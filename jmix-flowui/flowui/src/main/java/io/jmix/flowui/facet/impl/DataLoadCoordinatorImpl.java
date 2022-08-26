@@ -141,7 +141,7 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
             } else if (parameter.startsWith(componentPrefix)) {
                 String componentId = parameter.substring(componentPrefix.length());
-                Component component = UiComponentUtils.findComponentOrElseThrow(view, componentId);
+                Component component = UiComponentUtils.getComponent(view, componentId);
                 LikeClause likeClause = findLikeClause(loader, parameter);
 
                 addOnComponentValueChangedLoadTrigger(loader, component, parameter, likeClause);

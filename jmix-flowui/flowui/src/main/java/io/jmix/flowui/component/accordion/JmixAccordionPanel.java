@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.accordion;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import io.jmix.flowui.component.ComponentContainer;
 
@@ -27,33 +26,45 @@ import java.util.stream.Collectors;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-public class JmixAccordion extends Accordion implements ComponentContainer {
+public class JmixAccordionPanel extends AccordionPanel implements ComponentContainer {
 
-    @Override
-    public JmixAccordionPanel add(String summary, Component content) {
-        final JmixAccordionPanel panel = new JmixAccordionPanel(summary, content);
-        return add(panel);
+    public JmixAccordionPanel() {
+        super();
     }
 
-    @Override
-    public JmixAccordionPanel add(AccordionPanel panel) {
-        if (!(panel instanceof JmixAccordionPanel)) {
-            throw new IllegalArgumentException(String.format("%s supports only %s",
-                    getClass().getSimpleName(), JmixAccordionPanel.class.getSimpleName()));
-        }
+    public JmixAccordionPanel(String summary) {
+        super(summary);
+    }
 
-        return ((JmixAccordionPanel) super.add(panel));
+    public JmixAccordionPanel(Component summary) {
+        super(summary);
+    }
+
+    public JmixAccordionPanel(String summary, Component content) {
+        super(summary, content);
+    }
+
+    public JmixAccordionPanel(Component summary, Component content) {
+        super(summary, content);
+    }
+
+    public JmixAccordionPanel(String summary, Component... components) {
+        super(summary, components);
+    }
+
+    public JmixAccordionPanel(Component summary, Component... components) {
+        super(summary, components);
     }
 
     @Override
     public Optional<Component> findOwnComponent(String id) {
-        return getChildren()
+        return getContent()
                 .filter(component -> sameId(component, id))
                 .findFirst();
     }
 
     @Override
     public Collection<Component> getOwnComponents() {
-        return getChildren().sequential().collect(Collectors.toList());
+        return getContent().sequential().collect(Collectors.toList());
     }
 }

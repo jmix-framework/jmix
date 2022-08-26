@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.accordion;
+package io.jmix.flowui.component.applayout;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.accordion.Accordion;
-import com.vaadin.flow.component.accordion.AccordionPanel;
+import com.vaadin.flow.component.applayout.AppLayout;
 import io.jmix.flowui.component.ComponentContainer;
 
 import java.util.Collection;
@@ -27,25 +26,8 @@ import java.util.stream.Collectors;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-public class JmixAccordion extends Accordion implements ComponentContainer {
+public class JmixAppLayout extends AppLayout implements ComponentContainer {
 
-    @Override
-    public JmixAccordionPanel add(String summary, Component content) {
-        final JmixAccordionPanel panel = new JmixAccordionPanel(summary, content);
-        return add(panel);
-    }
-
-    @Override
-    public JmixAccordionPanel add(AccordionPanel panel) {
-        if (!(panel instanceof JmixAccordionPanel)) {
-            throw new IllegalArgumentException(String.format("%s supports only %s",
-                    getClass().getSimpleName(), JmixAccordionPanel.class.getSimpleName()));
-        }
-
-        return ((JmixAccordionPanel) super.add(panel));
-    }
-
-    @Override
     public Optional<Component> findOwnComponent(String id) {
         return getChildren()
                 .filter(component -> sameId(component, id))

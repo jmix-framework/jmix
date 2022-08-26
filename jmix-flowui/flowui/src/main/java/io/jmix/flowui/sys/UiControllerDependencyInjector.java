@@ -5,7 +5,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasComponents;
 import io.jmix.core.DevelopmentException;
-import io.jmix.flowui.component.EnhancedHasComponents;
+import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
@@ -134,14 +134,14 @@ public class UiControllerDependencyInjector {
     @Nullable
     protected Object getInjectedInstance(Class<?> type, String name, InjectElement injectElement, View<?> controller) {
         // TODO: gg, exception?
-        if (!(controller.getContent() instanceof EnhancedHasComponents)) {
+        if (!(controller.getContent() instanceof ComponentContainer)) {
             return null;
         }
 
         AnnotatedElement element = injectElement.getElement();
         Class<?> annotationClass = injectElement.getAnnotationClass();
 
-        EnhancedHasComponents content = ((EnhancedHasComponents) controller.getContent());
+        ComponentContainer content = ((ComponentContainer) controller.getContent());
 
         if (Component.class.isAssignableFrom(type)) {
             /// if legacy frame - inject controller
@@ -547,14 +547,14 @@ public class UiControllerDependencyInjector {
     @Nullable
     protected Object findMethodTarget(View<?> controller, String target) {
         // TODO: gg, exception?
-        if (!(controller.getContent() instanceof EnhancedHasComponents)) {
+        if (!(controller.getContent() instanceof ComponentContainer)) {
             return null;
         }
 
         ViewFacets viewFacets = UiControllerUtils.getViewFacets(controller);
 
         String[] elements = ValuePathHelper.parse(target);
-        EnhancedHasComponents viewLayout = ((EnhancedHasComponents) controller.getContent());
+        ComponentContainer viewLayout = ((ComponentContainer) controller.getContent());
         if (elements.length == 1) {
             ViewActions viewActions = UiControllerUtils.getViewActions(controller);
             Action action = viewActions.getAction(target);
@@ -583,8 +583,8 @@ public class UiControllerDependencyInjector {
                     }
                 }
 
-                if (component instanceof HasComponents) {
-                    Optional<Component> childComponent = UiComponentUtils.findComponent((HasComponents) component, id);
+                if (UiComponentUtils.isContainer(component)) {
+                    Optional<Component> childComponent = UiComponentUtils.findComponent(component, id);
                     if (childComponent.isPresent()) {
                         return childComponent.get();
                     }

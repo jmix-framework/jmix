@@ -1,0 +1,77 @@
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <layout>
+        <vbox id="vbox">
+            <textField/>
+            <textField/>
+            <hbox>
+                <textField/>
+                <textField/>
+            </hbox>
+        </vbox>
+
+        <details id="details">
+            <hbox id="detailsButtonsPanel">
+                <button id="button1"/>
+                <button action="detailsDataGrid.read"/>
+            </hbox>
+            <dataGrid id="detailsDataGrid" metaClass="test_Order">
+                <actions>
+                    <action id="read" type="read"/>
+                    <action id="customAction"/>
+                </actions>
+                <columns>
+                    <column property="number"/>
+                    <column property="amount"/>
+                </columns>
+            </dataGrid>
+        </details>
+
+        <accordion id="accordion">
+            <accordionPanel id="accordionPanel1">
+                <vbox id="accordionPanelWrapper">
+                    <hbox id="accordionButtonsPanel">
+                        <button id="button2"/>
+                        <button action="detailsDataGrid.read"/>
+                    </hbox>
+                    <dataGrid id="accordionDataGrid" metaClass="test_Order">
+                        <actions>
+                            <action id="read" type="read"/>
+                            <action id="customAction"/>
+                        </actions>
+                        <columns>
+                            <column property="number"/>
+                            <column property="amount"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </accordionPanel>
+
+            <accordionPanel id="accordionPanel2">
+                <vbox id="accordionVbox">
+                    <textField/>
+                    <textField/>
+                    <hbox>
+                        <textField/>
+                        <textField/>
+                    </hbox>
+                </vbox>
+            </accordionPanel>
+        </accordion>
+    </layout>
+</view>

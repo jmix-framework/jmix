@@ -16,12 +16,12 @@
 
 package io.jmix.flowui.xml.layout.loader.container;
 
-import com.vaadin.flow.component.accordion.AccordionPanel;
+import io.jmix.flowui.component.accordion.JmixAccordionPanel;
 
-public class AccordionPanelLoader extends AbstractDetailsLoader<AccordionPanel> {
+public class AccordionPanelLoader extends AbstractDetailsLoader<JmixAccordionPanel> {
 
     @Override
-    protected AccordionPanel createComponent() {
-        return factory.create(AccordionPanel.class);
+    protected JmixAccordionPanel createComponent() {
+        return factory.create(JmixAccordionPanel.class);
     }
 }

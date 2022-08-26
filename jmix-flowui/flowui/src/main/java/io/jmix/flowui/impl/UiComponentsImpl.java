@@ -2,6 +2,8 @@ package io.jmix.flowui.impl;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -15,6 +17,8 @@ import com.vaadin.flow.di.Instantiator;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsDatatype;
+import io.jmix.flowui.component.accordion.JmixAccordion;
+import io.jmix.flowui.component.accordion.JmixAccordionPanel;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
@@ -50,9 +54,11 @@ public class UiComponentsImpl implements UiComponents {
     {
         register(DataGrid.class, Grid.class);
         register(TreeDataGrid.class, TreeGrid.class);
+        register(JmixAccordion.class, Accordion.class);
+        register(JmixAccordionPanel.class, AccordionPanel.class);
+        register(JmixDetails.class, Details.class);
         register(JmixButton.class, Button.class);
         register(JmixComboBox.class, ComboBox.class);
-        register(JmixDetails.class, Details.class);
         register(TypedTextField.class, TextField.class);
         register(TypedTimePicker.class, TimePicker.class);
         register(TypedDateTimePicker.class, DateTimePicker.class);

@@ -70,7 +70,7 @@ public abstract class AbstractContainerLoader<T extends Component> extends Abstr
 
         if (layout instanceof FlexComponent) {
             loadString(element, "expand").ifPresent(componentId -> {
-                Component componentToExpand = UiComponentUtils.findComponent(layout, componentId)
+                Component componentToExpand = UiComponentUtils.findComponent(((Component) layout), componentId)
                         .orElseThrow(() -> new GuiDevelopmentException(
                                 String.format("There is no component with id '%s' to expand", componentId), context));
                 ((FlexComponent) layout).expand(componentToExpand);
@@ -78,6 +78,7 @@ public abstract class AbstractContainerLoader<T extends Component> extends Abstr
         }
     }
 
+    // TODO: what is it?
     /*protected void setComponentsRatio(ComponentContainer resultComponent, Element element) {
         if (!(resultComponent instanceof SupportsExpandRatio)) {
             return;

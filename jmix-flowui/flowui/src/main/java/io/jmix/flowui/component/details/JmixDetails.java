@@ -17,52 +17,26 @@
 package io.jmix.flowui.component.details;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasOrderedComponents;
 import com.vaadin.flow.component.details.Details;
-import com.vaadin.flow.dom.Element;
+import io.jmix.flowui.component.ComponentContainer;
 
-import java.util.stream.Stream;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class JmixDetails extends Details implements HasOrderedComponents {
+import static io.jmix.flowui.component.UiComponentUtils.sameId;
+
+public class JmixDetails extends Details implements ComponentContainer {
 
     @Override
-    public Stream<Component> getChildren() {
-        return super.getContent();
+    public Optional<Component> findOwnComponent(String id) {
+        return getContent()
+                .filter(component -> sameId(component, id))
+                .findFirst();
     }
 
     @Override
-    public void add(Component... components) {
-        super.addContent(components);
-    }
-
-
-    @Override
-    public void remove(Component... components) {
-        getContentContainer().remove(components);
-    }
-
-    @Override
-    public void removeAll() {
-        getContentContainer().removeAll();
-    }
-
-    @Override
-    public void addComponentAtIndex(int index, Component component) {
-        getContentContainer().addComponentAtIndex(index, component);
-    }
-
-    @Override
-    public void addComponentAsFirst(Component component) {
-        getContentContainer().addComponentAsFirst(component);
-    }
-
-    protected HasOrderedComponents getContentContainer() {
-        Element firstChild = getElement().getChild(0);
-        return firstChild.getComponent()
-                .filter(component -> component instanceof HasOrderedComponents)
-                .map(component -> ((HasOrderedComponents) component))
-                .orElseThrow(() ->
-                        new IllegalStateException(Details.class.getSimpleName() +
-                                " content doesn't contain components"));
+    public Collection<Component> getOwnComponents() {
+        return getContent().sequential().collect(Collectors.toList());
     }
 }

@@ -17,19 +17,18 @@
 package io.jmix.flowui.view;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValueAndElement;
 import io.jmix.core.AccessManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.kit.component.HasActions;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.HasActions;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -59,7 +58,7 @@ public class ReadOnlyViewsSupport {
      * All own view actions will be refreshed ({@link Action#refreshState()}).
      * <p>
      *
-     * @param view   a view to set the read-only mode
+     * @param view     a view to set the read-only mode
      * @param readOnly whether a view in the read-only mode
      */
     public void setViewReadOnly(View<?> view, boolean readOnly) {
@@ -71,11 +70,11 @@ public class ReadOnlyViewsSupport {
 
     protected void updateComponentsReadOnlyState(View<?> view, boolean readOnly) {
         Component content = view.getContent();
-        if (!(content instanceof HasComponents)) {
+        if (!UiComponentUtils.isContainer(content)) {
             return;
         }
 
-        for (Component component : UiComponentUtils.getComponents(((HasComponents) content))) {
+        for (Component component : UiComponentUtils.getComponents(content)) {
             if (component instanceof HasValueAndElement
                     && isChangeReadOnly(component)) {
                 boolean editable = isEditableConsideringDataBinding(component, !readOnly);

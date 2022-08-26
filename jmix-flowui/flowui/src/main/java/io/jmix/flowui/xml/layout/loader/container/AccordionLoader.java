@@ -18,15 +18,16 @@ package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
+import io.jmix.flowui.component.accordion.JmixAccordion;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;
 
-public class AccordionLoader extends AbstractContainerLoader<Accordion> {
+public class AccordionLoader extends AbstractContainerLoader<JmixAccordion> {
 
     @Override
-    protected Accordion createComponent() {
-        return factory.create(Accordion.class);
+    protected JmixAccordion createComponent() {
+        return factory.create(JmixAccordion.class);
     }
 
     @Override

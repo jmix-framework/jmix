@@ -18,7 +18,7 @@ package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.applayout.AppLayout;
-import io.jmix.flowui.component.EnhancedHasComponents;
+import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -41,7 +41,7 @@ public class FocusComponentInitTask implements ComponentLoader.InitTask {
 
     @Override
     public void execute(ComponentContext context, View<?> view) {
-        if (!(view.getContent() instanceof EnhancedHasComponents)
+        if (!(view.getContent() instanceof ComponentContainer)
                 && !(view.getContent() instanceof AppLayout)) {
             throw new GuiDevelopmentException("View cannot contain components", context.getFullFrameId());
         }

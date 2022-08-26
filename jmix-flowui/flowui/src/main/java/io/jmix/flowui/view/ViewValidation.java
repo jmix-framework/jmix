@@ -3,7 +3,6 @@ package io.jmix.flowui.view;
 import com.google.common.collect.Iterables;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
-import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.core.Messages;
@@ -50,9 +49,9 @@ public class ViewValidation {
         this.notifications = notifications;
     }
 
-    public ValidationErrors validateUiComponents(HasComponents component) {
-        Preconditions.checkNotNullArgument(component);
-        return validateUiComponents(UiComponentUtils.getComponents(component));
+    public ValidationErrors validateUiComponents(Component container) {
+        Preconditions.checkNotNullArgument(container);
+        return validateUiComponents(UiComponentUtils.getComponents(container));
     }
 
     public ValidationErrors validateUiComponents(Collection<Component> components) {

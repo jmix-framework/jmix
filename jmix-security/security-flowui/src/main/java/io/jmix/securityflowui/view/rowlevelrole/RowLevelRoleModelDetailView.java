@@ -21,6 +21,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
+import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.exception.ValidationException;
@@ -149,16 +150,16 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
             }
         }
 
-        setupRoleViewMode();
+        setupRoleReadOnlyMode();
     }
 
-    private void setupRoleViewMode() {
+    private void setupRoleReadOnlyMode() {
         boolean isDatabaseSource = isDatabaseSource();
         setReadOnly(!isDatabaseSource);
 
         Collection<Action> resourcePoliciesActions = rowLevelPoliciesTable.getActions();
         for (Action action : resourcePoliciesActions) {
-            action.setEnabled(isDatabaseSource);
+            action.setVisible(ReadAction.ID.equals(action.getId()) != isDatabaseSource);
         }
 
         Collection<Action> childRolesActions = childRolesTable.getActions();

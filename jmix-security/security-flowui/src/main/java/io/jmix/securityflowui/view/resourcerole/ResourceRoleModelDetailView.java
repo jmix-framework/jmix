@@ -30,6 +30,7 @@ import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.flowui.DialogWindowBuilders;
+import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -158,7 +159,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         }
 
         boolean isDatabaseSource = isDatabaseSource();
-        setupRoleViewMode(isDatabaseSource);
+        setupRoleReadOnlyMode(isDatabaseSource);
 
         Action createGraphQLPolicyAction = resourcePoliciesTable.getAction("createGraphQLPolicy");
         if (createGraphQLPolicyAction != null) {
@@ -168,12 +169,12 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         initPoliciesMenuBar(isDatabaseSource);
     }
 
-    private void setupRoleViewMode(boolean isDatabaseSource) {
+    private void setupRoleReadOnlyMode(boolean isDatabaseSource) {
         setReadOnly(!isDatabaseSource);
 
         Collection<Action> resourcePoliciesActions = resourcePoliciesTable.getActions();
         for (Action action : resourcePoliciesActions) {
-            action.setEnabled(isDatabaseSource);
+            action.setVisible(ReadAction.ID.equals(action.getId()) != isDatabaseSource);
         }
 
         Collection<Action> childRolesActions = childRolesTable.getActions();
@@ -183,18 +184,17 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     private void initPoliciesMenuBar(boolean enabled) {
+        if (!enabled) {
+            return;
+        }
+
         MenuBar policiesMenuBar = new MenuBar();
         policiesMenuBar.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
-        policiesMenuBar.setEnabled(enabled);
 
         resourcePoliciesButtonsPanel.addComponentAsFirst(policiesMenuBar);
 
         MenuItem item = policiesMenuBar.addItem(VaadinIcon.PLUS.create());
         item.add(messages.getMessage("actions.Create"));
-
-        if (!enabled) {
-            return;
-        }
 
         SubMenu subMenu = item.getSubMenu();
         getCreatePolicyActions()
@@ -363,6 +363,27 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         }
 
         DialogWindow<?> dialog = buildResourcePolicyDetailView(editedResourcePolicyModel);
+        dialog.open();
+    }
+
+    @Subscribe("resourcePoliciesTable.read")
+    private void onResourcePoliciesTableRead(ActionPerformedEvent event) {
+        ResourcePolicyModel editedResourcePolicyModel = resourcePoliciesTable.getSingleSelectedItem();
+        if (editedResourcePolicyModel == null) {
+            return;
+        }
+
+        DialogWindow<?> dialog = buildResourcePolicyDetailView(editedResourcePolicyModel);
+
+        View<?> view = dialog.getView();
+        if (view instanceof ReadOnlyAwareView) {
+            ((ReadOnlyAwareView) view).setReadOnly(true);
+        } else {
+            throw new IllegalStateException(String.format("%s '%s' does not implement %s: %s",
+                    View.class.getSimpleName(), view.getId(),
+                    ReadOnlyAwareView.class.getSimpleName(), view.getClass()));
+        }
+
         dialog.open();
     }
 

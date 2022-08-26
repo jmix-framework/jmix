@@ -53,7 +53,7 @@
             <hbox id="rowLevelPoliciesButtonsPanel" className="buttons-panel">
                 <button action="rowLevelPoliciesTable.create"/>
                 <button action="rowLevelPoliciesTable.edit"/>
-                <!--            <button action="rowLevelPoliciesTable.view"/>-->
+                <button action="rowLevelPoliciesTable.read"/>
                 <button action="rowLevelPoliciesTable.remove"/>
             </hbox>
             <dataGrid id="rowLevelPoliciesTable"
@@ -71,7 +71,11 @@
                             <property name="openMode" value="DIALOG"/>
                         </properties>
                     </action>
-                    <!--                <action id="view" type="view"/>-->
+                    <action id="read" type="read">
+                        <properties>
+                            <property name="openMode" value="DIALOG"/>
+                        </properties>
+                    </action>
                     <action id="remove" type="remove"/>
                 </actions>
                 <columns>

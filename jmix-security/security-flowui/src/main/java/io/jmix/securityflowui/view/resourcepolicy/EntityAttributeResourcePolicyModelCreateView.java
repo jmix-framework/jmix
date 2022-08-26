@@ -8,8 +8,6 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableFunction;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -54,14 +52,9 @@ public class EntityAttributeResourcePolicyModelCreateView extends MultipleResour
     @Autowired
     private Metadata metadata;
     @Autowired
-    private MetadataTools metadataTools;
-    @Autowired
     private MessageTools messageTools;
     @Autowired
     private MessageBundle messageBundle;
-
-    @Autowired
-    private Notifications notifications;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -85,40 +78,11 @@ public class EntityAttributeResourcePolicyModelCreateView extends MultipleResour
     }
 
     private void initTable() {
-        attributesTable.addColumn(createPermissionChangeRenderer("view"))
-                .setHeader(messageTools.getPropertyCaption(attributesDc.getEntityMetaClass(), "view"));
-        attributesTable.addColumn(createPermissionChangeRenderer("modify"))
-                .setHeader(messageTools.getPropertyCaption(attributesDc.getEntityMetaClass(), "modify"));
-    }
+        attributesTable.addColumn(createViewPermissionChangeRenderer())
+                .setHeader(getColumnHeader("view"));
 
-    private ComponentRenderer<Checkbox, AttributeResourceModel> createPermissionChangeRenderer(String property) {
-        return new ComponentRenderer<>(
-                (SerializableFunction<AttributeResourceModel, Checkbox>) item -> {
-                    Checkbox checkbox = new Checkbox();
-
-                    switch (property) {
-                        case "view":
-                            checkbox.setValue(item.getView());
-                            break;
-                        case "modify":
-                            checkbox.setValue(item.getModify());
-                            break;
-                    }
-
-                    checkbox.addValueChangeListener(event -> {
-                        switch (property) {
-                            case "view":
-                                item.setView(checkbox.getValue());
-                                break;
-                            case "modify":
-                                item.setModify(checkbox.getValue());
-                                break;
-                        }
-                        attributesDc.replaceItem(item);
-                    });
-
-                    return checkbox;
-                });
+        attributesTable.addColumn(createModifyPermissionChangeRenderer())
+                .setHeader(getColumnHeader("modify"));
     }
 
     private void fillAttributesTable(@Nullable String entityName) {
@@ -189,5 +153,43 @@ public class EntityAttributeResourcePolicyModelCreateView extends MultipleResour
 
     private String generateResourceString(String entityName, String attributeName) {
         return entityName + "." + attributeName;
+    }
+
+    private ComponentRenderer<Checkbox, AttributeResourceModel> createViewPermissionChangeRenderer() {
+        return new ComponentRenderer<>(
+                (SerializableFunction<AttributeResourceModel, Checkbox>) this::viewPermissionChangeUpdater);
+    }
+
+    private ComponentRenderer<Checkbox, AttributeResourceModel> createModifyPermissionChangeRenderer() {
+        return new ComponentRenderer<>(
+                (SerializableFunction<AttributeResourceModel, Checkbox>) this::modifyPermissionChangeUpdater);
+    }
+
+    private Checkbox viewPermissionChangeUpdater(AttributeResourceModel item) {
+        Checkbox checkbox = new Checkbox();
+        checkbox.setValue(item.getView());
+
+        checkbox.addValueChangeListener(event -> {
+            item.setView(checkbox.getValue());
+            attributesDc.replaceItem(item);
+        });
+
+        return checkbox;
+    }
+
+    private Checkbox modifyPermissionChangeUpdater(AttributeResourceModel item) {
+        Checkbox checkbox = new Checkbox();
+        checkbox.setValue(item.getModify());
+
+        checkbox.addValueChangeListener(event -> {
+            item.setModify(checkbox.getValue());
+            attributesDc.replaceItem(item);
+        });
+
+        return checkbox;
+    }
+
+    private String getColumnHeader(String property) {
+        return messageTools.getPropertyCaption(attributesDc.getEntityMetaClass(), property);
     }
 }

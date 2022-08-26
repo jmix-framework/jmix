@@ -104,16 +104,16 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
 
     @Subscribe(id = "rowLevelPolicyModelDc", target = Target.DATA_CONTAINER)
     private void onRowLevelPolicyModelDcItemPropertyChange(ItemPropertyChangeEvent<RowLevelPolicyModel> event) {
-        if ("type".equals(event.getProperty())) {
+        String property = event.getProperty();
+
+        if ("type".equals(property)) {
             initFieldsAccessForType();
         }
 
-        switch (event.getProperty()) {
-            case "entityName":
-            case "whereClause":
-            case "script":
-                updateCheckSyntaxButtonEnabledState();
-                break;
+        if ("entityName".equals(property)
+                || "whereClause".equals(property)
+                || "script".equals(property)) {
+            updateCheckSyntaxButtonEnabledState();
         }
     }
 
@@ -165,13 +165,16 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
 
     @Subscribe("checkSyntaxBtn")
     public void onCheckSyntaxBtnClick(ClickEvent<Button> event) {
-        switch (getEditedEntity().getType()) {
+        RowLevelPolicyType type = getEditedEntity().getType();
+        switch (type) {
             case JPQL:
                 checkJpqlSyntax();
                 break;
             case PREDICATE:
                 checkPredicateSyntax();
                 break;
+            default:
+                throw new IllegalStateException("Unknown type: " + type);
         }
     }
 
@@ -230,7 +233,10 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
             predicate.test(entity, getApplicationContext());
             showTestPassedNotification();
         } catch (ScriptCompilationException e) {
-            Throwable rootCause = e.getRootCause() != null ? e.getRootCause() : e;
+            Throwable rootCause = ExceptionUtils.getRootCause(e);
+            if (rootCause == null) {
+                rootCause = e;
+            }
             String message = Strings.nullToEmpty(rootCause.getMessage());
             showTestFailedNotification(new Span(message));
         } catch (Exception e) {

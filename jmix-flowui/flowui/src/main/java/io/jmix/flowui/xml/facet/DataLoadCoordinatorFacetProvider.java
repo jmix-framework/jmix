@@ -245,7 +245,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
             ViewData viewData = UiControllerUtils.getViewData(facet.getOwner());
             DataLoader loader = viewData.getLoader(loaderId);
-            Component component = UiComponentUtils.findComponentOrElseThrow(facet.getOwner(), componentId);
+            Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
 
             facet.addOnComponentValueChangedLoadTrigger(loader, component, param, likeClause);
         }

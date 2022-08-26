@@ -19,15 +19,15 @@ package io.jmix.flowui.app.main;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.HasText;
-import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.router.RouterLayout;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.applayout.JmixAppLayout;
 import io.jmix.flowui.view.UiControllerUtils;
 import io.jmix.flowui.view.View;
 
 import java.util.Optional;
 
-public class StandardMainView extends View<AppLayout> implements RouterLayout {
+public class StandardMainView extends View<JmixAppLayout> implements RouterLayout {
 
     @Override
     public void showRouterLayoutContent(HasElement content) {

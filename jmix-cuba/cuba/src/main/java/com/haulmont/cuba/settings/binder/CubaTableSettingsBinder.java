@@ -81,4 +81,12 @@ public class CubaTableSettingsBinder extends TableSettingsBinder {
     protected TableSettings createTableSettings() {
         return new GroupTableSettings();
     }
+
+    @Override
+    protected boolean isPresentationsEnabled(Table table) {
+        if (table instanceof com.haulmont.cuba.gui.components.Table) {
+            return ((com.haulmont.cuba.gui.components.Table<?>) table).isUsePresentations();
+        }
+        return super.isPresentationsEnabled(table);
+    }
 }

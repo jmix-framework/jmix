@@ -57,7 +57,7 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
     public void applySettings(Table table, SettingsWrapper wrapper) {
         TableSettings tableSettings = wrapper.getSettings();
 
-        if (tableSettings.getTextSelection() != null) {
+        if (isPresentationsEnabled(table) && tableSettings.getTextSelection() != null) {
             table.setTextSelectionEnabled(tableSettings.getTextSelection());
 
             com.vaadin.ui.Component presentationsLayout = getEnhancedTable(table).getPresentationsLayout();
@@ -136,12 +136,14 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
 
         boolean settingsChanged = false;
 
-        Boolean textSelection = tableSettings.getTextSelection();
-        if (textSelection == null
-                || BooleanUtils.toBoolean(textSelection) != table.isTextSelectionEnabled()) {
-            tableSettings.setTextSelection(table.isTextSelectionEnabled());
+        if (isPresentationsEnabled(table)) {
+            Boolean textSelection = tableSettings.getTextSelection();
+            if (textSelection == null
+                    || BooleanUtils.toBoolean(textSelection) != table.isTextSelectionEnabled()) {
+                tableSettings.setTextSelection(table.isTextSelectionEnabled());
 
-            settingsChanged = true;
+                settingsChanged = true;
+            }
         }
 
         String settingsSortProperty = null;
@@ -180,7 +182,9 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
         TableSettings tableSettings = createTableSettings();
         tableSettings.setId(table.getId());
 
-        tableSettings.setTextSelection(table.isTextSelectionEnabled());
+        if (isPresentationsEnabled(table)) {
+            tableSettings.setTextSelection(table.isTextSelectionEnabled());
+        }
 
         // get column settings
         tableSettings.setColumns(getTableColumnSettings(table));
@@ -357,6 +361,10 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
         }
 
         return false;
+    }
+
+    protected boolean isPresentationsEnabled(Table table) {
+        return table.getPresentations() != null;
     }
 
     protected JmixEnhancedTable getEnhancedTable(Table table) {

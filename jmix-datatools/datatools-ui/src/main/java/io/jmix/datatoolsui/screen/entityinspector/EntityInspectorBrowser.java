@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
@@ -465,6 +466,8 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         createAction.setScreenClass(EntityInspectorEditor.class);
         createAction.setNewEntitySupplier(() -> metadata.create(selectedMeta));
         createAction.setShortcut(componentProperties.getTableInsertShortcut());
+        createAction.addEnabledRule(() -> !Modifier.isAbstract(selectedMeta.getJavaClass().getModifiers()));
+        createAction.setDescription(messages.getMessage(EntityInspectorBrowser.class, "createForAbstract"));
         return createAction;
     }
 

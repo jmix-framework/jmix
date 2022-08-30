@@ -124,7 +124,8 @@
 
 @mixin he-caption-inline-icon-style($unit-size  : $v-unit-size,
                                     $font-size  : $v-font-size) {
-  .v-slot-inline-icon {
+  .v-slot-inline-icon > .v-caption-on-top,
+  .jmix-fglayout-slot:not(.inline) {
     .v-caption-inline-icon {
       & > .v-icon {
         // Move the icon if a field has a caption

@@ -524,7 +524,8 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                 case EMBEDDED:
                 case COMPOSITION:
                     EntityImportPlanProperty property = entityImportPlan.getProperty(metaProperty.getName());
-                    property.setReferenceImportBehaviour(ReferenceImportBehaviour.IGNORE_MISSING);
+                    if (property != null)
+                        property.setReferenceImportBehaviour(ReferenceImportBehaviour.IGNORE_MISSING);
                     break;
                 default:
             }

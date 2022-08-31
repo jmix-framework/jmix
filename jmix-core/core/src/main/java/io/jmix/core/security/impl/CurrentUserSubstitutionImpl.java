@@ -18,6 +18,7 @@ package io.jmix.core.security.impl;
 
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -25,10 +26,14 @@ import org.springframework.stereotype.Component;
 @Component("sec_CurrentUserSubstitution")
 public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
 
-    private CurrentAuthentication currentAuthentication;
+    protected CurrentAuthentication currentAuthentication;
 
-    public CurrentUserSubstitutionImpl(CurrentAuthentication currentAuthentication) {
+    protected CurrentAuthenticationSupport currentAuthenticationSupport;
+
+    @Autowired
+    public CurrentUserSubstitutionImpl(CurrentAuthentication currentAuthentication, CurrentAuthenticationSupport currentAuthenticationSupport) {
         this.currentAuthentication = currentAuthentication;
+        this.currentAuthenticationSupport = currentAuthenticationSupport;
     }
 
     @Override
@@ -45,7 +50,7 @@ public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
         if (SubstitutedUserAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
             Object substitutedPrincipal = ((SubstitutedUserAuthenticationToken) authentication).getSubstitutedPrincipal();
             if (substitutedPrincipal instanceof UserDetails) {
-                return (UserDetails) substitutedPrincipal;
+                return currentAuthenticationSupport.reloadUser((UserDetails) substitutedPrincipal);
             } else {
                 throw new RuntimeException("Substituted principal must be UserDetails");
             }

@@ -466,7 +466,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         createAction.setScreenClass(EntityInspectorEditor.class);
         createAction.setNewEntitySupplier(() -> metadata.create(selectedMeta));
         createAction.setShortcut(componentProperties.getTableInsertShortcut());
-        if (!Modifier.isAbstract(selectedMeta.getJavaClass().getModifiers())) {
+        if (Modifier.isAbstract(selectedMeta.getJavaClass().getModifiers())) {
             createAction.setEnabled(false);
             createAction.setDescription(messages.getMessage(EntityInspectorBrowser.class, "createForAbstract"));
         }

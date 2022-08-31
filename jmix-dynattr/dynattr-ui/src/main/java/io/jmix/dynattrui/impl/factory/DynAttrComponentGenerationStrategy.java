@@ -51,6 +51,7 @@ import org.springframework.core.Ordered;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.jmix.dynattr.AttributeType.*;
 
@@ -413,9 +414,9 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
         List<String> dependsOnAttributeCodes = attribute.getConfiguration().getDependsOnAttributeCodes();
         if (dependsOnAttributeCodes != null && !dependsOnAttributeCodes.isEmpty()) {
-
+            List<String> codesWithMarkers = dependsOnAttributeCodes.stream().map(a -> '+' + a).collect(Collectors.toList());
             container.addItemPropertyChangeListener(e -> {
-                if (dependsOnAttributeCodes.contains(e.getProperty())) {
+                if (codesWithMarkers.contains(e.getProperty())) {
                     List options = optionsLoader.loadOptions(e.getItem(), attribute);
                     ((ValuesSelectAction) valuesPicker.getActionNN(ValuesSelectAction.ID))
                             .setOptions(new ListOptions(options));
@@ -443,9 +444,9 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
         List<String> dependsOnAttributeCodes = attribute.getConfiguration().getDependsOnAttributeCodes();
         if (dependsOnAttributeCodes != null && !dependsOnAttributeCodes.isEmpty()) {
-
+            List<String> codesWithMarkers = dependsOnAttributeCodes.stream().map(a -> '+' + a).collect(Collectors.toList());
             container.addItemPropertyChangeListener(e -> {
-                if (dependsOnAttributeCodes.contains(e.getProperty())) {
+                if (codesWithMarkers.contains(e.getProperty())) {
                     List options = optionsLoader.loadOptions(e.getItem(), attribute);
                     //noinspection unchecked
                     lookupField.setOptions(new ListOptions(options));

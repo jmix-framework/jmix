@@ -336,8 +336,8 @@ dependencies {
 
         api 'com.icegreen:greenmail:1.6.9'
 
-        def geoToolsVersion = '20.3'
-        api "org.geotools:gt-api:$geoToolsVersion"
+        def geoToolsVersion = '24.6'
+        api "org.geotools:gt-main:$geoToolsVersion"
         api "org.geotools:gt-geojson:$geoToolsVersion"
         api "org.geotools:gt-referencing:$geoToolsVersion"
         api "org.geotools:gt-epsg-hsql:$geoToolsVersion"

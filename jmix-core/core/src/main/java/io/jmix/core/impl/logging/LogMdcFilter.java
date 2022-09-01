@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Filter that setup MDC (Mapped Diagnostic Context) for each http request.
+ * Filter that sets up MDC (Mapped Diagnostic Context) for each http request.
  */
 public class LogMdcFilter extends OncePerRequestFilter {
 

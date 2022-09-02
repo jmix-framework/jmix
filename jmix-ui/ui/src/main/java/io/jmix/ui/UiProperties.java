@@ -55,7 +55,6 @@ public class UiProperties {
      */
     int httpSessionExpirationTimeoutSec;
     UrlHandlingMode urlHandlingMode;
-    List<String> linkHandlerActions;
     List<String> viewFileExtensions;
 
     /**
@@ -135,7 +134,6 @@ public class UiProperties {
             @DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec,
             @DefaultValue("1800") int httpSessionExpirationTimeoutSec,
             @DefaultValue("URL_ROUTES") UrlHandlingMode urlHandlingMode,
-            @DefaultValue({"open", "o"}) List<String> linkHandlerActions,
             @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
             @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
             @DefaultValue("31536000") long webJarResourcesCacheTime, // 60 * 60 * 24 * 365
@@ -163,7 +161,6 @@ public class UiProperties {
         this.jmxConsoleMBeanOperationTimeoutSec = jmxConsoleMBeanOperationTimeoutSec;
         this.httpSessionExpirationTimeoutSec = httpSessionExpirationTimeoutSec;
         this.urlHandlingMode = urlHandlingMode;
-        this.linkHandlerActions = linkHandlerActions;
         this.viewFileExtensions = viewFileExtensions;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.webJarResourcesCacheTime = webJarResourcesCacheTime;
@@ -207,10 +204,6 @@ public class UiProperties {
 
     public UrlHandlingMode getUrlHandlingMode() {
         return urlHandlingMode;
-    }
-
-    public List<String> getLinkHandlerActions() {
-        return linkHandlerActions;
     }
 
     public boolean isAllowAnonymousAccess() {

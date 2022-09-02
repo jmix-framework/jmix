@@ -89,7 +89,7 @@ public class CoreConfiguration {
 
     @Bean("core_LogMdcFilterRegistrationBean")
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
-    public FilterRegistrationBean<LogMdcFilter> LogMdcFilter(CurrentAuthentication currentAuthentication) {
+    public FilterRegistrationBean<LogMdcFilter> logMdcFilterFilterRegistrationBean(CurrentAuthentication currentAuthentication) {
         LogMdcFilter logMdcFilter = new LogMdcFilter(currentAuthentication);
         FilterRegistrationBean<LogMdcFilter> filterRegistration = new FilterRegistrationBean<>(logMdcFilter);
         filterRegistration.setUrlPatterns(Set.of("/*"));

@@ -138,7 +138,8 @@ public class FilesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
             assertEquals("application/pdf", response.getFirstHeader("Content-Type").getValue());
             assertEquals("no-cache", response.getFirstHeader("Cache-Control").getValue());
-            assertEquals("inline; filename=\"test-file.pdf\"", response.getFirstHeader("Content-Disposition").getValue());
+            assertEquals("inline; filename=\"test%2dfile.pdf\"; filename*=utf-8''test%2dfile.pdf",
+                    response.getFirstHeader("Content-Disposition").getValue());
             byte[] fileContent = EntityUtils.toByteArray(response.getEntity());
             assertTrue(fileContent.length > 0);
         }

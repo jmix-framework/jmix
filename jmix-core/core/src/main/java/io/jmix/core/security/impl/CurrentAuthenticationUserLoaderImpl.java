@@ -16,39 +16,31 @@
 
 package io.jmix.core.security.impl;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.Id;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jmix.core.security.CurrentAuthenticationUserLoader;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-/**
- * Class contains support functionality for {@link io.jmix.core.security.impl.CurrentAuthenticationImpl} and
- * {@link CurrentUserSubstitutionImpl}
- */
-@Component("core_CurrentAuthenticationSupport")
-public class CurrentAuthenticationSupport {
+@Component("core_CurrentAuthenticationUserLoader")
+public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticationUserLoader {
+
+    protected DataManager dataManager;
 
     protected Metadata metadata;
 
     protected MetadataTools metadataTools;
 
-    protected DataManager dataManager;
 
-    @Autowired
-    public CurrentAuthenticationSupport(Metadata metadata, DataManager dataManager, MetadataTools metadataTools) {
-        this.metadata = metadata;
+    protected CoreProperties coreProperties;
+
+    public CurrentAuthenticationUserLoaderImpl(DataManager dataManager, Metadata metadata, MetadataTools metadataTools, CoreProperties coreProperties) {
         this.dataManager = dataManager;
+        this.metadata = metadata;
         this.metadataTools = metadataTools;
+        this.coreProperties = coreProperties;
     }
 
-    /**
-     * In some cases security context may contain a JPA entity instance where lazy loading is broken. To fix such cases
-     * we reload user instance before returning it to the client.
-     */
     public UserDetails reloadUser(UserDetails user) {
         if (shouldReloadUser(user)) {
             return dataManager.load(Id.of(user)).optional().orElse(user);
@@ -57,7 +49,9 @@ public class CurrentAuthenticationSupport {
     }
 
     protected boolean shouldReloadUser(UserDetails user) {
+        if (!coreProperties.isCurrentAuthenticationUserReloadEnabled()) return false;
         MetaClass metaClass = metadata.findClass(user.getClass());
         return metaClass != null && metadataTools.isJpaEntity(metaClass);
     }
+
 }

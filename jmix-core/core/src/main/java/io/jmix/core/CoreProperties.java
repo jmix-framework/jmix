@@ -100,6 +100,11 @@ public class CoreProperties {
      */
     PessimisticLock pessimisticLock;
 
+    /**
+     * Whether the user returned by the CurrentAuthentication should be reloaded.
+     */
+    boolean currentAuthenticationUserReloadEnabled;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -119,7 +124,8 @@ public class CoreProperties {
             @DefaultValue("false") boolean legacyFetchPlanSerializationAttributeName,
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
-            @DefaultValue PessimisticLock pessimisticLock) {
+            @DefaultValue PessimisticLock pessimisticLock,
+            @DefaultValue("true") boolean currentAuthenticationUserReloadEnabled) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -148,6 +154,7 @@ public class CoreProperties {
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.pessimisticLock = pessimisticLock;
+        this.currentAuthenticationUserReloadEnabled = currentAuthenticationUserReloadEnabled;
     }
 
     public String getWebHostName() {
@@ -248,6 +255,13 @@ public class CoreProperties {
         return pessimisticLock;
     }
 
+    /**
+     * @see #currentAuthenticationUserReloadEnabled
+     */
+    public boolean isCurrentAuthenticationUserReloadEnabled() {
+        return currentAuthenticationUserReloadEnabled;
+    }
+
     public static class PessimisticLock {
 
         /**
@@ -279,5 +293,6 @@ public class CoreProperties {
         public boolean isUseDefaultQuartzConfiguration() {
             return useDefaultQuartzConfiguration;
         }
+
     }
 }

@@ -18,9 +18,17 @@ package io.jmix.ui.sys.linkhandling;
 
 import com.google.common.collect.ImmutableMap;
 import io.jmix.ui.App;
+import io.jmix.ui.navigation.NavigationHandler;
+import io.jmix.ui.navigation.Route;
+import io.jmix.ui.navigation.UrlRouting;
 
 import java.util.Map;
 
+/**
+ * @deprecated will be removed in the next minor release. Use URL history and navigation API, e.g. {@link Route},
+ * {@link UrlRouting}, {@link NavigationHandler} instead
+ */
+@Deprecated
 public class ExternalLinkContext {
     protected Map<String, String> requestParams;
     protected String action;

@@ -16,7 +16,10 @@
 
 package io.jmix.ui;
 
+import io.jmix.ui.navigation.NavigationHandler;
+import io.jmix.ui.navigation.Route;
 import io.jmix.ui.navigation.UrlHandlingMode;
+import io.jmix.ui.navigation.UrlRouting;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -55,6 +58,11 @@ public class UiProperties {
      */
     int httpSessionExpirationTimeoutSec;
     UrlHandlingMode urlHandlingMode;
+    /**
+     * @deprecated will be removed in the next minor release. Use URL history and navigation API, e.g. {@link Route},
+     * {@link UrlRouting}, {@link NavigationHandler} instead
+     */
+    @Deprecated
     List<String> linkHandlerActions;
     List<String> viewFileExtensions;
 
@@ -209,6 +217,11 @@ public class UiProperties {
         return urlHandlingMode;
     }
 
+    /**
+     * @deprecated will be removed in the next minor release. Use URL history and navigation API, e.g. {@link Route},
+     * {@link UrlRouting}, {@link NavigationHandler} instead
+     */
+    @Deprecated
     public List<String> getLinkHandlerActions() {
         return linkHandlerActions;
     }

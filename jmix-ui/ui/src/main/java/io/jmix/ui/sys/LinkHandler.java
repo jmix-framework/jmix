@@ -21,6 +21,9 @@ import com.vaadin.server.WrappedSession;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.navigation.NavigationHandler;
+import io.jmix.ui.navigation.Route;
+import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.sys.linkhandling.ExternalLinkContext;
 import io.jmix.ui.sys.linkhandling.LinkHandlerProcessor;
 import org.springframework.context.annotation.Scope;
@@ -35,7 +38,11 @@ import java.util.Map;
  * {@link io.jmix.ui.UiProperties#getLinkHandlerActions()} actions.
  * <br> The bean traverses all implementations of {@link LinkHandlerProcessor}
  * by their priority and gives control to first possible to handle processor.
+ *
+ * @deprecated will be removed in the next minor release. Use URL history and navigation API, e.g. {@link Route},
+ * {@link UrlRouting}, {@link NavigationHandler} instead
  */
+@Deprecated
 @org.springframework.stereotype.Component("ui_LinkHandler")
 @Scope("prototype")
 public class LinkHandler {

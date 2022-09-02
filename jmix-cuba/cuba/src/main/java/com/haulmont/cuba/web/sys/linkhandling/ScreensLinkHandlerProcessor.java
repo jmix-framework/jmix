@@ -24,6 +24,9 @@ import io.jmix.ui.*;
 import com.haulmont.cuba.gui.exception.AccessDeniedHandler;
 import com.haulmont.cuba.gui.exception.EntityAccessExceptionHandler;
 import com.haulmont.cuba.gui.exception.NoSuchScreenHandler;
+import io.jmix.ui.navigation.NavigationHandler;
+import io.jmix.ui.navigation.Route;
+import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.Screen;
@@ -43,6 +46,11 @@ import java.util.Map;
 import static com.haulmont.cuba.gui.WindowManager.OpenType;
 import static java.lang.String.format;
 
+/**
+ * @deprecated will be removed in the next minor release. Use URL history and navigation API, e.g. {@link Route},
+ * {@link UrlRouting}, {@link NavigationHandler} instead
+ */
+@Deprecated
 @Component(ScreensLinkHandlerProcessor.NAME)
 public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordered {
     public static final String NAME = "cuba_ScreensLinkHandlerProcessor";

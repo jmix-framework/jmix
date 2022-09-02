@@ -16,6 +16,9 @@
 
 package io.jmix.ui.sys.linkhandling;
 
+import io.jmix.ui.navigation.NavigationHandler;
+import io.jmix.ui.navigation.Route;
+import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.sys.LinkHandler;
 
 /**
@@ -24,7 +27,11 @@ import io.jmix.ui.sys.LinkHandler;
  * <br> {@link LinkHandler} traverses processors to find first able to handle link.
  * <br> To set processor priority use {@link org.springframework.core.annotation.Order @Order},
  * {@link org.springframework.core.Ordered} or {@link javax.annotation.Priority @Priority}.
+ *
+ * @deprecated will be removed in the next minor release. Use URL history and navigation API, e.g. {@link Route},
+ * {@link UrlRouting}, {@link NavigationHandler} instead
  */
+@Deprecated
 public interface LinkHandlerProcessor {
 
     /**

@@ -31,14 +31,17 @@ public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticatio
 
     protected MetadataTools metadataTools;
 
-
     protected CoreProperties coreProperties;
 
-    public CurrentAuthenticationUserLoaderImpl(DataManager dataManager, Metadata metadata, MetadataTools metadataTools, CoreProperties coreProperties) {
+    protected EntityStates entityStates;
+
+    public CurrentAuthenticationUserLoaderImpl(DataManager dataManager, Metadata metadata, MetadataTools metadataTools,
+                                               CoreProperties coreProperties, EntityStates entityStates) {
         this.dataManager = dataManager;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.coreProperties = coreProperties;
+        this.entityStates = entityStates;
     }
 
     public UserDetails reloadUser(UserDetails user) {
@@ -51,7 +54,7 @@ public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticatio
     protected boolean shouldReloadUser(UserDetails user) {
         if (!coreProperties.isCurrentAuthenticationUserReloadEnabled()) return false;
         MetaClass metaClass = metadata.findClass(user.getClass());
-        return metaClass != null && metadataTools.isJpaEntity(metaClass);
+        return metaClass != null && metadataTools.isJpaEntity(metaClass) && !entityStates.isNew(user);
     }
 
 }

@@ -76,6 +76,8 @@ public class TagPickerLoader extends AbstractValuePickerLoader<TagPicker> {
                 resultComponent::setFilterMode);
         loadString(element, "metaClass", s ->
                 resultComponent.setMetaClass(getMetadata().getClass(s)));
+        loadInteger(element, "pageLength",
+                resultComponent::setPageLength);
     }
 
     protected Metadata getMetadata() {

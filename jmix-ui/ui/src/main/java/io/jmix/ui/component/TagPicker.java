@@ -26,6 +26,7 @@ import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EventObject;
@@ -183,6 +184,21 @@ public interface TagPicker<V> extends ValuesPicker<V>, OptionsField<Collection<V
      */
     @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME, typeParameter = "V")
     void setMetaClass(MetaClass metaClass);
+
+    /**
+     * @return the page length of the suggestion popup.
+     */
+    int getPageLength();
+
+    /**
+     * Sets the page length for the suggestion popup. Setting the page length to
+     * 0 will disable suggestion popup paging (all items visible).
+     *
+     * @param pageLength the pageLength to set
+     */
+    @StudioProperty(defaultValue = "10")
+    @PositiveOrZero
+    void setPageLength(int pageLength);
 
     /**
      * @return is selected options is hidden from the dropdown list

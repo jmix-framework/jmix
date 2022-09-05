@@ -22,6 +22,7 @@ import io.jmix.oidc.OidcProperties;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
 import io.jmix.oidc.claimsmapper.DefaultClaimsRolesMapper;
 import io.jmix.oidc.jwt.JmixJwtAuthenticationConverter;
+import io.jmix.oidc.resourceserver.OidcResourceServerLastSecurityFilter;
 import io.jmix.oidc.userinfo.DefaultJmixOidcUserService;
 import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
@@ -33,6 +34,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
@@ -41,6 +43,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
 @AutoConfiguration
 @Import({OidcConfiguration.class})
@@ -125,13 +128,17 @@ public class OidcAutoConfiguration {
         @Bean("oidc_JwtSecurityFilterChain")
         @Order(JmixOrder.HIGHEST_PRECEDENCE + 150)
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                       OidcUserMapper oidcUserMapper,
-                                                       OidcProperties oidcProperties) throws Exception {
-            http.apply(SecurityConfigurers.apiSecurity())
-                    .and()
-                    .oauth2ResourceServer()
-                    .jwt()
-                    .jwtAuthenticationConverter(jmixJwtAuthenticationConverter(oidcUserMapper, oidcProperties));
+                                                       JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter,
+                                                       ApplicationEventPublisher applicationEventPublisher) throws Exception {
+            http.oauth2ResourceServer(resourceServer -> {
+                resourceServer.jwt(jwt -> {
+                    jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
+                });
+            });
+            http.apply(SecurityConfigurers.apiSecurity());
+
+            OidcResourceServerLastSecurityFilter lastSecurityFilter = new OidcResourceServerLastSecurityFilter(applicationEventPublisher);
+            http.addFilterAfter(lastSecurityFilter, FilterSecurityInterceptor.class);
             return http.build();
         }
 

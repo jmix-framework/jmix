@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.rest'
-archivesBaseName = 'jmix-rest-starter'
+@Experimental
+@NonNullApi
+package io.jmix.oidc.resourceserver;
 
-dependencies {
-    api project(':rest')
-
-    compileOnly project(':security-oauth2')
-    compileOnly project(':oidc')
-
-    api 'org.springframework.boot:spring-boot-autoconfigure'
-}
+import io.jmix.core.annotation.Experimental;
+import org.springframework.lang.NonNullApi;

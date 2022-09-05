@@ -21,6 +21,7 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.reports.ReportsConfiguration;
 import io.jmix.reportsrest.ReportsRestConfiguration;
 import io.jmix.reportsrest.security.event.ReportBeforeInvocationEventListener;
+import io.jmix.reportsrest.security.event.ReportBeforeResourceServerApiInvocationEventListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -34,5 +35,11 @@ public class ReportsRestAutoConfiguration {
     @ConditionalOnClass(name = "io.jmix.securityoauth2.SecurityOAuth2Configuration")
     protected ReportBeforeInvocationEventListener reportBeforeInvocationEventListener() {
         return new ReportBeforeInvocationEventListener();
+    }
+
+    @Bean
+    @ConditionalOnClass(name = "io.jmix.oidc.OidcConfiguration")
+    protected ReportBeforeResourceServerApiInvocationEventListener reportBeforeResourceServerApiInvocationEventListener() {
+        return new ReportBeforeResourceServerApiInvocationEventListener();
     }
 }

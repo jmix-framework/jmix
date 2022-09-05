@@ -25,6 +25,7 @@ dependencies {
     compileOnly project(':security')
     compileOnly 'org.springframework.security.oauth:spring-security-oauth2'
     compileOnly project(':security-oauth2')
+    compileOnly project(':oidc')
 
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'

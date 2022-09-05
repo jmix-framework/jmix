@@ -119,7 +119,11 @@ public class EntityChangedEventManager {
         log.trace("collect {}", entities);
         AccumulatedInfoHolder holder = getAccumulatedInfoHolder();
         List<EntityChangedEventInfo> infoList = internalCollect(entities);
-        return merge(holder.accumulatedList, infoList);
+        if (holder.accumulatedList != null) {
+            infoList = merge(holder.accumulatedList, infoList);
+            holder.accumulatedList.clear();
+        }
+        return infoList;
     }
 
     public List<EntityChangedEventInfo> internalCollect(Collection<Object> entities) {

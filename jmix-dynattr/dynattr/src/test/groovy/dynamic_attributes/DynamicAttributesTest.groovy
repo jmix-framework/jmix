@@ -37,6 +37,8 @@ import test_support.entity.Group
 import test_support.entity.Role
 import test_support.entity.User
 import test_support.entity.UserRole
+import test_support.entity.event_clearing.Project
+import test_support.entity.event_clearing.Task
 
 import javax.sql.DataSource
 
@@ -57,11 +59,11 @@ class DynamicAttributesTest extends Specification {
     @Autowired
     protected UserRepository repository;
 
-    protected io.jmix.dynattr.model.Category userCategory, userRoleCategory, roleCategory
+    protected io.jmix.dynattr.model.Category userCategory, userRoleCategory, roleCategory, taskCategory
 
     protected CategoryAttribute userAttribute, userRoleAttribute, roleAttribute,
                                 userGroupAttribute, userGroupCollectionAttribute, userIntCollectionAttribute,
-                                userEnumAttribute, userEnumCollectionAttribute
+                                userEnumAttribute, userEnumCollectionAttribute, taskAttribute
 
     protected User user1, user2
 
@@ -83,6 +85,8 @@ class DynamicAttributesTest extends Specification {
         roleCategory = metadata.create(io.jmix.dynattr.model.Category)
         roleCategory.name = 'role'
         roleCategory.entityType = 'dynattr$Role'
+
+        createTaskAndProjectAttributes()
 
         createUserAttributes()
 
@@ -114,7 +118,9 @@ class DynamicAttributesTest extends Specification {
                 userEnumAttribute,
                 userEnumCollectionAttribute,
                 userRoleAttribute,
-                roleAttribute)
+                roleAttribute,
+                taskCategory,
+                taskAttribute)
 
         dataManager.save(user1, role, userRole, group1, group2)
 
@@ -130,6 +136,8 @@ class DynamicAttributesTest extends Specification {
         jdbcTemplate.update('delete from DYNATTR_USER_ROLE')
         jdbcTemplate.update('delete from DYNATTR_ROLE')
         jdbcTemplate.update('delete from DYNATTR_USER')
+        jdbcTemplate.update('delete from DYNAT_TASK')
+        jdbcTemplate.update('delete from DYNAT_PROJECT')
     }
 
     protected void createUserAttributes() {
@@ -207,6 +215,20 @@ class DynamicAttributesTest extends Specification {
         roleAttribute.categoryEntityType = 'dynattr$Role'
         roleAttribute.category = roleCategory
         roleAttribute.defaultEntity = new ReferenceToEntity()
+    }
+
+    protected void createTaskAndProjectAttributes() {
+        taskCategory = metadata.create(io.jmix.dynattr.model.Category)
+        taskCategory.name = 'task'
+        taskCategory.entityType = 'dynat_Task'
+
+        taskAttribute = metadata.create(CategoryAttribute)
+        taskAttribute.name = 'taskAttribute'
+        taskAttribute.code = 'taskAttribute'
+        taskAttribute.dataType = AttributeType.STRING
+        taskAttribute.categoryEntityType = 'dynat_Task'
+        taskAttribute.category = taskCategory
+        taskAttribute.defaultEntity = new ReferenceToEntity()
     }
 
     def "create user and save with dynamic attributes"() {
@@ -436,5 +458,29 @@ class DynamicAttributesTest extends Specification {
         EntityValues.getValue(user, '+userAttribute')
         then:
         thrown(EntityValueAccessException.class)
+    }
+
+    def "check dynattr not caused stackOverflow"() {
+        when:
+        Project project = metadata.create(Project)
+        project.name = 'test'
+
+        project = dataManager.save(project)
+        Task task = metadata.create(Task)
+
+        task.name = 'testTask'
+        task.project = project
+        project.tasks.add(task)
+
+        EntityValues.setValue(task, '+taskAttribute', 'theValue')
+
+        dataManager.save(task, project)
+
+        then:
+        noExceptionThrown()
+
+        Task loaded = dataManager.load(Task).id(task.id).hint(DynAttrQueryHints.LOAD_DYN_ATTR, true).one()
+        loaded != null
+        EntityValues.getValue(loaded, '+taskAttribute') == 'theValue'
     }
 }

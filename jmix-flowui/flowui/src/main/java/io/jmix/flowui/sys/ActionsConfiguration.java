@@ -61,7 +61,7 @@ public class ActionsConfiguration extends AbstractScanConfiguration {
 
         Stream<ActionDefinition> scannedActionsStream = basePackages.stream()
                 .flatMap(this::scanPackage)
-                .filter(this::isCandidateUiController)
+                .filter(this::isCandidateViewController)
                 .map(this::extractActionDefinition);
 
         return Stream.concat(scannedActionsStream, explicitDefinitions.stream())
@@ -83,7 +83,7 @@ public class ActionsConfiguration extends AbstractScanConfiguration {
         return new ActionDefinition(actionTypeId, className);
     }
 
-    protected boolean isCandidateUiController(MetadataReader metadataReader) {
+    protected boolean isCandidateViewController(MetadataReader metadataReader) {
         return metadataReader.getClassMetadata().isConcrete()
                 && metadataReader.getAnnotationMetadata().hasAnnotation(ActionType.class.getName());
     }

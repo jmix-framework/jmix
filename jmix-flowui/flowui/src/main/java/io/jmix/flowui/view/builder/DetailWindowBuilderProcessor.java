@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static io.jmix.flowui.view.UiControllerUtils.getViewData;
+import static io.jmix.flowui.view.ViewControllerUtils.getViewData;
 
 
 @Internal

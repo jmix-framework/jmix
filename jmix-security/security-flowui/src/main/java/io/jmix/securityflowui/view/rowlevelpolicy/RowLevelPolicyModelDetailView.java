@@ -45,29 +45,29 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-@UiController("sec_RowLevelPolicyModel.detail")
-@UiDescriptor("row-level-policy-model-detail-view.xml")
+@ViewController("sec_RowLevelPolicyModel.detail")
+@ViewDescriptor("row-level-policy-model-detail-view.xml")
 @EditedEntityContainer("rowLevelPolicyModelDc")
 @DialogMode(width = "50em")
 public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPolicyModel> {
 
     private static final Logger log = LoggerFactory.getLogger(RowLevelPolicyModelDetailView.class);
 
-    @ComponentId
+    @ViewComponent
     private JmixComboBox<String> entityNameField;
-    @ComponentId
+    @ViewComponent
     private Select<RowLevelPolicyAction> actionField;
-    @ComponentId
+    @ViewComponent
     private TextArea joinClauseField;
-    @ComponentId
+    @ViewComponent
     private TextArea whereClauseField;
-    @ComponentId
+    @ViewComponent
     private TextArea scriptField;
-    @ComponentId
+    @ViewComponent
     private JmixButton checkSyntaxBtn;
-    @ComponentId
+    @ViewComponent
     private Anchor docsLink;
-    @ComponentId
+    @ViewComponent
     private HorizontalLayout detailActions;
 
     @Autowired

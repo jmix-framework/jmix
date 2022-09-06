@@ -26,8 +26,8 @@ import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.sys.UiDescriptorUtils;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.sys.ViewDescriptorUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -99,7 +99,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
 
     protected boolean isSupportedView(Class<?> targetView) {
         return View.class.isAssignableFrom(targetView)
-                && targetView.getAnnotation(UiController.class) != null;
+                && targetView.getAnnotation(ViewController.class) != null;
     }
 
     /**
@@ -124,7 +124,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         public static MenuItem create(Class<? extends View<?>> controllerClass) {
-            return new ViewMenuItem(UiDescriptorUtils.getInferredViewId(controllerClass))
+            return new ViewMenuItem(ViewDescriptorUtils.getInferredViewId(controllerClass))
                     .withControllerClass(controllerClass);
         }
 

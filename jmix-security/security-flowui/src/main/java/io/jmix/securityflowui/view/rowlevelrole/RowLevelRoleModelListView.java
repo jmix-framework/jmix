@@ -33,7 +33,6 @@ import io.jmix.securityflowui.component.rolefilter.RoleFilter;
 import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
 import io.jmix.securityflowui.model.*;
 import io.jmix.securityflowui.util.RemoveRoleConsumer;
-import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -43,16 +42,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Route(value = "rowlevelrolemodels", layout = DefaultMainViewParent.class)
-@UiController("sec_RowLevelRoleModel.list")
-@UiDescriptor("row-level-role-model-list-view.xml")
+@ViewController("sec_RowLevelRoleModel.list")
+@ViewDescriptor("row-level-role-model-list-view.xml")
 @LookupComponent("roleModelsTable")
 @DialogMode(width = "50em", height = "37.5em")
 public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleModel> {
 
-    @ComponentId
+    @ViewComponent
     private DataGrid<RowLevelRoleModel> roleModelsTable;
 
-    @ComponentId
+    @ViewComponent
     private CollectionContainer<RowLevelRoleModel> roleModelsDc;
 
     @Autowired

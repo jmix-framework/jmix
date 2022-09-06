@@ -51,23 +51,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Route(value = "resourcerolemodels", layout = DefaultMainViewParent.class)
-@UiController("sec_ResourceRoleModel.list")
-@UiDescriptor("resource-role-model-list-view.xml")
+@ViewController("sec_ResourceRoleModel.list")
+@ViewDescriptor("resource-role-model-list-view.xml")
 @LookupComponent("roleModelsTable")
 @DialogMode(width = "50em", height = "37.5em")
 public class ResourceRoleModelListView extends StandardListView<ResourceRoleModel> {
 
-    @ComponentId
+    @ViewComponent
     private DataGrid<ResourceRoleModel> roleModelsTable;
-    @ComponentId
+    @ViewComponent
     private HorizontalLayout buttonsPanel;
 
-    @ComponentId("roleModelsTable.exportJSON")
+    @ViewComponent("roleModelsTable.exportJSON")
     private Action exportJSON;
-    @ComponentId("roleModelsTable.exportZIP")
+    @ViewComponent("roleModelsTable.exportZIP")
     private Action exportZIP;
 
-    @ComponentId
+    @ViewComponent
     private CollectionContainer<ResourceRoleModel> roleModelsDc;
 
     @Autowired

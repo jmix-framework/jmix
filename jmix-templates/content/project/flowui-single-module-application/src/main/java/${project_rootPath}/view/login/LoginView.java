@@ -5,8 +5,8 @@ import com.vaadin.flow.router.Route;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 import io.jmix.securityflowui.authentication.AuthDetails;
 import io.jmix.securityflowui.authentication.LoginViewSupport;
 import org.slf4j.Logger;
@@ -17,8 +17,8 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 
 @Route(value = "login")
-@UiController("${normalizedPrefix_underscore}LoginView")
-@UiDescriptor("login-view.xml")
+@ViewController("${normalizedPrefix_underscore}LoginView")
+@ViewDescriptor("login-view.xml")
 public class LoginView extends StandardView {
 
     private final Logger log = LoggerFactory.getLogger(LoginView.class);

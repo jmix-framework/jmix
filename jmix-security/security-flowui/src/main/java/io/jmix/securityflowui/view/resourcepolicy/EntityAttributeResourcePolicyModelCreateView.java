@@ -28,20 +28,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@UiController("sec_EntityAttributeResourcePolicyModel.create")
-@UiDescriptor("entity-attribute-resource-policy-model-create-view.xml")
+@ViewController("sec_EntityAttributeResourcePolicyModel.create")
+@ViewDescriptor("entity-attribute-resource-policy-model-create-view.xml")
 @EditedEntityContainer("resourcePolicyModelDc")
 @DialogMode(width = "40em")
 public class EntityAttributeResourcePolicyModelCreateView extends MultipleResourcePolicyModelCreateView {
 
-    @ComponentId
+    @ViewComponent
     private JmixComboBox<String> entityField;
-    @ComponentId
+    @ViewComponent
     private TypedTextField<String> policyGroupField;
-    @ComponentId
+    @ViewComponent
     private DataGrid<AttributeResourceModel> attributesTable;
 
-    @ComponentId
+    @ViewComponent
     private CollectionContainer<AttributeResourceModel> attributesDc;
 
     @Autowired

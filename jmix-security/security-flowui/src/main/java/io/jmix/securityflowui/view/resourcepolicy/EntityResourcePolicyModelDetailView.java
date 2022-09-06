@@ -7,15 +7,15 @@ import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.model.ResourcePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@UiController("sec_EntityResourcePolicyModel.detail")
-@UiDescriptor("entity-resource-policy-model-detail-view.xml")
+@ViewController("sec_EntityResourcePolicyModel.detail")
+@ViewDescriptor("entity-resource-policy-model-detail-view.xml")
 @EditedEntityContainer("resourcePolicyModelDc")
 @DialogMode(width = "32em")
 public class EntityResourcePolicyModelDetailView extends StandardDetailView<ResourcePolicyModel> {
 
-    @ComponentId
+    @ViewComponent
     private JmixComboBox<String> entityField;
-    @ComponentId
+    @ViewComponent
     private JmixSelect<String> actionField;
 
     @Autowired

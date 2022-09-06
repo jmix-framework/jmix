@@ -191,11 +191,11 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
     }
 
     protected void fireViewBeforeShowEvent(View view) {
-        UiControllerUtils.fireEvent(view, new BeforeShowEvent(view));
+        ViewControllerUtils.fireEvent(view, new BeforeShowEvent(view));
     }
 
     protected void fireViewAfterShowEvent(View view) {
-        UiControllerUtils.fireEvent(view, new AfterShowEvent(view));
+        ViewControllerUtils.fireEvent(view, new AfterShowEvent(view));
     }
 
     protected void onDialogCloseAction(Dialog.DialogCloseActionEvent event) {

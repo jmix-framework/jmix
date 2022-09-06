@@ -8,8 +8,8 @@ import io.jmix.flowui.view.*;
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${detailRoute}/:${detailRouteParam}", layout = MainView.class)
-@UiController("${detailId}")
-@UiDescriptor("${detailDescriptorName}.xml")
+@ViewController("${detailId}")
+@ViewDescriptor("${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")
 public class ${detailControllerName} extends StandardDetailView<${entity.className}> {
 }

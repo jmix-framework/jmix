@@ -18,108 +18,108 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 @Route(value = "html-view")
-@UiController("HtmlView")
-@UiDescriptor("html-view.xml")
+@ViewController("HtmlView")
+@ViewDescriptor("html-view.xml")
 public class HtmlView extends StandardView {
 
     //Containers
-    @ComponentId
+    @ViewComponent
     public Article articleId;
 
-    @ComponentId
+    @ViewComponent
     public Aside asideId;
 
-    @ComponentId
+    @ViewComponent
     public DescriptionList descriptionListId;
 
-    @ComponentId
+    @ViewComponent
     public DescriptionList.Term termId;
 
-    @ComponentId
+    @ViewComponent
     public DescriptionList.Description descriptionId;
 
-    @ComponentId
+    @ViewComponent
     public Div divId;
 
-    @ComponentId
+    @ViewComponent
     public Emphasis emphasisId;
 
-    @ComponentId
+    @ViewComponent
     public Footer footerId;
 
-    @ComponentId
+    @ViewComponent
     public H1 h1Id;
 
-    @ComponentId
+    @ViewComponent
     public H2 h2Id;
 
-    @ComponentId
+    @ViewComponent
     public H3 h3Id;
 
-    @ComponentId
+    @ViewComponent
     public H4 h4Id;
 
-    @ComponentId
+    @ViewComponent
     public H5 h5Id;
 
-    @ComponentId
+    @ViewComponent
     public H6 h6Id;
 
-    @ComponentId
+    @ViewComponent
     public Header headerId;
 
-    @ComponentId
+    @ViewComponent
     public ListItem listItemId;
 
-    @ComponentId
+    @ViewComponent
     public Paragraph pId;
 
-    @ComponentId
+    @ViewComponent
     public Pre preId;
 
-    @ComponentId
+    @ViewComponent
     public Section sectionId;
 
-    @ComponentId
+    @ViewComponent
     public Span spanId;
 
-    @ComponentId
+    @ViewComponent
     public UnorderedList unorderedListId;
 
-    @ComponentId
+    @ViewComponent
     public Anchor anchorId;
 
-    @ComponentId
+    @ViewComponent
     public HtmlObject htmlObjectId;
 
-    @ComponentId
+    @ViewComponent
     public Image imageId;
 
-    @ComponentId
+    @ViewComponent
     public Main mainId;
 
-    @ComponentId
+    @ViewComponent
     public Nav navId;
 
-    @ComponentId
+    @ViewComponent
     public OrderedList orderedListId;
 
     //Components
-    @ComponentId
+    @ViewComponent
     public Hr hrId;
 
-    @ComponentId
+    @ViewComponent
     public IFrame iframeId;
 
-    @ComponentId
+    @ViewComponent
     public Input inputId;
 
-    @ComponentId
+    @ViewComponent
     public Param paramId;
 }

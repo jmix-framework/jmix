@@ -21,7 +21,7 @@ import facet.data_load_coordinator.screen.DlcManualNoParamTestScreen
 import facet.data_load_coordinator.screen.DlcManualTestScreen
 import io.jmix.core.Metadata
 import io.jmix.flowui.facet.DataLoadCoordinator
-import io.jmix.flowui.view.UiControllerUtils
+import io.jmix.flowui.view.ViewControllerUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Unroll
@@ -44,7 +44,7 @@ class DataLoadCoordinatorFacetTest extends FlowuiTestSpecification {
         when: "show screen"
 
         def screen = openScreen(screenClass)
-        def screenFacets = UiControllerUtils.getViewFacets(screen);
+        def screenFacets = ViewControllerUtils.getViewFacets(screen);
 
         then: "facet is created and injected"
 
@@ -102,7 +102,7 @@ class DataLoadCoordinatorFacetTest extends FlowuiTestSpecification {
         when: "show screen"
 
         def screen = openScreen(DlcAutoTestScreen)
-        def screenFacets = UiControllerUtils.getViewFacets(screen);
+        def screenFacets = ViewControllerUtils.getViewFacets(screen);
 
         then: "facet is created and injected"
 

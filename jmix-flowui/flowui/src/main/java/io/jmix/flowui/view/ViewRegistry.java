@@ -7,10 +7,9 @@ import io.jmix.core.Resources;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.exception.NoSuchViewException;
-import io.jmix.flowui.sys.UiControllerDefinition;
-import io.jmix.flowui.sys.UiControllersConfiguration;
-import io.jmix.flowui.sys.UiDescriptorUtils;
-import org.apache.commons.lang3.StringUtils;
+import io.jmix.flowui.sys.ViewControllerDefinition;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
+import io.jmix.flowui.sys.ViewDescriptorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -51,7 +49,7 @@ public class ViewRegistry {
     protected Map<Class<?>, ViewInfo> primaryDetailViews = new HashMap<>();
     protected Map<Class<?>, ViewInfo> primaryLookupViews = new HashMap<>();
 
-    protected List<UiControllersConfiguration> configurations = Collections.emptyList();
+    protected List<ViewControllersConfiguration> configurations = Collections.emptyList();
 
     protected volatile boolean initialized;
 
@@ -83,7 +81,7 @@ public class ViewRegistry {
     }
 
     @Autowired(required = false)
-    public void setConfigurations(List<UiControllersConfiguration> configurations) {
+    public void setConfigurations(List<ViewControllersConfiguration> configurations) {
         this.configurations = configurations;
     }
 
@@ -123,12 +121,12 @@ public class ViewRegistry {
     }
 
     protected void loadViewConfigurations() {
-        for (UiControllersConfiguration provider : configurations) {
-            List<UiControllerDefinition> uiControllers = provider.getUiControllers();
+        for (ViewControllersConfiguration provider : configurations) {
+            List<ViewControllerDefinition> viewControllers = provider.getViewControllers();
 
-            Map<String, String> projectViews = new HashMap<>(uiControllers.size());
+            Map<String, String> projectViews = new HashMap<>(viewControllers.size());
 
-            for (UiControllerDefinition definition : uiControllers) {
+            for (ViewControllerDefinition definition : viewControllers) {
                 String viewId = definition.getId();
                 String controllerClassName = definition.getControllerClassName();
 
@@ -145,7 +143,7 @@ public class ViewRegistry {
                 }
 
                 Class<? extends View<?>> controllerClass = loadDefinedViewClass(controllerClassName);
-                String templatePath = UiDescriptorUtils.resolveTemplatePath(controllerClass);
+                String templatePath = ViewDescriptorUtils.resolveTemplatePath(controllerClass);
                 ViewInfo viewInfo = new ViewInfo(viewId, controllerClassName, controllerClass, templatePath);
 
                 registerView(viewId, viewInfo);
@@ -216,7 +214,7 @@ public class ViewRegistry {
     /**
      * Returns view information by id.
      *
-     * @param id view id as set in the {@link UiController} annotation
+     * @param id view id as set in the {@link ViewController} annotation
      * @return view's registration information
      */
     public Optional<ViewInfo> findViewInfo(String id) {
@@ -253,7 +251,7 @@ public class ViewRegistry {
     /**
      * Returns view information by id.
      *
-     * @param id view id as set in the {@link UiController} annotation
+     * @param id view id as set in the {@link ViewController} annotation
      * @return view's registration information
      * @throws NoSuchViewException if the view with specified id is not registered
      */

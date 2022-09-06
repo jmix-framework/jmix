@@ -17,11 +17,11 @@
 package facet.data_load_coordinator.screen;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 @Route(value = "facet/dlc/dlc-manual")
-@UiController
-@UiDescriptor("dlc-manual-test-screen.xml")
+@ViewController
+@ViewDescriptor("dlc-manual-test-screen.xml")
 public class DlcManualTestScreen extends DlcBaseTestScreen {
 }

@@ -18,17 +18,17 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.sales.Order;
 
 @Route("checkbox-group-view")
-@UiController("CheckboxGroupView")
-@UiDescriptor("checkbox-group-view.xml")
+@ViewController("CheckboxGroupView")
+@ViewDescriptor("checkbox-group-view.xml")
 public class CheckboxGroupView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public JmixCheckboxGroup<Order> checkboxGroup;
 }

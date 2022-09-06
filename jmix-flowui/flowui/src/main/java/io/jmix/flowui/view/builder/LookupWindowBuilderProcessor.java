@@ -156,7 +156,7 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
             }
         }
 
-        DataContext dataContext = UiControllerUtils.getViewData(builder.getOrigin()).getDataContext();
+        DataContext dataContext = ViewControllerUtils.getViewData(builder.getOrigin()).getDataContext();
 
         List<E> mergedItems = new ArrayList<>(selectedItems.size());
         FetchPlan viewForCollectionContainer = viewProperties.isReloadUnfetchedAttributesFromLookupViews()

@@ -17,7 +17,7 @@
 package io.jmix.flowui.sys;
 
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.ViewController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,21 +35,21 @@ import java.util.stream.Stream;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Configuration that performs ClassPath scanning of {@link UiController}s and provides {@link UiControllerDefinition}.
+ * Configuration that performs ClassPath scanning of {@link ViewController}s and provides {@link ViewControllerDefinition}.
  */
-public class UiControllersConfiguration extends AbstractScanConfiguration {
+public class ViewControllersConfiguration extends AbstractScanConfiguration {
 
-    private static final Logger log = LoggerFactory.getLogger(UiControllersConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewControllersConfiguration.class);
 
     protected ApplicationContext applicationContext;
     protected MetadataReaderFactory metadataReaderFactory;
 
     protected List<String> basePackages = Collections.emptyList();
-    protected List<UiControllerDefinition> explicitDefinitions = Collections.emptyList();
+    protected List<ViewControllerDefinition> explicitDefinitions = Collections.emptyList();
 
     @Autowired
-    public UiControllersConfiguration(ApplicationContext applicationContext,
-                                      AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+    public ViewControllersConfiguration(ApplicationContext applicationContext,
+                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         this.applicationContext = applicationContext;
         this.metadataReaderFactory = metadataReaderFactory;
     }
@@ -64,38 +64,38 @@ public class UiControllersConfiguration extends AbstractScanConfiguration {
         this.basePackages = basePackages;
     }
 
-    public List<UiControllerDefinition> getExplicitDefinitions() {
+    public List<ViewControllerDefinition> getExplicitDefinitions() {
         return explicitDefinitions;
     }
 
-    public void setExplicitDefinitions(List<UiControllerDefinition> explicitDefinitions) {
+    public void setExplicitDefinitions(List<ViewControllerDefinition> explicitDefinitions) {
         checkNotNullArgument(explicitDefinitions);
 
         this.explicitDefinitions = explicitDefinitions;
     }
 
-    public List<UiControllerDefinition> getUiControllers() {
+    public List<ViewControllerDefinition> getViewControllers() {
         log.trace("Scanning packages {}", basePackages);
 
-        Stream<UiControllerDefinition> scannedControllersStream = basePackages.stream()
+        Stream<ViewControllerDefinition> scannedControllersStream = basePackages.stream()
                 .flatMap(this::scanPackage)
-                .filter(this::isCandidateUiController)
+                .filter(this::isCandidateViewController)
                 .map(this::extractControllerDefinition);
 
         return Stream.concat(scannedControllersStream, explicitDefinitions.stream())
                 .collect(Collectors.toList());
     }
 
-    protected UiControllerDefinition extractControllerDefinition(MetadataReader metadataReader) {
-        UiControllerMeta uiControllerMeta = new UiControllerMeta(metadataReaderFactory, metadataReader);
+    protected ViewControllerDefinition extractControllerDefinition(MetadataReader metadataReader) {
+        ViewControllerMeta viewControllerMeta = new ViewControllerMeta(metadataReaderFactory, metadataReader);
 
-        return new UiControllerDefinition(uiControllerMeta.getControllerId(),
-                uiControllerMeta.getControllerClass(), uiControllerMeta.getResource());
+        return new ViewControllerDefinition(viewControllerMeta.getControllerId(),
+                viewControllerMeta.getControllerClass(), viewControllerMeta.getResource());
     }
 
-    protected boolean isCandidateUiController(MetadataReader metadataReader) {
+    protected boolean isCandidateViewController(MetadataReader metadataReader) {
         return metadataReader.getClassMetadata().isConcrete()
-                && metadataReader.getAnnotationMetadata().hasAnnotation(UiController.class.getName());
+                && metadataReader.getAnnotationMetadata().hasAnnotation(ViewController.class.getName());
     }
 
     @Override

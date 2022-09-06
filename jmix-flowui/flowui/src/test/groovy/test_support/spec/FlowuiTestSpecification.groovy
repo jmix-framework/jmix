@@ -15,7 +15,7 @@ import io.jmix.core.security.SystemAuthenticator
 import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.view.ViewRegistry
 import io.jmix.flowui.view.View
-import io.jmix.flowui.sys.UiControllersConfiguration
+import io.jmix.flowui.sys.ViewControllersConfiguration
 import org.apache.commons.lang3.ArrayUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
@@ -109,7 +109,7 @@ class FlowuiTestSpecification extends Specification {
         def metadataReaderFactory = applicationContext.getBean(AnnotationScanMetadataReaderFactory.class)
         ViewRegistry windowConfig = applicationContext.getBean(ViewRegistry.class)
 
-        def configuration = new UiControllersConfiguration(applicationContext, metadataReaderFactory)
+        def configuration = new ViewControllersConfiguration(applicationContext, metadataReaderFactory)
 
         def injector = applicationContext.getAutowireCapableBeanFactory()
         injector.autowireBean(configuration)
@@ -120,7 +120,7 @@ class FlowuiTestSpecification extends Specification {
             def configurationsField = getDeclaredField(ViewRegistry.class,
                     "configurations", true)
             //noinspection unchecked
-            def configurations = (Collection<UiControllersConfiguration>) configurationsField.get(windowConfig)
+            def configurations = (Collection<ViewControllersConfiguration>) configurationsField.get(windowConfig)
 
             def modifiedConfigurations = new ArrayList<>(configurations)
             modifiedConfigurations.add(configuration)

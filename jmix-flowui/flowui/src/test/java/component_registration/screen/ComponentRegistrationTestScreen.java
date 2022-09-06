@@ -2,16 +2,16 @@ package component_registration.screen;
 
 import com.vaadin.flow.router.Route;
 import component_registration.TestThirdJmixButton;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 @Route("component-registrations-test-screen")
-@UiController
-@UiDescriptor("component-registrations-test-screen.xml")
+@ViewController
+@ViewDescriptor("component-registrations-test-screen.xml")
 public class ComponentRegistrationTestScreen extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public TestThirdJmixButton button;
 }

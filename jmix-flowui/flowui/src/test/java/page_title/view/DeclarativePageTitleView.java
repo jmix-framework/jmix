@@ -18,11 +18,11 @@ package page_title.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 @Route("declarative-page-title-view")
-@UiController
-@UiDescriptor("declarative-page-title-view.xml")
+@ViewController
+@ViewDescriptor("declarative-page-title-view.xml")
 public class DeclarativePageTitleView extends StandardView {
 }

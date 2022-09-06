@@ -12,7 +12,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.Install;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.View;
@@ -36,8 +36,8 @@ import java.util.function.Supplier;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
-@Component("flowui_UiControllerReflectionInspector")
-public class UiControllerReflectionInspector {
+@Component("flowui_ViewControllerReflectionInspector")
+public class ViewControllerReflectionInspector {
 
     protected final LoadingCache<Class<?>, ViewIntrospectionData> viewIntrospectionCache =
             CacheBuilder.newBuilder()
@@ -57,7 +57,7 @@ public class UiControllerReflectionInspector {
 
     protected final Function<Class, MethodHandles.Lookup> lambdaLookupProvider;
 
-    public UiControllerReflectionInspector() {
+    public ViewControllerReflectionInspector() {
         MethodHandles.Lookup original = MethodHandles.lookup();
 
         MethodHandle privateLookupInMh;
@@ -319,8 +319,8 @@ public class UiControllerReflectionInspector {
             return Autowired.class;
         }
 
-        if (element.isAnnotationPresent(ComponentId.class)) {
-            return ComponentId.class;
+        if (element.isAnnotationPresent(ViewComponent.class)) {
+            return ViewComponent.class;
         }
 
         return null;

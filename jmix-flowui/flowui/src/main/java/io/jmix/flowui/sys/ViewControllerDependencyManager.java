@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Component("flowui_UiControllerDependencyManager")
-public class UiControllerDependencyManager {
+@Component("flowui_ViewControllerDependencyManager")
+public class ViewControllerDependencyManager {
 
-    protected UiControllerDependencyInjector controllerDependencyInjector;
+    protected ViewControllerDependencyInjector controllerDependencyInjector;
     protected List<ControllerDependencyInjector> dependencyInjectors;
 
-    public UiControllerDependencyManager(UiControllerDependencyInjector controllerDependencyInjector,
-                                         @Nullable List<ControllerDependencyInjector> dependencyInjectors) {
+    public ViewControllerDependencyManager(ViewControllerDependencyInjector controllerDependencyInjector,
+                                           @Nullable List<ControllerDependencyInjector> dependencyInjectors) {
         this.controllerDependencyInjector = controllerDependencyInjector;
         this.dependencyInjectors = dependencyInjectors;
     }

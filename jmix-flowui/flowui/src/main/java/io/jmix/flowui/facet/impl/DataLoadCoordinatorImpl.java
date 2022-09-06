@@ -33,8 +33,8 @@ import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.View.BeforeShowEvent;
-import io.jmix.flowui.view.UiControllerUtils;
-import io.jmix.flowui.sys.UiControllerReflectionInspector;
+import io.jmix.flowui.view.ViewControllerUtils;
+import io.jmix.flowui.sys.ViewControllerReflectionInspector;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -53,9 +53,9 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
     protected List<Trigger> triggers = new ArrayList<>();
 
-    protected UiControllerReflectionInspector reflectionInspector;
+    protected ViewControllerReflectionInspector reflectionInspector;
 
-    public DataLoadCoordinatorImpl(UiControllerReflectionInspector reflectionInspector) {
+    public DataLoadCoordinatorImpl(ViewControllerReflectionInspector reflectionInspector) {
         this.reflectionInspector = reflectionInspector;
     }
 
@@ -108,7 +108,7 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
     @Override
     public void configureAutomatically() {
         View<?> owner = getOwnerNN();
-        ViewData viewData = UiControllerUtils.getViewData(owner);
+        ViewData viewData = ViewControllerUtils.getViewData(owner);
 
         getUnconfiguredLoaders(viewData).forEach(loader -> configureAutomatically(loader, owner));
     }
@@ -134,7 +134,7 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
         // add triggers on container/component events
         for (String parameter : allParameters) {
             if (parameter.startsWith(containerPrefix)) {
-                InstanceContainer<?> container = UiControllerUtils.getViewData(view)
+                InstanceContainer<?> container = ViewControllerUtils.getViewData(view)
                         .getContainer(parameter.substring(containerPrefix.length()));
 
                 addOnContainerItemChangedLoadTrigger(loader, container, parameter);

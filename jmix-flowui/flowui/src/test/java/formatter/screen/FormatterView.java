@@ -27,20 +27,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 
 @Route(value = "formatter-view")
-@UiController("FormatterView")
-@UiDescriptor("formatter-view.xml")
+@ViewController("FormatterView")
+@ViewDescriptor("formatter-view.xml")
 public class FormatterView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public JmixValuePicker<Date> dateFormatterField;
 
-    @ComponentId
+    @ViewComponent
     public JmixValuePicker<Date> dateTimeFormatterField;
 
-    @ComponentId
+    @ViewComponent
     public JmixValuePicker<Long> numberFormatterField;
 
-    @ComponentId
+    @ViewComponent
     public JmixValuePicker<Long> defaultNumberFormatterField;
 
     @Autowired

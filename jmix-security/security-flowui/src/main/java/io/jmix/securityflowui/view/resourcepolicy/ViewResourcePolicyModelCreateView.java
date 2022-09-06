@@ -22,18 +22,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-@UiController("sec_ViewResourcePolicyModel.create")
-@UiDescriptor("view-resource-policy-model-create-view.xml")
+@ViewController("sec_ViewResourcePolicyModel.create")
+@ViewDescriptor("view-resource-policy-model-create-view.xml")
 @DialogMode(width = "32em")
 public class ViewResourcePolicyModelCreateView extends MultipleResourcePolicyModelCreateView {
 
-    @ComponentId
+    @ViewComponent
     private JmixComboBox<String> viewField;
-    @ComponentId
+    @ViewComponent
     private TypedTextField<String> policyGroupField;
-    @ComponentId
+    @ViewComponent
     private JmixTextArea menuItemField;
-    @ComponentId
+    @ViewComponent
     private JmixCheckbox menuAccessField;
 
     @Autowired

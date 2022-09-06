@@ -22,7 +22,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.Install;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.Target;
@@ -52,16 +52,16 @@ public class DlcBaseTestScreen extends StandardView {
 
     public List<LoadEvent> events = new ArrayList<>();
 
-    @ComponentId
+    @ViewComponent
     public DataLoadCoordinator dlc;
 
-    @ComponentId
+    @ViewComponent
     public CollectionContainer<Owner> ownersDc;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<String> nameFilterField;
 
-    @ComponentId
+    @ViewComponent
     public EntityPicker<OwnerCategory> categoryFilterField;
 
     @Install(to = "ownersDl", target = Target.DATA_LOADER)

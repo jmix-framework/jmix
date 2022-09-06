@@ -15,7 +15,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.UiControllerUtils;
+import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -170,7 +170,7 @@ public class RemoveOperation {
 
     protected <E> void removeItems(RemoveBuilder<E> builder, List<E> selectedItems) {
         View<?> origin = builder.getOrigin();
-        ViewData viewData = UiControllerUtils.getViewData(origin);
+        ViewData viewData = ViewControllerUtils.getViewData(origin);
 
         CollectionContainer<E> container = getCollectionContainer(builder);
 

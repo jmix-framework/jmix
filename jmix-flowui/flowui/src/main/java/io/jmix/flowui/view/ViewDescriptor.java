@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 import java.lang.annotation.*;
 
 /**
- * Indicates that the annotated {@link UiController} is linked to an XML template.
+ * Indicates that the annotated {@link ViewController} is linked to an XML template.
  * The annotated class must be a direct or indirect subclass of {@link View}.
  * This annotation is inherited by subclasses.
  *
@@ -32,7 +32,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
-public @interface UiDescriptor {
+public @interface ViewDescriptor {
 
     /**
      * Path to the XML descriptor. If the value contains a file name only, it is assumed that the file is located

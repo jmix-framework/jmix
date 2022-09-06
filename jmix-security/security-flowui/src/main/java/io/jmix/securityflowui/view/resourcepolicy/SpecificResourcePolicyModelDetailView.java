@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@UiController("sec_SpecificResourcePolicyModel.detail")
-@UiDescriptor("specific-resource-policy-model-detail-view.xml")
+@ViewController("sec_SpecificResourcePolicyModel.detail")
+@ViewDescriptor("specific-resource-policy-model-detail-view.xml")
 @EditedEntityContainer("resourcePolicyModelDc")
 @DialogMode(width = "32em")
 public class SpecificResourcePolicyModelDetailView extends StandardDetailView<ResourcePolicyModel> {
 
-    @ComponentId
+    @ViewComponent
     private JmixComboBox<String> resourceField;
 
     @Autowired

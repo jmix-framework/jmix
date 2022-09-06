@@ -21,7 +21,7 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ActionsConfiguration;
-import io.jmix.flowui.sys.UiControllersConfiguration;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -37,13 +37,13 @@ import java.util.Collections;
 @Import(StandardSecurityFlowuiConfiguration.class)
 public class SecurityFlowuiConfiguration {
 
-    @Bean("flowui_SecurityUiControllers")
-    public UiControllersConfiguration views(ApplicationContext applicationContext,
-                                             AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        UiControllersConfiguration uiControllers
-                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        uiControllers.setBasePackages(Collections.singletonList("io.jmix.securityflowui.view"));
-        return uiControllers;
+    @Bean("flowui_SecurityViewControllers")
+    public ViewControllersConfiguration views(ApplicationContext applicationContext,
+                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.securityflowui.view"));
+        return viewControllers;
     }
 
     @Bean("flowui_SecurityActions")

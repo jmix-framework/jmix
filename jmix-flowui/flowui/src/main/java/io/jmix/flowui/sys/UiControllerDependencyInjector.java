@@ -3,7 +3,7 @@ package io.jmix.flowui.sys;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.HasValue;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -463,6 +463,8 @@ public class UiControllerDependencyInjector {
             Object listener;
             if (ComponentEventListener.class.isAssignableFrom(addListenerMethod.type().parameterType(1))) {
                 listener = getComponentEventListener(controller, clazz, annotatedMethod, eventType);
+            } else if (HasValue.ValueChangeListener.class.isAssignableFrom(addListenerMethod.type().parameterType(1))) {
+                listener = getValueChangeEventListener(controller, clazz, annotatedMethod, eventType);
             } else {
                 listener = getConsumerListener(controller, clazz, annotatedMethod, eventType);
             }
@@ -475,6 +477,40 @@ public class UiControllerDependencyInjector {
                 throw new RuntimeException("Unable to add listener " + method, e);
             }
         }
+    }
+
+    protected HasValue.ValueChangeListener getValueChangeEventListener(View<?> controller,
+                                                                       Class<? extends View> clazz,
+                                                                       AnnotatedMethod<Subscribe> annotatedMethod,
+                                                                       Class<?> eventType) {
+        HasValue.ValueChangeListener listener;
+        // If view controller class was hot-deployed, then it will be loaded
+        // by different class loader. This will make impossible to create lambda
+        // using LambdaMetaFactory for producing the listener method in Java 17+
+        if (SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_16) ||
+                getClass().getClassLoader() == controller.getClass().getClassLoader()) {
+            MethodHandle consumerMethodFactory =
+                    reflectionInspector.getValueChangeEventMethodFactory(clazz, annotatedMethod, eventType);
+            try {
+                listener = (HasValue.ValueChangeListener) consumerMethodFactory.invokeWithArguments(controller);
+            } catch (Error e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new RuntimeException(String.format("Unable to bind %s handler",
+                        HasValue.ValueChangeListener.class.getSimpleName()), e);
+            }
+        } else {
+            listener = event -> {
+                try {
+                    annotatedMethod.getMethodHandle().invoke(controller, event);
+                } catch (Throwable e) {
+                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
+                            HasValue.ValueChangeListener.class.getSimpleName()), e);
+                }
+            };
+        }
+
+        return listener;
     }
 
     protected ComponentEventListener getComponentEventListener(View<?> controller,

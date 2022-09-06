@@ -9,12 +9,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.view.ComponentId;
 import io.jmix.flowui.view.Install;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.Subscribe;
+import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +142,41 @@ public class UiControllerReflectionInspector {
                 try {
                     site = LambdaMetafactory.metafactory(
                             caller, "accept", consumerType, type.changeParameterType(0, Object.class), methodHandle, type);
+                } catch (LambdaConversionException e) {
+                    throw new RuntimeException("Unable to build lambda consumer " + methodHandle, e);
+                }
+
+                return site.getTarget();
+            });
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Unable to get lambda factory", e);
+        }
+
+        return lambdaMethodFactory;
+    }
+
+    public MethodHandle getValueChangeEventMethodFactory(Class<?> ownerClass,
+                                                         AnnotatedMethod annotatedMethod, Class<?> eventClass) {
+        MethodHandle lambdaMethodFactory;
+        MethodHandle methodHandle = annotatedMethod.getMethodHandle();
+        try {
+            lambdaMethodFactory = lambdaMethodsCache.get(methodHandle, () -> {
+                MethodType type = MethodType.methodType(void.class, eventClass);
+                MethodType listenerType = MethodType.methodType(HasValue.ValueChangeListener.class, ownerClass);
+
+                Class<?> callerClass;
+                if (Modifier.isPrivate(annotatedMethod.getMethod().getModifiers())) {
+                    callerClass = annotatedMethod.getMethod().getDeclaringClass();
+                } else {
+                    callerClass = ownerClass;
+                }
+
+                MethodHandles.Lookup caller = lambdaLookupProvider.apply(callerClass);
+                CallSite site;
+                try {
+                    site = LambdaMetafactory.metafactory(
+                            caller, "valueChanged", listenerType,
+                            type.changeParameterType(0, HasValue.ValueChangeEvent.class), methodHandle, type);
                 } catch (LambdaConversionException e) {
                     throw new RuntimeException("Unable to build lambda consumer " + methodHandle, e);
                 }
@@ -468,7 +504,8 @@ public class UiControllerReflectionInspector {
         for (Method m : uniqueDeclaredMethods) {
             if (m.getParameterCount() == 1
                     && (Consumer.class.isAssignableFrom(m.getParameterTypes()[0])
-                    || ComponentEventListener.class.isAssignableFrom(m.getParameterTypes()[0]))) {
+                    || ComponentEventListener.class.isAssignableFrom(m.getParameterTypes()[0])
+                    || HasValue.ValueChangeListener.class.isAssignableFrom(m.getParameterTypes()[0]))) {
                 // setXxxListener or addXxxListener
                 if (m.getReturnType() == Void.TYPE && m.getName().startsWith("set")
                         || (m.getReturnType() == Registration.class && m.getName().startsWith("add"))
@@ -498,6 +535,10 @@ public class UiControllerReflectionInspector {
                     } else if (eventArgumentType instanceof ParameterizedType) {
                         // case of ValueChangeEvent<V>
                         actualTypeArgument = (Class) ((ParameterizedType) eventArgumentType).getRawType();
+                    } else if (eventArgumentType instanceof WildcardType
+                            && ((WildcardType) eventArgumentType).getLowerBounds()[0] instanceof ParameterizedType) {
+                        WildcardType wildcardType = (WildcardType) eventArgumentType;
+                        actualTypeArgument = (Class) (((ParameterizedType) wildcardType.getLowerBounds()[0]).getRawType());
                     }
 
                     if (actualTypeArgument != null) {

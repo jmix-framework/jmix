@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Documented
-public @interface ComponentId {
+public @interface ViewComponent {
 
     /**
      * The id of the element to map to. When empty, the name of the field is

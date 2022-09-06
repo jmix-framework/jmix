@@ -18,19 +18,19 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.textfield.JmixEmailField;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 @Route("email-field")
-@UiController
-@UiDescriptor("email-field.xml")
+@ViewController
+@ViewDescriptor("email-field.xml")
 public class EmailFieldView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public JmixEmailField emailFieldId;
 
-    @ComponentId
+    @ViewComponent
     public JmixEmailField emailFieldWithValueId;
 }

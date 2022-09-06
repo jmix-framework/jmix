@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import static io.jmix.flowui.view.UiControllerUtils.getPackage;
+import static io.jmix.flowui.view.ViewControllerUtils.getPackage;
 
 
 @Component("flowui_ViewSupport")
@@ -40,7 +40,7 @@ public class ViewSupport {
     protected ViewRegistry viewRegistry;
     protected ViewNavigationSupport navigationSupport;
     protected CurrentAuthentication currentAuthentication;
-    protected UiControllerDependencyManager dependencyManager;
+    protected ViewControllerDependencyManager dependencyManager;
 
     protected Map<String, String> titleCache = new ConcurrentHashMap<>();
 
@@ -49,7 +49,7 @@ public class ViewSupport {
                        ViewRegistry viewRegistry,
                        ViewNavigationSupport navigationSupport,
                        CurrentAuthentication currentAuthentication,
-                       UiControllerDependencyManager dependencyManager) {
+                       ViewControllerDependencyManager dependencyManager) {
         this.applicationContext = applicationContext;
         this.viewXmlLoader = viewXmlLoader;
         this.viewRegistry = viewRegistry;
@@ -61,13 +61,13 @@ public class ViewSupport {
     public void initView(View<?> view) {
         log.debug("Init view: " + view);
 
-        UiControllerUtils.setViewData(view, applicationContext.getBean(ViewData.class));
+        ViewControllerUtils.setViewData(view, applicationContext.getBean(ViewData.class));
 
         ActionBinders actionBinders = applicationContext.getBean(ActionBinders.class);
         ViewActions actions = applicationContext.getBean(ViewActions.class, actionBinders.binder(view));
-        UiControllerUtils.setViewActions(view, actions);
+        ViewControllerUtils.setViewActions(view, actions);
 
-        UiControllerUtils.setViewFacets(view, applicationContext.getBean(ViewFacets.class, view));
+        ViewControllerUtils.setViewFacets(view, applicationContext.getBean(ViewFacets.class, view));
 
         String viewId = getInferredViewId(view);
         view.setId(viewId);
@@ -89,8 +89,8 @@ public class ViewSupport {
             loadWindowFromXml(element, view, componentLoaderContext);
         }
 
-        UiControllerDependencyManager dependencyManager =
-                applicationContext.getBean(UiControllerDependencyManager.class);
+        ViewControllerDependencyManager dependencyManager =
+                applicationContext.getBean(ViewControllerDependencyManager.class);
         dependencyManager.inject(view);
 
         componentLoaderContext.executePreInitTasks();
@@ -357,17 +357,17 @@ public class ViewSupport {
     protected String getInferredViewId(View<?> view) {
         Class<? extends View> viewClass = view.getClass();
 
-        UiController uiController = viewClass.getAnnotation(UiController.class);
-        if (uiController == null) {
-            throw new IllegalArgumentException("No @" + UiController.class.getSimpleName() +
+        ViewController viewController = viewClass.getAnnotation(ViewController.class);
+        if (viewController == null) {
+            throw new IllegalArgumentException("No @" + ViewController.class.getSimpleName() +
                     " annotation for class " + viewClass);
         }
 
-        return UiDescriptorUtils.getInferredViewId(uiController, viewClass);
+        return ViewDescriptorUtils.getInferredViewId(viewController, viewClass);
     }
 
     protected void fireViewInitEvent(View<?> view) {
-        UiControllerUtils.fireEvent(view, new InitEvent(view));
+        ViewControllerUtils.fireEvent(view, new InitEvent(view));
     }
 
     @Nullable
@@ -394,7 +394,7 @@ public class ViewSupport {
 
     @Nullable
     protected String getViewTitleValue(ViewInfo viewInfo) {
-        String title = UiControllerUtils.findAnnotation(viewInfo.getControllerClass(), PageTitle.class)
+        String title = ViewControllerUtils.findAnnotation(viewInfo.getControllerClass(), PageTitle.class)
                 .map(PageTitle::value)
                 .orElse(null);
 
@@ -410,7 +410,7 @@ public class ViewSupport {
     }
 
     protected String getViewMessageGroup(ViewInfo viewInfo) {
-        String messagesGroup = UiControllerUtils.getPackage(viewInfo.getControllerClass());
+        String messagesGroup = ViewControllerUtils.getPackage(viewInfo.getControllerClass());
 
         // XML value takes precedence because it's defined explicitly
         Element element = loadViewXml(viewInfo);

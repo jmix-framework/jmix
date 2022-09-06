@@ -48,8 +48,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Route(value = "rowlevelrolemodels/:code", layout = DefaultMainViewParent.class)
-@UiController("sec_RowLevelRoleModel.detail")
-@UiDescriptor("row-level-role-model-detail-view.xml")
+@ViewController("sec_RowLevelRoleModel.detail")
+@ViewDescriptor("row-level-role-model-detail-view.xml")
 @EditedEntityContainer("roleModelDc")
 public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRoleModel> {
 
@@ -57,24 +57,24 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
 
     public static final String ROUTE_PARAM_NAME = "code";
 
-    @ComponentId
+    @ViewComponent
     private Tabs tabs;
-    @ComponentId
+    @ViewComponent
     private VerticalLayout childRolesWrapper;
-    @ComponentId
+    @ViewComponent
     private VerticalLayout rowLevelPoliciesWrapper;
-    @ComponentId
+    @ViewComponent
     private TypedTextField<String> codeField;
-    @ComponentId
+    @ViewComponent
     private DataGrid<RowLevelRoleModel> childRolesTable;
-    @ComponentId
+    @ViewComponent
     private DataGrid<RowLevelPolicyModel> rowLevelPoliciesTable;
 
-    @ComponentId
+    @ViewComponent
     private InstanceContainer<RowLevelRoleModel> roleModelDc;
-    @ComponentId
+    @ViewComponent
     private CollectionContainer<RowLevelRoleModel> childRolesDc;
-    @ComponentId
+    @ViewComponent
     private CollectionPropertyContainer<RowLevelPolicyModel> rowLevelPoliciesDc;
 
     @Autowired

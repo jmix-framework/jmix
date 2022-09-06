@@ -12,9 +12,9 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
-public final class UiControllerUtils {
+public final class ViewControllerUtils {
 
-    private UiControllerUtils() {
+    private ViewControllerUtils() {
     }
 
     public static String getPageTitle(@Nullable Component component) {

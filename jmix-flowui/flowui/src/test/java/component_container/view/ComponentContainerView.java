@@ -26,17 +26,17 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
 
 @Route("component-container-view")
-@UiController
-@UiDescriptor("component-container-view.xml")
+@ViewController
+@ViewDescriptor("component-container-view.xml")
 public class ComponentContainerView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public VerticalLayout vbox;
 
-    @ComponentId
+    @ViewComponent
     public JmixDetails details;
 
-    @ComponentId
+    @ViewComponent
     public JmixAccordion accordion;
 
     @Subscribe("detailsDataGrid.customAction")

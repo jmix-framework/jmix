@@ -9,20 +9,20 @@ import javax.annotation.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public final class UiDescriptorUtils {
+public final class ViewDescriptorUtils {
 
-    private UiDescriptorUtils() {
+    private ViewDescriptorUtils() {
     }
 
     @Nullable
     public static String resolveTemplatePath(Class<? extends View<?>> controllerClass) {
-        UiDescriptor annotation = controllerClass.getAnnotation(UiDescriptor.class);
+        ViewDescriptor annotation = controllerClass.getAnnotation(ViewDescriptor.class);
         if (annotation == null) {
             return null;
         } else {
-            String templatePath = UiDescriptorUtils.getInferredTemplate(annotation, controllerClass);
+            String templatePath = ViewDescriptorUtils.getInferredTemplate(annotation, controllerClass);
             if (!templatePath.startsWith("/")) {
-                String packageName = UiControllerUtils.getPackage(controllerClass);
+                String packageName = ViewControllerUtils.getPackage(controllerClass);
                 if (StringUtils.isNotEmpty(packageName)) {
                     String relativePath = packageName.replace('.', '/');
                     templatePath = "/" + relativePath + "/" + templatePath;
@@ -33,18 +33,18 @@ public final class UiDescriptorUtils {
         }
     }
 
-    public static String getInferredTemplate(UiDescriptor uiDescriptor,
+    public static String getInferredTemplate(ViewDescriptor viewDescriptor,
                                              Class<?> annotatedViewClass) {
-        checkNotNullArgument(uiDescriptor);
+        checkNotNullArgument(viewDescriptor);
         checkNotNullArgument(annotatedViewClass);
 
-        String template = uiDescriptor.value();
+        String template = viewDescriptor.value();
         if (Strings.isNullOrEmpty(template)) {
-            template = uiDescriptor.path();
+            template = viewDescriptor.path();
 
             if (Strings.isNullOrEmpty(template)) {
                 throw new DevelopmentException("View class annotated with @" +
-                        UiDescriptor.class.getSimpleName() + " without template: " + annotatedViewClass);
+                        ViewDescriptor.class.getSimpleName() + " without template: " + annotatedViewClass);
             }
         }
 
@@ -65,21 +65,21 @@ public final class UiDescriptorUtils {
     public static String getInferredViewId(Class<?> annotatedViewClass) {
         checkNotNullArgument(annotatedViewClass);
 
-        UiController uiController = annotatedViewClass.getAnnotation(UiController.class);
-        if (uiController == null) {
-            throw new IllegalArgumentException("No @" + UiController.class.getSimpleName() +
+        ViewController viewController = annotatedViewClass.getAnnotation(ViewController.class);
+        if (viewController == null) {
+            throw new IllegalArgumentException("No @" + ViewController.class.getSimpleName() +
                     " annotation for class " + annotatedViewClass);
         }
 
-        return UiDescriptorUtils.getInferredViewId(uiController, annotatedViewClass);
+        return ViewDescriptorUtils.getInferredViewId(viewController, annotatedViewClass);
     }
 
-    public static String getInferredViewId(UiController uiController,
+    public static String getInferredViewId(ViewController viewController,
                                            Class<?> annotatedViewClass) {
-        checkNotNullArgument(uiController);
+        checkNotNullArgument(viewController);
         checkNotNullArgument(annotatedViewClass);
 
-        return getInferredViewId(uiController.id(), uiController.value(), annotatedViewClass.getName());
+        return getInferredViewId(viewController.id(), viewController.value(), annotatedViewClass.getName());
     }
 
     public static String getInferredViewId(@Nullable String idAttribute,

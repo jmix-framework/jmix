@@ -26,48 +26,48 @@ import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.sales.Order;
 
 @Route(value = "container-view")
-@UiController("ContainerView")
-@UiDescriptor("container-view.xml")
+@ViewController("ContainerView")
+@ViewDescriptor("container-view.xml")
 public class ContainerView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public InstanceContainer<Order> orderDc;
 
     public void loadData() {
         getViewData().loadAll();
     }
 
-    @ComponentId
+    @ViewComponent
     public VerticalLayout vboxId;
 
-    @ComponentId
+    @ViewComponent
     public HorizontalLayout hboxId;
 
-    @ComponentId
+    @ViewComponent
     public Accordion accordionId;
 
-    @ComponentId
+    @ViewComponent
     public AccordionPanel accordionPanelId;
 
-    @ComponentId
+    @ViewComponent
     public AccordionPanel anotherAccordionPanelId;
 
-    @ComponentId
+    @ViewComponent
     public FormLayout formLayoutId;
 
-    @ComponentId
+    @ViewComponent
     public Scroller scrollerId;
 
-    @ComponentId
+    @ViewComponent
     public SplitLayout splitLayoutId;
 
-    @ComponentId
+    @ViewComponent
     public Tabs tabsId;
 }

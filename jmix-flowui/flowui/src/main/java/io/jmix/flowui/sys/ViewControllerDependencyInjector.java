@@ -10,14 +10,15 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstallSubject;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.*;
-import io.jmix.flowui.sys.UiControllerReflectionInspector.AnnotatedMethod;
-import io.jmix.flowui.sys.UiControllerReflectionInspector.InjectElement;
-import io.jmix.flowui.sys.UiControllerReflectionInspector.ViewIntrospectionData;
+import io.jmix.flowui.sys.ViewControllerReflectionInspector.AnnotatedMethod;
+import io.jmix.flowui.sys.ViewControllerReflectionInspector.InjectElement;
+import io.jmix.flowui.sys.ViewControllerReflectionInspector.ViewIntrospectionData;
 import io.jmix.flowui.sys.delegate.*;
 import io.jmix.flowui.sys.event.UiEventListenerMethodAdapter;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -45,16 +46,16 @@ import static io.jmix.flowui.sys.ValuePathHelper.pathPrefix;
 import static java.lang.reflect.Proxy.newProxyInstance;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
-@org.springframework.stereotype.Component("flowui_UiControllerDependencyInjector")
-public class UiControllerDependencyInjector {
+@org.springframework.stereotype.Component("flowui_ViewControllerDependencyInjector")
+public class ViewControllerDependencyInjector {
 
-    private static final Logger log = LoggerFactory.getLogger(UiControllerDependencyInjector.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewControllerDependencyInjector.class);
 
     protected ApplicationContext applicationContext;
-    protected UiControllerReflectionInspector reflectionInspector;
+    protected ViewControllerReflectionInspector reflectionInspector;
 
-    public UiControllerDependencyInjector(ApplicationContext applicationContext,
-                                          UiControllerReflectionInspector reflectionInspector) {
+    public ViewControllerDependencyInjector(ApplicationContext applicationContext,
+                                            ViewControllerReflectionInspector reflectionInspector) {
         this.applicationContext = applicationContext;
         this.reflectionInspector = reflectionInspector;
     }
@@ -95,8 +96,8 @@ public class UiControllerDependencyInjector {
         Class<?> annotationClass = injectElement.getAnnotationClass();
 
         String name = null;
-        if (annotationClass == ComponentId.class) {
-            name = element.getAnnotation(ComponentId.class).value();
+        if (annotationClass == ViewComponent.class) {
+            name = element.getAnnotation(ViewComponent.class).value();
         }
 
         if (Strings.isNullOrEmpty(name)) {
@@ -151,17 +152,21 @@ public class UiControllerDependencyInjector {
             return component.orElse(null);
         } else if (InstanceContainer.class.isAssignableFrom(type)) {
             // Injecting a container
-            ViewData data = UiControllerUtils.getViewData(controller);
+            ViewData data = ViewControllerUtils.getViewData(controller);
             return data.getContainer(name);
         } else if (DataLoader.class.isAssignableFrom(type)) {
             // Injecting a loader
-            ViewData data = UiControllerUtils.getViewData(controller);
+            ViewData data = ViewControllerUtils.getViewData(controller);
             return data.getLoader(name);
+        } else if (DataContext.class.isAssignableFrom(type)) {
+            ViewData data = ViewControllerUtils.getViewData(controller);
+            return data.getDataContext();
+
         } else if (Action.class.isAssignableFrom(type)) {
             // Injecting an action
             String[] elements = ValuePathHelper.parse(name);
             if (elements.length == 1) {
-                ViewActions viewActions = UiControllerUtils.getViewActions(controller);
+                ViewActions viewActions = ViewControllerUtils.getViewActions(controller);
                 return viewActions.getAction(name);
             }
 
@@ -180,20 +185,19 @@ public class UiControllerDependencyInjector {
                         String.format("Can't inject %s. Incorrect path: '%s'", Facet.class.getSimpleName(), name));
             }
 
-            return UiControllerUtils.getViewFacets(controller).getFacet(name);
+            return ViewControllerUtils.getViewFacets(controller).getFacet(name);
         } else if (MessageBundle.class == type) {
             return createMessageBundle(controller);
         }
 
         // TODO: gg, handle other types
-        // TODO: gg, DataContext?
 
         return null;
     }
 
     protected MessageBundle createMessageBundle(View<?> controller) {
         MessageBundle messageBundle = applicationContext.getBean(MessageBundle.class);
-        messageBundle.setMessageGroup(UiControllerUtils.getPackage(controller.getClass()));
+        messageBundle.setMessageGroup(ViewControllerUtils.getPackage(controller.getClass()));
 
         if (controller.getId().isEmpty()) {
             return messageBundle;
@@ -343,7 +347,7 @@ public class UiControllerDependencyInjector {
     @Nullable
     protected Object getInstallTargetInstance(View<?> controller, Install annotation) {
         Object targetInstance;
-        String target = UiDescriptorUtils.getInferredProvideId(annotation);
+        String target = ViewDescriptorUtils.getInferredProvideId(annotation);
         if (Strings.isNullOrEmpty(target)) {
 
             switch (annotation.target()) {
@@ -353,7 +357,7 @@ public class UiControllerDependencyInjector {
                     targetInstance = controller;
                     break;
                 case DATA_CONTEXT:
-                    targetInstance = UiControllerUtils.getViewData(controller).getDataContext();
+                    targetInstance = ViewControllerUtils.getViewData(controller).getDataContext();
                     break;
 
                 default:
@@ -361,9 +365,9 @@ public class UiControllerDependencyInjector {
                             Install.class.getSimpleName(), annotation.target()));
             }
         } else if (annotation.target() == Target.DATA_LOADER) {
-            targetInstance = UiControllerUtils.getViewData(controller).getLoader(target);
+            targetInstance = ViewControllerUtils.getViewData(controller).getLoader(target);
         } else if (annotation.target() == Target.DATA_CONTAINER) {
-            targetInstance = UiControllerUtils.getViewData(controller).getContainer(target);
+            targetInstance = ViewControllerUtils.getViewData(controller).getContainer(target);
         } else {
             targetInstance = findMethodTarget(controller, target);
         }
@@ -398,14 +402,14 @@ public class UiControllerDependencyInjector {
             Method method = annotatedMethod.getMethod();
             Subscribe annotation = annotatedMethod.getAnnotation();
 
-            String target = UiDescriptorUtils.getInferredSubscribeId(annotation);
+            String target = ViewDescriptorUtils.getInferredSubscribeId(annotation);
 
             Parameter parameter = method.getParameters()[0];
             Class<?> eventType = parameter.getType();
 
             Object eventTarget = null;
 
-            ViewData viewData = UiControllerUtils.getViewData(controller);
+            ViewData viewData = ViewControllerUtils.getViewData(controller);
 
             if (Strings.isNullOrEmpty(target)) {
                 switch (annotation.target()) {
@@ -587,12 +591,12 @@ public class UiControllerDependencyInjector {
             return null;
         }
 
-        ViewFacets viewFacets = UiControllerUtils.getViewFacets(controller);
+        ViewFacets viewFacets = ViewControllerUtils.getViewFacets(controller);
 
         String[] elements = ValuePathHelper.parse(target);
         ComponentContainer viewLayout = ((ComponentContainer) controller.getContent());
         if (elements.length == 1) {
-            ViewActions viewActions = UiControllerUtils.getViewActions(controller);
+            ViewActions viewActions = ViewControllerUtils.getViewActions(controller);
             Action action = viewActions.getAction(target);
             if (action != null) {
                 return action;

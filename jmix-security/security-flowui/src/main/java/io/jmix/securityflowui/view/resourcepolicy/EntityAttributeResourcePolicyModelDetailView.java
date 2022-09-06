@@ -12,17 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
-@UiController("sec_EntityAttributeResourcePolicyModel.detail")
-@UiDescriptor("entity-attribute-resource-policy-model-detail-view.xml")
+@ViewController("sec_EntityAttributeResourcePolicyModel.detail")
+@ViewDescriptor("entity-attribute-resource-policy-model-detail-view.xml")
 @EditedEntityContainer("resourcePolicyModelDc")
 @DialogMode(width = "32em")
 public class EntityAttributeResourcePolicyModelDetailView extends StandardDetailView<ResourcePolicyModel> {
 
-    @ComponentId
+    @ViewComponent
     private JmixComboBox<String> entityField;
-    @ComponentId
+    @ViewComponent
     private JmixComboBox<String> attributeField;
-    @ComponentId
+    @ViewComponent
     private JmixSelect<String> actionField;
 
     @Autowired

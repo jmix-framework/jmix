@@ -30,7 +30,7 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface UiController {
+public @interface ViewController {
     String ID_ATTRIBUTE = "id";
     String VALUE_ATTRIBUTE = "value";
 

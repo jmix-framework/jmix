@@ -20,69 +20,69 @@ import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 import java.util.Date;
 
 @Route(value = "validator-view")
-@UiController("ValidatorView")
-@UiDescriptor("validator-view.xml")
+@ViewController("ValidatorView")
+@ViewDescriptor("validator-view.xml")
 public class ValidatorView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public BigDecimalField decimalField;
 
-    @ComponentId
+    @ViewComponent
     public BigDecimalField digitsField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<Double> doubleField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<String> emailField;
 
-    @ComponentId
+    @ViewComponent
     public TypedDatePicker<Date> futureOrPresentField;
 
-    @ComponentId
+    @ViewComponent
     public TypedDatePicker<Date> futureField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<Integer> integerField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<Integer> negativeOrZeroField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<Integer> negativeField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<String> notBlankField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<String> notEmptyField;
 
-    @ComponentId
+    @ViewComponent
     public TypedDatePicker<Date> notNullField;
 
-    @ComponentId
+    @ViewComponent
     public TypedDatePicker<Date> pastOrPresentField;
 
-    @ComponentId
+    @ViewComponent
     public TypedDatePicker<Date> pastField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<Integer> positiveOrZeroField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<Integer> positiveField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<String> regexpField;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<String> sizeField;
 }

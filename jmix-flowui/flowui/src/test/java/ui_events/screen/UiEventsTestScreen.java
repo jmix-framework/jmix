@@ -18,12 +18,12 @@ package ui_events.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.ViewController;
 import org.springframework.context.event.EventListener;
 import ui_events.TestUiEvent;
 
 @Route("ui-events-test-screen")
-@UiController
+@ViewController
 public class UiEventsTestScreen extends StandardView {
 
     public String eventMessage = "noop";

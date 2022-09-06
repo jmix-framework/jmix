@@ -17,7 +17,7 @@
 package io.jmix.flowui.sys;
 
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.ViewController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -34,20 +34,20 @@ import java.util.Map;
 /**
  * Class provides information about view controller.
  */
-public class UiControllerMeta {
+public class ViewControllerMeta {
 
-    private static final Logger log = LoggerFactory.getLogger(UiControllerMeta.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewControllerMeta.class);
 
     protected MetadataReaderFactory metadataReaderFactory;
     protected MetadataReader metadataReader;
     protected Class<? extends View> viewClass;
 
-    public UiControllerMeta(MetadataReaderFactory metadataReaderFactory, MetadataReader metadataReader) {
+    public ViewControllerMeta(MetadataReaderFactory metadataReaderFactory, MetadataReader metadataReader) {
         this.metadataReaderFactory = metadataReaderFactory;
         this.metadataReader = metadataReader;
     }
 
-    public UiControllerMeta(MetadataReaderFactory metadataReaderFactory, Class<? extends View> viewClass) {
+    public ViewControllerMeta(MetadataReaderFactory metadataReaderFactory, Class<? extends View> viewClass) {
         this.metadataReaderFactory = metadataReaderFactory;
         this.viewClass = viewClass;
     }
@@ -86,16 +86,16 @@ public class UiControllerMeta {
     }
 
     protected String getControllerId() {
-        Map<String, Object> uiController = getAnnotationAttributes(UiController.class.getName());
+        Map<String, Object> viewController = getAnnotationAttributes(ViewController.class.getName());
 
         String id = null;
         String value = null;
-        if (uiController != null) {
-            id = (String) uiController.get(UiController.ID_ATTRIBUTE);
-            value = (String) uiController.get(UiController.VALUE_ATTRIBUTE);
+        if (viewController != null) {
+            id = (String) viewController.get(ViewController.ID_ATTRIBUTE);
+            value = (String) viewController.get(ViewController.VALUE_ATTRIBUTE);
         }
 
-        return UiDescriptorUtils.getInferredViewId(id, value, getViewClassName());
+        return ViewDescriptorUtils.getInferredViewId(id, value, getViewClassName());
     }
 
     protected String getViewClassName() {

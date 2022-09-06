@@ -33,13 +33,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Route(value = "rowlevelrolemodelslookup", layout = DefaultMainViewParent.class)
-@UiController("sec_RowLevelRoleModel.lookup")
-@UiDescriptor("row-level-role-model-lookup-view.xml")
+@ViewController("sec_RowLevelRoleModel.lookup")
+@ViewDescriptor("row-level-role-model-lookup-view.xml")
 @LookupComponent("roleModelsTable")
 @DialogMode(width = "50em", height = "37.5em")
 public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleModel> {
 
-    @ComponentId
+    @ViewComponent
     private CollectionContainer<RowLevelRoleModel> roleModelsDc;
 
     @Autowired

@@ -20,7 +20,7 @@ import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.model.impl.ViewDataXmlLoader;
-import io.jmix.flowui.view.UiControllerUtils;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.view.ViewFacets;
@@ -77,7 +77,7 @@ public class ViewLoaderSupport implements ApplicationContextAware {
     public void loadData(Element element) {
         Element dataElement = element.element("data");
         if (dataElement != null) {
-            ViewData viewData = UiControllerUtils.getViewData(view);
+            ViewData viewData = ViewControllerUtils.getViewData(view);
             viewDataXmlLoader.load(viewData, dataElement, null);
             ((ComponentLoaderContext) context).setViewData(viewData);
         }
@@ -89,7 +89,7 @@ public class ViewLoaderSupport implements ApplicationContextAware {
             return;
         }
 
-        ViewActions viewActions = UiControllerUtils.getViewActions(view);
+        ViewActions viewActions = ViewControllerUtils.getViewActions(view);
         for (Element actionEl : actionsEl.elements("action")) {
             viewActions.addAction(loadDeclarativeAction(actionEl));
         }
@@ -102,7 +102,7 @@ public class ViewLoaderSupport implements ApplicationContextAware {
         if (facetsElement != null) {
             List<Element> facetElements = facetsElement.elements();
 
-            ViewFacets viewFacets = UiControllerUtils.getViewFacets(view);
+            ViewFacets viewFacets = ViewControllerUtils.getViewFacets(view);
             FacetLoader loader = applicationContext.getBean(FacetLoader.class);
             for (Element facetElement : facetElements) {
                 Facet facet = loader.load(facetElement, getComponentContext());

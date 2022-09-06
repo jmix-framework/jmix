@@ -8,7 +8,7 @@ import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.StandardOutcome;
-import io.jmix.flowui.view.UiControllerUtils;
+import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(DetailCloseAction.ID)
@@ -45,7 +45,7 @@ public class DetailCloseAction<E> extends OperationResultViewAction<DetailCloseA
     public void execute() {
         checkTarget();
 
-        operationResult = target.close(UiControllerUtils.isCommitActionPerformed(target)
+        operationResult = target.close(ViewControllerUtils.isCommitActionPerformed(target)
                 ? StandardOutcome.COMMIT
                 : StandardOutcome.CLOSE);
 

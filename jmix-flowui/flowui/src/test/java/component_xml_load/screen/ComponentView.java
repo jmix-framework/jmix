@@ -40,15 +40,15 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.sales.Order;
 
 @Route(value = "component-view")
-@UiController("ComponentView")
-@UiDescriptor("component-view.xml")
+@ViewController("ComponentView")
+@ViewDescriptor("component-view.xml")
 public class ComponentView extends StandardView {
 
     public void loadData() {
@@ -60,99 +60,99 @@ public class ComponentView extends StandardView {
         getViewData().loadAll();
     }
 
-    @ComponentId
+    @ViewComponent
     public Action buttonAction;
 
-    @ComponentId
+    @ViewComponent
     public InstanceContainer<Order> orderDc;
 
-    @ComponentId
+    @ViewComponent
     public Avatar avatarId;
 
-    @ComponentId
+    @ViewComponent
     public JmixBigDecimalField bigDecimalFieldId;
 
-    @ComponentId
+    @ViewComponent
     public JmixBigDecimalField bigDecimalFieldWithValueId;
 
-    @ComponentId
+    @ViewComponent
     public JmixButton buttonId;
 
-    @ComponentId
+    @ViewComponent
     public JmixButton buttonWithActionId;
 
-    @ComponentId
+    @ViewComponent
     public JmixCheckbox checkBoxId;
 
-    @ComponentId
+    @ViewComponent
     public JmixCheckbox checkBoxWithDataId;
 
-    @ComponentId
+    @ViewComponent
     public JmixComboBox<String> comboBoxId;
 
-    @ComponentId
+    @ViewComponent
     public TypedDatePicker<?> datePickerId;
 
-    @ComponentId
+    @ViewComponent
     public TypedTimePicker<?> timePickerId;
 
-    @ComponentId
+    @ViewComponent
     public TypedDateTimePicker<?> dateTimePickerId;
 
-    @ComponentId
+    @ViewComponent
     public Details detailsId;
 
-    @ComponentId
+    @ViewComponent
     public JmixNumberField numberFieldId;
 
-    @ComponentId
+    @ViewComponent
     public JmixNumberField numberFieldWithValueId;
 
-    @ComponentId
+    @ViewComponent
     public JmixPasswordField passwordFieldId;
 
-    @ComponentId
+    @ViewComponent
     public JmixPasswordField passwordFieldWithValueId;
 
-    @ComponentId
+    @ViewComponent
     public ProgressBar progressBarId;
 
-    @ComponentId
+    @ViewComponent
     public JmixRadioButtonGroup<String> radioButtonGroupId;
 
-    @ComponentId
+    @ViewComponent
     public JmixSelect<String> selectId;
 
-    @ComponentId
+    @ViewComponent
     public JmixTextArea textAreaId;
 
-    @ComponentId
+    @ViewComponent
     public JmixTextArea textAreaWithValueId;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<Integer> textFieldId;
 
-    @ComponentId
+    @ViewComponent
     public TypedTextField<String> textFieldWithValueId;
 
-    @ComponentId
+    @ViewComponent
     public JmixValuePicker<?> valuePickerId;
 
-    @ComponentId
+    @ViewComponent
     public JmixValuesPicker<?> valuesPickerId;
 
-    @ComponentId
+    @ViewComponent
     public EntityPicker<?> entityPickerId;
 
-    @ComponentId
+    @ViewComponent
     public EntityPicker<?> metaClassEntityPickerId;
 
-    @ComponentId
+    @ViewComponent
     public ComboBoxPicker<String> comboBoxPickerId;
 
-    @ComponentId
+    @ViewComponent
     public EntityComboBox<?> entityComboBoxId;
 
-    @ComponentId
+    @ViewComponent
     public EntityComboBox<?> metaClassComboBoxId;
 }

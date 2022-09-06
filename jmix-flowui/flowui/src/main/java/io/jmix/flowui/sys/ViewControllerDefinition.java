@@ -20,17 +20,17 @@ import org.springframework.core.io.Resource;
 
 import javax.annotation.Nullable;
 
-public final class UiControllerDefinition {
+public final class ViewControllerDefinition {
 
     private final String id;
     private final String controllerClassName;
     private final Resource resource;
 
-    public UiControllerDefinition(String id, String controllerClass) {
+    public ViewControllerDefinition(String id, String controllerClass) {
         this(id, controllerClass, null);
     }
 
-    public UiControllerDefinition(String id, String controllerClassName, Resource resource) {
+    public ViewControllerDefinition(String id, String controllerClassName, Resource resource) {
         this.id = id;
         this.controllerClassName = controllerClassName;
         this.resource = resource;

@@ -33,22 +33,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Route(value = "roleassignment/:username", layout = DefaultMainViewParent.class)
-@UiController("roleAssignmentView")
-@UiDescriptor("role-assignment-view.xml")
+@ViewController("roleAssignmentView")
+@ViewDescriptor("role-assignment-view.xml")
 public class RoleAssignmentView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     private DataGrid<RoleAssignmentEntity> resourceRoleAssignmentsTable;
-    @ComponentId
+    @ViewComponent
     private DataGrid<RoleAssignmentEntity> rowLevelRoleAssignmentsTable;
 
-    @ComponentId
+    @ViewComponent
     private CollectionContainer<RoleAssignmentEntity> rowLevelRoleAssignmentEntitiesDc;
-    @ComponentId
+    @ViewComponent
     private CollectionContainer<RoleAssignmentEntity> resourceRoleAssignmentEntitiesDc;
-    @ComponentId
+    @ViewComponent
     private CollectionLoader<RoleAssignmentEntity> rowLevelRoleAssignmentEntitiesDl;
-    @ComponentId
+    @ViewComponent
     private CollectionLoader<RoleAssignmentEntity> resourceRoleAssignmentEntitiesDl;
 
     @Autowired

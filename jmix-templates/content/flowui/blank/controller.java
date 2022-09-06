@@ -8,13 +8,13 @@ superClass = "StandardView"
 } else {
 superClass = "io.jmix.flowui.view.StandardView"}
 %>
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 <%if (classComment) {%>
         ${classComment}
 <%}%>@Route(value = "${route}", layout = MainView.class)
-@UiController("${id}")
-@UiDescriptor("${descriptorName}.xml")
+@ViewController("${id}")
+@ViewDescriptor("${descriptorName}.xml")
 public class ${controllerName} extends ${superClass} {
 }

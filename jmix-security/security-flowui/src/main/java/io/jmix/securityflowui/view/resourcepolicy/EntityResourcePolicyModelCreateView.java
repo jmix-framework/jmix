@@ -26,21 +26,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@UiController("sec_EntityResourcePolicyModel.create")
-@UiDescriptor("entity-resource-policy-model-create-view.xml")
+@ViewController("sec_EntityResourcePolicyModel.create")
+@ViewDescriptor("entity-resource-policy-model-create-view.xml")
 @DialogMode(width = "32em")
 public class EntityResourcePolicyModelCreateView extends MultipleResourcePolicyModelCreateView {
 
     private static final Set<EntityPolicyAction> ALL_ACTION =
             Sets.newHashSet(EntityPolicyAction.class.getEnumConstants());
 
-    @ComponentId
+    @ViewComponent
     private JmixComboBox<String> entityField;
-    @ComponentId
+    @ViewComponent
     private TypedTextField<String> policyGroupField;
-    @ComponentId
+    @ViewComponent
     private JmixCheckbox allActions;
-    @ComponentId
+    @ViewComponent
     private JmixCheckboxGroup<EntityPolicyAction> actionsGroup;
 
     @Autowired

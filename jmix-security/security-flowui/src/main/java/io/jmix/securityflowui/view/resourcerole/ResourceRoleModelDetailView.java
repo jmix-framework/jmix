@@ -58,8 +58,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Route(value = "resourcerolemodels/:code", layout = DefaultMainViewParent.class)
-@UiController("sec_ResourceRoleModel.detail")
-@UiDescriptor("resource-role-model-detail-view.xml")
+@ViewController("sec_ResourceRoleModel.detail")
+@ViewDescriptor("resource-role-model-detail-view.xml")
 @EditedEntityContainer("roleModelDc")
 public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRoleModel> {
 
@@ -67,30 +67,30 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     public static final String ROUTE_PARAM_NAME = "code";
 
-    @ComponentId
+    @ViewComponent
     private Tabs tabs;
-    @ComponentId
+    @ViewComponent
     private VerticalLayout childRolesWrapper;
-    @ComponentId
+    @ViewComponent
     private VerticalLayout resourcePoliciesWrapper;
-    @ComponentId
+    @ViewComponent
     private TypedTextField<String> codeField;
-    @ComponentId
+    @ViewComponent
     private TypedTextField<String> sourceField;
-    @ComponentId
+    @ViewComponent
     private JmixCheckboxGroup<String> scopesField;
-    @ComponentId
+    @ViewComponent
     private DataGrid<ResourcePolicyModel> resourcePoliciesTable;
-    @ComponentId
+    @ViewComponent
     private DataGrid<ResourceRoleModel> childRolesTable;
-    @ComponentId
+    @ViewComponent
     private HorizontalLayout resourcePoliciesButtonsPanel;
 
-    @ComponentId
+    @ViewComponent
     private InstanceContainer<ResourceRoleModel> roleModelDc;
-    @ComponentId
+    @ViewComponent
     private CollectionContainer<ResourceRoleModel> childRolesDc;
-    @ComponentId
+    @ViewComponent
     private CollectionPropertyContainer<ResourcePolicyModel> resourcePoliciesDc;
 
     @Autowired

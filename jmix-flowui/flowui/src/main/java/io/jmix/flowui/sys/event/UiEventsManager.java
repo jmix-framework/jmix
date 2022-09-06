@@ -21,7 +21,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiEventPublisher;
-import io.jmix.flowui.sys.UiControllerDependencyInjector;
+import io.jmix.flowui.sys.ViewControllerDependencyInjector;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 
 /**
  * @see UiEventPublisher
- * @see UiControllerDependencyInjector
+ * @see ViewControllerDependencyInjector
  * @see UiEventListenerMethodAdapter
  */
 @Internal

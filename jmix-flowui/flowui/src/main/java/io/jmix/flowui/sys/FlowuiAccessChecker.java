@@ -24,7 +24,7 @@ import io.jmix.flowui.menu.MenuItem;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.ViewController;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -85,11 +85,11 @@ public class FlowuiAccessChecker {
 
     protected boolean isSupportedView(Class<?> targetView) {
         return View.class.isAssignableFrom(targetView)
-                && targetView.getAnnotation(UiController.class) != null;
+                && targetView.getAnnotation(ViewController.class) != null;
     }
 
     protected boolean isViewHasSecurityPermission(Class<?> target) {
-        String viewId = UiDescriptorUtils.getInferredViewId(target);
+        String viewId = ViewDescriptorUtils.getInferredViewId(target);
         FlowuiShowViewContext context = new FlowuiShowViewContext(viewId);
         accessManager.applyRegisteredConstraints(context);
         return context.isPermitted();

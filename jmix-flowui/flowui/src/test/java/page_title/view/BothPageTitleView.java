@@ -19,12 +19,12 @@ package page_title.view;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 @Route("both-page-title-view")
 @PageTitle("msg://bothPageTitleView.title")
-@UiController
-@UiDescriptor("both-page-title-view.xml")
+@ViewController
+@ViewDescriptor("both-page-title-view.xml")
 public class BothPageTitleView extends StandardView {
 }

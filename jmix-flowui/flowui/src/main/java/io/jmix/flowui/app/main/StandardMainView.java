@@ -22,7 +22,7 @@ import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.router.RouterLayout;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.applayout.JmixAppLayout;
-import io.jmix.flowui.view.UiControllerUtils;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.View;
 
 import java.util.Optional;
@@ -47,6 +47,6 @@ public class StandardMainView extends View<JmixAppLayout> implements RouterLayou
     }
 
     private String getTitleFromOpenedView() {
-        return UiControllerUtils.getPageTitle(getContent().getContent());
+        return ViewControllerUtils.getPageTitle(getContent().getContent());
     }
 }

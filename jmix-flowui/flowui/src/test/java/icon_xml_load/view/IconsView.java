@@ -19,27 +19,27 @@ package icon_xml_load.view;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 @Route(value = "icons-view")
-@UiController("IconsView")
-@UiDescriptor("icons-view.xml")
+@ViewController("IconsView")
+@ViewDescriptor("icons-view.xml")
 public class IconsView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public Action actionEnumIcon;
-    @ComponentId
+    @ViewComponent
     public Action actionVaadinIcon;
-    @ComponentId
+    @ViewComponent
     public Action actionLumoIcon;
 
-    @ComponentId
+    @ViewComponent
     public JmixButton buttonEnumIcon;
-    @ComponentId
+    @ViewComponent
     public JmixButton buttonVaadinIcon;
-    @ComponentId
+    @ViewComponent
     public JmixButton buttonLumoIcon;
 }

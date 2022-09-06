@@ -19,12 +19,12 @@ package page_title.view;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.UiController;
-import io.jmix.flowui.view.UiDescriptor;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 @Route("annotated-page-title-hardcoded-view")
 @PageTitle("Annotated Page Title Hardcoded")
-@UiController
-@UiDescriptor("annotated-page-title-hardcoded-view.xml")
+@ViewController
+@ViewDescriptor("annotated-page-title-hardcoded-view.xml")
 public class AnnotatedPageTitleHardcodedView extends StandardView {
 }

@@ -211,7 +211,6 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
         }
         report.setDefaultTemplate(defaultTemplate);
         report.setTemplates(savedTemplates);
-        entityEventManager.publishEntitySavingEvent(report, false);
         em.flush();
         return report;
     }

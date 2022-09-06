@@ -23,8 +23,7 @@ public interface StudioMainViewActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "logout"),
-                    @StudioProperty(xmlAttribute = "shortcut", type = StudioPropertyType.SHORTCUT,
-                            setMethod = "setShortcutCombination"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.logout.description"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")

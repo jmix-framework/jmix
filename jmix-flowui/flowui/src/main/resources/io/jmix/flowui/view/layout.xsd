@@ -1082,7 +1082,7 @@
         <xs:attribute name="exclude" type="xs:string"/>
     </xs:attributeGroup>
 
-    <xs:simpleType name="shortcut">
+    <xs:simpleType name="shortcutCombination">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1704,7 +1704,7 @@
         </xs:sequence>
 
         <xs:attribute name="type" type="actionTypeEnum"/>
-        <xs:attribute name="shortcut" type="shortcut"/>
+        <xs:attribute name="shortcutCombination" type="shortcutCombination"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="text" type="resourceString"/>
         <xs:attribute name="description" type="resourceString"/>

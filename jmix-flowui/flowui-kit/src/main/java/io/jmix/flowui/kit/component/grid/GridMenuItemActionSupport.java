@@ -80,7 +80,7 @@ public class GridMenuItemActionSupport {
             String propertyName = event.getPropertyName();
             switch (propertyName) {
                 case Action.PROP_TEXT:
-                case Action.PROP_SHORTCUT:
+                case Action.PROP_SHORTCUT_COMBINATION:
                     menuItem.setText(generateTitle(action));
                     break;
                 case Action.PROP_ENABLED:

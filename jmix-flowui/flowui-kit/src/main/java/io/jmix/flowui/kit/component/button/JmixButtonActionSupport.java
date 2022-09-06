@@ -59,7 +59,7 @@ public class JmixButtonActionSupport {
             updateText(overrideComponentProperties);
             updateTitle(overrideComponentProperties);
             updateIcon(overrideComponentProperties);
-            updateShortcut(overrideComponentProperties);
+            updateShortcutCombination(overrideComponentProperties);
             updateActionVariant(overrideComponentProperties);
 
             buttonClickRegistration =
@@ -167,7 +167,7 @@ public class JmixButtonActionSupport {
         }
     }
 
-    protected void updateShortcut(boolean overrideComponentProperties) {
+    protected void updateShortcutCombination(boolean overrideComponentProperties) {
         if (button.getShortcutCombination() == null || overrideComponentProperties) {
             button.setShortcutCombination(action.getShortcutCombination());
         }
@@ -198,7 +198,7 @@ public class JmixButtonActionSupport {
                 removeActionVariant(button, (ActionVariant) event.getOldValue());
                 addActionVariant(button, (ActionVariant) event.getNewValue());
                 break;
-            case Action.PROP_SHORTCUT:
+            case Action.PROP_SHORTCUT_COMBINATION:
                 button.setShortcutCombination((KeyCombination) event.getNewValue());
                 break;
         }

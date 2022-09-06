@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 
 public class ActionBinderUtils {
 
-    public static void refreshShortcutProperty(ClickNotifier component,
-                                               @Nullable KeyCombination newShortcutCombination,
-                                               @Nullable KeyCombination oldShortcutCombination,
-                                               List<Registration> registrations) {
+    public static void refreshShortcutCombinationProperty(ClickNotifier component,
+                                                          @Nullable KeyCombination newShortcutCombination,
+                                                          @Nullable KeyCombination oldShortcutCombination,
+                                                          List<Registration> registrations) {
         List<ShortcutRegistration> shortcutRegistrations = registrations.stream()
                 .filter(registration -> registration instanceof ShortcutRegistration)
                 .map(registration -> (ShortcutRegistration) registration)

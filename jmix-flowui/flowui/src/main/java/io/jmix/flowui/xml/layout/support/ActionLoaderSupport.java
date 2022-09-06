@@ -157,8 +157,8 @@ public class ActionLoaderSupport implements ApplicationContextAware {
                 .ifPresent(iconString ->
                         targetAction.setIcon(parseIcon(iconString)));
 
-        componentLoader().loadShortcut(element).ifPresent(shortcut ->
-                targetAction.setShortcutCombination(KeyCombination.create(shortcut)));
+        componentLoader().loadShortcutCombination(element).ifPresent(shortcutCombination ->
+                targetAction.setShortcutCombination(KeyCombination.create(shortcutCombination)));
 
         Element propertiesEl = element.element("properties");
         if (propertiesEl != null) {

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component("flowui_PropertyShortcutLoader")
-public class PropertyShortcutLoader {
+public class PropertyShortcutCombinationLoader {
 
     protected static final Map<String, Function<FlowuiComponentProperties, String>> COMPONENTS_SHORTCUT_ALIASES =
             ImmutableMap.<String, Function<FlowuiComponentProperties, String>>builder()
@@ -29,7 +29,7 @@ public class PropertyShortcutLoader {
     protected FlowuiComponentProperties componentProperties;
     protected FlowuiViewProperties viewProperties;
 
-    public PropertyShortcutLoader(FlowuiComponentProperties componentProperties, FlowuiViewProperties viewProperties) {
+    public PropertyShortcutCombinationLoader(FlowuiComponentProperties componentProperties, FlowuiViewProperties viewProperties) {
         this.componentProperties = componentProperties;
         this.viewProperties = viewProperties;
     }
@@ -50,6 +50,6 @@ public class PropertyShortcutLoader {
             return viewsShortcut.apply(viewProperties);
         }
 
-        throw new IllegalStateException(String.format("There is no shortcut for alias '%s'", alias));
+        throw new IllegalStateException(String.format("There is no shortcutCombination for alias '%s'", alias));
     }
 }

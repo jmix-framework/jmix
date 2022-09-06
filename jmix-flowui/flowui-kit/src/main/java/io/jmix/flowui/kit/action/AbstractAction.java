@@ -151,7 +151,7 @@ public abstract class AbstractAction implements Action {
         KeyCombination oldValue = this.shortcutCombination;
         if (!Objects.equals(oldValue, shortcutCombination)) {
             this.shortcutCombination = shortcutCombination;
-            firePropertyChange(Action.PROP_SHORTCUT, oldValue, shortcutCombination);
+            firePropertyChange(Action.PROP_SHORTCUT_COMBINATION, oldValue, shortcutCombination);
         }
     }
 

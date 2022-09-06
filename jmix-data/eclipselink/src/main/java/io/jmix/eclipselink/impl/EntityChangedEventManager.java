@@ -94,7 +94,7 @@ public class EntityChangedEventManager {
         log.trace("beforeFlush {}", instances);
         List<EntityChangedEventInfo> infoList = internalCollect(instances);
         AccumulatedInfoHolder holder = getAccumulatedInfoHolder();
-        holder.accumulatedList = merge(holder.accumulatedList, infoList);
+        holder.accumulatedList = merge(holder.accumulatedList, infoList);//store events because changes will be lost during implicit flush
     }
 
     private List<EntityChangedEventInfo> merge(Collection<EntityChangedEventInfo> collection1, Collection<EntityChangedEventInfo> collection2) {
@@ -121,6 +121,8 @@ public class EntityChangedEventManager {
         List<EntityChangedEventInfo> infoList = internalCollect(entities);
         if (holder.accumulatedList != null) {
             infoList = merge(holder.accumulatedList, infoList);
+            //clear stored events: it is time to publish them
+            // otherwise stack overflow may occur if listener will commit something and the same events will be got and processed again
             holder.accumulatedList.clear();
         }
         return infoList;

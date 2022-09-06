@@ -76,7 +76,7 @@ public class ValuePickerButtonActionSupport {
                 case Action.PROP_ICON:
                     button.setIcon(action.getIcon());
                     break;
-                case Action.PROP_SHORTCUT:
+                case Action.PROP_SHORTCUT_COMBINATION:
                     button.setShortcutCombination(action.getShortcutCombination());
                     button.setTitle(generateTitle(action));
                     break;

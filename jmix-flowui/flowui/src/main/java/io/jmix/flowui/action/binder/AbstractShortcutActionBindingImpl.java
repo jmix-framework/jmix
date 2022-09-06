@@ -26,7 +26,7 @@ public abstract class AbstractShortcutActionBindingImpl<H extends Component, A e
         addShortcutRegistrationIfNeeded(action.getShortcutCombination(), actionHandler);
 
         this.registrations.add(action.addPropertyChangeListener(propertyChangeEvent -> {
-            if (Action.PROP_SHORTCUT.equals(propertyChangeEvent.getPropertyName())) {
+            if (Action.PROP_SHORTCUT_COMBINATION.equals(propertyChangeEvent.getPropertyName())) {
                 if (shortcutRegistration != null) {
                     this.registrations.remove(shortcutRegistration);
                     shortcutRegistration.remove();

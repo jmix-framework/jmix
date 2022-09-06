@@ -150,7 +150,7 @@ public enum StudioPropertyType {
     /**
      * Keyboard shortcut.
      */
-    SHORTCUT,
+    SHORTCUT_COMBINATION,
 
     /**
      * Data store name.

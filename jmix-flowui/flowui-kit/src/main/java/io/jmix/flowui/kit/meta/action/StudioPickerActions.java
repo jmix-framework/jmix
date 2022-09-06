@@ -22,8 +22,7 @@ public interface StudioPickerActions {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon", required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = "shortcut", type = StudioPropertyType.SHORTCUT,
-                            setMethod = "setShortcutCombination"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             }
@@ -45,8 +44,8 @@ public interface StudioPickerActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "valueClear"),
-                    @StudioProperty(xmlAttribute = "shortcut", type = StudioPropertyType.SHORTCUT,
-                            setMethod = "setShortcutCombination", defaultValue = "CONTROL-ALT-C"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
+                            defaultValue = "CONTROL-ALT-C"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.valuePicker.clear.description"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -77,8 +76,8 @@ public interface StudioPickerActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "entityClear"),
-                    @StudioProperty(xmlAttribute = "shortcut", type = StudioPropertyType.SHORTCUT,
-                            setMethod = "setShortcutCombination", defaultValue = "CONTROL-ALT-C"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
+                            defaultValue = "CONTROL-ALT-C"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.valuePicker.clear.description"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -109,8 +108,8 @@ public interface StudioPickerActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "entityLookup"),
-                    @StudioProperty(xmlAttribute = "shortcut", type = StudioPropertyType.SHORTCUT,
-                            setMethod = "setShortcutCombination", defaultValue = "CONTROL-ALT-L"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
+                            defaultValue = "CONTROL-ALT-L"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.entityPicker.lookup.description"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -143,8 +142,8 @@ public interface StudioPickerActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "entityOpen"),
-                    @StudioProperty(xmlAttribute = "shortcut", type = StudioPropertyType.SHORTCUT,
-                            setMethod = "setShortcutCombination", defaultValue = "CONTROL-ALT-O"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
+                            defaultValue = "CONTROL-ALT-O"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.entityPicker.open.description"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -177,8 +176,8 @@ public interface StudioPickerActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "entityOpenComposition"),
-                    @StudioProperty(xmlAttribute = "shortcut", type = StudioPropertyType.SHORTCUT,
-                            setMethod = "setShortcutCombination", defaultValue = "CONTROL-ALT-O"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
+                            defaultValue = "CONTROL-ALT-O"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.entityPicker.open.description"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")

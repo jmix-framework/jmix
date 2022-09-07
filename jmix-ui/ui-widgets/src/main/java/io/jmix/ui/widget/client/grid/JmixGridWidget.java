@@ -502,5 +502,13 @@ public class JmixGridWidget extends Grid<JsonObject> {
         protected double getFreeSpace() {
             return new ComputedStyle(getEscalator().getElement()).getWidthIncludingBorderPadding();
         }
+
+        @Override
+        protected void afterApplyingFixedWidthColumns() {
+            RowContainer header = getEscalator().getHeader();
+            if (header.getRowCount() > 0) {
+                header.refreshRows(0, header.getRowCount());
+            }
+        }
     }
 }

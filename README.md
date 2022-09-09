@@ -47,7 +47,7 @@ Follow the [Quick Start](https://www.jmix.io/learn/quickstart/) guide to get up 
     git clone https://github.com/jmix-framework/jmix.git
     ```
 
-- Install JDK 8.
+- Install JDK 11.
 
 - Build and publish the framework modules to the local Maven:
 

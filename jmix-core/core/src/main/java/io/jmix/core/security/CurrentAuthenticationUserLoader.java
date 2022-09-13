@@ -18,6 +18,8 @@ package io.jmix.core.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Map;
+
 /**
  * Interface that encapsulates functionality for reloading the user returned by {@link CurrentAuthentication} and
  * {@link io.jmix.core.usersubstitution.CurrentUserSubstitution}. The reloading is necessary in order to always return
@@ -27,7 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface CurrentAuthenticationUserLoader {
 
     /**
-     * Returns the reloaded user instance.
+     * Returns the reloaded user instance. See supported hints in the {@link CurrentUserHints}.
      */
-    UserDetails reloadUser(UserDetails user);
+    UserDetails reloadUser(UserDetails user, Map<String, Object> hints);
 }

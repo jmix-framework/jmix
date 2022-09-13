@@ -24,6 +24,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.Map;
+
 @Component("sec_CurrentUserSubstitution")
 public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
 
@@ -39,11 +42,21 @@ public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
 
     @Override
     public UserDetails getAuthenticatedUser() {
-        return currentAuthentication.getUser();
+        return getAuthenticatedUser(Collections.emptyMap());
+    }
+
+    @Override
+    public UserDetails getAuthenticatedUser(Map<String, Object> hints) {
+        return currentAuthentication.getUser(hints);
     }
 
     @Override
     public UserDetails getSubstitutedUser() {
+        return getSubstitutedUser(Collections.emptyMap());
+    }
+
+    @Override
+    public UserDetails getSubstitutedUser(Map<String, Object> hints) {
         if (!currentAuthentication.isSet()) {
             return null;
         }
@@ -51,7 +64,7 @@ public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
         if (SubstitutedUserAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
             Object substitutedPrincipal = ((SubstitutedUserAuthenticationToken) authentication).getSubstitutedPrincipal();
             if (substitutedPrincipal instanceof UserDetails) {
-                return currentAuthenticationUserLoader.reloadUser((UserDetails) substitutedPrincipal);
+                return currentAuthenticationUserLoader.reloadUser((UserDetails) substitutedPrincipal, hints);
             } else {
                 throw new RuntimeException("Substituted principal must be UserDetails");
             }
@@ -61,7 +74,12 @@ public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
 
     @Override
     public UserDetails getEffectiveUser() {
-        UserDetails substitutedUser = getSubstitutedUser();
-        return substitutedUser != null ? substitutedUser : getAuthenticatedUser();
+        return getEffectiveUser(Collections.emptyMap());
+    }
+
+    @Override
+    public UserDetails getEffectiveUser(Map<String, Object> hints) {
+        UserDetails substitutedUser = getSubstitutedUser(hints);
+        return substitutedUser != null ? substitutedUser : getAuthenticatedUser(hints);
     }
 }

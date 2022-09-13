@@ -19,8 +19,11 @@ package io.jmix.core.security.impl;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthenticationUserLoader;
+import io.jmix.core.security.CurrentUserHints;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component("core_CurrentAuthenticationUserLoader")
 public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticationUserLoader {
@@ -44,15 +47,17 @@ public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticatio
         this.entityStates = entityStates;
     }
 
-    public UserDetails reloadUser(UserDetails user) {
-        if (shouldReloadUser(user)) {
+    public UserDetails reloadUser(UserDetails user, Map<String, Object> hints) {
+        if (shouldReloadUser(user, hints)) {
             return dataManager.load(Id.of(user)).optional().orElse(user);
         }
         return user;
     }
 
-    protected boolean shouldReloadUser(UserDetails user) {
+    protected boolean shouldReloadUser(UserDetails user, Map<String, Object> hints) {
         if (!coreProperties.isCurrentAuthenticationUserReloadEnabled()) return false;
+        Object reloadUserHint = hints.get(CurrentUserHints.RELOAD_USER);
+        if (reloadUserHint != null && ((boolean) reloadUserHint) == false) return false;
         MetaClass metaClass = metadata.findClass(user.getClass());
         return metaClass != null && metadataTools.isJpaEntity(metaClass) && !entityStates.isNew(user);
     }

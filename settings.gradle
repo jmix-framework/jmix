@@ -20,6 +20,9 @@ includeProject('audit-starter', 'jmix-audit/audit-starter')
 includeProject('audit-ui', 'jmix-audit/audit-ui')
 includeProject('audit-ui-starter', 'jmix-audit/audit-ui-starter')
 
+includeProject('authorization-server', 'jmix-authorization-server/authorization-server')
+includeProject('authorization-server-starter', 'jmix-authorization-server/authorization-server-starter')
+
 includeProject('awsfs', 'jmix-awsfs/awsfs')
 includeProject('awsfs-starter', 'jmix-awsfs/awsfs-starter')
 

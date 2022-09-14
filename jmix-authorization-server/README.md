@@ -54,9 +54,34 @@ jmix.authorization-server.default-client.access-token-time-to-live=60m
 jmix.authorization-server.default-client.refresh-token-time-to-live=10d
 ```
 
+Custom implementation of the interface may look as follows:
+
+```java
+@Component
+public class MyRegisteredClientProvider implements RegisteredClientProvider {
+    @Override
+    public List<RegisteredClient> getRegisteredClients() {
+        RegisteredClient client = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("client1")
+                .clientSecret("{noop}secret1")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .redirectUris(uris -> {
+                    uris.add("http://localhost:8080/authorized");
+                    uris.add("https://oauth.pstmn.io/v1/callback");
+                })
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenFormat(OAuth2TokenFormat.REFERENCE)
+                        .build())
+                .build();
+        return List.of(client);
+    }
+}
+```
+
 ## Obtaining Access Token
 
-### Authorization Code Grant
+### Authorization Code Grant Type
 
 When obtaining the token from web application or mobile application the client must first request the authorization code
 
@@ -79,7 +104,7 @@ grant_type=authorization_code&code=<authorization_code>
 
 Access and refresh tokens will be returned in the response.
 
-### Client Credentials Grant
+### Client Credentials Grant Type
 
 When it is not possible to enter user credentials in the browser login window, e.g. in case of some integration between 
 two applications, the client credentials flow may be used. There must be Basic authentication on behalf of one of registered clients. 

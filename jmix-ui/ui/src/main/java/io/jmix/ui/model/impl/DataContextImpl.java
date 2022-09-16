@@ -267,7 +267,7 @@ public class DataContextImpl implements DataContextInternal {
 
         mergeSystemState(srcEntity, dstEntity, isRoot, options);
 
-        MetaClass metaClass = getMetaClass(srcEntity);
+        MetaClass metaClass = getEntityMetaClass(srcEntity);
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
@@ -385,7 +385,7 @@ public class DataContextImpl implements DataContextInternal {
     protected void mergeLazyLoadingState(Object srcEntity, Object dstEntity) {
         boolean srcNew = entityStates.isNew(srcEntity);
 
-        MetaClass metaClass = getMetaClass(srcEntity);
+        MetaClass metaClass = getEntityMetaClass(srcEntity);
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (property.getRange().isClass()) {
@@ -849,7 +849,7 @@ public class DataContextImpl implements DataContextInternal {
         return modifiedInstances;
     }
 
-    protected MetaClass getMetaClass(Object entity) {
+    protected MetaClass getEntityMetaClass(Object entity) {
         return metadata.getClass(entity.getClass());
     }
 

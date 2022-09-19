@@ -22,11 +22,15 @@ public class LogMdcFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        LogMdc.setup(currentAuthentication.getAuthentication());
-        try {
+        if (currentAuthentication.isSet()) {
+            LogMdc.setup(currentAuthentication.getAuthentication());
+            try {
+                filterChain.doFilter(request, response);
+            } finally {
+                LogMdc.setup(null);
+            }
+        } else {
             filterChain.doFilter(request, response);
-        } finally {
-            LogMdc.setup(null);
         }
     }
 }

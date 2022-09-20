@@ -38,12 +38,12 @@
         <action id="commitAction"
                 text="msg:///actions.Ok"
                 icon="CHECK"
-                shortcut="${COMMIT_SHORTCUT}"
+                shortcutCombination="${COMMIT_SHORTCUT}"
                 actionVariant="PRIMARY"/>
         <action id="closeAction"
                 text="msg:///actions.Cancel"
                 icon="BAN"
-                shortcut="${CLOSE_SHORTCUT}"/>
+                shortcutCombination="${CLOSE_SHORTCUT}"/>
     </actions>
     <layout>
         <formLayout id="resourcesForm">

@@ -28,7 +28,7 @@ import java.util.Map;
 @Component("core_CurrentAuthenticationUserLoader")
 public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticationUserLoader {
 
-    protected DataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
 
     protected Metadata metadata;
 
@@ -38,7 +38,7 @@ public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticatio
 
     protected EntityStates entityStates;
 
-    public CurrentAuthenticationUserLoaderImpl(DataManager dataManager, Metadata metadata, MetadataTools metadataTools,
+    public CurrentAuthenticationUserLoaderImpl(UnconstrainedDataManager dataManager, Metadata metadata, MetadataTools metadataTools,
                                                CoreProperties coreProperties, EntityStates entityStates) {
         this.dataManager = dataManager;
         this.metadata = metadata;
@@ -55,9 +55,11 @@ public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticatio
     }
 
     protected boolean shouldReloadUser(UserDetails user, Map<String, Object> hints) {
-        if (!coreProperties.isCurrentAuthenticationUserReloadEnabled()) return false;
+        if (!coreProperties.isCurrentAuthenticationUserReloadEnabled())
+            return false;
         Object reloadUserHint = hints.get(CurrentUserHints.RELOAD_USER);
-        if (reloadUserHint != null && ((boolean) reloadUserHint) == false) return false;
+        if (reloadUserHint != null && ((boolean) reloadUserHint) == false)
+            return false;
         MetaClass metaClass = metadata.findClass(user.getClass());
         return metaClass != null && metadataTools.isJpaEntity(metaClass) && !entityStates.isNew(user);
     }

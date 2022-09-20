@@ -36,5 +36,10 @@ class ControllerUtilsTest extends Specification {
         URI debugUrl = new URI("http://localhost:8080/app/?debug#!")
         then:
         ControllerUtils.getLocationWithoutParams(debugUrl) == "http://localhost:8080/app/"
+
+        when:
+        URI encodedUrl = new URI("http://localhost:8080/#login?redirectTo=employees%2Fview")
+        then:
+        ControllerUtils.getLocationWithoutParams(encodedUrl) == "http://localhost:8080/"
     }
 }

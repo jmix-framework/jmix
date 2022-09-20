@@ -3808,6 +3808,7 @@
 
     <xs:complexType name="screenSettingsComponentType">
         <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="enabled" type="xs:boolean"/>
     </xs:complexType>
 
     <!-- PresentationsFacet   -->

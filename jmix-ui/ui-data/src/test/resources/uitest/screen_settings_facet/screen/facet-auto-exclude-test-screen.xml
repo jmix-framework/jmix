@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        xmlns:c="http://jmix.io/schema/ui/jpql-condition">
+    <data readOnly="true">
+        <collection id="projectsDc"
+                    class="test_support.entity.Project">
+            <fetchPlan extends="_local"/>
+            <loader/>
+        </collection>
+    </data>
+    <facets>
+        <screenSettings id="facet" auto="true">
+            <components>
+                <component id="groupBox" enabled="false"/>
+            </components>
+        </screenSettings>
+    </facets>
+    <layout spacing="true">
+        <groupBox id="groupBox" collapsable="true" collapsed="true"/>
+        <groupTable id="projectsTable"
+                    width="100%"
+                    dataContainer="projectsDc">
+            <columns>
+                <column id="name"/>
+                <column id="description"/>
+                <column id="budget"/>
+                <column id="startDate"/>
+                <column id="active"/>
+            </columns>
+        </groupTable>
+    </layout>
+</window>

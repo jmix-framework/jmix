@@ -31,10 +31,10 @@ public interface UiMinimalRole {
 
     String CODE = "flowui-minimal";
 
-    @ViewPolicy(viewIds = "main")
+    @ViewPolicy(viewIds = "MainView")
     void main();
 
-    @ViewPolicy(viewIds = "login")
+    @ViewPolicy(viewIds = "LoginView")
     @SpecificPolicy(resources = "flowui.loginToUi")
     void login();
 

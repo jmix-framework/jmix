@@ -18,7 +18,7 @@
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_blank.svg"
           order="0"
-          name="Blank view (FlowUI)">
+          name="Blank view">
     <description>
         <![CDATA[<html>Blank view not associated with an entity.</html>]]>
     </description>

@@ -17,14 +17,14 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_browse.svg"
-          name="Entity list view (FlowUI)"
+          name="Entity list view"
           order="10">
     <tags>
         <tag>ENTITY</tag>
         <tag>JPA</tag>
     </tags>
     <description>
-        <![CDATA[<html>Entity list view with a table consuming all available space.</html>]]>
+        <![CDATA[<html>Entity list view. Displays a list of entities in the DataGrid component.</html>]]>
     </description>
     <locMessages key="viewTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.title">
         <message lang="default">

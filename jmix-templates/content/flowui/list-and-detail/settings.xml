@@ -24,7 +24,7 @@
         <tag>JPA</tag>
     </tags>
     <description>
-        <![CDATA[<html>Standard list and detail views created at once.</html>]]>
+        <![CDATA[<html>Entity list and detail views created at once.</html>]]>
     </description>
     <locMessages key="viewTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.title">
         <message lang="default">

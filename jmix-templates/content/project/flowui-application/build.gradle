@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '1.3.0-M3'
+    id 'io.jmix' version '1.4.0-M1'
     id 'java'
     id 'com.vaadin' version '23.1.7'
 }
@@ -25,6 +25,7 @@ dependencies {
     implementation 'io.jmix.data:jmix-eclipselink-starter'
     implementation 'io.jmix.security:jmix-security-flowui-starter'
     implementation 'io.jmix.security:jmix-security-data-starter'
+    implementation 'io.jmix.localfs:jmix-localfs-starter'
     implementation 'io.jmix.flowui:jmix-flowui-starter'
     implementation 'io.jmix.flowui:jmix-flowui-themes'
 

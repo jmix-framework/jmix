@@ -17,16 +17,14 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_editor.svg"
-          name="Entity detail view (FlowUI)"
+          name="Entity detail view"
           order="20">
     <tags>
         <tag>ENTITY</tag>
         <tag>JPA</tag>
     </tags>
     <description>
-        <![CDATA[<html>Entity detail view with a form and window action buttons: <i>OK</i> and <i>Cancel</i>.
-<br>Select <b>Extended window actions</b> checkbox to create a detail that can be saved without closing the view.
-It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html>]]>
+        <![CDATA[<html>Entity detail view with a form and action buttons: <i>OK</i> and <i>Cancel</i>.</html>]]>
     </description>
     <locMessages key="detailTitle" expressionKey="${studioUtils.decapitalize(detailControllerName)}.title">
         <message lang="default">

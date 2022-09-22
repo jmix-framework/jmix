@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.kit.component.grid;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 
@@ -51,7 +50,7 @@ public class GridMenuItemActionSupport {
         this.action = action;
 
         if (action != null) {
-            menuItem.setText(generateTitle(action));
+            menuItem.setText(action.getText());
             menuItem.setEnabled(action.isEnabled());
             menuItem.setVisible(action.isVisible());
 
@@ -80,8 +79,7 @@ public class GridMenuItemActionSupport {
             String propertyName = event.getPropertyName();
             switch (propertyName) {
                 case Action.PROP_TEXT:
-                case Action.PROP_SHORTCUT_COMBINATION:
-                    menuItem.setText(generateTitle(action));
+                    menuItem.setText(action.getText());
                     break;
                 case Action.PROP_ENABLED:
                     menuItem.setEnabled(action.isEnabled());
@@ -92,23 +90,5 @@ public class GridMenuItemActionSupport {
                 default:
             }
         });
-    }
-
-    @Nullable
-    protected String generateTitle(Action action) {
-        String text = action.getText();
-        String shortcutCombination = action.getShortcutCombination() != null
-                ? action.getShortcutCombination().format()
-                : null;
-
-        if (!Strings.isNullOrEmpty(text)) {
-            return Strings.isNullOrEmpty(shortcutCombination)
-                    ? text
-                    : String.format("%s (%s)", text, shortcutCombination);
-        } else if (!Strings.isNullOrEmpty(shortcutCombination)) {
-            return shortcutCombination;
-        } else {
-            return null;
-        }
     }
 }

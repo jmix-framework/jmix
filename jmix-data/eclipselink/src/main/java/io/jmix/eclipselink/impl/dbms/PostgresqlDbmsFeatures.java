@@ -41,7 +41,7 @@ public class PostgresqlDbmsFeatures implements DbmsFeatures {
     @Nullable
     @Override
     public String getUuidTypeClassName() {
-        return "com.haulmont.cuba.core.sys.persistence.PostgresUUID";
+        return "io.jmix.data.impl.dbms.PostgresUUID";
     }
 
     @Nullable

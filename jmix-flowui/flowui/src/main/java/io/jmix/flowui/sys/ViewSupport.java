@@ -89,11 +89,13 @@ public class ViewSupport {
             loadWindowFromXml(element, view, componentLoaderContext);
         }
 
+        // Pre InitTasks must be executed before DependencyManager
+        // invocation to have precedence over @Subscribe methods
+        componentLoaderContext.executePreInitTasks();
+
         ViewControllerDependencyManager dependencyManager =
                 applicationContext.getBean(ViewControllerDependencyManager.class);
         dependencyManager.inject(view);
-
-        componentLoaderContext.executePreInitTasks();
 
         fireViewInitEvent(view);
 

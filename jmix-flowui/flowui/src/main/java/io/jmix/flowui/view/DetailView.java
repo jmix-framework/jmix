@@ -18,6 +18,7 @@ public interface DetailView<E> extends ChangeTracker {
 
     /**
      * @return currently edited entity instance
+     * @throws IllegalStateException if entity isn't initialized yet
      */
     E getEditedEntity();
 

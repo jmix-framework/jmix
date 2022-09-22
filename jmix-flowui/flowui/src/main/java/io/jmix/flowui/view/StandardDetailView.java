@@ -438,8 +438,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     @Override
     public T getEditedEntity() {
-        T editedEntity = getEditedEntityContainer().getItemOrNull();
-        return editedEntity != null ? editedEntity : entityToEdit;
+        T item = getEditedEntityContainer().getItemOrNull();
+        if (item == null && entityToEdit == null) {
+            throw new IllegalStateException("Edited entity isn't initialized yet");
+        }
+
+        return item != null ? item : entityToEdit;
     }
 
     @Override

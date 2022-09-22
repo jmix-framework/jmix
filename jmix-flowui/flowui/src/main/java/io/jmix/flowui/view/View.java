@@ -55,7 +55,7 @@ public class View<T extends Component> extends Composite<T>
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        fireEvent(new AfterShowEvent(this));
+        fireEvent(new ReadyEvent(this));
     }
 
     @Override
@@ -189,8 +189,8 @@ public class View<T extends Component> extends Composite<T>
         return getEventBus().addListener(BeforeShowEvent.class, listener);
     }
 
-    protected Registration addAfterShowListener(ComponentEventListener<AfterShowEvent> listener) {
-        return getEventBus().addListener(AfterShowEvent.class, listener);
+    protected Registration addReadyListener(ComponentEventListener<ReadyEvent> listener) {
+        return getEventBus().addListener(ReadyEvent.class, listener);
     }
 
     protected Registration addBeforeCloseListener(ComponentEventListener<BeforeCloseEvent> listener) {
@@ -218,9 +218,9 @@ public class View<T extends Component> extends Composite<T>
     }
 
     //    @TriggerOnce
-    public static class AfterShowEvent extends ComponentEvent<View<?>> {
+    public static class ReadyEvent extends ComponentEvent<View<?>> {
 
-        public AfterShowEvent(View<?> source) {
+        public ReadyEvent(View<?> source) {
             super(source, false);
         }
     }

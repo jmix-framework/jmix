@@ -2762,7 +2762,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="Init"/>
             <xs:enumeration value="BeforeShow"/>
-            <xs:enumeration value="AfterShow"/>
+            <xs:enumeration value="Ready"/>
         </xs:restriction>
     </xs:simpleType>
 

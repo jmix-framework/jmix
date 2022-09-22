@@ -125,8 +125,8 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
             case "BeforeShow":
                 eventClass = View.BeforeShowEvent.class;
                 break;
-            case "AfterShow":
-                eventClass = View.AfterShowEvent.class;
+            case "Ready":
+                eventClass = View.ReadyEvent.class;
                 break;
             default:
                 throw new GuiDevelopmentException("Unsupported 'dataLoadCoordinator/refresh/onViewEvent.event' " +

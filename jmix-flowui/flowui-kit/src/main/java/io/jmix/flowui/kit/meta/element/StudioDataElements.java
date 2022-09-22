@@ -155,7 +155,7 @@ public interface StudioDataElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/onViewEventLoadTrigger.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
-                            options = {"Init", "BeforeShow", "AfterShow"}, required = true)
+                            options = {"Init", "BeforeShow", "Ready"}, required = true)
             }
     )
     void onViewEventLoadTrigger();

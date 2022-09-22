@@ -20,7 +20,7 @@ import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.view.View.AfterShowEvent;
+import io.jmix.flowui.view.View.ReadyEvent;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -178,7 +178,7 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
 
     protected void onDialogOpenedChanged(OpenedChangeEvent<Dialog> openedChangeEvent) {
         if (openedChangeEvent.isOpened()) {
-            fireViewAfterShowEvent(view);
+            fireViewReadyEvent(view);
 
             AfterOpenEvent<S> event = new AfterOpenEvent<>(this);
             publish(AfterOpenEvent.class, event);
@@ -190,12 +190,12 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         publish(AfterCloseEvent.class, event);
     }
 
-    protected void fireViewBeforeShowEvent(View view) {
+    protected void fireViewBeforeShowEvent(View<?> view) {
         ViewControllerUtils.fireEvent(view, new BeforeShowEvent(view));
     }
 
-    protected void fireViewAfterShowEvent(View view) {
-        ViewControllerUtils.fireEvent(view, new AfterShowEvent(view));
+    protected void fireViewReadyEvent(View<?> view) {
+        ViewControllerUtils.fireEvent(view, new ReadyEvent(view));
     }
 
     protected void onDialogCloseAction(Dialog.DialogCloseActionEvent event) {

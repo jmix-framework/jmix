@@ -57,7 +57,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     public StandardDetailView() {
         addBeforeShowListener(this::onBeforeShow);
-        addAfterShowListener(this::onAfterShow);
+        addReadyListener(this::onReady);
         addBeforeCloseListener(this::onBeforeClose);
     }
 
@@ -65,7 +65,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         setupEntityToEdit();
     }
 
-    private void onAfterShow(AfterShowEvent afterShowEvent) {
+    private void onReady(ReadyEvent event) {
         setupModifiedTracking();
         setupLock(); // todo rp move to onBeforeShow?
     }

@@ -30,7 +30,7 @@ public final class ViewControllerDefinition {
         this(id, controllerClass, null);
     }
 
-    public ViewControllerDefinition(String id, String controllerClassName, Resource resource) {
+    public ViewControllerDefinition(String id, String controllerClassName, @Nullable Resource resource) {
         this.id = id;
         this.controllerClassName = controllerClassName;
         this.resource = resource;

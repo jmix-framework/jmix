@@ -14,10 +14,13 @@ public class PropertyShortcutCombinationLoader {
     protected static final Map<String, Function<FlowuiComponentProperties, String>> COMPONENTS_SHORTCUT_ALIASES =
             ImmutableMap.<String, Function<FlowuiComponentProperties, String>>builder()
                     .put("GRID_CREATE_SHORTCUT", FlowuiComponentProperties::getGridCreateShortcut)
-                    /*.put("GRID_ADD_SHORTCUT", FlowUiComponentProperties::getGridAddShortcut)*/
+                    .put("GRID_ADD_SHORTCUT", FlowuiComponentProperties::getGridAddShortcut)
                     .put("GRID_EDIT_SHORTCUT", FlowuiComponentProperties::getGridEditShortcut)
+                    .put("GRID_READ_SHORTCUT", FlowuiComponentProperties::getGridReadShortcut)
                     .put("GRID_REMOVE_SHORTCUT", FlowuiComponentProperties::getGridRemoveShortcut)
-                    /*.put("GRID_VIEW_SHORTCUT", FlowUiComponentProperties::getGridViewShortcut)*/
+                    .put("PICKER_LOOKUP_SHORTCUT", FlowuiComponentProperties::getPickerLookupShortcut)
+                    .put("PICKER_OPEN_SHORTCUT", FlowuiComponentProperties::getPickerOpenShortcut)
+                    .put("PICKER_CLEAR_SHORTCUT", FlowuiComponentProperties::getPickerClearShortcut)
                     .build();
 
     protected static final Map<String, Function<FlowuiViewProperties, String>> VIEWS_SHORTCUT_ALIASES =

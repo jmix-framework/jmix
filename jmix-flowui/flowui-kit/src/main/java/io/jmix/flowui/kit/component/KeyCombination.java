@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.component;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import org.apache.commons.lang3.ArrayUtils;
@@ -57,7 +58,12 @@ public class KeyCombination {
      * @param keyString string of type "Modifiers-Key", e.g. "Alt-N". Case-insensitive.
      * @return new instance
      */
-    public static KeyCombination create(String keyString) {
+    @Nullable
+    public static KeyCombination create(@Nullable String keyString) {
+        if (Strings.isNullOrEmpty(keyString)) {
+            return null;
+        }
+
         keyString = keyString.toUpperCase();
 
         Key key;

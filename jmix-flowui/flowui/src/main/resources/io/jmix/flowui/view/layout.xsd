@@ -1089,16 +1089,16 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="${GRID_CREATE_SHORTCUT}"/>
-                    <xs:enumeration value="${GRID_EDIT_SHORTCUT}"/>
-                    <xs:enumeration value="${GRID_REMOVE_SHORTCUT}"/>
                     <xs:enumeration value="${COMMIT_SHORTCUT}"/>
                     <xs:enumeration value="${CLOSE_SHORTCUT}"/>
-                    <!--                    <xs:enumeration value="${NEXT_TAB_SHORTCUT}"/>-->
-                    <!--                    <xs:enumeration value="${PREVIOUS_TAB_SHORTCUT}"/>-->
-                    <!--                    <xs:enumeration value="${PICKER_LOOKUP_SHORTCUT}"/>-->
-                    <!--                    <xs:enumeration value="${PICKER_OPEN_SHORTCUT}"/>-->
-                    <!--                    <xs:enumeration value="${PICKER_CLEAR_SHORTCUT}"/>-->
+                    <xs:enumeration value="${GRID_CREATE_SHORTCUT}"/>
+                    <xs:enumeration value="${GRID_ADD_SHORTCUT}"/>
+                    <xs:enumeration value="${GRID_EDIT_SHORTCUT}"/>
+                    <xs:enumeration value="${GRID_READ_SHORTCUT}"/>
+                    <xs:enumeration value="${GRID_REMOVE_SHORTCUT}"/>
+                    <xs:enumeration value="${PICKER_LOOKUP_SHORTCUT}"/>
+                    <xs:enumeration value="${PICKER_OPEN_SHORTCUT}"/>
+                    <xs:enumeration value="${PICKER_CLEAR_SHORTCUT}"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

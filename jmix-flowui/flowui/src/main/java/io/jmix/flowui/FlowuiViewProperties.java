@@ -54,8 +54,8 @@ public class FlowuiViewProperties {
     boolean reloadUnfetchedAttributesFromLookupViews;
 
     public FlowuiViewProperties(
-            @DefaultValue("ESCAPE") String closeShortcut,
-            @DefaultValue("CONTROL-ENTER") String commitShortcut,
+            String closeShortcut,
+            String commitShortcut,
             @DefaultValue("true") boolean createActionAddsFirst,
             @DefaultValue("true") boolean useSaveConfirmation,
             @DefaultValue("DEFAULT") String validationNotificationType,

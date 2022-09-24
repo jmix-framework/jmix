@@ -141,4 +141,46 @@ class EntityStatesTest extends DataSpec {
         committedLineA.product == null
         committedLineB.product == null
     }
+
+    def "test getCurrentFetchPlan for new entity with reference"() {
+        given:
+
+        Group group = dataManager.create(Group)
+        group.name = randomName('group')
+        group = dataManager.save(group)
+
+        User user = dataManager.create(User)
+        user.name = "user"
+        user.login = randomName('login')
+        user.group = group
+        user = dataManager.save(user)
+
+        def order = dataManager.create(Order)
+        order.number = '1'
+        order.user = user
+
+        when:
+        def fetchPlan = entityStates.getCurrentFetchPlan(order)
+
+        then:
+        fetchPlan.containsProperty('number')
+        fetchPlan.containsProperty('date') // regardless of null
+
+        // customer is a reference and null, so it's not in FP. Will be lazily loaded if needed.
+        !fetchPlan.containsProperty('customer')
+
+        // user is set, so it's in FP
+        fetchPlan.containsProperty('user')
+        fetchPlan.getProperty('user').fetchPlan.containsProperty('name')
+        fetchPlan.getProperty('user').fetchPlan.containsProperty('firstName') // regardless of null
+        fetchPlan.getProperty('user').fetchPlan.containsProperty('group')
+        fetchPlan.getProperty('user').fetchPlan.getProperty('group').fetchPlan.containsProperty('name')
+
+        // orderLines is null, so it's not in FP. Will be lazily loaded if needed.
+        !fetchPlan.containsProperty('orderLines')
+
+        cleanup:
+        dataManager.remove(Id.of(user))
+        dataManager.remove(Id.of(group))
+    }
 }

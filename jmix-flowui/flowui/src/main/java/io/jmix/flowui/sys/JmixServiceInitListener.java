@@ -2,6 +2,7 @@ package io.jmix.flowui.sys;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.InternalServerError;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.internal.ErrorTargetEntry;
 import com.vaadin.flow.server.*;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
@@ -49,6 +50,7 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         // should be defined only in one configuration as Spring cannot register bean with
         // the same name, see VaadinScanPackagesRegistrar#registerBeanDefinitions().
         // Register routes after route application scope is available.
+        viewRegistry.setRouteConfiguration(RouteConfiguration.forApplicationScope());
         viewRegistry.registerViewRoutes();
 
         registerInternalServiceError();

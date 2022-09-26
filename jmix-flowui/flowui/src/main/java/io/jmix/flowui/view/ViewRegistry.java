@@ -64,6 +64,8 @@ public class ViewRegistry implements ApplicationContextAware {
 
     protected volatile boolean initialized;
 
+    protected RouteConfiguration routeConfiguration;
+
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Autowired
@@ -447,7 +449,7 @@ public class ViewRegistry implements ApplicationContextAware {
             return;
         }
 
-        RouteConfiguration routeConfiguration = RouteConfiguration.forApplicationScope();
+        RouteConfiguration routeConfiguration = getRouteConfiguration();
         if (routeConfiguration.isRouteRegistered(controllerClass)) {
             log.debug("Skipping route '{}' for class '{}' since it was already registered",
                     route.value(), controllerClass.getName());
@@ -486,5 +488,17 @@ public class ViewRegistry implements ApplicationContextAware {
         }
 
         return Collections.emptyList();
+    }
+
+    public RouteConfiguration getRouteConfiguration() {
+        if (routeConfiguration == null) {
+            throw new IllegalStateException(RouteConfiguration.class.getSimpleName() + " isn't initialized");
+        }
+
+        return routeConfiguration;
+    }
+
+    public void setRouteConfiguration(RouteConfiguration routeConfiguration) {
+        this.routeConfiguration = routeConfiguration;
     }
 }

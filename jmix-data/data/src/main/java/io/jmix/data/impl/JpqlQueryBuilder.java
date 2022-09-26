@@ -220,7 +220,9 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
     protected void applyFiltering() {
         if (condition != null) {
             Set<String> nonNullParamNames = queryParameters.entrySet().stream()
-                    .filter(e -> e.getValue() != null)
+                    .filter(e ->
+                            e.getValue() != null &&
+                                    !(e.getValue() instanceof TemporalValue && ((TemporalValue) e.getValue()).date == null))
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toSet());
 

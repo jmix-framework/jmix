@@ -582,7 +582,7 @@ public class FluentLoader<E> {
          * @param name  parameter name
          * @param value parameter value
          */
-        public ByQuery<E> parameter(String name, Object value) {
+        public ByQuery<E> parameter(String name, @Nullable Object value) {
             parameters.put(name, value);
             return this;
         }
@@ -594,7 +594,7 @@ public class FluentLoader<E> {
          * @param value        parameter value
          * @param temporalType how to interpret the value
          */
-        public ByQuery<E> parameter(String name, Date value, TemporalType temporalType) {
+        public ByQuery<E> parameter(String name, @Nullable Date value, TemporalType temporalType) {
             parameters.put(name, new TemporalValue(value, temporalType));
             return this;
         }
@@ -815,7 +815,7 @@ public class FluentLoader<E> {
          * @param name  parameter name
          * @param value parameter value
          */
-        public ByCondition<E> parameter(String name, Object value) {
+        public ByCondition<E> parameter(String name, @Nullable Object value) {
             parameters.put(name, value);
             return this;
         }
@@ -827,7 +827,7 @@ public class FluentLoader<E> {
          * @param value        parameter value
          * @param temporalType how to interpret the value
          */
-        public ByCondition<E> parameter(String name, Date value, TemporalType temporalType) {
+        public ByCondition<E> parameter(String name, @Nullable Date value, TemporalType temporalType) {
             parameters.put(name, new TemporalValue(value, temporalType));
             return this;
         }

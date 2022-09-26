@@ -307,10 +307,14 @@ public class DialogsImpl implements Dialogs {
                                           Action action, Button button) {
             if (action == firstCommitAction) {
                 KeyCombination commitShortcut = KeyCombination.create(flowUiViewProperties.getCommitShortcut());
-                button.addClickShortcut(commitShortcut.getKey(), commitShortcut.getKeyModifiers());
+                if (commitShortcut != null) {
+                    button.addClickShortcut(commitShortcut.getKey(), commitShortcut.getKeyModifiers());
+                }
             } else if (action == firstDeclineAction) {
                 KeyCombination closeShortcut = KeyCombination.create(flowUiViewProperties.getCloseShortcut());
-                button.addClickShortcut(closeShortcut.getKey(), closeShortcut.getKeyModifiers());
+                if (closeShortcut != null) {
+                    button.addClickShortcut(closeShortcut.getKey(), closeShortcut.getKeyModifiers());
+                }
             }
         }
 
@@ -355,7 +359,9 @@ public class DialogsImpl implements Dialogs {
             okButton = createButton(okAction, dialog);
 
             KeyCombination commitShortcut = KeyCombination.create(flowUiViewProperties.getCommitShortcut());
-            okButton.addClickShortcut(commitShortcut.getKey(), commitShortcut.getKeyModifiers());
+            if (commitShortcut != null) {
+                okButton.addClickShortcut(commitShortcut.getKey(), commitShortcut.getKeyModifiers());
+            }
 
             dialog.getFooter().add(okButton);
         }

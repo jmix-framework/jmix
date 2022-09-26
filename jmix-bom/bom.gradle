@@ -68,7 +68,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:2.7.2")
+    api platform("org.springframework.boot:spring-boot-dependencies:2.7.4")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -286,6 +286,7 @@ dependencies {
         api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix'
         api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.9'
         api 'org.glassfish:javax.el:3.0.1-b12'
+        api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.1'
 
         api 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
         api 'org.glassfish.jaxb:jaxb-runtime:2.3.6'

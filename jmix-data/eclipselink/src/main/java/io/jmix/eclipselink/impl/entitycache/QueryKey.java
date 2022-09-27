@@ -29,18 +29,28 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class QueryKey implements Serializable {
-    protected final String originalQueryString;
+
     protected final String queryString;
     protected final int firstRow;
     protected final int maxRows;
     protected final boolean softDeletion;
     protected final boolean singleResult;
-    protected final Map<String, Object> originalNamedParameters;
-    protected final Map<String, Object> namedParameters;
-    protected final Map<String, Object> additionalCriteriaParameters;
+    /**
+     * Named parameters with names replaced by {@code normalized_param_{i}} string, where i - order in query string
+     */
+    protected final Object[] normalizedParameters;
     protected final Object[] positionalParameters;
-
+    protected final Object[] additionalCriteriaParameters;
     protected final int hashCode;
+
+    //transient attributes
+    /**
+     * !!!WARNING!!!
+     * DO NOT USE COLLECTIONS IN KEYS WITH HAZELCAST.
+     * At least HashMap serialized/deserialized by hazelcast in undetermined way which leads to inability to get value by valid key.
+     */
+    protected final transient String originalQueryString;
+    protected final transient Map<String, Object> originalNamedParameters;
     protected final transient UUID id;
 
     protected static final Pattern PARAMETER_TEMPLATE_PATTERN = Pattern.compile("(:[\\w_$]+)");
@@ -103,15 +113,15 @@ public class QueryKey implements Serializable {
 
         this.originalNamedParameters = namedParameters;
         if (this.originalNamedParameters != null) {
-            this.namedParameters = new LinkedHashMap<>(originalNamedParameters);
+            this.normalizedParameters = new Object[originalNamedParameters.size()];
             StringBuffer queryBuilder = new StringBuffer();
             int i = 0;
             Matcher m = PARAMETER_TEMPLATE_PATTERN.matcher(originalQueryString);
             while (m.find()) {
                 String parameterName = m.group().substring(1);
                 String newParameterName = "normalized_param_" + i;
-                this.namedParameters.remove(parameterName);
-                this.namedParameters.put(newParameterName, originalNamedParameters.get(parameterName));
+
+                this.normalizedParameters[i] = originalNamedParameters.get(parameterName);
                 m.appendReplacement(queryBuilder, String.format(":%s", newParameterName));
                 i++;
             }
@@ -119,10 +129,21 @@ public class QueryKey implements Serializable {
             this.queryString = queryBuilder.toString();
         } else {
             this.queryString = this.originalQueryString;
-            this.namedParameters = null;
+            this.normalizedParameters = null;
         }
 
-        this.additionalCriteriaParameters = additionalCriteriaParameters;
+        if (additionalCriteriaParameters.size() > 0) {
+            this.additionalCriteriaParameters = new Object[additionalCriteriaParameters.size() * 2];
+
+            List<String> sortedParams = additionalCriteriaParameters.keySet().stream().sorted().collect(Collectors.toList());
+
+            for (int i = 0; i < sortedParams.size(); i++) {
+                this.additionalCriteriaParameters[i * 2] = sortedParams.get(i);
+                this.additionalCriteriaParameters[i * 2 + 1] = additionalCriteriaParameters.get(sortedParams.get(i));
+            }
+        } else {
+            this.additionalCriteriaParameters = null;
+        }
 
         this.positionalParameters = positionalParameters;
 
@@ -141,8 +162,8 @@ public class QueryKey implements Serializable {
                 .add("maxRows", maxRows)
                 .add("softDeletion", softDeletion)
                 .add("positionalParameters", Arrays.deepToString(positionalParameters))
-                .add("namedParameters", namedParameters)
-                .add("additionalCriteriaParameters", additionalCriteriaParameters)
+                .add("normalizedParameters", Arrays.deepToString(normalizedParameters))
+                .add("additionalCriteriaParameters", Arrays.deepToString(additionalCriteriaParameters))
                 .toString();
     }
 
@@ -166,8 +187,8 @@ public class QueryKey implements Serializable {
 
     protected boolean equalsParams(QueryKey queryKey) {
         return Arrays.deepEquals(positionalParameters, queryKey.positionalParameters)
-                && mapEquals(namedParameters, queryKey.namedParameters)
-                && mapEquals(additionalCriteriaParameters, queryKey.additionalCriteriaParameters);
+                && Arrays.deepEquals(normalizedParameters, queryKey.normalizedParameters)
+                && Arrays.deepEquals(additionalCriteriaParameters, queryKey.additionalCriteriaParameters);
     }
 
 
@@ -186,8 +207,8 @@ public class QueryKey implements Serializable {
         //generates hashCode for value in same way as org.eclipse.persistence.internal.identitymaps.CacheId.computeArrayHashCode()
         result = 31 * result + (positionalParameters == null ? 0 : Arrays.deepHashCode(positionalParameters));
 
-        result = 31 * result + (namedParameters == null ? 0 : generateMapHashCode(namedParameters));
-        result = 31 * result + (additionalCriteriaParameters == null ? 0 : generateMapHashCode(additionalCriteriaParameters));
+        result = 31 * result + (normalizedParameters == null ? 0 : Arrays.deepHashCode(normalizedParameters));
+        result = 31 * result + (additionalCriteriaParameters == null ? 0 : Arrays.deepHashCode(additionalCriteriaParameters));
         return result;
     }
 

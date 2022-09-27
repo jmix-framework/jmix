@@ -300,30 +300,35 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         return loaderSupport.loadString(element, "shortcutCombination")
                 .map(shortcutCombination -> {
                     if (shortcutCombination.startsWith("${") && shortcutCombination.endsWith("}")) {
-                        String fqnShortcutCombination = loadShortcutCombinationFromFQNConfig(shortcutCombination);
-                        if (fqnShortcutCombination != null) {
-                            return fqnShortcutCombination;
+                        if (isShortcutCombinationFQN(shortcutCombination)) {
+                            return loadShortcutCombinationFromFQNConfig(shortcutCombination);
                         }
 
-                        String configShortcutCombination = loadShortcutCombinationFromConfig(shortcutCombination);
-                        if (configShortcutCombination != null) {
-                            return configShortcutCombination;
+                        if (isShortcutCombinationConfig(shortcutCombination)) {
+                            return loadShortcutCombinationFromConfig(shortcutCombination);
                         }
 
-                        String aliasShortcutCombination = loadShortcutCombinationFromAlias(shortcutCombination);
-                        if (aliasShortcutCombination != null) {
-                            return aliasShortcutCombination;
+                        if (isShortcutCombinationAlias(shortcutCombination)) {
+                            return loadShortcutCombinationFromAlias(shortcutCombination);
                         }
+
+                        String message = String.format("An error occurred while loading shortcutCombination. " +
+                                "Can't find shortcutCombination for code \"%s\"", shortcutCombination);
+                        throw new GuiDevelopmentException(message, context);
                     }
 
                     return shortcutCombination;
                 });
     }
 
+    protected boolean isShortcutCombinationFQN(String shortcutCombination) {
+        return shortcutCombination.contains("#");
+    }
+
     @Nullable
-    protected String loadShortcutCombinationFromFQNConfig(String shortcut) {
-        if (shortcut.contains("#")) {
-            String[] splittedShortcut = shortcut.split("#");
+    protected String loadShortcutCombinationFromFQNConfig(String shortcutCombination) {
+        if (isShortcutCombinationFQN(shortcutCombination)) {
+            String[] splittedShortcut = shortcutCombination.split("#");
             if (splittedShortcut.length != 2) {
                 String message = "An error occurred while loading shortcut: incorrect format of shortcut.";
                 throw new GuiDevelopmentException(message, context);
@@ -361,9 +366,13 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         return null;
     }
 
+    protected boolean isShortcutCombinationConfig(String shortcutCombination) {
+        return shortcutCombination.contains(".");
+    }
+
     @Nullable
     protected String loadShortcutCombinationFromConfig(String shortcutCombination) {
-        if (shortcutCombination.contains(".")) {
+        if (isShortcutCombinationConfig(shortcutCombination)) {
             String shortcutPropertyKey = shortcutCombination.substring(2, shortcutCombination.length() - 1);
             String shortcutValue = environment.getProperty(shortcutPropertyKey);
             if (StringUtils.isNotEmpty(shortcutValue)) {
@@ -376,9 +385,13 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         return null;
     }
 
+    protected boolean isShortcutCombinationAlias(String shortcutCombination) {
+        return shortcutCombination.endsWith("_SHORTCUT}");
+    }
+
     @Nullable
     protected String loadShortcutCombinationFromAlias(String shortcutCombination) {
-        if (shortcutCombination.endsWith("_SHORTCUT}")) {
+        if (isShortcutCombinationAlias(shortcutCombination)) {
             PropertyShortcutCombinationLoader propertyShortcutLoader = applicationContext.getBean(PropertyShortcutCombinationLoader.class);
 
             String alias = shortcutCombination.substring(2, shortcutCombination.length() - 1);

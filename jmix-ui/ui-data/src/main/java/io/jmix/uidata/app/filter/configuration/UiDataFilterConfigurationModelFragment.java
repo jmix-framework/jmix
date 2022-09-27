@@ -27,13 +27,7 @@ import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.UiComponentProperties;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.ScreenFragment;
-import io.jmix.ui.screen.StandardOutcome;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.Target;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
 import io.jmix.uidata.accesscontext.UiFilterModifyGlobalConfigurationContext;
 import io.jmix.uidata.entity.FilterConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
@@ -133,6 +127,15 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
         boolean isAvailableForAll = StringUtils.isEmpty(configurationDc.getItem().getUsername());
         availableForAllField.setValue(isAvailableForAll);
         defaultForAllField.setEnabled(isAvailableForAll);
+
+        updateHostScreenReadOnlyState(allowGlobalFilters, isAvailableForAll);
+    }
+
+    protected void updateHostScreenReadOnlyState(boolean allowGlobalFilters, boolean isAvailableForAll) {
+        if (isAvailableForAll && !allowGlobalFilters
+                && getHostScreen() instanceof ReadOnlyAwareScreen) {
+            ((ReadOnlyAwareScreen) getHostScreen()).setReadOnly(true);
+        }
     }
 
     protected void initThirdConfigurationFormRow() {

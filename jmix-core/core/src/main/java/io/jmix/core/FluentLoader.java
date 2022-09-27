@@ -614,7 +614,7 @@ public class FluentLoader<E> {
          * @param temporalType how to interpret the value
          */
         public ByQuery<E> parameter(String name, @Nullable Date value, TemporalType temporalType) {
-            parameters.put(name, new TemporalValue(value, temporalType));
+            parameters.put(name, value != null ? new TemporalValue(value, temporalType) : null);
             return this;
         }
 
@@ -855,7 +855,7 @@ public class FluentLoader<E> {
          * @param temporalType how to interpret the value
          */
         public ByCondition<E> parameter(String name, @Nullable Date value, TemporalType temporalType) {
-            parameters.put(name, new TemporalValue(value, temporalType));
+            parameters.put(name, value != null ? new TemporalValue(value, temporalType) : null);
             return this;
         }
 

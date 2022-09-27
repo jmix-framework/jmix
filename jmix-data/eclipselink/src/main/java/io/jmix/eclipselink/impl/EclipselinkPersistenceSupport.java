@@ -492,9 +492,6 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
 
             if (!readOnly) {
                 traverseEntities(container, new OnSaveEntityVisitor(container.getTransactionManagerKey()), false);
-                for (String storeName : container.getStores()) {
-                    fireFlush(storeName);
-                }
             }
 
             Collection<Object> instances = container.getAllInstances();
@@ -548,6 +545,11 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                 }
 
                 publishEntityChangedEvents(collectedEvents);
+
+                for (String storeName : container.getStores()) {
+                    fireFlush(storeName);
+                }
+                detachAll();
             } else {
                 detachAll();
             }

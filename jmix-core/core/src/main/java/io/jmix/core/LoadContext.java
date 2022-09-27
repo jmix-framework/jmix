@@ -24,6 +24,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 
 import javax.annotation.Nullable;
+import javax.persistence.LockModeType;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
@@ -60,6 +61,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     protected boolean joinTransaction = true;
 
     protected Map<String, Serializable> hints; // lazy initialized map
+    protected LockModeType lockMode;
 
     /**
      * @param metaClass metaclass of the loaded entities
@@ -97,7 +99,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     }
 
     /**
-     * @param queryString JPQL query string. Only named parameters are supported.
+     * @param queryString query string. Only named parameters are supported.
      * @return query definition object
      */
     @Override
@@ -105,6 +107,23 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         final Query query = new Query(queryString);
         setQuery(query);
         return query;
+    }
+
+    /**
+     * @param lockMode lock mode to be used when executing query
+     */
+    @Override
+    public void setLockMode(LockModeType lockMode) {
+        this.lockMode = lockMode;
+    }
+
+    /**
+     * @return lock mode to be used when executing query
+     */
+    @Override
+    @Nullable
+    public LockModeType getLockMode() {
+        return lockMode;
     }
 
     /**
@@ -280,6 +299,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         }
         ctx.accessConstraints.addAll(accessConstraints);
         ctx.joinTransaction = joinTransaction;
+        ctx.lockMode = lockMode;
         return ctx;
     }
 

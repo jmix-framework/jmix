@@ -21,6 +21,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.LockModeType;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
@@ -153,6 +154,12 @@ public class FluentValuesLoader extends AbstractFluentValueLoader {
     @Override
     public FluentValuesLoader maxResults(int maxResults) {
         super.maxResults(maxResults);
+        return this;
+    }
+
+    @Override
+    public FluentValuesLoader lockMode(LockModeType lockMode) {
+        super.lockMode(lockMode);
         return this;
     }
 }

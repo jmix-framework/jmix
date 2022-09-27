@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
+import javax.persistence.LockModeType;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
@@ -51,6 +52,7 @@ public class FluentLoader<E> {
     private FetchPlanBuilder fetchPlanBuilder;
     private Map<String, Serializable> hints = new HashMap<>();
     private Collection<AccessConstraint<?>> accessConstraints = new ArrayList<>(0);
+    private LockModeType lockMode;
 
     @Autowired
     private Metadata metadata;
@@ -114,6 +116,7 @@ public class FluentLoader<E> {
 
         loadContext.setHints(hints);
         loadContext.setAccessConstraints(accessConstraints);
+        loadContext.setLockMode(lockMode);
     }
 
     protected void createFetchPlanBuilder() {
@@ -299,6 +302,14 @@ public class FluentLoader<E> {
             loader.joinTransaction = join;
             return this;
         }
+
+        /**
+         * Sets a lock mode to be used when executing query.
+         */
+        public ById<E> lockMode(LockModeType lockMode) {
+            loader.lockMode = lockMode;
+            return this;
+        }
     }
 
     public static class ByIds<E> {
@@ -417,6 +428,14 @@ public class FluentLoader<E> {
          */
         public ByIds<E> joinTransaction(boolean join) {
             loader.joinTransaction = join;
+            return this;
+        }
+
+        /**
+         * Sets a lock mode to be used when executing query.
+         */
+        public ByIds<E> lockMode(LockModeType lockMode) {
+            loader.lockMode = lockMode;
             return this;
         }
     }
@@ -663,6 +682,14 @@ public class FluentLoader<E> {
             loader.joinTransaction = join;
             return this;
         }
+
+        /**
+         * Sets a lock mode to be used when executing query.
+         */
+        public ByQuery<E> lockMode(LockModeType lockMode) {
+            loader.lockMode = lockMode;
+            return this;
+        }
     }
 
     public static class ByCondition<E> {
@@ -894,6 +921,14 @@ public class FluentLoader<E> {
          */
         public ByCondition<E> joinTransaction(boolean join) {
             loader.joinTransaction = join;
+            return this;
+        }
+
+        /**
+         * Sets a lock mode to be used when executing query.
+         */
+        public ByCondition<E> lockMode(LockModeType lockMode) {
+            loader.lockMode = lockMode;
             return this;
         }
     }

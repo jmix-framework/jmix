@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,6 +66,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
     protected int queryKey;
 
     protected boolean countQuery;
+    protected LockModeType lockMode;
 
     protected String resultQuery;
     protected Map<String, Object> resultParameters;
@@ -145,6 +147,11 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         return this;
     }
 
+    public JpqlQueryBuilder setLockMode(@Nullable LockModeType lockMode) {
+        this.lockMode = lockMode;
+        return this;
+    }
+
     public String getResultQueryString() {
         if (resultQuery == null) {
             buildResultQuery();
@@ -183,6 +190,10 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                 if (entry.getValue() != null)
                     throw new DevelopmentException(String.format("Parameter '%s' is not used in the query", name));
             }
+        }
+
+        if (lockMode != null) {
+            query.setLockMode(lockMode);
         }
 
         return query;

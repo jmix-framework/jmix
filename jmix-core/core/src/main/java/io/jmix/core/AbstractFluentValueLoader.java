@@ -18,6 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.constraint.AccessConstraint;
 
+import javax.persistence.LockModeType;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
@@ -35,6 +36,7 @@ class AbstractFluentValueLoader {
     private List<AccessConstraint<?>> accessConstraints;
     private int firstResult;
     private int maxResults;
+    private LockModeType lockMode;
 
     AbstractFluentValueLoader(String queryString) {
         this.queryString = queryString;
@@ -65,6 +67,7 @@ class AbstractFluentValueLoader {
         loadContext.setAccessConstraints(accessConstraints);
 
         loadContext.setJoinTransaction(joinTransaction);
+        loadContext.setLockMode(lockMode);
 
         return loadContext;
     }
@@ -168,6 +171,14 @@ class AbstractFluentValueLoader {
      */
     public AbstractFluentValueLoader maxResults(int maxResults) {
         this.maxResults = maxResults;
+        return this;
+    }
+
+    /**
+     * Sets a lock mode to be used when executing query.
+     */
+    public AbstractFluentValueLoader lockMode(LockModeType lockMode) {
+        this.lockMode = lockMode;
         return this;
     }
 

@@ -21,6 +21,7 @@ import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.querycondition.Condition;
 
 import javax.annotation.Nullable;
+import javax.persistence.LockModeType;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
@@ -46,6 +47,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
     protected List<AccessConstraint<?>> accessConstraints;
     protected Map<String, Serializable> hints; // lazy initialized map
     protected boolean joinTransaction;
+    protected LockModeType lockMode;
 
     /**
      * Creates an instance of ValueLoadContext
@@ -69,6 +71,23 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
     public Query setQueryString(String queryString) {
         query = new Query(queryString);
         return query;
+    }
+
+    /**
+     * @param lockMode lock mode to be used when executing query
+     */
+    @Override
+    public void setLockMode(LockModeType lockMode) {
+        this.lockMode = lockMode;
+    }
+
+    /**
+     * @return lock mode to be used when executing query
+     */
+    @Override
+    @Nullable
+    public LockModeType getLockMode() {
+        return lockMode;
     }
 
     /**

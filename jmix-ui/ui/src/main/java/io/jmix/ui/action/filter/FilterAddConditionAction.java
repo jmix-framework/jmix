@@ -19,6 +19,7 @@ package io.jmix.ui.action.filter;
 import io.jmix.core.Messages;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.app.filter.condition.AddConditionScreen;
 import io.jmix.ui.component.Filter;
@@ -46,7 +47,7 @@ import java.util.function.Predicate;
 
 @StudioAction(target = "io.jmix.ui.component.Filter", description = "Adds condition to current filter configuration")
 @ActionType(FilterAddConditionAction.ID)
-public class FilterAddConditionAction extends FilterAction {
+public class FilterAddConditionAction extends FilterAction implements Action.AdjustWhenScreenReadOnly {
 
     public static final String ID = "filter_addCondition";
 

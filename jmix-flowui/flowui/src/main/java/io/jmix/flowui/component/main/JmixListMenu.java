@@ -60,7 +60,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     }
 
     protected void initComponent() {
-        getContent().addClassNames(JMIX_LIST_MENU_STYLE_NAME, LIST_NONE_STYLE_NAME);
+        getContent().addClassNames(JMIX_LIST_MENU_CLASS_NAME, LIST_NONE_CLASS_NAME);
     }
 
     /**

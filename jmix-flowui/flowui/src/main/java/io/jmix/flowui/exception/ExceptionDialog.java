@@ -31,11 +31,11 @@ import java.util.Map;
 
 public class ExceptionDialog implements InitializingBean {
 
-    protected static final String BASE_STYLE_NAME = "jmix-exception-dialog-window";
-    protected static final String DIALOG_CONTENT_STYLE_NAME = BASE_STYLE_NAME + "-content";
-    protected static final String HEADER_CLOSE_BUTTON_STYLE_NAME = BASE_STYLE_NAME + "-close-button";
-    protected static final String STACKTRACE_TEXTAREA_STYLE_NAME = BASE_STYLE_NAME + "-stacktrace-textarea";
-    protected static final String MESSAGE_TEXTAREA_STYLE_NAME = BASE_STYLE_NAME + "-message-textarea";
+    protected static final String BASE_CLASS_NAME = "jmix-exception-dialog-window";
+    protected static final String DIALOG_CONTENT_CLASS_NAME = BASE_CLASS_NAME + "-content";
+    protected static final String HEADER_CLOSE_BUTTON_CLASS_NAME = BASE_CLASS_NAME + "-close-button";
+    protected static final String STACKTRACE_TEXTAREA_CLASS_NAME = BASE_CLASS_NAME + "-stacktrace-textarea";
+    protected static final String MESSAGE_TEXTAREA_CLASS_NAME = BASE_CLASS_NAME + "-message-textarea";
 
     protected static final String WIDTH = "40em";
     protected static final String EXPANDED_WIDTH = "45em";
@@ -132,7 +132,7 @@ public class ExceptionDialog implements InitializingBean {
                 ButtonVariant.LUMO_ICON,
                 ButtonVariant.LUMO_CONTRAST
         );
-        closeButton.setClassName(HEADER_CLOSE_BUTTON_STYLE_NAME);
+        closeButton.setClassName(HEADER_CLOSE_BUTTON_CLASS_NAME);
         closeButton.setTitle(messages.getMessage("exceptionDialog.header.closeButton.description"));
         closeButton.addClickListener(this::onHeaderCloseButtonClick);
         return closeButton;
@@ -147,7 +147,7 @@ public class ExceptionDialog implements InitializingBean {
 
         layout.setWidthFull();
         layout.setHeightFull();
-        layout.setClassName(DIALOG_CONTENT_STYLE_NAME);
+        layout.setClassName(DIALOG_CONTENT_CLASS_NAME);
 
         Element messageTextArea = createMessageTextArea(getMessage(throwable));
 
@@ -163,7 +163,7 @@ public class ExceptionDialog implements InitializingBean {
 
     protected Element createMessageTextArea(String message) {
         Element textarea = ElementFactory.createTextarea();
-        textarea.getClassList().add(MESSAGE_TEXTAREA_STYLE_NAME);
+        textarea.getClassList().add(MESSAGE_TEXTAREA_CLASS_NAME);
         textarea.setAttribute("readonly", "");
         textarea.setProperty("value", message);
         return textarea;
@@ -261,7 +261,7 @@ public class ExceptionDialog implements InitializingBean {
     protected Element createStackTraceTextArea(String stackTrace) {
         Element textarea = ElementFactory.createTextarea();
 
-        textarea.getClassList().add(STACKTRACE_TEXTAREA_STYLE_NAME);
+        textarea.getClassList().add(STACKTRACE_TEXTAREA_CLASS_NAME);
         textarea.setAttribute("readonly", "");
         textarea.setProperty("value", stackTrace);
         textarea.setProperty("wrap", "off");

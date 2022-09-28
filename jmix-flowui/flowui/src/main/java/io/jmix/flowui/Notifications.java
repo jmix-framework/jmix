@@ -82,15 +82,15 @@ public class Notifications {
 
     public static class NotificationBuilder {
 
-        protected static final String CLOSEABLE_LAYOUT_STYLE_NAME = "jmix-closeable-layout";
-        protected static final String CLOSE_BUTTON_STYLE_NAME = "close-button";
+        protected static final String CLOSEABLE_LAYOUT_CLASS_NAME = "jmix-closeable-layout";
+        protected static final String CLOSE_BUTTON_CLASS_NAME = "close-button";
 
-        protected static final String TEXT_LAYOUT_STYLE_NAME = "jmix-text-layout";
-        protected static final String TITLE_STYLE_NAME = "title";
-        protected static final String MESSAGE_STYLE_NAME = "message";
+        protected static final String TEXT_LAYOUT_CLASS_NAME = "jmix-text-layout";
+        protected static final String TITLE_CLASS_NAME = "title";
+        protected static final String MESSAGE_CLASS_NAME = "message";
 
-        protected static final String TEXT_CONTENT_STYLE_NAME = "text-content";
-        protected static final String COMPONENT_CONTENT_STYLE_NAME = "component-content";
+        protected static final String TEXT_CONTENT_CLASS_NAME = "text-content";
+        protected static final String COMPONENT_CONTENT_CLASS_NAME = "component-content";
 
         protected static final String WARNING_THEME_NAME = "warning";
 
@@ -270,8 +270,8 @@ public class Notifications {
             if (closeableLayout != null) {
                 closeableLayout.addComponentAsFirst(content);
                 closeableLayout.getElement().getClassList().add(content instanceof Text
-                        ? TEXT_CONTENT_STYLE_NAME
-                        : COMPONENT_CONTENT_STYLE_NAME);
+                        ? TEXT_CONTENT_CLASS_NAME
+                        : COMPONENT_CONTENT_CLASS_NAME);
                 return (Component) closeableLayout;
             }
             return content;
@@ -279,34 +279,34 @@ public class Notifications {
 
         protected HasComponents createTextLayout() {
             Div div = new Div();
-            div.setClassName(TEXT_LAYOUT_STYLE_NAME);
+            div.setClassName(TEXT_LAYOUT_CLASS_NAME);
             return div;
         }
 
         protected Component createTitleComponent(String title) {
             H4 titleElement = new H4();
             titleElement.setText(title);
-            titleElement.setClassName(TITLE_STYLE_NAME);
+            titleElement.setClassName(TITLE_CLASS_NAME);
             return titleElement;
         }
 
         protected Component createMessageComponent(String message) {
             Paragraph messageElement = new Paragraph();
-            messageElement.setClassName(MESSAGE_STYLE_NAME);
+            messageElement.setClassName(MESSAGE_CLASS_NAME);
             messageElement.setText(message);
             return messageElement;
         }
 
         protected HasComponents createCloseableLayout() {
             Div div = new Div();
-            div.setClassName(CLOSEABLE_LAYOUT_STYLE_NAME);
+            div.setClassName(CLOSEABLE_LAYOUT_CLASS_NAME);
             div.add(createCloseButton());
             return div;
         }
 
         protected Button createCloseButton() {
             Button button = new Button();
-            button.setClassName(CLOSE_BUTTON_STYLE_NAME);
+            button.setClassName(CLOSE_BUTTON_CLASS_NAME);
             button.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
             button.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
             button.addClickListener(this::onCloseButtonClick);

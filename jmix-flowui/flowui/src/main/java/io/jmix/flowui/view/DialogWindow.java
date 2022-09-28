@@ -35,7 +35,7 @@ import java.util.function.Consumer;
 public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasStyle,
         ApplicationContextAware, InitializingBean {
 
-    protected static final String BASE_STYLE_NAME = "jmix-dialog-window";
+    protected static final String BASE_CLASS_NAME = "jmix-dialog-window";
 
     protected Dialog dialog;
     protected S view;
@@ -124,7 +124,7 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
                 ButtonVariant.LUMO_ICON,
                 ButtonVariant.LUMO_CONTRAST
         );
-        closeButton.setClassName(BASE_STYLE_NAME + "-close-button");
+        closeButton.setClassName(BASE_CLASS_NAME + "-close-button");
         closeButton.setTitle(messages().getMessage("dialogWindow.closeButton.description"));
         closeButton.addClickListener(this::onCloseButtonClicked);
         return closeButton;
@@ -137,7 +137,7 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
     protected Component createViewWrapper(S view) {
         Scroller scroller = new Scroller(view);
         scroller.setHeightFull();
-        scroller.setClassName(BASE_STYLE_NAME + "-view-wrapper");
+        scroller.setClassName(BASE_CLASS_NAME + "-view-wrapper");
         return scroller;
     }
 

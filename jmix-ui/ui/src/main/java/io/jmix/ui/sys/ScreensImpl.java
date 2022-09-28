@@ -227,7 +227,11 @@ public class ScreensImpl implements Screens {
         componentLoaderContext.executeInitTasks();
         componentLoaderContext.executePostInitTasks();
 
+        Timer.Sample afterInitSample = Timer.start(meterRegistry);
+
         fireScreenAfterInitEvent(controller, AfterInitEvent.class, new AfterInitEvent(controller, options));
+
+        afterInitSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.AFTER_INIT, windowInfo.getId()));
 
         return controller;
     }
@@ -347,10 +351,6 @@ public class ScreensImpl implements Screens {
             showTooManyOpenTabsMessage();
             return OperationResult.fail();
         }
-
-        Timer.Sample uiPermissionsSample = Timer.start(meterRegistry);
-
-        uiPermissionsSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.UI_PERMISSIONS, screen.getId()));
 
         Timer.Sample beforeShowSample = Timer.start(meterRegistry);
 

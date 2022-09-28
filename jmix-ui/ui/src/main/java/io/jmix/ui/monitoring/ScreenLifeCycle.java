@@ -19,11 +19,12 @@ package io.jmix.ui.monitoring;
 public enum ScreenLifeCycle {
     CREATE("create"),
     LOAD("load"),
-    XML("xml"),
+    @Deprecated XML("xml"), // not used
     INIT("init"),
-    BEFORE_SHOW("afterShow"),
+    AFTER_INIT("afterInit"),
+    BEFORE_SHOW("beforeShow"),
     AFTER_SHOW("afterShow"),
-    UI_PERMISSIONS("uiPermissions"),
+    @Deprecated UI_PERMISSIONS("uiPermissions"), // not used
     INJECTION("inject");
 
     private String name;

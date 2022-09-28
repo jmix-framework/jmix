@@ -82,7 +82,7 @@ public class Scheduling implements SchedulingAPI {
     protected volatile long schedulingStartTime;
 
     @Override
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 1000, initialDelay = 5000)//workaround for jmix-framework/jmix#1045
     public void processScheduledTasks() {
         if (AppContext.isStarted()) {
             processScheduledTasks(true);

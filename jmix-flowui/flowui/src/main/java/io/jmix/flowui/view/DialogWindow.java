@@ -91,6 +91,13 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         dialog.add(wrapper);
     }
 
+    protected void postInitDialog(Dialog dialog) {
+        String title = view.getPageTitle();
+
+        dialog.setHeaderTitle(title);
+        dialog.getElement().setAttribute("aria-label", title);
+    }
+
     protected void applyDialogModeSettings(S view) {
         DialogMode dialogMode = view.getClass().getAnnotation(DialogMode.class);
         if (dialogMode != null) {
@@ -161,6 +168,10 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
 
     public void open() {
         fireViewBeforeShowEvent(view);
+        // In case of dynamic title, we can obtain it after
+        // all possible dependant properties are set
+        postInitDialog(dialog);
+
         dialog.open();
     }
 

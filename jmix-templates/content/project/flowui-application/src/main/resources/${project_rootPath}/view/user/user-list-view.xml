@@ -36,6 +36,8 @@
                 <action id="edit" type="edit"/>
                 <action id="remove" type="remove"/>
                 <action id="showRoleAssignments" type="showRoleAssignments"/>
+                <action id="changePassword" type="changePassword"/>
+                <action id="resetPassword" type="resetPassword"/>
             </actions>
             <columns>
                 <column property="username"/>

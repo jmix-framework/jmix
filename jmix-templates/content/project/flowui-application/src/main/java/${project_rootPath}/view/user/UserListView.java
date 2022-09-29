@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.action.ChangePasswordAction;
 import io.jmix.securityflowui.action.ResetPasswordAction;
@@ -46,7 +47,7 @@ public class UserListView extends StandardListView<User> {
         Action resetPasswordAction = usersTable.getAction(ResetPasswordAction.ID);
 
         MenuItem item = additionActionMenuBar.addItem(VaadinIcon.COG.create());
-        item.add(messageBundle.getMessage("additionalMenuBar"));
+        item.add(messageBundle.getMessage("additionalMenu"));
 
         SubMenu subMenu = item.getSubMenu();
 

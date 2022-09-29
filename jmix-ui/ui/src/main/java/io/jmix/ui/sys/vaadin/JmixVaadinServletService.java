@@ -16,13 +16,16 @@
 
 package io.jmix.ui.sys.vaadin;
 
+import com.google.common.hash.HashCode;
 import com.vaadin.server.*;
 import com.vaadin.server.communication.*;
 import com.vaadin.spring.server.SpringVaadinServletService;
+import com.vaadin.ui.Component;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import io.jmix.core.Messages;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.ui.App;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.UiThemeProperties;
@@ -43,10 +46,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import static com.google.common.hash.Hashing.murmur3_128;
 
 public class JmixVaadinServletService extends SpringVaadinServletService
         implements AtmospherePushConnection.UidlWriterFactory {
@@ -58,7 +65,6 @@ public class JmixVaadinServletService extends SpringVaadinServletService
     protected UiProperties uiProperties;
     protected UiThemeProperties uiThemeProperties;
 
-    protected boolean testMode;
     protected boolean performanceTestMode;
 
     protected ApplicationContext applicationContext;
@@ -76,7 +82,6 @@ public class JmixVaadinServletService extends SpringVaadinServletService
         this.serviceUrl = serviceUrl;
 
         uiProperties = applicationContext.getBean(UiProperties.class);
-        testMode = uiProperties.isTestMode();
         performanceTestMode = uiProperties.isPerformanceTestMode();
 
         uiThemeProperties = applicationContext.getBean(UiThemeProperties.class);
@@ -200,6 +205,39 @@ public class JmixVaadinServletService extends SpringVaadinServletService
         }
 
         return Collections.emptyList();
+    }
+
+    @Override
+    public String generateConnectorId(VaadinSession session, ClientConnector connector) {
+        return performanceTestMode
+                ? generateTestConnectorId(session, connector)
+                : super.generateConnectorId(session, connector);
+    }
+
+    protected String generateTestConnectorId(VaadinSession session, ClientConnector connector) {
+        if (!(connector instanceof Component)) {
+            return super.generateConnectorId(session, connector);
+        }
+
+        Component component = (Component) connector;
+        String id = component.getId() == null
+                ? super.generateConnectorId(session, connector)
+                : component.getId();
+
+        return toLongNumberString(id);
+    }
+
+    protected String toLongNumberString(String data) {
+        HashCode hashCode = murmur3_128().hashString(data, StandardCharsets.UTF_8);
+        byte[] hashBytes = hashCode.asBytes();
+        byte[] shortBytes = new byte[Long.BYTES];
+
+        System.arraycopy(hashBytes, 0, shortBytes, 0, Long.BYTES);
+
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.put(shortBytes);
+        buffer.flip();
+        return Long.toString(Math.abs(buffer.getLong()));
     }
 
     /**

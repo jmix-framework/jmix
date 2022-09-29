@@ -30,7 +30,18 @@ import java.util.Map;
 @ConstructorBinding
 public class UiProperties {
 
+    /**
+     * Enables automatic tests for UI. If {@code true} components add {@code j-test-id} attribute to DOM tree.
+     */
     boolean testMode;
+
+    /**
+     * Enables performance testing for UI:
+     * <ul>
+     *     <li>disables {@code xsrf-protection}</li>
+     *     <li>Vaadin generates the same ids for component connectors.</li>
+     * </ul>
+     */
     boolean performanceTestMode;
 
     /**
@@ -180,10 +191,16 @@ public class UiProperties {
         this.mainTabCaptionLength = mainTabCaptionLength;
     }
 
+    /**
+     * @see #testMode
+     */
     public boolean isTestMode() {
         return testMode;
     }
 
+    /**
+     * @see #performanceTestMode
+     */
     public boolean isPerformanceTestMode() {
         return performanceTestMode;
     }

@@ -14,7 +14,9 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.view.ViewAttributes;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -88,6 +90,13 @@ public class FlowuiTestConfiguration {
     @Bean
     public ServletContextInitializer contextInitializer(ApplicationContext applicationContext) {
         return new VaadinServletContextInitializer(applicationContext);
+    }
+
+    @Bean
+    @Primary
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public ViewAttributes testViewAttributes(String viewId) {
+        return new TestViewAttributes(viewId);
     }
 
     @EnableWebSecurity

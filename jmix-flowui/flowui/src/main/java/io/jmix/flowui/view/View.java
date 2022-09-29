@@ -89,6 +89,7 @@ public class View<T extends Component> extends Composite<T>
         super.onDetach(detachEvent);
 
         removeApplicationListeners();
+        removeViewAttributes();
         unregisterBackNavigation();
     }
 
@@ -98,6 +99,10 @@ public class View<T extends Component> extends Composite<T>
 
     private void removeApplicationListeners() {
         getApplicationContext().getBean(UiEventsManager.class).removeApplicationListeners(this);
+    }
+
+    private void removeViewAttributes() {
+        getViewAttributes().removeAllAttributes();
     }
 
     public OperationResult closeWithDefaultAction() {
@@ -122,6 +127,7 @@ public class View<T extends Component> extends Composite<T>
         closeDelegate.accept(this);
 
         removeApplicationListeners();
+        removeViewAttributes();
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
         fireEvent(afterCloseEvent);
@@ -159,6 +165,11 @@ public class View<T extends Component> extends Composite<T>
 
     protected void setViewFacets(ViewFacets viewFacets) {
         this.viewFacets = viewFacets;
+    }
+
+    protected ViewAttributes getViewAttributes() {
+        String viewId = getId().orElseThrow(() -> new IllegalStateException("View should have an id"));
+        return getApplicationContext().getBean(ViewAttributes.class, viewId);
     }
 
     @Override

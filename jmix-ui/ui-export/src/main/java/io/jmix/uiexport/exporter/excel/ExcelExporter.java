@@ -286,7 +286,9 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         createFonts();
         createFormats();
 
-        List<DataGrid.Column<Object>> columns = dataGrid.getColumns();
+        List<DataGrid.Column<Object>> columns = dataGrid.getVisibleColumns().stream()
+                .filter(col -> !col.isCollapsed())
+                .collect(Collectors.toList());
 
         int r = 0;
 

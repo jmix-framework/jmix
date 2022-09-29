@@ -16,36 +16,34 @@
 
 package io.jmix.eclipselink.impl.dbms;
 
+import org.eclipse.persistence.mappings.DatabaseMapping;
 import org.eclipse.persistence.mappings.converters.Converter;
-import org.eclipse.persistence.platform.database.HSQLPlatform;
+import org.eclipse.persistence.sessions.Session;
 
-import java.sql.Types;
+public class UuidUuidConverter implements Converter {
 
-public class JmixHSQLPlatform extends HSQLPlatform implements UuidMappingInfo {
-    @Override
-    public boolean supportsNestingOuterJoins() {
-        //nested joins supports in hsqldb from version 1.9
-        //https://sourceforge.net/p/hsqldb/feature-requests/206/
-        return true;
+    private final static UuidUuidConverter INSTANCE = new UuidUuidConverter();
+
+    public static UuidUuidConverter getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public int getUuidSqlType() {
-        return Types.VARCHAR;
+    public Object convertObjectValueToDataValue(Object objectValue, Session session) {
+        return objectValue;
     }
 
     @Override
-    public Class<?> getUuidType() {
-        return String.class;
+    public Object convertDataValueToObjectValue(Object dataValue, Session session) {
+        return dataValue;
     }
 
     @Override
-    public String getUuidColumnDefinition() {
-        return "varchar(36)";
+    public boolean isMutable() {
+        return false;
     }
 
     @Override
-    public Converter getUuidConverter() {
-        return String36UuidConverter.getInstance();
+    public void initialize(DatabaseMapping mapping, Session session) {
     }
 }

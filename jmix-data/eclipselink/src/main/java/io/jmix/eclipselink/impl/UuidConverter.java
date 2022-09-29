@@ -25,6 +25,10 @@ import org.eclipse.persistence.platform.database.PostgreSQLPlatform;
 import org.eclipse.persistence.platform.database.SQLServerPlatform;
 import org.eclipse.persistence.sessions.Session;
 
+/**
+ * Replaced with converters obtained through {@link io.jmix.eclipselink.impl.dbms.UuidMappingInfo}.
+ */
+@Deprecated
 public class UuidConverter implements Converter {
 
     private final static UuidConverter INSTANCE = new UuidConverter();

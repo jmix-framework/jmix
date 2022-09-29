@@ -436,9 +436,11 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     @Internal
     public void setTopLevelWindow(@Nullable RootWindow window) {
         if (this.topLevelWindow != window) {
-            this.topLevelWindow = window;
-
             if (window != null) {
+                removePreviousTopLevelWindowConnector();
+
+                this.topLevelWindow = window;
+
                 setContent(topLevelWindow.unwrapComposition(Component.class));
             } else {
                 setContent(null);
@@ -448,6 +450,14 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     public TestIdManager getTestIdManager() {
         return testIdManager;
+    }
+
+    protected void removePreviousTopLevelWindowConnector() {
+        if (isPerformanceTestMode()
+                && topLevelWindow != null
+                && uiProperties.getMainScreenId().equals(topLevelWindow.getId())) {
+            getConnectorTracker().cleanConnectorMap(true);
+        }
     }
 
     /**

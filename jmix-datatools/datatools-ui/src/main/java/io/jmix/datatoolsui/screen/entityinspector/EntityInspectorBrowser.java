@@ -550,6 +550,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                     break;
                 case ASSOCIATION:
                 case COMPOSITION:
+                case EMBEDDED:
                     FetchPlan local = fetchPlanRepository.getFetchPlan(metaProperty.getRange().asClass(), FetchPlan.LOCAL);
                     fetchPlanBuilder.add(metaProperty.getName(), local.getName());
                     break;

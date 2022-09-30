@@ -82,7 +82,7 @@ public class TestInMemoryDataStore implements DataStore {
         Set<Object> result = new HashSet<>();
 
         for (Object entity : context.getEntitiesToSave()) {
-            String metaClassName = metadata.getClass(entity.getClass()).getName();
+            String metaClassName = metadata.getClass(entity).getName();
             Map<Object, Object> instances = entities.get(metaClassName);
             if (instances == null) {
                 instances = new ConcurrentHashMap<>();
@@ -92,7 +92,7 @@ public class TestInMemoryDataStore implements DataStore {
             result.add(entity);
         }
         for (Object entity : context.getEntitiesToRemove()) {
-            String metaClassName = metadata.getClass(entity.getClass()).getName();
+            String metaClassName = metadata.getClass(entity).getName();
             Map<Object, Object> instances = entities.get(metaClassName);
             if (instances != null) {
                 instances.remove(EntityValues.getId(entity));

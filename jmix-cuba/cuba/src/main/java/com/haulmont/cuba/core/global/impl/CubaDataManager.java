@@ -157,7 +157,7 @@ public class CubaDataManager implements DataManager {
     @Override
     public <E extends Entity> E commit(E entity, @Nullable String fetchPlanName) {
         if (fetchPlanName != null) {
-            FetchPlan view = fetchPlanRepository.getFetchPlan(metadata.getClass(entity.getClass()), fetchPlanName);
+            FetchPlan view = fetchPlanRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName);
             return commit(entity, view);
         } else {
             return commit(entity, (FetchPlan) null);

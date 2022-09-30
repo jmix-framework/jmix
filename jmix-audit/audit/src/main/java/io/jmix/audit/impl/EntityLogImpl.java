@@ -358,7 +358,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
     }
 
     protected String getEntityName(Object entity) {
-        MetaClass metaClass = metadata.getSession().getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         return extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
     }
 
@@ -688,7 +688,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
             return null;
         }
         Set<String> attributes = new HashSet<>();
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             Range range = metaProperty.getRange();
             if (range.isClass() && range.getCardinality().isMany()) {

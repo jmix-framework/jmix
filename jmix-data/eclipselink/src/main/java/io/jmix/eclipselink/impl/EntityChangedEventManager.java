@@ -293,7 +293,7 @@ public class EntityChangedEventManager {
     @SuppressWarnings("unchecked")
     private AttributeChanges.Builder getEntityAttributeChanges(Object entity, boolean deleted) {
         AttributeChanges.Builder builder = AttributeChanges.Builder.create();
-        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (!property.isReadOnly()) {
                 Object value = EntityValues.getValue(entity, property.getName());
                 if (deleted) {

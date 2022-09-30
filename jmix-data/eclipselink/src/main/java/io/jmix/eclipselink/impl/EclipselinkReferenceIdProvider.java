@@ -61,7 +61,7 @@ public class EclipselinkReferenceIdProvider implements ReferenceIdProvider {
 
     @Override
     public RefId getReferenceId(Object entity, String property) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         MetaProperty metaProperty = metaClass.getProperty(property);
 
         if (!metaProperty.getRange().isClass() || metaProperty.getRange().getCardinality().isMany())

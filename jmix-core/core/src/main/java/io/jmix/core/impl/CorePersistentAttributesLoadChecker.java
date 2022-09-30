@@ -53,7 +53,7 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
             KeyValueEntity keyValue = (KeyValueEntity) entity;
             return keyValue.getInstanceMetaClass() != null && keyValue.getInstanceMetaClass().findProperty(property) != null;
         }
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
 
         if (ObjectPathUtils.isSpecialPath(property)) {
             return metadataTools.isAdditionalProperty(metaClass, property);

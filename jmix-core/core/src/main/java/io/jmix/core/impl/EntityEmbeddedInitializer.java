@@ -35,7 +35,7 @@ public class EntityEmbeddedInitializer implements EntityInitializer, Ordered {
 
     @Override
     public void initEntity(Object entity) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         for (MetaProperty property : metaClass.getProperties()) {
             if (property.getRange().isClass() && metadataTools.isEmbedded(property)) {
                 EmbeddedParameters embeddedParameters = property.getAnnotatedElement().getAnnotation(EmbeddedParameters.class);

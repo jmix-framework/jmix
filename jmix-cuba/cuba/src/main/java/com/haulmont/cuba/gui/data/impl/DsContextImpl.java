@@ -280,8 +280,8 @@ public class DsContextImpl implements DsContextImplementation {
 
     @SuppressWarnings("unchecked")
     protected void repairReferences(Entity entity, Entity contextEntity) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
-        MetaClass contextEntityMetaClass = metadata.getClass(contextEntity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
+        MetaClass contextEntityMetaClass = metadata.getClass(contextEntity);
 
         for (MetaProperty property : metaClass.getProperties()) {
             if (!property.getRange().isClass()

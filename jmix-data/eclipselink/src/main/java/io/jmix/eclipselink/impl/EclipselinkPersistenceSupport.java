@@ -250,7 +250,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
     protected boolean isDeleted(Object entity, AttributeChangeListener changeListener) {
         if (EntityValues.isSoftDeletionSupported(entity)) {
             //SoftDeletion may be disabled, so check it
-            EntityManager jmixEm = storeAwareLocator.getEntityManager(metadata.getClass(entity.getClass()).getStore().getName());
+            EntityManager jmixEm = storeAwareLocator.getEntityManager(metadata.getClass(entity).getStore().getName());
             if (PersistenceHints.isSoftDeletion(jmixEm)) {
                 ObjectChangeSet changeSet = changeListener.getObjectChangeSet();
                 return changeSet != null
@@ -513,7 +513,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                         if (fetchGroup != null && !(fetchGroup instanceof JmixEntityFetchGroup))
                             fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
                     }
-                    MetaClass metaClass = metadata.getClass(instance.getClass());
+                    MetaClass metaClass = metadata.getClass(instance);
                     if (getEntityEntry(instance).isNew()) {
                         typeNames.add(metaClass.getName());
                     }

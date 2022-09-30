@@ -48,7 +48,7 @@ public class EntityEventManager {
     }
 
     private MetaClass getOriginalMetaClass(Object entity) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         return extendedEntities.getOriginalOrThisMetaClass(metaClass);
     }
 }

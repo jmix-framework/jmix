@@ -60,7 +60,7 @@ public class EntityLoadInfoBuilder {
     public EntityLoadInfo create(Entity entity, @Nullable String viewName) {
         Objects.requireNonNull(entity, "entity is null");
 
-        MetaClass metaClass = metadata.getSession().getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
 
         MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
         boolean stringKey = primaryKeyProperty != null && primaryKeyProperty.getJavaType().equals(String.class);
@@ -195,7 +195,7 @@ public class EntityLoadInfoBuilder {
         Preconditions.checkNotNullArgument(collection, "collection is null");
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
 
         for (EntityLoadInfo info : collection) {
             if (metaClass.equals(info.getMetaClass()) && EntityValues.getId(entity).equals(info.getId()))

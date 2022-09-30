@@ -478,7 +478,7 @@ public abstract class AbstractDataStore implements DataStore {
 
     protected void copyNonPersistentAttributes(Object source, Object destination) {
         // copy non-persistent attributes to the resulting merged instance
-        for (MetaProperty property : metadata.getClass(source.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(source).getProperties()) {
             if (!metadataTools.isJpa(property) && !property.isReadOnly()) {
                 // copy using reflection to avoid executing getter/setter code
                 Field field = FieldUtils.getField(source.getClass(), property.getName(), true);

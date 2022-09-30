@@ -131,7 +131,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             Object value = (entry.getValue() instanceof Entity)
-                    ? String.format("%s-%s", metadata.getClass(entry.getValue().getClass()), Id.of((Entity) entry.getValue()).getValue())
+                    ? String.format("%s-%s", metadata.getClass(entry.getValue()), Id.of((Entity) entry.getValue()).getValue())
                     : entry.getValue();
             builder.append(String.format("key: %s, value: %s", entry.getKey(), value)).append("\n");
         }

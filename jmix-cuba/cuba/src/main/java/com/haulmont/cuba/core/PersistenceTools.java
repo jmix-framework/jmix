@@ -186,7 +186,7 @@ public class PersistenceTools {
             if (entity == null)
                 continue;
 
-            MetaClass metaClass = metadata.getClass(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity);
 
             String table = metadataTools.getDatabaseTable(metaClass);
             String primaryKey = metadataTools.getPrimaryKeyName(metaClass);

@@ -760,8 +760,8 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     protected boolean entityHasReference(Object entity, Object refEntity) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
-        MetaClass refMetaClass = metadata.getClass(refEntity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
+        MetaClass refMetaClass = metadata.getClass(refEntity);
 
         return metaClass.getProperties().stream()
                 .anyMatch(metaProperty -> metaProperty.getRange().isClass()
@@ -818,7 +818,7 @@ public class DataContextImpl implements DataContextInternal {
         }
         visited.add(entity);
 
-        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (!property.getRange().isClass() || !entityStates.isLoaded(entity, property.getName()))
                 continue;
             Object value = EntityValues.getValue(entity, property.getName());
@@ -850,7 +850,7 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     protected MetaClass getEntityMetaClass(Object entity) {
-        return metadata.getClass(entity.getClass());
+        return metadata.getClass(entity);
     }
 
     @Nullable

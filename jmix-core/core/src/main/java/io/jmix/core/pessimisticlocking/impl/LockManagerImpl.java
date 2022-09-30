@@ -156,7 +156,7 @@ public class LockManagerImpl implements LockManager {
     public LockInfo lock(Object entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
 
         return lock(originalMetaClass.getName(), EntityValues.getId(entity).toString());
@@ -173,7 +173,7 @@ public class LockManagerImpl implements LockManager {
     public void unlock(Object entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
 
         unlock(originalMetaClass.getName(), EntityValues.getId(entity).toString());

@@ -74,7 +74,7 @@ public class EntitySerializationTokenManager {
     @Nullable
     public String generateSecurityToken(Object entity) {
         EntityPreconditions.checkEntityType(entity);
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
 
         SecurityState securityState = EntitySystemAccess.getSecurityState(entity);
         JsonObject tokenObject = new JsonObject();
@@ -97,7 +97,7 @@ public class EntitySerializationTokenManager {
      * Decrypt security token and read filtered data
      */
     public void restoreSecurityToken(Object entity, @Nullable String securityToken) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         SecurityState securityState = EntitySystemAccess.getSecurityState(entity);
 
         if (securityToken != null) {

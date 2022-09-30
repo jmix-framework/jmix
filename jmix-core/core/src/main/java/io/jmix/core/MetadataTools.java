@@ -1031,8 +1031,8 @@ public class MetadataTools {
         EntityPreconditions.checkEntityType(source);
         EntityPreconditions.checkEntityType(dest);
 
-        MetaClass sourceMetaClass = metadata.getClass(source.getClass());
-        MetaClass destMetaClass = metadata.getClass(dest.getClass());
+        MetaClass sourceMetaClass = metadata.getClass(source);
+        MetaClass destMetaClass = metadata.getClass(dest);
         for (MetaProperty srcProperty : sourceMetaClass.getProperties()) {
             String name = srcProperty.getName();
             MetaProperty dstProperty = destMetaClass.findProperty(name);
@@ -1206,7 +1206,7 @@ public class MetadataTools {
             return;
         visited.add(entity);
 
-        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (visitor.skip(property))
                 continue;
 
@@ -1239,7 +1239,7 @@ public class MetadataTools {
         }
         fetchPlans.add(fetchPlan);
 
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
 
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());

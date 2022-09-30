@@ -104,7 +104,7 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
         EntityAttributesEraser.ReferencesCollector references = entityAttributesEraser.collectErasingReferences(entities,
                 entity -> {
                     InMemoryCrudEntityContext childCrudContext =
-                            new InMemoryCrudEntityContext(metadata.getClass(entity.getClass()), applicationContext);
+                            new InMemoryCrudEntityContext(metadata.getClass(entity), applicationContext);
                     accessManager.applyConstraints(childCrudContext, context.getAccessConstraints());
                     boolean readPermitted = childCrudContext.isReadPermitted(entity);
                     if (!readPermitted) {

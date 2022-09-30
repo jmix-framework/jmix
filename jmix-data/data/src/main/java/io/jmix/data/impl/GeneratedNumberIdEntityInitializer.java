@@ -44,7 +44,7 @@ public class GeneratedNumberIdEntityInitializer implements EntityInitializer, Or
 
     @Override
     public void initEntity(Object entity) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         if (!coreProperties.isIdGenerationForEntitiesInAdditionalDataStoresEnabled()
                 && !Stores.MAIN.equals(metaClass.getStore().getName())) {
             return;

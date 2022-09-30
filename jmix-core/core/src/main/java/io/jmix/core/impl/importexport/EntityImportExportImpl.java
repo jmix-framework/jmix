@@ -238,7 +238,7 @@ public class EntityImportExportImpl implements EntityImportExport {
             Object dstEntity = null;
             Object entityId = EntityValues.getId(srcEntity);
             if (entityId != null) {
-                LoadContext<?> ctx = new LoadContext<>(metadata.getClass(srcEntity.getClass()))
+                LoadContext<?> ctx = new LoadContext<>(metadata.getClass(srcEntity))
                         .setFetchPlan(fetchPlan)
                         .setHint("jmix.dynattr", true)
                         .setHint("jmix.softDeletion", false)
@@ -301,7 +301,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         EntityPreconditions.checkEntityType(srcEntity);
         FetchPlan fetchPlan = constructFetchPlanFromImportPlan(importPlan).build();
 
-        LoadContext<?> ctx = new LoadContext<>(metadata.getClass(srcEntity.getClass()))
+        LoadContext<?> ctx = new LoadContext<>(metadata.getClass(srcEntity))
                 .setFetchPlan(fetchPlan)
                 .setHint("jmix.dynattr", true)
                 .setHint("jmix.softDeletion", false)
@@ -751,7 +751,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                 .filter(item -> item.equals(entity))
                 .findFirst().orElse(null);
         if (result == null) {
-            LoadContext<?> ctx = new LoadContext<>(metadata.getClass(entity.getClass()))
+            LoadContext<?> ctx = new LoadContext<>(metadata.getClass(entity))
                     .setHint("jmix.softDeletion", false)
                     .setFetchPlan(fetchPlanRepository.getFetchPlan(metadata.getClass(entity).getJavaClass(), FetchPlan.INSTANCE_NAME))
                     .setId(EntityValues.getId(entity));
@@ -773,7 +773,7 @@ public class EntityImportExportImpl implements EntityImportExport {
             SecurityState securityState = EntitySystemAccess.getSecurityState(entity);
             if (securityState.getRestoreState() == SecurityState.RestoreState.RESTORED_FROM_NULL_TOKEN) {
 
-                MetaClass metaClass = metadata.getClass(entity.getClass());
+                MetaClass metaClass = metadata.getClass(entity);
                 for (MetaProperty metaProperty : metaClass.getProperties()) {
                     if (metaProperty.getRange().isClass() && metadataTools.isJpa(metaProperty)
                             && fetchPlan.containsProperty(metaProperty.getName())) {

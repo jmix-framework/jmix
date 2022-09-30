@@ -112,6 +112,11 @@ public class KeyValueEntity
         this.metaClass = metaClass;
     }
 
+    @Override
+    public boolean hasInstanceMetaClass() {
+        return metaClass != null;
+    }
+
     /**
      * @return name of a property that represents this entity id, if set by {@link #setIdName(String)}
      */

@@ -65,7 +65,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private void onBeforeShow(BeforeShowEvent event) {
         setupEntityToEdit();
-        setupLock();
+        setupLockHandler();
     }
 
     private void onReady(ReadyEvent event) {
@@ -488,6 +488,11 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     protected void initExistingEntity(String serializedEntityId) {
+        Object entityId = UrlIdSerializer.deserializeId(getSerializedIdType(), serializedEntityId);
+        getEditedEntityLoader().setEntityId(entityId);
+    }
+
+    private Class<?> getSerializedIdType() {
         MetaClass entityMetaClass = getEditedEntityContainer().getEntityMetaClass();
         MetaProperty primaryKeyProperty = getMetadataTools().getPrimaryKeyProperty(entityMetaClass);
         if (primaryKeyProperty == null) {
@@ -495,9 +500,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                     "Entity %s has no primary key", entityMetaClass.getName()));
         }
 
-        Class<?> idType = primaryKeyProperty.getJavaType();
-        Object entityId = UrlIdSerializer.deserializeId(idType, serializedEntityId);
-        getEditedEntityLoader().setEntityId(entityId);
+        return primaryKeyProperty.getJavaType();
     }
 
     protected void setupEntityToEdit(T entityToEdit) {
@@ -570,6 +573,38 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
         return false;
     }
+
+    private void setupLockHandler() {
+        getEditedEntityContainer().addItemChangeListener(this::itemChangeLockHandler);
+    }
+
+    private void itemChangeLockHandler(InstanceContainer.ItemChangeEvent<T> event) {
+        if (entityLockStatus == PessimisticLockStatus.LOCKED) {
+            return;
+        }
+        if (event.getItem() == null) {
+            return;
+        }
+
+        Object editedEntityId = null;
+
+        if (entityToEdit != null) {
+            editedEntityId = EntityValues.getId(entityToEdit);
+        } else if (serializedEntityIdToEdit != null) {
+            // Do not set up lock, if it's new instance
+            if (NEW_ENTITY_ID.equals(serializedEntityIdToEdit)) {
+                return;
+            }
+            editedEntityId = UrlIdSerializer.deserializeId(getSerializedIdType(), serializedEntityIdToEdit);
+        }
+
+        Object id = EntityValues.getId(event.getItem());
+        // If it's the same instance, set up lock
+        if (EntityValues.propertyValueEquals(id, editedEntityId)) {
+            setupLock();
+        }
+    }
+
 
     private void setupLock() {
         T editedEntity = getEditedEntity();

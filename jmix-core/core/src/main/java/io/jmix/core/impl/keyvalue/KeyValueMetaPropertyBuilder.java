@@ -32,6 +32,10 @@ import io.jmix.core.metamodel.model.impl.EnumerationRange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * DEPRECATED. Use {@link KeyValueMetaClassFactory} instead.
+ */
+@Deprecated
 @Component("core_KeyValueMetaPropertyBuilder")
 public class KeyValueMetaPropertyBuilder {
 
@@ -65,5 +69,15 @@ public class KeyValueMetaPropertyBuilder {
 
     public KeyValueMetaProperty build(MetaClass metaClass, String name, Datatype datatype) {
         return new KeyValueMetaProperty(metaClass, name, datatype.getJavaClass(), new DatatypeRange(datatype), MetaProperty.Type.DATATYPE);
+    }
+
+    public KeyValueMetaProperty build(MetaClass metaClass, String name, MetaClass propertyMetaClass) {
+        return new KeyValueMetaProperty(
+                metaClass,
+                name,
+                propertyMetaClass.getJavaClass(),
+                new ClassRange(propertyMetaClass),
+                MetaProperty.Type.ASSOCIATION
+        );
     }
 }

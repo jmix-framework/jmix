@@ -18,7 +18,7 @@ package io.jmix.ui.model.impl;
 
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
-import io.jmix.core.impl.keyvalue.KeyValueMetaPropertyBuilder;
+import io.jmix.core.impl.keyvalue.KeyValueMetaClassFactory;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.KeyValueCollectionContainer;
@@ -33,7 +33,7 @@ public class KeyValueCollectionContainerImpl
         extends CollectionContainerImpl<KeyValueEntity> implements KeyValueCollectionContainer {
 
     @Autowired
-    private KeyValueMetaPropertyBuilder keyValueMetaPropertyBuilder;
+    private KeyValueMetaClassFactory keyValueMetaClassFactory;
 
     private String idName;
 
@@ -59,20 +59,28 @@ public class KeyValueCollectionContainerImpl
 
     @Override
     public KeyValueContainer addProperty(String name) {
-        getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, String.class));
+        keyValueMetaClassFactory.configurer(getEntityMetaClass()).addProperty(name, String.class);
         return this;
     }
 
     @Override
     public KeyValueContainer addProperty(String name, Class aClass) {
-        getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, aClass));
+        keyValueMetaClassFactory.configurer(getEntityMetaClass()).addProperty(name, aClass);
         return this;
     }
 
     @Override
     public KeyValueContainer addProperty(String name, Datatype datatype) {
-        getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, datatype));
+        keyValueMetaClassFactory.configurer(getEntityMetaClass()).addProperty(name, datatype);
         return this;
+    }
+
+    @Override
+    public KeyValueEntity createEntity() {
+        KeyValueEntity entity = new KeyValueEntity();
+        entity.setIdName(idName);
+        entity.setInstanceMetaClass(entityMetaClass);
+        return entity;
     }
 
     @Override

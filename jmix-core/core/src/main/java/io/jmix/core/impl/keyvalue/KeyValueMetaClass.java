@@ -16,21 +16,28 @@
 
 package io.jmix.core.impl.keyvalue;
 
+import io.jmix.core.Stores;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.*;
 import io.jmix.core.metamodel.model.impl.MetadataObjectImpl;
+import org.springframework.beans.factory.BeanFactory;
 
 import javax.annotation.Nullable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.*;
 
 /**
  * MetaClass for {@link KeyValueEntity}.
  */
-public class KeyValueMetaClass extends MetadataObjectImpl implements MetaClass {
+public class KeyValueMetaClass extends MetadataObjectImpl implements MetaClass, Externalizable {
 
-    private Map<String, MetaProperty> properties = new LinkedHashMap<>();
+    private transient Map<String, MetaProperty> properties = new LinkedHashMap<>();
 
-    private Store store;
+    private transient Store store;
 
     public void addProperty(MetaProperty property) {
         properties.put(property.getName(), property);
@@ -129,6 +136,9 @@ public class KeyValueMetaClass extends MetadataObjectImpl implements MetaClass {
 
     public void setStore(Store store) {
         this.store = store;
+        for (MetaProperty metaProperty : properties.values()) {
+            ((KeyValueMetaProperty) metaProperty).setStore(store);
+        }
     }
 
     @Override
@@ -136,5 +146,49 @@ public class KeyValueMetaClass extends MetadataObjectImpl implements MetaClass {
         return "KeyValueMetaClass{" +
                 "properties=" + properties.keySet() +
                 '}';
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeUTF(name);
+        out.writeObject(annotations);
+
+        out.writeObject(store != null ? store.getName() : null);
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        for (Map.Entry<String, MetaProperty> entry : properties.entrySet()) {
+            MetaProperty metaProperty = entry.getValue();
+            if (metaProperty.getRange().isClass() && metaProperty.getRange().asClass() instanceof KeyValueMetaClass)
+                map.put(entry.getKey(), metaProperty.getRange().asClass());
+            else
+                map.put(entry.getKey(), metaProperty.getJavaType());
+        }
+        out.writeObject(map);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        this.name = in.readUTF();
+        this.annotations = (Map<String, Object>) in.readObject();
+
+        BeanFactory beanFactory = SerializationContext.getThreadLocalBeanFactory();
+        Stores stores = beanFactory.getBean(Stores.class);
+        KeyValueMetaClassFactory metaClassFactory = beanFactory.getBean(KeyValueMetaClassFactory.class);
+
+        String storeName = (String) in.readObject();
+        if (storeName != null)
+            this.setStore(stores.get(storeName));
+
+        Map<String, Object> map = (Map<String, Object>) in.readObject();
+        this.properties = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof KeyValueMetaClass)
+                metaClassFactory.configurer(this).addProperty(name, (KeyValueMetaClass) value);
+            else
+                metaClassFactory.configurer(this).addProperty(name, (Class<?>) value);
+        }
     }
 }

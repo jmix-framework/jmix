@@ -29,14 +29,14 @@ import java.lang.reflect.AnnotatedElement;
 public class KeyValueMetaProperty extends MetadataObjectImpl implements MetaProperty {
 
     protected final MetaClass metaClass;
-    protected final transient Range range;
-    protected final Class javaClass;
+    protected final Range range;
+    protected final Class<?> javaClass;
     protected final Boolean mandatory;
     protected final AnnotatedElement annotatedElement = new FakeAnnotatedElement();
     protected final Type type;
     protected Store store;
 
-    public KeyValueMetaProperty(MetaClass metaClass, String name, Class javaClass, Range range, Type type) {
+    public KeyValueMetaProperty(MetaClass metaClass, String name, Class<?> javaClass, Range range, Type type) {
         this.metaClass = metaClass;
         this.name = name;
         this.range = range;

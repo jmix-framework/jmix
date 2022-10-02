@@ -56,4 +56,10 @@ public interface KeyValueContainer extends InstanceContainer<KeyValueEntity> {
      * @return this instance for chaining
      */
     KeyValueContainer addProperty(String name, Datatype datatype);
+
+    /**
+     * Creates new {@code KeyValueEntity} instance initialized with {@code idName} and {@code instanceMetaClass}
+     * defined for the data container.
+     */
+    KeyValueEntity createEntity();
 }

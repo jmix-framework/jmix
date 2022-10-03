@@ -10,7 +10,7 @@
         </instance>
     </data>
     <actions>
-        <action id="commitAction" type="detail_commitClose"/>
+        <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
     <facets>
@@ -34,7 +34,7 @@
             <checkbox id="activeField" property="active"/>
         </formLayout>
         <hbox id="detailActions">
-            <button id="commitAndCloseBtn" action="commitAction"/>
+            <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>

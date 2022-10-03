@@ -8,7 +8,7 @@
         </instance>
     </data>
     <actions>
-        <action id="commitAction" type="detail_commitClose"/>
+        <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
@@ -23,7 +23,7 @@
         </formLayout>
 
         <hbox id="detailActions" width="100%">
-            <button id="commitAndCloseBtn" action="commitAction"/>
+            <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
             <button id="checkSyntaxBtn"
                     text="msg://checkSyntaxBtn.text"

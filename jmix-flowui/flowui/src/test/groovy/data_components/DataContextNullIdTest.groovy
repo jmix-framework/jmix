@@ -89,7 +89,7 @@ class DataContextNullIdTest extends DataContextSpec {
         dataContext.find(TestStringIdEntity, '2').is(merged)
     }
 
-    def "commit"() {
+    def "save"() {
         def dataContext = factory.createDataContext()
 
         TestNullableIdEntity entity = new TestNullableIdEntity(name: "111")
@@ -103,7 +103,7 @@ class DataContextNullIdTest extends DataContextSpec {
         dataContext.getModified().contains(merged)
 
         when:
-        dataContext.commit()
+        dataContext.save()
 
         then:
         !dataContext.hasChanges()
@@ -115,7 +115,7 @@ class DataContextNullIdTest extends DataContextSpec {
         entityMap.size() == 1
     }
 
-    def "commit two instances"() {
+    def "save two instances"() {
         def dataContext = factory.createDataContext()
 
         TestNullableIdEntity entity1 = new TestNullableIdEntity(name: "111")
@@ -133,7 +133,7 @@ class DataContextNullIdTest extends DataContextSpec {
         dataContext.getModified().contains(merged2)
 
         when:
-        dataContext.commit()
+        dataContext.save()
 
         then:
         !dataContext.hasChanges()
@@ -143,7 +143,7 @@ class DataContextNullIdTest extends DataContextSpec {
         dataContext.contains(merged2)
     }
 
-    def "commit graph"() {
+    def "save graph"() {
         def dataContext = factory.createDataContext()
 
         TestNullableIdEntity master = new TestNullableIdEntity(name: "master1")
@@ -165,7 +165,7 @@ class DataContextNullIdTest extends DataContextSpec {
         dataContext.find(mergedMaster.items[1]).is(mergedMaster.items[1])
 
         when:
-        dataContext.commit()
+        dataContext.save()
 
         then:
         !dataContext.hasChanges()

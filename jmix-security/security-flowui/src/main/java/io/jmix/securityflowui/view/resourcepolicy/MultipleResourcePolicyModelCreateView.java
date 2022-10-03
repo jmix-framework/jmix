@@ -36,7 +36,7 @@ import java.util.List;
 
 public abstract class MultipleResourcePolicyModelCreateView extends StandardView {
 
-    public static final String COMMIT_ACTION_ID = "commitAction";
+    public static final String SAVE_ACTION_ID = "saveAction";
 
     @Autowired
     private ViewValidation viewValidation;
@@ -47,27 +47,27 @@ public abstract class MultipleResourcePolicyModelCreateView extends StandardView
     }
 
     protected void initScreenActions() {
-        SecuredBaseAction commitAction = createCommitAction();
+        SecuredBaseAction saveAction = createSaveAction();
 
-        getViewActions().addAction(commitAction);
+        getViewActions().addAction(saveAction);
     }
 
-    protected SecuredBaseAction createCommitAction() {
+    protected SecuredBaseAction createSaveAction() {
         Messages messages = getApplicationContext().getBean(Messages.class);
         FlowuiViewProperties flowUiViewProperties = getApplicationContext().getBean(FlowuiViewProperties.class);
 
-        return new SecuredBaseAction(COMMIT_ACTION_ID)
+        return new SecuredBaseAction(SAVE_ACTION_ID)
                 .withText(messages.getMessage("actions.Ok"))
                 .withIcon(FlowuiComponentUtils.convertToIcon(VaadinIcon.CHECK))
                 .withVariant(ActionVariant.PRIMARY)
-                .withShortcutCombination(KeyCombination.create(flowUiViewProperties.getCommitShortcut()))
+                .withShortcutCombination(KeyCombination.create(flowUiViewProperties.getSaveShortcut()))
                 .withHandler(this::validateAndClose);
     }
 
     protected void validateAndClose(ActionPerformedEvent event) {
         ValidationErrors validationErrors = validateView();
         if (validationErrors.isEmpty()) {
-            close(StandardOutcome.COMMIT);
+            close(StandardOutcome.SAVE);
         } else {
             viewValidation.showValidationErrors(validationErrors);
         }

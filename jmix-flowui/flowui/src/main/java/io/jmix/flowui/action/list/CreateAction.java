@@ -46,7 +46,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
 
     protected Supplier<E> newEntitySupplier;
     protected Consumer<E> initializer;
-    protected Consumer<E> afterCommitHandler;
+    protected Consumer<E> afterSaveHandler;
     protected Function<E, E> transformation;
 
     protected OpenMode openMode;
@@ -159,24 +159,24 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     }
 
     /**
-     * Sets the handler to be invoked when the detail view commits the new entity.
+     * Sets the handler to be invoked when the detail view saves the new entity.
      * <p>
      * Note that handler is invoked if the detail is opened in {@link OpenMode#DIALOG} mode.
      * <p>
      * The preferred way to set the handler is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
-     * &#64;Install(to = "petsTable.create", subject = "afterCommitHandler")
-     * protected void petsTableCreateAfterCommitHandler(Pet entity) {
+     * &#64;Install(to = "petsTable.create", subject = "afterSaveHandler")
+     * protected void petsTableCreateAfterSaveHandler(Pet entity) {
      *     System.out.println("Created " + entity);
      * }
      * </pre>
      */
-    public void setAfterCommitHandler(@Nullable Consumer<E> afterCommitHandler) {
-        this.afterCommitHandler = afterCommitHandler;
+    public void setAfterSaveHandler(@Nullable Consumer<E> afterSaveHandler) {
+        this.afterSaveHandler = afterSaveHandler;
     }
 
     /**
-     * Sets the function to transform the committed in the detail view entity before setting it to the target data
+     * Sets the function to transform the saved in the detail view entity before setting it to the target data
      * container.
      * <p>
      * Note that transformation function is invoked if the detail is opened in {@link OpenMode#DIALOG} mode.
@@ -312,12 +312,12 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         }
 
         DialogWindow<?> dialogWindow = builder.build();
-        if (afterCommitHandler != null) {
+        if (afterSaveHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
-                if (event.closedWith(StandardOutcome.COMMIT)
+                if (event.closedWith(StandardOutcome.SAVE)
                         && event.getView() instanceof DetailView) {
-                    E committedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
-                    afterCommitHandler.accept(committedEntity);
+                    E savedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
+                    afterSaveHandler.accept(savedEntity);
                 }
             });
         }
@@ -375,10 +375,10 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     }
 
     /**
-     * @see #setAfterCommitHandler(Consumer)
+     * @see #setAfterSaveHandler(Consumer)
      */
-    public CreateAction<E> withAfterCommitHandler(@Nullable Consumer<E> afterCommitHandler) {
-        setAfterCommitHandler(afterCommitHandler);
+    public CreateAction<E> withAfterSaveHandler(@Nullable Consumer<E> afterSaveHandler) {
+        setAfterSaveHandler(afterSaveHandler);
         return this;
     }
 

@@ -55,7 +55,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private boolean modifiedAfterOpen = false;
 
     private boolean showSaveNotification = true;
-    private boolean commitActionPerformed = false;
+    private boolean saveActionPerformed = false;
 
     public StandardDetailView() {
         addBeforeShowListener(this::onBeforeShow);
@@ -80,7 +80,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         DataContext dataContext = getViewData().getDataContextOrNull();
         if (dataContext != null) {
             dataContext.addChangeListener(this::onChangeEvent);
-            dataContext.addPostCommitListener(this::onPostCommitEvent);
+            dataContext.addPostSaveListener(this::onPostSaveEvent);
         }
     }
 
@@ -88,10 +88,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         setModifiedAfterOpen(true);
     }
 
-    private void onPostCommitEvent(DataContext.PostCommitEvent postCommitEvent) {
+    private void onPostSaveEvent(DataContext.PostSaveEvent postSaveEvent) {
         setModifiedAfterOpen(false);
 
-        if (!postCommitEvent.getCommittedInstances().isEmpty()
+        if (!postSaveEvent.getSavedInstances().isEmpty()
                 && showSaveNotification) {
             showSaveNotification();
         }
@@ -147,7 +147,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return DEFAULT_ROUTE_PARAM;
     }
 
-    private OperationResult commitChanges() {
+    private OperationResult saveChanges() {
         ValidationErrors validationErrors = validateView();
         if (!validationErrors.isEmpty()) {
             ViewValidation viewValidation = getViewValidation();
@@ -159,17 +159,17 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             return OperationResult.fail();
         }
 
-        Runnable standardCommitAction = createStandardCommitAction();
+        Runnable standardSaveAction = createStandardSaveAction();
 
-        BeforeCommitChangesEvent beforeEvent = new BeforeCommitChangesEvent(this, standardCommitAction);
+        BeforeSaveEvent beforeEvent = new BeforeSaveEvent(this, standardSaveAction);
         fireEvent(beforeEvent);
 
-        if (beforeEvent.isCommitPrevented()) {
-            return beforeEvent.getCommitResult()
+        if (beforeEvent.isSavePrevented()) {
+            return beforeEvent.getSaveResult()
                     .orElse(OperationResult.fail());
         }
 
-        standardCommitAction.run();
+        standardSaveAction.run();
 
         return OperationResult.success();
     }
@@ -205,9 +205,9 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return errors;
     }
 
-    private Runnable createStandardCommitAction() {
+    private Runnable createStandardSaveAction() {
         return () -> {
-            EntitySet committedEntities = getViewData().getDataContext().commit();
+            EntitySet savedEntities = getViewData().getDataContext().save();
 
             InstanceContainer<T> container = getEditedEntityContainer();
             if (container instanceof HasLoader) {
@@ -216,7 +216,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                     //noinspection rawtypes
                     InstanceLoader instanceLoader = (InstanceLoader) loader;
                     if (instanceLoader.getEntityId() == null) {
-                        committedEntities.optional(getEditedEntity())
+                        savedEntities.optional(getEditedEntity())
                                 .ifPresent(entity ->
                                         instanceLoader.setEntityId(
                                                 requireNonNull(EntityValues.getId(entity))
@@ -226,24 +226,24 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                 }
             }
 
-            fireEvent(new AfterCommitChangesEvent(this));
+            fireEvent(new AfterSaveEvent(this));
         };
     }
 
-    protected boolean isCommitActionPerformed() {
-        return commitActionPerformed;
+    protected boolean isSaveActionPerformed() {
+        return saveActionPerformed;
     }
 
     @Override
-    public OperationResult commit() {
-        return commitChanges()
-                .then(() -> commitActionPerformed = true);
+    public OperationResult save() {
+        return saveChanges()
+                .then(() -> saveActionPerformed = true);
     }
 
     @Override
-    public OperationResult closeWithCommit() {
-        return commitChanges()
-                .compose(() -> close(StandardOutcome.COMMIT));
+    public OperationResult closeWithSave() {
+        return saveChanges()
+                .compose(() -> close(StandardOutcome.SAVE));
     }
 
     @Override
@@ -252,14 +252,14 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     /**
-     * @return whether a notification will be shown in case of successful commit
+     * @return whether a notification will be shown in case of successful save
      */
     public boolean isShowSaveNotification() {
         return showSaveNotification;
     }
 
     /**
-     * Sets whether a notification will be shown in case of successful commit.
+     * Sets whether a notification will be shown in case of successful save.
      *
      * @param showSaveNotification {@code true} if a notification needs to be shown, {@code false} otherwise
      */
@@ -291,8 +291,9 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     /**
-     * Sets whether cross-field validation should be performed before commit changes. It uses {@link UiCrossFieldChecks}
-     * constraint group to validate bean instance. The default value is {@code true}.
+     * Sets whether cross-field validation should be performed before saving changes.
+     * It uses {@link UiCrossFieldChecks} constraint group to validate bean instance.
+     * The default value is {@code true}.
      *
      * @param crossFieldValidationEnabled {@code true} if cross-field should be enabled, {@code false} otherwise
      */
@@ -331,7 +332,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
                 if (useSaveConfirmation) {
                     getViewValidation().showSaveConfirmationDialog(this)
-                            .onCommit(() -> result.resume(navigateWithCommit(navigationAction)))
+                            .onSave(() -> result.resume(navigateWithSave(navigationAction)))
                             .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
                             .onCancel(result::fail);
                 } else {
@@ -342,7 +343,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             } else {
                 if (useSaveConfirmation) {
                     getViewValidation().showSaveConfirmationDialog(this)
-                            .onCommit(() -> result.resume(closeWithCommit()))
+                            .onSave(() -> result.resume(closeWithSave()))
                             .onDiscard(() -> result.resume(closeWithDiscard()))
                             .onCancel(result::fail);
                 } else {
@@ -360,9 +361,9 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return navigate(navigationAction, StandardOutcome.DISCARD.getCloseAction());
     }
 
-    private OperationResult navigateWithCommit(ContinueNavigationAction navigationAction) {
-        return commitChanges()
-                .compose(() -> navigate(navigationAction, StandardOutcome.COMMIT.getCloseAction()));
+    private OperationResult navigateWithSave(ContinueNavigationAction navigationAction) {
+        return saveChanges()
+                .compose(() -> navigate(navigationAction, StandardOutcome.SAVE.getCloseAction()));
     }
 
     private OperationResult navigate(ContinueNavigationAction navigationAction,
@@ -739,12 +740,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return getEventBus().addListener(InitEntityEvent.class, ((ComponentEventListener) listener));
     }
 
-    protected Registration addBeforeCommitChangesListener(ComponentEventListener<BeforeCommitChangesEvent> listener) {
-        return getEventBus().addListener(BeforeCommitChangesEvent.class, listener);
+    protected Registration addBeforeSaveListener(ComponentEventListener<BeforeSaveEvent> listener) {
+        return getEventBus().addListener(BeforeSaveEvent.class, listener);
     }
 
-    protected Registration addAfterCommitChangesListener(ComponentEventListener<AfterCommitChangesEvent> listener) {
-        return getEventBus().addListener(AfterCommitChangesEvent.class, listener);
+    protected Registration addAfterSaveListener(ComponentEventListener<AfterSaveEvent> listener) {
+        return getEventBus().addListener(AfterSaveEvent.class, listener);
     }
 
     /**
@@ -781,23 +782,23 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     /**
-     * Event sent before commit of data context from {@link #commitChanges()} call.
+     * Event sent before saving of data context from {@link #saveChanges()} call.
      * <br>
-     * Use this event listener to prevent commit and/or show additional dialogs to user before commit, for example:
+     * Use this event listener to prevent saving and/or show additional dialogs to user before save, for example:
      * <pre>
      *     &#64;Subscribe
-     *     protected void onBeforeCommit(BeforeCommitChangesEvent event) {
+     *     protected void onBeforeSave(BeforeSaveEvent event) {
      *         if (getEditedEntity().getDescription() == null) {
      *             notifications.create().withCaption("Description required").show();
-     *             event.preventCommit();
+     *             event.preventSave();
      *         }
      *     }
      * </pre>
      * <p>
-     * Show dialog and resume commit after:
+     * Show dialog and resume saving after:
      * <pre>
      *     &#64;Subscribe
-     *     protected void onBeforeCommit(BeforeCommitChangesEvent event) {
+     *     protected void onBeforeSave(BeforeSaveEvent event) {
      *         if (getEditedEntity().getDescription() == null) {
      *             dialogs.createOptionDialog()
      *                     .withCaption("Question")
@@ -806,31 +807,31 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      *                             new DialogAction(DialogAction.Type.YES).withHandler(e -&gt; {
      *                                 getEditedEntity().setDescription("No description");
      *
-     *                                 // retry commit and resume action
-     *                                 event.resume(commitChanges());
+     *                                 // retry save and resume action
+     *                                 event.resume(saveChanges());
      *                             }),
      *                             new DialogAction(DialogAction.Type.NO).withHandler(e -&gt; {
-     *                                 // trigger standard commit and resume action
+     *                                 // trigger standard save and resume action
      *                                 event.resume();
      *                             })
      *                     )
      *                     .show();
      *
-     *             event.preventCommit();
+     *             event.preventSave();
      *         }
      *     }
      * </pre>
      *
-     * @see #addBeforeCommitChangesListener(ComponentEventListener)
+     * @see #addBeforeSaveListener(ComponentEventListener)
      */
-    public static class BeforeCommitChangesEvent extends ComponentEvent<View<?>> {
+    public static class BeforeSaveEvent extends ComponentEvent<View<?>> {
 
         protected final Runnable resumeAction;
 
-        protected boolean commitPrevented = false;
-        protected OperationResult commitResult;
+        protected boolean savePrevented = false;
+        protected OperationResult saveResult;
 
-        public BeforeCommitChangesEvent(View<?> source, @Nullable Runnable resumeAction) {
+        public BeforeSaveEvent(View<?> source, @Nullable Runnable resumeAction) {
             super(source, false);
             this.resumeAction = resumeAction;
         }
@@ -843,20 +844,20 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         }
 
         /**
-         * Prevents commit of the view.
+         * Prevents saving of the view data.
          */
-        public void preventCommit() {
-            preventCommit(new UnknownOperationResult());
+        public void preventSave() {
+            preventSave(new UnknownOperationResult());
         }
 
         /**
-         * Prevents commit of the view.
+         * Prevents saving of the view data.
          *
-         * @param commitResult result object that will be returned from the {@link #commitChanges()}} method
+         * @param saveResult result object that will be returned from the {@link #saveChanges()}} method
          */
-        public void preventCommit(OperationResult commitResult) {
-            this.commitPrevented = true;
-            this.commitResult = commitResult;
+        public void preventSave(OperationResult saveResult) {
+            this.savePrevented = true;
+            this.saveResult = saveResult;
         }
 
         /**
@@ -866,51 +867,52 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             if (resumeAction != null) {
                 resumeAction.run();
             }
-            if (commitResult instanceof UnknownOperationResult) {
-                ((UnknownOperationResult) commitResult).resume(OperationResult.success());
+            if (saveResult instanceof UnknownOperationResult) {
+                ((UnknownOperationResult) saveResult).resume(OperationResult.success());
             }
         }
 
         /**
-         * Resume with the passed result ignoring standard execution. The standard commit will not be performed.
+         * Resume with the passed result ignoring standard execution.
+         * The standard save will not be performed.
          */
         public void resume(OperationResult result) {
-            if (commitResult instanceof UnknownOperationResult) {
-                ((UnknownOperationResult) commitResult).resume(result);
+            if (saveResult instanceof UnknownOperationResult) {
+                ((UnknownOperationResult) saveResult).resume(result);
             }
         }
 
         /**
-         * @return result passed to the {@link #preventCommit(OperationResult)} method
+         * @return result passed to the {@link #preventSave(OperationResult)} method
          */
-        public Optional<OperationResult> getCommitResult() {
-            return Optional.ofNullable(commitResult);
+        public Optional<OperationResult> getSaveResult() {
+            return Optional.ofNullable(saveResult);
         }
 
         /**
-         * @return whether the commit was prevented by invoking {@link #preventCommit()} method
+         * @return whether the saving process was prevented by invoking {@link #preventSave()} method
          */
-        public boolean isCommitPrevented() {
-            return commitPrevented;
+        public boolean isSavePrevented() {
+            return savePrevented;
         }
     }
 
     /**
-     * Event sent after commit of data context from {@link #commitChanges()} call.
+     * Event sent after saving of data context from {@link #saveChanges()} call.
      * <br>
-     * Use this event listener to notify users after commit, for example:
+     * Use this event listener to notify users after save, for example:
      * <pre>
      *     &#64;Subscribe
-     *     protected void onAfterCommit(AfterCommitChanges event) {
-     *         notifications.create().withCaption("Committed").show();
+     *     protected void onAfterSave(AfterSaveEvent event) {
+     *         notifications.create().withCaption("Saved").show();
      *     }
      * </pre>
      *
-     * @see #addAfterCommitChangesListener(ComponentEventListener)
+     * @see #addAfterSaveListener(ComponentEventListener)
      */
-    public static class AfterCommitChangesEvent extends ComponentEvent<View> {
+    public static class AfterSaveEvent extends ComponentEvent<View<?>> {
 
-        public AfterCommitChangesEvent(View source) {
+        public AfterSaveEvent(View source) {
             super(source, false);
         }
 

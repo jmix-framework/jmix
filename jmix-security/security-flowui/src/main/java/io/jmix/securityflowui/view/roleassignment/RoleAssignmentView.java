@@ -193,7 +193,7 @@ public class RoleAssignmentView extends StandardView {
         Set<RoleAssignmentEntity> selected = resourceRoleAssignmentsTable.getSelectedItems();
         resourceRoleAssignmentEntitiesDc.getMutableItems().removeAll(selected);
         // do not immediately remove role assignments but do that
-        // only when role-assignment-screen is committed
+        // only when role-assignment-screen is saved
         DataContext dataContext = getDataContext();
         selected.forEach(dataContext::remove);
     }
@@ -203,15 +203,15 @@ public class RoleAssignmentView extends StandardView {
         Set<RoleAssignmentEntity> selected = rowLevelRoleAssignmentsTable.getSelectedItems();
         rowLevelRoleAssignmentEntitiesDc.getMutableItems().removeAll(selected);
         // do not immediately remove role assignments but do that
-        // only when role-assignment-screen is committed
+        // only when role-assignment-screen is saved
         DataContext dataContext = getDataContext();
         selected.forEach(dataContext::remove);
     }
 
-    @Subscribe("commitAction")
-    public void onCommitActionPerformed(ActionPerformedEvent event) {
-        getDataContext().commit();
-        close(StandardOutcome.COMMIT);
+    @Subscribe("saveAction")
+    public void onSaveActionPerformed(ActionPerformedEvent event) {
+        getDataContext().save();
+        close(StandardOutcome.SAVE);
     }
 
     @Subscribe("closeAction")

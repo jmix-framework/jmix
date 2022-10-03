@@ -56,7 +56,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     protected ReadOnlyViewsSupport readOnlyViewsSupport;
 
     protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
-    protected Consumer<E> afterCommitHandler;
+    protected Consumer<E> afterSaveHandler;
     protected Function<E, E> transformation;
 
     protected boolean textInitialized = false;
@@ -154,25 +154,25 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     }
 
     /**
-     * Sets the handler to be invoked when the detail view commits the entity
+     * Sets the handler to be invoked when the detail view saves the entity
      * (if "enable editing" action was executed).
      * <p>
      * Note that handler is invoked if the detail is opened in {@link OpenMode#DIALOG} mode.
      * <p>
      * The preferred way to set the handler is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
-     * &#64;Install(to = "petsTable.read", subject = "afterCommitHandler")
-     * protected void petsTableReadAfterCommitHandler(Pet entity) {
-     *     System.out.println("Committed " + entity);
+     * &#64;Install(to = "petsTable.read", subject = "afterSaveHandler")
+     * protected void petsTableReadAfterSaveHandler(Pet entity) {
+     *     System.out.println("Saved " + entity);
      * }
      * </pre>
      */
-    public void setAfterCommitHandler(@Nullable Consumer<E> afterCommitHandler) {
-        this.afterCommitHandler = afterCommitHandler;
+    public void setAfterSaveHandler(@Nullable Consumer<E> afterSaveHandler) {
+        this.afterSaveHandler = afterSaveHandler;
     }
 
     /**
-     * Sets the function to transform the committed in the detail view entity
+     * Sets the function to transform the saved in the detail view entity
      * (if "enable editing" action was executed) before setting it to the target data container.
      * <p>
      * Note that transformation function is invoked if the detail is opened in {@link OpenMode#DIALOG} mode.
@@ -294,12 +294,12 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
                     ReadOnlyAwareView.class.getSimpleName(), view.getClass()));
         }
 
-        if (afterCommitHandler != null) {
+        if (afterSaveHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
-                if (event.closedWith(StandardOutcome.COMMIT)
+                if (event.closedWith(StandardOutcome.SAVE)
                         && event.getView() instanceof DetailView) {
-                    E committedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
-                    afterCommitHandler.accept(committedEntity);
+                    E savedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
+                    afterSaveHandler.accept(savedEntity);
                 }
             });
         }
@@ -388,10 +388,10 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     }
 
     /**
-     * @see #setAfterCommitHandler(Consumer)
+     * @see #setAfterSaveHandler(Consumer)
      */
-    public ReadAction<E> withAfterCommitHandler(@Nullable Consumer<E> afterCommitHandler) {
-        setAfterCommitHandler(afterCommitHandler);
+    public ReadAction<E> withAfterSavedHandler(@Nullable Consumer<E> afterSavedHandler) {
+        setAfterSaveHandler(afterSavedHandler);
         return this;
     }
 

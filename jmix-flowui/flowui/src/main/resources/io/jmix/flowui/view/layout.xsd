@@ -892,8 +892,8 @@
                     <xs:enumeration value="read"/>
                     <xs:enumeration value="refresh"/>
                     <xs:enumeration value="detail_close"/>
-                    <xs:enumeration value="detail_commit"/>
-                    <xs:enumeration value="detail_commitClose"/>
+                    <xs:enumeration value="detail_save"/>
+                    <xs:enumeration value="detail_saveClose"/>
                     <xs:enumeration value="detail_discard"/>
                     <xs:enumeration value="detail_enableEditing"/>
                     <xs:enumeration value="lookup_discard"/>
@@ -1089,7 +1089,7 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="${COMMIT_SHORTCUT}"/>
+                    <xs:enumeration value="${SAVE_SHORTCUT}"/>
                     <xs:enumeration value="${CLOSE_SHORTCUT}"/>
                     <xs:enumeration value="${GRID_CREATE_SHORTCUT}"/>
                     <xs:enumeration value="${GRID_ADD_SHORTCUT}"/>

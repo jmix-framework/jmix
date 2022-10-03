@@ -29,7 +29,7 @@ public class StandardListView<T> extends StandardView implements LookupView<T>, 
 
     private void onBeforeShow(BeforeShowEvent event) {
         setupLookupComponent();
-        setupCommitShortcut();
+        setupSaveShortcut();
     }
 
     protected void setupLookupComponent() {
@@ -39,7 +39,7 @@ public class StandardListView<T> extends StandardView implements LookupView<T>, 
         }
     }
 
-    protected void setupCommitShortcut() {
+    protected void setupSaveShortcut() {
         if (selectionHandler == null) {
             // window was not opened as Lookup
             getSelectAction()

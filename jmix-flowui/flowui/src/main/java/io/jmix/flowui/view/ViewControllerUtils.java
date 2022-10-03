@@ -90,7 +90,7 @@ public final class ViewControllerUtils {
         ComponentUtil.fireEvent(view, event);
     }
 
-    public static boolean isCommitActionPerformed(StandardDetailView<?> detailView) {
-        return detailView.isCommitActionPerformed();
+    public static boolean isSaveActionPerformed(StandardDetailView<?> detailView) {
+        return detailView.isSaveActionPerformed();
     }
 }

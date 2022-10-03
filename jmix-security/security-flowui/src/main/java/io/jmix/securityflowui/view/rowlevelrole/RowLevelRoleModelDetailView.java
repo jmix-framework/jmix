@@ -222,7 +222,7 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPreCommit(DataContext.PreCommitEvent event) {
+    public void onPreSave(DataContext.PreSaveEvent event) {
         if (isDatabaseSource()) {
             saveRoleEntityToDatabase(event.getModifiedInstances());
         }

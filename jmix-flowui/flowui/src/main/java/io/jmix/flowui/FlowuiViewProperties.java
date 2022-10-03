@@ -26,7 +26,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class FlowuiViewProperties {
 
     String closeShortcut;
-    String commitShortcut;
+    String saveShortcut;
     boolean createActionAddsFirst;
     boolean useSaveConfirmation;
 
@@ -55,7 +55,7 @@ public class FlowuiViewProperties {
 
     public FlowuiViewProperties(
             String closeShortcut,
-            String commitShortcut,
+            String saveShortcut,
             @DefaultValue("true") boolean createActionAddsFirst,
             @DefaultValue("true") boolean useSaveConfirmation,
             @DefaultValue("DEFAULT") String validationNotificationType,
@@ -64,7 +64,7 @@ public class FlowuiViewProperties {
             @DefaultValue("true") boolean reloadUnfetchedAttributesFromLookupViews
     ) {
         this.closeShortcut = closeShortcut;
-        this.commitShortcut = commitShortcut;
+        this.saveShortcut = saveShortcut;
         this.createActionAddsFirst = createActionAddsFirst;
         this.useSaveConfirmation = useSaveConfirmation;
         this.validationNotificationType = validationNotificationType;
@@ -77,8 +77,8 @@ public class FlowuiViewProperties {
         return closeShortcut;
     }
 
-    public String getCommitShortcut() {
-        return commitShortcut;
+    public String getSaveShortcut() {
+        return saveShortcut;
     }
 
     public boolean isCreateActionAddsFirst() {

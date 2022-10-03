@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Standard implementation of {@link DataContext} which commits data to {@link DataManager}.
+ * Standard implementation of {@link DataContext} which saves data to {@link DataManager}.
  */
 public class DataContextImpl implements DataContextInternal {
 
@@ -85,7 +85,7 @@ public class DataContextImpl implements DataContextInternal {
 
     protected DataContextInternal parentContext;
 
-    protected Function<SaveContext, Set<Object>> commitDelegate;
+    protected Function<SaveContext, Set<Object>> saveDelegate;
 
     protected Map<Object, Map<String, EmbeddedPropertyChangeListener>> embeddedPropertyListeners = new WeakHashMap<>();
 
@@ -637,63 +637,63 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     @Override
-    public EntitySet commit() {
-        PreCommitEvent preCommitEvent = new PreCommitEvent(this, modifiedInstances, removedInstances);
-        events.publish(PreCommitEvent.class, preCommitEvent);
-        if (preCommitEvent.isCommitPrevented())
+    public EntitySet save() {
+        PreSaveEvent preSaveEvent = new PreSaveEvent(this, modifiedInstances, removedInstances);
+        events.publish(PreSaveEvent.class, preSaveEvent);
+        if (preSaveEvent.isSavePrevented())
             return EntitySet.of(Collections.emptySet());
 
-        EntitySet committedAndMerged;
+        EntitySet savedAndMerged;
         try {
-            Set<Object> committed = performCommit();
-            committedAndMerged = mergeCommitted(committed);
+            Set<Object> saved = performSave();
+            savedAndMerged = mergeSaved(saved);
         } finally {
             nullIdEntitiesMap.clear();
         }
 
-        events.publish(PostCommitEvent.class, new PostCommitEvent(this, committedAndMerged));
+        events.publish(PostSaveEvent.class, new PostSaveEvent(this, savedAndMerged));
 
         modifiedInstances.clear();
         removedInstances.clear();
 
-        return committedAndMerged;
+        return savedAndMerged;
     }
 
     @Override
-    public Subscription addPreCommitListener(Consumer<PreCommitEvent> listener) {
-        return events.subscribe(PreCommitEvent.class, listener);
+    public Subscription addPreSaveListener(Consumer<PreSaveEvent> listener) {
+        return events.subscribe(PreSaveEvent.class, listener);
     }
 
     @Override
-    public Subscription addPostCommitListener(Consumer<PostCommitEvent> listener) {
-        return events.subscribe(PostCommitEvent.class, listener);
+    public Subscription addPostSaveListener(Consumer<PostSaveEvent> listener) {
+        return events.subscribe(PostSaveEvent.class, listener);
     }
 
     @Override
-    public Function<SaveContext, Set<Object>> getCommitDelegate() {
-        return commitDelegate;
+    public Function<SaveContext, Set<Object>> getSaveDelegate() {
+        return saveDelegate;
     }
 
     @Override
-    public void setCommitDelegate(Function<SaveContext, Set<Object>> delegate) {
-        this.commitDelegate = delegate;
+    public void setSaveDelegate(Function<SaveContext, Set<Object>> delegate) {
+        this.saveDelegate = delegate;
     }
 
-    protected Set<Object> performCommit() {
+    protected Set<Object> performSave() {
         if (!hasChanges())
             return Collections.emptySet();
 
         if (parentContext == null) {
-            return commitToDataManager();
+            return saveToDataManager();
         } else {
-            return commitToParentContext();
+            return saveToParentContext();
         }
     }
 
-    protected Set<Object> commitToDataManager() {
+    protected Set<Object> saveToDataManager() {
         SaveContext saveContext = new SaveContext()
-                .saving(isolate(filterCommittedInstances(modifiedInstances)))
-                .removing(isolate(filterCommittedInstances(removedInstances)));
+                .saving(isolate(filterSavedInstances(modifiedInstances)))
+                .removing(isolate(filterSavedInstances(removedInstances)));
 
         entityReferencesNormalizer.updateReferences(saveContext.getEntitiesToSave());
         updateFetchPlans(saveContext);
@@ -702,14 +702,14 @@ public class DataContextImpl implements DataContextInternal {
             saveContext.getFetchPlans().put(entity, entityStates.getCurrentFetchPlan(entity));
         }
 
-        if (commitDelegate == null) {
+        if (saveDelegate == null) {
             return dataManager.save(saveContext);
         } else {
-            return commitDelegate.apply(saveContext);
+            return saveDelegate.apply(saveContext);
         }
     }
 
-    protected List filterCommittedInstances(Set<Object> instances) {
+    protected List filterSavedInstances(Set<Object> instances) {
         return instances.stream()
                 .filter(entity -> !metadataTools.isJpaEmbeddable(entity.getClass()))
                 .collect(Collectors.toList());
@@ -735,18 +735,18 @@ public class DataContextImpl implements DataContextInternal {
         return isolatedEntities;
     }
 
-    protected Set<Object> commitToParentContext() {
-        Set<Object> committedEntities = new HashSet<>();
+    protected Set<Object> saveToParentContext() {
+        Set<Object> savedEntities = new HashSet<>();
         for (Object entity : modifiedInstances) {
             Object merged = parentContext.merge(entity);
             parentContext.getModifiedInstances().add(merged);
-            committedEntities.add(merged);
+            savedEntities.add(merged);
         }
         for (Object entity : removedInstances) {
             parentContext.remove(entity);
             cleanupContextAfterRemoveEntity(parentContext, entity);
         }
-        return committedEntities;
+        return savedEntities;
     }
 
     protected void cleanupContextAfterRemoveEntity(DataContextInternal context, Object removedEntity) {
@@ -766,10 +766,10 @@ public class DataContextImpl implements DataContextInternal {
                         && Objects.equals(EntityValues.getValue(entity, metaProperty.getName()), refEntity));
     }
 
-    protected EntitySet mergeCommitted(Set<Object> committed) {
+    protected EntitySet mergeSaved(Set<Object> saved) {
         // transform into sorted collection to have reproducible behavior
         List<Object> entitiesToMerge = new ArrayList<>();
-        for (Object entity : committed) {
+        for (Object entity : saved) {
             Object e = nullIdEntitiesMap.getOrDefault(entity, entity);
             if (contains(e)) {
                 entitiesToMerge.add(entity);

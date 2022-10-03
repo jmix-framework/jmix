@@ -94,7 +94,7 @@ class CompositionTest extends FlowuiTestSpecification {
 
         orderScreen.dataContext.dataManager = mockDataManager()
 
-        orderScreen.dataContext.commit()
+        orderScreen.dataContext.save()
 
         then:
 
@@ -127,21 +127,21 @@ class CompositionTest extends FlowuiTestSpecification {
         orderLineScreen.lineCnt.item == orderLine11
         orderLineScreen.lineCnt.item.quantity == 10
 
-        when: "change orderLine11.quantity and commit child context"
+        when: "change orderLine11.quantity and save child context"
 
         orderLineScreen.lineCnt.item.quantity = 11
 
-        def childContextStateBeforeCommit = entitySerialization.toJson(orderLineScreen.dataContext.getAll())
+        def childContextStateBeforeSave = entitySerialization.toJson(orderLineScreen.dataContext.getAll())
 
         def modified = []
-        orderLineScreen.dataContext.addPreCommitListener { e ->
+        orderLineScreen.dataContext.addPreSaveListener { e ->
             modified.addAll(e.modifiedInstances)
         }
-        orderLineScreen.dataContext.commit()
+        orderLineScreen.dataContext.save()
 
-        def childContextStateAfterCommit = entitySerialization.toJson(orderLineScreen.dataContext.getAll())
+        def childContextStateAfterSave = entitySerialization.toJson(orderLineScreen.dataContext.getAll())
 
-        then: "child context committed orderLine11 to parent"
+        then: "child context saved orderLine11 to parent"
 
         modified.contains(orderLine11)
         saved.isEmpty()
@@ -151,15 +151,15 @@ class CompositionTest extends FlowuiTestSpecification {
 
         !orderLineScreen.dataContext.hasChanges()
 
-        and: "child context is exactly the same as before commit"
+        and: "child context is exactly the same as before save"
 
-        childContextStateAfterCommit == childContextStateBeforeCommit
+        childContextStateAfterSave == childContextStateBeforeSave
 
-        when: "commit parent context"
+        when: "save parent context"
 
-        orderScreen.dataContext.commit()
+        orderScreen.dataContext.save()
 
-        then: "orderLine11 committed to DataService"
+        then: "orderLine11 saved to DataService"
 
         saved.size() == 1
         saved.contains(orderLine11)
@@ -190,7 +190,7 @@ class CompositionTest extends FlowuiTestSpecification {
 
         productScreen.productCnt.item.price = 101
 
-        productScreen.dataContext.commit()
+        productScreen.dataContext.save()
 
         then:
 
@@ -199,7 +199,7 @@ class CompositionTest extends FlowuiTestSpecification {
         when:
 
         orderLineScreen.lineCnt.item.quantity = 11
-        orderLineScreen.dataContext.commit()
+        orderLineScreen.dataContext.save()
 
         then:
 
@@ -207,7 +207,7 @@ class CompositionTest extends FlowuiTestSpecification {
 
         when:
 
-        orderScreen.dataContext.commit()
+        orderScreen.dataContext.save()
 
         then:
 
@@ -229,7 +229,7 @@ class CompositionTest extends FlowuiTestSpecification {
         orderScreen.linesCnt.item = orderLine11
         orderLineScreen.open(orderScreen.linesCnt.item, orderScreen.dataContext)
         orderLineScreen.lineCnt.item.quantity = 11
-        orderLineScreen.dataContext.commit()
+        orderLineScreen.dataContext.save()
 
         when: "open orderLineScreen second time"
 
@@ -243,8 +243,8 @@ class CompositionTest extends FlowuiTestSpecification {
 
         orderLineScreen.lineCnt.item.quantity = 12
 
-        orderLineScreen.dataContext.commit()
-        orderScreen.dataContext.commit()
+        orderLineScreen.dataContext.save()
+        orderScreen.dataContext.save()
 
         then:
 
@@ -266,8 +266,8 @@ class CompositionTest extends FlowuiTestSpecification {
 
         when:
 
-        orderLineScreen.dataContext.commit()
-        orderScreen.dataContext.commit()
+        orderLineScreen.dataContext.save()
+        orderScreen.dataContext.save()
 
         then:
 
@@ -289,7 +289,7 @@ class CompositionTest extends FlowuiTestSpecification {
         when: "remove OrderLine in lineScreen"
 
         lineScreen.dataContext.remove(lineScreen.lineCnt.item)
-        lineScreen.dataContext.commit()
+        lineScreen.dataContext.save()
 
         then:
 
@@ -298,7 +298,7 @@ class CompositionTest extends FlowuiTestSpecification {
 
         when:
 
-        orderScreen.dataContext.commit()
+        orderScreen.dataContext.save()
 
         then:
 

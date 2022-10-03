@@ -60,7 +60,7 @@ class CollectionContainerNullIdTest extends DataContextSpec {
         context.hasChanges()
 
         when:
-        context.commit()
+        context.save()
 
         then:
         container.containsItem(entity1)
@@ -83,7 +83,7 @@ class CollectionContainerNullIdTest extends DataContextSpec {
         master.items[0].is(item1)
 
         when:
-        context.commit()
+        context.save()
 
         then:
         master.items[0].is(item1)
@@ -106,13 +106,13 @@ class CollectionContainerNullIdTest extends DataContextSpec {
         noExceptionThrown()
 
         when:
-        def committedEntity = context.commit().get(entity)
+        def savedEntity = context.save().get(entity)
 
         then:
-        committedEntity.is(entity)
+        savedEntity.is(entity)
 
         when:
-        container.replaceItem(committedEntity)
+        container.replaceItem(savedEntity)
 
         then:
         container.getItem(entity.id).is(entity)

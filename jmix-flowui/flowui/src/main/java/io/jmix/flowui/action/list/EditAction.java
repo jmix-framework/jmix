@@ -12,7 +12,6 @@ import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
-import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -39,7 +38,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     protected DialogWindowBuilders dialogWindowBuilders;
 
     protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
-    protected Consumer<E> afterCommitHandler;
+    protected Consumer<E> afterSaveHandler;
     protected Function<E, E> transformation;
 
     protected boolean textInitialized = false;
@@ -138,24 +137,24 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     /**
-     * Sets the handler to be invoked when the detail view commits the entity.
+     * Sets the handler to be invoked when the detail view saves the entity.
      * <p>
      * Note that handler is invoked if the detail is opened in {@link OpenMode#DIALOG} mode.
      * <p>
      * The preferred way to set the handler is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
-     * &#64;Install(to = "petsTable.edit", subject = "afterCommitHandler")
-     * protected void petsTableEditAfterCommitHandler(Pet entity) {
-     *     System.out.println("Committed " + entity);
+     * &#64;Install(to = "petsTable.edit", subject = "afterSaveHandler")
+     * protected void petsTableEditAfterSaveHandler(Pet entity) {
+     *     System.out.println("Saved " + entity);
      * }
      * </pre>
      */
-    public void setAfterCommitHandler(@Nullable Consumer<E> afterCommitHandler) {
-        this.afterCommitHandler = afterCommitHandler;
+    public void setAfterSaveHandler(@Nullable Consumer<E> afterSaveHandler) {
+        this.afterSaveHandler = afterSaveHandler;
     }
 
     /**
-     * Sets the function to transform the committed in the detail view entity before setting it to the target data
+     * Sets the function to transform the saved in the detail view entity before setting it to the target data
      * container.
      * <p>
      * Note that transformation function is invoked if the detail is opened in {@link OpenMode#DIALOG} mode.
@@ -329,12 +328,12 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         }
 
         DialogWindow<View<?>> dialogWindow = builder.build();
-        if (afterCommitHandler != null) {
+        if (afterSaveHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
-                if (event.closedWith(StandardOutcome.COMMIT)
+                if (event.closedWith(StandardOutcome.SAVE)
                         && event.getView() instanceof DetailView) {
-                    E committedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
-                    afterCommitHandler.accept(committedEntity);
+                    E savedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
+                    afterSaveHandler.accept(savedEntity);
                 }
             });
         }
@@ -391,10 +390,10 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     /**
-     * @see #setAfterCommitHandler(Consumer)
+     * @see #setAfterSaveHandler(Consumer)
      */
-    public EditAction<E> withAfterCommitHandler(@Nullable Consumer<E> afterCommitHandler) {
-        setAfterCommitHandler(afterCommitHandler);
+    public EditAction<E> withAfterSaveHandler(@Nullable Consumer<E> afterSaveHandler) {
+        setAfterSaveHandler(afterSaveHandler);
         return this;
     }
 

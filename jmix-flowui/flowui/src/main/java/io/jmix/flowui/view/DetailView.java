@@ -10,9 +10,9 @@ import io.jmix.flowui.util.OperationResult;
  */
 public interface DetailView<E> extends ChangeTracker {
 
-    OperationResult commit();
+    OperationResult save();
 
-    OperationResult closeWithCommit();
+    OperationResult closeWithSave();
 
     OperationResult closeWithDiscard();
 

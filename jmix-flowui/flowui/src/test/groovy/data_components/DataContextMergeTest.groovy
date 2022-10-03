@@ -594,7 +594,7 @@ class DataContextMergeTest extends DataContextSpec {
     }
 
     // todo tiers
-    def "property change events on commit"(orderId, line1Id, line2Id) {
+    def "property change events on save"(orderId, line1Id, line2Id) {
         DataContext context = factory.createDataContext()
 
         Order order1 = new Order(id: orderId, number: '1')
@@ -613,10 +613,10 @@ class DataContextMergeTest extends DataContextSpec {
         }
         mergedOrder.__getEntityEntry().addPropertyChangeListener(listener)
 
-        when: "committing new instances"
+        when: "saving new instances"
 
-        context.commit()
-        println 'After commit 1: ' + events
+        context.save()
+        println 'After save 1: ' + events
 
         then:
 
@@ -637,8 +637,8 @@ class DataContextMergeTest extends DataContextSpec {
         order11.number = '111'
         events.clear()
 
-        context.commit()
-        println 'After commit 2: ' + events
+        context.save()
+        println 'After save 2: ' + events
 
         then:
 
@@ -667,14 +667,14 @@ class DataContextMergeTest extends DataContextSpec {
 
         when:
 
-        context.commit()
+        context.save()
 
         then:
 
         1 * listener.propertyChanged({ it.property == 'prePersistCounter' })
     }
 
-    def "exception on commit keeps current state intact"() {
+    def "exception on save keeps current state intact"() {
         DataContext context = factory.createDataContext()
 
         TestJpaLifecycleCallbacksEntity entity = new TestJpaLifecycleCallbacksEntity()
@@ -682,7 +682,7 @@ class DataContextMergeTest extends DataContextSpec {
 
         when:
 
-        context.commit()
+        context.save()
 
         then:
 
@@ -690,7 +690,7 @@ class DataContextMergeTest extends DataContextSpec {
         mergedEntity.getPrePersistCounter() == null
     }
 
-    def "identity-id entity is merged after commit"() {
+    def "identity-id entity is merged after save"() {
         DataContext context = factory.createDataContext()
 
         def entity = new TestIdentityIdEntity(name: 'test1')
@@ -708,7 +708,7 @@ class DataContextMergeTest extends DataContextSpec {
 
         when:
 
-        context.commit()
+        context.save()
 
         then:
 
@@ -758,7 +758,7 @@ class DataContextMergeTest extends DataContextSpec {
         mergedEntity.getRoFoo() != null
     }
 
-    def "commit and merge partially loaded entity"() {
+    def "save and merge partially loaded entity"() {
         DataContext context = factory.createDataContext()
 
         Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
@@ -769,7 +769,7 @@ class DataContextMergeTest extends DataContextSpec {
         when:
         def order11t = context.merge(order11)
         order11t.number = '222'
-        context.commit()
+        context.save()
 //        for (Entity tracked : ((DataContextImpl) context).getAll()) {
 //            context.evict(tracked)
 //        }
@@ -778,7 +778,7 @@ class DataContextMergeTest extends DataContextSpec {
         def order2 = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
         def order2t = context.merge(order2)
         order2t.number = '333'
-        context.commit()
+        context.save()
 
         then:
         def order3 = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'customer.name') }.one()
@@ -789,14 +789,14 @@ class DataContextMergeTest extends DataContextSpec {
         dataManager.remove(order3, order2, order1, customer1)
     }
 
-    def "committed new entity has reference loaded"() {
+    def "saved new entity has reference loaded"() {
         DataContext context = factory.createDataContext()
 
         Customer customer0 = context.merge(new Customer(name: 'c1', address: new Address()))
         Order order0 = context.merge(new Order(number: '111', customer: customer0))
 
         when:
-        context.commit()
+        context.save()
 
         then:
         def order = context.find(order0)
@@ -819,13 +819,13 @@ class DataContextMergeTest extends DataContextSpec {
         when:
         def order1t = context.merge(order1l)
         order1t.number = '222'
-        context.commit()
+        context.save()
 
 
         def order2 = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'customer.name') }.one()
         def order2t = context.merge(order2)
         order2t.number = '333'
-        context.commit()
+        context.save()
 
         then:
         noExceptionThrown()

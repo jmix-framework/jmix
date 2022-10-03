@@ -21,7 +21,7 @@ package io.jmix.flowui.view;
  * {@link StandardDetailView}, {@link StandardListView}.
  * <p>
  * If its {@link #isCheckForUnsavedChanges()} flag is set to true, the view checks if it contains unsaved changes and asks the
- * user whether to commit or discard them.
+ * user whether to save or discard them.
  */
 public class StandardCloseAction implements CloseAction, ChangeTrackerCloseAction {
 

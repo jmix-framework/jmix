@@ -11,17 +11,17 @@ import io.jmix.flowui.view.PessimisticLockStatus;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ActionType(DetailCommitCloseAction.ID)
-public class DetailCommitCloseAction<E>
-        extends OperationResultViewAction<DetailCommitCloseAction<E>, StandardDetailView<E>> {
+@ActionType(DetailSaveCloseAction.ID)
+public class DetailSaveCloseAction<E>
+        extends OperationResultViewAction<DetailSaveCloseAction<E>, StandardDetailView<E>> {
 
-    public static final String ID = "detail_commitClose";
+    public static final String ID = "detail_saveClose";
 
-    public DetailCommitCloseAction() {
+    public DetailSaveCloseAction() {
         this(ID);
     }
 
-    public DetailCommitCloseAction(String id) {
+    public DetailSaveCloseAction(String id) {
         super(id);
     }
 
@@ -40,14 +40,14 @@ public class DetailCommitCloseAction<E>
 
     @Autowired
     protected void setFlowUiViewProperties(FlowuiViewProperties flowUiViewProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiViewProperties.getCommitShortcut());
+        this.shortcutCombination = KeyCombination.create(flowUiViewProperties.getSaveShortcut());
     }
 
     @Override
     public void execute() {
         checkTarget();
 
-        operationResult = target.closeWithCommit();
+        operationResult = target.closeWithSave();
 
         super.execute();
     }

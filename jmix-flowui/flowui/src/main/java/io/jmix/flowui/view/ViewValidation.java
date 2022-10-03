@@ -197,7 +197,7 @@ public class ViewValidation {
                 .withActions(
                         new DialogAction(DialogAction.Type.OK)
                                 .withText(messages.getMessage("dialogs.closeUnsaved.save"))
-                                .withHandler(__ -> result.commit())
+                                .withHandler(__ -> result.save())
                                 .withVariant(ActionVariant.PRIMARY),
                         new DialogAction(DialogAction.Type.CLOSE)
                                 .withText(messages.getMessage("dialogs.closeUnsaved.discard"))
@@ -253,15 +253,15 @@ public class ViewValidation {
      * Callbacks holder for save changes dialog.
      */
     public static class SaveChangesDialogResult {
-        protected Runnable commitHandler;
+        protected Runnable saveHandler;
         protected Runnable discardHandler;
         protected Runnable cancelHandler;
 
         public SaveChangesDialogResult() {
         }
 
-        public SaveChangesDialogResult onCommit(Runnable commitHandler) {
-            this.commitHandler = commitHandler;
+        public SaveChangesDialogResult onSave(Runnable saveHandler) {
+            this.saveHandler = saveHandler;
             return this;
         }
 
@@ -275,9 +275,9 @@ public class ViewValidation {
             return this;
         }
 
-        public void commit() {
-            if (commitHandler != null) {
-                commitHandler.run();
+        public void save() {
+            if (saveHandler != null) {
+                saveHandler.run();
             }
         }
 

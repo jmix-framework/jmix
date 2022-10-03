@@ -94,7 +94,7 @@ class ContainersWithDataContextTest extends FlowuiTestSpecification {
 
         line1 = lineContext.merge(line1)
         line1.quantity = 1
-        lineContext.commit()
+        lineContext.save()
         line1 = orderContext.find(line1)
 
         linesDc.mutableItems.add(line1)
@@ -108,7 +108,7 @@ class ContainersWithDataContextTest extends FlowuiTestSpecification {
 
         param1 = paramContext.merge(param1)
         param1.name = "p1"
-        paramContext.commit()
+        paramContext.save()
         param1 = orderContext.find(param1)
 
         paramsDc.mutableItems.add(param1)
@@ -132,7 +132,7 @@ class ContainersWithDataContextTest extends FlowuiTestSpecification {
 
         line2 = lineContext.merge(line2)
         line2.quantity = 2
-        lineContext.commit()
+        lineContext.save()
         line2 = orderContext.find(line2)
 
         linesDc.mutableItems.add(line2)
@@ -146,7 +146,7 @@ class ContainersWithDataContextTest extends FlowuiTestSpecification {
 
         param2 = paramContext.merge(param2)
         param2.name = "p2"
-        paramContext.commit()
+        paramContext.save()
         param2 = orderContext.find(param2)
 
         paramsDc.mutableItems.add(param2)

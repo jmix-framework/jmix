@@ -35,10 +35,10 @@
         </collection>
     </data>
     <actions>
-        <action id="commitAction"
+        <action id="saveAction"
                 text="msg:///actions.Ok"
                 icon="CHECK"
-                shortcutCombination="${COMMIT_SHORTCUT}"
+                shortcutCombination="${SAVE_SHORTCUT}"
                 actionVariant="PRIMARY"/>
         <action id="closeAction"
                 text="msg:///actions.Cancel"
@@ -114,7 +114,7 @@
         </formLayout>
 
         <hbox id="detailActions">
-            <button id="commitAndCloseBtn" action="commitAction"/>
+            <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>

@@ -16,12 +16,12 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view">
     <actions>
-        <action id="commitAction" type="detail_commitClose"/>
+        <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
-        <hbox id="editActions">
-            <button action="commitAction"/>
+        <hbox id="detailActions">
+            <button action="saveAction"/>
             <button action="closeAction"/>
         </hbox>
     </layout>

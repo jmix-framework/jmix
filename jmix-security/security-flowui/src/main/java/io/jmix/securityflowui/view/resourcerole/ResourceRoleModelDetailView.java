@@ -305,7 +305,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     private void addPoliciesFromMultiplePoliciesView(
             DialogWindow.AfterCloseEvent<? extends MultipleResourcePolicyModelCreateView> closeEvent) {
-        if (closeEvent.closedWith(StandardOutcome.COMMIT)) {
+        if (closeEvent.closedWith(StandardOutcome.SAVE)) {
             MultipleResourcePolicyModelCreateView view = closeEvent.getSource().getView();
             for (ResourcePolicyModel resourcePolicyModel : view.getResourcePolicies()) {
                 boolean policyExists = resourcePoliciesDc.getItems().stream()
@@ -451,7 +451,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPreCommit(DataContext.PreCommitEvent event) {
+    public void onPreSave(DataContext.PreSaveEvent event) {
         if (isDatabaseSource()) {
             saveRoleEntityToDatabase(event.getModifiedInstances());
         }

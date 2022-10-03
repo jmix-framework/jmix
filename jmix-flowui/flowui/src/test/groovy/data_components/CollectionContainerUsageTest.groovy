@@ -211,7 +211,7 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
 
         def modified = []
         DataContext context = dataComponents.createDataContext()
-        context.addPreCommitListener({ e ->
+        context.addPreSaveListener({ e ->
             modified.addAll(e.modifiedInstances)
         })
 
@@ -234,7 +234,7 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
 
         when:
 
-        context.commit()
+        context.save()
 
         then:
 
@@ -246,7 +246,7 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
 
         def modified = []
         DataContext context = dataComponents.createDataContext()
-        context.addPreCommitListener({ e ->
+        context.addPreSaveListener({ e ->
             modified.addAll(e.modifiedInstances)
         })
 
@@ -270,7 +270,7 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
 
         when:
 
-        context.commit()
+        context.save()
 
         then:
 
@@ -282,7 +282,7 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
 
         def modified = []
         DataContext context = dataComponents.createDataContext()
-        context.addPreCommitListener({ e ->
+        context.addPreSaveListener({ e ->
             modified.addAll(e.removedInstances)
         })
 
@@ -303,7 +303,7 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
 
         when:
 
-        context.commit()
+        context.save()
 
         then:
 
@@ -315,7 +315,7 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
 
         def modified = []
         DataContext context = dataComponents.createDataContext()
-        context.addPreCommitListener({ e ->
+        context.addPreSaveListener({ e ->
             modified.addAll(e.removedInstances)
         })
 
@@ -334,7 +334,7 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
 
         when:
 
-        context.commit()
+        context.save()
 
         then:
 

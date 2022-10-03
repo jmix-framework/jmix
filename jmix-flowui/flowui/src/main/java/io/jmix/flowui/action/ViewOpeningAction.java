@@ -104,8 +104,8 @@ public interface ViewOpeningAction extends Action {
      * <pre>
      * &#64;Install(to = "petsTable.view", subject = "afterCloseHandler")
      * protected void petsTableViewAfterCloseHandler(AfterCloseEvent event) {
-     *     if (event.closedWith(StandardOutcome.COMMIT)) {
-     *         System.out.println("Committed");
+     *     if (event.closedWith(StandardOutcome.SAVE)) {
+     *         System.out.println("Saved");
      *     }
      * }
      * </pre>

@@ -122,8 +122,8 @@ public class ChangePasswordView extends StandardView {
                 : super.getPageTitle();
     }
 
-    @Subscribe("commitAction")
-    public void onCommitActionPerformed(ActionPerformedEvent event) {
+    @Subscribe("saveAction")
+    public void onSaveActionPerformed(ActionPerformedEvent event) {
         if (!validate()) {
             return;
         }
@@ -134,13 +134,13 @@ public class ChangePasswordView extends StandardView {
                             .withType(Notifications.Type.SUCCESS)
                             .withPosition(Notification.Position.MIDDLE)
                             .show();
-                    close(StandardOutcome.COMMIT);
+                    close(StandardOutcome.SAVE);
                 }).otherwise(() -> {
                     viewValidation.showValidationErrors(ValidationErrors.of(
                             messageBundle.getMessage("changePasswordView.currentPasswordWarning")));
                 });
 
-        close(StandardOutcome.COMMIT);
+        close(StandardOutcome.SAVE);
     }
 
     @Subscribe("closeAction")

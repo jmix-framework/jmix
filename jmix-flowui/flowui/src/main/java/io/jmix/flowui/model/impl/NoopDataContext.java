@@ -130,7 +130,7 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public EntitySet commit() {
+    public EntitySet save() {
         return EntitySet.of(Collections.emptySet());
     }
 
@@ -149,21 +149,21 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public Subscription addPreCommitListener(Consumer<PreCommitEvent> listener) {
+    public Subscription addPreSaveListener(Consumer<PreSaveEvent> listener) {
         return VoidSubscription.INSTANCE;
     }
 
     @Override
-    public Subscription addPostCommitListener(Consumer<PostCommitEvent> listener) {
+    public Subscription addPostSaveListener(Consumer<PostSaveEvent> listener) {
         return VoidSubscription.INSTANCE;
     }
 
     @Override
-    public Function<SaveContext, Set<Object>> getCommitDelegate() {
+    public Function<SaveContext, Set<Object>> getSaveDelegate() {
         return null;
     }
 
     @Override
-    public void setCommitDelegate(Function<SaveContext, Set<Object>> delegate) {
+    public void setSaveDelegate(Function<SaveContext, Set<Object>> delegate) {
     }
 }

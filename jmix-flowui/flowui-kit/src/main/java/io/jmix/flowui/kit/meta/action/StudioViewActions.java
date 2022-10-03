@@ -37,7 +37,7 @@ public interface StudioViewActions {
                             defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "outcome", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.view.StandardOutcome",
-                            defaultValue = "CLOSE", options = {"CLOSE", "COMMIT", "DISCARD", "SELECT"}),
+                            defaultValue = "CLOSE", options = {"CLOSE", "SAVE", "DISCARD", "SELECT"}),
             }
     )
     void viewCloseAction();
@@ -133,9 +133,9 @@ public interface StudioViewActions {
     void detailCloseAction();
 
     @StudioAction(
-            type = "detail_commit",
-            description = "Commits changes in the detail view",
-            classFqn = "io.jmix.flowui.action.view.DetailCommitAction",
+            type = "detail_save",
+            description = "Saves changes in the detail view",
+            classFqn = "io.jmix.flowui.action.view.DetailSaveAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
@@ -146,7 +146,7 @@ public interface StudioViewActions {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "ARCHIVE",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
-                            initialValue = "detailCommit"),
+                            initialValue = "detailSave"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.Save"),
@@ -159,12 +159,12 @@ public interface StudioViewActions {
                             defaultValue = "true")
             }
     )
-    void detailCommitAction();
+    void detailSaveAction();
 
     @StudioAction(
-            type = "detail_commitClose",
-            description = "Commits changes and closes the detail view",
-            classFqn = "io.jmix.flowui.action.view.DetailCommitCloseAction",
+            type = "detail_saveClose",
+            description = "Saves changes and closes the detail view",
+            classFqn = "io.jmix.flowui.action.view.DetailSaveCloseAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
@@ -175,7 +175,7 @@ public interface StudioViewActions {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "CHECK",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
-                            initialValue = "detailCommitClose"),
+                            initialValue = "detailSaveClose"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
                             defaultValue = "CONTROL-ENTER"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
@@ -189,7 +189,7 @@ public interface StudioViewActions {
                             defaultValue = "true")
             }
     )
-    void detailCommitCloseAction();
+    void detailSaveCloseAction();
 
     @StudioAction(
             type = "detail_discard",

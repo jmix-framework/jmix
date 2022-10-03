@@ -25,7 +25,7 @@ public class PropertyShortcutCombinationLoader {
 
     protected static final Map<String, Function<FlowuiViewProperties, String>> VIEWS_SHORTCUT_ALIASES =
             ImmutableMap.<String, Function<FlowuiViewProperties, String>>builder()
-                    .put("COMMIT_SHORTCUT", FlowuiViewProperties::getCommitShortcut)
+                    .put("SAVE_SHORTCUT", FlowuiViewProperties::getSaveShortcut)
                     .put("CLOSE_SHORTCUT", FlowuiViewProperties::getCloseShortcut)
                     .build();
 

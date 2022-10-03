@@ -76,7 +76,7 @@ class CompositionViewsTest extends FlowuiTestSpecification {
 
         def lineScreenForCreate = orderView.buildLineScreenForCreate(explicitParentDc)
 
-        lineScreenForCreate.changeCommitAndClose(1)
+        lineScreenForCreate.changeSaveAndClose(1)
 
         then:
 
@@ -89,7 +89,7 @@ class CompositionViewsTest extends FlowuiTestSpecification {
 
         def lineScreenForEdit = orderView.buildLineScreenForEdit(explicitParentDc)
 
-        lineScreenForEdit.changeCommitAndClose(2)
+        lineScreenForEdit.changeSaveAndClose(2)
 
         then:
 
@@ -134,7 +134,7 @@ class CompositionViewsTest extends FlowuiTestSpecification {
         def lineParam1 = lineViewCtx.find(lineParam)
         lineView.paramsDc.getMutableItems().remove(lineParam1)
         lineViewCtx.remove(lineParam1)
-        lineViewCtx.commit()
+        lineViewCtx.save()
 
         then:
 

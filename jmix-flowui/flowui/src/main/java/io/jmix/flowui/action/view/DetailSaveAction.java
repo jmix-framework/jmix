@@ -8,16 +8,16 @@ import io.jmix.flowui.view.PessimisticLockStatus;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ActionType(DetailCommitAction.ID)
-public class DetailCommitAction<E> extends OperationResultViewAction<DetailCommitAction<E>, StandardDetailView<E>> {
+@ActionType(DetailSaveAction.ID)
+public class DetailSaveAction<E> extends OperationResultViewAction<DetailSaveAction<E>, StandardDetailView<E>> {
 
-    public static final String ID = "detail_commit";
+    public static final String ID = "detail_save";
 
-    public DetailCommitAction() {
+    public DetailSaveAction() {
         this(ID);
     }
 
-    public DetailCommitAction(String id) {
+    public DetailSaveAction(String id) {
         super(id);
     }
 
@@ -37,7 +37,7 @@ public class DetailCommitAction<E> extends OperationResultViewAction<DetailCommi
     public void execute() {
         checkTarget();
 
-        operationResult = target.commit();
+        operationResult = target.save();
 
         super.execute();
     }

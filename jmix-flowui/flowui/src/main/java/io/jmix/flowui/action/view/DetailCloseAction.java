@@ -45,8 +45,8 @@ public class DetailCloseAction<E> extends OperationResultViewAction<DetailCloseA
     public void execute() {
         checkTarget();
 
-        operationResult = target.close(ViewControllerUtils.isCommitActionPerformed(target)
-                ? StandardOutcome.COMMIT
+        operationResult = target.close(ViewControllerUtils.isSaveActionPerformed(target)
+                ? StandardOutcome.SAVE
                 : StandardOutcome.CLOSE);
 
         super.execute();

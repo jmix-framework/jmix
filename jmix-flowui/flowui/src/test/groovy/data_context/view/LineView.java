@@ -61,8 +61,8 @@ public class LineView extends StandardDetailView<OrderLine> {
         lineDl.load();
     }
 
-    public void changeCommitAndClose(int quantity) {
+    public void changeSaveAndClose(int quantity) {
         qtyField.setTypedValue(quantity);
-        closeWithCommit();
+        closeWithSave();
     }
 }

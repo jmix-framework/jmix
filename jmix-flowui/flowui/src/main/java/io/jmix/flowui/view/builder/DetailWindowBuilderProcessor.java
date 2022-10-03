@@ -86,11 +86,11 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         }
 
         dialog.addAfterCloseListener(closeEvent -> {
-            if (closeEvent.closedWith(StandardOutcome.COMMIT)) {
-                E entityFromDetail = getCommittedEntity(detailView, parentDataContext);
+            if (closeEvent.closedWith(StandardOutcome.SAVE)) {
+                E entityFromDetail = getSavedEntity(detailView, parentDataContext);
                 E reloadedEntity = transformForCollectionContainer(entityFromDetail, container);
-                E committedEntity = transform(reloadedEntity, builder);
-                E mergedEntity = merge(committedEntity, builder.getOrigin(), parentDataContext);
+                E savedEntity = transform(reloadedEntity, builder);
+                E mergedEntity = merge(savedEntity, builder.getOrigin(), parentDataContext);
 
                 if (builder.getMode() == DetailViewMode.CREATE) {
                     boolean addsFirst = false;
@@ -135,7 +135,7 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                                                                                            DetailWindowBuilder<E, S> builder,
                                                                                            DetailView<E> detailView) {
         return closeEvent -> {
-            if (closeEvent.closedWith(StandardOutcome.COMMIT)) {
+            if (closeEvent.closedWith(StandardOutcome.SAVE)) {
                 E entityFromDetail = detailView.getEditedEntity();
                 E reloadedEntity = transformForField(entityFromDetail, field);
                 E editedEntity = transform(reloadedEntity, builder);
@@ -338,7 +338,7 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         return result;
     }
 
-    protected <E> E getCommittedEntity(DetailView<E> detailView, @Nullable DataContext parentDataContext) {
+    protected <E> E getSavedEntity(DetailView<E> detailView, @Nullable DataContext parentDataContext) {
         E editedEntity = detailView.getEditedEntity();
         if (parentDataContext != null) {
             E trackedEntity = parentDataContext.find(editedEntity);

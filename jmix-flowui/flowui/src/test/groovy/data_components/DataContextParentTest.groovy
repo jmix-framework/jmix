@@ -111,7 +111,7 @@ class DataContextParentTest extends DataContextSpec {
         user1_ctx2 != null
         !user1_ctx2.is(user1_ctx1)
 
-        when: "add detail instance to collection of the master object in child context and commit it"
+        when: "add detail instance to collection of the master object in child context and save it"
 
         UserRole ur1_ctx2 = ctx2.merge(new UserRole(user: user1_ctx2))
 
@@ -119,13 +119,13 @@ class DataContextParentTest extends DataContextSpec {
         user1_ctx2.userRoles.add(ur1_ctx2)
 
         def modified = []
-        ctx2.addPreCommitListener({ e ->
+        ctx2.addPreSaveListener({ e ->
             modified.addAll(e.modifiedInstances)
         })
 
-        ctx2.commit()
+        ctx2.save()
 
-        then: "child context commits both detail and master instances to parent context"
+        then: "child context saves both detail and master instances to parent context"
 
         modified.size() == 2
         modified.contains(user1_ctx2)
@@ -137,17 +137,17 @@ class DataContextParentTest extends DataContextSpec {
         UserRole ur1_ctx1 = ctx1.find(UserRole, ur1_ctx2.id)
         user1_ctx1.userRoles[0].is(ur1_ctx1)
 
-        when: "committing parent context"
+        when: "saving parent context"
 
         modified.clear()
 
-        ctx1.addPreCommitListener({ e ->
+        ctx1.addPreSaveListener({ e ->
             modified.addAll(e.modifiedInstances)
         })
 
-        ctx1.commit()
+        ctx1.save()
 
-        then: "parent context commits both detail and master instances"
+        then: "parent context saves both detail and master instances"
 
         modified.size() == 2
         modified.contains(user1_ctx1)
@@ -175,7 +175,7 @@ class DataContextParentTest extends DataContextSpec {
         isNew(user1_ctx2)
         ctx2.hasChanges()
 
-        when: "create new instances in child context and commit"
+        when: "create new instances in child context and save"
 
         UserRole ur1_ctx2 = ctx2.merge(new UserRole(user: user1_ctx2))
 
@@ -184,7 +184,7 @@ class DataContextParentTest extends DataContextSpec {
 
         user1_ctx2.userRoles = [ur1_ctx2]
 
-        ctx2.commit()
+        ctx2.save()
 
         then: "new instances are in parent context"
 
@@ -203,7 +203,7 @@ class DataContextParentTest extends DataContextSpec {
     }
 
     @Unroll
-    def "commit to parent"(boolean detached) {
+    def "save to parent"(boolean detached) {
 
         DataContext ctx1 = factory.createDataContext()
 
@@ -237,7 +237,7 @@ class DataContextParentTest extends DataContextSpec {
         when:
 
         line2.quantity = 2
-        ctx2.commit()
+        ctx2.save()
 
         then:
 
@@ -280,7 +280,7 @@ class DataContextParentTest extends DataContextSpec {
 
         when:
 
-        ctx2.commit()
+        ctx2.save()
 
         then:
 
@@ -290,7 +290,7 @@ class DataContextParentTest extends DataContextSpec {
 
         ctx2.merge(ctx1.find(line))
         ctx2.remove(line)
-        ctx2.commit()
+        ctx2.save()
 
         then:
 
@@ -322,8 +322,8 @@ class DataContextParentTest extends DataContextSpec {
 
         when:
 
-        ctx3.commit()
-        ctx2.commit()
+        ctx3.save()
+        ctx2.save()
 
         then:
 
@@ -333,7 +333,7 @@ class DataContextParentTest extends DataContextSpec {
 
         ctx2.merge(ctx1.find(line))
         ctx2.remove(line)
-        ctx2.commit()
+        ctx2.save()
 
         then:
 
@@ -366,8 +366,8 @@ class DataContextParentTest extends DataContextSpec {
 
         when:
 
-        ctx3.commit()
-        ctx2.commit()
+        ctx3.save()
+        ctx2.save()
 
         then:
 
@@ -376,7 +376,7 @@ class DataContextParentTest extends DataContextSpec {
         when:
 
         ctx2.merge(ctx1.find(line))
-        ctx2.commit() // commit to root context
+        ctx2.save() // save to root context
         ctx1.remove(line) // then remove
 
         then:

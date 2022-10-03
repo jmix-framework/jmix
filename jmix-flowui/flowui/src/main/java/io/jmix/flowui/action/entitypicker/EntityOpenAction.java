@@ -38,7 +38,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
 
     protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
 
-    protected Consumer<E> afterCommitHandler;
+    protected Consumer<E> afterSaveHandler;
     protected Function<E, E> transformation;
 
     public EntityOpenAction() {
@@ -85,8 +85,8 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         super.setTarget(target);
     }
 
-    public void setAfterCommitHandler(Consumer<E> afterCommitHandler) {
-        this.afterCommitHandler = afterCommitHandler;
+    public void setAfterSaveHandler(Consumer<E> afterSaveHandler) {
+        this.afterSaveHandler = afterSaveHandler;
     }
 
     public void setTransformation(Function<E, E> transformation) {
@@ -185,12 +185,12 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         }
 
         DialogWindow<?> dialogWindow = builder.build();
-        if (afterCommitHandler != null) {
+        if (afterSaveHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
-                if (event.closedWith(StandardOutcome.COMMIT)
+                if (event.closedWith(StandardOutcome.SAVE)
                         && event.getView() instanceof DetailView) {
-                    E committedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
-                    afterCommitHandler.accept(committedEntity);
+                    E savedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
+                    afterSaveHandler.accept(savedEntity);
                 }
             });
         }
@@ -214,8 +214,8 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         return this;
     }
 
-    public EntityOpenAction<E> withAfterCommitHandler(Consumer<E> afterCommitHandler) {
-        setAfterCommitHandler(afterCommitHandler);
+    public EntityOpenAction<E> withAfterSaveHandler(Consumer<E> afterSaveHandler) {
+        setAfterSaveHandler(afterSaveHandler);
         return this;
     }
 

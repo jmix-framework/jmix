@@ -50,7 +50,7 @@ public class LookupSelectAction<E> extends OperationResultViewAction<LookupSelec
 
     @Autowired
     protected void setFlowUiViewProperties(FlowuiViewProperties flowUiViewProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiViewProperties.getCommitShortcut());
+        this.shortcutCombination = KeyCombination.create(flowUiViewProperties.getSaveShortcut());
     }
 
     @Override

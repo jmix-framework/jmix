@@ -45,8 +45,8 @@ public class ResetPasswordView extends StandardView {
     protected Set<? extends UserDetails> users;
 
     @SuppressWarnings("unchecked")
-    @Subscribe("commitAction")
-    public void onCommitActionPerformed(ActionPerformedEvent event) {
+    @Subscribe("saveAction")
+    public void onSaveActionPerformed(ActionPerformedEvent event) {
         Map<UserDetails, String> newPasswords = userManager.resetPasswords((Set<UserDetails>) users);
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<UserDetails, String> entry : newPasswords.entrySet()) {

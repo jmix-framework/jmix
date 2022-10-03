@@ -6,7 +6,7 @@
                     class="io.jmix.securityflowui.view.resourcepolicy.AttributeResourceModel"/>
     </data>
     <actions>
-        <action id="commitAction"/>
+        <action id="saveAction"/>
         <action id="closeAction" type="view_close"/>
     </actions>
     <layout>
@@ -29,7 +29,7 @@
         </dataGrid>
 
         <hbox id="detailActions">
-            <button id="commitAndCloseBtn" action="commitAction"/>
+            <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>

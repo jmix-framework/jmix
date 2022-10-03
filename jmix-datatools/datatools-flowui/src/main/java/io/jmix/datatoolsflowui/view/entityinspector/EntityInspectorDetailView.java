@@ -25,13 +25,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.AccessManager;
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -46,29 +40,12 @@ import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
-import io.jmix.flowui.action.list.AddAction;
-import io.jmix.flowui.action.list.CreateAction;
-import io.jmix.flowui.action.list.EditAction;
-import io.jmix.flowui.action.list.ExcludeAction;
-import io.jmix.flowui.action.list.RemoveAction;
-import io.jmix.flowui.action.list.SecuredListDataComponentAction;
+import io.jmix.flowui.action.list.*;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionLoader;
-import io.jmix.flowui.model.DataComponents;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.InstanceLoader;
-import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.MessageBundle;
-import io.jmix.flowui.view.OpenMode;
-import io.jmix.flowui.view.StandardDetailView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.model.*;
+import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlIdSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -79,7 +56,6 @@ import java.util.HashMap;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 @Route(value = "entityinspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
 @ViewController("datatlf_entityInspectorDetailView")
 @ViewDescriptor("entity-inspector-detail-view.xml")
@@ -142,12 +118,12 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     }
 
     @Subscribe
-    public void beforeShow(BeforeShowEvent event) {
+    public void onBeforeShow(BeforeShowEvent event) {
         createContent();
     }
 
     @Subscribe
-    protected void afterCommit(StandardDetailView.AfterCommitChangesEvent event) {
+    protected void onAfterSave(AfterSaveEvent event) {
         if (parentDataContainer != null) {
             parentDataContainer.replaceItem(getEditedEntity());
         }
@@ -288,7 +264,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
                     tabToContentMap.put(tab, embeddedForm);
                     tabs.add(tab);
 
-                    addComponentBeforeEditActions(embeddedForm);
+                    addComponentBeforeDetailActions(embeddedForm);
                     break;
                 default:
                     break;
@@ -349,7 +325,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
         tabToContentMap.put(tab, vbox);
         tabs.add(tab);
 
-        addComponentBeforeEditActions(vbox);
+        addComponentBeforeDetailActions(vbox);
     }
 
     protected CollectionContainer createDataGridContainer(
@@ -528,9 +504,9 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
         return result;
     }
 
-    protected void addComponentBeforeEditActions(Component component) {
-        Component editActions = getContent().getComponent("editActions");
-        getContent().addComponentAtIndex(getContent().indexOf(editActions), component);
+    protected void addComponentBeforeDetailActions(Component component) {
+        Component detailActions = getContent().getComponent("detailActions");
+        getContent().addComponentAtIndex(getContent().indexOf(detailActions), component);
     }
 
     public void setMetadataClassName(String metadataClassName) {

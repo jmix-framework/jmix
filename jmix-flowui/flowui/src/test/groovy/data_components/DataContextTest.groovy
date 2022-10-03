@@ -183,7 +183,7 @@ class DataContextTest extends DataContextSpec {
     def "merge new"() throws Exception {
         DataContext context = factory.createDataContext()
 
-        when: "merging and committing graph of new instances"
+        when: "merging and saving graph of new instances"
 
         User user1 = new User()
         user1.login = "u1"
@@ -213,14 +213,14 @@ class DataContextTest extends DataContextSpec {
         Collection modified = []
         Collection removed = []
 
-        context.addPreCommitListener({ e ->
+        context.addPreSaveListener({ e ->
             modified.addAll(e.modifiedInstances)
             removed.addAll(e.removedInstances)
         })
 
-        context.commit()
+        context.save()
 
-        then: "all merged instances are committed"
+        then: "all merged instances are saved"
 
         modified.size() == 5
         modified.contains(user1)
@@ -267,12 +267,12 @@ class DataContextTest extends DataContextSpec {
         Collection modified = []
         Collection removed = []
 
-        context.addPreCommitListener({ e->
+        context.addPreSaveListener({ e->
             modified.addAll(e.modifiedInstances)
             removed.addAll(e.removedInstances)
         })
 
-        def committed = context.commit()
+        def saved = context.save()
 
         then:
 
@@ -283,8 +283,8 @@ class DataContextTest extends DataContextSpec {
         removed.size() == 1
         removed.contains(user1Role2)
 
-        committed.containsAll([role1, user1])
-        !committed.contains(user1Role2)
+        saved.containsAll([role1, user1])
+        !saved.contains(user1Role2)
     }
 
     def "remove"() {
@@ -305,8 +305,8 @@ class DataContextTest extends DataContextSpec {
         when:
 
         def removed = []
-        context.addPreCommitListener { e -> removed.addAll(e.removedInstances) }
-        context.commit()
+        context.addPreSaveListener { e -> removed.addAll(e.removedInstances) }
+        context.save()
 
         then:
 
@@ -331,8 +331,8 @@ class DataContextTest extends DataContextSpec {
         when:
 
         def removed = []
-        context.addPreCommitListener { e -> removed.addAll(e.removedInstances) }
-        context.commit()
+        context.addPreSaveListener { e -> removed.addAll(e.removedInstances) }
+        context.save()
 
         then:
 
@@ -357,15 +357,15 @@ class DataContextTest extends DataContextSpec {
         when:
 
         def removed = []
-        context.addPreCommitListener { e -> removed.addAll(e.removedInstances) }
-        context.commit()
+        context.addPreSaveListener { e -> removed.addAll(e.removedInstances) }
+        context.save()
 
         then:
 
         removed.isEmpty()
     }
 
-    def "commit returns different reference"() {
+    def "save returns different reference"() {
         DataContext context = factory.createDataContext()
 
         Product product1 = new Product(name: "p1", price: 100)
@@ -374,7 +374,7 @@ class DataContextTest extends DataContextSpec {
         makeDetached(product1, product2, line)
         def line1 = context.merge(line)
 
-        context.setCommitDelegate { SaveContext cc ->
+        context.setSaveDelegate { SaveContext cc ->
             Set entities = new HashSet()
             cc.entitiesToSave.each {
                 entities.add(makeSaved(it))
@@ -386,7 +386,7 @@ class DataContextTest extends DataContextSpec {
         when:
 
         line1.quantity = 20
-        context.commit()
+        context.save()
 
         then:
 
@@ -490,13 +490,13 @@ class DataContextTest extends DataContextSpec {
         ((FetchGroupTracker) order2_1)._persistence_getFetchGroup().attributeNames.containsAll(['id', 'version', 'number', 'orderLines'])
     }
 
-    def "commit delegate"() {
+    def "save delegate"() {
 
         Order order1 = makeSaved(new Order(number: "111"))
 
         def dataContext = factory.createDataContext()
-        dataContext.setCommitDelegate { SaveContext cc ->
-            [makeSaved(new Order(id: order1.id, number: 'committed through delegate'))].toSet()
+        dataContext.setSaveDelegate { SaveContext cc ->
+            [makeSaved(new Order(id: order1.id, number: 'saved through delegate'))].toSet()
         }
 
         def order2 = dataContext.merge(order1)
@@ -504,11 +504,11 @@ class DataContextTest extends DataContextSpec {
         when:
 
         order2.number = '222'
-        dataContext.commit()
+        dataContext.save()
 
         then:
 
-        dataContext.find(Order, order1.id).number == 'committed through delegate'
+        dataContext.find(Order, order1.id).number == 'saved through delegate'
     }
 
     def "read-only context"() {
@@ -614,7 +614,7 @@ class DataContextTest extends DataContextSpec {
         dataContext.find(Customer, customer.id).is(customer)
     }
 
-    def "remove of newly created entity does not commit it"() {
+    def "remove of newly created entity does not save it"() {
         DataContext context = factory.createDataContext()
 
         Order order = new Order(number: '111')
@@ -631,8 +631,8 @@ class DataContextTest extends DataContextSpec {
         when:
 
         def removed = []
-        context.addPreCommitListener { e -> removed.addAll(e.removedInstances) }
-        context.commit()
+        context.addPreSaveListener { e -> removed.addAll(e.removedInstances) }
+        context.save()
 
         then:
 
@@ -667,8 +667,8 @@ class DataContextTest extends DataContextSpec {
         when:
 
         def modified = []
-        context.addPreCommitListener { e -> modified.addAll(e.modifiedInstances) }
-        context.commit()
+        context.addPreSaveListener { e -> modified.addAll(e.modifiedInstances) }
+        context.save()
 
         then:
 
@@ -703,8 +703,8 @@ class DataContextTest extends DataContextSpec {
         when:
 
         def modified = []
-        context.addPreCommitListener { e -> modified.addAll(e.modifiedInstances) }
-        context.commit()
+        context.addPreSaveListener { e -> modified.addAll(e.modifiedInstances) }
+        context.save()
 
         then:
 

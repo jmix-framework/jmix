@@ -169,7 +169,8 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
             moveDownButtonEnabled = index < ((LogicalFilterCondition) parent).getOwnFilterConditions().size() - 1;
         }
 
-        moveUpButton.setEnabled(moveUpButtonEnabled);
-        moveDownButton.setEnabled(moveDownButtonEnabled);
+        boolean notReadOnly = !isReadOnly();
+        moveUpButton.setEnabled(moveUpButtonEnabled && notReadOnly);
+        moveDownButton.setEnabled(moveDownButtonEnabled && notReadOnly);
     }
 }

@@ -52,6 +52,8 @@ includeProject('datatools', 'jmix-datatools/datatools')
 includeProject('datatools-starter', 'jmix-datatools/datatools-starter')
 includeProject('datatools-ui', 'jmix-datatools/datatools-ui')
 includeProject('datatools-ui-starter', 'jmix-datatools/datatools-ui-starter')
+includeProject('datatools-flowui', 'jmix-datatools/datatools-flowui')
+includeProject('datatools-flowui-starter', 'jmix-datatools/datatools-flowui-starter')
 
 includeProject('dynattr', 'jmix-dynattr/dynattr')
 includeProject('dynattr-starter', 'jmix-dynattr/dynattr-starter')

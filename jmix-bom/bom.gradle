@@ -138,6 +138,8 @@ dependencies {
         api "io.jmix.datatools:jmix-datatools-starter:$freeVersion"
         api "io.jmix.datatools:jmix-datatools-ui:$freeVersion"
         api "io.jmix.datatools:jmix-datatools-ui-starter:$freeVersion"
+        api "io.jmix.datatools:jmix-datatools-flowui:$freeVersion"
+        api "io.jmix.datatools:jmix-datatools-flowui-starter:$freeVersion"
 
         api "io.jmix.dynattr:jmix-dynattr:$freeVersion"
         api "io.jmix.dynattr:jmix-dynattr-ui:$freeVersion"

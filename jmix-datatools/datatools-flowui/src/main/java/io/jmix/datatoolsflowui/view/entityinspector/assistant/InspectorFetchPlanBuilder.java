@@ -109,6 +109,8 @@ public class InspectorFetchPlanBuilder {
                                 builder -> builder.addFetchPlan(FetchPlan.INSTANCE_NAME));
                     }
                     break;
+                default:
+                    break;
             }
         }
         return fetchPlanBuilder.build();

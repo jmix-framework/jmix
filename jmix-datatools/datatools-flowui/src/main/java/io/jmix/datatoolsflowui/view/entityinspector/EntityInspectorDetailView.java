@@ -49,6 +49,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlIdSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -91,6 +92,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     protected MessageBundle messageBundle;
 
     protected Tabs tabs;
+    @Nullable
     protected DataContext parentDataContext;
     protected String parentProperty;
     protected DataContext dataContext;
@@ -518,7 +520,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
         this.metadataId = metadataId;
     }
 
-    public void setParentDataContext(DataContext parentDataContext) {
+    public void setParentDataContext(@Nullable DataContext parentDataContext) {
         this.parentDataContext = parentDataContext;
     }
 

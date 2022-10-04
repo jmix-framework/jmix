@@ -115,7 +115,7 @@ public class EntityInspectorEditAction<E> extends EditAction<E> {
     }
 
     public EntityInspectorEditAction<E> withParentDataContext(DataContext parentDataContext) {
-        setParentDataContext(parentDataContext);
+        this.parentDataContext = parentDataContext;
         return this;
     }
 
@@ -124,7 +124,7 @@ public class EntityInspectorEditAction<E> extends EditAction<E> {
         return this;
     }
 
-    public EntityInspectorEditAction<E> withParentDataContainer(CollectionContainer<Object> dataGridContainer) {
+    public EntityInspectorEditAction<E> withParentDataContainer(CollectionContainer<Object> parentDataContainer) {
         this.parentDataContainer = parentDataContainer;
         return this;
     }

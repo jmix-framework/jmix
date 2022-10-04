@@ -1,7 +1,7 @@
 {
   "version": 1,
   "name": "UI Theme Add-On",
-  "order": 50,
+  "order": 150,
   "addon": true,
   "description": "<html>Jmix UI theme add-ons allow you to reuse custom UI themes in different applications.</html>",
   "params": [

@@ -8,10 +8,13 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntitySystemAccess;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
 import io.jmix.flowui.data.binding.SuspendableBinding;
 import io.jmix.flowui.data.binding.ValueBinding;
@@ -34,6 +37,9 @@ import javax.annotation.Nullable;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.metadata.BeanDescriptor;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public abstract class AbstractValueBinding<V> implements ValueBinding<V>, SuspendableBinding {
 
@@ -47,8 +53,10 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
     protected HasValue<?, V> component;
 
     protected Registration componentValueChangeRegistration;
-    protected Registration valueSourceValueChangeSubscription;
-    protected Registration valueSourceStateChangeSubscription;
+
+    protected Registration valueSourceValueChangeRegistration;
+    protected Registration valueSourceStateChangeRegistration;
+    protected Registration valueSourceInstanceChangeRegistration;
 
     protected boolean suspended = false;
 
@@ -103,14 +111,17 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
 
         componentValueChangeRegistration = addComponentValueChangeListener(this::onComponentValueChange);
 
-        valueSourceValueChangeSubscription = valueSource.addValueChangeListener(this::onValueSourceValueChange);
-        valueSourceStateChangeSubscription = valueSource.addStateChangeListener(this::valueSourceStateChanged);
+        valueSourceValueChangeRegistration = valueSource.addValueChangeListener(this::onValueSourceValueChange);
+        valueSourceStateChangeRegistration = valueSource.addStateChangeListener(this::onValueSourceStateChanged);
 
         component.setReadOnly(valueSource.isReadOnly());
 
         if (valueSource instanceof EntityValueSource) {
             EntityValueSource<?, V> entityValueSource = (EntityValueSource<?, V>) valueSource;
             MetaPropertyPath metaPropertyPath = entityValueSource.getMetaPropertyPath();
+
+            this.valueSourceInstanceChangeRegistration =
+                    entityValueSource.addInstanceChangeListener(this::onValueSourceInstanceChanged);
 
             initRequired(component, metaPropertyPath);
 
@@ -161,11 +172,28 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
                 if (!attributeContext.canView()) {
                     ((Component) component).setVisible(false);
                 }
+
+                resetRequiredIfAttributeFiltered(component, entityValueSource, metaPropertyPath);
             }
         }
     }
 
-    protected void valueSourceStateChanged(StateChangeEvent event) {
+    protected void onValueSourceInstanceChanged(EntityValueSource.InstanceChangeEvent<?> event) {
+        if (valueSource.getState() == BindingState.ACTIVE) {
+
+            if (valueSource instanceof EntityValueSource) {
+                EntityValueSource<?, V> entityValueSource = (EntityValueSource<?, V>) valueSource;
+
+                resetRequiredIfAttributeFiltered(component, entityValueSource,
+                        entityValueSource.getMetaPropertyPath());
+            }
+
+            // read value to component
+            setComponentValue(valueSource.getValue());
+        }
+    }
+
+    protected void onValueSourceStateChanged(StateChangeEvent event) {
         if (event.getState() == BindingState.ACTIVE) {
             // read value to component
             setComponentValue(valueSource.getValue());
@@ -192,13 +220,17 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
             componentValueChangeRegistration.remove();
             componentValueChangeRegistration = null;
         }
-        if (valueSourceValueChangeSubscription != null) {
-            valueSourceValueChangeSubscription.remove();
-            valueSourceValueChangeSubscription = null;
+        if (valueSourceValueChangeRegistration != null) {
+            valueSourceValueChangeRegistration.remove();
+            valueSourceValueChangeRegistration = null;
         }
-        if (valueSourceStateChangeSubscription != null) {
-            valueSourceStateChangeSubscription.remove();
-            valueSourceStateChangeSubscription = null;
+        if (valueSourceStateChangeRegistration != null) {
+            valueSourceStateChangeRegistration.remove();
+            valueSourceStateChangeRegistration = null;
+        }
+        if (valueSourceInstanceChangeRegistration != null) {
+            valueSourceInstanceChangeRegistration.remove();
+            valueSourceInstanceChangeRegistration = null;
         }
     }
 
@@ -257,6 +289,46 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
                         metaPropertyPath.getMetaClass(),
                         metaPropertyPath.toPathString());
                 ((HasRequired) component).setRequiredMessage(defaultRequiredMessage);
+            }
+        }
+    }
+
+    /**
+     * Set field's "required" flag to false if the value has been filtered by
+     * Row Level Security. This is necessary to allow user to submit form with
+     * filtered attribute even if attribute is required.
+     */
+    protected void resetRequiredIfAttributeFiltered(HasValue<?, V> field,
+                                                    EntityValueSource<?, V> valueSource,
+                                                    MetaPropertyPath metaPropertyPath) {
+        if (field.isRequiredIndicatorVisible()
+                && valueSource.getState() == BindingState.ACTIVE
+                && valueSource.getItem() != null
+                && metaPropertyPath.getMetaProperty().getRange().isClass()) {
+
+            Object rootItem = valueSource.getItem();
+            Object targetItem = rootItem;
+
+            MetaProperty[] propertiesChain = metaPropertyPath.getMetaProperties();
+            if (propertiesChain.length > 1) {
+                String basePropertyItem = Arrays.stream(propertiesChain)
+                        .limit(propertiesChain.length - 1)
+                        .map(MetadataObject::getName)
+                        .collect(Collectors.joining("."));
+
+                targetItem = EntityValues.getValueEx(rootItem, basePropertyItem);
+            }
+
+            if (targetItem != null) {
+                String propertyName = metaPropertyPath.getMetaProperty().getName();
+                Object value = EntityValues.getValue(targetItem, propertyName);
+
+                Collection<String> erasedAttributes =
+                        EntitySystemAccess.getSecurityState(targetItem).getErasedAttributes();
+
+                if (value == null && erasedAttributes.contains(propertyName)) {
+                    field.setRequiredIndicatorVisible(false);
+                }
             }
         }
     }

@@ -24,13 +24,11 @@ import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.InstanceContainer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import spock.lang.Ignore
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
 import test_support.spec.FlowuiTestSpecification
 
-@Ignore
 @SpringBootTest
 class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
@@ -94,12 +92,12 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer1'
-        field2.value == 'customer1'
+        field1.typedValue == 'customer1'
+        field2.typedValue == 'customer1'
 
         when:
 
-        field1.value = 'customer11'
+        field1.typedValue = 'customer11'
 
         then:
 
@@ -107,7 +105,7 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         and:
 
-        field2.value == 'customer11'
+        field2.typedValue == 'customer11'
 
         when:
 
@@ -115,8 +113,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer111'
-        field2.value == 'customer111'
+        field1.typedValue == 'customer111'
+        field2.typedValue == 'customer111'
     }
 
     def "binding to property path - change root item"() {
@@ -130,8 +128,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer1'
-        field2.value == 'customer1'
+        field1.typedValue == 'customer1'
+        field2.typedValue == 'customer1'
 
         when:
 
@@ -139,8 +137,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer2'
-        field2.value == 'customer2'
+        field1.typedValue == 'customer2'
+        field2.typedValue == 'customer2'
     }
 
     def "binding to property path - change leaf item"() {
@@ -154,8 +152,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer1'
-        field2.value == 'customer1'
+        field1.typedValue == 'customer1'
+        field2.typedValue == 'customer1'
 
         when:
 
@@ -163,8 +161,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer2'
-        field2.value == 'customer2'
+        field1.typedValue == 'customer2'
+        field2.typedValue == 'customer2'
     }
 
     def "binding to deep property path"() {
@@ -178,12 +176,12 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer1'
-        field2.value == 'customer1'
+        field1.typedValue == 'customer1'
+        field2.typedValue == 'customer1'
 
         when:
 
-        field1.value = 'customer11'
+        field1.typedValue = 'customer11'
 
         then:
 
@@ -191,7 +189,7 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         and:
 
-        field2.value == 'customer11'
+        field2.typedValue == 'customer11'
 
         when:
 
@@ -199,8 +197,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer111'
-        field2.value == 'customer111'
+        field1.typedValue == 'customer111'
+        field2.typedValue == 'customer111'
 
         when: "change root item"
 
@@ -208,8 +206,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer2'
-        field2.value == 'customer2'
+        field1.typedValue == 'customer2'
+        field2.typedValue == 'customer2'
 
         when: "change intermediate item"
 
@@ -217,8 +215,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer111'
-        field2.value == 'customer111'
+        field1.typedValue == 'customer111'
+        field2.typedValue == 'customer111'
 
         when: "change leaf item"
 
@@ -226,8 +224,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer2'
-        field2.value == 'customer2'
+        field1.typedValue == 'customer2'
+        field2.typedValue == 'customer2'
 
     }
 
@@ -242,8 +240,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer1'
-        field2.value == 'customer1'
+        field1.typedValue == 'customer1'
+        field2.typedValue == 'customer1'
 
         when:
 
@@ -251,8 +249,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == null
-        field2.value == null
+        field1.typedValue == null
+        field2.typedValue == null
     }
 
     def "binding to deep property path - set intermediate item null"() {
@@ -266,8 +264,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer1'
-        field2.value == 'customer1'
+        field1.typedValue == 'customer1'
+        field2.typedValue == 'customer1'
 
         when:
 
@@ -275,8 +273,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == null
-        field2.value == null
+        field1.typedValue == null
+        field2.typedValue == null
     }
 
     def "binding to deep property path - set root item null"() {
@@ -290,8 +288,8 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == 'customer1'
-        field2.value == 'customer1'
+        field1.typedValue == 'customer1'
+        field2.typedValue == 'customer1'
 
         when:
 
@@ -299,7 +297,7 @@ class ContainerBindingToPathTest extends FlowuiTestSpecification {
 
         then:
 
-        field1.value == null
-        field2.value == null
+        field1.typedValue == null
+        field2.typedValue == null
     }
 }

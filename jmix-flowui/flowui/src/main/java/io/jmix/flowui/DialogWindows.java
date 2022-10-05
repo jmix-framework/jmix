@@ -31,16 +31,16 @@ import io.jmix.flowui.view.builder.*;
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-@org.springframework.stereotype.Component("flowui_DialogWindowBuilders")
-public class DialogWindowBuilders {
+@org.springframework.stereotype.Component("flowui_DialogWindows")
+public class DialogWindows {
 
     protected WindowBuilderProcessor windowBuilderProcessor;
     protected DetailWindowBuilderProcessor detailBuilderProcessor;
     protected LookupWindowBuilderProcessor lookupBuilderProcessor;
 
-    public DialogWindowBuilders(WindowBuilderProcessor windowBuilderProcessor,
-                                DetailWindowBuilderProcessor detailBuilderProcessor,
-                                LookupWindowBuilderProcessor lookupBuilderProcessor) {
+    public DialogWindows(WindowBuilderProcessor windowBuilderProcessor,
+                         DetailWindowBuilderProcessor detailBuilderProcessor,
+                         LookupWindowBuilderProcessor lookupBuilderProcessor) {
         this.windowBuilderProcessor = windowBuilderProcessor;
         this.detailBuilderProcessor = detailBuilderProcessor;
         this.lookupBuilderProcessor = lookupBuilderProcessor;

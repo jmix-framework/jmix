@@ -21,7 +21,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
-import io.jmix.flowui.DialogWindowBuilders;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataComponents;
@@ -58,7 +58,7 @@ public class OrderView extends StandardView implements HasUrlParameter<String> {
     private CollectionContainer<OrderLine> linesDc;
 
     @Autowired
-    private DialogWindowBuilders builders;
+    private DialogWindows dialogWindows;
 
     @Autowired
     private Metadata metadata;
@@ -89,7 +89,7 @@ public class OrderView extends StandardView implements HasUrlParameter<String> {
     }
 
     public LineView buildLineScreenForCreate(boolean explicitParentDc) {
-        DetailWindowClassBuilder<OrderLine, LineView> builder = builders.detail(itemsDataGrid)
+        DetailWindowClassBuilder<OrderLine, LineView> builder = dialogWindows.detail(itemsDataGrid)
                 .withViewClass(LineView.class)
                 .newEntity();
         if (explicitParentDc) {
@@ -100,7 +100,7 @@ public class OrderView extends StandardView implements HasUrlParameter<String> {
 
     public LineView buildLineScreenForEdit(boolean explicitParentDc) {
         itemsDataGrid.select(linesDc.getItems().get(0));
-        DetailWindowClassBuilder<OrderLine, LineView> builder = builders.detail(itemsDataGrid)
+        DetailWindowClassBuilder<OrderLine, LineView> builder = dialogWindows.detail(itemsDataGrid)
                 .withViewClass(LineView.class);
         if (explicitParentDc) {
             builder.withParentDataContext(getViewData().getDataContext());

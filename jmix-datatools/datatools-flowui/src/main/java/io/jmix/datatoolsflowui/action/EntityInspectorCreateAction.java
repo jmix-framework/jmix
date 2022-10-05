@@ -46,7 +46,7 @@ public class EntityInspectorCreateAction<E> extends CreateAction<E> {
 
     @Override
     protected void openDialog() {
-        DetailWindowBuilder<E, View<?>> builder = dialogWindowBuilders.detail(target);
+        DetailWindowBuilder<E, View<?>> builder = dialogWindows.detail(target);
 
         builder = viewInitializer.initWindowBuilder(builder);
 

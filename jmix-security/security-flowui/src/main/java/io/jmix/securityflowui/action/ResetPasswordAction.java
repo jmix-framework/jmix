@@ -19,7 +19,7 @@ package io.jmix.securityflowui.action;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.DialogWindowBuilders;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
@@ -42,7 +42,7 @@ public class ResetPasswordAction<E extends UserDetails>
 
     public static final String ID = "resetPassword";
 
-    protected DialogWindowBuilders dialogWindowBuilders;
+    protected DialogWindows dialogWindows;
 
     public ResetPasswordAction() {
         super(ID);
@@ -53,8 +53,8 @@ public class ResetPasswordAction<E extends UserDetails>
     }
 
     @Autowired
-    protected void setDialogWindowBuilders(DialogWindowBuilders dialogWindowBuilders) {
-        this.dialogWindowBuilders = dialogWindowBuilders;
+    protected void setDialogWindows(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     @Autowired
@@ -99,7 +99,7 @@ public class ResetPasswordAction<E extends UserDetails>
 
     protected void buildAndShowDialog() {
         findParent().ifPresent(parent -> {
-            DialogWindow<ResetPasswordView> dialog = dialogWindowBuilders.view(parent, ResetPasswordView.class)
+            DialogWindow<ResetPasswordView> dialog = dialogWindows.view(parent, ResetPasswordView.class)
                     .build();
             ResetPasswordView view = dialog.getView();
             view.setUsers(target.getSelectedItems());

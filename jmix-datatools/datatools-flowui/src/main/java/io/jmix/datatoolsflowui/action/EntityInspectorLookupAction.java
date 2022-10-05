@@ -48,7 +48,7 @@ public class EntityInspectorLookupAction<E> extends EntityLookupAction<E> {
                     "for the " + target.getClass().getSimpleName(), "action ID", getId());
         }
 
-        LookupWindowBuilder<E, View<?>> builder = dialogBuilders.lookup(target);
+        LookupWindowBuilder<E, View<?>> builder = dialogWindows.lookup(target);
 
         builder = viewInitializer.initWindowBuilder(builder);
 

@@ -29,7 +29,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
-import io.jmix.flowui.DialogWindowBuilders;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -104,7 +104,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     @Autowired
     private DataManager dataManager;
     @Autowired
-    private DialogWindowBuilders dialogBuilders;
+    private DialogWindows dialogWindows;
     @Autowired
     private RoleModelConverter roleModelConverter;
     @Autowired
@@ -277,28 +277,28 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     @Subscribe("resourcePoliciesTable.createMenuPolicy")
     private void onResourcePoliciesTableCreateMenuPolicy(ActionPerformedEvent event) {
-        dialogBuilders.view(this, MenuResourcePolicyModelCreateView.class)
+        dialogWindows.view(this, MenuResourcePolicyModelCreateView.class)
                 .withAfterCloseListener(this::addPoliciesFromMultiplePoliciesView)
                 .open();
     }
 
     @Subscribe("resourcePoliciesTable.createViewPolicy")
     private void onResourcePoliciesTableCreateViewPolicy(ActionPerformedEvent event) {
-        dialogBuilders.view(this, ViewResourcePolicyModelCreateView.class)
+        dialogWindows.view(this, ViewResourcePolicyModelCreateView.class)
                 .withAfterCloseListener(this::addPoliciesFromMultiplePoliciesView)
                 .open();
     }
 
     @Subscribe("resourcePoliciesTable.createEntityPolicy")
     private void onResourcePoliciesTableCreateEntityPolicy(ActionPerformedEvent event) {
-        dialogBuilders.view(this, EntityResourcePolicyModelCreateView.class)
+        dialogWindows.view(this, EntityResourcePolicyModelCreateView.class)
                 .withAfterCloseListener(this::addPoliciesFromMultiplePoliciesView)
                 .open();
     }
 
     @Subscribe("resourcePoliciesTable.createEntityAttributePolicy")
     private void onResourcePoliciesTableCreateEntityAttributePolicy(ActionPerformedEvent event) {
-        dialogBuilders.view(this, EntityAttributeResourcePolicyModelCreateView.class)
+        dialogWindows.view(this, EntityAttributeResourcePolicyModelCreateView.class)
                 .withAfterCloseListener(this::addPoliciesFromMultiplePoliciesView)
                 .open();
     }
@@ -325,7 +325,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     @Subscribe("resourcePoliciesTable.createGraphQLPolicy")
     private void onGraphQLPoliciesTableCreateGraphQLPolicy(ActionPerformedEvent event) {
-        DialogWindow<GraphQLResourcePolicyModelDetailView> dialog = dialogBuilders.detail(resourcePoliciesTable)
+        DialogWindow<GraphQLResourcePolicyModelDetailView> dialog = dialogWindows.detail(resourcePoliciesTable)
                 .withViewClass(GraphQLResourcePolicyModelDetailView.class)
                 .newEntity()
                 .withInitializer(resourcePolicyModel -> {
@@ -341,7 +341,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     @Subscribe("resourcePoliciesTable.createSpecificPolicy")
     private void onResourcePoliciesTableCreateSpecificPolicy(ActionPerformedEvent event) {
-        DialogWindow<SpecificResourcePolicyModelDetailView> dialog = dialogBuilders.detail(resourcePoliciesTable)
+        DialogWindow<SpecificResourcePolicyModelDetailView> dialog = dialogWindows.detail(resourcePoliciesTable)
                 .withViewClass(SpecificResourcePolicyModelDetailView.class)
                 .newEntity()
                 .withInitializer(resourcePolicyModel -> {
@@ -388,7 +388,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     private DialogWindow<?> buildResourcePolicyDetailView(ResourcePolicyModel editedResourcePolicyModel) {
-        return dialogBuilders.detail(resourcePoliciesTable)
+        return dialogWindows.detail(resourcePoliciesTable)
                 .withViewClass(getResourcePolicyDetailViewClass(editedResourcePolicyModel))
                 .withParentDataContext(getViewData().getDataContext())
                 .build();

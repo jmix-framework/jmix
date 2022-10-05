@@ -19,7 +19,7 @@ package io.jmix.securityflowui.action;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.DialogWindowBuilders;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
@@ -41,7 +41,7 @@ public class ChangePasswordAction<E extends UserDetails>
     public static final String ID = "changePassword";
 
     protected boolean currentPasswordRequired = false;
-    protected DialogWindowBuilders dialogWindowBuilders;
+    protected DialogWindows dialogWindows;
 
     public ChangePasswordAction() {
         super(ID);
@@ -52,8 +52,8 @@ public class ChangePasswordAction<E extends UserDetails>
     }
 
     @Autowired
-    protected void setDialogWindowBuilders(DialogWindowBuilders dialogWindowBuilders) {
-        this.dialogWindowBuilders = dialogWindowBuilders;
+    protected void setDialogWindows(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     @Autowired
@@ -101,7 +101,7 @@ public class ChangePasswordAction<E extends UserDetails>
     }
 
     protected void buildAndShowDialog(E selectedItem) {
-        DialogWindow<ChangePasswordView> dialog = dialogWindowBuilders.view(findParent(), ChangePasswordView.class)
+        DialogWindow<ChangePasswordView> dialog = dialogWindows.view(findParent(), ChangePasswordView.class)
                 .build();
         ChangePasswordView view = dialog.getView();
         view.setUsername(selectedItem.getUsername());

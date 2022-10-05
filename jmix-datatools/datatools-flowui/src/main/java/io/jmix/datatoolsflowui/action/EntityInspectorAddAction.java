@@ -42,7 +42,7 @@ public class EntityInspectorAddAction<E> extends AddAction<E> {
     public void execute() {
         checkTarget();
 
-        LookupWindowBuilder<E, View<?>> builder = dialogWindowBuilders.lookup(target);
+        LookupWindowBuilder<E, View<?>> builder = dialogWindows.lookup(target);
 
         builder = viewInitializer.initWindowBuilder(builder);
 

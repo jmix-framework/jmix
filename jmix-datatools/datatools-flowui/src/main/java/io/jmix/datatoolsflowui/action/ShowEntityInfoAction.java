@@ -20,7 +20,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.datatoolsflowui.accesscontext.FlowuiShowEntityInfoContext;
 import io.jmix.datatoolsflowui.view.entityinfo.EntityInfoView;
-import io.jmix.flowui.DialogWindowBuilders;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
@@ -41,7 +41,7 @@ public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEnt
     protected boolean visibleBySpecificUiPermission = true;
     protected Views views;
     protected ViewSupport viewSupport;
-    protected DialogWindowBuilders dialogWindowBuilders;
+    protected DialogWindows dialogWindows;
 
     public ShowEntityInfoAction() {
         this(ID);
@@ -62,8 +62,8 @@ public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEnt
     }
 
     @Autowired
-    public void setDialogWindowBuilders(DialogWindowBuilders dialogWindowBuilders) {
-        this.dialogWindowBuilders = dialogWindowBuilders;
+    public void setDialogWindowBuilders(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     @Autowired
@@ -112,7 +112,7 @@ public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEnt
     }
 
     public void showInfo(Object entity) {
-        DialogWindow<EntityInfoView> dialog = dialogWindowBuilders.view(findParent(), EntityInfoView.class)
+        DialogWindow<EntityInfoView> dialog = dialogWindows.view(findParent(), EntityInfoView.class)
                 .build();
         dialog.getView().setEntity(entity);
         dialog.open();

@@ -21,7 +21,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.DialogWindowBuilders;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
@@ -55,7 +55,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     public static final String ID = "create";
 
     protected ViewNavigators viewNavigators;
-    protected DialogWindowBuilders dialogWindowBuilders;
+    protected DialogWindows dialogWindows;
     protected AccessManager accessManager;
 
     protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
@@ -249,8 +249,8 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     }
 
     @Autowired
-    public void setDialogWindowBuilders(DialogWindowBuilders dialogWindowBuilders) {
-        this.dialogWindowBuilders = dialogWindowBuilders;
+    public void setDialogWindowBuilders(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     @Override
@@ -308,7 +308,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
 
     @SuppressWarnings("unchecked")
     protected void openDialog() {
-        DetailWindowBuilder<E, View<?>> builder = dialogWindowBuilders.detail(target);
+        DetailWindowBuilder<E, View<?>> builder = dialogWindows.detail(target);
 
         builder = viewInitializer.initWindowBuilder(builder);
 

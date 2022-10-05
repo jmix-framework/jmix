@@ -22,7 +22,7 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.DialogWindowBuilders;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.ActionType;
@@ -50,7 +50,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
 
     protected Messages messages;
     protected Notifications notifications;
-    protected DialogWindowBuilders dialogBuilders;
+    protected DialogWindows dialogWindows;
 
     protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
 
@@ -73,8 +73,8 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     }
 
     @Autowired
-    public void setDialogBuilders(DialogWindowBuilders dialogBuilders) {
-        this.dialogBuilders = dialogBuilders;
+    public void setDialogWindows(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     @Autowired
@@ -192,7 +192,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
                     "for the " + target.getClass().getSimpleName(), "action ID", getId());
         }
 
-        DetailWindowBuilder<E, View<?>> builder = dialogBuilders.detail(target);
+        DetailWindowBuilder<E, View<?>> builder = dialogWindows.detail(target);
 
         builder = viewInitializer.initWindowBuilder(builder);
 

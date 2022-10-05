@@ -22,7 +22,7 @@ import com.vaadin.flow.router.QueryParameters;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
-import io.jmix.flowui.DialogWindowBuilders;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
@@ -52,7 +52,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     public static final String ID = "read";
 
     protected ViewNavigators viewNavigators;
-    protected DialogWindowBuilders dialogWindowBuilders;
+    protected DialogWindows dialogWindows;
     protected ReadOnlyViewsSupport readOnlyViewsSupport;
 
     protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
@@ -207,8 +207,8 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     }
 
     @Autowired
-    public void setDialogWindowBuilders(DialogWindowBuilders dialogWindowBuilders) {
-        this.dialogWindowBuilders = dialogWindowBuilders;
+    public void setDialogWindowBuilders(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     @Autowired
@@ -268,7 +268,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     }
 
     protected void openDialog(E editedEntity) {
-        DetailWindowBuilder<E, View<?>> builder = dialogWindowBuilders.detail(target);
+        DetailWindowBuilder<E, View<?>> builder = dialogWindows.detail(target);
 
         builder = viewInitializer.initWindowBuilder(builder);
 

@@ -328,11 +328,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         if (selected.isEmpty()) {
             items.setSelectedItem(null);
         } else {
-            // reset selection and select new item
-            /*if (isMultiSelect()) {
-                dataGridItems.setSelectedItem(null);
-            }*/
-
             E newItem = selected.iterator().next();
             // In some cases, the container may not contain
             // an item that we want to set as the selected

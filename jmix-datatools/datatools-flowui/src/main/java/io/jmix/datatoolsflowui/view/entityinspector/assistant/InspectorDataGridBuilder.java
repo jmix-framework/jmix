@@ -25,7 +25,7 @@ import io.jmix.datatoolsflowui.DatatoolsFlowuiProperties;
 import io.jmix.datatoolsflowui.view.entityinspector.EntityFormLayoutUtils;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.component.grid.JmixGridDataProvider;
+import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -37,7 +37,6 @@ import javax.persistence.Convert;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 @Component("datatlf_EntityInspectorDataGridBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorDataGridBuilder {
@@ -52,12 +51,17 @@ public class InspectorDataGridBuilder {
     protected DatatoolsFlowuiProperties datatoolsflowuiProperties;
 
     private final MetaClass metaClass;
-    private final CollectionContainer collectionContainer;
+    private final CollectionContainer<?> collectionContainer;
 
     private Boolean withSystem = false;
 
+    protected InspectorDataGridBuilder(CollectionContainer<?> collectionContainer) {
+        this.collectionContainer = collectionContainer;
+        this.metaClass = collectionContainer.getEntityMetaClass();
+    }
+
     public static InspectorDataGridBuilder from(ApplicationContext applicationContext,
-                                                CollectionContainer collectionContainer) {
+                                                CollectionContainer<?> collectionContainer) {
         return applicationContext.getBean(InspectorDataGridBuilder.class, collectionContainer);
     }
 
@@ -66,8 +70,9 @@ public class InspectorDataGridBuilder {
         return this;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public DataGrid build() {
-        DataGrid dataGrid = uiComponents.create(DataGrid.class);
+        DataGrid<?> dataGrid = uiComponents.create(DataGrid.class);
 
         //collect properties in order to add non-system columns first
         List<MetaProperty> nonSystemProperties = new ArrayList<>(10);
@@ -104,24 +109,19 @@ public class InspectorDataGridBuilder {
         dataGrid.setAllRowsVisible(true);
         dataGrid.setMinHeight("20em");
 
-        dataGrid.setItems(new JmixGridDataProvider(collectionContainer));
+        dataGrid.setItems(new ContainerDataGridItems(collectionContainer));
 
         dataGrid.enableMultiSelect();
         return dataGrid;
     }
 
-    protected InspectorDataGridBuilder(CollectionContainer collectionContainer) {
-        this.collectionContainer = collectionContainer;
-        this.metaClass = collectionContainer.getEntityMetaClass();
-    }
-
-    protected void addMetaPropertyToDataGrid(DataGrid dataGrid, MetaProperty metaProperty) {
+    protected void addMetaPropertyToDataGrid(DataGrid<?> dataGrid, MetaProperty metaProperty) {
         MetaPropertyPath metaPropertyPath = metaClass.getPropertyPath(metaProperty.getName());
         if (metaPropertyPath == null) {
             return;
         }
 
-        DataGrid.Column column = dataGrid.addColumn(metaPropertyPath);
+        DataGrid.Column<?> column = dataGrid.addColumn(metaPropertyPath);
 
         column.setHeader(getProperHeader(metaClass, metaProperty));
     }

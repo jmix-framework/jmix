@@ -132,7 +132,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
                     report.setGroup(group);
                 }
             } else {
-                entityEventManager.publishEntitySavingEvent(group, true);
+                entityEventManager.publishEntitySavingEvent(group, true);//workaround for jmix-framework/jmix#1069
                 em.persist(group);
             }
         }
@@ -148,7 +148,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
 
             if (existingReport != null) {
                 report.setVersion(existingReport.getVersion());
-                entityEventManager.publishEntitySavingEvent(report, false);
+                entityEventManager.publishEntitySavingEvent(report, false);//workaround for jmix-framework/jmix#1069
                 report = em.merge(report);
                 if (existingReport.getTemplates() != null) {
                     existingTemplates = existingReport.getTemplates();
@@ -161,7 +161,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
                 report.setTemplates(null);
             } else {
                 report.setVersion(0);
-                entityEventManager.publishEntitySavingEvent(report, true);
+                entityEventManager.publishEntitySavingEvent(report, true);//workaround for jmix-framework/jmix#1069
                 report = em.merge(report);
             }
 
@@ -186,7 +186,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
                     }
 
                     loadedTemplate.setReport(report);
-                    entityEventManager.publishEntitySavingEvent(loadedTemplate, entityStates.isNew(loadedTemplate));
+                    entityEventManager.publishEntitySavingEvent(loadedTemplate, entityStates.isNew(loadedTemplate));//workaround for jmix-framework/jmix#1069
                     savedTemplates.add(em.merge(loadedTemplate));
                 }
             }

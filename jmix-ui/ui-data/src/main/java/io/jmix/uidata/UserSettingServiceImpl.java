@@ -101,7 +101,7 @@ public class UserSettingServiceImpl implements UserSettingService {
                 us.setUsername(authentication.getUser().getUsername());
                 us.setName(name);
                 us.setValue(value);
-                entityEventManager.publishEntitySavingEvent(us, true);
+                entityEventManager.publishEntitySavingEvent(us, true);//workaround for jmix-framework/jmix#1069
                 entityManager.persist(us);
             } else {
                 us.setValue(value);
@@ -173,7 +173,7 @@ public class UserSettingServiceImpl implements UserSettingService {
                 } catch (Exception e) {
                     newSetting.setValue(currSetting.getValue());
                 }
-                entityEventManager.publishEntitySavingEvent(newSetting, true);
+                entityEventManager.publishEntitySavingEvent(newSetting, true);//workaround for jmix-framework/jmix#1069
                 entityManager.persist(newSetting);
             }
         });
@@ -235,7 +235,7 @@ public class UserSettingServiceImpl implements UserSettingService {
                 newPresentation.setName(presentation.getName());
                 newPresentation.setSettings(presentation.getSettings());
                 presentationMap.put(presentation.getId(), newPresentation);
-                entityEventManager.publishEntitySavingEvent(newPresentation, true);
+                entityEventManager.publishEntitySavingEvent(newPresentation, true);//workaround for jmix-framework/jmix#1069
                 entityManager.persist(newPresentation);
             }
             return presentationMap;

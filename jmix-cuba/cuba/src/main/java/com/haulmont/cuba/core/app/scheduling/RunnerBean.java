@@ -171,7 +171,7 @@ public class RunnerBean implements Runner {
             execution.setServer(serverInfo.getServerId());
 
 
-            entityEventManager.publishEntitySavingEvent(execution, true);
+            entityEventManager.publishEntitySavingEvent(execution, true);//workaround for jmix-framework/jmix#1069
             em.persist(execution);
             tx.commit();
 

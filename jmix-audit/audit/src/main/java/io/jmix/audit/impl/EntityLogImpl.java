@@ -256,7 +256,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
     protected void saveItem(EntityLogItem item) {
         String storeName = metadata.getClass(item.getEntity()).getStore().getName();
 
-        entityEventManager.publishEntitySavingEvent(item, true);
+        entityEventManager.publishEntitySavingEvent(item, true);//workaround for jmix-framework/jmix#1069
         if (item.getDbGeneratedIdEntity() == null) {
             if (Stores.isMain(storeName)) {
                 entityManager.persist(item);

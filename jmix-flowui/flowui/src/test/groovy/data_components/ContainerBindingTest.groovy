@@ -20,15 +20,14 @@ package data_components
 import io.jmix.core.Metadata
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.grid.DataGrid
-import io.jmix.flowui.component.grid.JmixGridDataProvider
 import io.jmix.flowui.component.textfield.TypedTextField
+import io.jmix.flowui.data.grid.ContainerDataGridItems
 import io.jmix.flowui.data.value.ContainerValueSource
 import io.jmix.flowui.model.CollectionContainer
 import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.InstanceContainer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import spock.lang.Ignore
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
 
@@ -73,14 +72,13 @@ class ContainerBindingTest extends FlowuiTestSpecification {
         order.number == 'changed'
     }
 
-    @Ignore
     def "field and table with collection container"() {
 
         CollectionContainer<Order> container = dataComponents.createCollectionContainer(Order)
 
         DataGrid<Order> dataGrid = uiComponents.create(DataGrid)
         dataGrid.addColumn(metadata.getClass(Order).getPropertyPath('number'))
-        dataGrid.setItems(new JmixGridDataProvider<Order>(container))
+        dataGrid.setItems(new ContainerDataGridItems<Order>(container))
 
         TypedTextField textField = uiComponents.create(TypedTextField)
         textField.setValueSource(new ContainerValueSource(container, 'number'))

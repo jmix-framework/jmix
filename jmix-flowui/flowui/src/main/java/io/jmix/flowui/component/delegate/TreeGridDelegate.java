@@ -22,9 +22,8 @@ import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import com.vaadin.flow.function.ValueProvider;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.data.grid.GridDataItems;
-import io.jmix.flowui.data.grid.TreeGridDataItems;
 import io.jmix.flowui.component.grid.TreeDataGrid;
+import io.jmix.flowui.data.grid.DataGridItems;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -33,15 +32,11 @@ import java.util.Collection;
 
 @Component("flowui_TreeGridDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class TreeGridDelegate<E> extends AbstractGridDelegate<TreeDataGrid<E>, E> {
+public class TreeGridDelegate<E, ITEMS extends DataGridItems<E>>
+        extends AbstractGridDelegate<TreeDataGrid<E>, E, ITEMS> {
 
     public TreeGridDelegate(TreeDataGrid<E> component) {
         super(component);
-    }
-
-    @Override
-    protected boolean isSupportedDataItems(GridDataItems<E> gridDataItems) {
-        return gridDataItems instanceof TreeGridDataItems;
     }
 
     @Override
@@ -50,7 +45,7 @@ public class TreeGridDelegate<E> extends AbstractGridDelegate<TreeDataGrid<E>, E
     }
 
     @Override
-    protected void setupAutowiredColumns(GridDataItems<E> gridDataItems) {
+    protected void setupAutowiredColumns(ITEMS gridDataItems) {
         Collection<MetaPropertyPath> paths = getAutowiredProperties(gridDataItems);
 
         Grid.Column<E> hierarchyColumn = null;

@@ -16,8 +16,8 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.grid.JmixTreeGridDataProvider;
 import io.jmix.flowui.component.grid.TreeDataGrid;
+import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 
 public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
@@ -51,8 +51,8 @@ public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
 
         if (holder.getContainer() != null) {
             resultComponent.setDataProvider(
-                    new JmixTreeGridDataProvider(holder.getContainer(), hierarchyProperty, showOrphans)
-            );
+                    new ContainerTreeDataGridItems(holder.getContainer(),
+                            hierarchyProperty, showOrphans));
         }
     }
 }

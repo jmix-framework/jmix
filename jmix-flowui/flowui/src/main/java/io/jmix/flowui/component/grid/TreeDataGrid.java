@@ -28,7 +28,7 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.data.DataUnit;
-import io.jmix.flowui.data.grid.TreeGridDataItems;
+import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,7 +44,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
 
     protected ApplicationContext applicationContext;
 
-    protected TreeGridDelegate<E> gridDelegate;
+    protected TreeGridDelegate<E, TreeDataGridItems<E>> gridDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -61,15 +61,15 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     }
 
     @SuppressWarnings("unchecked")
-    protected TreeGridDelegate<E> createDelegate() {
+    protected TreeGridDelegate<E, TreeDataGridItems<E>> createDelegate() {
         return applicationContext.getBean(TreeGridDelegate.class, this);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void setDataProvider(HierarchicalDataProvider<E, ?> dataProvider) {
-        if (dataProvider instanceof TreeGridDataItems) {
-            gridDelegate.setItems((TreeGridDataItems<E>) dataProvider);
+        if (dataProvider instanceof TreeDataGridItems) {
+            gridDelegate.setItems((TreeDataGridItems<E>) dataProvider);
         }
 
         super.setDataProvider(dataProvider);

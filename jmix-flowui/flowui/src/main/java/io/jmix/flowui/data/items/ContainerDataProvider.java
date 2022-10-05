@@ -49,12 +49,16 @@ public class ContainerDataProvider<E> extends AbstractDataProvider<E, Serializab
         Preconditions.checkNotNullArgument(container);
 
         this.container = container;
+        initContainer(container);
+    }
+
+    private void initContainer(CollectionContainer<E> container) {
         if (container instanceof HasLoader) {
-            this.loader = ((HasLoader) container).getLoader();
+            loader = ((HasLoader) container).getLoader();
         }
 
-        this.container.addCollectionChangeListener(this::containerCollectionChanged);
-        this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
+        container.addCollectionChangeListener(this::containerCollectionChanged);
+        container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
     }
 
     protected void containerCollectionChanged(@SuppressWarnings("unused") CollectionContainer.CollectionChangeEvent<E> e) {

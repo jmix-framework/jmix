@@ -16,8 +16,8 @@
 
 package io.jmix.flowui.data.grid;
 
-
 import io.jmix.flowui.data.EntityDataUnit;
+import io.jmix.flowui.data.grid.DataGridItems;
 
-public interface EntityGridDataItems<E> extends GridDataItems<E>, EntityDataUnit {
+public interface EntityDataGridItems<E> extends DataGridItems<E>, EntityDataUnit {
 }

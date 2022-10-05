@@ -17,23 +17,22 @@
 package data_components
 
 import com.vaadin.flow.component.grid.GridSortOrder
+import io.jmix.core.EntityStates
 import io.jmix.core.Metadata
 import io.jmix.core.Sort
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.grid.DataGrid
-import io.jmix.flowui.component.grid.JmixGridDataProvider
+import io.jmix.flowui.data.grid.ContainerDataGridItems
 import io.jmix.flowui.model.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import spock.lang.Ignore
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
 
 import java.util.function.Consumer
 
-@Ignore
 @SpringBootTest
-class CollectionContainerUsageTest extends FlowuiTestSpecification {
+class CollectionContainerUsageFlowuiTest extends FlowuiTestSpecification {
 
     @Autowired
     DataComponents dataComponents
@@ -41,6 +40,8 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
     UiComponents uiComponents
     @Autowired
     Metadata metadata
+    @Autowired
+    EntityStates entityStates
 
     private CollectionContainer<Order> container
     private DataGrid<Order> dataGrid
@@ -49,7 +50,7 @@ class CollectionContainerUsageTest extends FlowuiTestSpecification {
         container = dataComponents.createCollectionContainer(Order)
         dataGrid = uiComponents.create(DataGrid)
         dataGrid.addColumn(metadata.getClass(Order).getPropertyPath('number'))
-        dataGrid.setItems(new JmixGridDataProvider(this.container))
+        dataGrid.setItems(new ContainerDataGridItems(this.container))
     }
 
     def "sort items"() {

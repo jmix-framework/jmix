@@ -262,7 +262,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
             message.setContentText(null);
         }
 
-        entityEventManager.publishEntitySavingEvent(message, true);
+        entityEventManager.publishEntitySavingEvent(message, true);//workaround for jmix-framework/jmix#1069
         entityManager.persist(message);
 
         message.getAttachments().forEach(attachment -> {
@@ -272,7 +272,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
                 attachment.setContent(null);
             }
 
-            entityEventManager.publishEntitySavingEvent(attachment, true);
+            entityEventManager.publishEntitySavingEvent(attachment, true);//workaround for jmix-framework/jmix#1069
             entityManager.persist(attachment);
         });
     }

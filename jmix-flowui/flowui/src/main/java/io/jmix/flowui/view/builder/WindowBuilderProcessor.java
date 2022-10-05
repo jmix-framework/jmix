@@ -38,17 +38,17 @@ public class WindowBuilderProcessor extends AbstractWindowBuilderProcessor {
         super(applicationContext, views, viewRegistry);
     }
 
-    public <S extends View<?>> DialogWindow<S> build(WindowBuilder<S> builder) {
-        S view = createView(builder);
+    public <V extends View<?>> DialogWindow<V> build(WindowBuilder<V> builder) {
+        V view = createView(builder);
 
-        DialogWindow<S> dialog = createDialog(view);
+        DialogWindow<V> dialog = createDialog(view);
         initDialog(builder, dialog);
 
         return dialog;
     }
 
     @Override
-    protected <S extends View<?>> Class<S> inferViewClass(DialogWindowBuilder<S> builder) {
+    protected <V extends View<?>> Class<V> inferViewClass(DialogWindowBuilder<V> builder) {
         throw new IllegalStateException("Can't open a view. " +
                 "Either view id or view class must be defined");
     }

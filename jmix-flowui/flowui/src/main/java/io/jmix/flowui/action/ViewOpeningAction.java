@@ -127,9 +127,9 @@ public interface ViewOpeningAction extends Action {
      * </pre>
      *
      * @param afterCloseHandler handler to set
-     * @param <S>               view type
+     * @param <V>               view type
      */
-    <S extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler);
+    <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler);
 
     @FunctionalInterface
     interface RouteParametersProvider {

@@ -74,9 +74,9 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         this.viewProperties = viewProperties;
     }
 
-    public <E, S extends View<?>> DialogWindow<S> build(LookupWindowBuilder<E, S> builder) {
+    public <E, V extends View<?>> DialogWindow<V> build(LookupWindowBuilder<E, V> builder) {
 
-        S view = createView(builder);
+        V view = createView(builder);
 
         if (!(view instanceof LookupView)) {
             throw new IllegalArgumentException(String.format("View '%s' does not implement %s. View class: %s",
@@ -96,7 +96,7 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         builder.getSelectHandler().ifPresent(lookupView::setSelectionHandler);
         builder.getSelectValidator().ifPresent(lookupView::setSelectionValidator);
 
-        DialogWindow<S> dialog = createDialog(view);
+        DialogWindow<V> dialog = createDialog(view);
         initDialog(builder, dialog);
 
         builder.getField().ifPresent(field -> {
@@ -134,9 +134,9 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
 
     @SuppressWarnings("unchecked")
     @Override
-    protected <S extends View<?>> Class<S> inferViewClass(DialogWindowBuilder<S> builder) {
-        LookupWindowBuilder<?, S> lookupBuilder = ((LookupWindowBuilder<?, S>) builder);
-        return (Class<S>) viewRegistry.getLookupViewInfo(lookupBuilder.getEntityClass()).getControllerClass();
+    protected <V extends View<?>> Class<V> inferViewClass(DialogWindowBuilder<V> builder) {
+        LookupWindowBuilder<?, V> lookupBuilder = ((LookupWindowBuilder<?, V>) builder);
+        return (Class<V>) viewRegistry.getLookupViewInfo(lookupBuilder.getEntityClass()).getControllerClass();
     }
 
     protected <E> void handleSelectionWithContainer(LookupWindowBuilder<E, ?> builder,
@@ -199,7 +199,7 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected <E, S extends View<?>> void handleSelectionWithField(LookupWindowBuilder<E, S> builder,
+    protected <E, V extends View<?>> void handleSelectionWithField(LookupWindowBuilder<E, V> builder,
                                                                    HasValue field,
                                                                    Collection<E> itemsFromLookup) {
         if (itemsFromLookup.isEmpty()) {

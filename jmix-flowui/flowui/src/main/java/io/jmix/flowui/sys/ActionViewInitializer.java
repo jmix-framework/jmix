@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.sys;
 
-import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.action.ViewOpeningAction.QueryParametersProvider;
 import io.jmix.flowui.action.ViewOpeningAction.RouteParametersProvider;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
@@ -74,11 +73,11 @@ public class ActionViewInitializer {
     }
 
     @Nullable
-    public <S extends View<?>> Consumer<AfterCloseEvent<S>> getAfterCloseHandler() {
+    public <V extends View<?>> Consumer<AfterCloseEvent<V>> getAfterCloseHandler() {
         return (Consumer) afterCloseHandler;
     }
 
-    public <S extends View<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
+    public <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<V>> afterCloseHandler) {
         this.afterCloseHandler = (Consumer) afterCloseHandler;
     }
 
@@ -122,7 +121,7 @@ public class ActionViewInitializer {
         return navigator;
     }
 
-    public <E, S extends View<?>> DetailWindowBuilder<E, S> initWindowBuilder(DetailWindowBuilder<E, S> windowBuilder) {
+    public <E, V extends View<?>> DetailWindowBuilder<E, V> initWindowBuilder(DetailWindowBuilder<E, V> windowBuilder) {
         if (viewClass != null) {
             windowBuilder = windowBuilder.withViewClass((Class) viewClass);
         }
@@ -138,7 +137,7 @@ public class ActionViewInitializer {
         return windowBuilder;
     }
 
-    public <E, S extends View<?>> LookupWindowBuilder<E, S> initWindowBuilder(LookupWindowBuilder<E, S> windowBuilder) {
+    public <E, V extends View<?>> LookupWindowBuilder<E, V> initWindowBuilder(LookupWindowBuilder<E, V> windowBuilder) {
         if (viewClass != null) {
             windowBuilder = windowBuilder.withViewClass((Class) viewClass);
         }

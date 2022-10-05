@@ -38,34 +38,34 @@ public abstract class AbstractWindowBuilderProcessor {
         this.viewRegistry = viewRegistry;
     }
 
-    protected <S extends View<?>> DialogWindow<S> createDialog(S view) {
-        DialogWindow<S> dialogWindow = new DialogWindow<>(view);
+    protected <V extends View<?>> DialogWindow<V> createDialog(V view) {
+        DialogWindow<V> dialogWindow = new DialogWindow<>(view);
         BeanUtil.autowireContext(applicationContext, dialogWindow);
 
         return dialogWindow;
     }
 
-    protected <S extends View<?>> S createView(DialogWindowBuilder<S> builder) {
-        Class<S> viewClass = getViewClass(builder);
+    protected <V extends View<?>> V createView(DialogWindowBuilder<V> builder) {
+        Class<V> viewClass = getViewClass(builder);
         return views.create(viewClass);
     }
 
     @SuppressWarnings("unchecked")
-    protected <S extends View<?>> Class<S> getViewClass(DialogWindowBuilder<S> builder) {
+    protected <V extends View<?>> Class<V> getViewClass(DialogWindowBuilder<V> builder) {
         if (builder.getViewId().isPresent()) {
             String viewId = builder.getViewId().get();
-            return (Class<S>) viewRegistry.getViewInfo(viewId).getControllerClass();
+            return (Class<V>) viewRegistry.getViewInfo(viewId).getControllerClass();
         } else if (builder instanceof DialogWindowClassBuilder
                 && ((DialogWindowClassBuilder<?>) builder).getViewClass().isPresent()) {
-            return ((DialogWindowClassBuilder<S>) builder).getViewClass().get();
+            return ((DialogWindowClassBuilder<V>) builder).getViewClass().get();
         } else {
             return inferViewClass(builder);
         }
     }
 
-    protected abstract <S extends View<?>> Class<S> inferViewClass(DialogWindowBuilder<S> builder);
+    protected abstract <V extends View<?>> Class<V> inferViewClass(DialogWindowBuilder<V> builder);
 
-    protected <S extends View<?>> void initDialog(DialogWindowBuilder<S> builder, DialogWindow<S> dialog) {
+    protected <V extends View<?>> void initDialog(DialogWindowBuilder<V> builder, DialogWindow<V> dialog) {
         builder.getAfterOpenListener().ifPresent(dialog::addAfterOpenListener);
         builder.getAfterCloseListener().ifPresent(dialog::addAfterCloseListener);
     }

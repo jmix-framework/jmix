@@ -48,20 +48,20 @@ import java.util.EventObject;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasStyle,
+public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasStyle,
         ApplicationContextAware, InitializingBean {
 
     protected static final String BASE_CLASS_NAME = "jmix-dialog-window";
 
     protected Dialog dialog;
-    protected S view;
+    protected V view;
 
     protected ApplicationContext applicationContext;
 
     // private, lazily initialized
     private EventHub eventHub = null;
 
-    public DialogWindow(S view) {
+    public DialogWindow(V view) {
         this.view = view;
         this.dialog = createDialog();
     }
@@ -77,7 +77,7 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         initDialog(dialog);
     }
 
-    protected void initView(S view) {
+    protected void initView(V view) {
         view.setCloseDelegate(__ -> closeInternal());
         view.addAfterCloseListener(this::onViewAfterClosed);
     }
@@ -114,7 +114,7 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         dialog.getElement().setAttribute("aria-label", title);
     }
 
-    protected void applyDialogModeSettings(S view) {
+    protected void applyDialogModeSettings(V view) {
         DialogMode dialogMode = view.getClass().getAnnotation(DialogMode.class);
         if (dialogMode != null) {
             setModal(dialogMode.modal());
@@ -157,7 +157,7 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         view.closeWithDefaultAction();
     }
 
-    protected Component createViewWrapper(S view) {
+    protected Component createViewWrapper(V view) {
         Scroller scroller = new Scroller(view);
         scroller.setHeightFull();
         scroller.setClassName(BASE_CLASS_NAME + "-view-wrapper");
@@ -178,7 +178,7 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         }
     }
 
-    public S getView() {
+    public V getView() {
         return view;
     }
 
@@ -207,13 +207,13 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         if (openedChangeEvent.isOpened()) {
             fireViewReadyEvent(view);
 
-            AfterOpenEvent<S> event = new AfterOpenEvent<>(this);
+            AfterOpenEvent<V> event = new AfterOpenEvent<>(this);
             publish(AfterOpenEvent.class, event);
         }
     }
 
     protected void onViewAfterClosed(View.AfterCloseEvent closeEvent) {
-        AfterCloseEvent<S> event = new AfterCloseEvent<>(this, closeEvent.getCloseAction());
+        AfterCloseEvent<V> event = new AfterCloseEvent<>(this, closeEvent.getCloseAction());
         publish(AfterCloseEvent.class, event);
     }
 
@@ -232,41 +232,41 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
     }
 
     @SuppressWarnings("unchecked")
-    public Registration addAfterOpenListener(Consumer<AfterOpenEvent<S>> listener) {
+    public Registration addAfterOpenListener(Consumer<AfterOpenEvent<V>> listener) {
         Subscription subscription = getEventHub().subscribe(AfterOpenEvent.class, ((Consumer) listener));
         return Registration.once(subscription::remove);
     }
 
     @SuppressWarnings("unchecked")
-    public Registration addAfterCloseListener(Consumer<AfterCloseEvent<S>> listener) {
+    public Registration addAfterCloseListener(Consumer<AfterCloseEvent<V>> listener) {
         Subscription subscription = getEventHub().subscribe(AfterCloseEvent.class, ((Consumer) listener));
         return Registration.once(subscription::remove);
     }
 
     //    @TriggerOnce
-    public static class AfterOpenEvent<S extends View<?>> extends EventObject {
+    public static class AfterOpenEvent<V extends View<?>> extends EventObject {
 
-        public AfterOpenEvent(DialogWindow<S> source) {
+        public AfterOpenEvent(DialogWindow<V> source) {
             super(source);
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public DialogWindow<S> getSource() {
-            return (DialogWindow<S>) super.getSource();
+        public DialogWindow<V> getSource() {
+            return (DialogWindow<V>) super.getSource();
         }
 
-        public S getView() {
+        public V getView() {
             return getSource().getView();
         }
     }
 
     //    @TriggerOnce
-    public static class AfterCloseEvent<S extends View<?>> extends EventObject {
+    public static class AfterCloseEvent<V extends View<?>> extends EventObject {
 
         protected final CloseAction closeAction;
 
-        public AfterCloseEvent(DialogWindow<S> source, CloseAction closeAction) {
+        public AfterCloseEvent(DialogWindow<V> source, CloseAction closeAction) {
             super(source);
 
             this.closeAction = closeAction;
@@ -274,11 +274,11 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
 
         @SuppressWarnings("unchecked")
         @Override
-        public DialogWindow<S> getSource() {
-            return (DialogWindow<S>) super.getSource();
+        public DialogWindow<V> getSource() {
+            return (DialogWindow<V>) super.getSource();
         }
 
-        public S getView() {
+        public V getView() {
             return getSource().getView();
         }
 

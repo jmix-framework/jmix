@@ -21,7 +21,7 @@ import io.jmix.flowui.view.View;
 
 import java.util.Optional;
 
-public interface DialogWindowClassBuilder<S extends View<?>> extends DialogWindowBuilder<S> {
+public interface DialogWindowClassBuilder<V extends View<?>> extends DialogWindowBuilder<V> {
 
-    Optional<Class<S>> getViewClass();
+    Optional<Class<V>> getViewClass();
 }

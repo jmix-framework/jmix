@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class DetailWindowBuilder<E, S extends View<?>> extends AbstractWindowBuilder<S> {
+public class DetailWindowBuilder<E, V extends View<?>> extends AbstractWindowBuilder<V> {
 
     protected final Class<E> entityClass;
 
@@ -52,7 +52,7 @@ public class DetailWindowBuilder<E, S extends View<?>> extends AbstractWindowBui
 
     protected DetailViewMode mode = DetailViewMode.CREATE;
 
-    protected DetailWindowBuilder(DetailWindowBuilder<E, S> builder) {
+    protected DetailWindowBuilder(DetailWindowBuilder<E, V> builder) {
         super(builder.origin, builder.handler);
 
         this.entityClass = builder.entityClass;
@@ -79,24 +79,24 @@ public class DetailWindowBuilder<E, S extends View<?>> extends AbstractWindowBui
 
     public DetailWindowBuilder(View<?> origin,
                                Class<E> entityClass,
-                               Function<? extends DetailWindowBuilder<E, S>, DialogWindow<S>> handler) {
+                               Function<? extends DetailWindowBuilder<E, V>, DialogWindow<V>> handler) {
         super(origin, handler);
 
         this.entityClass = entityClass;
     }
 
-    public DetailWindowBuilder<E, S> newEntity() {
+    public DetailWindowBuilder<E, V> newEntity() {
         this.mode = DetailViewMode.CREATE;
         return this;
     }
 
-    public DetailWindowBuilder<E, S> newEntity(E entity) {
+    public DetailWindowBuilder<E, V> newEntity(E entity) {
         this.newEntity = entity;
         this.mode = DetailViewMode.CREATE;
         return this;
     }
 
-    public DetailWindowBuilder<E, S> editEntity(E entity) {
+    public DetailWindowBuilder<E, V> editEntity(E entity) {
         this.editedEntity = entity;
         this.mode = DetailViewMode.EDIT;
         return this;
@@ -107,54 +107,54 @@ public class DetailWindowBuilder<E, S extends View<?>> extends AbstractWindowBui
         return new DetailWindowClassBuilder(this, viewClass);
     }
 
-    public DetailWindowBuilder<E, S> withViewId(@Nullable String viewId) {
+    public DetailWindowBuilder<E, V> withViewId(@Nullable String viewId) {
         this.viewId = viewId;
         return this;
     }
 
-    public DetailWindowBuilder<E, S> withInitializer(@Nullable Consumer<E> initializer) {
+    public DetailWindowBuilder<E, V> withInitializer(@Nullable Consumer<E> initializer) {
         this.initializer = initializer;
         return this;
     }
 
-    public DetailWindowBuilder<E, S> withTransformation(@Nullable Function<E, E> transformation) {
+    public DetailWindowBuilder<E, V> withTransformation(@Nullable Function<E, E> transformation) {
         this.transformation = transformation;
         return this;
     }
 
-    public DetailWindowBuilder<E, S> withContainer(@Nullable CollectionContainer<E> container) {
+    public DetailWindowBuilder<E, V> withContainer(@Nullable CollectionContainer<E> container) {
         this.container = container;
         return this;
     }
 
-    public DetailWindowBuilder<E, S> withParentDataContext(@Nullable DataContext parentDataContext) {
+    public DetailWindowBuilder<E, V> withParentDataContext(@Nullable DataContext parentDataContext) {
         this.parentDataContext = parentDataContext;
         return this;
     }
 
-    public DetailWindowBuilder<E, S> withListDataComponent(@Nullable ListDataComponent<E> listDataComponent) {
+    public DetailWindowBuilder<E, V> withListDataComponent(@Nullable ListDataComponent<E> listDataComponent) {
         this.listDataComponent = listDataComponent;
         return this;
     }
 
-    public DetailWindowBuilder<E, S> withField(@Nullable HasValue<?, E> field) {
+    public DetailWindowBuilder<E, V> withField(@Nullable HasValue<?, E> field) {
         this.field = field;
         return this;
     }
 
-    public DetailWindowBuilder<E, S> withAddFirst(@Nullable Boolean addFirst) {
+    public DetailWindowBuilder<E, V> withAddFirst(@Nullable Boolean addFirst) {
         this.addFirst = addFirst;
         return this;
     }
 
     @Override
-    public DetailWindowBuilder<E, S> withAfterOpenListener(@Nullable Consumer<AfterOpenEvent<S>> listener) {
+    public DetailWindowBuilder<E, V> withAfterOpenListener(@Nullable Consumer<AfterOpenEvent<V>> listener) {
         super.withAfterOpenListener(listener);
         return this;
     }
 
     @Override
-    public DetailWindowBuilder<E, S> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<S>> listener) {
+    public DetailWindowBuilder<E, V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
         return this;
     }

@@ -73,16 +73,16 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     }
 
     @SuppressWarnings("unchecked")
-    public <E, S extends View<?>> DialogWindow<S> build(DetailWindowBuilder<E, S> builder) {
+    public <E, V extends View<?>> DialogWindow<V> build(DetailWindowBuilder<E, V> builder) {
 
         CollectionContainer<E> container = findContainer(builder);
 
         E entity = initEntity(builder, container);
 
-        S view = createView(builder);
+        V view = createView(builder);
         ((DetailView<E>) view).setEntityToEdit(entity);
 
-        DialogWindow<S> dialog = createDialog(view);
+        DialogWindow<V> dialog = createDialog(view);
         initDialog(builder, dialog);
 
         DataContext parentDataContext = setupParentDataContext(builder, view, container);
@@ -93,8 +93,8 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         return dialog;
     }
 
-    protected <E, S extends View<?>> void setupListDataComponent(DetailWindowBuilder<E, S> builder,
-                                                                 DetailView<E> detailView, DialogWindow<S> dialog,
+    protected <E, V extends View<?>> void setupListDataComponent(DetailWindowBuilder<E, V> builder,
+                                                                 DetailView<E> detailView, DialogWindow<V> dialog,
                                                                  @Nullable CollectionContainer<E> container,
                                                                  @Nullable DataContext parentDataContext) {
         if (container == null) {
@@ -137,8 +137,8 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     }
 
     @SuppressWarnings("unchecked")
-    protected <E, S extends View<?>> void setupField(DetailWindowBuilder<E, S> builder,
-                                                     S view, DialogWindow<S> dialog,
+    protected <E, V extends View<?>> void setupField(DetailWindowBuilder<E, V> builder,
+                                                     V view, DialogWindow<V> dialog,
                                                      @Nullable DataContext parentDataContext) {
         builder.getField().ifPresent(field -> {
             setupViewDataContext(field, builder.getOrigin(), view, parentDataContext);
@@ -147,8 +147,8 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     }
 
     @SuppressWarnings("unchecked")
-    protected <E, S extends View<?>> Consumer<AfterCloseEvent<S>> createAfterCloseListener(HasValue<?, E> field,
-                                                                                           DetailWindowBuilder<E, S> builder,
+    protected <E, V extends View<?>> Consumer<AfterCloseEvent<V>> createAfterCloseListener(HasValue<?, E> field,
+                                                                                           DetailWindowBuilder<E, V> builder,
                                                                                            DetailView<E> detailView) {
         return closeEvent -> {
             if (closeEvent.closedWith(StandardOutcome.SAVE)) {
@@ -180,8 +180,8 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         };
     }
 
-    protected <E, S extends View<?>> void setupViewDataContext(HasValue<?, E> field,
-                                                               View<?> origin, S view,
+    protected <E, V extends View<?>> void setupViewDataContext(HasValue<?, E> field,
+                                                               View<?> origin, V view,
                                                                @Nullable DataContext parentDataContext) {
         if (parentDataContext == null && field instanceof SupportsValueSource) {
             ValueSource<?> valueSource = ((SupportsValueSource<?>) field).getValueSource();
@@ -199,14 +199,14 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
 
     @SuppressWarnings("unchecked")
     @Override
-    protected <S extends View<?>> Class<S> inferViewClass(DialogWindowBuilder<S> builder) {
-        DetailWindowBuilder<?, S> detailBuilder = ((DetailWindowBuilder<?, S>) builder);
-        return (Class<S>) viewRegistry.getDetailViewInfo(detailBuilder.getEntityClass()).getControllerClass();
+    protected <V extends View<?>> Class<V> inferViewClass(DialogWindowBuilder<V> builder) {
+        DetailWindowBuilder<?, V> detailBuilder = ((DetailWindowBuilder<?, V>) builder);
+        return (Class<V>) viewRegistry.getDetailViewInfo(detailBuilder.getEntityClass()).getControllerClass();
     }
 
     @Nullable
-    protected <E, S extends View<?>> DataContext setupParentDataContext(DetailWindowBuilder<E, S> builder,
-                                                                        S view,
+    protected <E, V extends View<?>> DataContext setupParentDataContext(DetailWindowBuilder<E, V> builder,
+                                                                        V view,
                                                                         @Nullable CollectionContainer<E> container) {
         DataContext dataContext = builder.getParentDataContext().orElseGet(() -> {
             if (container instanceof Nested) {

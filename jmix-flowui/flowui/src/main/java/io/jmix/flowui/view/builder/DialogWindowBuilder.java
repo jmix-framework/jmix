@@ -23,13 +23,13 @@ import io.jmix.flowui.view.View;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public interface DialogWindowBuilder<S extends View<?>> {
+public interface DialogWindowBuilder<V extends View<?>> {
 
     View<?> getOrigin();
 
     Optional<String> getViewId();
 
-    Optional<Consumer<AfterOpenEvent<S>>> getAfterOpenListener();
+    Optional<Consumer<AfterOpenEvent<V>>> getAfterOpenListener();
 
-    Optional<Consumer<AfterCloseEvent<S>>> getAfterCloseListener();
+    Optional<Consumer<AfterCloseEvent<V>>> getAfterCloseListener();
 }

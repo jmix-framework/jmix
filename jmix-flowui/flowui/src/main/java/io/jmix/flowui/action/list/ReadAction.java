@@ -149,7 +149,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     }
 
     @Override
-    public <S extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler) {
+    public <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler) {
         viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
@@ -382,7 +382,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     /**
      * @see #setAfterCloseHandler(Consumer)
      */
-    public <S extends View<?>> ReadAction<E> withAfterCloseHandler(Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler) {
+    public <V extends View<?>> ReadAction<E> withAfterCloseHandler(Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
         return this;
     }

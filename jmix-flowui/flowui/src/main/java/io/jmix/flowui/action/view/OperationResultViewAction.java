@@ -25,8 +25,8 @@ import io.jmix.flowui.util.UnknownOperationResult;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public abstract class OperationResultViewAction<A extends OperationResultViewAction<A, S>, S extends View>
-        extends ViewAction<A, S>
+public abstract class OperationResultViewAction<A extends OperationResultViewAction<A, V>, V extends View>
+        extends ViewAction<A, V>
         implements OperationResultAction {
 
     protected Supplier<OperationResult> nextStepSupplier;

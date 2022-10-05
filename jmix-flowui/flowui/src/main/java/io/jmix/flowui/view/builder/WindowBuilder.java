@@ -26,13 +26,13 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class WindowBuilder<S extends View<?>> extends AbstractWindowBuilder<S> implements DialogWindowClassBuilder<S> {
+public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> implements DialogWindowClassBuilder<V> {
 
-    protected Class<S> viewClass;
+    protected Class<V> viewClass;
 
     public WindowBuilder(View<?> origin,
-                         Class<S> viewClass,
-                         Function<? extends WindowBuilder<S>, DialogWindow<S>> handler) {
+                         Class<V> viewClass,
+                         Function<? extends WindowBuilder<V>, DialogWindow<V>> handler) {
         super(origin, handler);
 
         this.viewClass = viewClass;
@@ -40,26 +40,26 @@ public class WindowBuilder<S extends View<?>> extends AbstractWindowBuilder<S> i
 
     public WindowBuilder(View<?> origin,
                          String viewId,
-                         Function<? extends WindowBuilder<S>, DialogWindow<S>> handler) {
+                         Function<? extends WindowBuilder<V>, DialogWindow<V>> handler) {
         super(origin, handler);
 
         this.viewId = viewId;
     }
 
     @Override
-    public WindowBuilder<S> withAfterOpenListener(@Nullable Consumer<AfterOpenEvent<S>> listener) {
+    public WindowBuilder<V> withAfterOpenListener(@Nullable Consumer<AfterOpenEvent<V>> listener) {
         super.withAfterOpenListener(listener);
         return this;
     }
 
     @Override
-    public WindowBuilder<S> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<S>> listener) {
+    public WindowBuilder<V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
         return this;
     }
 
     @Override
-    public Optional<Class<S>> getViewClass() {
+    public Optional<Class<V>> getViewClass() {
         return Optional.ofNullable(viewClass);
     }
 }

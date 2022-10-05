@@ -27,29 +27,29 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class AbstractWindowBuilder<S extends View<?>> implements DialogWindowBuilder<S> {
+public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBuilder<V> {
 
     protected final View<?> origin;
-    protected final Function<AbstractWindowBuilder<S>, DialogWindow<S>> handler;
+    protected final Function<AbstractWindowBuilder<V>, DialogWindow<V>> handler;
 
     protected String viewId;
 
-    protected Consumer<AfterOpenEvent<S>> afterOpenListener;
-    protected Consumer<AfterCloseEvent<S>> afterCloseListener;
+    protected Consumer<AfterOpenEvent<V>> afterOpenListener;
+    protected Consumer<AfterCloseEvent<V>> afterCloseListener;
 
     protected AbstractWindowBuilder(View<?> origin,
-                                    Function<? extends AbstractWindowBuilder<S>, DialogWindow<S>> handler) {
+                                    Function<? extends AbstractWindowBuilder<V>, DialogWindow<V>> handler) {
         this.origin = origin;
         //noinspection unchecked
-        this.handler = (Function<AbstractWindowBuilder<S>, DialogWindow<S>>) handler;
+        this.handler = (Function<AbstractWindowBuilder<V>, DialogWindow<V>>) handler;
     }
 
-    public AbstractWindowBuilder<S> withAfterOpenListener(@Nullable Consumer<AfterOpenEvent<S>> listener) {
+    public AbstractWindowBuilder<V> withAfterOpenListener(@Nullable Consumer<AfterOpenEvent<V>> listener) {
         this.afterOpenListener = listener;
         return this;
     }
 
-    public AbstractWindowBuilder<S> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<S>> listener) {
+    public AbstractWindowBuilder<V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         this.afterCloseListener = listener;
         return this;
     }
@@ -65,21 +65,21 @@ public class AbstractWindowBuilder<S extends View<?>> implements DialogWindowBui
     }
 
     @Override
-    public Optional<Consumer<AfterOpenEvent<S>>> getAfterOpenListener() {
+    public Optional<Consumer<AfterOpenEvent<V>>> getAfterOpenListener() {
         return Optional.ofNullable(afterOpenListener);
     }
 
     @Override
-    public Optional<Consumer<AfterCloseEvent<S>>> getAfterCloseListener() {
+    public Optional<Consumer<AfterCloseEvent<V>>> getAfterCloseListener() {
         return Optional.ofNullable(afterCloseListener);
     }
 
-    public DialogWindow<S> build() {
+    public DialogWindow<V> build() {
         return handler.apply(this);
     }
 
-    public DialogWindow<S> open() {
-        DialogWindow<S> dialogWindow = build();
+    public DialogWindow<V> open() {
+        DialogWindow<V> dialogWindow = build();
         dialogWindow.open();
         return dialogWindow;
     }

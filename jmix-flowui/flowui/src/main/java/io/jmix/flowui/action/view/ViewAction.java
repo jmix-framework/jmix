@@ -31,10 +31,10 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class ViewAction<A extends ViewAction<A, S>, S extends View> extends SecuredBaseAction
-        implements TargetAction<S>, ExecutableAction {
+public abstract class ViewAction<A extends ViewAction<A, V>, V extends View> extends SecuredBaseAction
+        implements TargetAction<V>, ExecutableAction {
 
-    protected S target;
+    protected V target;
 
     public ViewAction(String id) {
         super(id);
@@ -48,12 +48,12 @@ public abstract class ViewAction<A extends ViewAction<A, S>, S extends View> ext
 
     @Nullable
     @Override
-    public S getTarget() {
+    public V getTarget() {
         return target;
     }
 
     @Override
-    public void setTarget(@Nullable S target) {
+    public void setTarget(@Nullable V target) {
         if (!Objects.equals(this.target, target)) {
             this.target = target;
 
@@ -62,7 +62,7 @@ public abstract class ViewAction<A extends ViewAction<A, S>, S extends View> ext
     }
 
     @SuppressWarnings("unchecked")
-    public A withTarget(@Nullable S target) {
+    public A withTarget(@Nullable V target) {
         setTarget(target);
         return ((A) this);
     }

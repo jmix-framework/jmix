@@ -18,10 +18,11 @@ package io.jmix.security.impl.role.builder.extractor;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
-import io.jmix.security.role.annotation.*;
+import io.jmix.security.role.annotation.EntityAttributePolicy;
+import io.jmix.security.role.annotation.EntityAttributePolicyContainer;
+import io.jmix.security.role.annotation.NullEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,12 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
 
     protected Metadata metadata;
 
+    protected PolicyExtractorUtils policyExtractorUtils;
+
     @Autowired
-    public EntityAttributePolicyExtractor(Metadata metadata) {
+    public EntityAttributePolicyExtractor(Metadata metadata, PolicyExtractorUtils policyExtractorUtils) {
         this.metadata = metadata;
+        this.policyExtractorUtils = policyExtractorUtils;
     }
 
     @Override
@@ -54,8 +58,7 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
             Class<?> entityClass = annotation.entityClass();
             String entityName = annotation.entityName();
             if (entityClass != NullEntity.class) {
-                MetaClass metaClass = metadata.getClass(entityClass);
-                entityName = metaClass.getName();
+                entityName = policyExtractorUtils.getEntityNameByEntityClass(entityClass);
             } else if (Strings.isNullOrEmpty(entityName)) {
                 log.error("Neither entityClass, nor entityName is defined for the EntityAttributePolicy annotation. " +
                         "Class: {}, method: {}", method.getClass().getName(), method.getName());

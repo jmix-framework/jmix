@@ -65,10 +65,17 @@ public class AuthenticationPolicyStore implements PolicyStore {
 
     @Override
     public Stream<ResourcePolicy> getEntityResourcePolicies(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-
+        MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
         return extractFromAuthenticationByScope(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
-                index -> index.getPolicies(originalMetaClass.getName())));
+                index -> {
+                    Stream<ResourcePolicy> metaClassPolicies = index.getPolicies(metaClass.getName());
+                    //if entity replaces some other entity then we return policies for both of them
+                    if (originalMetaClass != null) {
+                        Stream<ResourcePolicy> originalMetaClassPolicies = index.getPolicies(originalMetaClass.getName());
+                        return Stream.concat(metaClassPolicies, originalMetaClassPolicies);
+                    }
+                    return metaClassPolicies;
+                }));
     }
 
     @Override
@@ -79,8 +86,17 @@ public class AuthenticationPolicyStore implements PolicyStore {
 
     @Override
     public Stream<ResourcePolicy> getEntityAttributesResourcePolicies(MetaClass metaClass, String attribute) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
         return extractFromAuthenticationByScope(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
-                index -> index.getPolicies(metaClass.getName(), attribute)));
+                index -> {
+                    Stream<ResourcePolicy> metaClassPolicies = index.getPolicies(metaClass.getName(), attribute);
+                    //if entity replaces some other entity then we return policies for both of them
+                    if (originalMetaClass != null) {
+                        Stream<ResourcePolicy> originalMetaClassPolicies = index.getPolicies(originalMetaClass.getName(), attribute);
+                        return Stream.concat(metaClassPolicies, originalMetaClassPolicies);
+                    }
+                    return metaClassPolicies;
+                }));
     }
 
     @Override

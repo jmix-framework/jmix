@@ -132,7 +132,7 @@ public class RoleAssignmentView extends StandardView {
                     .onDiscard(() -> result.resume(close(StandardOutcome.DISCARD)))
                     .onCancel(result::fail);
 
-            event.preventWindowClose(result);
+            event.preventClose(result);
         }
     }
 

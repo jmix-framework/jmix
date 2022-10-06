@@ -29,6 +29,22 @@ import org.springframework.context.ApplicationContext;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Base class for UI views.
+ * <p>
+ * A view is a building block of application UI. It contains UI components, data components and facets, that are
+ * usually defined in linked XML descriptors.
+ * <p>
+ * A view can be shown either as a web page with its own URL (using {@link io.jmix.flowui.ViewNavigators}), or
+ * inside a dialog window (using {@link io.jmix.flowui.DialogWindows}).
+ * <p>
+ * Views are registered in the application using the {@link ViewController} annotation on the view class.
+ * <p>
+ * A view sends lifecycle events: {@link InitEvent}, {@link BeforeShowEvent}, {@link ReadyEvent},
+ * {@link BeforeCloseEvent}, {@link AfterCloseEvent}.
+ *
+ * @param <T> type of the root UI component
+ */
 public class View<T extends Component> extends Composite<T>
         implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver, HasDynamicTitle {
 
@@ -89,6 +105,7 @@ public class View<T extends Component> extends Composite<T>
 
                 if (beforeCloseEvent.isClosePrevented()) {
                     closeActionPerformed = false;
+                    event.postpone();
                     return;
                 }
 
@@ -188,6 +205,10 @@ public class View<T extends Component> extends Composite<T>
         return getApplicationContext().getBean(ViewAttributes.class, viewId);
     }
 
+    protected ViewSupport getViewSupport() {
+        return getApplicationContext().getBean(ViewSupport.class);
+    }
+
     @Override
     public String getPageTitle() {
         // return not cached value in case of hot deploy
@@ -200,35 +221,108 @@ public class View<T extends Component> extends Composite<T>
      * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
      * <pre>
      *    &#64;Subscribe
-     *    public void onInit(InitEvent event) {
+     *    protected void onInit(InitEvent event) {
      *       // handle event here
      *    }
      * </pre>
      *
      * @param listener the listener to add, not {@code null}
-     * @return a handle that can be used for removing the listener
+     * @return a registration object that can be used for removing the listener
      */
     protected Registration addInitListener(ComponentEventListener<InitEvent> listener) {
         return getEventBus().addListener(InitEvent.class, listener);
     }
 
+    /**
+     * Adds {@link BeforeShowEvent} listener.
+     * <p>
+     * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
+     * <pre>
+     *    &#64;Subscribe
+     *    protected void onBeforeShow(BeforeShowEvent event) {
+     *       // handle event here
+     *    }
+     * </pre>
+     *
+     * @param listener the listener to add, not {@code null}
+     * @return a registration object that can be used for removing the listener
+     */
     protected Registration addBeforeShowListener(ComponentEventListener<BeforeShowEvent> listener) {
         return getEventBus().addListener(BeforeShowEvent.class, listener);
     }
 
+    /**
+     * Adds {@link ReadyEvent} listener.
+     * <p>
+     * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
+     * <pre>
+     *    &#64;Subscribe
+     *    protected void onReady(ReadyEvent event) {
+     *       // handle event here
+     *    }
+     * </pre>
+     *
+     * @param listener the listener to add, not {@code null}
+     * @return a registration object that can be used for removing the listener
+     */
     protected Registration addReadyListener(ComponentEventListener<ReadyEvent> listener) {
         return getEventBus().addListener(ReadyEvent.class, listener);
     }
 
+    /**
+     * Adds {@link BeforeCloseEvent} listener.
+     * <p>
+     * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
+     * <pre>
+     *    &#64;Subscribe
+     *    protected void onBeforeClose(BeforeCloseEvent event) {
+     *       // handle event here
+     *    }
+     * </pre>
+     *
+     * @param listener the listener to add, not {@code null}
+     * @return a registration object that can be used for removing the listener
+     */
     protected Registration addBeforeCloseListener(ComponentEventListener<BeforeCloseEvent> listener) {
         return getEventBus().addListener(BeforeCloseEvent.class, listener);
     }
 
+    /**
+     * Adds {@link AfterCloseEvent} listener.
+     * <p>
+     * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
+     * <pre>
+     *    &#64;Subscribe
+     *    protected void onAfterClose(AfterCloseEvent event) {
+     *       // handle event here
+     *    }
+     * </pre>
+     *
+     * @param listener the listener to add, not {@code null}
+     * @return a registration object that can be used for removing the listener
+     */
     protected Registration addAfterCloseListener(ComponentEventListener<AfterCloseEvent> listener) {
         return getEventBus().addListener(AfterCloseEvent.class, listener);
     }
 
-    //    @TriggerOnce
+    /**
+     * The first event in the view opening process.
+     * <p>
+     * The view and all its declaratively defined components are created, and dependency injection is completed.
+     * Some visual components are not fully initialized, for example buttons are not yet linked with actions.
+     * <p>
+     * In this event listener, you can create visual and data components, for example:
+     * <pre>
+     *     &#64;Subscribe
+     *     protected void onInit(InitEvent event) {
+     *         Label label = uiComponents.create(Label.class);
+     *         label.setText("Hello World");
+     *         getContent().add(label);
+     *     }
+     * </pre>
+     *
+     * @see #addInitListener(ComponentEventListener)
+     */
     public static class InitEvent extends ComponentEvent<View<?>> {
 
         public InitEvent(View<?> source) {
@@ -236,7 +330,23 @@ public class View<T extends Component> extends Composite<T>
         }
     }
 
-    //    @TriggerOnce
+    /**
+     * The second (after {@link InitEvent}) event in the view opening process.
+     * All components have completed their internal initialization procedures.
+     * Data loaders have been triggered by the automatically configured {@code DataLoadCoordinator} facet.
+     * <p>
+     * In this event listener, you can load data, check permissions and modify UI components. For example:
+     * <pre>
+     *     &#64;Subscribe
+     *     protected void onBeforeShow(BeforeShowEvent event) {
+     *         customersDl.load();
+     *     }
+     * </pre>
+     *
+     * You can abort the process of opening the view by throwing an exception.
+     *
+     * @see #addBeforeShowListener(ComponentEventListener)
+     */
     public static class BeforeShowEvent extends ComponentEvent<View<?>> {
 
         public BeforeShowEvent(View<?> source) {
@@ -244,7 +354,20 @@ public class View<T extends Component> extends Composite<T>
         }
     }
 
-    //    @TriggerOnce
+    /**
+     * The last (after {@link BeforeShowEvent}) event in the view opening process.
+     * <p>
+     * In this event listener, you can make final configuration of the view according to loaded data and
+     * show notifications or dialogs:
+     * <pre>
+     *     &#64;Subscribe
+     *     protected void onReady(ReadyEvent event) {
+     *         notifications.show("Just opened");
+     *     }
+     * </pre>
+     *
+     * @see #addReadyListener(ComponentEventListener)
+     */
     public static class ReadyEvent extends ComponentEvent<View<?>> {
 
         public ReadyEvent(View<?> source) {
@@ -252,6 +375,24 @@ public class View<T extends Component> extends Composite<T>
         }
     }
 
+    /**
+     * The first event in the view closing process.
+     * The view is still displayed and fully functional.
+     * <p>
+     * In this event listener, you can check any conditions and prevent closing using the
+     * {@link #preventClose()} method of the event, for example:
+     * <pre>
+     *     &#64;Subscribe
+     *     protected void onBeforeClose(BeforeCloseEvent event) {
+     *         if (Strings.isNullOrEmpty(textField.getTypedValue())) {
+     *             notifications.show("Input required");
+     *             event.preventClose();
+     *         }
+     *     }
+     * </pre>
+     *
+     * @see #addBeforeCloseListener(ComponentEventListener)
+     */
     public static class BeforeCloseEvent extends ComponentEvent<View<?>> {
 
         protected final CloseAction closeAction;
@@ -264,32 +405,65 @@ public class View<T extends Component> extends Composite<T>
             this.closeAction = closeAction;
         }
 
+        /**
+         * @return action passed to the {@link #close(CloseAction)} method or {@link NavigateCloseAction}
+         */
         public CloseAction getCloseAction() {
             return closeAction;
         }
 
-        public void preventWindowClose() {
+        /**
+         * Prevents closing of the view.
+         */
+        public void preventClose() {
             this.closePrevented = true;
         }
 
-        public void preventWindowClose(OperationResult closeResult) {
+        /**
+         * Prevents closing of the view.
+         *
+         * @param closeResult result object returned from the {@link #close(CloseAction)} method
+         */
+        public void preventClose(OperationResult closeResult) {
             this.closePrevented = true;
             this.closeResult = closeResult;
         }
 
+        /**
+         * @return whether the closing was prevented by invoking {@link #preventClose()} method
+         */
         public boolean isClosePrevented() {
             return closePrevented;
         }
 
+        /**
+         * @return result passed to the {@link #preventClose(OperationResult)} method
+         */
         public Optional<OperationResult> getCloseResult() {
             return Optional.ofNullable(closeResult);
         }
 
+        /**
+         * Checks that view was closed with the given {@code outcome}.
+         */
         public boolean closedWith(StandardOutcome outcome) {
             return outcome.getCloseAction().equals(closeAction);
         }
     }
 
+    /**
+     * The second (after {@link BeforeCloseEvent}) event in the view closing process.
+     * <p>
+     * In this event listener, you can show notifications or dialogs after closing the view, for example:
+     * <pre>
+     *     &#64;Subscribe
+     *     protected void onAfterClose(AfterCloseEvent event) {
+     *         notifications.show("Just closed");
+     *     }
+     * </pre>
+     *
+     * @see #addAfterCloseListener(ComponentEventListener)
+     */
     public static class AfterCloseEvent extends ComponentEvent<View<?>> {
 
         protected final CloseAction closeAction;
@@ -299,16 +473,18 @@ public class View<T extends Component> extends Composite<T>
             this.closeAction = closeAction;
         }
 
+        /**
+         * @return action passed to the {@link #close(CloseAction)} method or {@link NavigateCloseAction}
+         */
         public CloseAction getCloseAction() {
             return closeAction;
         }
 
+        /**
+         * Checks that view was closed with the given {@code outcome}.
+         */
         public boolean closedWith(StandardOutcome outcome) {
             return outcome.getCloseAction().equals(closeAction);
         }
-    }
-
-    private ViewSupport getViewSupport() {
-        return applicationContext.getBean(ViewSupport.class);
     }
 }

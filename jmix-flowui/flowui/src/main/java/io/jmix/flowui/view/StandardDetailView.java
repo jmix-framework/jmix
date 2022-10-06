@@ -369,7 +369,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                 }
             }
 
-            event.preventWindowClose(result);
+            event.preventClose(result);
         }
     }
 

@@ -17,10 +17,28 @@
 package io.jmix.flowui;
 
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewController;
 
+/**
+ * Creates UI view instances.
+ * <p>
+ * To open views, use {@link ViewNavigators} and {@link DialogWindows}.
+ */
 public interface Views {
 
+    /**
+     * Creates a view by its id.
+     *
+     * @param viewId view id set in the {@link ViewController} annotation.
+     * @return view instance
+     */
     View create(String viewId);
 
+    /**
+     * Creates a view by its class.
+     *
+     * @param viewClass view class
+     * @return view instance
+     */
     <T extends View> T create(Class<T> viewClass);
 }

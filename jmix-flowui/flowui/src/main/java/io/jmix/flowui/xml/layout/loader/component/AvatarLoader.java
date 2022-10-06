@@ -33,8 +33,8 @@ public class AvatarLoader extends AbstractComponentLoader<Avatar> {
         loadInteger(element, "colorIndex", resultComponent::setColorIndex);
         loadResourceString(element, "abbreviation", context.getMessageGroup(), resultComponent::setAbbreviation);
 
-        componentLoader().loadThemeName(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
     }
 }

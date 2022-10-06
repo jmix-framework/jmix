@@ -39,7 +39,7 @@ public class ScrollerLoader extends AbstractContainerLoader<Scroller> {
     public void loadComponent() {
         loadEnum(element, Scroller.ScrollDirection.class, "scrollBarsDirection", resultComponent::setScrollDirection);
 
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadSubComponents();

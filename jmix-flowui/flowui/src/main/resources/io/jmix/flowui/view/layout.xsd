@@ -1278,7 +1278,7 @@
     </xs:simpleType>
 
     <!-- ThemeNames-->
-    <xs:simpleType name="progressBarThemeName">
+    <xs:simpleType name="progressBarThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1293,7 +1293,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="radioButtonGroupThemeName">
+    <xs:simpleType name="radioButtonGroupThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1307,7 +1307,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="checkboxGroupThemeName">
+    <xs:simpleType name="checkboxGroupThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1321,7 +1321,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="textAreaThemeName">
+    <xs:simpleType name="textAreaThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1338,7 +1338,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="badgeThemeName">
+    <xs:simpleType name="badgeThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1357,7 +1357,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="textFieldThemeName">
+    <xs:simpleType name="textFieldThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1374,7 +1374,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="detailsThemeName">
+    <xs:simpleType name="detailsThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1389,7 +1389,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="timePickerThemeName">
+    <xs:simpleType name="timePickerThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1407,7 +1407,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="datePickerThemeName">
+    <xs:simpleType name="datePickerThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1425,7 +1425,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="dateTimePickerThemeName">
+    <xs:simpleType name="dateTimePickerThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1443,7 +1443,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="comboBoxThemeName">
+    <xs:simpleType name="comboBoxThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1461,7 +1461,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="gridThemeName">
+    <xs:simpleType name="gridThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1480,7 +1480,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="avatarThemeName">
+    <xs:simpleType name="avatarThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1496,7 +1496,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="splitThemeName">
+    <xs:simpleType name="splitThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1510,7 +1510,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="tabThemeName">
+    <xs:simpleType name="tabThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1523,7 +1523,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="tabsThemeName">
+    <xs:simpleType name="tabsThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1542,7 +1542,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="buttonThemeName">
+    <xs:simpleType name="buttonThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1665,11 +1665,11 @@
 
         <xs:attributeGroup ref="hasSize"/>
         <xs:attributeGroup ref="hasEnabled"/>
-        <xs:attributeGroup ref="hasClassName"/>
+        <xs:attributeGroup ref="hasClassNames"/>
     </xs:attributeGroup>
 
-    <xs:attributeGroup name="hasClassName">
-        <xs:attribute name="className" type="xs:string"/>
+    <xs:attributeGroup name="hasClassNames">
+        <xs:attribute name="classNames" type="xs:string"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasSecurityConstraint">
@@ -1738,7 +1738,7 @@
             <xs:extension base="baseComponent">
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasTitle"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1748,7 +1748,7 @@
             <xs:extension base="baseHtmlComponent">
                 <xs:group ref="singleLayoutOrComponent"/>
 
-                <xs:attribute name="themeName" type="badgeThemeName"/>
+                <xs:attribute name="themeNames" type="badgeThemeNames"/>
 
                 <xs:attributeGroup ref="hasText"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -1760,13 +1760,13 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:group ref="singleLayoutOrComponent"/>
-                <xs:attribute name="themeName" type="badgeThemeName"/>
+                <xs:attribute name="themeNames" type="badgeThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasText"/>
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1781,7 +1781,7 @@
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
@@ -1796,7 +1796,7 @@
                 <xs:attribute name="value" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="autoselect" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="textFieldThemeName"/>
+                <xs:attribute name="themeNames" type="textFieldThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
@@ -1824,7 +1824,7 @@
                     <xs:group ref="htmlLists"/>
                 </xs:sequence>
 
-                <xs:attribute name="themeName" type="badgeThemeName"/>
+                <xs:attribute name="themeNames" type="badgeThemeNames"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasText"/>
             </xs:extension>
@@ -1901,7 +1901,7 @@
                 <xs:attribute name="loadMenuConfig" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1913,7 +1913,7 @@
                 <xs:attribute name="action" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="iconAfterText" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="buttonThemeName"/>
+                <xs:attribute name="themeNames" type="buttonThemeNames"/>
                 <xs:attribute name="disableOnClick" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -1921,7 +1921,7 @@
                 <xs:attributeGroup ref="hasIcon"/>
                 <xs:attributeGroup ref="hasText"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1931,12 +1931,12 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="autofocus" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="buttonThemeName"/>
+                <xs:attribute name="themeNames" type="buttonThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasIcon"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1948,7 +1948,7 @@
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1999,7 +1999,7 @@
                 <xs:attribute name="multiSort" type="xs:boolean"/>
                 <xs:attribute name="dropMode" type="gridDropMode"/>
                 <xs:attribute name="rowsDraggable" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="gridThemeName"/>
+                <xs:attribute name="themeNames" type="gridThemeNames"/>
                 <xs:attribute name="dataContainer" type="xs:string"/>
                 <xs:attribute name="allRowsVisible" type="xs:boolean"/>
                 <xs:attribute name="selectionMode" type="gridSelectionMode"/>
@@ -2011,7 +2011,7 @@
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2116,7 +2116,7 @@
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
@@ -2134,7 +2134,7 @@
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="comboBoxThemeName"/>
+                <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
@@ -2168,7 +2168,7 @@
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="required" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="comboBoxThemeName"/>
+                <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
 
@@ -2176,7 +2176,7 @@
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2212,7 +2212,7 @@
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="timeDatatypeEnum"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="timePickerThemeName"/>
+                <xs:attribute name="themeNames" type="timePickerThemeNames"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2233,7 +2233,7 @@
                 <xs:attribute name="datatype" type="dateDatatypeEnum"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="datePickerThemeName"/>
+                <xs:attribute name="themeNames" type="datePickerThemeNames"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2251,7 +2251,7 @@
                 <!--                <xs:attribute name="zone" type="timePickerZoneVariants"/>-->
 
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="dateTimePickerThemeName"/>
+                <xs:attribute name="themeNames" type="dateTimePickerThemeNames"/>
                 <xs:attribute name="timePlaceholder" type="resourceString"/>
                 <xs:attribute name="datePlaceholder" type="resourceString"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
@@ -2270,10 +2270,10 @@
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="value" type="xs:double"/>
                 <xs:attribute name="indeterminate" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="progressBarThemeName"/>
+                <xs:attribute name="themeNames" type="progressBarThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2282,7 +2282,7 @@
     <xs:complexType name="radioButtonGroupComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:attribute name="themeName" type="radioButtonGroupThemeName"/>
+                <xs:attribute name="themeNames" type="radioButtonGroupThemeNames"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
 
@@ -2290,7 +2290,7 @@
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasRequired"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
@@ -2306,13 +2306,13 @@
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
 
-                <xs:attribute name="themeName" type="checkboxGroupThemeName"/>
+                <xs:attribute name="themeNames" type="checkboxGroupThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasRequired"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
@@ -2331,7 +2331,7 @@
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2346,7 +2346,7 @@
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2360,13 +2360,13 @@
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="autoselect" type="xs:boolean"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="textAreaThemeName"/>
+                <xs:attribute name="themeNames" type="textAreaThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasRequired"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasAutocorrect"/>
                 <xs:attributeGroup ref="hasHelperText"/>
@@ -2405,7 +2405,7 @@
                     <xs:element name="formatter" minOccurs="0" type="formatterType"/>
                 </xs:sequence>
                 <xs:attribute name="invalid" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="xs:string"/>
+                <xs:attribute name="themeNames" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
 
@@ -2431,7 +2431,7 @@
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2444,10 +2444,10 @@
                 <xs:attribute name="image" type="xs:string"/>
                 <xs:attribute name="colorIndex" type="xs:integer"/>
                 <xs:attribute name="abbreviation" type="resourceString"/>
-                <xs:attribute name="themeName" type="avatarThemeName"/>
+                <xs:attribute name="themeNames" type="avatarThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2463,7 +2463,7 @@
                 <xs:attribute name="scrollBarsDirection" type="scrollDirection"/>
 
                 <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2476,12 +2476,12 @@
                     <xs:group ref="singleLayoutOrComponent"/>
                 </xs:sequence>
 
-                <xs:attribute name="themeName" type="splitThemeName"/>
+                <xs:attribute name="themeNames" type="splitThemeNames"/>
                 <xs:attribute name="splitterPosition" type="xs:double"/>
                 <xs:attribute name="orientation" type="orientationType"/>
 
                 <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2499,22 +2499,22 @@
                                 <xs:extension base="baseComponent">
                                     <xs:group ref="singleLayoutOrComponent"/>
 
-                                    <xs:attribute name="themeName" type="tabThemeName"/>
+                                    <xs:attribute name="themeNames" type="tabThemeNames"/>
                                     <xs:attribute name="flexGrow" type="xs:double"/>
 
                                     <xs:attributeGroup ref="hasLabel"/>
                                     <xs:attributeGroup ref="hasEnabled"/>
-                                    <xs:attributeGroup ref="hasClassName"/>
+                                    <xs:attributeGroup ref="hasClassNames"/>
                                 </xs:extension>
                             </xs:complexContent>
                         </xs:complexType>
                     </xs:element>
                 </xs:sequence>
 
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasSize"/>
 
-                <xs:attribute name="themeName" type="tabsThemeName"/>
+                <xs:attribute name="themeNames" type="tabsThemeNames"/>
                 <xs:attribute name="orientation" type="orientationType"/>
             </xs:extension>
         </xs:complexContent>
@@ -2533,7 +2533,7 @@
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasRequired"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasValidation"/>
@@ -2551,12 +2551,12 @@
                 <xs:group ref="layoutOrComponent"/>
 
                 <xs:attribute name="summaryText" type="resourceString"/>
-                <xs:attribute name="themeName" type="detailsThemeName"/>
+                <xs:attribute name="themeNames" type="detailsThemeNames"/>
                 <xs:attribute name="opened" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2588,7 +2588,7 @@
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2693,7 +2693,7 @@
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValueChangeMode"/>

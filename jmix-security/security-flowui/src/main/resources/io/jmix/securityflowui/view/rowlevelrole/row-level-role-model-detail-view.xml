@@ -50,7 +50,7 @@
         </tabs>
 
         <vbox id="rowLevelPoliciesWrapper" width="100%" padding="false">
-            <hbox id="rowLevelPoliciesButtonsPanel" className="buttons-panel">
+            <hbox id="rowLevelPoliciesButtonsPanel" classNames="buttons-panel">
                 <button action="rowLevelPoliciesTable.create"/>
                 <button action="rowLevelPoliciesTable.edit"/>
                 <button action="rowLevelPoliciesTable.read"/>
@@ -89,7 +89,7 @@
         </vbox>
 
         <vbox id="childRolesWrapper" width="100%" padding="false" visible="false">
-            <hbox id="childRolesButtonsPanel" className="buttons-panel">
+            <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
                 <button action="childRolesTable.add"/>
                 <button action="childRolesTable.remove"/>
             </hbox>

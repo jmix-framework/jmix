@@ -57,7 +57,7 @@
                      opened="true"
                      width="100%">
                 <vbox id="resourceRolesWrapper" padding="false">
-                    <hbox id="resourceRoleButtonsPanel" className="buttons-panel">
+                    <hbox id="resourceRoleButtonsPanel" classNames="buttons-panel">
                         <button id="addResourceRoleBtn"
                                 action="resourceRoleAssignmentsTable.addResourceRole"/>
                         <button id="removeResourceRoleBtn"
@@ -87,7 +87,7 @@
                      opened="true"
                      width="100%">
                 <vbox id="rowLevelRolesWrapper" padding="false">
-                    <hbox id="rowLevelRoleButtonsPanel" className="buttons-panel">
+                    <hbox id="rowLevelRoleButtonsPanel" classNames="buttons-panel">
                         <button id="addRowLevelRoleBtn"
                                 action="rowLevelRoleAssignmentsTable.addRowLevelRole"/>
                         <button id="removeRowLevelRoleBtn"

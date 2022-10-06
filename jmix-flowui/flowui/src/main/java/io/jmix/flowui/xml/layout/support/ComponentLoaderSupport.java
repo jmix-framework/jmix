@@ -142,7 +142,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loadAlignItems(component, element);
         loadJustifyContent(component, element);
         loadEnabled(component, element);
-        loadClassName(component, element);
+        loadClassNames(component, element);
         loadSizeAttributes(component, element);
     }
 
@@ -172,18 +172,18 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadInteger(element, "valueChangeTimeout", component::setValueChangeTimeout);
     }
 
-    public void loadThemeName(HasTheme component, Element element) {
-        loaderSupport.loadString(element, "themeName")
-                .ifPresent(themeString -> split(themeString, component::addThemeName));
+    public void loadThemeNames(HasTheme component, Element element) {
+        loaderSupport.loadString(element, "themeNames")
+                .ifPresent(themesString -> split(themesString, component::addThemeName));
     }
 
-    public void loadClassName(HasStyle component, Element element) {
-        loaderSupport.loadString(element, "className")
-                .ifPresent(classNameString -> split(classNameString, component::addClassName));
+    public void loadClassNames(HasStyle component, Element element) {
+        loaderSupport.loadString(element, "classNames")
+                .ifPresent(classNamesString -> split(classNamesString, component::addClassName));
     }
 
     public void loadBadge(HasText component, Element element) {
-        loaderSupport.loadString(element, "themeName")
+        loaderSupport.loadString(element, "themeNames")
                 .ifPresent(badgeString -> {
                     component.getElement().getThemeList().add("badge");
                     split(badgeString, component.getElement().getThemeList()::add);

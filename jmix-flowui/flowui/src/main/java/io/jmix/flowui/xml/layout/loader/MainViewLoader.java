@@ -76,7 +76,7 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
         AppLayout appLayout = resultComponent.getContent();
         Element appLayoutElement = getAppLayoutElement();
 
-        componentLoader().loadClassName(appLayout, appLayoutElement);
+        componentLoader().loadClassNames(appLayout, appLayoutElement);
 
         getLoaderSupport().loadBoolean(appLayoutElement, "drawerOpened", appLayout::setDrawerOpened);
         getLoaderSupport().loadEnum(appLayoutElement, AppLayout.Section.class, "primarySection")

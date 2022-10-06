@@ -42,8 +42,8 @@ public class SplitLayoutLoader extends AbstractContainerLoader<SplitLayout> {
         loadDouble(element, "splitterPosition", resultComponent::setSplitterPosition);
         loadEnum(element, SplitLayout.Orientation.class, "orientation", resultComponent::setOrientation);
 
-        componentLoader().loadClassName(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadSubComponents();

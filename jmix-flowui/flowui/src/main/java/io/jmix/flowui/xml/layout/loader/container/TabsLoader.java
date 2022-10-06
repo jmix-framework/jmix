@@ -37,8 +37,8 @@ public class TabsLoader extends AbstractContainerLoader<Tabs> {
     public void loadComponent() {
         loadEnum(element, Tabs.Orientation.class, "orientation", resultComponent::setOrientation);
 
-        componentLoader().loadClassName(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadSubComponents();
@@ -64,8 +64,8 @@ public class TabsLoader extends AbstractContainerLoader<Tabs> {
 
             componentLoader().loadLabel(resultComponent, element);
             componentLoader().loadEnabled(resultComponent, element);
-            componentLoader().loadThemeName(resultComponent, element);
-            componentLoader().loadClassName(resultComponent, element);
+            componentLoader().loadThemeNames(resultComponent, element);
+            componentLoader().loadClassNames(resultComponent, element);
 
             loadSubComponents();
         }

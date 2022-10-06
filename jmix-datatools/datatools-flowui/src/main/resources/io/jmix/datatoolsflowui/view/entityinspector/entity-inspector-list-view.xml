@@ -26,7 +26,7 @@
             <select id="showMode" itemsEnum="io.jmix.datatoolsflowui.view.entityinspector.ShowMode"
                     emptySelectionAllowed="false" label="msg://io.jmix.datatoolsflowui.view.entityinspector/ShowMode"/>
         </hbox>
-        <hbox id="buttonsPanel" className="buttons-panel" visible="false"/>
+        <hbox id="buttonsPanel" classNames="buttons-panel" visible="false"/>
         <hbox id="lookupActions" visible="false">
             <button id="selectButton"/>
             <button action="discardAction"/>

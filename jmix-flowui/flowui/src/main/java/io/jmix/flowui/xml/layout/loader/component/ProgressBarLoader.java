@@ -33,8 +33,8 @@ public class ProgressBarLoader extends AbstractComponentLoader<ProgressBar> {
         loadDouble(element, "value", resultComponent::setValue);
         loadBoolean(element, "indeterminate", resultComponent::setIndeterminate);
 
-        componentLoader().loadThemeName(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
     }
 }

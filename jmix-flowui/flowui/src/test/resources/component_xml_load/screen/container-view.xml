@@ -31,7 +31,7 @@
         <vbox id="vboxId"
               alignItems="STRETCH"
               boxSizing="BORDER_BOX"
-              className="cssClassName1, cssClassName2"
+              classNames="cssClassName1, cssClassName2"
               enabled="true"
               expand="expanded"
               height="50px"
@@ -51,7 +51,7 @@
         <hbox id="hboxId"
               alignItems="STRETCH"
               boxSizing="BORDER_BOX"
-              className="cssClassName1, cssClassName2"
+              classNames="cssClassName1, cssClassName2"
               enabled="true"
               expand="expanded"
               height="50px"
@@ -69,7 +69,7 @@
         </hbox>
 
         <accordion id="accordionId"
-                   className="cssClassName1, cssClassName2"
+                   classNames="cssClassName1, cssClassName2"
                    height="50px"
                    maxHeight="55px"
                    maxWidth="120px"
@@ -78,7 +78,7 @@
                    visible="true"
                    width="100px">
             <accordionPanel id="accordionPanelId"
-                            className="cssClassName1, cssClassName2"
+                            classNames="cssClassName1, cssClassName2"
                             enabled="true"
                             height="50px"
                             maxHeight="55px"
@@ -86,12 +86,12 @@
                             minHeight="40px"
                             minWidth="80px"
                             summaryText="summaryTextString"
-                            themeName="small, reverse"
+                            themeNames="small, reverse"
                             visible="true"
                             width="100px">
             </accordionPanel>
             <accordionPanel id="anotherAccordionPanelId"
-                            className="cssClassName1, cssClassName2"
+                            classNames="cssClassName1, cssClassName2"
                             enabled="true"
                             height="50px"
                             maxHeight="55px"
@@ -99,14 +99,14 @@
                             minHeight="40px"
                             minWidth="80px"
                             summaryText="summaryTextString"
-                            themeName="small, reverse"
+                            themeNames="small, reverse"
                             visible="true"
                             width="100px">
             </accordionPanel>
         </accordion>
 
         <formLayout id="formLayoutId"
-                    className="cssClassName1, cssClassName2"
+                    classNames="cssClassName1, cssClassName2"
                     dataContainer="orderDc"
                     enabled="true"
                     height="50px"
@@ -135,7 +135,7 @@
         </formLayout>
 
         <scroller id="scrollerId"
-                  className="cssClassName1, cssClassName2"
+                  classNames="cssClassName1, cssClassName2"
                   height="50px"
                   maxHeight="55px"
                   maxWidth="120px"
@@ -148,7 +148,7 @@
         </scroller>
 
         <split id="splitLayoutId"
-               className="cssClassName1, cssClassName2"
+               classNames="cssClassName1, cssClassName2"
                height="50px"
                maxHeight="55px"
                maxWidth="120px"
@@ -156,7 +156,7 @@
                minWidth="80px"
                orientation="HORIZONTAL"
                splitterPosition="5.6"
-               themeName="small, minimal"
+               themeNames="small, minimal"
                visible="true"
                width="100px">
             <scroller id="splitPrimaryChild"/>
@@ -164,29 +164,29 @@
         </split>
 
         <tabs id="tabsId"
-              className="cssClassName1, cssClassName2"
+              classNames="cssClassName1, cssClassName2"
               height="50px"
               maxHeight="55px"
               maxWidth="120px"
               minHeight="40px"
               minWidth="80px"
               orientation="HORIZONTAL"
-              themeName="small, minimal"
+              themeNames="small, minimal"
               visible="true"
               width="100px">
             <tab id="tab1"
-                 className="cssClassName1, cssClassName2"
+                 classNames="cssClassName1, cssClassName2"
                  enabled="true"
                  flexGrow="45.54"
                  label="labelString"
-                 themeName="icon-on-top"
+                 themeNames="icon-on-top"
                  visible="true">
             </tab>
             <tab id="tab2"
-                 className="cssClassName1, cssClassName2"
+                 classNames="cssClassName1, cssClassName2"
                  enabled="true"
                  flexGrow="45.44"
-                 themeName="icon-on-top"
+                 themeNames="icon-on-top"
                  visible="true">
                 <textField id="tab2Child"/>
             </tab>

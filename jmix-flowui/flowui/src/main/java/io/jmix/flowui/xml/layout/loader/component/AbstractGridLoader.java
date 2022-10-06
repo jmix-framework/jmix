@@ -72,8 +72,8 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
         loadEnum(element, NestedNullBehavior.class, "nestedNullBehavior", resultComponent::setNestedNullBehavior);
 
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadData();

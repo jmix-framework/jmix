@@ -45,8 +45,8 @@ public class BigDecimalFieldLoader extends AbstractComponentLoader<JmixBigDecima
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadAutocorrect(resultComponent, element);
         componentLoader().loadAutocomplete(resultComponent, element);

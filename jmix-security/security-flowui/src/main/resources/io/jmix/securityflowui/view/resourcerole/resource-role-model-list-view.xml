@@ -28,7 +28,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout expand="roleModelsTable">
-        <hbox id="buttonsPanel" className="buttons-panel">
+        <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="roleModelsTable.create"/>
             <button id="editBtn" action="roleModelsTable.edit"/>
             <button id="removeBtn" action="roleModelsTable.remove"/>

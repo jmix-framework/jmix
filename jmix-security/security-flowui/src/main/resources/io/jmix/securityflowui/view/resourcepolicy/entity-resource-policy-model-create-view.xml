@@ -19,7 +19,7 @@
                   label="msg://entityResourcePolicyModelCreateView.allActions.label"/>
 
         <checkboxGroup id="actionsGroup"
-                       themeName="vertical"/>
+                       themeNames="vertical"/>
 
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>

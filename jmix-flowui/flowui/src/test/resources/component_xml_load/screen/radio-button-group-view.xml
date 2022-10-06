@@ -32,7 +32,7 @@
     </facets>
     <layout>
         <radioButtonGroup id="radioButtonGroup"
-                          className="className, className1"
+                          classNames="className, className1"
                           colspan="1"
                           errorMessage="errorMessage"
                           height="100%"
@@ -47,7 +47,7 @@
                           required="true"
                           requiredIndicatorVisible="true"
                           requiredMessage="requiredMessage"
-                          themeName="helper-above-field, vertical"
+                          themeNames="helper-above-field, vertical"
                           width="100%"/>
     </layout>
 </view>

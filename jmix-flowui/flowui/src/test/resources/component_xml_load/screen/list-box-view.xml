@@ -32,7 +32,7 @@
     </facets>
     <layout>
         <listBox id="listBox"
-                 className="className, className1"
+                 classNames="className, className1"
                  colspan="1"
                  height="100%"
                  maxHeight="200px"
@@ -43,7 +43,7 @@
                  readOnly="true"
                  width="100%"/>
         <multiSelectListBox id="multiSelectListBox"
-                            className="className, className1"
+                            classNames="className, className1"
                             colspan="1"
                             height="100%"
                             maxHeight="200px"

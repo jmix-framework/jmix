@@ -22,29 +22,29 @@
     </actions>
     <appLayout>
         <navigationBar>
-            <header id="header" className="jmix-main-view-header">
+            <header id="header" classNames="jmix-main-view-header">
                 <drawerToggle id="drawerToggle"
-                              className="jmix-main-view-drawer-toggle"
-                              themeName="contrast"
+                              classNames="jmix-main-view-drawer-toggle"
+                              themeNames="contrast"
                               ariaLabel="msg://drawerToggle.ariaLabel"/>
-                <h1 id="viewTitle" className="jmix-main-view-title"/>
+                <h1 id="viewTitle" classNames="jmix-main-view-title"/>
             </header>
         </navigationBar>
         <drawerLayout>
-            <section id="section" className="jmix-main-view-section">
+            <section id="section" classNames="jmix-main-view-section">
                 <h2 id="applicationTitle"
                     text="msg://applicationTitle.text"
-                    className="jmix-main-view-application-title"/>
+                    classNames="jmix-main-view-application-title"/>
                 <nav id="navigation"
-                     className="jmix-main-view-navigation"
+                     classNames="jmix-main-view-navigation"
                      ariaLabel="msg://navigation.ariaLabel">
                     <listMenu id="menu"/>
                 </nav>
-                <footer id="footer" className="jmix-main-view-footer">
+                <footer id="footer" classNames="jmix-main-view-footer">
                     <userIndicator id="userIndicator"/>
                     <button id="logoutButton"
                             action="logout"
-                            className="jmix-logout-button"/>
+                            classNames="jmix-logout-button"/>
                 </footer>
             </section>
         </drawerLayout>

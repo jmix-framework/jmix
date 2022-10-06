@@ -51,7 +51,7 @@
         </tabs>
 
         <vbox id="resourcePoliciesWrapper" width="100%" padding="false">
-            <hbox id="resourcePoliciesButtonsPanel" className="buttons-panel">
+            <hbox id="resourcePoliciesButtonsPanel" classNames="buttons-panel">
                 <button action="resourcePoliciesTable.edit"/>
                 <button action="resourcePoliciesTable.read"/>
                 <button action="resourcePoliciesTable.remove"/>
@@ -81,7 +81,7 @@
         </vbox>
 
         <vbox id="childRolesWrapper" width="100%" padding="false" visible="false">
-            <hbox id="childRolesButtonsPanel" className="buttons-panel">
+            <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
                 <button action="childRolesTable.add"/>
                 <button action="childRolesTable.remove"/>
             </hbox>

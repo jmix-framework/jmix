@@ -21,12 +21,11 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationProvider;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -76,6 +75,7 @@ public class CoreSecurityConfiguration {
 
     @Bean(name = "core_authenticationManager")
     public AuthenticationManager authenticationManager(UserRepository userRepository,
+                                                       AuthenticationEventPublisher authenticationEventPublisher,
                                                        @Qualifier("core_PreAuthenticationChecks") PreAuthenticationChecks preAuthenticationChecks,
                                                        @Qualifier("core_PostAuthenticationChecks") PostAuthenticationChecks postAuthenticationChecks) throws Exception {
         List<AuthenticationProvider> providers = new ArrayList<>();
@@ -90,7 +90,9 @@ public class CoreSecurityConfiguration {
 
         providers.add(daoAuthenticationProvider);
 
-        return new ProviderManager(providers);
+        ProviderManager providerManager = new ProviderManager(providers);
+        providerManager.setAuthenticationEventPublisher(authenticationEventPublisher);
+        return providerManager;
     }
 
     @Bean(name = "core_UserRepository")
@@ -106,5 +108,10 @@ public class CoreSecurityConfiguration {
     @Bean(name = "core_PostAuthenticationChecks")
     public PostAuthenticationChecks postAuthenticationChecks() {
         return new PostAuthenticationChecks();
+    }
+
+    @Bean("core_AuthenticationEventPublisher")
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher publisher) {
+        return new DefaultAuthenticationEventPublisher(publisher);
     }
 }

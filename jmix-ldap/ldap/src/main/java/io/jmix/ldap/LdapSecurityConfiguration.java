@@ -21,14 +21,12 @@ import io.jmix.core.security.event.PreAuthenticationCheckEvent;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
 import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
@@ -67,7 +65,8 @@ public class LdapSecurityConfiguration {
     }
 
     @Bean("ldap_AuthenticationManager")
-    public AuthenticationManager ldapAuthenticationManager(StandardAuthenticationProvidersProducer providersProducer) {
+    public AuthenticationManager ldapAuthenticationManager(StandardAuthenticationProvidersProducer providersProducer,
+                                                           AuthenticationEventPublisher authenticationEventPublisher) {
         LdapBindAuthenticationManagerFactory factory = new LdapBindAuthenticationManagerFactory(ldapContextSource);
         factory.setUserSearchBase(ldapProperties.getUserSearchBase());
         factory.setUserSearchFilter(ldapProperties.getUserSearchFilter());
@@ -83,7 +82,14 @@ public class LdapSecurityConfiguration {
         } else {
             throw new IllegalStateException("Cannot get providers from default LDAP authentication manager");
         }
-        return new ProviderManager(providers);
+        ProviderManager providerManager = new ProviderManager(providers);
+        providerManager.setAuthenticationEventPublisher(authenticationEventPublisher);
+        return providerManager;
+    }
+
+    @Bean("ldap_AuthenticationEventPublisher")
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher publisher) {
+        return new DefaultAuthenticationEventPublisher(publisher);
     }
 
     @EventListener

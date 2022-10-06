@@ -18,11 +18,10 @@ package io.jmix.security;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -43,8 +42,16 @@ public class StandardSecurityConfiguration {
     }
 
     @Bean("sec_AuthenticationManager")
-    public AuthenticationManager authenticationManager(StandardAuthenticationProvidersProducer providersProducer) {
+    public AuthenticationManager authenticationManager(StandardAuthenticationProvidersProducer providersProducer,
+                                                       AuthenticationEventPublisher authenticationEventPublisher) {
         List<AuthenticationProvider> providers = providersProducer.getStandardProviders();
-        return new ProviderManager(providers);
+        ProviderManager providerManager = new ProviderManager(providers);
+        providerManager.setAuthenticationEventPublisher(authenticationEventPublisher);
+        return providerManager;
+    }
+
+    @Bean("sec_AuthenticationEventPublisher")
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher publisher) {
+        return new DefaultAuthenticationEventPublisher(publisher);
     }
 }

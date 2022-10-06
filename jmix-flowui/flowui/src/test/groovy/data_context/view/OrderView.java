@@ -29,7 +29,7 @@ import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.DetailWindowClassBuilder;
-import io.jmix.flowui.view.navigation.UrlIdSerializer;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,11 +69,14 @@ public class OrderView extends StandardView implements HasUrlParameter<String> {
     @Autowired
     private DataManager dataManager;
 
+    @Autowired
+    private UrlParamSerializer urlParamSerializer;
+
     private Order order;
 
     @Override
     public void setParameter(BeforeEvent event, String parameter) {
-        Object orderId = UrlIdSerializer.deserializeId(UUID.class, parameter);
+        Object orderId = urlParamSerializer.deserialize(UUID.class, parameter);
         order = dataManager.load(Order.class).id(orderId).one();
     }
 

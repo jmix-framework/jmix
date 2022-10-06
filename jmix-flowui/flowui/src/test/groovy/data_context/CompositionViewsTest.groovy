@@ -21,7 +21,7 @@ import data_context.view.OrderView
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.flowui.ViewNavigators
-import io.jmix.flowui.view.navigation.UrlIdSerializer
+import io.jmix.flowui.view.navigation.UrlParamSerializer
 import io.jmix.flowui.view.navigation.ViewNavigationSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -48,6 +48,8 @@ class CompositionViewsTest extends FlowuiTestSpecification {
     ViewNavigationSupport navigationSupport
     @Autowired
     Metadata metadata
+    @Autowired
+    UrlParamSerializer urlParamSerializer
 
     @Override
     void setup() {
@@ -67,7 +69,7 @@ class CompositionViewsTest extends FlowuiTestSpecification {
         def order = metadata.create(Order)
         dataManager.save(order)
 
-        navigationSupport.navigate(OrderView, UrlIdSerializer.serializeId(order.id))
+        navigationSupport.navigate(OrderView, urlParamSerializer.serialize(order.id))
         OrderView orderView = UI.getCurrent().getInternals().getActiveRouterTargetsChain().get(0)
 
         def orderScreenDc = orderView.viewData.dataContext
@@ -113,7 +115,7 @@ class CompositionViewsTest extends FlowuiTestSpecification {
 
         def lineParam = dataManager.save(new OrderLineParam(name: 'p1', orderLine: orderLine))
 
-        navigationSupport.navigate(OrderView, UrlIdSerializer.serializeId(order.id))
+        navigationSupport.navigate(OrderView, urlParamSerializer.serialize(order.id))
         OrderView orderView = UI.getCurrent().getInternals().getActiveRouterTargetsChain().get(0)
 
         def orderViewCtx = orderView.viewData.dataContext

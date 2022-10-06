@@ -33,6 +33,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
@@ -86,6 +87,8 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     private RoleModelConverter roleModelConverter;
     @Autowired
     private ResourceRoleRepository roleRepository;
+    @Autowired
+    private UrlParamSerializer urlParamSerializer;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -139,7 +142,8 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     public RouteParameters roleModelsTableEditRouteParametersProvider() {
         ResourceRoleModel selectedItem = roleModelsTable.getSingleSelectedItem();
         if (selectedItem != null) {
-            return new RouteParameters(ResourceRoleModelDetailView.ROUTE_PARAM_NAME, selectedItem.getCode());
+            String serializedCode = urlParamSerializer.serialize(selectedItem.getCode());
+            return new RouteParameters(ResourceRoleModelDetailView.ROUTE_PARAM_NAME, serializedCode);
         }
 
         return null;

@@ -38,7 +38,7 @@ import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
-import io.jmix.flowui.view.navigation.UrlIdSerializer;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nullable;
@@ -505,7 +505,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     protected void initExistingEntity(String serializedEntityId) {
-        Object entityId = UrlIdSerializer.deserializeId(getSerializedIdType(), serializedEntityId);
+        Object entityId = getUrlParamSerializer().deserialize(getSerializedIdType(), serializedEntityId);
         getEditedEntityLoader().setEntityId(entityId);
     }
 
@@ -612,7 +612,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             if (NEW_ENTITY_ID.equals(serializedEntityIdToEdit)) {
                 return;
             }
-            editedEntityId = UrlIdSerializer.deserializeId(getSerializedIdType(), serializedEntityIdToEdit);
+            editedEntityId = getUrlParamSerializer()
+                    .deserialize(getSerializedIdType(), serializedEntityIdToEdit);
         }
 
         Object id = EntityValues.getId(event.getItem());
@@ -749,6 +750,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private ReadOnlyViewsSupport getReadOnlyViewSupport() {
         return getApplicationContext().getBean(ReadOnlyViewsSupport.class);
+    }
+
+    private UrlParamSerializer getUrlParamSerializer() {
+        return getApplicationContext().getBean(UrlParamSerializer.class);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

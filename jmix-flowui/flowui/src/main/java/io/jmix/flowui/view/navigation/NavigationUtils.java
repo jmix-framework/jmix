@@ -25,9 +25,9 @@ public final class NavigationUtils {
     private NavigationUtils() {
     }
 
-    public static RouteParameters generateRouteParameters(ViewNavigator navigator, String id, String value) {
+    public static RouteParameters generateRouteParameters(ViewNavigator navigator, String param, String value) {
         HashMap<String, String> paramsMap = new HashMap<>();
-        paramsMap.put(id, value);
+        paramsMap.put(param, value);
 
         if (navigator.getRouteParameters().isPresent()) {
             RouteParameters routeParameters = navigator.getRouteParameters().get();

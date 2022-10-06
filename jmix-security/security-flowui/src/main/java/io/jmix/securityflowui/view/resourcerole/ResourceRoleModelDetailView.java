@@ -40,7 +40,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import io.jmix.flowui.view.*;
-import io.jmix.flowui.view.navigation.UrlIdSerializer;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;
@@ -109,6 +109,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private RoleModelConverter roleModelConverter;
     @Autowired
     private ResourceRoleRepository roleRepository;
+    @Autowired
+    private UrlParamSerializer urlParamSerializer;
 
     private boolean openedByCreateAction = false;
     private final Set<UUID> forRemove = new HashSet<>();
@@ -140,7 +142,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     @Override
     protected void initExistingEntity(String serializedEntityCode) {
-        String code = UrlIdSerializer.deserializeId(String.class, serializedEntityCode);
+        String code = urlParamSerializer.deserialize(String.class, serializedEntityCode);
         ResourceRole roleByCode = roleRepository.findRoleByCode(code);
 
         ResourceRoleModel resourceRoleModel = roleModelConverter.createResourceRoleModel(roleByCode);

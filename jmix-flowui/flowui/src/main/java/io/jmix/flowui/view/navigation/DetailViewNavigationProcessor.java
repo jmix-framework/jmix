@@ -31,10 +31,15 @@ import static java.util.Objects.requireNonNull;
 @Component("flowui_DetailViewNavigationProcessor")
 public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<DetailViewNavigator<?>> {
 
+    protected UrlParamSerializer urlParamSerializer;
+
     public DetailViewNavigationProcessor(ViewSupport viewSupport,
                                          ViewRegistry viewRegistry,
-                                         ViewNavigationSupport navigationSupport) {
+                                         ViewNavigationSupport navigationSupport,
+                                         UrlParamSerializer urlParamSerializer) {
         super(viewSupport, viewRegistry, navigationSupport);
+
+        this.urlParamSerializer = urlParamSerializer;
     }
 
     @Override
@@ -66,6 +71,6 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
                         navigator.getEntityClass())));
 
         Object id = requireNonNull(EntityValues.getId(entity));
-        return NavigationUtils.generateRouteParameters(navigator, "id", UrlIdSerializer.serializeId(id));
+        return NavigationUtils.generateRouteParameters(navigator, "id", urlParamSerializer.serialize(id));
     }
 }

@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @param <T>
  */
-//todo make the class generic and move it to jmix-security in order to share it with jmix-ldap, jmix-saml and jmix-oidc
+//todo make the class generic and move it to jmix-security in order to share it with jmix-ldap and jmix-oidc
 public abstract class SynchronizingOidcUserMapper<T extends JmixOidcUser> extends BaseOidcUserMapper<T> {
 
     private static final Logger log = LoggerFactory.getLogger(SynchronizingOidcUserMapper.class);

@@ -20,6 +20,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Map;
+
 @ConfigurationProperties(prefix = "jmix.flowui")
 @ConstructorBinding
 public class FlowuiProperties {
@@ -40,12 +44,26 @@ public class FlowuiProperties {
      */
     boolean compositeMenu;
 
+    Integer defaultMaxFetchSize;
+    Map<String, Integer> entityMaxFetchSize;
+
+    Integer defaultPageSize;
+    Map<String, Integer> entityPageSize;
+
     public FlowuiProperties(@DefaultValue("login") String loginViewId,
                             @DefaultValue("main") String mainViewId,
-                            @DefaultValue("true") boolean compositeMenu) {
+                            @DefaultValue("true") boolean compositeMenu,
+                            @DefaultValue("10000") Integer defaultMaxFetchSize,
+                            @Nullable Map<String, Integer> entityMaxFetchSize,
+                            @DefaultValue("50") Integer defaultPageSize,
+                            @Nullable Map<String, Integer> entityPageSize) {
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
         this.compositeMenu = compositeMenu;
+        this.defaultMaxFetchSize = defaultMaxFetchSize;
+        this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
+        this.defaultPageSize = defaultPageSize;
+        this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
     }
 
     /**
@@ -67,5 +85,27 @@ public class FlowuiProperties {
      */
     public boolean isCompositeMenu() {
         return compositeMenu;
+    }
+
+    public int getDefaultMaxFetchSize() {
+        return defaultMaxFetchSize;
+    }
+
+    public int getEntityMaxFetchSize(String entityName) {
+        Integer forEntity = entityMaxFetchSize.get(entityName);
+        if (forEntity != null)
+            return forEntity;
+        return defaultMaxFetchSize;
+    }
+
+    public int getDefaultPageSize() {
+        return defaultPageSize;
+    }
+
+    public int getEntityPageSize(String entityName) {
+        Integer forEntity = entityPageSize.get(entityName);
+        if (forEntity != null)
+            return forEntity;
+        return defaultPageSize;
     }
 }

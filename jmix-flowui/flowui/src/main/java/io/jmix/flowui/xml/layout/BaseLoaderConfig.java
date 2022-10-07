@@ -80,6 +80,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("treeDataGrid", TreeDataGridLoader.class);
         loaders.put("loginForm", LoginFormLoader.class);
         loaders.put("loginOverlay", LoginOverlayLoader.class);
+        loaders.put("simplePagination", SimplePaginationLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

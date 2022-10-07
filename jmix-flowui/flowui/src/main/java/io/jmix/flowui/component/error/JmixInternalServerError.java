@@ -22,6 +22,7 @@ import io.jmix.flowui.exception.UiExceptionHandlers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
@@ -74,7 +75,10 @@ public class JmixInternalServerError extends InternalServerError {
         log.info("Cannot navigate to the parent layout {}", viewClass.getName());
     }
 
-    protected Optional<RouteData> findRouteData(Class<?> target, List<RouteData> routes) {
+    protected Optional<RouteData> findRouteData(@Nullable Class<?> target, List<RouteData> routes) {
+        if (target == null) {
+            return Optional.empty();
+        }
         return routes.stream()
                 .filter(routeData -> target.equals(routeData.getNavigationTarget()))
                 .findFirst();

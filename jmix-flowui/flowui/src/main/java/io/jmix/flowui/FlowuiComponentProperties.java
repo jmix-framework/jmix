@@ -21,6 +21,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.util.List;
+
 @ConfigurationProperties(prefix = "jmix.flowui.component")
 @ConstructorBinding
 public class FlowuiComponentProperties {
@@ -38,6 +40,11 @@ public class FlowuiComponentProperties {
     String pickerOpenShortcut;
     String pickerClearShortcut;
 
+    /**
+     * Items for rows per page component.
+     */
+    List<Integer> paginationItemsPerPageItems;
+
     public FlowuiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -48,7 +55,8 @@ public class FlowuiComponentProperties {
             @DefaultValue("3000") int defaultNotificationDuration,
             String pickerLookupShortcut,
             String pickerOpenShortcut,
-            String pickerClearShortcut) {
+            String pickerClearShortcut,
+            @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageItems) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -60,6 +68,8 @@ public class FlowuiComponentProperties {
         this.pickerLookupShortcut = pickerLookupShortcut;
         this.pickerOpenShortcut = pickerOpenShortcut;
         this.pickerClearShortcut = pickerClearShortcut;
+
+        this.paginationItemsPerPageItems = paginationItemsPerPageItems;
     }
 
     public String getGridCreateShortcut() {
@@ -100,5 +110,12 @@ public class FlowuiComponentProperties {
 
     public String getPickerClearShortcut() {
         return pickerClearShortcut;
+    }
+
+    /**
+     * @see #paginationItemsPerPageItems
+     */
+    public List<Integer> getPaginationItemsPerPageItems() {
+        return paginationItemsPerPageItems;
     }
 }

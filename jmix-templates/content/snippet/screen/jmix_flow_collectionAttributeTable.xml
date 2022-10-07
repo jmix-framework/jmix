@@ -35,7 +35,7 @@ def oneToOneAnn = attribute.getAnnotation('OneToOne')
 def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim()) || attribute.hasAnnotation('JoinTable')
 %>
 <% if (!isManyToMany || isOwnerAttr) {%>
-<hbox id="buttonsPanel" className="buttons-panel">
+<hbox id="buttonsPanel" classNames="buttons-panel">
     <button action="${nestedDcProperty}Table.create"/>
     <% if (attribute.hasAnnotation('OneToMany')) {%>
     <button action="${nestedDcProperty}Table.edit"/>

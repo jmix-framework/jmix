@@ -30,7 +30,7 @@ fetchPlan.orderedRootProperties.each { property ->
 }
 
 %>
-<hbox id="buttonsPanel" className="buttons-panel">
+<hbox id="buttonsPanel" classNames="buttons-panel">
 <%tableActions.each { action ->%>
 <button id="${action}Btn" action="${tableId}.${action}"/>
 <%}%>

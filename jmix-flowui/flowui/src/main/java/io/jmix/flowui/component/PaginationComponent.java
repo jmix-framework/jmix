@@ -57,10 +57,12 @@ public interface PaginationComponent<T extends AbstractPagination> {
      * private DataManager dataManager;
      *
      * &#64;Install(to = "pagination", subject = "totalCountDelegate")
-     * private Integer paginationTotalCountDelegate(LoadContext<User> dataLoadContext) {
+     * private Integer paginationTotalCountDelegate(LoadContext&lt;User&gt; dataLoadContext) {
      *     return dataManager.loadValue("select count(e) from demo_User e", Integer.class).one();
      * }
      * </pre>
+     *
+     * @param totalCountDelegate total count delegate to set
      */
     void setTotalCountDelegate(@Nullable Function<LoadContext, Integer> totalCountDelegate);
 
@@ -68,6 +70,7 @@ public interface PaginationComponent<T extends AbstractPagination> {
      * Adds before refresh listener. It is invoked when data should be refreshed after user actions:
      * click on navigation buttons (next, last etc), change items per page value.
      *
+     * @param listener listener to add
      * @return a registration object for removing an event listener
      */
     Registration addBeforeRefreshListener(ComponentEventListener<BeforeRefreshEvent<T>> listener);
@@ -75,6 +78,7 @@ public interface PaginationComponent<T extends AbstractPagination> {
     /**
      * Adds after refresh listener. It is invoked when data is refreshed.
      *
+     * @param listener listener to add
      * @return a registration object for removing an event listener
      */
     Registration addAfterRefreshListener(ComponentEventListener<AfterRefreshEvent<T>> listener);

@@ -14,22 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.xml.layout.loader.component;
+@NonNullApi
+package io.jmix.flowui.component.loginform;
 
-import io.jmix.flowui.component.loginform.JmixLoginForm;
-
-public class LoginFormLoader extends AbstractLoginFormLoader<JmixLoginForm> {
-
-    @Override
-    protected JmixLoginForm createComponent() {
-        return factory.create(JmixLoginForm.class);
-    }
-
-    @Override
-    public void loadComponent() {
-        super.loadComponent();
-
-        loadBoolean(element, "rememberMeVisible", resultComponent::setRememberMeVisible);
-        loadBoolean(element, "localesVisible", resultComponent::setLocalesVisible);
-    }
-}
+import org.springframework.lang.NonNullApi;

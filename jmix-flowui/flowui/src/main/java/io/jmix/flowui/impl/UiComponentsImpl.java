@@ -26,6 +26,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.treegrid.TreeGrid;
@@ -41,6 +42,7 @@ import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
+import io.jmix.flowui.component.loginform.JmixLoginForm;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
@@ -80,6 +82,7 @@ public class UiComponentsImpl implements UiComponents {
         register(TypedDateTimePicker.class, DateTimePicker.class);
         register(TypedDatePicker.class, DatePicker.class);
         register(JmixBigDecimalField.class, BigDecimalField.class);
+        register(JmixLoginForm.class, LoginForm.class);
     }
 
     @SuppressWarnings("unchecked")

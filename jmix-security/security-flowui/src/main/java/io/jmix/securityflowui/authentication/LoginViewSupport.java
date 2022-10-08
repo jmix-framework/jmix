@@ -27,6 +27,7 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
+import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.ClientDetails;
@@ -206,7 +207,7 @@ public class LoginViewSupport {
     protected void saveCookies(AuthDetails authDetails) {
         Locale locale = authDetails.getLocale();
         if (locale != null) {
-            getCookies().addCookie(AppCookies.COOKIE_LOCALE, locale.toLanguageTag());
+            getCookies().addCookie(AppCookies.COOKIE_LOCALE, LocaleResolver.localeToString(locale));
         } else {
             getCookies().removeCookie(AppCookies.COOKIE_LOCALE);
         }

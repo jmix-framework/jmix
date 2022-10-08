@@ -14,22 +14,37 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.xml.layout.loader.component;
+package io.jmix.flowui.kit.component.loginform;
 
-import io.jmix.flowui.component.loginform.JmixLoginForm;
+/**
+ * POJO class that is supposed to be used as JSON item in {@link EnhancedLoginForm}.
+ */
+public class LocaleItem {
 
-public class LoginFormLoader extends AbstractLoginFormLoader<JmixLoginForm> {
+    String label;
+    String value;
 
-    @Override
-    protected JmixLoginForm createComponent() {
-        return factory.create(JmixLoginForm.class);
+    public LocaleItem() {
     }
 
-    @Override
-    public void loadComponent() {
-        super.loadComponent();
+    public LocaleItem(String label, String value) {
+        this.label = label;
+        this.value = value;
+    }
 
-        loadBoolean(element, "rememberMeVisible", resultComponent::setRememberMeVisible);
-        loadBoolean(element, "localesVisible", resultComponent::setLocalesVisible);
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

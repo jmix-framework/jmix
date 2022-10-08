@@ -2631,7 +2631,12 @@
     <xs:complexType name="loginFormComponent">
         <xs:complexContent>
             <xs:extension base="baseLoginComponent">
+                <xs:sequence>
+                    <xs:element name="form" type="jmixLoginFormType" minOccurs="0"/>
+                </xs:sequence>
 
+                <xs:attribute name="rememberMeVisible" type="xs:boolean"/>
+                <xs:attribute name="localesVisible" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2642,6 +2647,14 @@
                 <xs:sequence>
                     <xs:element name="header" type="loginHeaderType" minOccurs="0"/>
                 </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="jmixLoginFormType">
+        <xs:complexContent>
+            <xs:extension base="loginFormType">
+                <xs:attribute name="rememberMe" type="resourceString"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

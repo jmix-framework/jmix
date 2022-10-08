@@ -25,9 +25,11 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.provider.HasListDataView;
 import com.vaadin.flow.dom.Element;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -89,6 +91,11 @@ public final class FlowuiComponentUtils {
     public static <T> void setItemsMap(Select<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
+    }
+
+    public static void setItemsMap(EnhancedLoginForm component, Map<Locale, String> items) {
+        component.setLocaleItems(items.keySet());
+        component.setLocaleItemLabelGenerator(createItemLabelGenerator(items));
     }
 
     private static <T> void setItemsMapInternal(HasListDataView<T, ?> component, Map<T, String> items) {

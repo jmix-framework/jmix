@@ -16,12 +16,15 @@
 
 package io.jmix.flowui.sys;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.InternalServerError;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.internal.ErrorTargetEntry;
 import com.vaadin.flow.server.*;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.LocaleResolver;
 import io.jmix.flowui.component.error.JmixInternalServerError;
 import io.jmix.flowui.exception.UiExceptionHandlers;
 import io.jmix.flowui.view.ViewRegistry;
@@ -33,6 +36,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Optional;
 
 @Component("flowui_JmixServiceInitListener")
@@ -44,11 +48,16 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
 
     protected ViewRegistry viewRegistry;
     protected UiExceptionHandlers uiExceptionHandlers;
+    protected CoreProperties coreProperties;
+
+    protected AppCookies cookies;
 
     public JmixServiceInitListener(ViewRegistry viewRegistry,
-                                   UiExceptionHandlers uiExceptionHandlers) {
+                                   UiExceptionHandlers uiExceptionHandlers,
+                                   CoreProperties coreProperties) {
         this.viewRegistry = viewRegistry;
         this.uiExceptionHandlers = uiExceptionHandlers;
+        this.coreProperties = coreProperties;
     }
 
     @Override
@@ -81,6 +90,19 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
 
     protected void onSessionInitEvent(SessionInitEvent event) {
         event.getSession().setErrorHandler(uiExceptionHandlers);
+
+        initCookieLocale(event.getSession());
+    }
+
+    protected void initCookieLocale(VaadinSession session) {
+        String localeString = getCookies().getCookieValue(AppCookies.COOKIE_LOCALE);
+        if (Strings.isNullOrEmpty(localeString)) {
+            return;
+        }
+        Locale resolvedLocale = LocaleResolver.resolve(localeString);
+        if (coreProperties.getAvailableLocales().contains(resolvedLocale)) {
+            session.setLocale(resolvedLocale);
+        }
     }
 
     protected void registerInternalServiceError() {
@@ -102,5 +124,12 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         applicationRouteRegistry.setErrorNavigationTargets(Collections.singleton(JmixInternalServerError.class));
 
         log.debug("Default internal server error handler is registered: " + JmixInternalServerError.class.getName());
+    }
+
+    protected AppCookies getCookies() {
+        if (cookies == null) {
+            cookies = new AppCookies();
+        }
+        return cookies;
     }
 }

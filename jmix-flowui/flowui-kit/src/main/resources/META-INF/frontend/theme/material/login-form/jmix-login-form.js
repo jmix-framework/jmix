@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.xml.layout.loader.component;
+import '@vaadin/text-field/theme/material/vaadin-text-field.js';
+import '@vaadin/password-field/theme/material/vaadin-password-field.js';
+import '@vaadin/checkbox/theme/material/vaadin-checkbox.js';
+import '@vaadin/select/theme/material/vaadin-select.js';
 
-import io.jmix.flowui.component.loginform.JmixLoginForm;
+import '@vaadin/login/theme/material/vaadin-login-form.js';
 
-public class LoginFormLoader extends AbstractLoginFormLoader<JmixLoginForm> {
-
-    @Override
-    protected JmixLoginForm createComponent() {
-        return factory.create(JmixLoginForm.class);
-    }
-
-    @Override
-    public void loadComponent() {
-        super.loadComponent();
-
-        loadBoolean(element, "rememberMeVisible", resultComponent::setRememberMeVisible);
-        loadBoolean(element, "localesVisible", resultComponent::setLocalesVisible);
-    }
-}
+import './jmix-login-form-styles.js';
+import '../../../src/login-form/jmix-login-form.js';

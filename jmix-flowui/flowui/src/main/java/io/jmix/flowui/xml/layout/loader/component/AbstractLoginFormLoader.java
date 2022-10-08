@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.login.AbstractLogin;
 import com.vaadin.flow.component.login.LoginI18n;
+import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
@@ -32,7 +33,7 @@ public abstract class AbstractLoginFormLoader<C extends AbstractLogin> extends A
     }
 
     protected void loadLocalization(C resultComponent, Element element) {
-        LoginI18n i18n = LoginI18n.createDefault();
+        JmixLoginI18n i18n = JmixLoginI18n.createDefault();
 
         loadHeader(resultComponent, element, i18n);
         loadForm(resultComponent, element, i18n);
@@ -59,7 +60,7 @@ public abstract class AbstractLoginFormLoader<C extends AbstractLogin> extends A
     protected void loadForm(C resultComponent, Element element, LoginI18n i18n) {
         Element formElement = element.element("form");
         if (formElement != null) {
-            LoginI18n.Form form = new LoginI18n.Form();
+            JmixLoginI18n.JmixForm form = new JmixLoginI18n.JmixForm();
 
             loadResourceString(formElement, "title",
                     context.getMessageGroup(), form::setTitle);
@@ -71,6 +72,8 @@ public abstract class AbstractLoginFormLoader<C extends AbstractLogin> extends A
                     context.getMessageGroup(), form::setSubmit);
             loadResourceString(formElement, "forgotPassword",
                     context.getMessageGroup(), form::setForgotPassword);
+            loadResourceString(formElement, "rememberMe",
+                    context.getMessageGroup(), form::setRememberMe);
 
             i18n.setForm(form);
         }

@@ -93,7 +93,7 @@
               propertyType="STRING"
               advanced="true"
               required="true"
-              valueTemplate="id"/>
+              defaultValue="id"/>
 
     <source fileExt="xml"
             name="descriptor"/>

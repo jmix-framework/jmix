@@ -28,6 +28,7 @@ import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
 import io.jmix.oidc.usermapper.OidcUserMapper;
 import io.jmix.security.SecurityConfigurers;
+import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RowLevelRoleRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -87,7 +88,6 @@ public class OidcAutoConfiguration {
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                        JmixOidcUserService jmixOidcUserService,
                                                        ClientRegistrationRepository clientRegistrationRepository) throws Exception {
-            //todo session management
             http.authorizeHttpRequests(authorize -> {
                         authorize
                                 //if we don't allow /vaadinServlet/PUSH URL the Session Expired toolbox won't
@@ -111,6 +111,7 @@ public class OidcAutoConfiguration {
                             frameOptions.sameOrigin();
                         });
                     });
+            http.apply(new SessionManagementConfigurer());
 
             return http.build();
         }

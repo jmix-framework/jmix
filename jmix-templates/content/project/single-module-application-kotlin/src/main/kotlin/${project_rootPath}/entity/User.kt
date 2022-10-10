@@ -15,10 +15,9 @@ import javax.validation.constraints.Email
 
 @JmixEntity
 @Entity<%if(!normalizedPrefix_underscore.isEmpty()) {%>(name = "${normalizedPrefix_underscore}User")<%}%>
-@Table(
-    name = "${userTable}",
-    indexes = [Index(name = "IDX_${userTable}_ON_USERNAME", columnList = "USERNAME", unique = true)]
-)
+@Table(name = "${userTable}", indexes = [
+    Index(name = "IDX_${userTable}_ON_USERNAME", columnList = "USERNAME", unique = true)
+])
 open class User : JmixUserDetails, HasTimeZone {
 
     @Id
@@ -46,8 +45,9 @@ open class User : JmixUserDetails, HasTimeZone {
     @Column(name = "LAST_NAME")
     var lastName: String? = null
 
+    @Email
     @Column(name = "EMAIL")
-    var email: @Email String? = null
+    var email: String? = null
 
     @Column(name = "ACTIVE")
     var active: Boolean? = true

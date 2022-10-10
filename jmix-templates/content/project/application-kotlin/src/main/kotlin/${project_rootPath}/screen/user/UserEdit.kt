@@ -46,6 +46,11 @@ open class UserEdit : StandardEditor<User>() {
     private var isNewEntity: Boolean = false
 
     @Subscribe
+    open fun onInit(event: InitEvent?) {
+        timeZoneField.setOptionsList(listOf(*TimeZone.getAvailableIDs()))
+    }
+
+    @Subscribe
     fun onInitEntity(event: InitEntityEvent<User>?) {
         usernameField.isEditable = true
         passwordField.isVisible = true
@@ -78,10 +83,5 @@ open class UserEdit : StandardEditor<User>() {
         if (isNewEntity) {
             applicationContext.publishEvent(SingleUserPasswordChangeEvent(editedEntity.username!!, passwordField.value))
         }
-    }
-
-    @Subscribe
-    open fun onInit(event: InitEvent?) {
-        timeZoneField.setOptionsList(listOf(*TimeZone.getAvailableIDs()))
     }
 }

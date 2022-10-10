@@ -50,6 +50,11 @@ public class UserEdit extends StandardEditor<User> {
     private boolean isNewEntity;
 
     @Subscribe
+    public void onInit(InitEvent event) {
+        timeZoneField.setOptionsList(Arrays.asList(TimeZone.getAvailableIDs()));
+    }
+
+    @Subscribe
     public void onInitEntity(InitEntityEvent<User> event) {
         usernameField.setEditable(true);
         passwordField.setVisible(true);
@@ -82,10 +87,5 @@ public class UserEdit extends StandardEditor<User> {
         if (isNewEntity) {
             getApplicationContext().publishEvent(new SingleUserPasswordChangeEvent(getEditedEntity().getUsername(), passwordField.getValue()));
         }
-    }
-
-    @Subscribe
-    public void onInit(InitEvent event) {
-        timeZoneField.setOptionsList(Arrays.asList(TimeZone.getAvailableIDs()));
     }
 }

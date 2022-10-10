@@ -7,12 +7,12 @@ nestedCollectionDatasourceProperties.each { prop ->
     def binding = [
         'nestedDcProperty': prop,
         'fetchPlan': detailFetchPlan]
-    def tableXml = api.processSnippet('jmix_flow_collectionAttributeTable.xml', binding)
+    def tableXml = api.processSnippet('collectionAttributeTable.xml', binding)
     if (!binding['isError']) {
         collectionAttributesTable << tableXml
     }
 }
-def formXml = api.processSnippet('jmix_flow_form.xml',
+def formXml = api.processSnippet('form.xml',
         ['fetchPlan': detailFetchPlan,
         'api': api,
         'dcId': dcId,

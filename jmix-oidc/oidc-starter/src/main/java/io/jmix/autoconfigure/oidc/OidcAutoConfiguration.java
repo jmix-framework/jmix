@@ -105,6 +105,11 @@ public class OidcAutoConfiguration {
                     })
                     .csrf(csrf -> {
                         csrf.disable();
+                    })
+                    .headers(headers -> {
+                        headers.frameOptions(frameOptions -> {
+                            frameOptions.sameOrigin();
+                        });
                     });
 
             return http.build();

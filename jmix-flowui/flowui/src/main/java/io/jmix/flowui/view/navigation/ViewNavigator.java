@@ -18,6 +18,7 @@ package io.jmix.flowui.view.navigation;
 
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.View;
 
 import javax.annotation.Nullable;
@@ -26,6 +27,12 @@ import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Provides a fluent interface to configure navigation parameters and navigate to a {@link View}.
+ * <p>
+ * An instance of this class should be obtained through {@link ViewNavigators#view(String)} or
+ * {@link ViewNavigators#view(Class)}.
+ */
 public class ViewNavigator {
 
     protected final Consumer<ViewNavigator> handler;
@@ -44,51 +51,99 @@ public class ViewNavigator {
         this.handler = (Consumer<ViewNavigator>) handler;
     }
 
+    /**
+     * Sets the opened view by id.
+     *
+     * @param viewId identifier of the view as specified in the {@code ViewController} annotation
+     * @return this instance for chaining
+     */
     public ViewNavigator withViewId(@Nullable String viewId) {
         this.viewId = viewId;
         return this;
     }
 
+    /**
+     * Sets the opened view by its class.
+     *
+     * @param viewClass view class
+     * @return this instance for chaining
+     */
     public ViewNavigator withViewClass(@Nullable Class<? extends View> viewClass) {
         this.viewClass = viewClass;
         return this;
     }
 
+    /**
+     * Sets URL route parameters.
+     *
+     * @param routeParameters route parameters
+     * @return this instance for chaining
+     */
     public ViewNavigator withRouteParameters(@Nullable RouteParameters routeParameters) {
         this.routeParameters = routeParameters;
         return this;
     }
 
+    /**
+     * Sets URL query parameters.
+     *
+     * @param queryParameters query parameters
+     * @return this instance for chaining
+     */
     public ViewNavigator withQueryParameters(@Nullable QueryParameters queryParameters) {
         this.queryParameters = queryParameters;
         return this;
     }
 
+    /**
+     * Sets a view that should be navigated to when the opened view is closed or back browser button is clicked.
+     *
+     * @param backNavigationTarget view class
+     * @return this instance for chaining
+     */
     public ViewNavigator withBackNavigationTarget(@Nullable Class<? extends View> backNavigationTarget) {
         this.backNavigationTarget = backNavigationTarget;
         return this;
     }
 
+    /**
+     * @return identifier of the opened view as specified in the {@code ViewController} annotation
+     */
     public Optional<String> getViewId() {
         return Optional.ofNullable(viewId);
     }
 
+    /**
+     * @return opened view class
+     */
     public Optional<Class<? extends View>> getViewClass() {
         return Optional.ofNullable(viewClass);
     }
 
+    /**
+     * @return URL route parameters
+     */
     public Optional<RouteParameters> getRouteParameters() {
         return Optional.ofNullable(routeParameters);
     }
 
+    /**
+     * @return URL query parameters
+     */
     public Optional<QueryParameters> getQueryParameters() {
         return Optional.ofNullable(queryParameters);
     }
 
+    /**
+     * @return a view that should be navigated to when the opened view is closed or back browser button is clicked
+     */
     public Optional<Class<? extends View>> getBackNavigationTarget() {
         return Optional.ofNullable(backNavigationTarget);
     }
 
+    /**
+     * Perform navigation to the view configured using {@link #withViewId(String)} or {@link #withViewClass(Class)}.
+     */
     public void navigate() {
         handler.accept(this);
     }

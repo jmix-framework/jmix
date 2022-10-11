@@ -138,14 +138,33 @@ public class View<T extends Component> extends Composite<T>
         getViewAttributes().removeAllAttributes();
     }
 
+    /**
+     * Requests closing the view with the {@code close} action.
+     *
+     * @return result of close request
+     * @see #close(CloseAction)
+     */
     public OperationResult closeWithDefaultAction() {
         return close(StandardOutcome.CLOSE);
     }
 
+    /**
+     * Requests closing the view with the given outcome.
+     *
+     * @param outcome {@link StandardOutcome}
+     * @return result of close request
+     */
     public OperationResult close(StandardOutcome outcome) {
         return close(outcome.getCloseAction());
     }
 
+    /**
+     * Requests closing of the view caused by the given action.
+     *
+     * @param closeAction close action which is propagated to {@link BeforeCloseEvent}, {@link AfterCloseEvent} and,
+     *                      if the view has been opened in a dialog, to {@link DialogWindow.AfterCloseEvent}.
+     * @return result of close request
+     */
     public OperationResult close(CloseAction closeAction) {
         BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
         fireEvent(beforeCloseEvent);

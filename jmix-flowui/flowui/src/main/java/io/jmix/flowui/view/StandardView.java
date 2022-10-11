@@ -16,8 +16,12 @@
 
 package io.jmix.flowui.view;
 
+import com.vaadin.flow.component.applayout.AppLayout;
 import io.jmix.flowui.component.layout.ViewLayout;
 
+/**
+ * Base class of regular views opened either inside {@link AppLayout} or in a {@link DialogWindow}.
+ */
 public class StandardView extends View<ViewLayout> {
 
     @Override

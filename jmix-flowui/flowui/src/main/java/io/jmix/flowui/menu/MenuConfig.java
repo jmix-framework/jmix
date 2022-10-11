@@ -40,7 +40,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * GenericUI class holding information about the main menu structure.
+ * Holds information about the main menu structure.
  */
 @Component("flowui_MenuConfig")
 public class MenuConfig {

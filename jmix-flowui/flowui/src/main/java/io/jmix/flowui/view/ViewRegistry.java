@@ -52,6 +52,12 @@ import java.util.regex.Pattern;
 
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 
+/**
+ * Provides information about all registered views.
+ *
+ * @see #findViewInfo(String)
+ * @see #getViewInfo(String)
+ */
 @Component("flowui_ViewRegistry")
 public class ViewRegistry implements ApplicationContextAware {
 
@@ -310,6 +316,9 @@ public class ViewRegistry implements ApplicationContextAware {
         return findViewInfo(id).isPresent();
     }
 
+    /**
+     * @return registration info of all known views
+     */
     public Collection<ViewInfo> getViewInfos() {
         lock.readLock().lock();
         try {
@@ -320,7 +329,7 @@ public class ViewRegistry implements ApplicationContextAware {
         }
     }
 
-    public String getMetaClassViewId(MetaClass metaClass, String suffix) {
+    protected String getMetaClassViewId(MetaClass metaClass, String suffix) {
         MetaClass viewMetaClass = metaClass;
         MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
         if (originalMetaClass != null) {
@@ -330,10 +339,20 @@ public class ViewRegistry implements ApplicationContextAware {
         return viewMetaClass.getName() + suffix;
     }
 
+    /**
+     * Returns standard id of the list view for an entity, for example {@code Customer.list}.
+     *
+     * @param metaClass entity metaclass
+     */
     public String getListViewId(MetaClass metaClass) {
         return getMetaClassViewId(metaClass, LIST_VIEW_SUFFIX);
     }
 
+    /**
+     * Returns standard id of the lookup view for an entity, for example {@code Customer.lookup}.
+     *
+     * @param metaClass entity metaclass
+     */
     public String getLookupViewId(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         ViewInfo viewInfo = primaryLookupViews.get(originalMetaClass.getJavaClass());
@@ -344,6 +363,11 @@ public class ViewRegistry implements ApplicationContextAware {
         return getMetaClassViewId(metaClass, LOOKUP_VIEW_SUFFIX);
     }
 
+    /**
+     * Returns standard id of the detail view for an entity, for example {@code Customer.detail}.
+     *
+     * @param metaClass entity metaclass
+     */
     public String getDetailViewId(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         ViewInfo viewInfo = primaryDetailViews.get(originalMetaClass.getJavaClass());
@@ -354,6 +378,13 @@ public class ViewRegistry implements ApplicationContextAware {
         return getMetaClassViewId(metaClass, DETAIL_VIEW_SUFFIX);
     }
 
+    /**
+     * Returns detail view information by entity metaclass.
+     *
+     * @param metaClass entity metaclass
+     * @return view's registration information
+     * @throws NoSuchViewException if the detail view with the standard id is not registered for the entity
+     */
     public ViewInfo getDetailViewInfo(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         ViewInfo viewInfo = primaryDetailViews.get(originalMetaClass.getJavaClass());
@@ -365,16 +396,37 @@ public class ViewRegistry implements ApplicationContextAware {
         return getViewInfo(detailViewId);
     }
 
+    /**
+     * Returns detail view information by entity class.
+     *
+     * @param entityClass entity class
+     * @return view's registration information
+     * @throws NoSuchViewException if the detail view with the standard id is not registered for the entity
+     */
     public ViewInfo getDetailViewInfo(Class<?> entityClass) {
         MetaClass metaClass = metadata.getSession().getClass(entityClass);
         return getDetailViewInfo(metaClass);
     }
 
+    /**
+     * Returns detail view information by entity instance.
+     *
+     * @param entity entity instance
+     * @return view's registration information
+     * @throws NoSuchViewException if the detail view with the standard id is not registered for the entity
+     */
     public ViewInfo getDetailViewInfo(Object entity) {
         MetaClass metaClass = metadata.getClass(entity);
         return getDetailViewInfo(metaClass);
     }
 
+    /**
+     * Returns lookup or list view information by entity metaclass.
+     *
+     * @param metaClass entity metaclass
+     * @return view's registration information
+     * @throws NoSuchViewException if the lookup or list view with the standard id is not registered for the entity
+     */
     public ViewInfo getLookupViewInfo(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         ViewInfo viewInfo = primaryLookupViews.get(originalMetaClass.getJavaClass());
@@ -387,22 +439,35 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
-     * Get available lookup view by class of entity
+     * Returns lookup or list view information by entity class.
      *
      * @param entityClass entity class
-     * @return id of lookup view
-     * @throws NoSuchViewException if the view with specified ID is not registered
+     * @return view's registration information
+     * @throws NoSuchViewException if the lookup or list view with the standard id is not registered for the entity
      */
     public ViewInfo getLookupViewInfo(Class<?> entityClass) {
         MetaClass metaClass = metadata.getSession().getClass(entityClass);
         return getLookupViewInfo(metaClass);
     }
 
+    /**
+     * Returns lookup or list view information by entity instance.
+     *
+     * @param entity entity instance
+     * @return view's registration information
+     * @throws NoSuchViewException if the lookup or list view with the standard id is not registered for the entity
+     */
     public ViewInfo getLookupViewInfo(Object entity) {
         MetaClass metaClass = metadata.getClass(entity);
         return getLookupViewInfo(metaClass);
     }
 
+    /**
+     * Returns lookup or list view id by entity metaclass.
+     *
+     * @param metaClass entity metaclass
+     * @return view's id
+     */
     public String getAvailableLookupViewId(MetaClass metaClass) {
         String id = getLookupViewId(metaClass);
         if (!hasView(id)) {
@@ -412,6 +477,11 @@ public class ViewRegistry implements ApplicationContextAware {
         return id;
     }
 
+    /**
+     * Reloads a view class for hot-deploy.
+     *
+     * @param className view class name
+     */
     @SuppressWarnings({"unchecked"})
     public void loadViewClass(String className) {
         Class<? extends View<?>> viewClass = ((Class<? extends View<?>>) classManager.loadClass(className));
@@ -434,8 +504,8 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
-     * Iterates over all registered views and register their routes if needed.
-     * Replaces route registration in case a newer controller class is available.
+     * Iterates over all registered views and registers their routes if needed.
+     * Replaces route registration in case a newer view class is available.
      */
     public void registerViewRoutes() {
         for (ViewInfo viewInfo : getViewInfos()) {
@@ -445,7 +515,7 @@ public class ViewRegistry implements ApplicationContextAware {
 
     /**
      * Registers route for the passed viewInfo instance if needed. Replaces
-     * route registration in case a newer controller class is available.
+     * route registration in case a newer view class is available.
      *
      * @param viewInfo a viewInfo instance to register route
      */
@@ -454,21 +524,21 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
-     * Registers route for the passed controller class if needed. Replaces
-     * route registration in case a newer controller class is available.
+     * Registers route for the passed view class if needed. Replaces
+     * route registration in case a newer view class is available.
      *
-     * @param controllerClass a controller class to register route
+     * @param viewClass a view class to register route
      */
-    public void registerRoute(Class<? extends View<?>> controllerClass) {
-        Route route = controllerClass.getAnnotation(Route.class);
+    public void registerRoute(Class<? extends View<?>> viewClass) {
+        Route route = viewClass.getAnnotation(Route.class);
         if (route == null) {
             return;
         }
 
         RouteConfiguration routeConfiguration = getRouteConfiguration();
-        if (routeConfiguration.isRouteRegistered(controllerClass)) {
+        if (routeConfiguration.isRouteRegistered(viewClass)) {
             log.debug("Skipping route '{}' for class '{}' since it was already registered",
-                    route.value(), controllerClass.getName());
+                    route.value(), viewClass.getName());
             return;
         }
 
@@ -478,7 +548,7 @@ public class ViewRegistry implements ApplicationContextAware {
             routeConfiguration.removeRoute(route.value());
         }
 
-        routeConfiguration.setRoute(route.value(), controllerClass,
+        routeConfiguration.setRoute(route.value(), viewClass,
                 getParentChain(route, getDefaultParentChain()));
     }
 

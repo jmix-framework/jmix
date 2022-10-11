@@ -22,10 +22,45 @@ import io.jmix.flowui.kit.action.Action;
 
 import javax.annotation.Nullable;
 
+/**
+ * Provides fluent interface for configuring and displaying dialogs.
+ */
 public interface Dialogs {
 
+    /**
+     * Creates option dialog builder.
+     * <br>
+     * Example of showing an option dialog:
+     * <pre>{@code
+     * dialogs.createOptionDialog()
+     *         .withHeader("Confirm")
+     *         .withText("Do you want to discard data?")
+     *         .withActions(
+     *                 new DialogAction(DialogAction.Type.YES).withHandler(e -> {
+     *                     // YES option selected
+     *                 }),
+     *                 new DialogAction(DialogAction.Type.NO).withHandler(e -> {
+     *                     // NO option selected
+     *                 })
+     *         )
+     *         .open();
+     * }</pre>
+     */
     OptionDialogBuilder createOptionDialog();
 
+    /**
+     * Creates message dialog builder.
+     * <br>
+     * Example of showing a message dialog:
+     * <pre>{@code
+     * dialogs.createMessageDialog()
+     *         .withHeader("Attention")
+     *         .withText("Report has been saved")
+     *         .open();
+     * }</pre>
+     *
+     * @return builder
+     */
     MessageDialogBuilder createMessageDialog();
 
     interface OptionDialogBuilder extends DialogBuilder<OptionDialogBuilder>,

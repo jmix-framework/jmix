@@ -18,6 +18,7 @@ package io.jmix.flowui.view.navigation;
 
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.View;
 
 import javax.annotation.Nullable;
@@ -25,6 +26,11 @@ import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Provides a fluent interface to configure navigation parameters and navigate to an entity list {@link View}.
+ * <p>
+ * An instance of this class should be obtained through {@link ViewNavigators#listView(Class)}.
+ */
 public class ListViewNavigator<E> extends ViewNavigator {
 
     protected final Class<E> entityClass;
@@ -67,6 +73,9 @@ public class ListViewNavigator<E> extends ViewNavigator {
         return this;
     }
 
+    /**
+     * @return entity class of the list view
+     */
     public Class<E> getEntityClass() {
         return entityClass;
     }

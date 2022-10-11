@@ -26,11 +26,15 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.builder.*;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Provides fluent interface for opening views in dialog windows.
+ */
 @org.springframework.stereotype.Component("flowui_DialogWindows")
 public class DialogWindows {
 
@@ -46,6 +50,40 @@ public class DialogWindows {
         this.lookupBuilderProcessor = lookupBuilderProcessor;
     }
 
+    /**
+     * Creates a detail view builder for entity class.
+     * <p>
+     * Example of opening a view for editing an entity:
+     * <pre>{@code
+     * DialogWindow<CustomerDetailView> dialogWindow = dialogWindows.detail(this, Customer.class)
+     *         .withViewClass(CustomerDetailView.class)
+     *         .editEntity(customer)
+     *         .withAfterCloseListener(closeEvent -> {
+     *             if (closeEvent.closedWith(StandardOutcome.SAVE)) {
+     *                 Customer editedCustomer = closeEvent.getView().getEditedEntity();
+     *                 // ...
+     *             }
+     *         })
+     *         .open();
+     * }</pre>
+     *
+     * Example of opening a view for creating a new entity instance:
+     * <pre>{@code
+     * DialogWindow<CustomerDetailView> dialogWindow = dialogWindows.detail(this, Customer.class)
+     *         .withViewClass(CustomerDetailView.class)
+     *         .newEntity()
+     *         .withAfterCloseListener(closeEvent -> {
+     *             if (closeEvent.closedWith(StandardOutcome.SAVE)) {
+     *                 Customer newCustomer = closeEvent.getView().getEditedEntity();
+     *                 // ...
+     *             }
+     *         })
+     *         .open();
+     * }</pre>
+     *
+     * @param origin calling view
+     * @param entityClass edited entity class
+     */
     public <E, V extends View<?>> DetailWindowBuilder<E, V> detail(View<?> origin, Class<E> entityClass) {
         checkNotNullArgument(origin);
         checkNotNullArgument(entityClass);
@@ -53,6 +91,13 @@ public class DialogWindows {
         return new DetailWindowBuilder<>(origin, entityClass, detailBuilderProcessor::build);
     }
 
+    /**
+     * Creates a detail view builder to edit an entity selected in the list component.
+     *
+     * @param listDataComponent the component which provides a selected entity to edit
+     *
+     * @see #detail(View, Class)
+     */
     public <E, V extends View<?>> DetailWindowBuilder<E, V> detail(ListDataComponent<E> listDataComponent) {
         checkNotNullArgument(listDataComponent);
 
@@ -72,6 +117,13 @@ public class DialogWindows {
         return builder;
     }
 
+    /**
+     * Creates a detail view builder to edit an entity selected in the picker component.
+     *
+     * @param picker the component which provides an entity to edit
+     *
+     * @see #detail(View, Class)
+     */
     @SuppressWarnings("unchecked")
     public <E, V extends View<?>> DetailWindowBuilder<E, V> detail(EntityPickerComponent<E> picker) {
         checkNotNullArgument(picker);
@@ -94,6 +146,22 @@ public class DialogWindows {
         return builder;
     }
 
+    /**
+     * Creates a lookup view builder for an entity class.
+     * <p>
+     * Example of opening a view for selecting an entity:
+     * <pre>{@code
+     * DialogWindow<CustomerListView> dialogWindow = dialogWindows.lookup(this, Customer.class)
+     *         .withViewClass(CustomerListView.class)
+     *         .withSelectHandler(customers -> {
+     *             // ...
+     *         })
+     *         .open();
+     * }</pre>
+     *
+     * @param origin calling view
+     * @param entityClass entity class
+     */
     public <E, V extends View<?>> LookupWindowBuilder<E, V> lookup(View<?> origin, Class<E> entityClass) {
         checkNotNullArgument(origin);
         checkNotNullArgument(entityClass);
@@ -101,6 +169,13 @@ public class DialogWindows {
         return new LookupWindowBuilder<>(origin, entityClass, lookupBuilderProcessor::build);
     }
 
+    /**
+     * Creates a lookup view builder to select entities and add them to the data container of the list component.
+     *
+     * @param listDataComponent the list component
+     *
+     * @see #detail(View, Class)
+     */
     public <E, V extends View<?>> LookupWindowBuilder<E, V> lookup(ListDataComponent<E> listDataComponent) {
         checkNotNullArgument(listDataComponent);
 
@@ -115,6 +190,13 @@ public class DialogWindows {
         return builder;
     }
 
+    /**
+     * Creates a lookup view builder to select an entity and set it to the picker component.
+     *
+     * @param picker the picker component
+     *
+     * @see #detail(View, Class)
+     */
     @SuppressWarnings("unchecked")
     public <E, V extends View<?>> LookupWindowBuilder<E, V> lookup(EntityPickerComponent<E> picker) {
         checkNotNullArgument(picker);
@@ -133,10 +215,22 @@ public class DialogWindows {
         return builder;
     }
 
+    /**
+     * Creates a view builder.
+     *
+     * @param origin calling view
+     * @param viewClass opened view class
+     */
     public <V extends View<?>> WindowBuilder<V> view(View<?> origin, Class<V> viewClass) {
         return new WindowBuilder<>(origin, viewClass, windowBuilderProcessor::build);
     }
 
+    /**
+     * Creates a view builder.
+     *
+     * @param origin calling view
+     * @param viewId id of the opened view (as set in the {@link ViewController} annotation)
+     */
     public WindowBuilder<View<?>> view(View<?> origin, String viewId) {
         return new WindowBuilder<>(origin, viewId, windowBuilderProcessor::build);
     }

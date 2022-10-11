@@ -36,6 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
+/**
+ * Configures and displays popup notifications.
+ */
 @org.springframework.stereotype.Component("flowui_Notifications")
 public class Notifications {
     private static final Logger log = LoggerFactory.getLogger(Notifications.class);
@@ -47,12 +50,23 @@ public class Notifications {
         this.uiComponentProperties = uiComponentProperties;
     }
 
+    /**
+     * Shows a simple text notification.
+     *
+     * @param text notification text
+     */
     public void show(String text) {
         Preconditions.checkNotNullArgument(text);
 
         create(text).show();
     }
 
+    /**
+     * Shows a notification with a title and message.
+     *
+     * @param title notification title
+     * @param message notification message
+     */
     public void show(String title, String message) {
         Preconditions.checkNotNullArgument(title);
         Preconditions.checkNotNullArgument(message);
@@ -60,12 +74,22 @@ public class Notifications {
         create(title, message).show();
     }
 
+    /**
+     * Shows a component in the notification popup.
+     *
+     * @param component component to show in notification
+     */
     public void show(Component component) {
         Preconditions.checkNotNullArgument(component);
 
         create(component).show();
     }
 
+    /**
+     * Returns a builder for configuring and displaying the notification.
+     *
+     * @param text notification text
+     */
     public NotificationBuilder create(String text) {
         Preconditions.checkNotNullArgument(text);
 
@@ -73,6 +97,12 @@ public class Notifications {
                 .applyDefaults(uiComponentProperties);
     }
 
+    /**
+     * Returns a builder for configuring and displaying the notification.
+     *
+     * @param title notification title
+     * @param message notification message
+     */
     public NotificationBuilder create(String title, String message) {
         Preconditions.checkNotNullArgument(title);
         Preconditions.checkNotNullArgument(message);
@@ -81,6 +111,11 @@ public class Notifications {
                 .applyDefaults(uiComponentProperties);
     }
 
+    /**
+     * Returns a builder for configuring and displaying the notification.
+     *
+     * @param component component to show in notification
+     */
     public NotificationBuilder create(Component component) {
         Preconditions.checkNotNullArgument(component);
 
@@ -88,6 +123,9 @@ public class Notifications {
                 .applyDefaults(uiComponentProperties);
     }
 
+    /**
+     * Notification type.
+     */
     public enum Type {
         DEFAULT,
         SUCCESS,
@@ -96,6 +134,9 @@ public class Notifications {
         WARNING
     }
 
+    /**
+     * A builder that configures and displays notifications.
+     */
     public static class NotificationBuilder {
 
         protected static final String CLOSEABLE_LAYOUT_CLASS_NAME = "jmix-closeable-layout";
@@ -124,19 +165,35 @@ public class Notifications {
         protected NotificationVariant themeVariant;
         protected String className;
 
+        /**
+         * @param text notification text
+         */
         public NotificationBuilder(String text) {
             this.text = text;
         }
 
+        /**
+         * @param title notification title
+         * @param message notification message
+         */
         public NotificationBuilder(String title, String message) {
             this.title = title;
             this.message = message;
         }
 
+        /**
+         * @param component component to show in notification
+         */
         public NotificationBuilder(Component component) {
             this.component = component;
         }
 
+        /**
+         * Sets notification position.
+         * <p>
+         * Default position is specified in the {@code jmix.flowui.component.default-notification-position} property
+         * which is MIDDLE by default, see {@link FlowuiComponentProperties#getDefaultNotificationPosition()}.
+         */
         public NotificationBuilder withPosition(Notification.Position position) {
             Preconditions.checkNotNullArgument(position);
 
@@ -144,11 +201,21 @@ public class Notifications {
             return this;
         }
 
+        /**
+         * Sets notification duration in milliseconds to show the notification.
+         * Set to 0 or a negative number to disable the notification auto-closing.
+         * <p>
+         * Default duration is specified in the {@code jmix.flowui.component.default-notification-duration} property
+         * which is 3000 by default, see {@link FlowuiComponentProperties#getDefaultNotificationDuration()}.
+         */
         public NotificationBuilder withDuration(int duration) {
             this.duration = duration;
             return this;
         }
 
+        /**
+         * Sets notification type.
+         */
         public NotificationBuilder withType(Type type) {
             Preconditions.checkNotNullArgument(type);
 
@@ -156,11 +223,17 @@ public class Notifications {
             return this;
         }
 
+        /**
+         * Sets whether to show the button for closing the notification.
+         */
         public NotificationBuilder withCloseable(boolean closeable) {
             this.closeable = closeable;
             return this;
         }
 
+        /**
+         * Sets a theme variant to the notification.
+         */
         public NotificationBuilder withThemeVariant(NotificationVariant themeVariant) {
             Preconditions.checkNotNullArgument(themeVariant);
 
@@ -168,6 +241,9 @@ public class Notifications {
             return this;
         }
 
+        /**
+         * Sets a CSS class name to the notification.
+         */
         public NotificationBuilder withClassName(String className) {
             Preconditions.checkNotNullArgument(className);
 
@@ -221,6 +297,11 @@ public class Notifications {
             return component;
         }
 
+        /**
+         * Creates the notification.
+         * <p>
+         * Use {@link Notification#open()} to show created notification.
+         */
         public Notification build() {
             notification = createNotification();
             notification.setDuration(duration);
@@ -252,6 +333,9 @@ public class Notifications {
             return notification;
         }
 
+        /**
+         * Creates and shows the notification.
+         */
         public void show() {
             build().open();
         }

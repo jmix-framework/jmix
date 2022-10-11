@@ -26,38 +26,83 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * Interface of views that display a list of entities and can return instances selected by the user.
+ *
+ * @param <E> entity class
+ */
 public interface LookupView<E> {
 
+    /**
+     * Handle selected entities.
+     */
     OperationResult handleSelection();
 
+    /**
+     * Close the view without selection.
+     */
     OperationResult closeWithDiscard();
 
+    /**
+     * @return a component that is used to select entities of this view
+     * @throws IllegalStateException if such a component is not defined
+     */
     LookupComponent<E> getLookupComponent();
 
+    /**
+     * @return an optional component that is used to select entities of this view
+     */
     Optional<LookupComponent<E>> findLookupComponent();
 
+    /**
+     * @return selection handler
+     */
     Optional<Consumer<Collection<E>>> getSelectionHandler();
 
+    /**
+     * Sets selection handler for screen.
+     *
+     * @param selectionHandler selection handler
+     */
     void setSelectionHandler(@Nullable Consumer<Collection<E>> selectionHandler);
 
+    /**
+     * @return selection validator
+     */
     Optional<Predicate<ValidationContext<E>>> getSelectionValidator();
 
+    /**
+     * Sets selection validator.
+     *
+     * @param selectionValidator selection validator
+     */
     void setSelectionValidator(@Nullable Predicate<ValidationContext<E>> selectionValidator);
 
-    class ValidationContext<T> {
+    /**
+     * Context object which is passed to the selection validator set by {@link #setSelectionValidator(Predicate)}.
+     *
+     * @param <E> type of entity
+     */
+    class ValidationContext<E> {
         protected final View<?> view;
-        protected final Collection<T> selectedItems;
+        protected final Collection<E> selectedItems;
 
-        public ValidationContext(View<?> view, Collection<T> selectedItems) {
+        public ValidationContext(View<?> view, Collection<E> selectedItems) {
             this.view = view;
             this.selectedItems = selectedItems;
         }
 
+        /**
+         * @return the lookup view
+         */
         public View<?> getView() {
             return view;
         }
 
-        public Collection<T> getSelectedItems() {
+        /**
+         * @return a collection of selected entities
+         */
+        public Collection<E> getSelectedItems() {
             return selectedItems;
         }
     }

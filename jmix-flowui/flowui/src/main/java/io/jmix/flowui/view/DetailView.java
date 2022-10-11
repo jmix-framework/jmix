@@ -20,33 +20,42 @@ import io.jmix.core.pessimisticlocking.PessimisticLock;
 import io.jmix.flowui.util.OperationResult;
 
 /**
- * Interface for detail view controllers.
+ * Interface of views that display an entity instance and can save changes made by the user.
  *
  * @param <E> type of entity
  */
 public interface DetailView<E> extends ChangeTracker {
 
+    /**
+     * Saves changes.
+     */
     OperationResult save();
 
+    /**
+     * Saves changes and closes the view.
+     */
     OperationResult closeWithSave();
 
+    /**
+     * Discards changes and closes the view.
+     */
     OperationResult closeWithDiscard();
 
     /**
      * @return currently edited entity instance
-     * @throws IllegalStateException if entity isn't initialized yet
+     * @throws IllegalStateException if the edited entity isn't initialized yet, for example in {@link View.InitEvent}
      */
     E getEditedEntity();
 
     /**
-     * Sets entity instance to view.
+     * Sets entity instance to the view.
      *
      * @param entity entity to edit
      */
     void setEntityToEdit(E entity);
 
     /**
-     * @return lock status of currently edited entity instance. Possible variants:
+     * @return lock status of the currently edited entity instance. Possible variants:
      * <ul>
      *     <li>{@link PessimisticLockStatus#NOT_SUPPORTED} - if the entity does not support pessimistic lock.</li>
      *     <li>{@link PessimisticLockStatus#LOCKED} - if the entity instance is successfully locked.</li>

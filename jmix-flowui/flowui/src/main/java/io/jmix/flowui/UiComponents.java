@@ -17,11 +17,25 @@
 package io.jmix.flowui;
 
 import com.vaadin.flow.component.Component;
-import org.springframework.core.ParameterizedTypeReference;
 
+/**
+ * Factory for creating UI components.
+ *
+ * @see #create(Class)
+ */
 public interface UiComponents {
 
+    /**
+     * Creates a component instance.
+     * <p>
+     * For example:
+     * <pre>{@code
+     * Label label = uiComponents.create(Label.class);
+     * label.setText("Hello");
+     * getContent().add(label);
+     * }</pre>
+     *
+     * @param type component class
+     */
     <T extends Component> T create(Class<T> type);
-
-    <T extends Component> T create(ParameterizedTypeReference<T> type);
 }

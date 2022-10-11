@@ -22,6 +22,11 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Describes validation errors.
+ * <p>
+ * To create an object of this class, use the constructor, {@link #of(String)} or {@link #none()} methods.
+ */
 public class ValidationErrors {
 
     protected List<Item> items = new ArrayList<>();

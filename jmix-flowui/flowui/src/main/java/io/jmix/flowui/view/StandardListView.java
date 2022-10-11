@@ -30,14 +30,19 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class StandardListView<T> extends StandardView implements LookupView<T>, MultiSelectLookupView {
+/**
+ * Base class of entity list views.
+ *
+ * @param <E> entity class
+ */
+public class StandardListView<E> extends StandardView implements LookupView<E>, MultiSelectLookupView {
 
     protected static final String LOOKUP_ACTIONS_LAYOUT_DEFAULT_ID = "lookupActions";
     protected static final String SELECT_ACTION_DEFAULT_ID = "selectAction";
     protected static final String DISCARD_ACTION_DEFAULT_ID = "discardAction";
 
-    protected Consumer<Collection<T>> selectionHandler;
-    protected Predicate<ValidationContext<T>> selectionValidator;
+    protected Consumer<Collection<E>> selectionHandler;
+    protected Predicate<ValidationContext<E>> selectionValidator;
 
     public StandardListView() {
         addBeforeShowListener(this::onBeforeShow);
@@ -64,18 +69,18 @@ public class StandardListView<T> extends StandardView implements LookupView<T>, 
     }
 
     @Override
-    public Optional<Consumer<Collection<T>>> getSelectionHandler() {
+    public Optional<Consumer<Collection<E>>> getSelectionHandler() {
         return Optional.ofNullable(selectionHandler);
     }
 
     @Override
-    public void setSelectionHandler(@Nullable Consumer<Collection<T>> selectionHandler) {
+    public void setSelectionHandler(@Nullable Consumer<Collection<E>> selectionHandler) {
         this.selectionHandler = selectionHandler;
 
         getLookupActionsLayout().ifPresent(lookupActionsLayout -> {
             lookupActionsLayout.setVisible(true);
 
-            LookupComponent<T> lookupComponent = getLookupComponent();
+            LookupComponent<E> lookupComponent = getLookupComponent();
             if (lookupComponent instanceof SelectionChangeNotifier) {
                 SelectionChangeNotifier<?, ?> selectionNotifier = (SelectionChangeNotifier<?, ?>) lookupComponent;
 
@@ -94,7 +99,7 @@ public class StandardListView<T> extends StandardView implements LookupView<T>, 
     }
 
     @Override
-    public LookupComponent<T> getLookupComponent() {
+    public LookupComponent<E> getLookupComponent() {
         return findLookupComponent()
                 .orElseThrow(() -> new IllegalStateException(
                         String.format("%s does not declare @%s", getClass(),
@@ -104,7 +109,7 @@ public class StandardListView<T> extends StandardView implements LookupView<T>, 
 
     @SuppressWarnings("unchecked")
     @Override
-    public Optional<LookupComponent<T>> findLookupComponent() {
+    public Optional<LookupComponent<E>> findLookupComponent() {
         io.jmix.flowui.view.LookupComponent annotation =
                 getClass().getAnnotation(io.jmix.flowui.view.LookupComponent.class);
         if (annotation == null || Strings.isNullOrEmpty(annotation.value())) {
@@ -113,25 +118,25 @@ public class StandardListView<T> extends StandardView implements LookupView<T>, 
 
         return getContent()
                 .findComponent(annotation.value())
-                .map(component -> (LookupComponent<T>) component);
+                .map(component -> (LookupComponent<E>) component);
     }
 
     @Override
-    public Optional<Predicate<ValidationContext<T>>> getSelectionValidator() {
+    public Optional<Predicate<ValidationContext<E>>> getSelectionValidator() {
         return Optional.ofNullable(selectionValidator);
     }
 
     @Override
-    public void setSelectionValidator(@Nullable Predicate<ValidationContext<T>> selectionValidator) {
+    public void setSelectionValidator(@Nullable Predicate<ValidationContext<E>> selectionValidator) {
         this.selectionValidator = selectionValidator;
     }
 
     @Override
     public void setLookupComponentMultiSelect(boolean multiSelect) {
-        LookupComponent<T> lookupComponent = getLookupComponent();
+        LookupComponent<E> lookupComponent = getLookupComponent();
 
         if (lookupComponent instanceof MultiSelectLookupComponent) {
-            ((MultiSelectLookupComponent<T>) lookupComponent).enableMultiSelect();
+            ((MultiSelectLookupComponent<E>) lookupComponent).enableMultiSelect();
         }
     }
 
@@ -142,14 +147,14 @@ public class StandardListView<T> extends StandardView implements LookupView<T>, 
                     "Window was not opened as Lookup");
         }
 
-        Collection<T> selectedItems = getLookupComponent().getSelectedItems();
+        Collection<E> selectedItems = getLookupComponent().getSelectedItems();
 
         return validateSelectedItems(selectedItems)
                 .compose(() -> close(StandardOutcome.SELECT))
                 .compose(() -> doSelect(selectedItems));
     }
 
-    protected OperationResult validateSelectedItems(Collection<T> items) {
+    protected OperationResult validateSelectedItems(Collection<E> items) {
         return getSelectionValidator()
                 .map(validator -> {
                     boolean valid = validator.test(new ValidationContext<>(this, items));
@@ -158,7 +163,7 @@ public class StandardListView<T> extends StandardView implements LookupView<T>, 
                 .orElse(OperationResult.success());
     }
 
-    protected OperationResult doSelect(Collection<T> items) {
+    protected OperationResult doSelect(Collection<E> items) {
         getSelectionHandler().ifPresent(selectHandler ->
                 selectHandler.accept(items));
 

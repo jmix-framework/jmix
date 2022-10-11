@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Main menu item descriptor
+ * Main menu item descriptor.
  */
 public class MenuItem {
 

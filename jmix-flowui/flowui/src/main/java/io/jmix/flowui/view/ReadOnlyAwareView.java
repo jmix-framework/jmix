@@ -17,12 +17,12 @@
 package io.jmix.flowui.view;
 
 /**
- * Interface for view controllers that support read-only mode.
+ * Interface of views that support read-only mode.
  */
 public interface ReadOnlyAwareView {
 
     /**
-     * @return whether a view controller in read-only mode.
+     * @return whether a view is in read-only mode.
      */
     boolean isReadOnly();
 

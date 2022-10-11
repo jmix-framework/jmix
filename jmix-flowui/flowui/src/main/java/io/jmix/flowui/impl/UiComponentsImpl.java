@@ -101,7 +101,6 @@ public class UiComponentsImpl implements UiComponents {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    @Override
     public <T extends Component> T create(ParameterizedTypeReference<T> typeReference) {
         ParameterizedType type = (ParameterizedType) typeReference.getType();
         T component = create((Class<T>) type.getRawType());

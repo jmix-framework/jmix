@@ -26,6 +26,7 @@ import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -49,6 +50,11 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Base class of entity detail views.
+ *
+ * @param <T> entity class
+ */
 public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyAwareView {
 
     public static final String NEW_ENTITY_ID = "new";
@@ -73,6 +79,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private boolean showSaveNotification = true;
     private boolean saveActionPerformed = false;
 
+    /**
+     * Create views using {@link io.jmix.flowui.ViewNavigators} or {@link io.jmix.flowui.DialogWindows}.
+     */
+    @Internal
     public StandardDetailView() {
         addBeforeShowListener(this::onBeforeShow);
         addReadyListener(this::onReady);
@@ -275,9 +285,9 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     /**
-     * Sets whether a notification will be shown in case of successful save.
+     * Sets whether a notification should be shown in case of successful save. The default value is {@code true}.
      *
-     * @param showSaveNotification {@code true} if a notification needs to be shown, {@code false} otherwise
+     * @param showSaveNotification {@code true} if a notification should be shown, {@code false} otherwise
      */
     public void setShowSaveNotification(boolean showSaveNotification) {
         this.showSaveNotification = showSaveNotification;
@@ -756,17 +766,45 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return getApplicationContext().getBean(UrlParamSerializer.class);
     }
 
+    /**
+     * Adds a listener to {@link InitEntityEvent}.
+     *
+     * @param listener listener
+     * @return registration object for removing the listener
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected Registration addInitEntityListener(ComponentEventListener<InitEntityEvent<T>> listener) {
         return getEventBus().addListener(InitEntityEvent.class, ((ComponentEventListener) listener));
     }
 
+    /**
+     * Adds a listener to {@link BeforeSaveEvent}.
+     *
+     * @param listener listener
+     * @return registration object for removing the listener
+     */
     protected Registration addBeforeSaveListener(ComponentEventListener<BeforeSaveEvent> listener) {
         return getEventBus().addListener(BeforeSaveEvent.class, listener);
     }
 
+    /**
+     * Adds a listener to {@link AfterSaveEvent}.
+     *
+     * @param listener listener
+     * @return registration object for removing the listener
+     */
     protected Registration addAfterSaveListener(ComponentEventListener<AfterSaveEvent> listener) {
         return getEventBus().addListener(AfterSaveEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to {@link ValidationEvent}.
+     *
+     * @param listener listener
+     * @return registration object for removing the listener
+     */
+    protected Registration addValidationEventListener(ComponentEventListener<ValidationEvent> listener) {
+        return getEventBus().addListener(ValidationEvent.class, listener);
     }
 
     /**
@@ -775,7 +813,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      * Use this event listener to initialize default values in the new entity instance, for example:
      * <pre>
      *     &#64;Subscribe
-     *     public void onInitEntity(InitEntityEvent&lt;Foo&gt; event) {
+     *     protected void onInitEntity(InitEntityEvent&lt;Foo&gt; event) {
      *         event.getEntity().setStatus(Status.ACTIVE);
      *     }
      * </pre>
@@ -783,7 +821,6 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      * @param <E> type of entity
      * @see #addInitEntityListener(ComponentEventListener)
      */
-//    @TriggerOnce
     public static class InitEntityEvent<E> extends ComponentEvent<View<?>> {
 
         protected final E entity;
@@ -795,7 +832,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         }
 
         /**
-         * @return initializing entity
+         * @return entity to initialize
          */
         public E getEntity() {
             return entity;
@@ -803,14 +840,14 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     /**
-     * Event sent before saving of data context from {@link #saveChanges()} call.
+     * Event sent before saving the view data context.
      * <br>
-     * Use this event listener to prevent saving and/or show additional dialogs to user before save, for example:
+     * Use this event listener to prevent saving and/or interact with the user before save, for example:
      * <pre>
      *     &#64;Subscribe
      *     protected void onBeforeSave(BeforeSaveEvent event) {
      *         if (getEditedEntity().getDescription() == null) {
-     *             notifications.create().withCaption("Description required").show();
+     *             notifications.show("Description required");
      *             event.preventSave();
      *         }
      *     }
@@ -822,21 +859,21 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      *     protected void onBeforeSave(BeforeSaveEvent event) {
      *         if (getEditedEntity().getDescription() == null) {
      *             dialogs.createOptionDialog()
-     *                     .withCaption("Question")
-     *                     .withMessage("Do you want to set default description?")
+     *                     .withHeader("Question")
+     *                     .withText("Do you want to set default description?")
      *                     .withActions(
      *                             new DialogAction(DialogAction.Type.YES).withHandler(e -&gt; {
      *                                 getEditedEntity().setDescription("No description");
      *
      *                                 // retry save and resume action
-     *                                 event.resume(saveChanges());
+     *                                 event.resume(save());
      *                             }),
      *                             new DialogAction(DialogAction.Type.NO).withHandler(e -&gt; {
      *                                 // trigger standard save and resume action
      *                                 event.resume();
      *                             })
      *                     )
-     *                     .show();
+     *                     .open();
      *
      *             event.preventSave();
      *         }
@@ -919,13 +956,13 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     /**
-     * Event sent after saving of data context from {@link #saveChanges()} call.
+     * Event sent after saving the view data context.
      * <br>
      * Use this event listener to notify users after save, for example:
      * <pre>
      *     &#64;Subscribe
      *     protected void onAfterSave(AfterSaveEvent event) {
-     *         notifications.create().withCaption("Saved").show();
+     *         notifications.show("Saved");
      *     }
      * </pre>
      *
@@ -946,9 +983,9 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     /**
-     * Event sent when view is validated from {@link #validateAdditionalRules()} call.
+     * Event sent when the view is validated on saving the view data context.
      * <br>
-     * Use this event listener to perform additional view validation, for example:
+     * Use this event listener to perform additional validation of the view, for example:
      * <pre>
      *     &#64;Subscribe
      *     protected void onViewValidation(ValidationEvent event) {
@@ -970,6 +1007,9 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             return super.getSource();
         }
 
+        /**
+         * Add errors found by a custom validation.
+         */
         public void addErrors(ValidationErrors errors) {
             Preconditions.checkNotNullArgument(errors, "Validation errors cannot be null");
 

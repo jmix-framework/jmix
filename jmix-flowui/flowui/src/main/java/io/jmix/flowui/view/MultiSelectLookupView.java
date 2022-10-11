@@ -17,12 +17,12 @@
 package io.jmix.flowui.view;
 
 /**
- * A view that can change selection mode of lookup component.
+ * A view that can change selection mode of its lookup component.
  */
 public interface MultiSelectLookupView {
 
     /**
-     * Informs a view that a lookup component should change its selection mode, if possible.
+     * Informs the view that a lookup component should change its selection mode, if possible.
      *
      * @param multiSelect {@code true} to enable multiple selections, {@code false} otherwise
      */

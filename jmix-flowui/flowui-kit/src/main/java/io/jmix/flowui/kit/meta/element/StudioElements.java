@@ -17,9 +17,11 @@
 package io.jmix.flowui.kit.meta.element;
 
 import com.vaadin.flow.component.accordion.AccordionPanel;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.login.LoginI18n;
+import com.vaadin.flow.component.tabs.Tab;
+import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
@@ -163,4 +165,42 @@ public interface StudioElements {
             }
     )
     FormLayout.ResponsiveStep responsiveStep();
+
+    @StudioElement(
+            name = "Form",
+            classFqn = "io.jmix.flowui.kit.component.loginform.JmixLoginI18n.JmixForm",
+            xmlElement = "form",
+            target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "forgotPassword", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "password", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "rememberMe", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "submit", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "username", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    JmixLoginI18n.JmixForm loginForm();
+
+    @StudioElement(
+            name = "ErrorMessage",
+            classFqn = "com.vaadin.flow.component.login.LoginI18n.ErrorMessage",
+            xmlElement = "errorMessage",
+            target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    LoginI18n.ErrorMessage loginErrorMessage();
+
+    @StudioElement(
+            name = "AdditionalInformation",
+            xmlElement = "additionalInformation",
+            target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    void additionalInformation();
 }

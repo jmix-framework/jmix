@@ -37,6 +37,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
+import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuesPicker;
 import io.jmix.flowui.kit.meta.StudioComponent;
@@ -1450,4 +1451,22 @@ public interface StudioComponents {
             }
     )
     ValuesPicker valuesPicker();
+
+    @StudioComponent(
+            name = "LoginForm",
+            classFqn = "io.jmix.flowui.component.loginform.JmixLoginForm",
+            category = "Components",
+            xmlElement = "loginForm",
+            properties = {
+                    @StudioProperty(xmlAttribute = "forgotPasswordButtonVisible", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "rememberMeVisible", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "localesVisible", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+            }
+    )
+    EnhancedLoginForm loginForm();
 }

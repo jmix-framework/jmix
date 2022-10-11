@@ -19,6 +19,7 @@ package io.jmix.ldap;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.security.event.PreAuthenticationCheckEvent;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
+import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ import static io.jmix.security.SecurityConfigurers.uiSecurity;
 
 public class LdapActiveDirectorySecurityConfiguration {
 
+    public static final String SECURITY_CONFIGURER_QUALIFIER = "ldap-active-directory";
+
     @Autowired
     protected LdapProperties ldapProperties;
 
@@ -54,6 +57,7 @@ public class LdapActiveDirectorySecurityConfiguration {
         http.logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/"));
+        SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
         return http.build();
     }
 

@@ -83,6 +83,8 @@ public class OidcAutoConfiguration {
     @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
     public static class OAuth2LoginSecurityConfiguration {
 
+        public static final String SECURITY_CONFIGURER_QUALIFIER = "oidc-login";
+
         @Bean("oidc_OAuthLoginSecurityFilterChain")
         @Order(JmixOrder.HIGHEST_PRECEDENCE + 200)
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
@@ -112,7 +114,7 @@ public class OidcAutoConfiguration {
                         });
                     });
             http.apply(new SessionManagementConfigurer());
-
+            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 
@@ -131,6 +133,8 @@ public class OidcAutoConfiguration {
     @ConditionalOnProperty(value = "jmix.oidc.use-default-jwt-configuration", havingValue = "true", matchIfMissing = true)
     public static class OAuth2ResourceServerConfiguration {
 
+        public static final String SECURITY_CONFIGURER_QUALIFIER = "oidc-resource-server";
+
         @Bean("oidc_JwtSecurityFilterChain")
         @Order(JmixOrder.HIGHEST_PRECEDENCE + 150)
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
@@ -145,6 +149,7 @@ public class OidcAutoConfiguration {
 
             OidcResourceServerLastSecurityFilter lastSecurityFilter = new OidcResourceServerLastSecurityFilter(applicationEventPublisher);
             http.addFilterAfter(lastSecurityFilter, FilterSecurityInterceptor.class);
+            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 

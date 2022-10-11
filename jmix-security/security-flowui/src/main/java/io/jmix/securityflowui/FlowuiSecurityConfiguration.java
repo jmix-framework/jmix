@@ -15,6 +15,7 @@ import io.jmix.core.JmixOrder;
 import io.jmix.flowui.FlowuiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
@@ -67,6 +68,7 @@ public class FlowuiSecurityConfiguration {
 
     public static final String LOGOUT_URL = "/logout";
     public static final String LOGOUT_SUCCESS_URL = "/";
+    public static final String SECURITY_CONFIGURER_QUALIFIER = "flowui";
 
     protected VaadinDefaultRequestCache vaadinDefaultRequestCache;
     protected VaadinConfigurationProperties configurationProperties;
@@ -171,6 +173,7 @@ public class FlowuiSecurityConfiguration {
 
         initLoginView(http);
 
+        SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
         return http.build();
     }
 

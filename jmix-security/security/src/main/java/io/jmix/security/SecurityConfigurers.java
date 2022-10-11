@@ -17,6 +17,13 @@
 package io.jmix.security;
 
 import io.jmix.security.configurer.StandardSecurityConfigurer;
+import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.security.config.annotation.SecurityConfigurer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
+import java.util.Map;
 
 public class SecurityConfigurers {
 
@@ -36,5 +43,16 @@ public class SecurityConfigurers {
         return new StandardSecurityConfigurer()
                 .anonymous()
                 .allowApiUrls();
+    }
+
+    /**
+     * Method finds SecurityConfigurer beans with the given qualifier and applies them to the HttpSecurity
+     */
+    public static void applySecurityConfigurersWithQualifier(HttpSecurity http, String qualifier) throws Exception {
+        ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) http.getSharedObject(ApplicationContext.class);
+        Map<String, SecurityConfigurer> beans = BeanFactoryAnnotationUtils.qualifiedBeansOfType(applicationContext.getBeanFactory(), SecurityConfigurer.class, qualifier);
+        for (SecurityConfigurer configurer : beans.values()) {
+            http.apply(configurer);
+        }
     }
 }

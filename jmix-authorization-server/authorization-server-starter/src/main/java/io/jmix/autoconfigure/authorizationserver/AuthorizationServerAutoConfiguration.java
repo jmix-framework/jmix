@@ -55,6 +55,9 @@ public class AuthorizationServerAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     public static class AuthorizationServerSecurityConfiguration {
 
+        public static final String SECURITY_CONFIGURER_QUALIFIER = "authorization-server";
+        public static final String LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER = "authorization-server-login-form";
+
         @Bean("authsrv_AuthorizationServerSecurityFilterChain")
         @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
         public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
@@ -68,6 +71,7 @@ public class AuthorizationServerAutoConfiguration {
                                     new LoginUrlAuthenticationEntryPoint("/login"))
                     );
 
+            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 
@@ -82,6 +86,7 @@ public class AuthorizationServerAutoConfiguration {
                     })
                     .formLogin();
 
+            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 
@@ -113,6 +118,8 @@ public class AuthorizationServerAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     public static class ResourceServerSecurityConfiguration {
 
+        public static final String SECURITY_CONFIGURER_QUALIFIER = "authorization-server-resource-server";
+
         @Bean("authsrv_ResourceServerSecurityFilterChain")
         @Order(JmixOrder.HIGHEST_PRECEDENCE + 150)
         public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
@@ -125,6 +132,7 @@ public class AuthorizationServerAutoConfiguration {
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .opaqueToken(opaqueToken -> opaqueToken
                                     .introspector(opaqueTokenIntrospector)));
+            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 

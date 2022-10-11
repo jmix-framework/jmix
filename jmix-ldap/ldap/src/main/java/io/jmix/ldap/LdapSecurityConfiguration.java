@@ -39,6 +39,8 @@ import static io.jmix.security.SecurityConfigurers.uiSecurity;
 
 public class LdapSecurityConfiguration {
 
+    public static final String SECURITY_CONFIGURER_QUALIFIER = "ldap";
+
     @Autowired
     protected LdapProperties ldapProperties;
 

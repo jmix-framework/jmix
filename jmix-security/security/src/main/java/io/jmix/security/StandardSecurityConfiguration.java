@@ -31,6 +31,8 @@ import static io.jmix.security.SecurityConfigurers.uiSecurity;
 
 public class StandardSecurityConfiguration {
 
+    public static final String SECURITY_CONFIGURER_QUALIFIER = "standard-security";
+
     @Bean("sec_StandardSecurityFilterChain")
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,6 +40,7 @@ public class StandardSecurityConfiguration {
         http.logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/"));
+        SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
         return http.build();
     }
 

@@ -26,6 +26,7 @@
             <button id="editBtn" action="usersTable.edit"/>
             <button id="removeBtn" action="usersTable.remove"/>
             <button id="showRoleAssignmentsBtn" action="usersTable.showRoleAssignments"/>
+            <simplePagination dataLoader="usersDl"/>
         </hbox>
         <dataGrid id="usersTable"
                   width="100%"

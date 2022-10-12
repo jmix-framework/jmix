@@ -39,6 +39,7 @@ import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
+import io.jmix.flowui.kit.component.pagination.JmixSimplePagination;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuesPicker;
 import io.jmix.flowui.kit.meta.StudioComponent;
@@ -1505,4 +1506,23 @@ public interface StudioComponents {
             }
     )
     EnhancedLoginForm loginForm();
+
+    @StudioComponent(
+            name = "SimplePagination",
+            classFqn = "io.jmix.flowui.component.pagination.SimplePagination",
+            category = "Components",
+            xmlElement = "simplePagination",
+            properties = {
+                    @StudioProperty(xmlAttribute = "dataLoader", type = StudioPropertyType.DATA_LOADER_REF),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "itemsPerPageDefaultValue", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "itemsPerPageItems", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "itemsPerPageVisible", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "itemsPerPageUnlimitedItemVisible", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+            }
+    )
+    JmixSimplePagination simplePagination();
 }

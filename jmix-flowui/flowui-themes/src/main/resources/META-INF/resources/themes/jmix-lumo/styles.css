@@ -24,6 +24,7 @@
 @import url('component/jmix-user-indicator.css');
 @import url('component/jmix-simple-pagintion.css');
 @import url('component/jmix-items-per-page.css');
+@import url('component/jmix-dropdown-button-item-icon.css');
 
 html {
   --jmix-lumo-warning-background-color: hsla(43, 100%, 74%, 1);

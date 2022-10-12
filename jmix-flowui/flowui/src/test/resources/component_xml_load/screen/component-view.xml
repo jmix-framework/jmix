@@ -616,5 +616,34 @@
                         dataContainer="orderDc" property="customer"/>
 
         <entityComboBox id="metaClassComboBoxId" metaClass="test_Order"/>
+
+        <dropdownButton id="dropdownButtonId"
+                        classNames="cssClassName1, cssClassName2"
+                        enabled="true"
+                        height="50px"
+                        icon="GAMEPAD"
+                        maxHeight="55px"
+                        maxWidth="120px"
+                        minHeight="40px"
+                        minWidth="80px"
+                        openOnHover="true"
+                        text="dropdownButtonText"
+                        themeNames="small primary"
+                        title="dropdownButtonTitle"
+                        visible="true"
+                        whiteSpace="PRE"
+                        width="100px">
+            <items>
+                <actionItem id="firstActionItem">
+                    <action id="action2" icon="DIPLOMA"/>
+                </actionItem>
+                <separator/>
+                <actionItem id="secondActionItem" ref="buttonAction"/>
+                <componentItem id="componentItem">
+                    <span text="content"/>
+                </componentItem>
+                <textItem id="textItem" text="textItemContent"/>
+            </items>
+        </dropdownButton>
     </layout>
 </view>

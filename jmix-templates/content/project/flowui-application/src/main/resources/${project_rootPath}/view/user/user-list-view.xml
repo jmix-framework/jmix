@@ -26,6 +26,12 @@
             <button id="editBtn" action="usersTable.edit"/>
             <button id="removeBtn" action="usersTable.remove"/>
             <button id="showRoleAssignmentsBtn" action="usersTable.showRoleAssignments"/>
+            <dropdownButton id="additionalBtn" text="msg://additionalMenu" icon="COG">
+                <items>
+                    <actionItem id="changePasswordItem" ref="usersTable.changePassword"/>
+                    <actionItem id="resetPasswordItem" ref="usersTable.resetPassword"/>
+                </items>
+            </dropdownButton>
             <simplePagination dataLoader="usersDl"/>
         </hbox>
         <dataGrid id="usersTable"

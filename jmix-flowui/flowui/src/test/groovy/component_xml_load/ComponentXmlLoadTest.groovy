@@ -18,9 +18,14 @@ package component_xml_load
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasText
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.progressbar.ProgressBarVariant
 import component_xml_load.screen.ComponentView
+import io.jmix.flowui.kit.component.dropdownbutton.ActionItem
+import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant
+import io.jmix.flowui.kit.component.dropdownbutton.TextItem
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
@@ -143,6 +148,38 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             value == 67
             visible
             width == "100px"
+        }
+    }
+
+    def "Load dropdownButton component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = openScreen(ComponentView.class)
+
+        then: "DropdownButton attributes will be loaded"
+        verifyAll(componentView.dropdownButtonId) {
+            id.get() == "dropdownButtonId"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            enabled
+            height == "50px"
+            icon.element.getAttribute("icon") ==
+                    VaadinIcon.GAMEPAD.create().element.getAttribute("icon")
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            openOnHover
+            text == "dropdownButtonText"
+            themeNames.containsAll([DropdownButtonVariant.LUMO_SMALL.getVariantName(),
+                                    DropdownButtonVariant.LUMO_PRIMARY.getVariantName()])
+            title == "dropdownButtonTitle"
+            visible
+            whiteSpace == HasText.WhiteSpace.PRE
+            width == "100px"
+            getItems().size() == 4
+            (getItem("firstActionItem") as ActionItem).getAction().getId() == "action2"
+            (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
+            ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
+            (getItem("textItem") as TextItem).getText() == "textItemContent"
         }
     }
 }

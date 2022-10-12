@@ -1443,6 +1443,26 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="dropdownButtonThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="large"/>
+                    <xs:enumeration value="tertiary-inline"/>
+                    <xs:enumeration value="primary"/>
+                    <xs:enumeration value="contrast"/>
+                    <xs:enumeration value="icon"/>
+                    <xs:enumeration value="contained"/>
+                    <xs:enumeration value="outlined"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="comboBoxThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -1728,6 +1748,12 @@
     </xs:complexType>
 
     <xs:complexType name="pickerAction">
+        <xs:complexContent>
+            <xs:extension base="baseAction"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dropdownButtonAction">
         <xs:complexContent>
             <xs:extension base="baseAction"/>
         </xs:complexContent>
@@ -2137,6 +2163,61 @@
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ActionItem-->
+    <xs:complexType name="dropdownActionItemType">
+        <xs:choice>
+            <xs:element name="action" type="dropdownButtonAction"/>
+        </xs:choice>
+
+        <xs:attribute name="ref" type="xs:string"/>
+        <xs:attributeGroup ref="requiresId"/>
+    </xs:complexType>
+
+    <!-- ComponentItem-->
+    <xs:complexType name="dropdownComponentItemType">
+        <xs:choice>
+            <xs:group ref="singleLayoutOrComponent"/>
+        </xs:choice>
+
+        <xs:attributeGroup ref="requiresId"/>
+    </xs:complexType>
+
+    <!-- TextItem-->
+    <xs:complexType name="dropdownTextItemType">
+        <xs:attribute name="text" type="resourceString"/>
+        <xs:attributeGroup ref="requiresId"/>
+    </xs:complexType>
+
+    <!-- DropdownButton-->
+    <xs:complexType name="dropdownButtonComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="items">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="actionItem" type="dropdownActionItemType" minOccurs="0"/>
+                                <xs:element name="componentItem" type="dropdownComponentItemType" minOccurs="0"/>
+                                <xs:element name="textItem" type="dropdownTextItemType" minOccurs="0"/>
+                                <xs:element name="separator" minOccurs="0"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="openOnHover" type="xs:boolean"/>
+                <xs:attribute name="themeNames" type="dropdownButtonThemeNames"/>
+                <xs:attribute name="icon" type="vaadinIconEnum"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasEnabled"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2881,6 +2962,7 @@
                 <xs:element name="passwordField" type="passwordFieldComponent"/>
                 <xs:element name="timePicker" type="timePickerComponent"/>
                 <xs:element name="dateTimePicker" type="dateTimePickerComponent"/>
+                <xs:element name="dropdownButton" type="dropdownButtonComponent"/>
                 <xs:element name="comboBox" type="comboBoxComponent"/>
                 <xs:element name="valuePicker" type="valuePickerComponent"/>
                 <xs:element name="valuesPicker" type="valuePickerComponent"/>

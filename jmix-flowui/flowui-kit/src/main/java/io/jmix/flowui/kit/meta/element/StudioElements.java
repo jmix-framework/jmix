@@ -22,6 +22,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
@@ -203,4 +204,36 @@ public interface StudioElements {
             }
     )
     void additionalInformation();
+
+    @StudioElement(
+            name = "ActionItem",
+            classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ActionItem",
+            xmlElement = "actionItem",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
+            }
+    )
+    DropdownButtonItem actionItem();
+
+    @StudioElement(
+            name = "ComponentItem",
+            classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
+            xmlElement = "componentItem",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
+            }
+    )
+    DropdownButtonItem componentItem();
+
+    @StudioElement(
+            name = "TextItem",
+            classFqn = "io.jmix.flowui.kit.component.dropdownbutton.TextItem",
+            xmlElement = "textItem",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    DropdownButtonItem textItem();
 }

@@ -63,6 +63,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("textArea", TextAreaLoader.class);
         loaders.put("checkbox", CheckboxLoader.class);
         loaders.put("comboBox", ComboBoxLoader.class);
+        loaders.put("dropdownButton", DropdownButtonLoader.class);
         loaders.put("timePicker", TimePickerLoader.class);
         loaders.put("dateTimePicker", DateTimePickerLoader.class);
         loaders.put("datePicker", DatePickerLoader.class);

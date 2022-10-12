@@ -52,6 +52,22 @@
 
         <vbox id="resourcePoliciesWrapper" width="100%" padding="false">
             <hbox id="resourcePoliciesButtonsPanel" classNames="buttons-panel">
+                <dropdownButton id="createDropdownButton" text="msg:///actions.Create" themeNames="primary" icon="PLUS">
+                    <items>
+                        <actionItem id="createMenuPolicy"
+                                    ref="resourcePoliciesTable.createMenuPolicy"/>
+                        <actionItem id="createViewPolicy"
+                                    ref="resourcePoliciesTable.createViewPolicy"/>
+                        <actionItem id="createEntityPolicy"
+                                    ref="resourcePoliciesTable.createEntityPolicy"/>
+                        <actionItem id="createEntityAttributePolicy"
+                                    ref="resourcePoliciesTable.createEntityAttributePolicy"/>
+                        <actionItem id="createGraphQLPolicy"
+                                    ref="resourcePoliciesTable.createGraphQLPolicy"/>
+                        <actionItem id="createSpecificPolicy"
+                                    ref="resourcePoliciesTable.createSpecificPolicy"/>
+                    </items>
+                </dropdownButton>
                 <button action="resourcePoliciesTable.edit"/>
                 <button action="resourcePoliciesTable.read"/>
                 <button action="resourcePoliciesTable.remove"/>

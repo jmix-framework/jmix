@@ -18,11 +18,6 @@ package io.jmix.securityflowui.view.resourcerole;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import com.vaadin.flow.component.contextmenu.MenuItem;
-import com.vaadin.flow.component.contextmenu.SubMenu;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.menubar.MenuBar;
-import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -37,6 +32,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import io.jmix.flowui.view.*;
@@ -85,6 +81,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private DataGrid<ResourceRoleModel> childRolesTable;
     @ViewComponent
     private HorizontalLayout resourcePoliciesButtonsPanel;
+    @ViewComponent
+    private DropdownButton createDropdownButton;
 
     @ViewComponent
     private InstanceContainer<ResourceRoleModel> roleModelDc;
@@ -167,12 +165,12 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         if (createGraphQLPolicyAction != null) {
             createGraphQLPolicyAction.setVisible(isGraphQLEnabled());
         }
-
-        initPoliciesMenuBar(isDatabaseSource);
     }
 
     private void setupRoleReadOnlyMode(boolean isDatabaseSource) {
         setReadOnly(!isDatabaseSource);
+
+        createDropdownButton.setVisible(isDatabaseSource);
 
         Collection<Action> resourcePoliciesActions = resourcePoliciesTable.getActions();
         for (Action action : resourcePoliciesActions) {
@@ -183,27 +181,6 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         for (Action action : childRolesActions) {
             action.setEnabled(isDatabaseSource);
         }
-    }
-
-    private void initPoliciesMenuBar(boolean enabled) {
-        if (!enabled) {
-            return;
-        }
-
-        MenuBar policiesMenuBar = new MenuBar();
-        policiesMenuBar.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
-
-        resourcePoliciesButtonsPanel.addComponentAsFirst(policiesMenuBar);
-
-        MenuItem item = policiesMenuBar.addItem(VaadinIcon.PLUS.create());
-        item.add(messages.getMessage("actions.Create"));
-
-        SubMenu subMenu = item.getSubMenu();
-        getCreatePolicyActions()
-                .filter(Action::isVisible)
-                .forEach(action ->
-                        subMenu.addItem(action.getText(), event ->
-                                action.actionPerform(null)));
     }
 
     @Install(to = "childRolesDl", target = Target.DATA_LOADER)
@@ -250,7 +227,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     private void initResourcePoliciesTable() {
         resourcePoliciesTable.addColumn((ValueProvider<ResourcePolicyModel, String>) resourcePolicyModel ->
-                messageBundle.getMessage("roleAction." + resourcePolicyModel.getAction()))
+                        messageBundle.getMessage("roleAction." + resourcePolicyModel.getAction()))
                 .setKey("action")
                 .setHeader(messageTools.getPropertyCaption(resourcePoliciesDc.getEntityMetaClass(), "action"))
                 .setSortable(true);

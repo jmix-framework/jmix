@@ -43,6 +43,8 @@ import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
+import test_support.password.TestPasswordValidator1;
+import test_support.password.TestPasswordValidator2;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -114,6 +116,16 @@ public class SecurityUiTestConfiguration {
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
         uiControllers.setBasePackages(Collections.singletonList("test_support"));
         return uiControllers;
+    }
+
+    @Bean
+    public TestPasswordValidator1 testPasswordValidator1() {
+        return new TestPasswordValidator1();
+    }
+
+    @Bean
+    public TestPasswordValidator2 testPasswordValidator2() {
+        return new TestPasswordValidator2();
     }
 
     @EnableWebSecurity

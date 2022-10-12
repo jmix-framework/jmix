@@ -37,6 +37,7 @@ import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 import io.jmix.flowui.view.ViewValidation;
+import io.jmix.securityflowui.password.PasswordValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -66,6 +67,8 @@ public class ChangePasswordView extends StandardView {
     protected ViewValidation viewValidation;
     @Autowired
     protected PasswordEncoder passwordEncoder;
+    @Autowired
+    protected PasswordValidation passwordValidation;
     @Autowired
     protected UserRepository userRepository;
     @Autowired
@@ -188,6 +191,10 @@ public class ChangePasswordView extends StandardView {
                 && !Strings.isNullOrEmpty(confirmPassword)
                 && !Objects.equals(password, confirmPassword)) {
             errors.add(confirmPasswordField, messageBundle.getMessage("changePasswordView.passwordsDoNotMatch"));
+        }
+
+        for (String errorMessage : passwordValidation.validate(user, password)) {
+            errors.add(errorMessage);
         }
 
         if (errors.isEmpty()) {

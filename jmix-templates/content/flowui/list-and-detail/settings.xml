@@ -175,7 +175,7 @@
               propertyType="STRING"
               advanced="true"
               required="true"
-              valueTemplate="id"/>
+              defaultValue="id"/>
 
     <property caption="Parent menu item"
               code="menuItem"

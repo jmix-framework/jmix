@@ -1,0 +1,4 @@
+:host([jmix-role='jmix-dropdown-button']) [part='menu-bar-button'] {
+  margin: var(--lumo-space-xs) 0;
+  border-radius: var(--lumo-border-radius-m);
+}

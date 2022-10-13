@@ -48,6 +48,9 @@ public class DropdownButton extends Composite<JmixMenuBar>
         implements AttachNotifier, DetachNotifier, HasTitle, HasSize,
         HasTheme, HasEnabled, HasStyle, HasText {
 
+    protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
+    protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-dropdown-button";
+
     protected boolean explicitTitle = false;
     protected List<HasMenuItem> items = new ArrayList<>();
 
@@ -55,12 +58,18 @@ public class DropdownButton extends Composite<JmixMenuBar>
     protected Icon dropdownIcon = new Icon("lumo", "dropdown");
     protected Icon iconComponent;
 
+    @Override
+    protected JmixMenuBar initContent() {
+        JmixMenuBar content = super.initContent();
+        content.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, ATTRIBUTE_JMIX_ROLE_VALUE);
+
+        return content;
+    }
+
     protected JmixMenuItem getRootItem() {
         if (rootItem == null) {
-            // root item will be initialized
             rootItem = getContent().addItem(new Button());
 
-            rootItem.addThemeNames("icon");
             updateDropdownIconSlot();
         }
         return rootItem;

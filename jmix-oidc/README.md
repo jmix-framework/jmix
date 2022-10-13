@@ -1,7 +1,5 @@
 # Jmix OpenID Connect 
 
-**CAUTION: This add-on is now in the incubating state and its API and behavior may be modified in the future minor and patch releases.**
-
 ## Add-on Overview
 
 The Jmix OpenID Connect add-on provides predefined Spring Security configurations and a set of services that will simplify the following operations:

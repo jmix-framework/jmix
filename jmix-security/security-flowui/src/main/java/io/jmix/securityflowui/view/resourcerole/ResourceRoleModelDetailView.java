@@ -53,7 +53,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Route(value = "resourcerolemodels/:code", layout = DefaultMainViewParent.class)
+@Route(value = "sec/resourcerolemodels/:code", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.detail")
 @ViewDescriptor("resource-role-model-detail-view.xml")
 @EditedEntityContainer("roleModelDc")

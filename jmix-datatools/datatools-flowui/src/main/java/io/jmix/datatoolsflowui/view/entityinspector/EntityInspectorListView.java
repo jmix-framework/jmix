@@ -81,7 +81,7 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Route(value = "entityinspector", layout = DefaultMainViewParent.class)
+@Route(value = "datatl/entityinspector", layout = DefaultMainViewParent.class)
 @ViewController("datatl_entityInspectorListView")
 @ViewDescriptor("entity-inspector-list-view.xml")
 @LookupComponent("entitiesDataGrid")

@@ -32,7 +32,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Route(value = "resourcerolemodelslookup", layout = DefaultMainViewParent.class)
+@Route(value = "sec/resourcerolemodelslookup", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.lookup")
 @ViewDescriptor("resource-role-model-lookup-view.xml")
 @LookupComponent("roleModelsTable")

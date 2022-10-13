@@ -47,7 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "rowlevelrolemodels/:code", layout = DefaultMainViewParent.class)
+@Route(value = "sec/rowlevelrolemodels/:code", layout = DefaultMainViewParent.class)
 @ViewController("sec_RowLevelRoleModel.detail")
 @ViewDescriptor("row-level-role-model-detail-view.xml")
 @EditedEntityContainer("roleModelDc")

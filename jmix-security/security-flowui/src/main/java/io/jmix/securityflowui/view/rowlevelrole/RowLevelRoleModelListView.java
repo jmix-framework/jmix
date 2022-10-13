@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Route(value = "rowlevelrolemodels", layout = DefaultMainViewParent.class)
+@Route(value = "sec/rowlevelrolemodels", layout = DefaultMainViewParent.class)
 @ViewController("sec_RowLevelRoleModel.list")
 @ViewDescriptor("row-level-role-model-list-view.xml")
 @LookupComponent("roleModelsTable")

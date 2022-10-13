@@ -57,7 +57,7 @@ import java.util.HashMap;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
-@Route(value = "entityinspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
+@Route(value = "datatl/entityinspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
 @ViewController("datatl_entityInspectorDetailView")
 @ViewDescriptor("entity-inspector-detail-view.xml")
 @DialogMode(width = "50em", resizable = true)

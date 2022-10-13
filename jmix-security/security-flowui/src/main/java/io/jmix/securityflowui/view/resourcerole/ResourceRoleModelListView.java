@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Route(value = "resourcerolemodels", layout = DefaultMainViewParent.class)
+@Route(value = "sec/resourcerolemodels", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.list")
 @ViewDescriptor("resource-role-model-list-view.xml")
 @LookupComponent("roleModelsTable")

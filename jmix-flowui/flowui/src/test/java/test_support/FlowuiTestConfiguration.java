@@ -47,6 +47,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 @Configuration
@@ -113,6 +114,12 @@ public class FlowuiTestConfiguration {
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public ViewAttributes testViewAttributes(String viewId) {
         return new TestViewAttributes(viewId);
+    }
+
+    @Bean
+    @Primary
+    public ServletContext servletContext() {
+        return new TestServletContext();
     }
 
     @EnableWebSecurity

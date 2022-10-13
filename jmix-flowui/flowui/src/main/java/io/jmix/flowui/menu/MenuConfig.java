@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -166,25 +165,6 @@ public class MenuConfig {
     protected void loadMenuItems(Element parentElement, @Nullable MenuItem parentItem) {
         for (Element element : parentElement.elements()) {
             MenuItem menuItem = null;
-            MenuItem currentParentItem = parentItem;
-            MenuItem nextToItem = null;
-            boolean addItem = true;
-            boolean before = true;
-            String nextTo = element.attributeValue("insertBefore");
-            if (StringUtils.isBlank(nextTo)) {
-                before = false;
-                nextTo = element.attributeValue("insertAfter");
-            }
-            if (!StringUtils.isBlank(nextTo)) {
-                for (MenuItem rootItem : rootItems) {
-                    nextToItem = findItem(nextTo, rootItem);
-                    if (nextToItem != null) {
-                        if (nextToItem.getParent() != null)
-                            currentParentItem = nextToItem.getParent();
-                        break;
-                    }
-                }
-            }
 
             if ("menu".equals(element.getName())) {
                 String id = element.attributeValue("id");
@@ -193,13 +173,7 @@ public class MenuConfig {
                     log.warn("Invalid menu-config: 'id' attribute not defined");
                 }
 
-                MenuItem existingMenuItem = rootItems.stream()
-                        .filter(item -> Objects.nonNull(findItem(id, item)))
-                        .findFirst()
-                        .orElse(null);
-
-                menuItem = existingMenuItem != null ? existingMenuItem : new MenuItem(currentParentItem, id);
-                addItem = existingMenuItem == null;
+                menuItem = new MenuItem(parentItem, id);
 
                 menuItem.setMenu(true);
                 menuItem.setDescriptor(element);
@@ -211,7 +185,7 @@ public class MenuConfig {
                 loadDescription(element, menuItem);
                 loadMenuItems(element, menuItem);
             } else if ("item".equals(element.getName())) {
-                menuItem = createMenuItem(element, currentParentItem);
+                menuItem = createMenuItem(element, parentItem);
 
                 if (menuItem == null) {
                     continue;
@@ -230,12 +204,10 @@ public class MenuConfig {
                 log.warn(String.format("Unknown tag '%s' in menu-config", element.getName()));
             }
 
-            if (addItem) {
-                if (currentParentItem != null) {
-                    addItem(currentParentItem.getChildren(), menuItem, nextToItem, before);
-                } else {
-                    addItem(rootItems, menuItem, nextToItem, before);
-                }
+            if (parentItem != null) {
+                parentItem.getChildren().add(menuItem);
+            } else {
+                rootItems.add(menuItem);
             }
         }
     }
@@ -343,18 +315,6 @@ public class MenuConfig {
 
     protected String loadResourceString(@Nullable String ref) {
         return messageTools.loadString(ref);
-    }
-
-    protected void addItem(List<MenuItem> items, @Nullable MenuItem menuItem, @Nullable MenuItem beforeItem, boolean before) {
-        if (beforeItem == null) {
-            items.add(menuItem);
-        } else {
-            int i = items.indexOf(beforeItem);
-            if (before)
-                items.add(i, menuItem);
-            else
-                items.add(i + 1, menuItem);
-        }
     }
 
     @Nullable

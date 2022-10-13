@@ -58,7 +58,6 @@
         <xs:attribute type="xs:string" name="className"/>
         <xs:attribute type="xs:string" name="icon"/>
         <xs:attribute type="xs:boolean" name="opened"/>
-        <xs:attributeGroup ref="insertGroup"/>
     </xs:complexType>
 
     <xs:complexType name="itemType">
@@ -68,11 +67,5 @@
         <xs:attribute type="resourceString" name="description"/>
         <xs:attribute type="xs:string" name="className"/>
         <xs:attribute type="xs:string" name="icon"/>
-        <xs:attributeGroup ref="insertGroup"/>
     </xs:complexType>
-
-    <xs:attributeGroup name="insertGroup">
-        <xs:attribute type="xs:string" name="insertBefore"/>
-        <xs:attribute type="xs:string" name="insertAfter"/>
-    </xs:attributeGroup>
 </xs:schema>

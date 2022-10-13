@@ -20,15 +20,15 @@ package io.jmix.securityui.password;
  * Interface to be implemented by beans that validate password when it is created or changed for a user.
  *
  * @param <E> type of the user entity
+ * @see #validate(PasswordValidationContext)
  */
 public interface PasswordValidator<E> {
 
     /**
      * Validates the password for the given user.
      *
-     * @param user user entity
-     * @param password password to validate
+     * @param context object containing information about the user and password
      * @throws PasswordValidationException in case of validation error
      */
-    void validate(E user, String password) throws PasswordValidationException;
+    void validate(PasswordValidationContext<E> context) throws PasswordValidationException;
 }

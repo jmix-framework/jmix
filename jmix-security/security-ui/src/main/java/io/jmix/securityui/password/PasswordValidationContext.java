@@ -14,21 +14,35 @@
  * limitations under the License.
  */
 
-package io.jmix.securityflowui.password;
+package io.jmix.securityui.password;
 
 /**
- * Interface to be implemented by beans that validate password when it is created or changed for a user.
+ * Contains parameters of password validation.
  *
  * @param <E> type of the user entity
- * @see #validate(PasswordValidationContext)
+ * @see PasswordValidator
  */
-public interface PasswordValidator<E> {
+public class PasswordValidationContext<E> {
+
+    private final E user;
+    private final String password;
+
+    public PasswordValidationContext(E user, String password) {
+        this.user = user;
+        this.password = password;
+    }
 
     /**
-     * Validates the password for the given user.
-     *
-     * @param context object containing information about the user and password
-     * @throws PasswordValidationException in case of validation error
+     * @return user instance for which the password is validated
      */
-    void validate(PasswordValidationContext<E> context) throws PasswordValidationException;
+    public E getUser() {
+        return user;
+    }
+
+    /**
+     * @return validated password
+     */
+    public String getPassword() {
+        return password;
+    }
 }

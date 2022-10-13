@@ -31,8 +31,12 @@ import java.util.List;
 @Component("sec_PasswordValidation")
 public class PasswordValidation {
 
-    @Autowired(required = false)
     protected List<PasswordValidator> passwordValidators;
+
+    @Autowired(required = false)
+    public void setPasswordValidators(List<PasswordValidator> passwordValidators) {
+        this.passwordValidators = passwordValidators;
+    }
 
     /**
      * Runs all existing {@link PasswordValidator}s.
@@ -46,7 +50,7 @@ public class PasswordValidation {
         if (passwordValidators != null) {
             for (PasswordValidator passwordValidator : passwordValidators) {
                 try {
-                    passwordValidator.validate(user, password);
+                    passwordValidator.validate(new PasswordValidationContext(user, password));
                 } catch (PasswordValidationException e) {
                     errors.add(e.getMessage());
                 }

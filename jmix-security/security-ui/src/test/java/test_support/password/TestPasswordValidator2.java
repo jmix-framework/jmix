@@ -16,6 +16,7 @@
 
 package test_support.password;
 
+import io.jmix.securityui.password.PasswordValidationContext;
 import io.jmix.securityui.password.PasswordValidationException;
 import io.jmix.securityui.password.PasswordValidator;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,8 +24,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class TestPasswordValidator2 implements PasswordValidator<UserDetails> {
 
     @Override
-    public void validate(UserDetails user, String password) throws PasswordValidationException {
-        if (password.equals(user.getUsername()))
+    public void validate(PasswordValidationContext<UserDetails> context) throws PasswordValidationException {
+        if (context.getPassword().equals(context.getUser().getUsername()))
             throw new PasswordValidationException("Password must be different from username");
     }
 }

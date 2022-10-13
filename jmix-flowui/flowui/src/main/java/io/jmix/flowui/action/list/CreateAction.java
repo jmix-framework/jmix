@@ -28,7 +28,6 @@ import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
@@ -292,14 +291,8 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
 
     protected void navigate() {
         DetailViewNavigator<E> navigator = viewNavigators.detailView((target))
-                .newEntity();
-
-        if (target instanceof Component) {
-            View<?> parent = UiComponentUtils.findView((Component) target);
-            if (parent != null) {
-                navigator = navigator.withBackNavigationTarget(parent.getClass());
-            }
-        }
+                .newEntity()
+                .withBackwardNavigation(true);
 
         navigator = viewInitializer.initNavigator(navigator);
 

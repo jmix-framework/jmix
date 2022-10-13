@@ -63,7 +63,11 @@ public class View<T extends Component> extends Composite<T>
     }
 
     private Consumer<View<T>> createDefaultViewDelegate() {
-        return __ -> getViewSupport().close(this);
+        return __ -> getViewSupport().close(this, getReturnParameters());
+    }
+
+    protected QueryParameters getReturnParameters() {
+        return QueryParameters.empty();
     }
 
     protected ApplicationContext getApplicationContext() {
@@ -127,7 +131,7 @@ public class View<T extends Component> extends Composite<T>
     }
 
     private void unregisterBackNavigation() {
-        getViewSupport().unregisterBackNavigation(this);
+        getViewSupport().unregisterBackwardNavigation(this);
     }
 
     private void removeApplicationListeners() {

@@ -28,6 +28,7 @@ import io.jmix.flowui.action.binder.ActionBinders;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.View.InitEvent;
+import io.jmix.flowui.view.navigation.NavigationUtils;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.ComponentLoaderContext;
@@ -39,6 +40,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import javax.servlet.ServletContext;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -57,6 +60,7 @@ public class ViewSupport {
     protected ViewNavigationSupport navigationSupport;
     protected CurrentAuthentication currentAuthentication;
     protected ViewControllerDependencyManager dependencyManager;
+    protected ServletContext servletContext;
 
     protected Map<String, String> titleCache = new ConcurrentHashMap<>();
 
@@ -65,13 +69,15 @@ public class ViewSupport {
                        ViewRegistry viewRegistry,
                        ViewNavigationSupport navigationSupport,
                        CurrentAuthentication currentAuthentication,
-                       ViewControllerDependencyManager dependencyManager) {
+                       ViewControllerDependencyManager dependencyManager,
+                       ServletContext servletContext) {
         this.applicationContext = applicationContext;
         this.viewXmlLoader = viewXmlLoader;
         this.viewRegistry = viewRegistry;
         this.navigationSupport = navigationSupport;
         this.currentAuthentication = currentAuthentication;
         this.dependencyManager = dependencyManager;
+        this.servletContext = servletContext;
     }
 
     public void initView(View<?> view) {
@@ -120,56 +126,53 @@ public class ViewSupport {
         componentLoaderContext.executeInitTasks();
     }
 
-    public void registerBackNavigation(Class<? extends View> viewClass,
-                                       Class<? extends View> backNavigationTarget) {
-        registerBackNavigation(UI.getCurrent(), viewClass, backNavigationTarget);
+    public void registerBackwardNavigation(Class<? extends View> viewClass, URI uri) {
+        registerBackwardNavigation(UI.getCurrent(), viewClass, uri);
     }
 
-    public void registerBackNavigation(UI ui,
-                                       Class<? extends View> viewClass,
-                                       Class<? extends View> backNavigationTarget) {
+    public void registerBackwardNavigation(UI ui, Class<? extends View> viewClass, URI uri) {
         retrieveExtendedClientDetails(ui, details ->
-                registerBackNavigation(ui.getSession(), details.getWindowName(),
-                        viewClass, backNavigationTarget));
+                registerBackwardNavigation(ui.getSession(), details.getWindowName(),
+                        viewClass, uri));
     }
 
-    protected void registerBackNavigation(VaadinSession session, String windowName,
-                                          Class<? extends View> viewClass,
-                                          Class<? extends View> backNavigationTarget) {
-        log.debug(String.format("Register back navigation for '%s' with back target '%s'",
-                viewClass, backNavigationTarget));
+    protected void registerBackwardNavigation(VaadinSession session, String windowName,
+                                              Class<? extends View> viewClass, URI uri) {
+        log.debug("Register backward navigation for '{}' with back uri '{}'", viewClass, uri);
 
-        BackNavigationTargets targets = session.getAttribute(BackNavigationTargets.class);
+        BackwardNavigationTargets targets = session.getAttribute(BackwardNavigationTargets.class);
         if (targets == null) {
-            targets = new BackNavigationTargets();
+            targets = new BackwardNavigationTargets();
         }
 
-        targets.put(windowName, new Pair<>(viewClass, backNavigationTarget));
-        session.setAttribute(BackNavigationTargets.class, targets);
+        targets.put(windowName, new Pair<>(viewClass, uri));
+        session.setAttribute(BackwardNavigationTargets.class, targets);
     }
 
-    public void unregisterBackNavigation(View<?> view) {
+    public void unregisterBackwardNavigation(View<?> view) {
         UI ui = view.getUI().orElse(UI.getCurrent());
-        unregisterBackNavigation(ui, view.getClass());
+        unregisterBackwardNavigation(ui, view.getClass());
     }
 
-    public void unregisterBackNavigation(Class<? extends View> viewClass) {
-        unregisterBackNavigation(UI.getCurrent(), viewClass);
+    public void unregisterBackwardNavigation(Class<? extends View> viewClass) {
+        unregisterBackwardNavigation(UI.getCurrent(), viewClass);
     }
 
-    public void unregisterBackNavigation(UI ui, Class<? extends View> viewClass) {
-        log.debug(String.format("Unregister back navigation for '%s'", viewClass));
+    public void unregisterBackwardNavigation(UI ui, Class<? extends View> viewClass) {
+        log.debug("Attempt to unregister backward navigation for '{}'", viewClass);
 
-        if (!hasBackNavigationTarget(ui, viewClass)) {
+        if (!hasBackwardNavigationTarget(ui, viewClass)) {
             return;
         }
 
         retrieveExtendedClientDetails(ui, details ->
-                unregisterBackNavigation(ui.getSession(), details.getWindowName()));
+                unregisterBackwardNavigation(ui.getSession(), details.getWindowName()));
     }
 
-    protected void unregisterBackNavigation(VaadinSession session, String windowName) {
-        BackNavigationTargets targets = session.getAttribute(BackNavigationTargets.class);
+    protected void unregisterBackwardNavigation(VaadinSession session, String windowName) {
+        log.debug("Unregister backward navigation for '{}'", windowName);
+
+        BackwardNavigationTargets targets = session.getAttribute(BackwardNavigationTargets.class);
         if (targets != null) {
             targets.remove(windowName);
         }
@@ -305,58 +308,86 @@ public class ViewSupport {
     }
 
     public void close(View<?> view) {
+        close(view, QueryParameters.empty());
+    }
+
+    public void close(View<?> view, QueryParameters returnParams) {
         UI ui = view.getUI().orElse(UI.getCurrent());
-        close(ui, view);
+        close(ui, view, returnParams);
     }
 
     public void close(UI ui, View<?> view) {
+        close(ui, view, QueryParameters.empty());
+    }
+
+    public void close(UI ui, View<?> view, QueryParameters returnParams) {
         log.debug("Closing view: " + view);
 
-        // Check if a back navigation target for the given view class is registered
+        // Check if a backward navigation target for the given view class is registered
         // for any window name before we obtain ExtendedClientDetails
-        if (hasBackNavigationTarget(ui, view.getClass())) {
-            navigateToBackTarget(ui, view);
+        if (hasBackwardNavigationTarget(ui, view.getClass())) {
+            doBackwardNavigation(ui, view, returnParams);
         } else {
-            navigateToParentLayout(view);
+            navigateToParentLayout(view, returnParams);
         }
     }
 
-    protected boolean hasBackNavigationTarget(UI ui, Class<? extends View> viewClass) {
+    protected boolean hasBackwardNavigationTarget(UI ui, Class<? extends View> viewClass) {
         VaadinSession vaadinSession = ui.getSession();
-        BackNavigationTargets targets = vaadinSession.getAttribute(BackNavigationTargets.class);
+        BackwardNavigationTargets targets = vaadinSession.getAttribute(BackwardNavigationTargets.class);
 
         return targets != null && targets.values().stream()
                 .allMatch(pair -> pair.getFirst().equals(viewClass));
     }
 
-    protected void navigateToBackTarget(UI ui, View<?> view) {
+    protected void doBackwardNavigation(UI ui, View<?> view, QueryParameters returnParams) {
         retrieveExtendedClientDetails(ui, details ->
-                navigateToBackTarget(ui.getSession(), details.getWindowName(), view));
+                doBackwardNavigation(ui, details.getWindowName(), view, returnParams));
     }
 
-    protected void navigateToBackTarget(VaadinSession session, String windowName, View<?> view) {
-        BackNavigationTargets targets = session.getAttribute(BackNavigationTargets.class);
+    protected void doBackwardNavigation(UI ui, String windowName, View<?> view, QueryParameters returnParams) {
+        log.debug("Perform backward navigation for '{}'", view.getClass());
+
+        BackwardNavigationTargets targets = ui.getSession().getAttribute(BackwardNavigationTargets.class);
         if (targets != null && targets.containsKey(windowName)
                 && targets.get(windowName).getFirst().equals(view.getClass())) {
-            Class<? extends View> backTarget = targets.get(windowName).getSecond();
+            URI uri = targets.get(windowName).getSecond();
             targets.remove(windowName);
-            navigationSupport.navigate(backTarget);
+            ui.navigate(
+                    resolveLocation(uri),
+                    NavigationUtils.combineQueryParameters(resolveQueryParameters(uri), returnParams)
+            );
         } else {
-            navigateToParentLayout(view);
+            navigateToParentLayout(view, returnParams);
         }
     }
 
-    protected void navigateToParentLayout(View<?> view) {
+    protected String resolveLocation(URI uri) {
+        String path = uri.getPath();
+        String contextPath = servletContext.getContextPath();
+        if (!Strings.isNullOrEmpty(contextPath)
+                && path.startsWith(contextPath)) {
+            return path.substring(contextPath.length());
+        } else {
+            return path;
+        }
+    }
+
+    protected QueryParameters resolveQueryParameters(URI uri) {
+        return QueryParameters.fromString(Strings.emptyToNull(uri.getQuery()));
+    }
+
+    public void navigateToParentLayout(View<?> view, QueryParameters returnParams) {
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
         List<RouteData> routes = routeConfiguration.getAvailableRoutes();
 
         findRouteData(view.getClass(), routes)
                 .ifPresent(routeData -> {
                     Class<? extends RouterLayout> parentLayout = routeData.getParentLayout();
-
                     findRouteData(parentLayout, routes)
                             .ifPresent(data ->
-                                    navigationSupport.navigate(data.getNavigationTarget()));
+                                    navigationSupport.navigate(data.getNavigationTarget(),
+                                            RouteParameters.empty(), returnParams));
                 });
     }
 
@@ -449,9 +480,9 @@ public class ViewSupport {
         }
     }
 
-    // maps window.name to (view class, back navigation target)
+    // maps window.name to (view class, backward navigation target)
     @SuppressWarnings("rawtypes")
-    protected static class BackNavigationTargets
-            extends HashMap<String, Pair<Class<? extends View>, Class<? extends View>>> {
+    protected static class BackwardNavigationTargets
+            extends HashMap<String, Pair<Class<? extends View>, URI>> {
     }
 }

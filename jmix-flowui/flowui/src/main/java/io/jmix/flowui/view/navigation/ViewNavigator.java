@@ -43,7 +43,7 @@ public class ViewNavigator {
     protected RouteParameters routeParameters;
     protected QueryParameters queryParameters;
 
-    protected Class<? extends View> backNavigationTarget;
+    protected boolean backwardNavigation;
 
     public ViewNavigator(Consumer<? extends ViewNavigator> handler) {
         checkNotNullArgument(handler);
@@ -96,13 +96,13 @@ public class ViewNavigator {
     }
 
     /**
-     * Sets a view that should be navigated to when the opened view is closed or back browser button is clicked.
+     * Sets whether the current url should be navigated to when the opened view is closed.
      *
-     * @param backNavigationTarget view class
+     * @param backwardNavigation whether the current url should be registered for backward navigation
      * @return this instance for chaining
      */
-    public ViewNavigator withBackNavigationTarget(@Nullable Class<? extends View> backNavigationTarget) {
-        this.backNavigationTarget = backNavigationTarget;
+    public ViewNavigator withBackwardNavigation(boolean backwardNavigation) {
+        this.backwardNavigation = backwardNavigation;
         return this;
     }
 
@@ -135,10 +135,10 @@ public class ViewNavigator {
     }
 
     /**
-     * @return a view that should be navigated to when the opened view is closed or back browser button is clicked
+     * @return whether the current url should be navigated to when the opened view is closed
      */
-    public Optional<Class<? extends View>> getBackNavigationTarget() {
-        return Optional.ofNullable(backNavigationTarget);
+    public boolean isBackwardNavigation() {
+        return backwardNavigation;
     }
 
     /**

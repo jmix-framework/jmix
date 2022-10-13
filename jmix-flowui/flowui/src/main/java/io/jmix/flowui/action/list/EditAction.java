@@ -317,14 +317,8 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
     protected void navigate(E editedEntity) {
         DetailViewNavigator<E> navigator = viewNavigators.detailView((target))
-                .editEntity(editedEntity);
-
-        if (target instanceof Component) {
-            View<?> parent = UiComponentUtils.findView((Component) target);
-            if (parent != null) {
-                navigator = navigator.withBackNavigationTarget(parent.getClass());
-            }
-        }
+                .editEntity(editedEntity)
+                .withBackwardNavigation(true);
 
         navigator = viewInitializer.initNavigator(navigator);
 

@@ -51,21 +51,19 @@ public class ViewNavigators {
     /**
      * Creates a detail view navigator for an entity class.
      * <p>
-     * Example of navigating to a view for editing an entity and returning to the calling view:
+     * Example of navigating to a view for editing an entity:
      * <pre>{@code
      * viewNavigators.detailView(Customer.class)
      *         .editEntity(customersTable.getSingleSelectedItem())
      *         .withViewClass(CustomerDetailView.class)
-     *         .withBackNavigationTarget(getClass())
      *         .navigate();
      * }</pre>
      * <p>
-     * Example of navigating to a view for creating a new entity instance and returning to the calling view:
+     * Example of navigating to a view for creating a new entity instance:
      * <pre>{@code
      * viewNavigators.detailView(Customer.class)
      *         .newEntity()
      *         .withViewClass(CustomerDetailView.class)
-     *         .withBackNavigationTarget(getClass())
      *         .navigate();
      * }</pre>
      *
@@ -73,21 +71,9 @@ public class ViewNavigators {
      */
     public <E> DetailViewNavigator<E> detailView(Class<E> entityClass) {
         checkNotNullArgument(entityClass);
-        return new DetailViewNavigator<>(entityClass, detailViewNavigationProcessor::processNavigation);
-    }
 
-    /**
-     * Creates a detail view navigator for an entity class and sets back navigation target to the current view.
-     *
-     * @param entityClass edited entity class
-     * @param parent back navigation target - the view to return to after the opened view is closed
-     *
-     * @see #detailView(Class)
-     */
-    public <E> DetailViewNavigator<E> detailView(Class<E> entityClass, View<?> parent) {
-        checkNotNullArgument(entityClass);
-        return detailView(entityClass)
-                .withBackNavigationTarget(parent.getClass());
+        return new DetailViewNavigator<>(entityClass, detailViewNavigationProcessor::processNavigation)
+                .withBackwardNavigation(true);
     }
 
     /**
@@ -110,21 +96,8 @@ public class ViewNavigators {
             navigator.editEntity(selected);
         }
 
-        return navigator;
-    }
-
-    /**
-     * Creates a detail view navigator to edit an entity selected in the list component
-     * and sets back navigation target to the current view.
-     *
-     * @param listDataComponent the component which provides a selected entity to edit
-     * @param parent back navigation target - the view to return to after the opened view is closed
-     *
-     * @see #detailView(Class)
-     */
-    public <E> DetailViewNavigator<E> detailView(ListDataComponent<E> listDataComponent, View<?> parent) {
-        return detailView(listDataComponent)
-                .withBackNavigationTarget(parent.getClass());
+        return navigator
+                .withBackwardNavigation(true);
     }
 
     /**
@@ -150,21 +123,8 @@ public class ViewNavigators {
             navigator.editEntity(value);
         }
 
-        return navigator;
-    }
-
-    /**
-     * Creates a detail view navigator to edit an entity selected in the picker component
-     * and sets back navigation target to the current view.
-     *
-     * @param picker the component which provides an entity to edit
-     * @param parent back navigation target - the view to return to after the opened view is closed
-     *
-     * @see #detailView(Class)
-     */
-    public <E> DetailViewNavigator<E> detailView(EntityPickerComponent<E> picker, View<?> parent) {
-        return detailView(picker)
-                .withBackNavigationTarget(parent.getClass());
+        return navigator
+                .withBackwardNavigation(true);
     }
 
     /**
@@ -174,7 +134,7 @@ public class ViewNavigators {
      * <pre>{@code
      * viewNavigators.listView(Customer.class)
      *         .withViewClass(CustomerListView.class)
-     *         .withBackNavigationTarget(getClass())
+     *         .withBackwardNavigation(true)
      *         .navigate();
      * }</pre>
      *

@@ -68,8 +68,8 @@ public class ListViewNavigator<E> extends ViewNavigator {
     }
 
     @Override
-    public ListViewNavigator<E> withBackNavigationTarget(@Nullable Class<? extends View> backNavigationTarget) {
-        super.withBackNavigationTarget(backNavigationTarget);
+    public ListViewNavigator<E> withBackwardNavigation(boolean backwardNavigation) {
+        super.withBackwardNavigation(backwardNavigation);
         return this;
     }
 

@@ -16,7 +16,6 @@
 
 package io.jmix.securityflowui.action;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.Messages;
@@ -24,17 +23,13 @@ import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.NavigationUtils;
 import io.jmix.flowui.view.navigation.ViewNavigator;
 import io.jmix.securityflowui.view.roleassignment.RoleAssignmentView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Optional;
 
 @ActionType(ShowRoleAssignmentsAction.ID)
 public class ShowRoleAssignmentsAction<E extends UserDetails>
@@ -89,17 +84,9 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
 
         RouteParameters routeParameters =
                 NavigationUtils.generateRouteParameters(navigator, "username", selectedItem.getUsername());
-        navigator.withRouteParameters(routeParameters);
-
-        findParent().ifPresent(parent ->
-                navigator.withBackNavigationTarget(parent.getClass()));
+        navigator.withRouteParameters(routeParameters)
+                .withBackwardNavigation(true);
 
         navigator.navigate();
-    }
-
-    protected Optional<View<?>> findParent() {
-        return target instanceof Component
-                ? Optional.ofNullable(UiComponentUtils.findView((Component) target))
-                : Optional.empty();
     }
 }

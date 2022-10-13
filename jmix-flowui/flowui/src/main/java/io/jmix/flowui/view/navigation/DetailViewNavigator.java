@@ -87,8 +87,8 @@ public class DetailViewNavigator<E> extends ViewNavigator {
     }
 
     @Override
-    public DetailViewNavigator<E> withBackNavigationTarget(@Nullable Class<? extends View> backNavigationTarget) {
-        super.withBackNavigationTarget(backNavigationTarget);
+    public DetailViewNavigator<E> withBackwardNavigation(boolean backwardNavigation) {
+        super.withBackwardNavigation(backwardNavigation);
         return this;
     }
 

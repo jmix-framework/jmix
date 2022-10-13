@@ -16,13 +16,20 @@
 
 package io.jmix.flowui.view.navigation;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.sys.ViewSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URISyntaxException;
 
 public abstract class AbstractNavigationProcessor<N extends ViewNavigator> {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractNavigationProcessor.class);
 
     protected ViewSupport viewSupport;
     protected ViewRegistry viewRegistry;
@@ -41,10 +48,20 @@ public abstract class AbstractNavigationProcessor<N extends ViewNavigator> {
         RouteParameters routeParameters = getRouteParameters(navigator);
         QueryParameters queryParameters = getQueryParameters(navigator);
 
-        navigator.getBackNavigationTarget().ifPresent(target ->
-                viewSupport.registerBackNavigation(viewClass, target));
-
-        navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+        if (navigator.isBackwardNavigation()) {
+            log.trace("Fetching current URL for backward navigation");
+            UI.getCurrent().getPage().fetchCurrentURL(url -> {
+                log.trace("Fetched URL: {}", url.toString());
+                try {
+                    viewSupport.registerBackwardNavigation(viewClass, url.toURI());
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
+                navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+            });
+        } else {
+            navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+        }
     }
 
     protected Class<? extends View> getViewClass(N navigator) {

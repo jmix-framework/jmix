@@ -42,6 +42,7 @@
                 <xs:element type="menuType" name="menu"/>
             </xs:choice>
         </xs:sequence>
+        <xs:attribute name="order" type="xs:integer"/>
     </xs:complexType>
 
     <xs:complexType name="menuType">

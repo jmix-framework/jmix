@@ -14,8 +14,8 @@
   ~ limitations under the License.
   -->
 
-<menu-config xmlns="http://jmix.io/schema/flowui/menu">
-    <menu id="administration">
+<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="200">
+    <menu id="security">
         <item view="sec_ResourceRoleModel.list"
               title="msg://io.jmix.securityflowui.view.resourcerole/resourceRoleModelListView.menu"/>
         <item view="sec_RowLevelRoleModel.list"

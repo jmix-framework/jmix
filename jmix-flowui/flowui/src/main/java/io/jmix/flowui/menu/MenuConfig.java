@@ -112,18 +112,34 @@ public class MenuConfig {
                 modules.getPropertyValues(MENU_CONFIG_XML_PROP) :
                 Collections.singletonList(environment.getProperty(MENU_CONFIG_XML_PROP));
 
+        // put the list in default order - from the app down to the add-ons
+        Collections.reverse(locations);
+
+        List<Element> rootElements = new ArrayList<>();
         for (String location : locations) {
             Resource resource = resources.getResource(location);
             if (resource.exists()) {
                 try (InputStream stream = resource.getInputStream()) {
-                    Element rootElement = dom4JTools.readDocument(stream).getRootElement();
-                    loadMenuItems(rootElement, null);
+                    rootElements.add(dom4JTools.readDocument(stream).getRootElement());
                 } catch (IOException e) {
                     throw new RuntimeException("Unable to read menu config", e);
                 }
             } else {
                 log.warn("Resource {} not found, ignore it", location);
             }
+        }
+
+        // sort according to the `order` attributes
+        rootElements.sort((e1, e2) -> {
+            String orderStr1 = e1.attributeValue("order");
+            String orderStr2 = e2.attributeValue("order");
+            int order1 = orderStr1 == null ? 0 : Integer.parseInt(orderStr1);
+            int order2 = orderStr2 == null ? 0 : Integer.parseInt(orderStr2);
+            return order1 - order2;
+        });
+
+        for (Element rootElement : rootElements) {
+            loadMenuItems(rootElement, null);
         }
     }
 

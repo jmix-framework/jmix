@@ -17,6 +17,6 @@
 
 <menu-config xmlns="http://jmix.io/schema/flowui/menu" order="500">
     <menu id="datatools">
-        <item view="datatlf_entityInspectorListView" title="msg://io.jmix.datatoolsflowui.view.entityinspector/listTitle"/>
+        <item view="datatl_entityInspectorListView" title="msg://io.jmix.datatoolsflowui.view.entityinspector/listTitle"/>
     </menu>
 </menu-config>

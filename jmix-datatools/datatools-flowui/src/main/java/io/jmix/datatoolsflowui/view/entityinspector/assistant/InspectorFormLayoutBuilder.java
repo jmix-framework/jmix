@@ -51,7 +51,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Component("datatlf_EntityInspectorFormBuilder")
+@Component("datatl_EntityInspectorFormBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorFormLayoutBuilder {
 

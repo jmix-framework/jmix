@@ -37,7 +37,7 @@ import javax.persistence.Convert;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component("datatlf_EntityInspectorDataGridBuilder")
+@Component("datatl_EntityInspectorDataGridBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorDataGridBuilder {
 

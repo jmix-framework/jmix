@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import javax.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "datatlf_InfoValue")
+@JmixEntity(name = "datatl_InfoValue")
 @SystemLevel
 public class InfoValue {
 

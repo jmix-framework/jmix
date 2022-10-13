@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-@Component("datatlf_EntityInspectorFetchPlanBuilder")
+@Component("datatl_EntityInspectorFetchPlanBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorFetchPlanBuilder {
 

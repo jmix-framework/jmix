@@ -82,7 +82,7 @@ import java.util.function.Consumer;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Route(value = "entityinspector", layout = DefaultMainViewParent.class)
-@ViewController("datatlf_entityInspectorListView")
+@ViewController("datatl_entityInspectorListView")
 @ViewDescriptor("entity-inspector-list-view.xml")
 @LookupComponent("entitiesDataGrid")
 @DialogMode(width = "50em", height = "37.5em")

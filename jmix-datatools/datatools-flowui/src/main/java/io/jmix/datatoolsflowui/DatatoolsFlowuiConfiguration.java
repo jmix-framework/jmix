@@ -40,7 +40,7 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.datatoolsflowui", value = "classpath:/io/jmix/datatoolsflowui/module.properties")
 public class DatatoolsFlowuiConfiguration {
 
-    @Bean("datatlf_ViewControllersConfiguration")
+    @Bean("datatl_ViewControllersConfiguration")
     public ViewControllersConfiguration screens(ApplicationContext applicationContext,
                                                 AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ViewControllersConfiguration viewControllers
@@ -49,7 +49,7 @@ public class DatatoolsFlowuiConfiguration {
         return viewControllers;
     }
 
-    @Bean("datatlf_UiActions")
+    @Bean("datatl_UiActions")
     public ActionsConfiguration actions(ApplicationContext applicationContext,
                                         AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);

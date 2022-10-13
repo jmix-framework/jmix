@@ -58,7 +58,7 @@ import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
 @Route(value = "entityinspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
-@ViewController("datatlf_entityInspectorDetailView")
+@ViewController("datatl_entityInspectorDetailView")
 @ViewDescriptor("entity-inspector-detail-view.xml")
 @DialogMode(width = "50em", resizable = true)
 public class EntityInspectorDetailView extends StandardDetailView<Object> {

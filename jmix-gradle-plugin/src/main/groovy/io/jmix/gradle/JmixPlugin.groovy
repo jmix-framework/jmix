@@ -74,7 +74,7 @@ class JmixPlugin implements Plugin<Project> {
             def javaPlugin = project.plugins.findPlugin(JavaPlugin.class)
 
             if (kotlinPlugin) {
-                setupKotlinOutputDir(project)
+                setupKotlinOutputDir(project, kotlinPlugin.pluginVersion)
             }
 
             if (project.jmix.entitiesEnhancing.enabled) {
@@ -129,13 +129,25 @@ class JmixPlugin implements Plugin<Project> {
      * Kotlin classes output dir should be the same as java output dir.
      * Otherwise the current implementation of entities enhancing doesn't work properly
      */
-    private void setupKotlinOutputDir(Project project) {
+    private void setupKotlinOutputDir(Project project, String kotlinPluginVersion) {
         try {
-            project.tasks.getByName('compileKotlin', {
-                destinationDir = project.sourceSets.main.java.outputDir
+            def kotlinPluginVersionNumbers = kotlinPluginVersion.split('\\.')
+                    .collect { it.toInteger() }
+            int majorVersion = kotlinPluginVersionNumbers[0]
+            int minorVersion = kotlinPluginVersionNumbers[1]
+            project.tasks.getByName('compileKotlin', {task ->
+                if (majorVersion == 1 && minorVersion < 7) {
+                    task.destinationDir = project.sourceSets.main.java.outputDir
+                } else {
+                    task.destinationDirectory = project.sourceSets.main.java.outputDir
+                }
             })
-            project.tasks.getByName('compileTestKotlin', {
-                destinationDir = project.sourceSets.test.java.outputDir
+            project.tasks.getByName('compileTestKotlin', {task ->
+                if (majorVersion == 1 && minorVersion < 7) {
+                    task.destinationDir = project.sourceSets.test.java.outputDir
+                } else {
+                    task.destinationDirectory = project.sourceSets.test.java.outputDir
+                }
             })
         } catch (UnknownTaskException ignored) {
             project.logger.debug("Unable to setup output directory for Kotlin. " + ignored.message)

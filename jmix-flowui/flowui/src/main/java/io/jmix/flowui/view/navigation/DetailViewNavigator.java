@@ -39,6 +39,7 @@ public class DetailViewNavigator<E> extends ViewNavigator {
     protected final Class<E> entityClass;
 
     protected E editedEntity;
+    protected boolean readOnly;
 
     protected DetailViewMode mode = DetailViewMode.CREATE;
 
@@ -92,6 +93,11 @@ public class DetailViewNavigator<E> extends ViewNavigator {
         return this;
     }
 
+    public DetailViewNavigator<E> withReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+        return this;
+    }
+
     /**
      * @return entity class of the detail view
      */
@@ -111,5 +117,12 @@ public class DetailViewNavigator<E> extends ViewNavigator {
      */
     public DetailViewMode getMode() {
         return mode;
+    }
+
+    /**
+     * @return whether a view should be opened in read-only mode
+     */
+    public boolean isReadOnly() {
+        return readOnly;
     }
 }

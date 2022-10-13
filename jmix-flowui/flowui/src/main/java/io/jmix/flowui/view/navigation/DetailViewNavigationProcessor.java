@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.view.navigation;
 
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
@@ -25,6 +26,9 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import org.springframework.stereotype.Component;
 
+import static io.jmix.flowui.view.StandardDetailView.MODE_PARAM;
+import static io.jmix.flowui.view.StandardDetailView.MODE_READONLY;
+import static io.jmix.flowui.view.navigation.NavigationUtils.addQueryParameters;
 import static java.util.Objects.requireNonNull;
 
 @Internal
@@ -45,6 +49,17 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
     @Override
     protected Class<? extends View> inferViewClass(DetailViewNavigator<?> navigator) {
         return viewRegistry.getDetailViewInfo(navigator.getEntityClass()).getControllerClass();
+    }
+
+    @Override
+    protected QueryParameters getQueryParameters(DetailViewNavigator<?> navigator) {
+        if (navigator.isReadOnly()) {
+            QueryParameters queryParameters = navigator.getQueryParameters()
+                    .orElse(QueryParameters.empty());
+            return addQueryParameters(queryParameters, MODE_PARAM, MODE_READONLY);
+        } else {
+            return super.getQueryParameters(navigator);
+        }
     }
 
     @Override

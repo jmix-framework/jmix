@@ -224,7 +224,8 @@ public class View<T extends Component> extends Composite<T>
     }
 
     protected ViewAttributes getViewAttributes() {
-        String viewId = getId().orElseThrow(() -> new IllegalStateException("View should have an id"));
+        String viewId = getId().orElseThrow(() -> new IllegalStateException(
+                View.class.getSimpleName() + " should have an id"));
         return getApplicationContext().getBean(ViewAttributes.class, viewId);
     }
 

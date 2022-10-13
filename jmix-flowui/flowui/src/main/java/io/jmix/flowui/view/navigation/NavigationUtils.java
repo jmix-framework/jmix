@@ -18,6 +18,7 @@ package io.jmix.flowui.view.navigation;
 
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
+import io.jmix.flowui.view.StandardDetailView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,5 +52,13 @@ public final class NavigationUtils {
         }
 
         return new QueryParameters(combinedParams);
+    }
+
+    public static QueryParameters addQueryParameters(QueryParameters queryParameters, String name, String value) {
+        Map<String, List<String>> resultParams = new HashMap<>();
+        resultParams.put(name, List.of(value));
+        resultParams.putAll(queryParameters.getParameters());
+
+        return new QueryParameters(resultParams);
     }
 }

@@ -19,10 +19,14 @@ package io.jmix.flowui.view;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification.Position;
+import com.vaadin.flow.component.page.History;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
+import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
@@ -48,6 +52,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import static io.jmix.flowui.view.navigation.NavigationUtils.addQueryParameters;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -63,6 +68,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     public static final String MODE_READONLY = "readonly";
 
     public static final String LOCKED_BEFORE_REFRESH_ATTR_NAME = "lockedBeforeRefresh";
+    public static final String READ_ONLY_BEFORE_REFRESH_ATTR_NAME = "readOnlyBeforeRefresh";
 
     private T entityToEdit;
     private String serializedEntityIdToEdit;
@@ -152,12 +158,23 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private void checkReadOnlyState(BeforeEnterEvent event) {
-        List<String> state = event.getLocation()
+        Location location = event.getLocation();
+        List<String> mode = location
                 .getQueryParameters()
                 .getParameters()
                 .get(MODE_PARAM);
-        if (CollectionUtils.isNotEmpty(state)
-                && state.contains(MODE_READONLY)) {
+
+        if (CollectionUtils.isNotEmpty(mode)
+                && mode.contains(MODE_READONLY)) {
+            setReadOnlyBeforeRefresh();
+            setReadOnly(true);
+        } else if (isReadOnlyBeforeRefresh()) {
+            QueryParameters resultQueryParameters =
+                    addQueryParameters(location.getQueryParameters(), MODE_PARAM, MODE_READONLY);
+            Location newLocation = new Location(location.getSegments(), resultQueryParameters);
+
+            History history = getUI().orElse(UI.getCurrent()).getPage().getHistory();
+            history.replaceState(null, newLocation);
             setReadOnly(true);
         }
     }
@@ -717,6 +734,17 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private void setLockedBeforeRefresh() {
         getViewAttributes().setAttribute(LOCKED_BEFORE_REFRESH_ATTR_NAME, true);
+    }
+
+    /**
+     * @return {@code true} if the view instance has been set to read-only mode before refreshing the page.
+     */
+    private boolean isReadOnlyBeforeRefresh() {
+        return Boolean.TRUE.equals(getViewAttributes().getAttribute(READ_ONLY_BEFORE_REFRESH_ATTR_NAME));
+    }
+
+    private void setReadOnlyBeforeRefresh() {
+        getViewAttributes().setAttribute(READ_ONLY_BEFORE_REFRESH_ATTR_NAME, true);
     }
 
     private void setModifiedAfterOpen(boolean entityModified) {

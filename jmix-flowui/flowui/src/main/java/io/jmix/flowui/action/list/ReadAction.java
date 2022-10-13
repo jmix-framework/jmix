@@ -18,7 +18,6 @@ package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.QueryParameters;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
@@ -39,9 +38,6 @@ import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -283,11 +279,6 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
         View<?> view = dialogWindow.getView();
         if (view instanceof ReadOnlyAwareView) {
             ((ReadOnlyAwareView) view).setReadOnly(true);
-
-            // TODO: gg, implement
-            /*if (isReadOnlyCompositionDetailView(view)) {
-                readOnlyViewsSupport.setViewReadOnly(view, true, false);
-            }*/
         } else {
             throw new IllegalStateException(String.format("%s '%s' does not implement %s: %s",
                     View.class.getSimpleName(), view.getId(),
@@ -310,28 +301,13 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     protected void navigate(E editedEntity) {
         DetailViewNavigator<E> navigator = viewNavigators.detailView((target))
                 .editEntity(editedEntity)
-                .withBackwardNavigation(true);
+                .withBackwardNavigation(true)
+                .withReadOnly(true);
 
         navigator = viewInitializer.initNavigator(navigator);
-        navigator = addReadOnlyMode(navigator);
 
         navigator.navigate();
     }
-
-    protected static <E> DetailViewNavigator<E> addReadOnlyMode(DetailViewNavigator<E> navigator) {
-        Map<String, List<String>> resultParams = new HashMap<>();
-        resultParams.put(StandardDetailView.MODE_PARAM, List.of(StandardDetailView.MODE_READONLY));
-
-        navigator.getQueryParameters().ifPresent(queryParameters ->
-                resultParams.putAll(queryParameters.getParameters()));
-
-        return navigator.withQueryParameters(new QueryParameters(resultParams));
-    }
-
-    // TODO: gg, implement
-    /*protected boolean isReadOnlyCompositionDetailView(View<?> editor) {
-
-    }*/
 
     /**
      * @see #setViewId(String)

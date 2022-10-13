@@ -52,12 +52,14 @@ public abstract class AbstractNavigationProcessor<N extends ViewNavigator> {
             log.trace("Fetching current URL for backward navigation");
             UI.getCurrent().getPage().fetchCurrentURL(url -> {
                 log.trace("Fetched URL: {}", url.toString());
+
+                navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+
                 try {
                     viewSupport.registerBackwardNavigation(viewClass, url.toURI());
                 } catch (URISyntaxException e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }
-                navigationSupport.navigate(viewClass, routeParameters, queryParameters);
             });
         } else {
             navigationSupport.navigate(viewClass, routeParameters, queryParameters);

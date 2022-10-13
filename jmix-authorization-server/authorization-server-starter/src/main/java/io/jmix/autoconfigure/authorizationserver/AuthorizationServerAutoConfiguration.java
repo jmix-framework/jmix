@@ -58,7 +58,7 @@ public class AuthorizationServerAutoConfiguration {
         public static final String SECURITY_CONFIGURER_QUALIFIER = "authorization-server";
         public static final String LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER = "authorization-server-login-form";
 
-        @Bean("authsrv_AuthorizationServerSecurityFilterChain")
+        @Bean("authsr_AuthorizationServerSecurityFilterChain")
         @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
         public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
                 throws Exception {
@@ -75,7 +75,7 @@ public class AuthorizationServerAutoConfiguration {
             return http.build();
         }
 
-        @Bean("authsrv_LoginFormSecurityFilterChain")
+        @Bean("authsr_LoginFormSecurityFilterChain")
         @Order(JmixOrder.HIGHEST_PRECEDENCE + 110)
         public SecurityFilterChain loginFormSecurityFilterChain(HttpSecurity http)
                 throws Exception {
@@ -120,7 +120,7 @@ public class AuthorizationServerAutoConfiguration {
 
         public static final String SECURITY_CONFIGURER_QUALIFIER = "authorization-server-resource-server";
 
-        @Bean("authsrv_ResourceServerSecurityFilterChain")
+        @Bean("authsr_ResourceServerSecurityFilterChain")
         @Order(JmixOrder.HIGHEST_PRECEDENCE + 150)
         public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
                                                                      OpaqueTokenIntrospector opaqueTokenIntrospector) throws Exception {
@@ -137,7 +137,7 @@ public class AuthorizationServerAutoConfiguration {
         }
 
         @ConditionalOnMissingBean
-        @Bean("authsrv_OpaqueTokenIntrospector")
+        @Bean("authsr_OpaqueTokenIntrospector")
         public OpaqueTokenIntrospector opaqueTokenIntrospector(OAuth2AuthorizationService authorizationService,
                                                                UserDetailsService userDetailsService) {
             return new AuthorizationServiceOpaqueTokenIntrospector(authorizationService, userDetailsService);

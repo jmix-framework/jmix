@@ -6,14 +6,14 @@
 
 In a few words, Jmix Authorization Server add-on allows you to issue access and refresh tokens and protect API resources (REST API, custom controllers) with these tokens.  The add-on is built on top of [Spring Authorization Server](https://spring.io/projects/spring-authorization-server). 
 
-Jmix Authorization Server is a replacement for Jmix Security OAuth2 module that depends on outdated [Spring Security OAuth](https://spring.io/projects/spring-security-oauth) project that has reach end of life.
+Jmix Authorization Server is a replacement for Jmix Security OAuth2 module that depends on outdated [Spring Security OAuth](https://spring.io/projects/spring-security-oauth) project that has reached end of life.
 
 The Jmix Authorization Server add-on features:
 
 * Contains predefined Spring configurations for working as participant with "authorization server" and "resource server" roles described in OAuth 2.1 protocol flows. This means that your Jmix application may issue access and refresh tokens and protect API resources with these tokens.
 * Supports authorization code grant for web clients and mobile devices.
 * Supports client credentials grant for server-to-server interaction.
-* Out of the box only **opaque** tokens are supported.
+* Only **opaque** tokens are supported out of the box.
 
 ## Adding Add-on to the Application
 
@@ -32,10 +32,10 @@ implementation 'io.jmix.authorizationserver:jmix-authorization-server-starter'
 When the add-on is included to the application the auto-configuration does initial setup:
 
 * `SecurityFilterChain` is added for OAuth2 protocol endpoints (token endpoint, authorization endpoint etc.). 
-* `SecurityFilterChain` for login form is added
-* `InMemoryClientRepository` is registered
-* Default `RegisteredClientProvider` is registered that creates a RegisteredClient based on application properties (read below)
-* `SecurityFilterChain` for resource server configuration (URLs that must be protected using access tokens)
+* `SecurityFilterChain` is added for login form.
+* `InMemoryClientRepository` is registered.
+* Default `RegisteredClientProvider` is registered that creates a RegisteredClient based on application properties (read below).
+* `SecurityFilterChain` for resource server configuration (URLs that must be protected using access tokens).
 
 If you want to completely disable the default auto-configuration and provide your own one, set the following application property:
 
@@ -83,13 +83,13 @@ public class MyRegisteredClientProvider implements RegisteredClientProvider {
 
 ### Authorization Code Grant Type
 
-When obtaining the token from web application or mobile application the client must first request the authorization code
+When obtaining the token from web or mobile application, the client must first request the authorization code:
 
 ```
 GET /oauth2/authorize?response_type=code&client_id=<client_id>&redirect_uri=<redirect_uri>
 ```
 
-A special login page will be displayed where user must enter their credentials. If credentials are valid, a request to
+A special login page will be displayed where the user must enter their credentials. If credentials are valid, a request to
 the redirect_uri will be performed with authorization code in the request parameter.
 
 To exchange the authorization code to the access token the client application must make a request to the following URL:

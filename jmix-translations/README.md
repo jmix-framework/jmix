@@ -28,4 +28,5 @@ implementation 'io.jmix.translations:jmix-translations-ru'
 implementation 'io.jmix.translations:jmix-translations-zh-cn'
 implementation 'io.jmix.translations:jmix-translations-ro'
 implementation 'io.jmix.translations:jmix-translations-el'
+implementation 'io.jmix.translations:jmix-translations-ckb'
 ```

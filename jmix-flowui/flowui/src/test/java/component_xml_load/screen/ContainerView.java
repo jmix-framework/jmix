@@ -20,14 +20,14 @@ import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.scroller.JmixScroller;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.view.ViewComponent;
+import io.jmix.flowui.splitlayout.JmixSplitLayout;
 import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.sales.Order;
@@ -63,10 +63,10 @@ public class ContainerView extends StandardView {
     public FormLayout formLayoutId;
 
     @ViewComponent
-    public Scroller scrollerId;
+    public JmixScroller scrollerId;
 
     @ViewComponent
-    public SplitLayout splitLayoutId;
+    public JmixSplitLayout splitLayoutId;
 
     @ViewComponent
     public Tabs tabsId;

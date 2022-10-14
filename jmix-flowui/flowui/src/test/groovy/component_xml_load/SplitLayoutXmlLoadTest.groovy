@@ -16,9 +16,11 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.splitlayout.SplitLayout
 import component_xml_load.screen.ContainerView
 import io.jmix.core.DataManager
+import io.jmix.flowui.component.scroller.JmixScroller
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -55,6 +57,8 @@ class SplitLayoutXmlLoadTest extends FlowuiTestSpecification {
             themeNames.containsAll(["small", "minimal"])
             visible
             width == "100px"
+            getOwnComponent("splitPrimaryChild") instanceof JmixScroller
+            getOwnComponent("splitSecondaryChild") instanceof VerticalLayout
         }
     }
 

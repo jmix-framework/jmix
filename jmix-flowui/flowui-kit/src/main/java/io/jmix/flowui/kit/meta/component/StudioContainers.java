@@ -142,7 +142,7 @@ public interface StudioContainers {
 
     @StudioComponent(
             name = "Scroller",
-            classFqn = "com.vaadin.flow.component.orderedlayout.Scroller",
+            classFqn = "io.jmix.flowui.component.scroller.JmixScroller",
             category = "Containers",
             xmlElement = "scroller",
             icon = "io/jmix/flowui/kit/meta/icon/container/scroller.svg",
@@ -168,7 +168,7 @@ public interface StudioContainers {
 
     @StudioComponent(
             name = "Split",
-            classFqn = "com.vaadin.flow.component.splitlayout.SplitLayout",
+            classFqn = "io.jmix.flowui.splitlayout.JmixSplitLayout",
             category = "Containers",
             xmlElement = "split",
             icon = "io/jmix/flowui/kit/meta/icon/container/split.svg",

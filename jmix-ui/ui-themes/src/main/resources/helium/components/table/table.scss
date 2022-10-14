@@ -261,7 +261,7 @@ $he-table-header-row-height-scale: 1.5 !default;
   }
 
   .#{$primary-stylename}-caption-container {
-    border-left: none;
+    border-left: $table-inner-border;
   }
 
   .#{$primary-stylename}-cell-content {

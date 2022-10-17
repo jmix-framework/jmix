@@ -1,0 +1,64 @@
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://view"
+      focusComponent="sessionsTable">
+    <data readOnly="true">
+        <collection id="userSessionsDc"
+                    class="io.jmix.audit.entity.UserSession">
+            <loader id="userSessionsDl"/>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <formLayout id="filterPanel">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="2"/>
+                <responsiveStep minWidth="60em" columns="4"/>
+            </responsiveSteps>
+            <textField id="userName" datatype="string"
+                       label="msg://nameField"/>
+            <dateTimePicker id="lastRequestDateFrom" datatype="date"
+                            label="msg://lastRequestDateFrom"/>
+            <dateTimePicker id="lastRequestDateTo" datatype="date"
+                            label="msg://lastRequestDateTo"/>
+            <button id="clearButton" text="msg://clear" icon="ERASER"/>
+        </formLayout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="refreshBtn" action="sessionsTable.refresh"/>
+            <button id="expireBtn" action="sessionsTable.expire"/>
+        </hbox>
+        <dataGrid id="sessionsTable" minHeight="20em"
+                  width="100%"
+                  dataContainer="userSessionsDc"
+                  selectionMode="MULTI">
+            <actions>
+                <action id="refresh" type="refresh"/>
+                <action id="expire" text="msg://expire" icon="BAN"/>
+            </actions>
+            <columns>
+                <column property="sessionId"/>
+                <column property="principalName"/>
+                <column property="lastRequest"/>
+            </columns>
+        </dataGrid>
+
+    </layout>
+</view>

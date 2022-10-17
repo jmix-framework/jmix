@@ -469,4 +469,10 @@ $jmix-table-drag-indicator-color: $v-focus-color;
       }
     }
   }
+
+  // Overrides Vaadin value so 'com.vaadin.v7.client.ui.VScrollTable.VScrollTableBody.VScrollTableRow.getRealCellWidth'
+  // returns correct value for header cells
+  .#{$primary-stylename}-table td {
+    box-sizing: content-box;
+  }
 }

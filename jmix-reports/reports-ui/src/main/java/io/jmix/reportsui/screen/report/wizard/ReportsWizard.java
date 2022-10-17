@@ -33,6 +33,7 @@ import io.jmix.reportsui.screen.report.wizard.template.TemplateGenerator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
 import org.apache.commons.lang3.StringUtils;
+import org.jibx.schema.codegen.extend.DefaultNameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,8 @@ import java.util.*;
 public class ReportsWizard {
 
     public static final String ROOT_BAND_DEFINITION_NAME = "Root";
+    protected static final String DEFAULT_SINGLE_ENTITY_NAME = "Entity";
+    protected static final String DEFAULT_LIST_OF_ENTITIES_NAME = "Entities";
     protected static final String DEFAULT_SINGLE_ENTITY_ALIAS = "entity";//cause Thesis used it for running reports from screens without selection input params
     protected static final String DEFAULT_LIST_OF_ENTITIES_ALIAS = "entities";//cause Thesis will use it for running reports from screens without selection input params
 
@@ -230,14 +233,15 @@ public class ReportsWizard {
     protected ReportInputParameter createMainInputParameter(Report report, ReportData reportData) {
         ReportInputParameter reportInputParameter = createParameter(report, 1);
 
-        reportInputParameter.setName(reportData.getEntityTreeRootNode().getLocalizedName());
         String metaClassName = reportData.getEntityTreeRootNode().getMetaClassName();
 
         reportInputParameter.setEntityMetaClass(metaClassName);
         if (ReportTypeGenerate.LIST_OF_ENTITIES == reportData.getReportTypeGenerate()) {
+            reportInputParameter.setName(DEFAULT_LIST_OF_ENTITIES_NAME);
             reportInputParameter.setType(ParameterType.ENTITY_LIST);
             reportInputParameter.setAlias(DEFAULT_LIST_OF_ENTITIES_ALIAS);
         } else {
+            reportInputParameter.setName(DEFAULT_SINGLE_ENTITY_NAME);
             reportInputParameter.setType(ParameterType.ENTITY);
             reportInputParameter.setAlias(DEFAULT_SINGLE_ENTITY_ALIAS);
         }

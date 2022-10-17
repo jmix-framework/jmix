@@ -24,9 +24,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.data.selection.SelectionEvent;
@@ -56,6 +54,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.scroller.JmixScroller;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -182,7 +181,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @Autowired
     protected DialogWindows dialogBuilders;
     @ViewComponent
-    protected Scroller attributesScroller;
+    protected JmixScroller attributesScroller;
     @ViewComponent
     protected Tabs tabsheet;
     @ViewComponent
@@ -223,8 +222,6 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     protected void onInit(View.InitEvent event) {
         tabsheet.addSelectedChangeListener(this::onSelectedTabChange);
 
-
-        attributesScroller.setContent(attributesBoxScroll);
         Map<String, String> changeTypeMap = new LinkedHashMap<>();
         changeTypeMap.put("C", messages.getMessage(EntityLogView.class, "createField"));
         changeTypeMap.put("M", messages.getMessage(EntityLogView.class, "modifyField"));

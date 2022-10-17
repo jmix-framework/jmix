@@ -179,8 +179,10 @@
                     <h5 text="msg://attributes"/>
                     <checkbox id="selectAllCheckBox" label="msg://[all]"/>
                     <scroller id="attributesScroller" scrollBarsDirection="VERTICAL"
-                              minHeight="15em" maxHeight="20em" width="100%"/>
-                    <vbox id="attributesBoxScroll" padding="false"/>
+                              minHeight="15em" maxHeight="20em" width="100%">
+                        <vbox id="attributesBoxScroll" padding="false"/>
+                    </scroller>
+
                 </vbox>
                 <hbox id="actionsPaneLayout" visible="false" alignItems="END">
                     <button id="saveBtn" themeNames="primary" text="msg://save" icon="CHECK"/>

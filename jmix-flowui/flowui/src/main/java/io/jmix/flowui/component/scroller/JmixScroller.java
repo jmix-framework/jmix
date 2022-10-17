@@ -34,6 +34,10 @@ public class JmixScroller extends Scroller implements ComponentContainer {
 
     @Override
     public Collection<Component> getOwnComponents() {
-        return Collections.singletonList(getContent());
+        if (getContent() != null) {
+            return Collections.singletonList(getContent());
+        }
+
+        return Collections.emptyList();
     }
 }

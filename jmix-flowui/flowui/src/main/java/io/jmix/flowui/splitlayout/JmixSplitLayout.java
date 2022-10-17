@@ -20,7 +20,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import io.jmix.flowui.component.ComponentContainer;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +39,16 @@ public class JmixSplitLayout extends SplitLayout implements ComponentContainer {
 
     @Override
     public Collection<Component> getOwnComponents() {
-        return List.of(getPrimaryComponent(), getSecondaryComponent());
+        List<Component> ownComponents = new ArrayList<>();
+
+        if (getPrimaryComponent() != null) {
+            ownComponents.add(getPrimaryComponent());
+        }
+
+        if (getSecondaryComponent() != null) {
+            ownComponents.add(getSecondaryComponent());
+        }
+
+        return ownComponents.isEmpty() ? Collections.emptyList() : List.copyOf(ownComponents);
     }
 }

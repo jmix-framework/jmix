@@ -1,13 +1,6 @@
 # Jmix Templates
 
-This repository contains templates for creating new application projects with the [Jmix](https://jmix.io) framework.
-
-For more information see:
-
-* Jmix Core project source [repository](https://github.com/Haulmont/jmix-core).
-* Jmix [documentation](https://docs.jmix.io).
-
-Templates can use the following variables:
+Project templates can use the following variables:
 
 |           Variable           |                 Description                 |                 Example                 |
 |:----------------------------:|:-------------------------------------------:|:---------------------------------------:|
@@ -22,7 +15,7 @@ Templates can use the following variables:
 |       project_locales        |               Project locales               | [Locale(code=en), <br/>Locale(code=ru)] |
 |       project_version        |               Project version               |             0.0.1-SNAPSHOT              |
 
-The template for Single Module Add-On can also use the following variables:
+Add-on project templates (having `"addon": true` property in `template.json`) can also use the following variables:
 
 |             Variable             |                            Description                            |                Example                 |
 |:--------------------------------:|:-----------------------------------------------------------------:|:--------------------------------------:|

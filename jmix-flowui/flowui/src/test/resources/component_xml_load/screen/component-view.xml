@@ -484,37 +484,37 @@
             </actions>
         </valuePicker>
 
-        <valuesPicker id="valuesPickerId"
-                      allowCustomValue="true"
-                      autofocus="true"
-                      classNames="cssClassName1, cssClassName2"
-                      enabled="true"
-                      errorMessage="errorMessageString"
-                      height="50px"
-                      helperText="helperTextString"
-                      invalid="false"
-                      label="labelString"
-                      maxHeight="55px"
-                      maxWidth="120px"
-                      minHeight="40px"
-                      minWidth="80px"
-                      placeholder="placeholderString"
-                      readOnly="true"
-                      required="true"
-                      requiredIndicatorVisible="true"
-                      requiredMessage="requiredMessageString"
-                      themeNames="theme1, theme2"
-                      title="titleString"
-                      visible="true"
-                      width="100px"
+        <multiValuePicker id="valuesPickerId"
+                          allowCustomValue="true"
+                          autofocus="true"
+                          classNames="cssClassName1, cssClassName2"
+                          enabled="true"
+                          errorMessage="errorMessageString"
+                          height="50px"
+                          helperText="helperTextString"
+                          invalid="false"
+                          label="labelString"
+                          maxHeight="55px"
+                          maxWidth="120px"
+                          minHeight="40px"
+                          minWidth="80px"
+                          placeholder="placeholderString"
+                          readOnly="true"
+                          required="true"
+                          requiredIndicatorVisible="true"
+                          requiredMessage="requiredMessageString"
+                          themeNames="theme1, theme2"
+                          title="titleString"
+                          visible="true"
+                          width="100px"
 
-                      dataContainer="orderDc"
-                      property="orderLines">
+                          dataContainer="orderDc"
+                          property="orderLines">
             <actions>
                 <action id="action1" icon="GAMEPAD"/>
                 <action id="action2" icon="DIPLOMA"/>
             </actions>
-        </valuesPicker>
+        </multiValuePicker>
 
         <entityPicker id="entityPickerId"
                       allowCustomValue="true"

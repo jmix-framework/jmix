@@ -16,13 +16,13 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.valuepicker.JmixValuesPicker;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 
-public class ValuesPickerLoader extends AbstractValuePickerLoader<JmixValuesPicker<?>> {
+public class MultiValuePickerLoader extends AbstractValuePickerLoader<JmixMultiValuePicker<?>> {
 
     @Override
-    protected JmixValuesPicker<?> createComponent() {
-        return factory.create(JmixValuesPicker.class);
+    protected JmixMultiValuePicker<?> createComponent() {
+        return factory.create(JmixMultiValuePicker.class);
     }
 
     @Override

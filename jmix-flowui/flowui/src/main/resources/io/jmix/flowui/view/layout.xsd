@@ -2965,7 +2965,7 @@
                 <xs:element name="dropdownButton" type="dropdownButtonComponent"/>
                 <xs:element name="comboBox" type="comboBoxComponent"/>
                 <xs:element name="valuePicker" type="valuePickerComponent"/>
-                <xs:element name="valuesPicker" type="valuePickerComponent"/>
+                <xs:element name="multiValuePicker" type="valuePickerComponent"/>
                 <xs:element name="entityPicker" type="entityPickerComponent"/>
                 <xs:element name="comboBoxPicker" type="comboBoxPickerComponent"/>
                 <xs:element name="entityComboBox" type="entityComboBoxComponent"/>

@@ -23,7 +23,7 @@ import com.vaadin.flow.shared.Registration;
 import java.util.Collection;
 import java.util.Collections;
 
-public class ValuesPicker<V> extends ValuePickerBase<ValuesPicker<V>, Collection<V>>
+public class MultiValuePicker<V> extends ValuePickerBase<MultiValuePicker<V>, Collection<V>>
         implements HasPrefixAndSuffix {
 
     public boolean isAllowCustomValue() {
@@ -36,7 +36,7 @@ public class ValuesPicker<V> extends ValuePickerBase<ValuesPicker<V>, Collection
     }
 
     @Override
-    public Registration addCustomValueSetListener(ComponentEventListener<CustomValueSetEvent<ValuesPicker<V>, Collection<V>>> listener) {
+    public Registration addCustomValueSetListener(ComponentEventListener<CustomValueSetEvent<MultiValuePicker<V>, Collection<V>>> listener) {
         return super.addCustomValueSetListener(listener);
     }
 

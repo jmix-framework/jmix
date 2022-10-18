@@ -41,7 +41,7 @@ import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
 import io.jmix.flowui.kit.component.pagination.JmixSimplePagination;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
-import io.jmix.flowui.kit.component.valuepicker.ValuesPicker;
+import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioPropertiesBinding;
 import io.jmix.flowui.kit.meta.StudioProperty;
@@ -1439,11 +1439,11 @@ public interface StudioComponents {
     ValuePicker valuePicker();
 
     @StudioComponent(
-            name = "ValuesPicker",
-            classFqn = "io.jmix.flowui.component.valuepicker.JmixValuesPicker",
+            name = "MultiValuePicker",
+            classFqn = "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker",
             category = "Components",
-            xmlElement = "valuesPicker",
-            icon = "io/jmix/flowui/kit/meta/icon/component/valuesPicker.svg",
+            xmlElement = "multiValuePicker",
+            icon = "io/jmix/flowui/kit/meta/icon/component/multiValuePicker.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "allowCustomValue", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -1487,7 +1487,7 @@ public interface StudioComponents {
                     )
             }
     )
-    ValuesPicker valuesPicker();
+    MultiValuePicker multiValuePicker();
 
     @StudioComponent(
             name = "LoginForm",

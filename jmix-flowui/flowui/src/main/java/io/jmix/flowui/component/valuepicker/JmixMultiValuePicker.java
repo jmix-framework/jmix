@@ -27,7 +27,7 @@ import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
-import io.jmix.flowui.kit.component.valuepicker.ValuesPicker;
+import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -35,13 +35,13 @@ import org.springframework.context.ApplicationContextAware;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
-public class JmixValuesPicker<V> extends ValuesPicker<V>
+public class JmixMultiValuePicker<V> extends MultiValuePicker<V>
         implements PickerComponent<Collection<V>>, SupportsValidation<Collection<V>>,
         HasRequired, HasPrefixAndSuffix, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
-    protected FieldDelegate<JmixValuesPicker<V>, Collection<V>, Collection<V>> fieldDelegate;
+    protected FieldDelegate<JmixMultiValuePicker<V>, Collection<V>, Collection<V>> fieldDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -106,7 +106,7 @@ public class JmixValuesPicker<V> extends ValuesPicker<V>
     }
 
     @SuppressWarnings("unchecked")
-    protected FieldDelegate<JmixValuesPicker<V>, Collection<V>, Collection<V>> createFieldDelegate() {
+    protected FieldDelegate<JmixMultiValuePicker<V>, Collection<V>, Collection<V>> createFieldDelegate() {
         return applicationContext.getBean(FieldDelegate.class, this);
     }
 

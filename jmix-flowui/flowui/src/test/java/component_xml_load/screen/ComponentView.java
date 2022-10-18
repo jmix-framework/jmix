@@ -36,7 +36,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
-import io.jmix.flowui.component.valuepicker.JmixValuesPicker;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
@@ -140,7 +140,7 @@ public class ComponentView extends StandardView {
     public JmixValuePicker<?> valuePickerId;
 
     @ViewComponent
-    public JmixValuesPicker<?> valuesPickerId;
+    public JmixMultiValuePicker<?> valuesPickerId;
 
     @ViewComponent
     public EntityPicker<?> entityPickerId;

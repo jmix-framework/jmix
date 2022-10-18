@@ -33,7 +33,6 @@ import io.jmix.reportsui.screen.report.wizard.template.TemplateGenerator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
 import org.apache.commons.lang3.StringUtils;
-import org.jibx.schema.codegen.extend.DefaultNameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

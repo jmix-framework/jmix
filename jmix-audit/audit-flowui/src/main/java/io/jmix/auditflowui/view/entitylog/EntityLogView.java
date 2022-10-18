@@ -53,6 +53,7 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.scroller.JmixScroller;
 import io.jmix.flowui.component.select.JmixSelect;
@@ -191,8 +192,6 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected VerticalLayout loggedEntityMiscBox;
     protected Object selectedEntity;
-
-    protected TreeMap<String, String> entityMetaClassesMap;
 
     // allow or not selectAllCheckBox to change values of other checkboxes
     protected boolean canSelectAllCheckboxGenerateEvents = true;
@@ -496,7 +495,9 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
     protected void checkAllCheckboxes() {
         Checkbox selectAllCheckBox = (Checkbox) attributesBoxScroll.getChildren().
-                filter(e->e.getId().equals(SELECT_ALL_CHECK_BOX)).findFirst().orElse(null);
+                filter(e -> UiComponentUtils.sameId(e, SELECT_ALL_CHECK_BOX))
+                .findFirst().orElse(null);
+
         if (selectAllCheckBox != null) {
             for (Component c : attributesBoxScroll.getChildren().collect(Collectors.toList())) {
                 if (!c.equals(selectAllCheckBox)) {
@@ -534,14 +535,15 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
     public void clearAttributes() {
         for (Component c : attributesBoxScroll.getChildren().collect(Collectors.toList())) {
-            if (!SELECT_ALL_CHECK_BOX.equals(c.getId())) {
+            if (!UiComponentUtils.sameId(c, SELECT_ALL_CHECK_BOX)) {
                 attributesBoxScroll.remove(c);
             }
         }
     }
 
     protected boolean isEntityHaveAttribute(String propertyName, MetaClass metaClass, Set<LoggedAttribute> enabledAttr) {
-        if (enabledAttr != null && (metaClass.findProperty(propertyName) == null || !metadataTools.isSystem(metaClass.getProperty(propertyName)))) {
+        if (enabledAttr != null && (metaClass.findProperty(propertyName) == null
+                || !metadataTools.isSystem(metaClass.getProperty(propertyName)))) {
             for (LoggedAttribute logAttr : enabledAttr)
                 if (logAttr.getName().equals(propertyName))
                     return true;
@@ -719,10 +721,9 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         DataContext dataContext = getDataContext();
         selectedEntity = dataContext.merge(selectedEntity);
         Set<LoggedAttribute> enabledAttributes = selectedEntity.getAttributes();
-        Map<String, String> entityMetaClasses = getEntityMetaClasses();
         for (Component c : attributesBoxScroll.getChildren().collect(Collectors.toList())) {
             Checkbox currentCheckBox = (Checkbox) c;
-            if (SELECT_ALL_CHECK_BOX.equals(currentCheckBox.getId()))
+            if (UiComponentUtils.sameId(currentCheckBox, SELECT_ALL_CHECK_BOX))
                 continue;
             Boolean currentCheckBoxValue = currentCheckBox.getValue();
             MetaClass metaClass = metadata.getSession().getClass(entityNameField.getValue());

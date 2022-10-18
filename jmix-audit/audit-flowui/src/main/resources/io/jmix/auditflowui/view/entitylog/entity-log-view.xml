@@ -147,7 +147,7 @@
         <hbox id="setupWrapper" visible="false" width="100%">
             <vbox id="loggedEntityTableBox"
                   expand="loggedEntityTable" padding="false">
-                <hbox id="loggedEntityButtonPanel" className="buttons-panel">
+                <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
                     <button id="createBtn" action="loggedEntityTable.create"/>
                     <button id="editBtn" action="loggedEntityTable.edit"/>
                     <button id="removeBtn" action="loggedEntityTable.remove"/>

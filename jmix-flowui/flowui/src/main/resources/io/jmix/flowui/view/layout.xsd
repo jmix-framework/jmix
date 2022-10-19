@@ -1454,6 +1454,8 @@
                     <xs:enumeration value="large"/>
                     <xs:enumeration value="tertiary-inline"/>
                     <xs:enumeration value="primary"/>
+                    <xs:enumeration value="error"/>
+                    <xs:enumeration value="success"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="icon"/>
                     <xs:enumeration value="contained"/>
@@ -2222,6 +2224,15 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- ComboButton-->
+    <xs:complexType name="comboButtonComponent">
+        <xs:complexContent>
+            <xs:extension base="dropdownButtonComponent">
+                <xs:attribute name="action" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- ComboBox-->
     <xs:complexType name="comboBoxComponent">
         <xs:complexContent>
@@ -2963,6 +2974,7 @@
                 <xs:element name="timePicker" type="timePickerComponent"/>
                 <xs:element name="dateTimePicker" type="dateTimePickerComponent"/>
                 <xs:element name="dropdownButton" type="dropdownButtonComponent"/>
+                <xs:element name="comboButton" type="comboButtonComponent"/>
                 <xs:element name="comboBox" type="comboBoxComponent"/>
                 <xs:element name="valuePicker" type="valuePickerComponent"/>
                 <xs:element name="multiValuePicker" type="valuePickerComponent"/>

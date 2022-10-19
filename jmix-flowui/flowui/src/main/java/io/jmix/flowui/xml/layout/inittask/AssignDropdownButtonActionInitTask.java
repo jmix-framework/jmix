@@ -16,17 +16,19 @@
 
 package io.jmix.flowui.xml.layout.inittask;
 
+import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonComponent;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 
-public class AssignDropdownButtonActionInitTask extends AbstractAssignActionInitTask<DropdownButton> {
+public class AssignDropdownButtonActionInitTask<C extends Component & DropdownButtonComponent>
+        extends AbstractAssignActionInitTask<C> {
 
     protected String id;
     protected int index;
 
-    public AssignDropdownButtonActionInitTask(DropdownButton component,
+    public AssignDropdownButtonActionInitTask(C component,
                                               String actionId,
                                               String actionItemId,
                                               int index,

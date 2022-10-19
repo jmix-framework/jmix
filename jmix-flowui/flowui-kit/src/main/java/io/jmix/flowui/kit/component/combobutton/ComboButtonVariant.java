@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.dropdownbutton;
+package io.jmix.flowui.kit.component.combobutton;
 
-public enum DropdownButtonVariant {
+public enum ComboButtonVariant {
 
     LUMO_SMALL("small"),
     LUMO_LARGE("large"),
@@ -32,7 +32,7 @@ public enum DropdownButtonVariant {
 
     private final String variant;
 
-    DropdownButtonVariant(String variant) {
+    ComboButtonVariant(String variant) {
         this.variant = variant;
     }
 

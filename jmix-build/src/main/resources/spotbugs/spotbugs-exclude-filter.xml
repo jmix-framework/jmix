@@ -122,6 +122,12 @@
     </Match>
 
     <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+        <Class name="io.jmix.notifications.channel.impl.InAppNotificationChannel"/>
+        <Method name="init"/>
+    </Match>
+
+    <Match>
         <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
         <Class name="io.jmix.data.impl.jpql.EntityPath"/>
     </Match>

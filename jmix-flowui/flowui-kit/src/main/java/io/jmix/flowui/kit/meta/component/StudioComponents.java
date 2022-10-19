@@ -36,6 +36,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
@@ -369,7 +370,7 @@ public interface StudioComponents {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
-                            options = {"small", "large", "tertiary-inline", "primary", "contrast",
+                            options = {"small", "large", "tertiary-inline", "primary", "success", "error", "contrast",
                                     "icon", "contained", "outlined"}),
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
@@ -381,7 +382,42 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
             }
     )
-    MenuBar dropdownButton();
+    DropdownButton dropdownButton();
+
+    @StudioComponent(
+            name = "ComboButton",
+            classFqn = "io.jmix.flowui.kit.component.combobutton.ComboButton",
+            category = "Components",
+            xmlElement = "comboButton",
+            properties = {
+                    @StudioProperty(xmlAttribute = "action", type = StudioPropertyType.ACTION_REF),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "openOnHover", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"small", "large", "tertiary-inline", "primary", "success", "error", "contrast",
+                                    "icon", "contained", "outlined"}),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"}),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    MenuBar comboButton();
 
     @StudioComponent(
             name = "ComboBoxPicker",

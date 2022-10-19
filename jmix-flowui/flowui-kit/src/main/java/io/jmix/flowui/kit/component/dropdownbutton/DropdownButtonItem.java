@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 
 public interface DropdownButtonItem {
 
-    DropdownButton getParent();
+    DropdownButtonComponent getParent();
 
     String getId();
 

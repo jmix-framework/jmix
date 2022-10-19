@@ -182,4 +182,36 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("textItem") as TextItem).getText() == "textItemContent"
         }
     }
+
+    def "Load comboButton component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = openScreen(ComponentView.class)
+
+        then: "ComboButton attributes will be loaded"
+        verifyAll(componentView.comboButtonId) {
+            id.get() == "comboButtonId"
+            action.getText() == "Action Text"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            enabled
+            height == "50px"
+            icon.element.getAttribute("icon") ==
+                    VaadinIcon.USER.create().element.getAttribute("icon")
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            openOnHover
+            text == "Action Text"
+            themeNames.containsAll([DropdownButtonVariant.LUMO_PRIMARY.getVariantName()])
+            title == "Action Description"
+            visible
+            whiteSpace == HasText.WhiteSpace.PRE
+            width == "100px"
+            getItems().size() == 4
+            (getItem("firstActionItem") as ActionItem).getAction().getId() == "action2"
+            (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
+            ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
+            (getItem("textItem") as TextItem).getText() == "textItemContent"
+        }
+    }
 }

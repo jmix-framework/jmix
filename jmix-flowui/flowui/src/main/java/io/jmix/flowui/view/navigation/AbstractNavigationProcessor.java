@@ -19,13 +19,11 @@ package io.jmix.flowui.view.navigation;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
+import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.sys.ViewSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URISyntaxException;
 
 public abstract class AbstractNavigationProcessor<N extends ViewNavigator> {
 
@@ -54,12 +52,7 @@ public abstract class AbstractNavigationProcessor<N extends ViewNavigator> {
                 log.trace("Fetched URL: {}", url.toString());
 
                 navigationSupport.navigate(viewClass, routeParameters, queryParameters);
-
-                try {
-                    viewSupport.registerBackwardNavigation(viewClass, url.toURI());
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e.getMessage(), e);
-                }
+                viewSupport.registerBackwardNavigation(viewClass, url);
             });
         } else {
             navigationSupport.navigate(viewClass, routeParameters, queryParameters);

@@ -199,32 +199,39 @@ public class CrossDataStoreReferenceLoader {
         MetaClass cdsrMetaClass = crossDataStoreProperty.property.getRange().asClass();
         LoadContext<?> loadContext = new LoadContext<>(cdsrMetaClass);
 
-        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(cdsrMetaClass);
-        if (primaryKeyProperty == null || !primaryKeyProperty.getRange().isClass()) {
-            String queryString = String.format(
-                    "select e from %s e where e.%s in :idList", cdsrMetaClass, crossDataStoreProperty.primaryKeyName);
-            loadContext.setQuery(new LoadContext.Query(queryString).setParameter("idList", idList));
-        } else {
-            // composite key entity
-            StringBuilder sb = new StringBuilder("select e from ");
-            sb.append(cdsrMetaClass).append(" e where ");
+        if (metadataTools.isJpa(crossDataStoreProperty.property)) {
+            // Don't use standard loading by ids for JPA entities because AbstractDataStore throws exception
+            // if not all requested entities are loaded, see checkAndReorderLoadedEntities()
+            MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(cdsrMetaClass);
+            if (primaryKeyProperty == null || !primaryKeyProperty.getRange().isClass()) {
+                String queryString = String.format(
+                        "select e from %s e where e.%s in :idList", cdsrMetaClass, crossDataStoreProperty.primaryKeyName);
+                loadContext.setQuery(new LoadContext.Query(queryString).setParameter("idList", idList));
+            } else {
+                // composite key entity
+                StringBuilder sb = new StringBuilder("select e from ");
+                sb.append(cdsrMetaClass).append(" e where ");
 
-            MetaClass idMetaClass = primaryKeyProperty.getRange().asClass();
-            for (Iterator<MetaProperty> it = idMetaClass.getProperties().iterator(); it.hasNext(); ) {
-                MetaProperty property = it.next();
-                sb.append("e.").append(crossDataStoreProperty.primaryKeyName).append(".").append(property.getName());
-                sb.append(" in :list_").append(property.getName());
-                if (it.hasNext())
-                    sb.append(" and ");
+                MetaClass idMetaClass = primaryKeyProperty.getRange().asClass();
+                for (Iterator<MetaProperty> it = idMetaClass.getProperties().iterator(); it.hasNext(); ) {
+                    MetaProperty property = it.next();
+                    sb.append("e.").append(crossDataStoreProperty.primaryKeyName).append(".").append(property.getName());
+                    sb.append(" in :list_").append(property.getName());
+                    if (it.hasNext())
+                        sb.append(" and ");
+                }
+                LoadContext.Query query = new LoadContext.Query(sb.toString());
+                for (MetaProperty property : idMetaClass.getProperties()) {
+                    List<Object> propList = idList.stream()
+                            .map(o -> EntityValues.getValue(o, property.getName()))
+                            .collect(Collectors.toList());
+                    query.setParameter("list_" + property.getName(), propList);
+                }
+                loadContext.setQuery(query);
             }
-            LoadContext.Query query = new LoadContext.Query(sb.toString());
-            for (MetaProperty property : idMetaClass.getProperties()) {
-                List<Object> propList = idList.stream()
-                        .map(o -> EntityValues.getValue(o, property.getName()))
-                        .collect(Collectors.toList());
-                query.setParameter("list_" + property.getName(), propList);
-            }
-            loadContext.setQuery(query);
+        } else {
+            // A custom datastore based on AbstractDataStore can override checkAndReorderLoadedEntities() if needed
+            loadContext.setIds(idList);
         }
 
         loadContext.setFetchPlan(crossDataStoreProperty.fetchPlanProperty.getFetchPlan());

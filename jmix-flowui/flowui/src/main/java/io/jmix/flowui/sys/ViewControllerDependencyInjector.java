@@ -26,6 +26,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstallSubject;
@@ -631,6 +632,13 @@ public class ViewControllerDependencyInjector {
 
             if (componentOpt.isPresent()) {
                 Component component = componentOpt.get();
+
+                if (component instanceof HasSubParts) {
+                    Object part = ((HasSubParts) component).getSubPart(id);
+                    if (part != null) {
+                        return part;
+                    }
+                }
 
                 if (component instanceof HasActions) {
                     Action action = ((HasActions) component).getAction(id);

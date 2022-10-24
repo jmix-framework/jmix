@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractDateTimeFieldDelegate<C extends AbstractField<?, V>, T extends Comparable<T>, V>
+public abstract class AbstractDateTimeFieldDelegate<C extends AbstractField<?, V>, T extends Comparable, V>
         extends AbstractFieldDelegate<C, T, V> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractDateTimeFieldDelegate.class);

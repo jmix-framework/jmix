@@ -45,7 +45,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-public class TypedDateTimePicker<V extends Comparable<V>> extends DateTimePicker
+public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
         implements SupportsValueSource<V>,
         SupportsTypedValue<TypedDateTimePicker<V>,
                         ComponentValueChangeEvent<DateTimePicker, LocalDateTime>, V, LocalDateTime>, HasZoneId,

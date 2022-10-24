@@ -28,7 +28,7 @@ import java.time.LocalDate;
 
 @Component("flowui_DatePickerDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DatePickerDelegate<V extends Comparable<V>>
+public class DatePickerDelegate<V extends Comparable>
         extends AbstractDateTimeFieldDelegate<TypedDatePicker<V>, V, LocalDate> {
 
     public DatePickerDelegate(TypedDatePicker<V> component) {

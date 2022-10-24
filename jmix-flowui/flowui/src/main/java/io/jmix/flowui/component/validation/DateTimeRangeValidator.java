@@ -27,7 +27,7 @@ import java.util.Map;
 
 @Component("flowui_DateTimeRangeValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DateTimeRangeValidator<T extends Comparable<T>> extends AbstractValidator<T> {
+public class DateTimeRangeValidator<T extends Comparable> extends AbstractValidator<T> {
 
     protected T min;
     protected T max;

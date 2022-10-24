@@ -34,6 +34,6 @@ public class ListViewNavigationProcessor extends AbstractNavigationProcessor<Lis
 
     @Override
     protected Class<? extends View> inferViewClass(ListViewNavigator<?> navigator) {
-        return viewRegistry.getLookupViewInfo(navigator.getEntityClass()).getControllerClass();
+        return viewRegistry.getListViewInfo(navigator.getEntityClass()).getControllerClass();
     }
 }

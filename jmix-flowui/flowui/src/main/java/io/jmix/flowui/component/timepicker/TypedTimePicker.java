@@ -42,7 +42,7 @@ import org.springframework.context.ApplicationContextAware;
 import javax.annotation.Nullable;
 import java.time.*;
 
-public class TypedTimePicker<V extends Comparable<V>> extends TimePicker implements SupportsValueSource<V>,
+public class TypedTimePicker<V extends Comparable> extends TimePicker implements SupportsValueSource<V>,
         SupportsTypedValue<TypedTimePicker<V>, ComponentValueChangeEvent<TimePicker, LocalTime>, V, LocalTime>,
         SupportsDatatype<V>, SupportsValidation<V>, HasRequired, HasZoneId, ApplicationContextAware,
         InitializingBean {

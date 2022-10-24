@@ -42,7 +42,7 @@ import org.springframework.context.ApplicationContextAware;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
 
-public class TypedDatePicker<V extends Comparable<V>> extends DatePicker
+public class TypedDatePicker<V extends Comparable> extends DatePicker
         implements SupportsValueSource<V>,
         SupportsTypedValue<TypedDatePicker<V>, ComponentValueChangeEvent<DatePicker, LocalDate>, V, LocalDate>,
         SupportsDatatype<V>, SupportsValidation<V>, HasRequired, InitializingBean, ApplicationContextAware {

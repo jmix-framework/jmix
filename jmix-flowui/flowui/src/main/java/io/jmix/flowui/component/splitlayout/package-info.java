@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.flowui.splitlayout;
+package io.jmix.flowui.component.splitlayout;
 
 import org.springframework.lang.NonNullApi;

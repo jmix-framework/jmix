@@ -18,20 +18,32 @@ package io.jmix.datatoolsflowui.view.entityinspector;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-public enum ShowMode implements EnumClass<Integer> {
+import javax.annotation.Nullable;
 
-    NON_REMOVED(10),
-    REMOVED(20),
-    ALL(30);
+public enum ShowMode implements EnumClass<String> {
 
-    private final int id;
+    NON_REMOVED("non_removed"),
+    REMOVED("removed"),
+    ALL("all");
 
-    ShowMode(int id) {
+    private final String id;
+
+    ShowMode(String id) {
         this.id = id;
     }
 
     @Override
-    public Integer getId() {
+    public String getId() {
         return id;
+    }
+
+    @Nullable
+    public static ShowMode fromId(String id) {
+        for (ShowMode at : ShowMode.values()) {
+            if (at.getId().equals(id)) {
+                return at;
+            }
+        }
+        return null;
     }
 }

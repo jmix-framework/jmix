@@ -27,6 +27,7 @@ import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -1216,6 +1217,35 @@ public interface StudioComponents {
             }
     )
     Select select();
+
+    @StudioComponent(
+            name = "Tabs",
+            classFqn = "com.vaadin.flow.component.tabs.Tabs",
+            category = "Components",
+            xmlElement = "tabs",
+            icon = "io/jmix/flowui/kit/meta/icon/component/tabs.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.tabs.Tabs$Orientation",
+                            setMethod = "setOrientation", defaultValue = "HORIZONTAL",
+                            options = {"VERTICAL", "HORIZONTAL"}),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"icon-on-top", "centered", "small", "minimal",
+                                    "hide-scroll-buttons", "equal-width-tabs", "fixed"}),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100%")
+            }
+    )
+    Tabs tabs();
 
     @StudioComponent(
             name = "TextArea",

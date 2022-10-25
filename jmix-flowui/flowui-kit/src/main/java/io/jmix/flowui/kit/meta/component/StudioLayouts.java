@@ -23,21 +23,20 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.tabs.Tabs;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 
 @StudioUiKit
-public interface StudioContainers {
+public interface StudioLayouts {
 
     @StudioComponent(
             name = "Details",
             classFqn = "com.vaadin.flow.component.details.Details",
-            category = "Containers",
+            category = "Layouts",
             xmlElement = "details",
-            icon = "io/jmix/flowui/kit/meta/icon/container/details.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/details.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -61,9 +60,9 @@ public interface StudioContainers {
     @StudioComponent(
             name = "HBox",
             classFqn = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
-            category = "Containers",
+            category = "Layouts",
             xmlElement = "hbox",
-            icon = "io/jmix/flowui/kit/meta/icon/container/hbox.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/hbox.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignItems", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -102,9 +101,9 @@ public interface StudioContainers {
     @StudioComponent(
             name = "VBox",
             classFqn = "com.vaadin.flow.component.orderedlayout.VerticalLayout",
-            category = "Containers",
+            category = "Layouts",
             xmlElement = "vbox",
-            icon = "io/jmix/flowui/kit/meta/icon/container/vbox.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/vbox.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignItems", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -143,9 +142,9 @@ public interface StudioContainers {
     @StudioComponent(
             name = "Scroller",
             classFqn = "io.jmix.flowui.component.scroller.JmixScroller",
-            category = "Containers",
+            category = "Layouts",
             xmlElement = "scroller",
-            icon = "io/jmix/flowui/kit/meta/icon/container/scroller.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/scroller.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
@@ -169,9 +168,9 @@ public interface StudioContainers {
     @StudioComponent(
             name = "Split",
             classFqn = "io.jmix.flowui.splitlayout.JmixSplitLayout",
-            category = "Containers",
+            category = "Layouts",
             xmlElement = "split",
-            icon = "io/jmix/flowui/kit/meta/icon/container/split.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/split.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
@@ -196,40 +195,11 @@ public interface StudioContainers {
     SplitLayout splitLayout();
 
     @StudioComponent(
-            name = "Tabs",
-            classFqn = "com.vaadin.flow.component.tabs.Tabs",
-            category = "Containers",
-            xmlElement = "tabs",
-            icon = "io/jmix/flowui/kit/meta/icon/container/tabs.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.tabs.Tabs$Orientation",
-                            setMethod = "setOrientation", defaultValue = "HORIZONTAL",
-                            options = {"VERTICAL", "HORIZONTAL"}),
-                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
-                            options = {"icon-on-top", "centered", "small", "minimal",
-                                    "hide-scroll-buttons", "equal-width-tabs", "fixed"}),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100%")
-            }
-    )
-    Tabs tabs();
-
-    @StudioComponent(
             name = "Accordion",
             classFqn = "com.vaadin.flow.component.accordion.Accordion",
-            category = "Containers",
+            category = "Layouts",
             xmlElement = "accordion",
-            icon = "io/jmix/flowui/kit/meta/icon/container/accordion.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/accordion.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
@@ -249,9 +219,9 @@ public interface StudioContainers {
     @StudioComponent(
             name = "FormLayout",
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout",
-            category = "Containers",
+            category = "Layouts",
             xmlElement = "formLayout",
-            icon = "io/jmix/flowui/kit/meta/icon/container/formLayout.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/formLayout.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),

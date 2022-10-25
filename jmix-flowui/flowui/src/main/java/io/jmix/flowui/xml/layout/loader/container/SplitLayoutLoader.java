@@ -17,8 +17,8 @@
 package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.splitlayout.JmixSplitLayout;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;

@@ -17,7 +17,9 @@
 package io.jmix.datatoolsflowui.view.entityinspector;
 
 import com.google.common.collect.ImmutableMap;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -25,6 +27,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.selection.SelectionEvent;
+import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.*;
@@ -58,21 +61,15 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
-import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.LookupComponent;
-import io.jmix.flowui.view.OpenMode;
-import io.jmix.flowui.view.StandardListView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -93,6 +90,9 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected static final String RESTORE_ACTION_ID = "restore";
     protected static final String WIPE_OUT_ACTION_ID = "wipeOut";
 
+    protected static final String QUERY_PARAM_ENTITY = "entity";
+    protected static final String QUERY_PARAM_MODE = "mode";
+
     @ViewComponent
     protected HorizontalLayout lookupBox;
     @ViewComponent
@@ -106,6 +106,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected MessageBundle messageBundle;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -132,12 +134,15 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected DataManager dataManager;
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
+    @Autowired
+    protected RouteSupport routeSupport;
 
     protected DataGrid<Object> entitiesDataGrid;
     protected MetaClass selectedMeta;
     protected CollectionLoader entitiesDl;
     protected CollectionContainer entitiesDc;
     protected String entityName;
+    protected boolean isDialogMode = true;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -149,6 +154,27 @@ public class EntityInspectorListView extends StandardListView<Object> {
         showMode.addValueChangeListener(e -> showEntities());
     }
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        Map<String, List<String>> parameters = event.getLocation().getQueryParameters().getParameters();
+
+        if (parameters.containsKey(QUERY_PARAM_ENTITY)) {
+            parameters.get(QUERY_PARAM_ENTITY).stream()
+                    .findAny()
+                    .ifPresent(this::setEntityName);
+        }
+
+        if (parameters.containsKey(QUERY_PARAM_MODE)) {
+            parameters.get(QUERY_PARAM_MODE).stream()
+                    .findAny()
+                    .ifPresent(this::setShowMode);
+        }
+
+        isDialogMode = false;
+
+        super.beforeEnter(event);
+    }
+
     //to handle the usage of entityName public setter
     @Subscribe
     public void beforeShow(BeforeShowEvent event) {
@@ -156,9 +182,19 @@ public class EntityInspectorListView extends StandardListView<Object> {
             Session session = metadata.getSession();
             selectedMeta = session.getClass(entityName);
 
-            lookupBox.setVisible(false);
+            entitiesLookup.setValue(selectedMeta);
             createEntitiesDataGrid(selectedMeta);
             entitiesDl.load();
+        }
+
+        lookupBox.setVisible(!isDialogMode);
+    }
+
+    @Subscribe
+    public void onReady(ReadyEvent event) {
+        if (!isDialogMode) {
+            entitiesLookup.addValueChangeListener(this::entityChangeListener);
+            showMode.addValueChangeListener(this::showModeChangeListener);
         }
     }
 
@@ -384,6 +420,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         EditAction editAction = actions.create(EditAction.class);
         editAction.setOpenMode(OpenMode.NAVIGATION);
         editAction.setTarget(dataGrid);
+
         editAction.setRouteParametersProvider(() -> {
             Object selectedItem = dataGrid.getSingleSelectedItem();
             Object id = EntityValues.getId(selectedItem);
@@ -398,6 +435,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
             }
             return null;
         });
+
         editAction.setViewClass(EntityInspectorDetailView.class);
         editAction.addEnabledRule(() -> dataGrid.getSelectedItems().size() == 1);
 
@@ -512,6 +550,32 @@ public class EntityInspectorListView extends StandardListView<Object> {
         entitiesDataGrid.focus();
     }
 
+    protected void entityChangeListener(
+            AbstractField.ComponentValueChangeEvent<ComboBox<MetaClass>, MetaClass> valueChangeEvent) {
+        getUI().ifPresent(ui -> {
+            String queryParamValue = valueChangeEvent.getValue().getName();
+
+            routeSupport.setQueryParameter(
+                    ui,
+                    QUERY_PARAM_ENTITY,
+                    queryParamValue
+            );
+        });
+    }
+
+    protected void showModeChangeListener(
+            AbstractField.ComponentValueChangeEvent<Select<ShowMode>, ShowMode> valueChangeEvent) {
+        getUI().ifPresent(ui -> {
+            String queryParamValue = valueChangeEvent.getValue().getId();
+
+            routeSupport.setQueryParameter(
+                    ui,
+                    QUERY_PARAM_MODE,
+                    queryParamValue
+            );
+        });
+    }
+
     protected void showNotification(String message) {
         notifications.create(messages.getMessage(EntityInspectorListView.class,
                         message))
@@ -526,8 +590,21 @@ public class EntityInspectorListView extends StandardListView<Object> {
         return entityContext.isViewPermitted();
     }
 
-    public String getEntityName() {
-        return entityName;
+    protected void setShowMode(String showModeParameter) {
+        ShowMode showModeValue = ShowMode.fromId(showModeParameter);
+
+        if (showModeValue != null) {
+            showMode.setValue(showModeValue);
+        } else {
+            showMode.setValue(ShowMode.NON_REMOVED);
+
+            String title = messageBundle.getMessage("showMode.invalidQueryParameterTitle");
+            String message = messageBundle.getMessage("showMode.invalidQueryParameterMessage");
+
+            notifications.create(title, message)
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+        }
     }
 
     public void setEntityName(String entityName) {

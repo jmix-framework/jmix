@@ -16,8 +16,10 @@
 
 package io.jmix.flowui.component;
 
+import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.model.CollectionContainer;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
@@ -35,6 +37,10 @@ public class ComponentGenerationContext {
     protected ValueSource valueSource;
     protected Element xmlDescriptor;
     protected Class<?> targetClass;
+
+    protected DataProvider items;
+    protected Class<?> enumItems;
+    protected CollectionContainer<?> collectionItems;
 
     /**
      * Creates an instance of ComponentGenerationContext.
@@ -77,6 +83,36 @@ public class ComponentGenerationContext {
      */
     public ComponentGenerationContext setValueSource(@Nullable ValueSource valueSource) {
         this.valueSource = valueSource;
+        return this;
+    }
+
+    @Nullable
+    public DataProvider getItems() {
+        return items;
+    }
+
+    public ComponentGenerationContext setItems(@Nullable DataProvider items) {
+        this.items = items;
+        return this;
+    }
+
+    @Nullable
+    public Class<?> getEnumItems() {
+        return enumItems;
+    }
+
+    public ComponentGenerationContext setEnumItems(@Nullable Class<?> enumItems) {
+        this.enumItems = enumItems;
+        return this;
+    }
+
+    @Nullable
+    public CollectionContainer<?> getCollectionItems() {
+        return collectionItems;
+    }
+
+    public ComponentGenerationContext setCollectionItems(@Nullable CollectionContainer<?> collectionItems) {
+        this.collectionItems = collectionItems;
         return this;
     }
 

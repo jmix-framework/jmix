@@ -97,7 +97,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         } else if (mppRange.isDatatype()) {
             resultComponent = createDatatypeField(context, mpp);
         } else if (mppRange.isClass()) {
-            resultComponent = createEntityField(context, mpp);
+            resultComponent = createEntityField(context);
         } else if (mppRange.isEnum()) {
             resultComponent = createEnumField(context);
         }
@@ -205,8 +205,14 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         return numberField;
     }
 
-    protected Component createEntityField(ComponentGenerationContext context, MetaPropertyPath mpp) {
-        Component entityComponent = entityFieldCreationSupport.createEntityField(mpp);
+    @Nullable
+    protected Component createEntityField(ComponentGenerationContext context) {
+        Component entityComponent = entityFieldCreationSupport.createEntityField(context);
+
+        if (entityComponent == null) {
+            return null;
+        }
+
         setValueSource((SupportsValueSource<?>) entityComponent, context);
         return entityComponent;
     }

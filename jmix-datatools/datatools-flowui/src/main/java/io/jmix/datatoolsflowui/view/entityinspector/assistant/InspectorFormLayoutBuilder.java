@@ -198,6 +198,7 @@ public class InspectorFormLayoutBuilder {
         ComponentGenerationContext componentContext =
                 new ComponentGenerationContext(metaClass, metaProperty.getName());
         componentContext.setValueSource(valueSource);
+        componentContext.setTargetClass(FormLayout.class);
 
         com.vaadin.flow.component.Component field;
 

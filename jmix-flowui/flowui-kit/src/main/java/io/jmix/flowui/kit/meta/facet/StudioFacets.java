@@ -41,4 +41,16 @@ public interface StudioFacets {
             }
     )
     void dataLoadCoordinator();
+
+    @StudioFacet(
+            name = "QueryParameters",
+            classFqn = "io.jmix.flowui.facet.QueryParametersFacet",
+            category = "Facets",
+            xmlElement = "queryParameters",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+            }
+    )
+    void queryParameters();
 }

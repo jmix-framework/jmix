@@ -28,22 +28,21 @@ import org.springframework.stereotype.Component;
 
 import static io.jmix.flowui.view.StandardDetailView.MODE_PARAM;
 import static io.jmix.flowui.view.StandardDetailView.MODE_READONLY;
-import static io.jmix.flowui.view.navigation.NavigationUtils.addQueryParameters;
 import static java.util.Objects.requireNonNull;
 
 @Internal
 @Component("flowui_DetailViewNavigationProcessor")
 public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<DetailViewNavigator<?>> {
 
-    protected UrlParamSerializer urlParamSerializer;
+    protected RouteSupport routeSupport;
 
     public DetailViewNavigationProcessor(ViewSupport viewSupport,
                                          ViewRegistry viewRegistry,
                                          ViewNavigationSupport navigationSupport,
-                                         UrlParamSerializer urlParamSerializer) {
+                                         RouteSupport routeSupport) {
         super(viewSupport, viewRegistry, navigationSupport);
 
-        this.urlParamSerializer = urlParamSerializer;
+        this.routeSupport = routeSupport;
     }
 
     @Override
@@ -56,7 +55,7 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
         if (navigator.isReadOnly()) {
             QueryParameters queryParameters = navigator.getQueryParameters()
                     .orElse(QueryParameters.empty());
-            return addQueryParameters(queryParameters, MODE_PARAM, MODE_READONLY);
+            return routeSupport.addQueryParameter(queryParameters, MODE_PARAM, MODE_READONLY);
         } else {
             return super.getQueryParameters(navigator);
         }
@@ -77,7 +76,7 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
     }
 
     protected RouteParameters generateNewEntityRouteParameters(DetailViewNavigator<?> navigator) {
-        return NavigationUtils.generateRouteParameters(navigator, "id", StandardDetailView.NEW_ENTITY_ID);
+        return routeSupport.createRouteParameters("id", StandardDetailView.NEW_ENTITY_ID);
     }
 
     protected RouteParameters generateEditEntityRouteParameters(DetailViewNavigator<?> navigator) {
@@ -86,6 +85,6 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
                         navigator.getEntityClass())));
 
         Object id = requireNonNull(EntityValues.getId(entity));
-        return NavigationUtils.generateRouteParameters(navigator, "id", urlParamSerializer.serialize(id));
+        return routeSupport.createRouteParameters("id", id);
     }
 }

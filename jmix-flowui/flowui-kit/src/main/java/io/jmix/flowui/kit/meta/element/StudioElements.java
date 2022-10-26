@@ -236,4 +236,18 @@ public interface StudioElements {
             }
     )
     DropdownButtonItem textItem();
+
+    @StudioElement(
+            name = "Pagination",
+            classFqn = "io.jmix.flowui.facet.queryparameters.PaginationQueryParametersBinder",
+            xmlElement = "pagination",
+            target = {"io.jmix.flowui.facet.QueryParametersFacet"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "firstResultParam", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxResultsParam", type = StudioPropertyType.STRING)
+            }
+    )
+    void pagination();
 }

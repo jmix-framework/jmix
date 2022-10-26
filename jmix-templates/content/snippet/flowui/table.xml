@@ -34,7 +34,7 @@ fetchPlan.orderedRootProperties.each { property ->
 <%tableActions.each { action ->%>
 <button id="${action}Btn" action="${tableId}.${action}"/>
 <%}%>
-<simplePagination dataLoader="${tableDl}"/>
+<simplePagination id="pagination" dataLoader="${tableDl}"/>
 </hbox>
 <${tableType.xmlName} id="${tableId}"
         width="100%"

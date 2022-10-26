@@ -19,12 +19,13 @@ package io.jmix.flowui.kit.component.dropdownbutton;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.HasSubParts;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface DropdownButtonComponent {
+public interface DropdownButtonComponent extends HasSubParts {
 
     DropdownButtonItem addItem(String id, Action action);
 
@@ -81,4 +82,10 @@ public interface DropdownButtonComponent {
 
     @Nullable
     Icon getIcon();
+
+    @Nullable
+    @Override
+    default Object getSubPart(String name) {
+        return getItem(name);
+    }
 }

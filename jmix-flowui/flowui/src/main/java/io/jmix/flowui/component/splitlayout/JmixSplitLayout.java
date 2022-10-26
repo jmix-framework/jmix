@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.splitlayout;
+package io.jmix.flowui.component.splitlayout;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.splitlayout.SplitLayout;

@@ -44,11 +44,23 @@ public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBui
         this.handler = (Function<AbstractWindowBuilder<V>, DialogWindow<V>>) handler;
     }
 
+    /**
+     * Adds {@link AfterOpenEvent} listener to the dialog window.
+     *
+     * @param listener the listener to add
+     * @return this instance for chaining
+     */
     public AbstractWindowBuilder<V> withAfterOpenListener(@Nullable Consumer<AfterOpenEvent<V>> listener) {
         this.afterOpenListener = listener;
         return this;
     }
 
+    /**
+     * Adds {@link AfterCloseEvent} listener to the dialog window.
+     *
+     * @param listener the listener to add
+     * @return this instance for chaining
+     */
     public AbstractWindowBuilder<V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         this.afterCloseListener = listener;
         return this;
@@ -74,10 +86,20 @@ public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBui
         return Optional.ofNullable(afterCloseListener);
     }
 
+    /**
+     * Builds the dialog window. Dialog window should be shown using {@link DialogWindow#open()}.
+     *
+     * @return built dialog window
+     */
     public DialogWindow<V> build() {
         return handler.apply(this);
     }
 
+    /**
+     * Opens built dialog window.
+     *
+     * @return built dialog window
+     */
     public DialogWindow<V> open() {
         DialogWindow<V> dialogWindow = build();
         dialogWindow.open();

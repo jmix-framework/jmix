@@ -99,3 +99,10 @@ publishing {
         }
     }
 }
+
+processResources {
+    inputs.property('version', project.version)
+    filesMatching(['io/jmix/gradle/versions.properties']) {
+        expand(version: project.version)
+    }
+}

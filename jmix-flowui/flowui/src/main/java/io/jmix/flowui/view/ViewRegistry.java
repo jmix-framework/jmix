@@ -80,6 +80,7 @@ public class ViewRegistry implements ApplicationContextAware {
     protected Map<String, ViewInfo> views = new HashMap<>();
 
     protected Map<Class<?>, ViewInfo> primaryDetailViews = new HashMap<>();
+    protected Map<Class<?>, ViewInfo> primaryListViews = new HashMap<>();
     protected Map<Class<?>, ViewInfo> primaryLookupViews = new HashMap<>();
 
     protected List<ViewControllersConfiguration> configurations = Collections.emptyList();
@@ -158,6 +159,7 @@ public class ViewRegistry implements ApplicationContextAware {
 
         views.clear();
         primaryDetailViews.clear();
+        primaryListViews.clear();
         primaryLookupViews.clear();
 
         loadViewConfigurations();
@@ -204,6 +206,7 @@ public class ViewRegistry implements ApplicationContextAware {
         AnnotationMetadata annotationMetadata = classMetadata.getAnnotationMetadata();
 
         registerPrimaryDetailView(viewInfo, annotationMetadata);
+        registerPrimaryListView(viewInfo, annotationMetadata);
         registerPrimaryLookupView(viewInfo, annotationMetadata);
 
         views.put(id, viewInfo);
@@ -213,6 +216,12 @@ public class ViewRegistry implements ApplicationContextAware {
         getAnnotationValue(annotationMetadata, PrimaryDetailView.class)
                 .ifPresent(aClass ->
                         primaryDetailViews.put(aClass, viewInfo));
+    }
+
+    protected void registerPrimaryListView(ViewInfo viewInfo, AnnotationMetadata annotationMetadata) {
+        getAnnotationValue(annotationMetadata, PrimaryListView.class)
+                .ifPresent(aClass ->
+                        primaryListViews.put(aClass, viewInfo));
     }
 
     protected void registerPrimaryLookupView(ViewInfo viewInfo, AnnotationMetadata annotationMetadata) {
@@ -339,6 +348,7 @@ public class ViewRegistry implements ApplicationContextAware {
         return viewMetaClass.getName() + suffix;
     }
 
+
     /**
      * Returns standard id of the list view for an entity, for example {@code Customer.list}.
      *
@@ -354,12 +364,6 @@ public class ViewRegistry implements ApplicationContextAware {
      * @param metaClass entity metaclass
      */
     public String getLookupViewId(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        ViewInfo viewInfo = primaryLookupViews.get(originalMetaClass.getJavaClass());
-        if (viewInfo != null) {
-            return viewInfo.getId();
-        }
-
         return getMetaClassViewId(metaClass, LOOKUP_VIEW_SUFFIX);
     }
 
@@ -369,12 +373,6 @@ public class ViewRegistry implements ApplicationContextAware {
      * @param metaClass entity metaclass
      */
     public String getDetailViewId(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        ViewInfo viewInfo = primaryDetailViews.get(originalMetaClass.getJavaClass());
-        if (viewInfo != null) {
-            return viewInfo.getId();
-        }
-
         return getMetaClassViewId(metaClass, DETAIL_VIEW_SUFFIX);
     }
 
@@ -421,6 +419,42 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
+     * Returns list or lookup view information by entity metaclass.
+     *
+     * @param metaClass entity metaclass
+     * @return view's registration information
+     * @throws NoSuchViewException if the list or lookup view with the standard id is not registered for the entity
+     */
+    public ViewInfo getListViewInfo(MetaClass metaClass) {
+        String lookupViewId = getAvailableListViewId(metaClass);
+        return getViewInfo(lookupViewId);
+    }
+
+    /**
+     * Returns list or lookup view information by entity class.
+     *
+     * @param entityClass entity class
+     * @return view's registration information
+     * @throws NoSuchViewException if the list or lookup view with the standard id is not registered for the entity
+     */
+    public ViewInfo getListViewInfo(Class<?> entityClass) {
+        MetaClass metaClass = metadata.getSession().getClass(entityClass);
+        return getListViewInfo(metaClass);
+    }
+
+    /**
+     * Returns list or lookup view information by entity instance.
+     *
+     * @param entity entity instance
+     * @return view's registration information
+     * @throws NoSuchViewException if the list or lookup view with the standard id is not registered for the entity
+     */
+    public ViewInfo getListViewInfo(Object entity) {
+        MetaClass metaClass = metadata.getClass(entity);
+        return getListViewInfo(metaClass);
+    }
+
+    /**
      * Returns lookup or list view information by entity metaclass.
      *
      * @param metaClass entity metaclass
@@ -428,12 +462,6 @@ public class ViewRegistry implements ApplicationContextAware {
      * @throws NoSuchViewException if the lookup or list view with the standard id is not registered for the entity
      */
     public ViewInfo getLookupViewInfo(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        ViewInfo viewInfo = primaryLookupViews.get(originalMetaClass.getJavaClass());
-        if (viewInfo != null) {
-            return viewInfo;
-        }
-
         String lookupViewId = getAvailableLookupViewId(metaClass);
         return getViewInfo(lookupViewId);
     }
@@ -463,18 +491,47 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
-     * Returns lookup or list view id by entity metaclass.
+     * Returns list view id by entity metaclass determined by the following procedure:
+     * <ol>
+     *     <li>If a view annotated with @{@link PrimaryListView} exists, its id is used</li>
+     *     <li>Otherwise, a view with {@code <entity_name>.list} id is used</li>
+     * </ol>
+     *
+     * @param metaClass entity metaclass
+     * @return view's id
+     */
+    public String getAvailableListViewId(MetaClass metaClass) {
+        return getListViewIdInternal(metaClass);
+    }
+
+    /**
+     * Returns lookup view id by entity metaclass determined by the following procedure:
+     * <ol>
+     *     <li>If a view annotated with @{@link PrimaryLookupView} exists, its id is used</li>
+     *     <li>Otherwise, if a view with {@code <entity_name>.lookup} id exists, its id is used</li>
+     *     <li>Otherwise, if a view annotated with @{@link PrimaryListView} exists, its id is used</li>
+     *     <li>Otherwise, a view with {@code <entity_name>.list} id is used</li>
+     * </ol>
      *
      * @param metaClass entity metaclass
      * @return view's id
      */
     public String getAvailableLookupViewId(MetaClass metaClass) {
-        String id = getLookupViewId(metaClass);
-        if (!hasView(id)) {
-            id = getListViewId(metaClass);
-        }
+        String id = getLookupViewIdInternal(metaClass);
+        return hasView(id) ? id : getListViewIdInternal(metaClass);
+    }
 
-        return id;
+
+    protected String getListViewIdInternal(MetaClass metaClass) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+        ViewInfo viewInfo = primaryListViews.get(originalMetaClass.getJavaClass());
+        return viewInfo != null ? viewInfo.getId() : getListViewId(metaClass);
+    }
+
+    protected String getLookupViewIdInternal(MetaClass metaClass) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+        ViewInfo viewInfo = primaryLookupViews.get(originalMetaClass.getJavaClass());
+        return viewInfo != null ? viewInfo.getId() : getLookupViewId(metaClass);
     }
 
     /**

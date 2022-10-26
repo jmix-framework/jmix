@@ -29,7 +29,7 @@ import org.springframework.security.authentication.LockedException;
 @ViewDescriptor("login-view.xml")
 public class LoginView extends StandardView implements LocaleChangeObserver {
 
-    private final Logger log = LoggerFactory.getLogger(LoginView.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginView.class);
 
     @Autowired
     private LoginViewSupport loginViewSupport;

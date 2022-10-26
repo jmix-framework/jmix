@@ -28,7 +28,7 @@ import io.jmix.flowui.action.binder.ActionBinders;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.View.InitEvent;
-import io.jmix.flowui.view.navigation.NavigationUtils;
+import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.ComponentLoaderContext;
@@ -40,8 +40,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.servlet.ServletContext;
-import java.net.URI;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -60,7 +59,7 @@ public class ViewSupport {
     protected ViewNavigationSupport navigationSupport;
     protected CurrentAuthentication currentAuthentication;
     protected ViewControllerDependencyManager dependencyManager;
-    protected ServletContext servletContext;
+    protected RouteSupport routeSupport;
 
     protected Map<String, String> titleCache = new ConcurrentHashMap<>();
 
@@ -70,14 +69,14 @@ public class ViewSupport {
                        ViewNavigationSupport navigationSupport,
                        CurrentAuthentication currentAuthentication,
                        ViewControllerDependencyManager dependencyManager,
-                       ServletContext servletContext) {
+                       RouteSupport routeSupport) {
         this.applicationContext = applicationContext;
         this.viewXmlLoader = viewXmlLoader;
         this.viewRegistry = viewRegistry;
         this.navigationSupport = navigationSupport;
         this.currentAuthentication = currentAuthentication;
         this.dependencyManager = dependencyManager;
-        this.servletContext = servletContext;
+        this.routeSupport = routeSupport;
     }
 
     public void initView(View<?> view) {
@@ -126,26 +125,26 @@ public class ViewSupport {
         componentLoaderContext.executeInitTasks();
     }
 
-    public void registerBackwardNavigation(Class<? extends View> viewClass, URI uri) {
-        registerBackwardNavigation(UI.getCurrent(), viewClass, uri);
+    public void registerBackwardNavigation(Class<? extends View> viewClass, URL url) {
+        registerBackwardNavigation(UI.getCurrent(), viewClass, url);
     }
 
-    public void registerBackwardNavigation(UI ui, Class<? extends View> viewClass, URI uri) {
+    public void registerBackwardNavigation(UI ui, Class<? extends View> viewClass, URL url) {
         retrieveExtendedClientDetails(ui, details ->
                 registerBackwardNavigation(ui.getSession(), details.getWindowName(),
-                        viewClass, uri));
+                        viewClass, url));
     }
 
     protected void registerBackwardNavigation(VaadinSession session, String windowName,
-                                              Class<? extends View> viewClass, URI uri) {
-        log.debug("Register backward navigation for '{}' with back uri '{}'", viewClass, uri);
+                                              Class<? extends View> viewClass, URL url) {
+        log.debug("Register backward navigation for '{}' with back url '{}'", viewClass, url);
 
         BackwardNavigationTargets targets = session.getAttribute(BackwardNavigationTargets.class);
         if (targets == null) {
             targets = new BackwardNavigationTargets();
         }
 
-        targets.put(windowName, new Pair<>(viewClass, uri));
+        targets.put(windowName, new Pair<>(viewClass, url));
         session.setAttribute(BackwardNavigationTargets.class, targets);
     }
 
@@ -351,30 +350,15 @@ public class ViewSupport {
         BackwardNavigationTargets targets = ui.getSession().getAttribute(BackwardNavigationTargets.class);
         if (targets != null && targets.containsKey(windowName)
                 && targets.get(windowName).getFirst().equals(view.getClass())) {
-            URI uri = targets.get(windowName).getSecond();
+            URL url = targets.get(windowName).getSecond();
             targets.remove(windowName);
             ui.navigate(
-                    resolveLocation(uri),
-                    NavigationUtils.combineQueryParameters(resolveQueryParameters(uri), returnParams)
+                    routeSupport.resolveLocationString(url),
+                    routeSupport.mergeQueryParameters(routeSupport.resolveQueryParameters(url), returnParams)
             );
         } else {
             navigateToParentLayout(view, returnParams);
         }
-    }
-
-    protected String resolveLocation(URI uri) {
-        String path = uri.getPath();
-        String contextPath = servletContext.getContextPath();
-        if (!Strings.isNullOrEmpty(contextPath)
-                && path.startsWith(contextPath)) {
-            return path.substring(contextPath.length());
-        } else {
-            return path;
-        }
-    }
-
-    protected QueryParameters resolveQueryParameters(URI uri) {
-        return QueryParameters.fromString(Strings.emptyToNull(uri.getQuery()));
     }
 
     public void navigateToParentLayout(View<?> view, QueryParameters returnParams) {
@@ -483,6 +467,6 @@ public class ViewSupport {
     // maps window.name to (view class, backward navigation target)
     @SuppressWarnings("rawtypes")
     protected static class BackwardNavigationTargets
-            extends HashMap<String, Pair<Class<? extends View>, URI>> {
+            extends HashMap<String, Pair<Class<? extends View>, URL>> {
     }
 }

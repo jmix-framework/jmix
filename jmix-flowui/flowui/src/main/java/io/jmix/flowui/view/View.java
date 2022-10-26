@@ -19,6 +19,7 @@ package io.jmix.flowui.view;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -96,6 +97,7 @@ public class View<T extends Component> extends Composite<T>
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        fireEvent(new QueryParametersChangeEvent(this, event.getLocation().getQueryParameters()));
         fireEvent(new BeforeShowEvent(this));
     }
 
@@ -166,7 +168,7 @@ public class View<T extends Component> extends Composite<T>
      * Requests closing of the view caused by the given action.
      *
      * @param closeAction close action which is propagated to {@link BeforeCloseEvent}, {@link AfterCloseEvent} and,
-     *                      if the view has been opened in a dialog, to {@link DialogWindow.AfterCloseEvent}.
+     *                    if the view has been opened in a dialog, to {@link DialogWindow.AfterCloseEvent}.
      * @return result of close request
      */
     public OperationResult close(CloseAction closeAction) {
@@ -330,6 +332,17 @@ public class View<T extends Component> extends Composite<T>
     }
 
     /**
+     * Adds {@link QueryParametersChangeEvent} listener.
+     *
+     * @param listener the listener to add, not {@code null}
+     * @return a registration object that can be used for removing the listener
+     */
+    @Internal
+    Registration addQueryParametersChangeListener(ComponentEventListener<QueryParametersChangeEvent> listener) {
+        return getEventBus().addListener(QueryParametersChangeEvent.class, listener);
+    }
+
+    /**
      * The first event in the view opening process.
      * <p>
      * The view and all its declaratively defined components are created, and dependency injection is completed.
@@ -366,7 +379,7 @@ public class View<T extends Component> extends Composite<T>
      *         customersDl.load();
      *     }
      * </pre>
-     *
+     * <p>
      * You can abort the process of opening the view by throwing an exception.
      *
      * @see #addBeforeShowListener(ComponentEventListener)
@@ -509,6 +522,30 @@ public class View<T extends Component> extends Composite<T>
          */
         public boolean closedWith(StandardOutcome outcome) {
             return outcome.getCloseAction().equals(closeAction);
+        }
+    }
+
+    /**
+     * An event informing which query parameters the view is opened with.
+     * For internal use only. Can be changed or removed in future releases.
+     *
+     * @see #addQueryParametersChangeListener(ComponentEventListener)
+     */
+    @Internal
+    public static class QueryParametersChangeEvent extends ComponentEvent<View<?>> {
+
+        protected QueryParameters queryParameters;
+
+        public QueryParametersChangeEvent(View<?> source, QueryParameters queryParameters) {
+            super(source, true);
+            this.queryParameters = queryParameters;
+        }
+
+        /**
+         * @return query parameters with which the view is opened
+         */
+        public QueryParameters getQueryParameters() {
+            return queryParameters;
         }
     }
 }

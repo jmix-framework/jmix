@@ -21,12 +21,10 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification.Position;
-import com.vaadin.flow.component.page.History;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Location;
-import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
@@ -43,6 +41,7 @@ import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
+import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -52,7 +51,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static io.jmix.flowui.view.navigation.NavigationUtils.addQueryParameters;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -169,12 +167,9 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             setReadOnlyBeforeRefresh();
             setReadOnly(true);
         } else if (isReadOnlyBeforeRefresh()) {
-            QueryParameters resultQueryParameters =
-                    addQueryParameters(location.getQueryParameters(), MODE_PARAM, MODE_READONLY);
-            Location newLocation = new Location(location.getSegments(), resultQueryParameters);
+            RouteSupport routeSupport = getApplicationContext().getBean(RouteSupport.class);
+            routeSupport.addQueryParameter(getUI().orElse(UI.getCurrent()), MODE_PARAM, MODE_READONLY);
 
-            History history = getUI().orElse(UI.getCurrent()).getPage().getHistory();
-            history.replaceState(null, newLocation);
             setReadOnly(true);
         }
     }

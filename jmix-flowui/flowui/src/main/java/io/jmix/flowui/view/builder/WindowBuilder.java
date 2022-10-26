@@ -26,6 +26,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Provides a fluent interface to configure and open a view in a {@link DialogWindow}.
+ *
+ * @param <V> a view type which is opened in a dialog window
+ */
 public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> implements DialogWindowClassBuilder<V> {
 
     protected Class<V> viewClass;

@@ -17,7 +17,6 @@
 package io.jmix.securityflowui.action;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.Messages;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.ActionType;
@@ -25,8 +24,7 @@ import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
-import io.jmix.flowui.view.navigation.NavigationUtils;
-import io.jmix.flowui.view.navigation.ViewNavigator;
+import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.securityflowui.view.roleassignment.RoleAssignmentView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,6 +37,7 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
     public static final String ID = "showRoleAssignments";
 
     protected ViewNavigators viewNavigators;
+    protected RouteSupport routeSupport;
 
     public ShowRoleAssignmentsAction() {
         this(ID);
@@ -61,6 +60,11 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
     }
 
     @Autowired
+    public void setRouteSupport(RouteSupport routeSupport) {
+        this.routeSupport = routeSupport;
+    }
+
+    @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.ShowRoleAssignments");
     }
@@ -80,13 +84,9 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
     }
 
     protected void navigate(E selectedItem) {
-        ViewNavigator navigator = viewNavigators.view(RoleAssignmentView.class);
-
-        RouteParameters routeParameters =
-                NavigationUtils.generateRouteParameters(navigator, "username", selectedItem.getUsername());
-        navigator.withRouteParameters(routeParameters)
-                .withBackwardNavigation(true);
-
-        navigator.navigate();
+        viewNavigators.view(RoleAssignmentView.class)
+                .withRouteParameters(routeSupport.createRouteParameters("username", selectedItem.getUsername()))
+                .withBackwardNavigation(true)
+                .navigate();
     }
 }

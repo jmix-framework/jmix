@@ -21,7 +21,16 @@ import io.jmix.flowui.view.View;
 
 import java.util.Optional;
 
+/**
+ * An interface to be implemented by builders which opens a
+ * specific view in a {@link io.jmix.flowui.view.DialogWindow}.
+ *
+ * @param <V> a view type which is opened in a dialog window
+ */
 public interface DialogWindowClassBuilder<V extends View<?>> extends DialogWindowBuilder<V> {
 
+    /**
+     * @return opened view class
+     */
     Optional<Class<V>> getViewClass();
 }

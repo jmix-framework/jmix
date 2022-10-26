@@ -19,17 +19,35 @@ package io.jmix.flowui.view.builder;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewController;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * An interface to be implemented by builders which opens a view in a {@link io.jmix.flowui.view.DialogWindow}.
+ *
+ * @param <V> a view type which is opened in a dialog window
+ */
 public interface DialogWindowBuilder<V extends View<?>> {
 
+    /**
+     * @return invoking view
+     */
     View<?> getOrigin();
 
+    /**
+     * @return identifier of the opened view as specified in the {@link ViewController} annotation
+     */
     Optional<String> getViewId();
 
+    /**
+     * @return after open dialog listener
+     */
     Optional<Consumer<AfterOpenEvent<V>>> getAfterOpenListener();
 
+    /**
+     * @return after close dialog listener
+     */
     Optional<Consumer<AfterCloseEvent<V>>> getAfterCloseListener();
 }

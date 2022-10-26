@@ -36,8 +36,8 @@ import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.view.View.ReadyEvent;
 import io.jmix.flowui.view.View.BeforeShowEvent;
+import io.jmix.flowui.view.View.ReadyEvent;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -178,10 +178,16 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
         }
     }
 
+    /**
+     * @return a view witch is opened in this dialog window
+     */
     public V getView() {
         return view;
     }
 
+    /**
+     * Opens the dialog.
+     */
     public void open() {
         fireViewBeforeShowEvent(view);
         // In case of dynamic title, we can obtain it after
@@ -191,10 +197,19 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
         dialog.open();
     }
 
+    /**
+     * Requests closing the dialog.
+     */
     public void close() {
         close(false);
     }
 
+    /**
+     * Requests closing the dialog.
+     *
+     * @param force {@code true} to close the dialog without checking the state
+     *              (e.g. unsaved changes), {@code false} otherwise.
+     */
     public void close(boolean force) {
         view.close(force ? StandardOutcome.DISCARD : StandardOutcome.CLOSE);
     }
@@ -231,19 +246,30 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
         }
     }
 
+    /**
+     * Adds {@link AfterOpenEvent} listener.
+     *
+     * @param listener the listener to add
+     * @return a Registration for removing the event listener
+     */
     @SuppressWarnings("unchecked")
     public Registration addAfterOpenListener(Consumer<AfterOpenEvent<V>> listener) {
         Subscription subscription = getEventHub().subscribe(AfterOpenEvent.class, ((Consumer) listener));
         return Registration.once(subscription::remove);
     }
 
+    /**
+     * Adds {@link AfterCloseEvent} listener.
+     *
+     * @param listener the listener to add
+     * @return a Registration for removing the event listener
+     */
     @SuppressWarnings("unchecked")
     public Registration addAfterCloseListener(Consumer<AfterCloseEvent<V>> listener) {
         Subscription subscription = getEventHub().subscribe(AfterCloseEvent.class, ((Consumer) listener));
         return Registration.once(subscription::remove);
     }
 
-    //    @TriggerOnce
     public static class AfterOpenEvent<V extends View<?>> extends EventObject {
 
         public AfterOpenEvent(DialogWindow<V> source) {
@@ -261,7 +287,6 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
         }
     }
 
-    //    @TriggerOnce
     public static class AfterCloseEvent<V extends View<?>> extends EventObject {
 
         protected final CloseAction closeAction;
@@ -296,42 +321,84 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
         return dialog.getElement();
     }
 
+    /**
+     * @return whether this dialog can be closed by hitting the esc-key or not.
+     */
     public boolean isCloseOnEsc() {
         return dialog.isCloseOnEsc();
     }
 
+    /**
+     * Sets whether this dialog can be closed by hitting the esc-key or not.
+     *
+     * @param closeOnEsc {@code true} to enable closing this dialog with the esc-key,
+     *                   {@code false} to disable it
+     */
     public void setCloseOnEsc(boolean closeOnEsc) {
         dialog.setCloseOnEsc(closeOnEsc);
     }
 
+    /**
+     * @return whether this dialog can be closed by clicking outside of it or not.
+     */
     public boolean isCloseOnOutsideClick() {
         return dialog.isCloseOnOutsideClick();
     }
 
+    /**
+     * Sets whether this dialog can be closed by clicking outside of it or not.
+     *
+     * @param closeOnOutsideClick {@code true} to enable closing this dialog with an outside
+     *                            click, {@code false} to disable it
+     */
     public void setCloseOnOutsideClick(boolean closeOnOutsideClick) {
         dialog.setCloseOnOutsideClick(closeOnOutsideClick);
     }
 
+    /**
+     * @return whether component is set as modal or modeless dialog.
+     */
     public boolean isModal() {
         return dialog.isModal();
     }
 
+    /**
+     * Sets whether component will open modal or modeless dialog.
+     *
+     * @param modal {@code false} to enable dialog to open as modeless modal, {@code true} otherwise
+     */
     public void setModal(boolean modal) {
         dialog.setModal(modal);
     }
 
+    /**
+     * Sets whether dialog is enabled to be dragged by the user or not.
+     *
+     * @return whether dialog is enabled to be dragged or not.
+     */
     public boolean isDraggable() {
         return dialog.isDraggable();
     }
 
+    /**
+     * @param draggable {@code true} to enable dragging of the dialog, {@code false} otherwise
+     */
     public void setDraggable(boolean draggable) {
         dialog.setDraggable(draggable);
     }
 
+    /**
+     * @return whether dialog is enabled to be resized or not.
+     */
     public boolean isResizable() {
         return dialog.isResizable();
     }
 
+    /**
+     * Sets whether dialog can be resized by user or not.
+     *
+     * @param resizable {@code true} to enabled resizing of the dialog, {@code false} otherwise.
+     */
     public void setResizable(boolean resizable) {
         dialog.setResizable(resizable);
     }

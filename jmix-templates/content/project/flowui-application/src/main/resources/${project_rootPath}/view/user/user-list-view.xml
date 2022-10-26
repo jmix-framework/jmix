@@ -19,6 +19,9 @@
     </actions>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <queryParameters id="queryParameters">
+            <pagination id="paginationParams" component="pagination"/>
+        </queryParameters>
     </facets>
     <layout expand="usersTable">
         <hbox id="buttonsPanel" classNames="buttons-panel">
@@ -32,7 +35,7 @@
                     <actionItem id="resetPasswordItem" ref="usersTable.resetPassword"/>
                 </items>
             </dropdownButton>
-            <simplePagination dataLoader="usersDl"/>
+            <simplePagination id="pagination" dataLoader="usersDl"/>
         </hbox>
         <dataGrid id="usersTable"
                   width="100%"

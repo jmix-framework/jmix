@@ -2849,6 +2849,15 @@
 
     <!-- Facets -->
 
+    <xs:complexType name="facets">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="dataLoadCoordinator" type="dataLoadCoordinatorType" minOccurs="0"/>
+                <xs:element name="queryParameters" type="queryParametersType" minOccurs="0"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
     <!-- DataLoadCoordinator -->
 
     <xs:complexType name="dataLoadCoordinatorType">
@@ -2906,12 +2915,23 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="facets">
+    <!-- queryParameters -->
+
+    <xs:complexType name="queryParametersType">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="dataLoadCoordinator" type="dataLoadCoordinatorType" minOccurs="0"/>
+                <xs:element name="pagination" type="paginationQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
+        <xs:attribute name="id" type="xs:string"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="paginationQueryParametersType">
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="component" type="xs:string" use="required"/>
+        <xs:attribute name="firstResultParam" type="xs:string"/>
+        <xs:attribute name="maxResultParam" type="xs:string"/>
     </xs:complexType>
 
     <!--  -->

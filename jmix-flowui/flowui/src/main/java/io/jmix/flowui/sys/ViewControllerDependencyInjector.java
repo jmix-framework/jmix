@@ -655,11 +655,10 @@ public class ViewControllerDependencyInjector {
                 }
             }
 
-            // TODO: gg, do we need HasSubParts?
-            /*Facet facet = viewFacets.getFacet(pathPrefix(elements));
+            Facet facet = viewFacets.getFacet(pathPrefix(elements));
             if (facet instanceof HasSubParts) {
                 return ((HasSubParts) facet).getSubPart(id);
-            }*/
+            }
         }
 
         return null;

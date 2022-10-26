@@ -19,10 +19,13 @@ package io.jmix.flowui.view;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View.QueryParametersChangeEvent;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
@@ -108,5 +111,10 @@ public final class ViewControllerUtils {
 
     public static boolean isSaveActionPerformed(StandardDetailView<?> detailView) {
         return detailView.isSaveActionPerformed();
+    }
+
+    public static Registration addQueryParametersChangeListener(View<?> view,
+                                                                ComponentEventListener<QueryParametersChangeEvent> listener) {
+        return view.addQueryParametersChangeListener(listener);
     }
 }

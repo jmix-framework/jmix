@@ -213,7 +213,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Registration addAfterRefreshListener(ComponentEventListener<AfterRefreshEvent<SimplePagination>> listener) {
-        return addListener(BeforeRefreshEvent.class, (ComponentEventListener) listener);
+        return addListener(AfterRefreshEvent.class, (ComponentEventListener) listener);
     }
 
     @Nullable

@@ -92,10 +92,10 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
         String firstResultParam = loadAttribute(element, "firstResultParam");
-        String maxResultParam = loadAttribute(element, "maxResultParam");
+        String maxResultsParam = loadAttribute(element, "maxResultsParam");
 
         context.addPreInitTask(new PaginationQueryParametersBinderInitTask(
-                facet, componentId, binderId, firstResultParam, maxResultParam, urlParamSerializer
+                facet, componentId, binderId, firstResultParam, maxResultsParam, urlParamSerializer
         ));
     }
 
@@ -117,20 +117,20 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
         protected final String binderId;
         protected final String componentId;
         protected final String firstResultParam;
-        protected final String maxResultParam;
+        protected final String maxResultsParam;
         protected final UrlParamSerializer urlParamSerializer;
 
         public PaginationQueryParametersBinderInitTask(QueryParametersFacet facet,
                                                        String componentId,
                                                        @Nullable String binderId,
                                                        @Nullable String firstResultParam,
-                                                       @Nullable String maxResultParam,
+                                                       @Nullable String maxResultsParam,
                                                        UrlParamSerializer urlParamSerializer) {
             this.facet = facet;
             this.binderId = binderId;
             this.componentId = componentId;
             this.firstResultParam = firstResultParam;
-            this.maxResultParam = maxResultParam;
+            this.maxResultsParam = maxResultsParam;
             this.urlParamSerializer = urlParamSerializer;
         }
 
@@ -148,7 +148,7 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
 
             binder.setId(binderId);
             binder.setFirstResultParam(firstResultParam);
-            binder.setMaxResultParam(maxResultParam);
+            binder.setMaxResultsParam(maxResultsParam);
 
             facet.registerBinder(binder);
         }

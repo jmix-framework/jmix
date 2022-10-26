@@ -34,12 +34,12 @@ public class PaginationQueryParametersBinder extends AbstractQueryParametersBind
     public static final String NAME = "pagination";
 
     public static final String FIRST_RESULT_PARAM = "firstResult";
-    public static final String MAX_RESULT_PARAM = "maxResult";
+    public static final String MAX_RESULTS_PARAM = "maxResults";
 
     protected PaginationComponent<?> pagination;
 
     protected String firstResultParam;
-    protected String maxResultParam;
+    protected String maxResultsParam;
 
     protected UrlParamSerializer urlParamSerializer;
 
@@ -59,7 +59,7 @@ public class PaginationQueryParametersBinder extends AbstractQueryParametersBind
         getPaginationLoader().ifPresent(paginationLoader -> {
             QueryParameters queryParameters = QueryParameters.simple(ImmutableMap.of(
                     getFirstResultParam(), urlParamSerializer.serialize(paginationLoader.getFirstResult()),
-                    getMaxResultParam(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
+                    getMaxResultsParam(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
             ));
 
             fireQueryParametersChanged(new QueryParametersChangeEvent(this, queryParameters));
@@ -76,10 +76,10 @@ public class PaginationQueryParametersBinder extends AbstractQueryParametersBind
                 paginationLoader.setFirstResult(firstResult);
             }
 
-            if (parameters.containsKey(getMaxResultParam())) {
-                String serializedMaxResult = parameters.get(getMaxResultParam()).get(0);
-                int maxResult = urlParamSerializer.deserialize(Integer.class, serializedMaxResult);
-                paginationLoader.setMaxResults(maxResult);
+            if (parameters.containsKey(getMaxResultsParam())) {
+                String serializedMaxResults = parameters.get(getMaxResultsParam()).get(0);
+                int maxResults = urlParamSerializer.deserialize(Integer.class, serializedMaxResults);
+                paginationLoader.setMaxResults(maxResults);
             }
         });
     }
@@ -92,12 +92,12 @@ public class PaginationQueryParametersBinder extends AbstractQueryParametersBind
         this.firstResultParam = firstResultParam;
     }
 
-    public String getMaxResultParam() {
-        return Strings.isNullOrEmpty(maxResultParam) ? MAX_RESULT_PARAM : maxResultParam;
+    public String getMaxResultsParam() {
+        return Strings.isNullOrEmpty(maxResultsParam) ? MAX_RESULTS_PARAM : maxResultsParam;
     }
 
-    public void setMaxResultParam(@Nullable String maxResultParam) {
-        this.maxResultParam = maxResultParam;
+    public void setMaxResultsParam(@Nullable String maxResultsParam) {
+        this.maxResultsParam = maxResultsParam;
     }
 
     protected Optional<PaginationDataLoader> getPaginationLoader() {

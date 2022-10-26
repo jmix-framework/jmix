@@ -44,7 +44,7 @@ public abstract class AbstractFacet implements Facet {
     }
 
     @Override
-    public void setOwner(View<?> owner) {
+    public void setOwner(@Nullable View<?> owner) {
         this.owner = owner;
     }
 }

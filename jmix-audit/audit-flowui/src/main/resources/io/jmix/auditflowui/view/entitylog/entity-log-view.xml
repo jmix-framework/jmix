@@ -129,7 +129,7 @@
                         <column property="eventTs"/>
                         <column property="username"/>
                         <column property="type"/>
-                        <column property="entity"/>
+                        <column property="entityInstanceName"/>
                     </columns>
                 </dataGrid>
 
@@ -180,7 +180,7 @@
                     <checkbox id="selectAllCheckBox" label="msg://[all]"/>
                     <scroller id="attributesScroller" scrollBarsDirection="VERTICAL"
                               minHeight="15em" maxHeight="20em" width="100%">
-                        <vbox id="attributesBoxScroll" padding="false"/>
+                        <checkboxGroup id="attributesCheckboxGroup" themeNames="vertical"/>
                     </scroller>
 
                 </vbox>

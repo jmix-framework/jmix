@@ -32,6 +32,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Provides a fluent interface to configure and open a lookup view with
+ * the specific class in a {@link DialogWindow}.
+ *
+ * @param <V> a view type which is opened in a dialog window
+ * @param <E> entity type
+ */
 public class LookupWindowClassBuilder<E, V extends View<?> & LookupView<E>> extends LookupWindowBuilder<E, V>
         implements DialogWindowClassBuilder<V> {
 
@@ -94,8 +101,8 @@ public class LookupWindowClassBuilder<E, V extends View<?> & LookupView<E>> exte
     }
 
     @Override
-    public <T extends HasValue<?, Collection<E>>> LookupWindowClassBuilder<E, V> withValuesField(@Nullable T field) {
-        super.withValuesField(field);
+    public <T extends HasValue<?, Collection<E>>> LookupWindowClassBuilder<E, V> withMultiValueField(@Nullable T field) {
+        super.withMultiValueField(field);
         return this;
     }
 

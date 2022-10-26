@@ -31,6 +31,13 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Provides a fluent interface to configure and open a details view with
+ * the specific class in a {@link DialogWindow}.
+ *
+ * @param <V> a view type which is opened in a dialog window
+ * @param <E> edited entity type
+ */
 public class DetailWindowClassBuilder<E, V extends View<?> & DetailView<E>> extends DetailWindowBuilder<E, V>
         implements DialogWindowClassBuilder<V> {
 

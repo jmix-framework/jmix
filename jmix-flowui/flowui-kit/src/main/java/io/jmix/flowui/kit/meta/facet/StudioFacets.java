@@ -47,6 +47,7 @@ public interface StudioFacets {
             classFqn = "io.jmix.flowui.facet.QueryParametersFacet",
             category = "Facets",
             xmlElement = "queryParameters",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
             }

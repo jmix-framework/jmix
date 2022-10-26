@@ -2931,7 +2931,7 @@
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="component" type="xs:string" use="required"/>
         <xs:attribute name="firstResultParam" type="xs:string"/>
-        <xs:attribute name="maxResultParam" type="xs:string"/>
+        <xs:attribute name="maxResultsParam" type="xs:string"/>
     </xs:complexType>
 
     <!--  -->

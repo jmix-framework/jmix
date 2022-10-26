@@ -24,7 +24,6 @@ import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioElementsGroup;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
@@ -247,7 +246,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "firstResultParam", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "maxResultParam", type = StudioPropertyType.STRING)
+                    @StudioProperty(xmlAttribute = "maxResultsParam", type = StudioPropertyType.STRING)
             }
     )
     void pagination();

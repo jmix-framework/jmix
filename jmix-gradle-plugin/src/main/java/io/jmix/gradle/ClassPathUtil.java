@@ -39,6 +39,18 @@ public class ClassPathUtil {
         }
     }
 
+    public static void createFormattedClassPathFile(File classPathFile, List<File> classPath) {
+        try (PrintWriter writer = new PrintWriter(classPathFile)) {
+            writer.print("-cp ");
+            for (int i = 0; i < classPath.size(); i++) {
+                File file = classPath.get(i);
+                writer.print(file.getAbsolutePath() + ";");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write classpath to temporary file", e);
+        }
+    }
+
     public static List<File> getCommandLineClassPath() {
         ClassLoader classLoader = ClassPathCommandLine.class.getClassLoader();
         if (classLoader instanceof URLClassLoader) {

@@ -18,7 +18,6 @@ package io.jmix.gradle.ui;
 
 import io.jmix.gradle.ClassPathUtil;
 import io.jmix.gradle.JmixPlugin;
-import io.jmix.gradle.Versions;
 import org.apache.tools.ant.taskdefs.condition.Os;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -93,21 +92,17 @@ public class WidgetsDebug extends WidgetsTask {
             javaTmp.mkdirs();
 
             File classPathFile = getProject().file("build/tmp/debug-widget-set-classpath.dat");
-            ClassPathUtil.createClassPathFile(classPathFile, compilerClassPath);
+            ClassPathUtil.createFormattedClassPathFile(classPathFile, compilerClassPath);
 
-            Configuration classpath = getProject().getConfigurations().maybeCreate("commandLineClassPath");
-            classpath.setVisible(false);
-            classpath.defaultDependencies(dependencies ->
-                    dependencies.add(getProject().getDependencies()
-                            .create("io.jmix.gradle:jmix-gradle-plugin:" + Versions.getPluginVersion())));
+            gwtCompilerJvmArgs.add("@" + classPathFile.getAbsolutePath());
 
             getProject().javaexec(spec -> {
-                spec.getMainClass().set("io.jmix.gradle.ClassPathCommandLine");
-                spec.setClasspath(getProject().files(classpath));
-                spec.setArgs(ClassPathUtil.getExtendedCommandLineAgs(
-                        classPathFile.getAbsolutePath(), "com.google.gwt.dev.codeserver.CodeServer", gwtCompilerArgs));
+                spec.getMainClass().set("com.google.gwt.dev.codeserver.CodeServer");
+                spec.setArgs(gwtCompilerArgs);
                 spec.setJvmArgs(gwtCompilerJvmArgs);
             });
+
+            FileUtils.deleteQuietly(classPathFile);
         } else {
             getProject().javaexec(javaExecSpec -> {
                 javaExecSpec.getMainClass().set("com.google.gwt.dev.codeserver.CodeServer");

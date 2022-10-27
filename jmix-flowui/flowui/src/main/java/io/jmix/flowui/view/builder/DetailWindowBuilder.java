@@ -158,7 +158,7 @@ public class DetailWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
      * Sets callback to initialize a new entity instance.
      * <p>
      * The initializer is invoked only when {@link DetailViewMode} is {@code CREATE},
-     * i.e. when {@link #newEntity()} or {@link #newEntity(E)} methods are invoked on
+     * i.e. when {@link #newEntity()} or {@link #newEntity(Object)} methods are invoked on
      * the builder.
      *
      * @param initializer callback to initialize a new entity instance.
@@ -273,14 +273,14 @@ public class DetailWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
     }
 
     /**
-     * @return new entity set by {@link #newEntity(E)}.
+     * @return new entity set by {@link #newEntity(Object)}.
      */
     public Optional<E> getNewEntity() {
         return Optional.ofNullable(newEntity);
     }
 
     /**
-     * @return entity set by {@link #editEntity(E)}.
+     * @return entity set by {@link #editEntity(Object)}.
      */
     public Optional<E> getEditedEntity() {
         return Optional.ofNullable(editedEntity);
@@ -337,7 +337,7 @@ public class DetailWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
     }
 
     /**
-     * @return builder mode derived from previous calls to {@link #newEntity()} or {@link #editEntity(E)}
+     * @return builder mode derived from previous calls to {@link #newEntity()} or {@link #editEntity(Object)}
      */
     public DetailViewMode getMode() {
         return mode;

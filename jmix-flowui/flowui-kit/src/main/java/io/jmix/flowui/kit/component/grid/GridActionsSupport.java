@@ -17,7 +17,6 @@
 package io.jmix.flowui.kit.component.grid;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import io.jmix.flowui.kit.action.Action;
@@ -67,10 +66,8 @@ public class GridActionsSupport<C extends Grid<T>, T> {
 
         actions.add(index, action);
 
-        if (!Strings.isNullOrEmpty(action.getText())) {
-            addContextMenuItem(action, index);
-            updateContextMenu();
-        }
+        addContextMenuItem(action, index);
+        updateContextMenu();
     }
 
     protected void addContextMenuItem(Action action, int index) {

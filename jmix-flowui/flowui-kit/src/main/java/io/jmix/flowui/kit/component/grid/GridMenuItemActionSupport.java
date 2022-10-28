@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.component.grid;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 
@@ -58,6 +59,15 @@ public class GridMenuItemActionSupport {
                     action.actionPerform(event.getSource()));
             actionPropertyChangeRegistration = addPropertyChangeListener();
         }
+
+        updateVisible();
+    }
+
+    protected void updateVisible() {
+        menuItem.setVisible(
+                !Strings.isNullOrEmpty(menuItem.getText())
+                        && action != null && action.isVisible()
+        );
     }
 
     protected void removeRegistrations() {
@@ -80,12 +90,13 @@ public class GridMenuItemActionSupport {
             switch (propertyName) {
                 case Action.PROP_TEXT:
                     menuItem.setText(action.getText());
+                    updateVisible();
                     break;
                 case Action.PROP_ENABLED:
                     menuItem.setEnabled(action.isEnabled());
                     break;
                 case Action.PROP_VISIBLE:
-                    menuItem.setVisible(action.isVisible());
+                    updateVisible();
                     break;
                 default:
             }

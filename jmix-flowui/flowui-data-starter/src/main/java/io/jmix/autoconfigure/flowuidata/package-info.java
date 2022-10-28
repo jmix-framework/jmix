@@ -15,6 +15,6 @@
  */
 
 @Internal
-package io.jmix.autoconfigure.uidata;
+package io.jmix.autoconfigure.flowuidata;
 
 import io.jmix.core.annotation.Internal;

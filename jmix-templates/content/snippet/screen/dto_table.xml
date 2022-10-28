@@ -33,7 +33,6 @@ def isDataGrid = tableType.xmlName.endsWith('Grid')
         <column <%if(isDataGrid){%> property="${column}" <%}%> id="${column}"/>
     <%}%>
     </columns>
-    <simplePagination/>
     <buttonsPanel id="buttonsPanel"
                   alwaysVisible="true">
         <%tableActions.each { action ->%>

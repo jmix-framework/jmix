@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.uidata;
+package io.jmix.autoconfigure.flowuidata;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;

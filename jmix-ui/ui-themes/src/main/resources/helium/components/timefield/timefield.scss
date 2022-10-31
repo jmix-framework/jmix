@@ -91,5 +91,6 @@ $jmix-timefield-second-width: 84px;
 
   .jmix-timefield-ampm {
     width: round($jmix-timefield-ampm-width * $scaling-factor);
+    min-width: round($jmix-timefield-ampm-width * $scaling-factor);
   }
 }

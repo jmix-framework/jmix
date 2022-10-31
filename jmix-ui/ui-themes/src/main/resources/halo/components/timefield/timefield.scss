@@ -75,6 +75,7 @@ $jmix-timefield-ampm-width: 62px !default;
 
   .#{$primary-stylename}-ampm {
     width: $jmix-timefield-ampm-width;
+    min-width: $jmix-timefield-ampm-width;
     margin-left: round($v-layout-spacing-horizontal/2);
   }
 }

@@ -44,7 +44,8 @@ public class ClassPathUtil {
             writer.print("-cp ");
             for (int i = 0; i < classPath.size(); i++) {
                 File file = classPath.get(i);
-                writer.print(file.getAbsolutePath() + ";");
+                String path = file.getAbsolutePath().replace(" ", "\" \"");
+                writer.print(path + ";");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to write classpath to temporary file", e);

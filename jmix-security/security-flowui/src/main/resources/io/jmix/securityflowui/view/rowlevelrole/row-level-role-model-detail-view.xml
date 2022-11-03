@@ -58,6 +58,7 @@
             </hbox>
             <dataGrid id="rowLevelPoliciesTable"
                       dataContainer="rowLevelPoliciesDc"
+                      selectionMode="MULTI"
                       minHeight="20em"
                       width="100%">
                 <actions>
@@ -95,6 +96,7 @@
             </hbox>
             <dataGrid id="childRolesTable"
                       dataContainer="childRolesDc"
+                      selectionMode="MULTI"
                       minHeight="20em"
                       width="100%">
                 <actions>

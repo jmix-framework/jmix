@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class ViewXmlLoader {
     protected Resources resources;
     protected ViewXmlDocumentCache viewXmlDocumentCache;
     protected ViewXmlParser viewXmlParser;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     public void setResources(Resources resources) {
@@ -52,6 +54,11 @@ public class ViewXmlLoader {
     @Autowired
     public void setViewXmlParser(ViewXmlParser viewXmlParser) {
         this.viewXmlParser = viewXmlParser;
+    }
+
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -90,6 +97,11 @@ public class ViewXmlLoader {
     }
 
     protected Document createDocument(String template) {
-        return viewXmlParser.parseDescriptor(template);
+        Document originalDocument = viewXmlParser.parseDescriptor(template);
+
+        XmlInheritanceProcessor processor = applicationContext.getBean(XmlInheritanceProcessor.class, originalDocument);
+        Element resultRoot = processor.getResultRoot();
+
+        return resultRoot.getDocument();
     }
 }

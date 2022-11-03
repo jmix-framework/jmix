@@ -166,6 +166,12 @@
       padding-right: $unit-size;
     }
   }
+
+  .#{$primary-stylename}.inline-icon [class*="input"],
+  .#{$primary-stylename}.inline-icon .v-textfield,
+  .#{$primary-stylename}.inline-icon .jmix-suggestionfield {
+    padding-left: $unit-size;
+  }
 }
 
 @mixin he-pickerfield-style($primary-stylename  : jmix-pickerfield,

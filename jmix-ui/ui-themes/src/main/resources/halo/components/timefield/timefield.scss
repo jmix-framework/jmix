@@ -53,6 +53,21 @@ $jmix-timefield-ampm-width: 62px !default;
     @include valo-textfield-error-style;
   }
 
+  .#{$primary-stylename}-wrapper.inline-icon {
+    .#{$primary-stylename}-hour {
+      width: $jmix-timefield-hour-width + $v-unit-size;
+      padding-left: $v-unit-size;
+    }
+    .#{$primary-stylename}-minute {
+      width: $jmix-timefield-minute-width + $v-unit-size;
+      padding-left: $v-unit-size;
+    }
+    .#{$primary-stylename}-second {
+      width: $jmix-timefield-second-width + $v-unit-size;
+      padding-left: $v-unit-size;
+    }
+  }
+
   .#{$primary-stylename}-hour {
     width: $jmix-timefield-hour-width;
   }

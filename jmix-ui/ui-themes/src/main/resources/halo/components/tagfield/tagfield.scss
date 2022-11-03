@@ -195,6 +195,14 @@ $jmix-tagfield-tag-border-radius: $jmix-taglabel-border-radius !default;
     padding: 0 $textfield-default-padding-width 0 $jmix-tagfield-tag-padding-width;
   }
 
+  &.empty.inline-icon .v-textfield {
+    padding-left: 0;
+  }
+
+  &.inline-icon {
+    padding-left: $unit-size;
+  }
+
   &.clear-all:not(.empty) {
     padding-right: $tagfield-elements-height + first-number(valo-border()) + $tagfield-padding;
   }

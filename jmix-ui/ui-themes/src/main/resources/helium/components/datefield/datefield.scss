@@ -195,6 +195,20 @@ $he-datefield-calendar-button-padding: 2px !default;
     padding-right: ceil($unit-size/3) + $button-size + ($button-padding * 2);
   }
 
+  &.inline-icon {
+    .#{$primary-stylename} {
+      &.v-datefield-day,
+      &.v-datefield-month,
+      &.v-datefield-year {
+        width: round($jmix-default-datefield-width * $scaling-factor) + $unit-size;
+      }
+    }
+
+    .v-textfield {
+      padding-left: $unit-size;
+    }
+  }
+
   .#{$primary-stylename} {
     &.v-datefield-day,
     &.v-datefield-month,

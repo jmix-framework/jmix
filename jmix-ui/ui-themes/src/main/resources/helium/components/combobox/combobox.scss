@@ -148,6 +148,10 @@
 
   // TODO: gg, icon, etc
 
+  &.inline-icon [class*="input"] {
+    padding-left: $unit-size;
+  }
+
   [class*="input"] {
     @include he-combobox-input-size-style($unit-size: $unit-size, $padding: $padding, $font-size: $font-size);
   }

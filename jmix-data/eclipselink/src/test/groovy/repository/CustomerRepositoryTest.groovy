@@ -35,6 +35,7 @@ package repository
 import com.google.common.collect.Lists
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
+import io.jmix.core.FetchPlans
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
@@ -59,6 +60,8 @@ class CustomerRepositoryTest extends DataSpec {
     protected SystemAuthenticator authenticator
     @Autowired
     protected InMemoryUserRepository userRepository
+    @Autowired
+    protected FetchPlans fetchPlans;
 
     private Customer customer1, customer2, customer3
 
@@ -231,6 +234,35 @@ class CustomerRepositoryTest extends DataSpec {
         then:
         customers.size() == 1
         customers.get(0) == customer1
+        !entityStates.isLoaded(customers.get(0), "address") //loaded with LOCAL fetchPlan by default
+    }
+
+    void testFetchPlanParameter() {
+        when:
+        List<Customer> customers = customerRepository.findByNameStartingWithAndUseFetchPlan("cust",
+                fetchPlans.builder(Customer).addAll("name", "address.city").build())
+        then:
+        customers.size() == 1
+        customers.get(0) == customer1
+        entityStates.isLoaded(customers.get(0), "address")
+
+        when:
+
+        customers = customerRepository.findByNameWithNamedParameterAndUseFetchPlan("cust",
+                fetchPlans.builder(Customer).addAll("name", "address.city").build())
+        then:
+        customers.size() == 1
+        customers.get(0) == customer1
+        entityStates.isLoaded(customers.get(0), "address")
+
+        when:
+
+        customers = customerRepository.findByName("cust1",
+                fetchPlans.builder(Customer).addAll("name", "address.city").build())
+        then:
+        customers.size() == 1
+        customers.get(0) == customer1
+        entityStates.isLoaded(customers.get(0), "address")
     }
 
     void testQueryWithPositionalParam() {

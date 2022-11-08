@@ -29,7 +29,11 @@ import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.screen.*;
+import io.jmix.ui.screen.MessageBundle;
+import io.jmix.ui.screen.Subscribe;
+import io.jmix.ui.screen.Target;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -63,9 +67,16 @@ public class EntityAttributeResourcePolicyModelCreate extends MultipleResourcePo
     @Autowired
     private Metadata metadata;
 
+    private boolean hasChanges = false;
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         entityField.setOptionsMap(resourcePolicyEditorUtils.getEntityOptionsMap());
+    }
+
+    @Subscribe("policyGroupField")
+    public void onPolicyGroupFieldValueChange(HasValue.ValueChangeEvent<String> stringValueChangeEvent){
+        this.hasChanges = true;
     }
 
     @Subscribe("entityField")
@@ -73,6 +84,7 @@ public class EntityAttributeResourcePolicyModelCreate extends MultipleResourcePo
         String entityName = event.getValue();
         fillAttributesTable(entityName);
         policyGroupField.setValue(resourcePolicyGroupResolver.resolvePolicyGroup(ResourcePolicyType.ENTITY, entityName));
+        hasChanges = true;
     }
 
     private String generateResourceString(String entityName, String attributeName) {
@@ -136,6 +148,11 @@ public class EntityAttributeResourcePolicyModelCreate extends MultipleResourcePo
             }
         }
         return policies;
+    }
+
+    @Override
+    public boolean hasUnsavedChanges() {
+        return hasChanges;
     }
 
     @Override

@@ -18,17 +18,22 @@
 <fragment xmlns="http://jmix.io/schema/ui/fragment">
     <layout>
         <groupBox id="filterBox" orientation="horizontal" spacing="true" width="100%" caption="msg://filterCaption"
-                  collapsable="true" collapsed="true" expand="spacer">
-            <label value="msg://io.jmix.securityui.model/BaseRoleModel.name" align="MIDDLE_LEFT"/>
-            <textField id="nameFilterField" width="150px"/>
-
-            <label value="msg://io.jmix.securityui.model/BaseRoleModel.code" align="MIDDLE_LEFT"/>
-            <textField id="codeFilterField" width="150px"/>
-
-            <label id="sourceFilterLabel" value="msg://io.jmix.securityui.model/BaseRoleModel.source" align="MIDDLE_LEFT"/>
-            <comboBox id="sourceFilterField" width="150px"/>
-
-            <label id="spacer"/>
+                  collapsable="true" collapsed="true">
+            <flowBox width="100%" spacing="true">
+                <hbox spacing="true">
+                    <label value="msg://io.jmix.securityui.model/BaseRoleModel.name" align="MIDDLE_LEFT"/>
+                    <textField id="nameFilterField" width="150px"/>
+                </hbox>
+                <hbox spacing="true">
+                    <label value="msg://io.jmix.securityui.model/BaseRoleModel.code" align="MIDDLE_LEFT"/>
+                    <textField id="codeFilterField" width="150px"/>
+                </hbox>
+                <hbox spacing="true">
+                    <label id="sourceFilterLabel" value="msg://io.jmix.securityui.model/BaseRoleModel.source" align="MIDDLE_LEFT"/>
+                    <comboBox id="sourceFilterField" width="150px"/>
+                </hbox>
+                <label id="spacer"/>
+            </flowBox>
         </groupBox>
     </layout>
 </fragment>

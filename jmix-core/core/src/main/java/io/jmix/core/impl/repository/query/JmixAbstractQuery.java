@@ -17,6 +17,7 @@
 package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.DevelopmentException;
 import io.jmix.core.Metadata;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
@@ -26,6 +27,7 @@ import io.jmix.core.repository.FetchPlan;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
+import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
@@ -61,6 +63,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
 
     protected int sortIndex;
     protected int pageableIndex;
+    protected int fetchPlanIndex = -1;
 
     protected Map<String, Serializable> queryHints;
     protected String fetchPlan = io.jmix.core.FetchPlan.LOCAL;
@@ -76,8 +79,8 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         this.dataManager = applyConstraintsAnnotation.value() ? dataManager : dataManager.unconstrained();
         this.queryHints = Collections.unmodifiableMap(MethodMetadataHelper.determineQueryHints(method));
 
-        setFetchPlan(method);
         processSpecialParameters();
+        setFetchPlan(method);
     }
 
     @Override
@@ -92,6 +95,12 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     private void setFetchPlan(Method method) {
         FetchPlan fetchPlanAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, FetchPlan.class);
         if (fetchPlanAnnotation != null) {
+            if (fetchPlanIndex != -1) {
+                throw new DevelopmentException(
+                        String.format("@FetchPlan annotation and FetchPlan parameter (%d) cannot be used at the same time for method: %s",
+                                fetchPlanIndex, formatMethod(method)));
+            }
+            ;
             fetchPlan = fetchPlanAnnotation.value();
         }
 
@@ -106,10 +115,15 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     }
 
     protected void processSpecialParameters() {
-        Parameters parameters = queryMethod.getParameters();
+        Parameters<? extends Parameters, ? extends Parameter> parameters = queryMethod.getParameters();
 
         pageableIndex = parameters.getPageableIndex();
         sortIndex = parameters.getSortIndex();
+        for (Parameter bindableParameter : parameters.getBindableParameters().toList()) {
+            if (bindableParameter.getType().isAssignableFrom(io.jmix.core.FetchPlan.class)) {
+                fetchPlanIndex = bindableParameter.getIndex();
+            }
+        }
     }
 
     protected static String formatMethod(Method method) {

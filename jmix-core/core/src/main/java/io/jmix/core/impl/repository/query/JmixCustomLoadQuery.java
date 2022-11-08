@@ -90,8 +90,13 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
                 .load(metadata.getDomainType())
                 .query(this.query)
                 .parameters(buildNamedParametersMap(parameters))
-                .fetchPlan(fetchPlan)
                 .hints(queryHints);
+
+        if (fetchPlanIndex != -1) {
+            query.fetchPlan((FetchPlan) parameters[fetchPlanIndex]);
+        } else {
+            query.fetchPlan(fetchPlan);
+        }
 
         if (sortIndex != -1) {
             query.sort(LoaderHelper.springToJmixSort((Sort) parameters[sortIndex]));
@@ -142,6 +147,8 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
             }
         } else {
             for (Parameter bindableParameter : bindableParameters.toList()) {
+                if (bindableParameter.getIndex() == fetchPlanIndex)
+                    continue;
                 //noinspection OptionalGetWithoutIsPresent
                 String name = bindableParameter.getName().get();//existence checked by spring
                 if (parameterNames.contains(name)) {

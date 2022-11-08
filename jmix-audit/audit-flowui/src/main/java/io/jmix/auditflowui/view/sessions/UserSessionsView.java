@@ -16,11 +16,8 @@
 
 package io.jmix.auditflowui.view.sessions;
 
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.audit.UserSessions;
@@ -28,9 +25,10 @@ import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.UserSession;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.DefaultMainViewParent;
 import io.jmix.flowui.view.DialogMode;
@@ -42,7 +40,9 @@ import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -60,9 +60,13 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected TextField userName;
     @ViewComponent
-    protected DateTimePicker lastRequestDateFrom;
+    protected TypedDatePicker<LocalDate> lastRequestDateFrom;
     @ViewComponent
-    protected DateTimePicker lastRequestDateTo;
+    protected TypedTimePicker<LocalTime> lastRequestTimeFrom;
+    @ViewComponent
+    protected TypedDatePicker<LocalDate> lastRequestDateTo;
+    @ViewComponent
+    protected TypedTimePicker<LocalTime> lastRequestTimeTo;
     @ViewComponent
     protected CollectionLoader<UserSession> userSessionsDl;
 
@@ -80,16 +84,25 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
             if (userName.getValue() != null) {
                 sessions = sessions.filter(o -> o.getPrincipalName().toLowerCase().contains(userName.getValue()));
             }
-            if (lastRequestDateFrom.getValue() != null) {
-                Date afterDate =
-                        Date.from(lastRequestDateFrom.getValue().atZone(ZoneId.systemDefault()).toInstant());
-                sessions = sessions.filter(o -> o.getLastRequest().after(afterDate));
-            }
-            if (lastRequestDateTo.getValue() != null) {
-                Date beforeDate =
-                        Date.from(lastRequestDateTo.getValue().atZone(ZoneId.systemDefault()).toInstant());
+            if (lastRequestDateFrom.getTypedValue() != null || lastRequestTimeFrom.getTypedValue()!=null) {
 
-                sessions = sessions.filter(o -> o.getLastRequest().before(beforeDate));
+                LocalDate afterDate = lastRequestDateFrom.getTypedValue()!=null ? lastRequestDateFrom.getTypedValue() :
+                        LocalDate.now();
+                LocalTime afterTime = lastRequestTimeFrom.getTypedValue()!=null ? lastRequestTimeFrom.getTypedValue() :
+                    LocalTime.ofSecondOfDay(0);
+                LocalDateTime afterDateTime = LocalDateTime.of(afterDate, afterTime);
+
+                sessions = sessions.filter(o -> o.getLastRequest().after(Date
+                        .from(afterDateTime.atZone(ZoneId.systemDefault()).toInstant())));
+            }
+            if (lastRequestDateTo.getValue() != null || lastRequestTimeTo.getTypedValue()!=null) {
+                LocalDate beforeDate = lastRequestDateTo.getTypedValue()!=null ? lastRequestDateTo.getTypedValue() :
+                        LocalDate.now();
+                LocalTime beforeTime = lastRequestTimeTo.getTypedValue()!=null ? lastRequestTimeTo.getTypedValue() :
+                        LocalTime.ofSecondOfDay(0);
+                LocalDateTime beforeDateTime = LocalDateTime.of(beforeDate, beforeTime);
+                sessions = sessions.filter(o -> o.getLastRequest().before(Date
+                        .from(beforeDateTime.atZone(ZoneId.systemDefault()).toInstant())));
             }
             return sessions.collect(Collectors.toList());
         });

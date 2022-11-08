@@ -34,7 +34,7 @@ public abstract class BaseRoleRepository<T extends BaseRole> implements RoleRepo
 
     @Override
     public T findRoleByCode(String code) {
-        return findRoleByCodeExcludeVisited(code, Sets.newHashSet(code));
+        return findRoleByCodeExcludeVisited(code, Sets.newHashSet());
     }
 
     @Override
@@ -59,6 +59,8 @@ public abstract class BaseRoleRepository<T extends BaseRole> implements RoleRepo
 
     @Nullable
     protected T findRoleByCodeExcludeVisited(String code, Set<String> visited) {
+        visited.add(code);
+
         for (RoleProvider<T> roleProvider : getRoleProviders()) {
             T role = roleProvider.findRoleByCode(code);
             if (role != null) {

@@ -28,6 +28,7 @@ import io.jmix.securityflowui.model.RoleModelConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +49,8 @@ public class ResourceRoleModelLookupView extends StandardListView<ResourceRoleMo
     private RoleModelConverter roleModelConverter;
     @Autowired
     private ResourceRoleRepository roleRepository;
+
+    private List<String> excludedRolesCodes = Collections.emptyList();
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -73,10 +76,16 @@ public class ResourceRoleModelLookupView extends StandardListView<ResourceRoleMo
 
     protected void loadRoles(@Nullable RoleFilterChangeEvent event) {
         List<ResourceRoleModel> roleModels = roleRepository.getAllRoles().stream()
-                .filter(role -> event == null || event.matches(role))
+                .filter(role -> (event == null || event.matches(role))
+                        && !excludedRolesCodes.contains(role.getCode())
+                )
                 .map(roleModelConverter::createResourceRoleModel)
                 .sorted(Comparator.comparing(ResourceRoleModel::getName))
                 .collect(Collectors.toList());
         roleModelsDc.setItems(roleModels);
+    }
+
+    public void setExcludedRoles(List<String> excludedRolesCodes) {
+        this.excludedRolesCodes = excludedRolesCodes;
     }
 }

@@ -43,6 +43,8 @@ import io.jmix.securitydata.entity.ResourcePolicyEntity;
 import io.jmix.securitydata.entity.ResourceRoleEntity;
 import io.jmix.securityflowui.model.*;
 import io.jmix.securityflowui.model.ResourcePolicyType;
+import io.jmix.securityflowui.model.ResourceRoleModel;
+import io.jmix.securityflowui.model.RoleModelConverter;
 import io.jmix.securityflowui.model.RoleSource;
 import io.jmix.securityflowui.view.resourcepolicy.*;
 import org.slf4j.Logger;
@@ -200,6 +202,25 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
             }
         }
         return childRoleModels;
+    }
+
+    @Subscribe("childRolesTable.add")
+    public void onChildRolesTableAdd(ActionPerformedEvent event) {
+        DialogWindow<ResourceRoleModelLookupView> lookupDialog = dialogWindows.lookup(childRolesTable)
+                .withViewClass(ResourceRoleModelLookupView.class)
+                .build();
+
+        List<String> excludedRolesCodes = childRolesDc.getItems().stream()
+                .map(BaseRoleModel::getCode)
+                .collect(Collectors.toList());
+
+        if (codeField.isReadOnly()) {
+            excludedRolesCodes.add(getEditedEntity().getCode());
+        }
+
+        lookupDialog.getView().setExcludedRoles(excludedRolesCodes);
+
+        lookupDialog.open();
     }
 
     private void initTabs() {

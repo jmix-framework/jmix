@@ -20,15 +20,15 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthenticationUserLoader;
 import io.jmix.core.security.CurrentUserHints;
+import io.jmix.core.security.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component("core_CurrentAuthenticationUserLoader")
 public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticationUserLoader {
-
-    protected UnconstrainedDataManager dataManager;
 
     protected Metadata metadata;
 
@@ -38,18 +38,24 @@ public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticatio
 
     protected EntityStates entityStates;
 
-    public CurrentAuthenticationUserLoaderImpl(UnconstrainedDataManager dataManager, Metadata metadata, MetadataTools metadataTools,
-                                               CoreProperties coreProperties, EntityStates entityStates) {
-        this.dataManager = dataManager;
+    protected UserRepository userRepository;
+
+    public CurrentAuthenticationUserLoaderImpl(Metadata metadata, MetadataTools metadataTools,
+                                               CoreProperties coreProperties, EntityStates entityStates, UserRepository userRepository) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.coreProperties = coreProperties;
         this.entityStates = entityStates;
+        this.userRepository = userRepository;
     }
 
     public UserDetails reloadUser(UserDetails user, Map<String, Object> hints) {
         if (shouldReloadUser(user, hints)) {
-            return dataManager.load(Id.of(user)).optional().orElse(user);
+            try {
+                return userRepository.loadUserByUsername(user.getUsername());
+            } catch (UsernameNotFoundException e) {
+                return user;
+            }
         }
         return user;
     }

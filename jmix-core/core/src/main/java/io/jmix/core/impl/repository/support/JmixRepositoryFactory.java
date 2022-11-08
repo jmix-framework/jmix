@@ -36,8 +36,8 @@ import java.util.Optional;
 
 public class JmixRepositoryFactory extends RepositoryFactorySupport {
 
-    private ApplicationContext ctx;
-    private final CrudMethodMetadataAccessingPostProcessor crudMethodPostProcessor;
+    protected ApplicationContext ctx;
+    protected final CrudMethodMetadataAccessingPostProcessor crudMethodPostProcessor;
 
     public JmixRepositoryFactory(ApplicationContext ctx) {
         this.ctx = ctx;

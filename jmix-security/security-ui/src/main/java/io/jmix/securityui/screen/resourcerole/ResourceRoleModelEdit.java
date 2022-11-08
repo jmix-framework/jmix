@@ -160,6 +160,19 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         return childRoleModels;
     }
 
+    @Install(to = "childRolesTable.add", subject = "screenConfigurer")
+    private void childRolesTableAddScreenConfigurer(Screen screen) {
+        List<String> excludedRolesCodes = childRolesDc.getItems().stream()
+                .map(BaseRoleModel::getCode)
+                .collect(Collectors.toList());
+
+        if (!codeField.isEnabled()) {
+            excludedRolesCodes.add(getEditedEntity().getCode());
+        }
+
+        ((ResourceRoleModelLookup) screen).setExcludedRolesCodes(excludedRolesCodes);
+    }
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         //non-persistent entities are automatically marked as modified. If isNew is not set, we must remove

@@ -22,7 +22,12 @@ import io.jmix.security.model.ResourcePolicyEffect;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.securityui.model.DefaultResourcePolicyGroupResolver;
 import io.jmix.securityui.model.ResourcePolicyModel;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.CheckBox;
+import io.jmix.ui.component.CheckBoxGroup;
+import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.HasValue;
+import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.screen.MessageBundle;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
@@ -30,9 +35,12 @@ import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @UiController("sec_EntityResourcePolicyModel.create")
 @UiDescriptor("entity-resource-policy-model-create.xml")
@@ -40,18 +48,10 @@ public class EntityResourcePolicyModelCreate extends MultipleResourcePolicyModel
 
     @Autowired
     private ComboBox<String> entityField;
-
     @Autowired
-    private CheckBox createCheckBox;
-
+    private CheckBox allCheckBox;
     @Autowired
-    private CheckBox readCheckBox;
-
-    @Autowired
-    private CheckBox updateCheckBox;
-
-    @Autowired
-    private CheckBox deleteCheckBox;
+    private CheckBoxGroup<EntityPolicyAction> actionsCheckBoxGroup;
 
     @Autowired
     private TextField<String> policyGroupField;
@@ -68,42 +68,55 @@ public class EntityResourcePolicyModelCreate extends MultipleResourcePolicyModel
     @Autowired
     private MessageBundle messageBundle;
 
+    private boolean hasChanges = false;
     @Subscribe
     public void onInit(InitEvent event) {
         entityField.setOptionsMap(resourcePolicyEditorUtils.getEntityOptionsMap());
+    }
+
+    @Subscribe("policyGroupField")
+    public void onPolicyGroupFieldValueChange(HasValue.ValueChangeEvent<String> event) {
+        hasChanges = true;
     }
 
     @Subscribe("entityField")
     public void onEntityFieldValueChange(HasValue.ValueChangeEvent<String> event) {
         String entityName = event.getValue();
         policyGroupField.setValue(resourcePolicyGroupResolver.resolvePolicyGroup(ResourcePolicyType.ENTITY, entityName));
+        hasChanges = true;
     }
 
     private Set<String> getPolicyActions() {
-        Set<String> actions = new HashSet<>();
-        if (createCheckBox.isChecked())
-            actions.add("create");
-        if (readCheckBox.isChecked())
-            actions.add("read");
-        if (updateCheckBox.isChecked())
-            actions.add("update");
-        if (deleteCheckBox.isChecked())
-            actions.add("delete");
+        Set<String> actions = new HashSet<>(actionsCheckBoxGroup.getValue()
+                .stream().map(EntityPolicyAction::getId).collect(Collectors.toList()));
         return actions;
     }
 
-    @Subscribe("allActionsCheckBox")
-    public void onAllActionsCheckBoxValueChange(HasValue.ValueChangeEvent<Boolean> event) {
-        Boolean allIsChecked = Boolean.TRUE.equals(event.getValue());
-        createCheckBox.setEnabled(!allIsChecked);
-        readCheckBox.setEnabled(!allIsChecked);
-        updateCheckBox.setEnabled(!allIsChecked);
-        deleteCheckBox.setEnabled(!allIsChecked);
+    @Subscribe("actionsCheckBoxGroup")
+    public void onActionsCheckBoxGroupValueChange(HasValue.ValueChangeEvent<Collection<EntityPolicyAction>> event) {
+        allCheckBox.setEditable(false);
+        if(event.getValue()!=null && event.getValue().size()==EntityPolicyAction.values().length){
+            allCheckBox.setValue(true);
+        } else {
+            allCheckBox.setValue(false);
+        }
+        allCheckBox.setEditable(true);
+        hasChanges = true;
+    }
 
-        createCheckBox.setValue(allIsChecked);
-        readCheckBox.setValue(allIsChecked);
-        updateCheckBox.setValue(allIsChecked);
-        deleteCheckBox.setValue(allIsChecked);
+    @Subscribe("allCheckBox")
+    public void onAllActionsCheckBoxValueChange(HasValue.ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+
+        Boolean allIsChecked = Boolean.TRUE.equals(booleanValueChangeEvent.getValue());
+        if(booleanValueChangeEvent.isUserOriginated()) {
+            if (allIsChecked) {
+                actionsCheckBoxGroup.setValue(Arrays.stream(EntityPolicyAction.values())
+                        .collect(Collectors.toList()));
+            } else {
+                actionsCheckBoxGroup.clear();
+            }
+        }
+        hasChanges = true;
     }
 
     @Override
@@ -132,5 +145,10 @@ public class EntityResourcePolicyModelCreate extends MultipleResourcePolicyModel
             policies.add(policy);
         }
         return policies;
+    }
+
+    @Override
+    public boolean hasUnsavedChanges() {
+        return hasChanges;
     }
 }

@@ -23,7 +23,11 @@ import io.jmix.security.model.ResourcePolicyEffect;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.securityui.model.DefaultResourcePolicyGroupResolver;
 import io.jmix.securityui.model.ResourcePolicyModel;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.CheckBox;
+import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.HasValue;
+import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.menu.MenuItem;
 import io.jmix.ui.screen.MessageBundle;
 import io.jmix.ui.screen.Subscribe;
@@ -63,6 +67,8 @@ public class MenuResourcePolicyModelCreate extends MultipleResourcePolicyModelCr
 
     private String screenId;
 
+    private boolean hasChanges = false;
+
     @Subscribe
     public void onInit(InitEvent event) {
         menuItemField.setOptionsMap(resourcePolicyEditorUtils.getMenuItemOptionsMap());
@@ -89,6 +95,22 @@ public class MenuResourcePolicyModelCreate extends MultipleResourcePolicyModelCr
             screenField.setValue(resourcePolicyEditorUtils.getScreenCaption(screenId));
             screenAccessField.setEditable(true);
         }
+        hasChanges = true;
+    }
+
+    @Subscribe("policyGroupField")
+    protected void onPolicyGroupFieldValueChange(HasValue.ValueChangeEvent<String> event){
+        hasChanges = true;
+    }
+
+    @Subscribe("screenAccessField")
+    protected void onScreenAccessFieldValueChange(HasValue.ValueChangeEvent<Boolean> event) {
+        hasChanges = true;
+    }
+
+    @Subscribe("screenField")
+    protected void onScreenFieldValueChange(HasValue.ValueChangeEvent<String> event){
+        hasChanges = true;
     }
 
     @Override
@@ -125,5 +147,10 @@ public class MenuResourcePolicyModelCreate extends MultipleResourcePolicyModelCr
         }
 
         return policies;
+    }
+
+    @Override
+    public boolean hasUnsavedChanges() {
+        return hasChanges;
     }
 }

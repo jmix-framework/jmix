@@ -61,6 +61,8 @@ public interface OrderRepository extends JmixDataRepository<SalesOrder, UUID> {
 
     Page<SalesOrder> findSalesByDateAfterAndNumberIn(Date date, Pageable pageable, List<String> numbers);
 
+    Page<SalesOrder> findByDateAfterAndNumberIn(Date date, Pageable pageable, io.jmix.core.FetchPlan plan, List<String> numbers);
+
     Slice<SalesOrder> findSalesByCustomerNameIn(List<String> customerNames, Pageable pageable);
 
     @Query("select o from repository$SalesOrder o where (o.date> ?1 and o.number in ?2)")

@@ -234,7 +234,7 @@ class CustomerRepositoryTest extends DataSpec {
         then:
         customers.size() == 1
         customers.get(0) == customer1
-        !entityStates.isLoaded(customers.get(0), "address") //loaded with LOCAL fetchPlan by default
+        !entityStates.isLoaded(customers.get(0), "address") //loaded with _instance_name fetchPlan
     }
 
     void testFetchPlanParameterWithQueryAnnotation() {

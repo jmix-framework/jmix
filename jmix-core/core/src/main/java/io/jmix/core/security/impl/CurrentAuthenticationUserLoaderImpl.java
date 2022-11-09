@@ -21,6 +21,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthenticationUserLoader;
 import io.jmix.core.security.CurrentUserHints;
 import io.jmix.core.security.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,8 @@ import java.util.Map;
 
 @Component("core_CurrentAuthenticationUserLoader")
 public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticationUserLoader {
+
+    protected DataManager dataManager;
 
     protected Metadata metadata;
 
@@ -40,19 +43,26 @@ public class CurrentAuthenticationUserLoaderImpl implements CurrentAuthenticatio
 
     protected UserRepository userRepository;
 
-    public CurrentAuthenticationUserLoaderImpl(Metadata metadata, MetadataTools metadataTools,
-                                               CoreProperties coreProperties, EntityStates entityStates, UserRepository userRepository) {
+    public CurrentAuthenticationUserLoaderImpl(DataManager dataManager, Metadata metadata, MetadataTools metadataTools,
+                                               CoreProperties coreProperties, EntityStates entityStates) {
+        this.dataManager = dataManager;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.coreProperties = coreProperties;
         this.entityStates = entityStates;
+    }
+
+    @Autowired(required = false)
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     public UserDetails reloadUser(UserDetails user, Map<String, Object> hints) {
         if (shouldReloadUser(user, hints)) {
             try {
-                return userRepository.loadUserByUsername(user.getUsername());
+                return userRepository != null ?
+                        userRepository.loadUserByUsername(user.getUsername()) :
+                        dataManager.load(Id.of(user)).optional().orElse(user);
             } catch (UsernameNotFoundException e) {
                 return user;
             }

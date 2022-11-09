@@ -47,12 +47,14 @@ public interface CustomerRepository extends JmixDataRepository<Customer, UUID> {
     List<Customer> findByNameStartingWith(@Param("name") String name);
 
     @Query("where e.name like concat(?1,'%')")
-    List<Customer> findByNameStartingWithAndUseFetchPlan(String name, io.jmix.core.FetchPlan plan);
+    List<Customer> findByNameStartingWithAndUseFetchPlan(io.jmix.core.FetchPlan plan, String name);
 
     @Query("where e.name like concat(:name,'%')")
-    List<Customer> findByNameWithNamedParameterAndUseFetchPlan(@Param("name") String name, @Param("plan") io.jmix.core.FetchPlan plan);
+    List<Customer> findByNameWithNamedParameterAndUseFetchPlan(@Param("name") String name, io.jmix.core.FetchPlan plan);
 
     List<Customer> findByName(String name, io.jmix.core.FetchPlan plan);
+
+    Customer getByName(io.jmix.core.FetchPlan plan, String name);
 
     @Query("select c from repository$Customer c where c.name like concat(?1, '%')")
     List<Customer> findByQueryWithPositionParameter(String name);

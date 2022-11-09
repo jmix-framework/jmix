@@ -147,8 +147,6 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
             }
         } else {
             for (Parameter bindableParameter : bindableParameters.toList()) {
-                if (bindableParameter.getIndex() == fetchPlanIndex)
-                    continue;
                 //noinspection OptionalGetWithoutIsPresent
                 String name = bindableParameter.getName().get();//existence checked by spring
                 if (parameterNames.contains(name)) {

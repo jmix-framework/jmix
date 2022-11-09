@@ -237,17 +237,18 @@ class CustomerRepositoryTest extends DataSpec {
         !entityStates.isLoaded(customers.get(0), "address") //loaded with LOCAL fetchPlan by default
     }
 
-    void testFetchPlanParameter() {
+    void testFetchPlanParameterWithQueryAnnotation() {
         when:
-        List<Customer> customers = customerRepository.findByNameStartingWithAndUseFetchPlan("cust",
-                fetchPlans.builder(Customer).addAll("name", "address.city").build())
+        List<Customer> customers = customerRepository.findByNameStartingWithAndUseFetchPlan(
+                fetchPlans.builder(Customer).addAll("name", "address.city").build(),
+                "cust")
         then:
         customers.size() == 1
         customers.get(0) == customer1
         entityStates.isLoaded(customers.get(0), "address")
 
-        when:
 
+        when:
         customers = customerRepository.findByNameWithNamedParameterAndUseFetchPlan("cust",
                 fetchPlans.builder(Customer).addAll("name", "address.city").build())
         then:
@@ -255,14 +256,27 @@ class CustomerRepositoryTest extends DataSpec {
         customers.get(0) == customer1
         entityStates.isLoaded(customers.get(0), "address")
 
-        when:
+    }
 
-        customers = customerRepository.findByName("cust1",
-                fetchPlans.builder(Customer).addAll("name", "address.city").build())
+    void testFetchPlanParameter() {
+        when:
+        List<Customer> customers = customerRepository.findByName("some cust 2",
+                fetchPlans.builder(Customer).addAll("address.street").build())
         then:
         customers.size() == 1
-        customers.get(0) == customer1
+        customers.get(0) == customer2
         entityStates.isLoaded(customers.get(0), "address")
+        !entityStates.isLoaded(customers.get(0), "name")
+
+
+        when:
+        Customer one = customerRepository.getByName(
+                fetchPlans.builder(Customer).addAll("address.city").build(),
+                "another cust 3")
+        then:
+        one == customer3
+        entityStates.isLoaded(one, "address")
+        !entityStates.isLoaded(one, "name")
     }
 
     void testQueryWithPositionalParam() {

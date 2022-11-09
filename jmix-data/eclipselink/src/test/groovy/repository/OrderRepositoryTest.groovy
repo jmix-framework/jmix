@@ -17,6 +17,8 @@
 package repository
 
 import io.jmix.core.DataManager
+import io.jmix.core.EntityStates
+import io.jmix.core.FetchPlans
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -42,6 +44,10 @@ class OrderRepositoryTest extends DataSpec {
     private DataManager dataManager;
     @Autowired
     private JdbcTemplate jdbcTemplate
+    @Autowired
+    private EntityStates entityStates;
+    @Autowired
+    private FetchPlans fetchPlans;
 
 
     private Customer customer1, customer2, customer3;
@@ -273,6 +279,7 @@ class OrderRepositoryTest extends DataSpec {
         first.toList()[1] == order2
         first.hasNext()
         !first.hasPrevious()
+        !entityStates.isLoaded(first.toList()[0], "customer")
 
         when: "second page"
         Page<SalesOrder> second = orderRepository.findSalesByDateAfterAndNumberIn(
@@ -342,6 +349,30 @@ class OrderRepositoryTest extends DataSpec {
         pageByQueryThree.hasNext()
         !pageByQueryThree.hasPrevious()
 
+    }
+
+    void 'fetch plan parameter works with paging'() {
+        when:
+        Page<SalesOrder> page = orderRepository.findByDateAfterAndNumberIn(
+                new Date(0),
+                PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "number")),
+                fetchPlans.builder(SalesOrder).addAll("customer").build(),
+                ["111", "114", "113", "112"]
+        )
+        then:
+        entityStates.isLoaded(page.toList()[0], "customer")
+        !entityStates.isLoaded(page.toList()[0].customer, "address")
+
+        when:
+        Page<SalesOrder> page2 = orderRepository.findByDateAfterAndNumberIn(
+                new Date(0),
+                PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "number")),
+                fetchPlans.builder(SalesOrder).addAll("customer", "customer.address").build(),
+                ["111", "114", "113", "112"]
+        )
+        then:
+        entityStates.isLoaded(page2.toList()[0], "customer")
+        entityStates.isLoaded(page2.toList()[0].customer, "address")
     }
 
     void 'slicing works'() {

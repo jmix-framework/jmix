@@ -20,6 +20,9 @@ import io.jmix.core.FetchPlan;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.repository.query.Parameter;
 
+/**
+ * {@link Parameter} extension required to support {@link io.jmix.core.FetchPlan} special parameter.
+ */
 public class JmixParameter extends Parameter {
 
     protected JmixParameter(MethodParameter parameter) {

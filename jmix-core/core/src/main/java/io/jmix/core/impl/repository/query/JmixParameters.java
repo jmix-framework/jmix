@@ -22,7 +22,9 @@ import org.springframework.data.repository.query.Parameters;
 
 import java.lang.reflect.Method;
 import java.util.List;
-
+/**
+ * {@link Parameters} extension required to support {@link io.jmix.core.FetchPlan} special parameter.
+ */
 public class JmixParameters extends Parameters<JmixParameters, JmixParameter> {
 
     private final int fetchPlanIndex;

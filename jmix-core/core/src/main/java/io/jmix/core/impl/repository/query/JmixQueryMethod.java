@@ -22,6 +22,9 @@ import org.springframework.data.repository.query.QueryMethod;
 
 import java.lang.reflect.Method;
 
+/**
+ * {@link QueryMethod} extension required to support {@link io.jmix.core.FetchPlan} special parameter.
+ */
 public class JmixQueryMethod extends QueryMethod {
 
     public JmixQueryMethod(Method method, RepositoryMetadata metadata, ProjectionFactory factory) {

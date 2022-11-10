@@ -46,10 +46,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component("imap_ImapAttachments")
 public class ImapAttachmentsImpl implements ImapAttachments {
     private final static Logger log = LoggerFactory.getLogger(ImapAttachmentsImpl.class);
+
+    private final static String RFC6266_ATTACHMENT_NAME_REGEX_PATTERN = "([A-Za-z0-9\\-]*)''([A-Za-z0-9%]*)";
 
     @Autowired
     protected ImapHelper imapHelper;
@@ -130,14 +134,34 @@ public class ImapAttachmentsImpl implements ImapAttachments {
         return result;
     }
 
-    protected ImapMessageAttachment createImapMessageAttachment(int i, BodyPart bodyPart) throws MessagingException {
-        ImapMessageAttachment attachment = metadata.create(ImapMessageAttachment.class);
-        String name = bodyPart.getFileName();
+    /**
+     * Sometimes email clients encode filenames according to the RFC6266 standard.
+     * This method resolve this problem
+     * @param encodedName encoded attachment name
+     * @return name of attachment
+     */
+    protected String decodeAttachmentName(String encodedName) {
+        String decodedName = encodedName;
         try {
-            name = MimeUtility.decodeText(name);
+            if (encodedName.matches(RFC6266_ATTACHMENT_NAME_REGEX_PATTERN)) {
+                Pattern pattern = Pattern.compile(RFC6266_ATTACHMENT_NAME_REGEX_PATTERN, Pattern.MULTILINE);
+                Matcher matcher = pattern.matcher(encodedName);
+                if (matcher.matches()) {
+                    decodedName = java.net.URLDecoder.decode(matcher.group(2), matcher.group(1));
+                }
+            } else {
+                decodedName = MimeUtility.decodeText(encodedName);
+            }
         } catch (UnsupportedEncodingException e) {
             log.warn("Can't decode name of attachment", e);
         }
+        return decodedName;
+    }
+
+    protected ImapMessageAttachment createImapMessageAttachment(int i, BodyPart bodyPart) throws MessagingException {
+        ImapMessageAttachment attachment = metadata.create(ImapMessageAttachment.class);
+        String name = bodyPart.getFileName();
+        name = decodeAttachmentName(name);
         attachment.setName(name);
         attachment.setFileSize((long) bodyPart.getSize());
         attachment.setCreatedTs(timeSource.currentTimestamp());

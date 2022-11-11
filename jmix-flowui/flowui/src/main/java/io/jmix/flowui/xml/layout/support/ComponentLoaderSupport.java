@@ -18,7 +18,7 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
@@ -35,13 +35,10 @@ import io.jmix.flowui.component.formatter.FormatterLoadFactory;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.validation.ValidatorLoadFactory;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.kit.component.HasAutofocus;
-import io.jmix.flowui.kit.component.HasPlaceholder;
-import io.jmix.flowui.kit.component.HasTitle;
-import io.jmix.flowui.kit.component.SupportsFormatter;
+import io.jmix.flowui.kit.component.*;
 import io.jmix.flowui.kit.component.formatter.Formatter;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
-import io.jmix.flowui.xml.layout.loader.PropertyShortcutLoader;
+import io.jmix.flowui.xml.layout.loader.PropertyShortcutCombinationLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dom4j.Element;
@@ -145,7 +142,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loadAlignItems(component, element);
         loadJustifyContent(component, element);
         loadEnabled(component, element);
-        loadClassName(component, element);
+        loadClassNames(component, element);
         loadSizeAttributes(component, element);
     }
 
@@ -175,21 +172,21 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadInteger(element, "valueChangeTimeout", component::setValueChangeTimeout);
     }
 
-    public void loadThemeName(HasTheme component, Element element) {
-        loaderSupport.loadString(element, "themeName")
-                .ifPresent(themeString -> addNames(themeString, component::addThemeName));
+    public void loadThemeNames(HasTheme component, Element element) {
+        loaderSupport.loadString(element, "themeNames")
+                .ifPresent(themesString -> split(themesString, component::addThemeName));
     }
 
-    public void loadClassName(HasStyle component, Element element) {
-        loaderSupport.loadString(element, "className")
-                .ifPresent(classNameString -> addNames(classNameString, component::addClassName));
+    public void loadClassNames(HasStyle component, Element element) {
+        loaderSupport.loadString(element, "classNames")
+                .ifPresent(classNamesString -> split(classNamesString, component::addClassName));
     }
 
     public void loadBadge(HasText component, Element element) {
-        loaderSupport.loadString(element, "themeName")
+        loaderSupport.loadString(element, "themeNames")
                 .ifPresent(badgeString -> {
                     component.getElement().getThemeList().add("badge");
-                    addNames(badgeString, component.getElement().getThemeList()::add);
+                    split(badgeString, component.getElement().getThemeList()::add);
                 });
     }
 
@@ -289,38 +286,49 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loadMinHeight(component, element);
     }
 
-    public Optional<VaadinIcon> loadIcon(com.vaadin.flow.component.Component component, Element element) {
-        return loaderSupport.loadEnum(element, VaadinIcon.class, "icon");
+    public Optional<Icon> loadIcon(Element element) {
+        return loaderSupport.loadString(element, "icon")
+                .map(FlowuiComponentUtils::parseIcon);
     }
 
-    public Optional<String> loadShortcut(Element element) {
-        return loaderSupport.loadString(element, "shortcut")
-                .map(shortcut -> {
-                    if (shortcut.startsWith("${") && shortcut.endsWith("}")) {
-                        String fqnShortcut = loadShortcutFromFQNConfig(shortcut);
-                        if (fqnShortcut != null) {
-                            return fqnShortcut;
+    public void loadIcon(Element element, Consumer<Icon> setter) {
+        loadIcon(element)
+                .ifPresent(setter);
+    }
+
+    public Optional<String> loadShortcutCombination(Element element) {
+        return loaderSupport.loadString(element, "shortcutCombination")
+                .map(shortcutCombination -> {
+                    if (shortcutCombination.startsWith("${") && shortcutCombination.endsWith("}")) {
+                        if (isShortcutCombinationFQN(shortcutCombination)) {
+                            return loadShortcutCombinationFromFQNConfig(shortcutCombination);
                         }
 
-                        String configShortcut = loadShortcutFromConfig(shortcut);
-                        if (configShortcut != null) {
-                            return configShortcut;
+                        if (isShortcutCombinationConfig(shortcutCombination)) {
+                            return loadShortcutCombinationFromConfig(shortcutCombination);
                         }
 
-                        String aliasShortcut = loadShortcutFromAlias(shortcut);
-                        if (aliasShortcut != null) {
-                            return aliasShortcut;
+                        if (isShortcutCombinationAlias(shortcutCombination)) {
+                            return loadShortcutCombinationFromAlias(shortcutCombination);
                         }
+
+                        String message = String.format("An error occurred while loading shortcutCombination. " +
+                                "Can't find shortcutCombination for code \"%s\"", shortcutCombination);
+                        throw new GuiDevelopmentException(message, context);
                     }
 
-                    return shortcut;
+                    return shortcutCombination;
                 });
     }
 
+    protected boolean isShortcutCombinationFQN(String shortcutCombination) {
+        return shortcutCombination.contains("#");
+    }
+
     @Nullable
-    protected String loadShortcutFromFQNConfig(String shortcut) {
-        if (shortcut.contains("#")) {
-            String[] splittedShortcut = shortcut.split("#");
+    protected String loadShortcutCombinationFromFQNConfig(String shortcutCombination) {
+        if (isShortcutCombinationFQN(shortcutCombination)) {
+            String[] splittedShortcut = shortcutCombination.split("#");
             if (splittedShortcut.length != 2) {
                 String message = "An error occurred while loading shortcut: incorrect format of shortcut.";
                 throw new GuiDevelopmentException(message, context);
@@ -358,44 +366,51 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         return null;
     }
 
+    protected boolean isShortcutCombinationConfig(String shortcutCombination) {
+        return shortcutCombination.contains(".");
+    }
+
     @Nullable
-    protected String loadShortcutFromConfig(String shortcut) {
-        if (shortcut.contains(".")) {
-            String shortcutPropertyKey = shortcut.substring(2, shortcut.length() - 1);
+    protected String loadShortcutCombinationFromConfig(String shortcutCombination) {
+        if (isShortcutCombinationConfig(shortcutCombination)) {
+            String shortcutPropertyKey = shortcutCombination.substring(2, shortcutCombination.length() - 1);
             String shortcutValue = environment.getProperty(shortcutPropertyKey);
             if (StringUtils.isNotEmpty(shortcutValue)) {
                 return shortcutValue;
             } else {
-                String message = String.format("Component shortcut property \"%s\" doesn't exist", shortcutPropertyKey);
+                String message = String.format("Component shortcutCombination property \"%s\" doesn't exist", shortcutPropertyKey);
                 throw new GuiDevelopmentException(message, context);
             }
         }
         return null;
+    }
+
+    protected boolean isShortcutCombinationAlias(String shortcutCombination) {
+        return shortcutCombination.endsWith("_SHORTCUT}");
     }
 
     @Nullable
-    protected String loadShortcutFromAlias(String shortcut) {
-        if (shortcut.endsWith("_SHORTCUT}")) {
-            PropertyShortcutLoader propertyShortcutLoader = applicationContext.getBean(PropertyShortcutLoader.class);
+    protected String loadShortcutCombinationFromAlias(String shortcutCombination) {
+        if (isShortcutCombinationAlias(shortcutCombination)) {
+            PropertyShortcutCombinationLoader propertyShortcutLoader = applicationContext.getBean(PropertyShortcutCombinationLoader.class);
 
-            String alias = shortcut.substring(2, shortcut.length() - 1);
+            String alias = shortcutCombination.substring(2, shortcutCombination.length() - 1);
             if (propertyShortcutLoader.contains(alias)) {
                 return propertyShortcutLoader.getShortcut(alias);
             } else {
-                String message = String.format("An error occurred while loading shortcut. " +
-                        "Can't find shortcut for alias \"%s\"", alias);
+                String message = String.format("An error occurred while loading shortcutCombination. " +
+                        "Can't find shortcutCombination for alias \"%s\"", alias);
                 throw new GuiDevelopmentException(message, context);
             }
         }
         return null;
     }
 
-    protected void addNames(String names, Consumer<String> setter) {
-        for (String split : names.split(",")) {
-            String trimmed = split.trim();
-
-            if (!Strings.isNullOrEmpty(trimmed)) {
-                setter.accept(trimmed);
+    protected void split(String names, Consumer<String> setter) {
+        String[] values = names.split("[\\s,]+");
+        for (String value : values) {
+            if (!Strings.isNullOrEmpty(value)) {
+                setter.accept(value);
             }
         }
     }

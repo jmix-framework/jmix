@@ -34,7 +34,7 @@ public class GeneratedIdEntityInitializer implements EntityInitializer, Ordered 
 
     @Override
     public void initEntity(Object entity) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         metaClass.getProperties().stream()
                 .filter(property -> property.getRange().isDatatype()
                         && property.getRange().asDatatype().getJavaClass().equals(UUID.class)

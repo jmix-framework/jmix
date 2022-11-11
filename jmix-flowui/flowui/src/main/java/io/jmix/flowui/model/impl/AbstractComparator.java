@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,12 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
 
-@SameAsUi
-@RequiresChanges
 public abstract class AbstractComparator<T> implements Comparator<T> {
 
     protected boolean asc;
@@ -56,7 +52,7 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
         } else if (o1 instanceof Comparable && o2 instanceof Comparable) {
             c = ((Comparable) o1).compareTo(o2);
         } else if (o1 instanceof Entity && o2 instanceof Entity) {
-            MetaClass metaClass = metadata.getClass(o1.getClass());
+            MetaClass metaClass = metadata.getClass(o1);
             Collection<MetaProperty> namePatternProperties = metadataTools.getInstanceNameRelatedProperties(metaClass, true);
             if (namePatternProperties.isEmpty()) {
                 String instanceName1 = metadataTools.getInstanceName(o1);

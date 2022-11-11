@@ -63,6 +63,9 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     protected Messages messages;
 
     @Autowired
+    protected MessageBundle messageBundle;
+
+    @Autowired
     protected CheckBox useProxyChkBox;
 
     @Autowired
@@ -179,12 +182,12 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
         try {
             refreshFolders();
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage(getClass(), "connectionSucceed"))
+                    .withCaption(messageBundle.getMessage("connectionSucceed"))
                     .show();
         } catch (ImapException e) {
             log.error("Connection Error", e);
             notifications.create(Notifications.NotificationType.ERROR)
-                    .withCaption(messages.getMessage(getClass(), "connectionFailed"))
+                    .withCaption(messageBundle.getMessage("connectionFailed"))
                     .withDescription(e.getMessage())
                     .show();
         }

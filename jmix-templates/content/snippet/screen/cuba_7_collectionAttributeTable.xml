@@ -1,0 +1,63 @@
+<%def viewProperty = view.getProperty(nestedCollectionDatasourceProperty)
+if (viewProperty == null) {
+    isError = true
+    return
+}
+def entity = view.entity
+def ownerEntityClassName
+ownerEntity = entity
+def attribute = null
+while (ownerEntity != null && attribute == null) {
+    attribute = ownerEntity.getAttribute(nestedCollectionDatasourceProperty)
+    if (attribute != null) {
+        break
+    }
+    ownerEntity = ownerEntity.parent
+}
+
+if (attribute == null) {
+    isError = true
+    return
+}
+
+def columns = []
+def viewPropertyEntity = viewProperty.getEntity()
+viewProperty.subProperties.each {p ->
+        def attr = viewPropertyEntity.getAttribute(p.name)
+        if (attr != null && attr.allowPutToDataAware()) {
+            columns << p.name
+        }
+}
+
+def isManyToMany = attribute.hasAnnotation('ManyToMany')
+def isComposition = attribute.hasAnnotation('Composition')
+def addActionName = isManyToMany ? 'add' : 'create'
+def removeActionName = isComposition ? 'remove' : 'exclude'
+def oneToOneAnn = attribute.getAnnotation('OneToOne')
+def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim()) || attribute.hasAnnotation('JoinTable')
+%>
+<%if (createGroupBox) {%><groupBox id="${nestedCollectionDatasourceProperty}Box" caption="msg://${ownerEntity.packageName}/${ownerEntity.className}.${nestedCollectionDatasourceProperty}"><%}%>
+<table id="${nestedCollectionDatasourceProperty}Table" dataContainer="${nestedCollectionDatasourceProperty}Dc" width="100%" height="200px">
+    <% if (!isManyToMany || isOwnerAttr) {%>
+    <actions>
+        <action id="${addActionName}" type="${addActionName}"/>
+        <% if (attribute.hasAnnotation('OneToMany')) {%><action id="edit" type="edit"/><% }%>
+        <action id="${removeActionName}" type="${removeActionName}"/>
+    </actions>
+    <% }%>
+    <columns>
+        <%columns.each {%>
+            <column id="${it}"/>
+        <%}%>
+    </columns>
+    <% if (!isManyToMany || isOwnerAttr) {%>
+    <buttonsPanel>
+        <button action="${nestedCollectionDatasourceProperty}Table.${addActionName}"/>
+        <% if (attribute.hasAnnotation('OneToMany')) {%>
+        <button action="${nestedCollectionDatasourceProperty}Table.edit"/>
+        <%}%>
+        <button action="${nestedCollectionDatasourceProperty}Table.${removeActionName}"/>
+    </buttonsPanel>
+    <% }%>
+</table>
+<%if (createGroupBox) {%></groupBox><%}%>

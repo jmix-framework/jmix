@@ -16,7 +16,6 @@
 
 package io.jmix.reportsui.screen.report.importdialog;
 
-import io.jmix.core.Messages;
 import io.jmix.reports.ReportImportExport;
 import io.jmix.reports.entity.ReportImportOption;
 import io.jmix.reports.entity.ReportImportResult;
@@ -56,7 +55,7 @@ public class ReportImportDialog extends Screen {
     @Autowired
     protected HBoxLayout dropZone;
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -87,7 +86,7 @@ public class ReportImportDialog extends Screen {
 
             if (!result.hasErrors()) {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withCaption(messages.formatMessage(getClass(), "importResult",
+                        .withCaption(messageBundle.formatMessage("importResult",
                                 result.getCreatedReports().size(),
                                 result.getUpdatedReports().size()))
                         .show();
@@ -99,7 +98,7 @@ public class ReportImportDialog extends Screen {
                 log.error(exceptionTraces.toString());
 
                 notifications.create(Notifications.NotificationType.ERROR)
-                        .withCaption(messages.getMessage(getClass(), "reportException.unableToImportReport"))
+                        .withCaption(messageBundle.getMessage("reportException.unableToImportReport"))
                         .withDescription(exceptionTraces.toString())
                 .show();
                 close(StandardOutcome.CLOSE);
@@ -139,12 +138,12 @@ public class ReportImportDialog extends Screen {
     protected ValidationErrors getValidationErrors() {
         ValidationErrors errors = screenValidation.validateUiComponents(getWindow());
         if (fileUploadField.getFileId() == null) {
-            errors.add(messages.getMessage(getClass(), "reportException.noFile"));
+            errors.add(messageBundle.getMessage("reportException.noFile"));
             return errors;
         }
         String extension = FilenameUtils.getExtension(fileUploadField.getFileName());
         if (!StringUtils.equalsIgnoreCase(extension, DownloadFormat.ZIP.getFileExt())) {
-            errors.add(messages.formatMessage(getClass(), "reportException.wrongFileType", extension));
+            errors.add(messageBundle.formatMessage("reportException.wrongFileType", extension));
         }
         return errors;
     }

@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "name": "Full-Stack Application (Kotlin)",
+  "order": 110,
+  "addon": false,
+  "description": "<html>Jmix web application in Kotlin.<p>Contains UI, Security, File Storage subsystems and Data Tools add-on.<br>Uses embedded HSQL database.<p>You can change the database and include add-ons from the Marketplace at any time when working on the project.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": false
+    }
+  ]
+}

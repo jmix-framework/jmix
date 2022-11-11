@@ -3008,6 +3008,7 @@
                 <!-- comboBox attributes -->
                 <xs:attribute name="filterMode" type="filterMode"/>
                 <xs:attribute name="inputPrompt" type="resourceString"/>
+                <xs:attribute name="pageLength" type="xs:int"/>
 
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasRequirements"/>
@@ -3807,6 +3808,7 @@
 
     <xs:complexType name="screenSettingsComponentType">
         <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="enabled" type="xs:boolean"/>
     </xs:complexType>
 
     <!-- PresentationsFacet   -->

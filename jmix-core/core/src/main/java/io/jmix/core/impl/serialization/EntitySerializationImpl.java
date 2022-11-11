@@ -224,7 +224,7 @@ public class EntitySerializationImpl implements EntitySerialization {
 
         protected JsonObject serializeEntity(Entity entity, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
             JsonObject jsonObject = new JsonObject();
-            MetaClass metaClass = metadata.getClass(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity);
             if (!metadataTools.isJpaEmbeddable(metaClass)) {
                 jsonObject.addProperty(ENTITY_NAME_PROP, metaClass.getName());
                 if (serializeInstanceName) {
@@ -264,7 +264,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected void writeIdField(Entity entity, JsonObject jsonObject) {
-            MetaClass metaClass = metadata.getClass(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity);
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
             if (primaryKeyProperty == null) {
                 primaryKeyProperty = metaClass.getProperty("id");
@@ -284,7 +284,7 @@ public class EntitySerializationImpl implements EntitySerialization {
             if (!serializeSecretFields && metaProperty.getAnnotatedElement().isAnnotationPresent(Secret.class)) {
                 return false;
             }
-            MetaClass metaClass = metadata.getClass(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity);
 
             String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
             String propertyName = metaProperty.getName();
@@ -507,7 +507,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected void readFields(JsonObject jsonObject, Object entity) {
-            MetaClass metaClass = metadata.getClass(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity);
             Set<MetaProperty> additionalMetaProperties = metadataTools.getAdditionalProperties(metaClass);
             for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
                 String propertyName = entry.getKey();
@@ -681,7 +681,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected void clearFields(Object entity) {
-            MetaClass metaClass = metadata.getClass(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity);
             for (MetaProperty metaProperty : metaClass.getProperties()) {
                 if (metaProperty.getName().equals(metadataTools.getPrimaryKeyName(metaClass)) ||
                         metaProperty.getName().equals(metadataTools.getUuidPropertyName(entity.getClass())))

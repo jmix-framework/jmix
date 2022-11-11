@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,8 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.SameAsUi;
-
 /**
  * Container that holds a single instance which is loaded as a property of another entity.
  */
-@SameAsUi
 public interface InstancePropertyContainer<E> extends InstanceContainer<E>, Nested {
 }

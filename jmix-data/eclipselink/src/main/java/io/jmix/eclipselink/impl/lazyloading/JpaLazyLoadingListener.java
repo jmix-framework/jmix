@@ -96,7 +96,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                 .setHints(serializableHints);
 
         for (Map.Entry<Object, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
-            MetaClass metaClass = metadata.getClass(entry.getKey().getClass());
+            MetaClass metaClass = metadata.getClass(entry.getKey());
             for (MetaProperty property : metaClass.getProperties()) {
                 if (property.getRange().isClass() && !metadataTools.isEmbedded(property) &&
                         !isPropertyContainedInFetchPlans(property, entry.getValue()) &&
@@ -186,7 +186,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
 
         FetchPlanBuilder actualBuilder = fetchPlans.builder(fetchPlan.getEntityClass());
 
-        MetaClass metaClass = metadata.getClass(instance.getClass());
+        MetaClass metaClass = metadata.getClass(instance);
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
             if (!metaProperty.getRange().isClass() && !isLazyFetchedLocalAttribute(metaProperty)

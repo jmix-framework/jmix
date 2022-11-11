@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.util;
 
 import com.vaadin.flow.component.Focusable;
@@ -14,8 +30,8 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.model.*;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.UiControllerUtils;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +44,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Class that provides fluent interface for removing entity instances. <br>
- * Inject the class into your screen controller and use {@link #builder(Class, Screen)} method as an entry point.
+ * Inject the class into your view controller and use {@link #builder(Class, View)} method as an entry point.
  */
 @Component("flowui_RemoveOperation")
 public class RemoveOperation {
@@ -68,10 +84,10 @@ public class RemoveOperation {
      * Creates a remove builder.
      *
      * @param entityClass entity class
-     * @param origin      invoking screen
+     * @param origin      invoking view
      * @param <E>         type of entity
      */
-    public <E> RemoveBuilder<E> builder(Class<E> entityClass, Screen origin) {
+    public <E> RemoveBuilder<E> builder(Class<E> entityClass, View<?> origin) {
         checkNotNullArgument(entityClass);
         checkNotNullArgument(origin);
 
@@ -90,7 +106,7 @@ public class RemoveOperation {
             throw new IllegalArgumentException("ListDataComponent must extend the Component class");
         }
 
-        Screen screen = UiComponentUtils.findScreen((com.vaadin.flow.component.Component) listDataComponent);
+        View<?> view = UiComponentUtils.findView((com.vaadin.flow.component.Component) listDataComponent);
         Class<E> entityClass;
         DataUnit items = listDataComponent.getItems();
         if (items instanceof ContainerDataUnit) {
@@ -99,7 +115,7 @@ public class RemoveOperation {
             throw new IllegalStateException(String.format("Component %s is not bound to data", listDataComponent));
         }
 
-        return builder(entityClass, screen)
+        return builder(entityClass, view)
                 .withListDataComponent(listDataComponent);
     }
 
@@ -169,12 +185,12 @@ public class RemoveOperation {
     }
 
     protected <E> void removeItems(RemoveBuilder<E> builder, List<E> selectedItems) {
-        Screen origin = builder.getOrigin();
-        ScreenData screenData = UiControllerUtils.getScreenData(origin);
+        View<?> origin = builder.getOrigin();
+        ViewData viewData = ViewControllerUtils.getViewData(origin);
 
         CollectionContainer<E> container = getCollectionContainer(builder);
 
-        commitIfNeeded(selectedItems, container, screenData);
+        saveIfNeeded(selectedItems, container, viewData);
 
         if (selectedItems.size() == 1) {
             container.getMutableItems().remove(selectedItems.get(0));
@@ -191,28 +207,28 @@ public class RemoveOperation {
         }
     }
 
-    protected void commitIfNeeded(Collection<?> entitiesToRemove, CollectionContainer container,
-                                  ScreenData screenData) {
+    protected void saveIfNeeded(Collection<?> entitiesToRemove,
+                                CollectionContainer<?> container, ViewData viewData) {
 
-        List<?> entitiesToCommit = entitiesToRemove.stream()
+        List<?> entitiesToSave = entitiesToRemove.stream()
                 .filter(entity -> !entityStates.isNew(entity))
                 .collect(Collectors.toList());
 
-        boolean needCommit = !entitiesToCommit.isEmpty();
+        boolean needSave = !entitiesToSave.isEmpty();
         if (container instanceof Nested) {
-            InstanceContainer masterContainer = ((Nested) container).getMaster();
+            InstanceContainer<?> masterContainer = ((Nested) container).getMaster();
             String property = ((Nested) container).getProperty();
 
             MetaClass masterMetaClass = masterContainer.getEntityMetaClass();
             MetaProperty metaProperty = masterMetaClass.getProperty(property);
 
-            needCommit = needCommit && (metaProperty.getType() != MetaProperty.Type.COMPOSITION);
+            needSave = needSave && (metaProperty.getType() != MetaProperty.Type.COMPOSITION);
         }
 
-        DataContext dataContext = screenData.getDataContextOrNull();
-        if (needCommit) {
+        DataContext dataContext = viewData.getDataContextOrNull();
+        if (needSave) {
             SaveContext saveContext = new SaveContext();
-            for (Object entity : entitiesToCommit) {
+            for (Object entity : entitiesToSave) {
                 saveContext.removing(entity);
             }
             dataManager.save(saveContext);
@@ -230,7 +246,6 @@ public class RemoveOperation {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected <E> void excludeItems(RemoveBuilder<E> builder, List<E> selectedItems) {
         CollectionContainer<E> container = getCollectionContainer(builder);
 
@@ -238,7 +253,7 @@ public class RemoveOperation {
             throw new IllegalArgumentException("Exclude action supports only Nested containers");
         }
 
-        InstanceContainer masterDc = ((Nested) container).getMaster();
+        InstanceContainer<?> masterDc = ((Nested) container).getMaster();
 
         String property = ((Nested) container).getProperty();
         Object masterItem = masterDc.getItem();
@@ -249,8 +264,8 @@ public class RemoveOperation {
         if (inverseMetaProperty != null
                 && !inverseMetaProperty.getRange().getCardinality().isMany()) {
 
-            Class inversePropClass = extendedEntities.getEffectiveClass(inverseMetaProperty.getDomain());
-            Class dcClass = extendedEntities.getEffectiveClass(container.getEntityMetaClass());
+            Class<?> inversePropClass = extendedEntities.getEffectiveClass(inverseMetaProperty.getDomain());
+            Class<?> dcClass = extendedEntities.getEffectiveClass(container.getEntityMetaClass());
 
             if (inversePropClass.isAssignableFrom(dcClass)) {
                 // update reference for One-To-Many
@@ -265,13 +280,14 @@ public class RemoveOperation {
         focusListDataComponent(builder);
     }
 
+    @SuppressWarnings("unchecked")
     protected <E> CollectionContainer<E> getCollectionContainer(RemoveBuilder<E> builder) {
         CollectionContainer<E> container;
         if (builder.getContainer() != null) {
             container = builder.getContainer();
         } else if (builder.getListDataComponent() != null) {
             DataUnit items = builder.getListDataComponent().getItems();
-            container = ((ContainerDataUnit) items).getContainer();
+            container = ((ContainerDataUnit<E>) items).getContainer();
         } else {
             throw new IllegalArgumentException(String.format("Neither container nor %s is specified",
                     ListDataComponent.class.getSimpleName()));
@@ -318,7 +334,7 @@ public class RemoveOperation {
      */
     public static class RemoveBuilder<E> {
 
-        protected final Screen origin;
+        protected final View<?> origin;
         protected final Class<E> entityClass;
         protected final Consumer<RemoveBuilder<E>> handler;
 
@@ -336,7 +352,7 @@ public class RemoveOperation {
         protected Consumer<AfterActionPerformedEvent<E>> afterActionPerformedHandler;
         protected Consumer<ActionCancelledEvent<E>> actionCancelledHandler;
 
-        public RemoveBuilder(Screen origin, Class<E> entityClass, Consumer<RemoveBuilder<E>> actionHandler) {
+        public RemoveBuilder(View<?> origin, Class<E> entityClass, Consumer<RemoveBuilder<E>> actionHandler) {
             this.origin = origin;
             this.entityClass = entityClass;
             this.handler = actionHandler;
@@ -425,7 +441,7 @@ public class RemoveOperation {
             return confirmation;
         }
 
-        public Screen getOrigin() {
+        public View<?> getOrigin() {
             return origin;
         }
 
@@ -483,15 +499,15 @@ public class RemoveOperation {
         protected final List<E> items;
         protected boolean actionPrevented = false;
 
-        public BeforeActionPerformedEvent(Screen origin, List<E> items) {
+        public BeforeActionPerformedEvent(View<?> origin, List<E> items) {
             super(origin);
 
             this.items = items;
         }
 
         @Override
-        public Screen getSource() {
-            return (Screen) super.getSource();
+        public View<?> getSource() {
+            return (View<?>) super.getSource();
         }
 
         /**
@@ -522,15 +538,15 @@ public class RemoveOperation {
     public static class AfterActionPerformedEvent<E> extends EventObject {
         protected final List<E> items;
 
-        public AfterActionPerformedEvent(Screen origin, List<E> items) {
+        public AfterActionPerformedEvent(View<?> origin, List<E> items) {
             super(origin);
 
             this.items = items;
         }
 
         @Override
-        public Screen getSource() {
-            return (Screen) super.getSource();
+        public View<?> getSource() {
+            return (View<?>) super.getSource();
         }
 
         /**
@@ -547,15 +563,15 @@ public class RemoveOperation {
     public static class ActionCancelledEvent<E> extends EventObject {
         protected final List<E> items;
 
-        public ActionCancelledEvent(Screen origin, List<E> items) {
+        public ActionCancelledEvent(View<?> origin, List<E> items) {
             super(origin);
 
             this.items = items;
         }
 
         @Override
-        public Screen getSource() {
-            return (Screen) super.getSource();
+        public View<?> getSource() {
+            return (View<?>) super.getSource();
         }
 
         /**

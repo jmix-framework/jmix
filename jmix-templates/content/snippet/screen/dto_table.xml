@@ -1,0 +1,42 @@
+<%def isEmbedded(attr) {
+    return attr.hasAnnotation('Embedded') || attr.hasAnnotation('EmbeddedId')
+}
+
+def columns = []
+def tableActions = ["create","edit","remove"]
+
+entity.attributes.each { attr ->
+    if (attr == null || !attr.allowPutToDataAware()) {
+        return
+    }
+    if (!isEmbedded(attr)
+        && !attr.hasAnnotation('OneToMany')
+        && !attr.hasAnnotation('ManyToMany')
+        && !columns.contains(attr.name)
+        && !attr.isDeepInheritor('java.net.URI')) {
+            columns << attr.name
+    }
+}
+
+def isDataGrid = tableType.xmlName.endsWith('Grid')
+
+%>
+<${tableType.xmlName} id="${tableId}"
+        width="100%"
+        dataContainer="${tableDc}"<%
+        if (multiselect && !isDataGrid) {%>\n multiselect="true"<%}%>>
+    <actions><%tableActions.each { action ->%>
+        <action id="${action}" type="${action}"/>
+        <%}%>
+    </actions>
+    <columns><%columns.each {column ->%>
+        <column <%if(isDataGrid){%> property="${column}" <%}%> id="${column}"/>
+    <%}%>
+    </columns>
+    <buttonsPanel id="buttonsPanel"
+                  alwaysVisible="true">
+        <%tableActions.each { action ->%>
+            <button id="${action}Btn" action="${tableId}.${action}"/>
+        <%}%>
+    </buttonsPanel>
+</${tableType.xmlName}>

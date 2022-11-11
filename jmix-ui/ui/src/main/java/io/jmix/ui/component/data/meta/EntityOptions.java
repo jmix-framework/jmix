@@ -53,7 +53,7 @@ public interface EntityOptions<E> extends Options<E>, EntityDataUnit {
         private final T prevValue;
         private final T value;
 
-        public ValueChangeEvent(Options<T> source, T prevValue, T value) {
+        public ValueChangeEvent(Options<T> source, @Nullable T prevValue, @Nullable T value) {
             super(source);
             this.prevValue = prevValue;
             this.value = value;
@@ -65,10 +65,12 @@ public interface EntityOptions<E> extends Options<E>, EntityDataUnit {
             return (Options<T>) super.getSource();
         }
 
+        @Nullable
         public T getPrevValue() {
             return prevValue;
         }
 
+        @Nullable
         public T getValue() {
             return value;
         }

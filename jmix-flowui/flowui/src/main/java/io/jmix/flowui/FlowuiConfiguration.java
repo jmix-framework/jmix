@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.sys.ActionsConfiguration;
-import io.jmix.flowui.sys.UiControllersConfiguration;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -37,14 +37,13 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.flowui", value = "classpath:/io/jmix/flowui/module.properties")
 public class FlowuiConfiguration {
 
-    @Bean("flowui_UiControllers")
-    public UiControllersConfiguration screens(ApplicationContext applicationContext,
+    @Bean("flowui_ViewControllers")
+    public ViewControllersConfiguration views(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        UiControllersConfiguration uiControllers
-                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        // TODO: gg, no screens yet
-        uiControllers.setBasePackages(Collections.singletonList("io.jmix.flowui.app"));
-        return uiControllers;
+        ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.flowui.app"));
+        return viewControllers;
     }
 
     @Bean("flowui_UiActions")

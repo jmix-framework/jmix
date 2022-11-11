@@ -21,9 +21,9 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.main.JmixListMenu;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.ScreenInfo;
-import io.jmix.flowui.screen.ScreenRegistry;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewInfo;
+import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.sys.FlowuiAccessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +42,18 @@ public class ListMenuBuilder {
     private static final Logger log = LoggerFactory.getLogger(ListMenuBuilder.class);
 
     protected MenuConfig menuConfig;
-    protected ScreenRegistry screenRegistry;
+    protected ViewRegistry viewRegistry;
     protected UiComponents uiComponents;
     protected MessageTools messageTools;
     protected FlowuiAccessChecker flowuiAccessChecker;
 
     public ListMenuBuilder(MenuConfig menuConfig,
-                           ScreenRegistry screenRegistry,
+                           ViewRegistry viewRegistry,
                            UiComponents uiComponents,
                            MessageTools messageTools,
                            FlowuiAccessChecker flowuiAccessChecker) {
         this.menuConfig = menuConfig;
-        this.screenRegistry = screenRegistry;
+        this.viewRegistry = viewRegistry;
         this.uiComponents = uiComponents;
         this.messageTools = messageTools;
         this.flowuiAccessChecker = flowuiAccessChecker;
@@ -123,7 +123,7 @@ public class ListMenuBuilder {
     }
 
     protected JmixListMenu.MenuItem createMenuItem(MenuItem menuItem) {
-        JmixListMenu.ScreenMenuItem listMenuItem = new JmixListMenu.ScreenMenuItem(menuItem.getId())
+        JmixListMenu.ViewMenuItem listMenuItem = new JmixListMenu.ViewMenuItem(menuItem.getId())
                 .withTitle(menuConfig.getItemTitle(menuItem))
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.asList(getClassNames(menuItem)));
@@ -135,12 +135,12 @@ public class ListMenuBuilder {
     }
 
     @Nullable
-    protected Class<? extends Screen<?>> getControllerClass(MenuItem menuItem) {
-        if (Strings.isNullOrEmpty(menuItem.getScreen())) {
+    protected Class<? extends View<?>> getControllerClass(MenuItem menuItem) {
+        if (Strings.isNullOrEmpty(menuItem.getView())) {
             return null;
         }
-        ScreenInfo screenInfo = screenRegistry.getScreenInfo(menuItem.getScreen());
-        return screenInfo.getControllerClass();
+        ViewInfo viewInfo = viewRegistry.getViewInfo(menuItem.getView());
+        return viewInfo.getControllerClass();
     }
 
     @Nullable

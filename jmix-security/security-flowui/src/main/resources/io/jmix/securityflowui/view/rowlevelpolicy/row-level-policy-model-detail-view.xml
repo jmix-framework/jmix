@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://rowLevelPolicyModelDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="rowLevelPolicyModelDc"
+                  class="io.jmix.securityflowui.model.RowLevelPolicyModel">
+        </instance>
+    </data>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="rowLevelPolicyModelDc">
+            <comboBox id="entityNameField" property="entityName"/>
+            <select id="typeField" property="type"/>
+            <select id="actionField" property="action"/>
+
+            <textArea id="joinClauseField" height="9.5em" property="joinClause" colspan="2"/>
+            <textArea id="whereClauseField" height="19em" property="whereClause" colspan="2"/>
+            <textArea id="scriptField" height="19em" property="script" colspan="2"/>
+        </formLayout>
+
+        <hbox id="detailActions" width="100%">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+            <button id="checkSyntaxBtn"
+                    text="msg://checkSyntaxBtn.text"
+                    title="msg://checkSyntaxBtn.title"
+                    icon="BUG"/>
+            <anchor id="docsLink"
+                    text="msg://docsLink.text"
+                    title="msg://docsLink.title"
+                    href="msg://docUrl"
+                    target="BLANK"/>
+        </hbox>
+    </layout>
+</view>

@@ -16,7 +16,6 @@
 
 package io.jmix.reportsui.screen.report.edit.tabs;
 
-import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.UuidProvider;
@@ -51,7 +50,7 @@ public class ReportEditTemplatesFragment extends ScreenFragment {
     protected Table<ReportTemplate> templatesTable;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -110,7 +109,7 @@ public class ReportEditTemplatesFragment extends ScreenFragment {
             copy.setId(UuidProvider.createUuid());
             copy.setVersion(null);
 
-            String copyNamingPattern = messages.getMessage(getClass(), "template.copyNamingPattern");
+            String copyNamingPattern = messageBundle.getMessage("template.copyNamingPattern");
             String copyCode = String.format(copyNamingPattern, StringUtils.isEmpty(copy.getCode())
                     ? StringUtils.EMPTY
                     : copy.getCode());

@@ -39,29 +39,21 @@ import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.settings.ScreenSettings;
 import io.jmix.ui.settings.component.FilterSettings;
-import io.jmix.uidata.action.filter.FilterMakeDefaultAction;
-import io.jmix.uidata.action.filter.FilterRemoveAction;
-import io.jmix.uidata.action.filter.FilterSaveAction;
-import io.jmix.uidata.action.filter.FilterSaveAsAction;
-import io.jmix.uidata.action.filter.FilterSaveWithValuesAction;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
+import io.jmix.uidata.action.filter.*;
 import io.jmix.uidata.app.filter.configuration.UiDataFilterConfigurationModelFragment;
 import io.jmix.uidata.entity.FilterConfiguration;
-import io.jmix.ui.settings.ScreenSettings;
-import io.jmix.ui.settings.facet.ScreenSettingsFacet;
-import io.jmix.uidata.entity.UiSetting;
-import io.jmix.uidata.entity.UiTablePresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import static io.jmix.ui.component.filter.FilterUtils.generateFilterPath;
 
@@ -69,6 +61,8 @@ import static io.jmix.ui.component.filter.FilterUtils.generateFilterPath;
 public class UiDataFilterSupport extends FilterSupport {
 
     protected static final String CONFIGURATION_CONTAINER_ID = "configurationDc";
+
+    private static final Logger log = LoggerFactory.getLogger(UiDataFilterSupport.class);
 
     @Autowired
     protected DataManager dataManager;
@@ -87,9 +81,14 @@ public class UiDataFilterSupport extends FilterSupport {
         List<FilterConfiguration> configurationModels = loadFilterConfigurationModels(filter);
 
         for (FilterConfiguration configurationModel : configurationModels) {
-            Filter.Configuration configuration =
-                    filterConfigurationConverter.toConfiguration(configurationModel, filter);
-            map.put(configuration, configurationModel.getDefaultForAll());
+            try {
+                Filter.Configuration configuration =
+                        filterConfigurationConverter.toConfiguration(configurationModel, filter);
+                map.put(configuration, configurationModel.getDefaultForAll());
+            } catch (RuntimeException e) {
+                log.warn("Cannot create filter for configuration '{}'.", configurationModel.getName(), e);
+            }
+
         }
         return map;
     }

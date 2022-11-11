@@ -120,7 +120,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
             if (changes.hasChanges()) {
 
-                MetaClass metaClass = metadata.getClass(entity.getClass());
+                MetaClass metaClass = metadata.getClass(entity);
                 List<CategoryAttributeValue> attributeValues = loadValues(metaClass, accessConstraints,
                         Collections.singletonList(referenceToEntitySupport.getReferenceId(entity)));
 
@@ -422,7 +422,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                     .filter(aClass -> !dynAttrMetadata.getAttributes(metadata.getClass(aClass)).isEmpty())
                     .collect(Collectors.toSet());
             for (Object entity : entities) {
-                entitiesByType.put(extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity.getClass())), entity);
+                entitiesByType.put(extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity)), entity);
                 if (!dependentClasses.isEmpty()) {
                     metadataTools.traverseAttributes(entity, new EntityAttributeVisitor() {
                         @Override
@@ -435,12 +435,12 @@ public class DynAttrManagerImpl implements DynAttrManager {
                                         //noinspection rawtypes
                                         for (Object item : ((Collection) value)) {
                                             if (item instanceof Entity) {
-                                                entitiesByType.put(metadata.getClass(item.getClass()), item);
+                                                entitiesByType.put(metadata.getClass(item), item);
                                             }
                                         }
                                     } else if (value instanceof Entity) {
                                         if (!EntitySystemAccess.isEmbeddable(entity)) {
-                                            entitiesByType.put(metadata.getClass(value.getClass()), value);
+                                            entitiesByType.put(metadata.getClass(value), value);
                                         }
                                     }
                                 }

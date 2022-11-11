@@ -16,7 +16,6 @@
 
 package io.jmix.reportsui.screen.template.edit.pivottable.property.edit;
 
-import io.jmix.core.Messages;
 import io.jmix.reports.entity.pivottable.PivotTableProperty;
 import io.jmix.reports.entity.pivottable.PivotTablePropertyType;
 import io.jmix.ui.Dialogs;
@@ -39,7 +38,7 @@ public class PivotTablePropertyEdit extends StandardEditor<PivotTableProperty> {
     @Autowired
     protected SourceCodeEditor sourceCodeEditor;
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
     @Autowired
     protected Dialogs dialogs;
 
@@ -58,8 +57,8 @@ public class PivotTablePropertyEdit extends StandardEditor<PivotTableProperty> {
     @Install(to = "sourceCodeEditor", subject = "contextHelpIconClickHandler")
     protected void sourceCodeEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "pivotTable.functionHelpCaption"))
-                .withMessage(messages.getMessage(getClass(), "pivotTable.propertyFunctionHelp"))
+                .withCaption(messageBundle.getMessage("pivotTable.functionHelpCaption"))
+                .withMessage(messageBundle.getMessage("pivotTable.propertyFunctionHelp"))
                 .withModal(false)
                 .withWidth("560px")
                 .withContentMode(ContentMode.HTML)

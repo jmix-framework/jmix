@@ -16,7 +16,6 @@
 
 package io.jmix.reportsui.screen.report.wizard.region;
 
-import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.reports.entity.wizard.RegionProperty;
@@ -67,7 +66,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -110,7 +109,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         String messageKey = isTabulated
                 ? "selectEntityPropertiesForTableArea"
                 : "selectEntityProperties";
-        tipLabel.setValue(messages.formatMessage(getClass(), messageKey, rootEntity.getLocalizedName()));
+        tipLabel.setValue(messageBundle.formatMessage(messageKey, rootEntity.getLocalizedName()));
         tipLabel.setHtmlEnabled(true);
         initComponents();
     }
@@ -165,15 +164,15 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         if (addedItems.isEmpty()) {
             if (alreadyAdded) {
                 notifications.create(Notifications.NotificationType.TRAY)
-                        .withCaption(messages.getMessage(getClass(), "elementsAlreadyAdded"))
+                        .withCaption(messageBundle.getMessage("elementsAlreadyAdded"))
                         .show();
             } else if (selectedItems.size() != 0) {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withCaption(messages.getMessage(getClass(), "selectPropertyFromEntity"))
+                        .withCaption(messageBundle.getMessage("selectPropertyFromEntity"))
                         .show();
             } else {
                 notifications.create(Notifications.NotificationType.TRAY)
-                        .withCaption(messages.getMessage(getClass(), "elementsWasNotAdded"))
+                        .withCaption(messageBundle.getMessage("elementsWasNotAdded"))
                         .show();
             }
         } else {
@@ -183,9 +182,9 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
 
     protected void initAsFetchPlanEditor() {
         if (isTabulated) {
-            getWindow().setCaption(messages.getMessage(getClass(), "singleEntityDataSetFetchPlanEditor"));
+            getWindow().setCaption(messageBundle.getMessage("singleEntityDataSetFetchPlanEditor"));
         } else {
-            getWindow().setCaption(messages.getMessage(getClass(), "multiEntityDataSetFetchPlanEditor"));
+            getWindow().setCaption(messageBundle.getMessage("multiEntityDataSetFetchPlanEditor"));
         }
     }
 
@@ -194,11 +193,11 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     }
 
     protected void setTabulatedRegionEditorCaption(String collectionEntityName) {
-        getWindow().setCaption(messages.getMessage(getClass(), "tabulatedRegionEditor"));
+        getWindow().setCaption(messageBundle.getMessage("tabulatedRegionEditor"));
     }
 
     protected void setSimpleRegionEditorCaption() {
-        getWindow().setCaption(messages.getMessage(getClass(), "simpleRegionEditor"));
+        getWindow().setCaption(messageBundle.getMessage("simpleRegionEditor"));
     }
 
     @Install(to = "propertiesTable.removeItemAction", subject = "enabledRule")
@@ -257,7 +256,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     protected void onBeforeCommit(BeforeCommitChangesEvent event) {
         if (reportRegionPropertiesTableDc.getItems().isEmpty()) {
             notifications.create(Notifications.NotificationType.TRAY)
-                    .withCaption(messages.getMessage(getClass(), "selectAtLeastOneProp"))
+                    .withCaption(messageBundle.getMessage("selectAtLeastOneProp"))
                     .show();
             event.preventCommit();
         }

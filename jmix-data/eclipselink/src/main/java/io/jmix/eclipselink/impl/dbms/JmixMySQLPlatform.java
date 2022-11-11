@@ -18,13 +18,15 @@ package io.jmix.eclipselink.impl.dbms;
 
 import org.eclipse.persistence.exceptions.ConversionException;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
+import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.MySQLPlatform;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.UUID;
 
-public class JmixMySQLPlatform extends MySQLPlatform {
+public class JmixMySQLPlatform extends MySQLPlatform implements UuidMappingInfo {
 
     @Override
     public void setParameterValueInDatabaseCall(Object parameter,
@@ -34,7 +36,7 @@ public class JmixMySQLPlatform extends MySQLPlatform {
             throws SQLException {
 
         if (parameter instanceof UUID)
-            parameter = convertUUID((UUID) parameter);
+            parameter = String32UuidConverter.getInstance().uuidToString(parameter);
 
         super.setParameterValueInDatabaseCall(parameter, statement, index, session);
     }
@@ -42,12 +44,28 @@ public class JmixMySQLPlatform extends MySQLPlatform {
     @Override
     public Object convertObject(Object sourceObject, Class javaClass) throws ConversionException {
         if (sourceObject instanceof UUID && javaClass == String.class) {
-            return convertUUID((UUID) sourceObject);
+            return String32UuidConverter.getInstance().uuidToString(sourceObject);
         }
         return super.convertObject(sourceObject, javaClass);
     }
 
-    protected String convertUUID(UUID uuid) {
-        return uuid.toString().replace("-", "");
+    @Override
+    public int getUuidSqlType() {
+        return Types.VARCHAR;
+    }
+
+    @Override
+    public Class<?> getUuidType() {
+        return String.class;
+    }
+
+    @Override
+    public String getUuidColumnDefinition() {
+        return "varchar(32)";
+    }
+
+    @Override
+    public Converter getUuidConverter() {
+        return String32UuidConverter.getInstance();
     }
 }

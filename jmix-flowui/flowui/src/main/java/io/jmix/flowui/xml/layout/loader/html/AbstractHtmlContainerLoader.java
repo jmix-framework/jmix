@@ -36,7 +36,7 @@ public abstract class AbstractHtmlContainerLoader<T extends HtmlContainer> exten
         }
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadWhiteSpace(resultComponent, element);
         componentLoader().loadBadge(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);

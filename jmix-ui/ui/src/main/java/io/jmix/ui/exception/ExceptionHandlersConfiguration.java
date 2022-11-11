@@ -22,13 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class that is used to configure {@link ExceptionHandlers} via spring.xml.
- *
- * <p>If a project needs specific exception handlers, it should define a bean of this type with its own
- * <strong>id</strong>, e.g. <code>refapp_ExceptionHandlersConfiguration</code>, and set the list of handler class
- * names in <code>handlerClasses</code> property.</p>
- *
+ * DEPRECATED. Use only exception handlers defined as Spring beans.
  */
+@Deprecated
 public class ExceptionHandlersConfiguration {
 
     private List<Class> handlerClasses = new ArrayList<>();

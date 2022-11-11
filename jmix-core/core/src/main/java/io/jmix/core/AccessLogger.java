@@ -27,4 +27,6 @@ import io.jmix.core.constraint.AccessConstraint;
 public interface AccessLogger {
 
     <T extends AccessContext> void log(AccessConstraint<T> constraint, T accessContext);
+
+    void reset();
 }

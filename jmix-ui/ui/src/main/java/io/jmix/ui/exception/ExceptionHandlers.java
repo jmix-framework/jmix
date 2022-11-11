@@ -34,10 +34,6 @@ import java.util.Map;
  * Class that holds the collection of exception handlers and delegates unhandled exception processing to them. Handlers
  * form the chain of responsibility.
  *
- * <p>A set of exception handlers is configured by defining <code>ExceptionHandlersConfiguration</code> beans
- * in spring.xml. If a project needs specific handlers, it should define a bean of such type with its own
- * <strong>id</strong>, e.g. <code>refapp_ExceptionHandlersConfiguration</code></p>
- *
  * <p>An instance of this class is bound to {@link App}.</p>
  */
 public class ExceptionHandlers {
@@ -50,7 +46,7 @@ public class ExceptionHandlers {
     protected List<ExceptionHandler> handlers = new ArrayList<>();
     protected List<UiExceptionHandler> genericHandlers = new ArrayList<>();
 
-    protected ExceptionHandler defaultHandler;
+    protected DefaultExceptionHandler defaultHandler;
 
     public ExceptionHandlers(App app, ApplicationContext applicationContext) {
         this.app = app;
@@ -61,7 +57,7 @@ public class ExceptionHandlers {
     /**
      * @return default exception handler which is used when none of registered handlers have handled an exception
      */
-    public ExceptionHandler getDefaultHandler() {
+    public DefaultExceptionHandler getDefaultHandler() {
         return defaultHandler;
     }
 
@@ -70,15 +66,14 @@ public class ExceptionHandlers {
      *
      * @param defaultHandler default handler instance
      */
-    public void setDefaultHandler(ExceptionHandler defaultHandler) {
+    public void setDefaultHandler(DefaultExceptionHandler defaultHandler) {
         this.defaultHandler = defaultHandler;
     }
 
     /**
-     * Adds new Web-level handler if it is not yet registered.
-     *
-     * @param handler handler instance
+     * DEPRECATED. Use {@link #addHandler(UiExceptionHandler)}.
      */
+    @Deprecated
     public void addHandler(ExceptionHandler handler) {
         if (!handlers.contains(handler)) {
             handlers.add(handler);
@@ -86,7 +81,7 @@ public class ExceptionHandlers {
     }
 
     /**
-     * Adds new GUI-level handler if it is not yet registered.
+     * Adds new handler if it is not yet registered.
      *
      * @param handler handler instance
      */
@@ -120,16 +115,13 @@ public class ExceptionHandlers {
     }
 
     /**
-     * Create all Web handlers defined by <code>ExceptionHandlersConfiguration</code> beans in spring.xml and
-     * GUI handlers defined as Spring-beans.
+     * Register all exception handlers.
      */
     public void createByConfiguration() {
         removeAll();
 
-        // Web handlers
         Map<String, ExceptionHandlersConfiguration> map = applicationContext.getBeansOfType(ExceptionHandlersConfiguration.class);
 
-        // Project-level handlers must run before platform-level
         List<ExceptionHandlersConfiguration> configurations = new ArrayList<>(map.values());
         Collections.reverse(configurations);
 
@@ -149,7 +141,6 @@ public class ExceptionHandlers {
             }
         }
 
-        // GUI handlers
         Map<String, UiExceptionHandler> handlerMap = applicationContext.getBeansOfType(UiExceptionHandler.class);
 
         List<UiExceptionHandler> handlers = new ArrayList<>(handlerMap.values());

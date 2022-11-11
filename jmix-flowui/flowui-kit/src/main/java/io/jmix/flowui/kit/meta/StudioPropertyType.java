@@ -21,6 +21,11 @@ package io.jmix.flowui.kit.meta;
  */
 public enum StudioPropertyType {
     /**
+     * Identifier of an action defined in view.
+     */
+    ACTION_REF,
+
+    /**
      * Big decimal type.
      */
     BIG_DECIMAL,
@@ -36,14 +41,64 @@ public enum StudioPropertyType {
     COMPONENT_ID,
 
     /**
+     * Identifier of a component defined in view.
+     */
+    COMPONENT_REF,
+
+    /**
+     * ID of a collection data container.
+     */
+    COLLECTION_DATA_CONTAINER_REF,
+
+    /**
+     * ID of a data loader.
+     */
+    DATA_LOADER_REF,
+
+    /**
+     * ID of a data container
+     */
+    DATA_CONTAINER_REF,
+
+    /**
+     * ID of a datatype.
+     */
+    DATATYPE_ID,
+
+    /**
      * Double type.
      */
     DOUBLE,
 
     /**
+     * Names of Entities meta class.
+     */
+    ENTITY_NAME,
+
+    /**
+     * Names of Entities meta class.
+     */
+    ENTITY_NAMES,
+
+    /**
+     * FQN of Entity class.
+     */
+    ENTITY_CLASS,
+
+    /**
+     * FQN of Enum class.
+     */
+    ENUM_CLASS,
+
+    /**
      * Value from a strict list of property options.
      */
     ENUMERATION,
+
+    /**
+     * Fetch plan name.
+     */
+    FETCH_PLAN,
 
     /**
      * Float type.
@@ -67,6 +122,11 @@ public enum StudioPropertyType {
     LOCALIZED_STRING,
 
     /**
+     * JPA QL string.
+     */
+    JPA_QUERY,
+
+    /**
      * Long type.
      */
     LONG,
@@ -78,9 +138,24 @@ public enum StudioPropertyType {
     OPTIONS,
 
     /**
+     * Name of a data model property.
+     */
+    PROPERTY_REF,
+
+    /**
      * Size value, e.g. width or height
      */
     SIZE,
+
+    /**
+     * Keyboard shortcut.
+     */
+    SHORTCUT_COMBINATION,
+
+    /**
+     * Data store name.
+     */
+    STORE,
 
     /**
      * String type.

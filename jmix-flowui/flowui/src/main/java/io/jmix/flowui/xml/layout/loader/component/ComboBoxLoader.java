@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2022 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ public class ComboBoxLoader extends AbstractComboBoxLoader<JmixComboBox<?>> {
     public void loadComponent() {
         super.loadComponent();
 
+        getDataLoaderSupport().loadItems(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
 
         //These properties are loaded after the data provider is loaded,

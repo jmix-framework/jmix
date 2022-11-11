@@ -19,7 +19,7 @@ package io.jmix.ui.exception;
 import io.jmix.ui.*;
 
 /**
- * Interface to be implemented by exception handlers defined on GUI level.
+ * Interface to be implemented by UI exception handlers defined.
  */
 public interface UiExceptionHandler {
 
@@ -34,11 +34,11 @@ public interface UiExceptionHandler {
     boolean handle(Throwable exception, UiContext context);
 
     /**
-     * Exception handling context that provides UI beans.
+     * Exception handling context that provides UI infrastructure.
      */
     interface UiContext {
         /**
-         * @return screens manager
+         * @return screens screens API
          */
         Screens getScreens();
 

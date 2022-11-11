@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.validation;
 
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -26,10 +25,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-@SameAsUi
 @Component("flowui_DateTimeRangeValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DateTimeRangeValidator<T extends Comparable<T>> extends AbstractValidator<T> {
+public class DateTimeRangeValidator<T extends Comparable> extends AbstractValidator<T> {
 
     protected T min;
     protected T max;

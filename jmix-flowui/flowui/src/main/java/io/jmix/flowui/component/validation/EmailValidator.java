@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.validation;
 
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.List;
 
-@SameAsUi
 @Component("flowui_EmailValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EmailValidator extends AbstractValidator<String> implements InitializingBean {

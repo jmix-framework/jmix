@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class TestCurrentAuthentication implements CurrentAuthentication {
@@ -45,6 +46,11 @@ public class TestCurrentAuthentication implements CurrentAuthentication {
 
     @Override
     public UserDetails getUser() {
+        return user;
+    }
+
+    @Override
+    public UserDetails getUser(Map<String, Object> hints) {
         return user;
     }
 

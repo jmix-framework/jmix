@@ -41,10 +41,10 @@ public class AuthenticationFlowuiPolicyStore implements FlowuiPolicyStore {
     protected CurrentAuthentication currentAuthentication;
 
     @Override
-    public Stream<ResourcePolicy> getScreenResourcePolicies(String windowId) {
+    public Stream<ResourcePolicy> getViewResourcePolicies(String viewId) {
         return extractFromAuthenticationByScope(authority ->
-                authority.getResourcePoliciesByIndex(ScreenResourcePolicyByIdIndex.class,
-                        index -> index.getPolicies(windowId)));
+                authority.getResourcePoliciesByIndex(ViewResourcePolicyByIdIndex.class,
+                        index -> index.getPolicies(viewId)));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class AuthenticationFlowuiPolicyStore implements FlowuiPolicyStore {
         return scope == null || policyAwareAuthority.getScopes().contains(scope);
     }
 
-    public static class ScreenResourcePolicyByIdIndex implements ResourcePolicyIndex {
+    public static class ViewResourcePolicyByIdIndex implements ResourcePolicyIndex {
         private static final long serialVersionUID = -2668694174861058682L;
 
         protected Map<String, List<ResourcePolicy>> policyById;

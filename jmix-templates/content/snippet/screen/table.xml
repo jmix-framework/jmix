@@ -1,0 +1,56 @@
+<%def isEmbedded(attr) {
+    return attr.hasAnnotation('Embedded') || attr.hasAnnotation('EmbeddedId')
+}
+
+def columns = []
+
+view.orderedRootProperties.each { property ->
+    def attr = entity.getAttribute(property.name)
+    if (!attr.allowPutToDataAware()) {
+        return
+    }
+    if (!isEmbedded(attr)
+        && !attr.hasAnnotation('OneToMany') && !attr.hasAnnotation('ManyToMany')
+        && !columns.contains(property.name)) {
+        columns << property.name
+    } else if (property.entity != null) {
+        def subProperties = property.subProperties
+        def propEntity = property.entity
+        subProperties.each { subProp -> 
+            def subPropAttr = propEntity.getAttribute(subProp.name)
+            if (subPropAttr != null && !isEmbedded(subPropAttr)
+                && !subPropAttr.hasAnnotation('OneToMany') && !subPropAttr.hasAnnotation('ManyToMany')
+                && !subPropAttr.hasAnnotation('SystemLevel')
+                && !columns.contains("${property.name}.${subProp.name}")) {
+                    columns << "${property.name}.${subProp.name}"
+            }
+        }
+    }
+}
+
+def isDataGrid = tableType.xmlName.endsWith('Grid')
+
+%>
+<${tableType.xmlName} id="${tableId}"
+        width="100%"<%
+        if (multiselect) {%>\n multiselect="true"<%}%><%
+        if (presentation) {%>\n presentations="true"<%}
+        if (isDataGrid) {%>\n datasource="${tableDs}"<%}%>>
+    <%if(!tableActions.isEmpty()){%><actions><%tableActions.each { action ->%>
+        <action id="${action}"<%if (editorOpenMode && editorOpenMode != 'THIS_TAB' && (action == 'create' || action == 'edit')) {
+    %>\n openMode="${editorOpenMode}"<%}%>/>
+    <%}%>
+    </actions><%}%>
+    <columns><%columns.each {column ->%>
+    <column <%if(isDataGrid){%> property="${column}" <%}%> id="${column}"/>
+    <%}%>
+    </columns><%if(!isDataGrid){%>
+    <rows datasource="${tableDs}"/>
+    <simplePagination/><%}%>
+    <buttonsPanel id="buttonsPanel"
+                  alwaysVisible="true">
+        <%tableActions.each { action ->%>
+            <button id="${action}Btn" action="${tableId}.${action}"/>                
+        <%}%>
+    </buttonsPanel>
+</${tableType.xmlName}>

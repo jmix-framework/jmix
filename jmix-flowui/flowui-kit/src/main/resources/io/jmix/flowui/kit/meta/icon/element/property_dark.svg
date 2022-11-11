@@ -1,0 +1,19 @@
+<!--
+  - Copyright 2022 Haulmont.
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -     http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -->
+
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M9 11C9.74025 11 10.3866 11.4022 10.7324 11.9999L15 12V14L10.7318 14.0011C10.3858 14.5983 9.73984 15 9 15C8.26016 15 7.61415 14.5983 7.26819 14.0011L1 14V12L7.26761 11.9999C7.61343 11.4022 8.25975 11 9 11ZM9 12C8.44772 12 8 12.4477 8 13C8 13.5523 8.44772 14 9 14C9.55228 14 10 13.5523 10 13C10 12.4477 9.55228 12 9 12ZM6 6C6.74025 6 7.38657 6.40217 7.73239 6.99993L15 7V9L7.73181 9.00108C7.38585 9.59828 6.73984 10 6 10C5.26016 10 4.61415 9.59828 4.26819 9.00108L1 9V7L4.26761 6.99993C4.61343 6.40217 5.25975 6 6 6ZM6 7C5.44772 7 5 7.44772 5 8C5 8.55228 5.44772 9 6 9C6.55228 9 7 8.55228 7 8C7 7.44772 6.55228 7 6 7ZM11 1C11.7403 1 12.3866 1.40217 12.7324 1.99993L15 2V4L12.7318 4.00108C12.3858 4.59828 11.7398 5 11 5C10.2602 5 9.61415 4.59828 9.26819 4.00108L1 4V2L9.26761 1.99993C9.61343 1.40217 10.2597 1 11 1ZM11 2C10.4477 2 10 2.44772 10 3C10 3.55228 10.4477 4 11 4C11.5523 4 12 3.55228 12 3C12 2.44772 11.5523 2 11 2Z" fill="#AFB1B3"/>
+</svg>

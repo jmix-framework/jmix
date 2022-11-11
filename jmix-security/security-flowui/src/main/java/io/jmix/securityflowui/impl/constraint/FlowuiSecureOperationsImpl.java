@@ -27,12 +27,12 @@ import java.util.Objects;
 public class FlowuiSecureOperationsImpl implements FlowuiSecureOperations {
 
     @Override
-    public boolean isScreenPermitted(String windowId, FlowuiPolicyStore policyStore) {
-        boolean result = policyStore.getScreenResourcePolicies(windowId)
+    public boolean isViewPermitted(String viewId, FlowuiPolicyStore policyStore) {
+        boolean result = policyStore.getViewResourcePolicies(viewId)
                 .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
 
         if (!result) {
-            result = policyStore.getScreenResourcePolicies("*")
+            result = policyStore.getViewResourcePolicies("*")
                     .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
         }
 

@@ -1,0 +1,70 @@
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema targetNamespace="http://jmix.io/schema/flowui/main-view"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://jmix.io/schema/flowui/main-view"
+           xmlns:data="http://jmix.io/schema/flowui/data"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
+           xmlns:mainLayout="http://jmix.io/schema/flowui/main-view-layout"
+           elementFormDefault="qualified">
+
+    <xs:include schemaLocation="http://jmix.io/schema/flowui/data"/>
+    <xs:include schemaLocation="http://jmix.io/schema/flowui/layout"/>
+
+    <xs:element name="mainView">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="data" type="data:viewData" minOccurs="0"/>
+
+                <xs:element name="actions" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="action" type="layout:viewAction"/>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="facets" minOccurs="0" type="layout:facets"/>
+
+                <xs:element name="appLayout" type="appLayoutType"/>
+            </xs:all>
+
+            <xs:attribute name="messagesGroup" type="xs:string"/>
+            <xs:attribute name="title" type="layout:resourceString"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="appLayoutType">
+        <xs:all>
+            <xs:element name="navigationBar" type="mainLayout:navigationBarContainer"/>
+            <xs:element name="drawerLayout" type="mainLayout:drawerLayoutContainer"/>
+        </xs:all>
+        <xs:attribute name="drawerOpened" type="xs:boolean"/>
+        <xs:attribute name="primarySection" type="primarySection"/>
+
+        <xs:attributeGroup ref="layout:hasClassNames"/>
+    </xs:complexType>
+
+    <xs:simpleType name="primarySection">
+        <xs:restriction>
+            <xs:enumeration value="DRAWER"/>
+            <xs:enumeration value="NAVBAR"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

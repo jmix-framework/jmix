@@ -467,7 +467,8 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
         queryBuilder.setId(context.getId())
                 .setIds(context.getIds())
-                .setEntityName(metaClass.getName());
+                .setEntityName(metaClass.getName())
+                .setLockMode(context.getLockMode());
 
         if (contextQuery != null) {
             queryBuilder.setQueryString(contextQuery.getQueryString())
@@ -525,7 +526,8 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         queryBuilder.setValueProperties(context.getProperties())
                 .setQueryString(contextQuery.getQueryString())
                 .setCondition(contextQuery.getCondition())
-                .setQueryParameters(contextQuery.getParameters());
+                .setQueryParameters(contextQuery.getParameters())
+                .setLockMode(context.getLockMode());
 
         if (!count) {
             queryBuilder.setSort(contextQuery.getSort());

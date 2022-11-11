@@ -80,7 +80,7 @@ public class EntityMap implements Map<String, Object> {
     }
 
     private MetaClass getMetaClass(Entity entity) {
-        return metadata.getClass(instance.getClass());
+        return metadata.getClass(instance);
     }
 
     @Override

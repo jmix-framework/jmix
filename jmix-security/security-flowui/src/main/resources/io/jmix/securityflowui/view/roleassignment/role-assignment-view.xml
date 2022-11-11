@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <data>
+        <collection id="resourceRoleAssignmentEntitiesDc"
+                    class="io.jmix.securitydata.entity.RoleAssignmentEntity">
+            <loader id="resourceRoleAssignmentEntitiesDl">
+                <query>
+                    <![CDATA[select e from sec_RoleAssignmentEntity e where e.username = :username and e.roleType = :roleType]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="rowLevelRoleAssignmentEntitiesDc"
+                    class="io.jmix.securitydata.entity.RoleAssignmentEntity">
+            <loader id="rowLevelRoleAssignmentEntitiesDl">
+                <query>
+                    <![CDATA[select e from sec_RoleAssignmentEntity e where e.username = :username and e.roleType = :roleType]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <actions>
+        <action id="saveAction"
+                text="msg:///actions.Ok"
+                icon="CHECK"
+                shortcutCombination="${SAVE_SHORTCUT}"
+                actionVariant="PRIMARY"/>
+        <action id="closeAction"
+                text="msg:///actions.Cancel"
+                icon="BAN"
+                shortcutCombination="${CLOSE_SHORTCUT}"/>
+    </actions>
+    <layout>
+        <formLayout id="resourcesForm">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="80em" columns="2"/>
+            </responsiveSteps>
+
+            <details id="resourceRolesBox"
+                     summaryText="msg://resourceRoles.text"
+                     opened="true"
+                     width="100%">
+                <vbox id="resourceRolesWrapper" padding="false">
+                    <hbox id="resourceRoleButtonsPanel" classNames="buttons-panel">
+                        <button id="addResourceRoleBtn"
+                                action="resourceRoleAssignmentsTable.addResourceRole"/>
+                        <button id="removeResourceRoleBtn"
+                                action="resourceRoleAssignmentsTable.remove"/>
+                    </hbox>
+                    <dataGrid id="resourceRoleAssignmentsTable"
+                              dataContainer="resourceRoleAssignmentEntitiesDc"
+                              selectionMode="MULTI">
+                        <actions>
+                            <action id="addResourceRole" type="add">
+                                <properties>
+                                    <property name="viewClass"
+                                              value="io.jmix.securityflowui.view.resourcerole.ResourceRoleModelLookupView"/>
+                                </properties>
+                            </action>
+                            <action id="remove" type="remove"/>
+                        </actions>
+                        <columns>
+                            <column property="roleCode"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </details>
+
+            <details id="rowLevelRolesBox"
+                     summaryText="msg://rowLevelRoles.text"
+                     opened="true"
+                     width="100%">
+                <vbox id="rowLevelRolesWrapper" padding="false">
+                    <hbox id="rowLevelRoleButtonsPanel" classNames="buttons-panel">
+                        <button id="addRowLevelRoleBtn"
+                                action="rowLevelRoleAssignmentsTable.addRowLevelRole"/>
+                        <button id="removeRowLevelRoleBtn"
+                                action="rowLevelRoleAssignmentsTable.remove"/>
+                    </hbox>
+                    <dataGrid id="rowLevelRoleAssignmentsTable"
+                              dataContainer="rowLevelRoleAssignmentEntitiesDc"
+                              selectionMode="MULTI">
+                        <actions>
+                            <action id="addRowLevelRole" type="add">
+                                <properties>
+                                    <property name="viewClass"
+                                              value="io.jmix.securityflowui.view.rowlevelrole.RowLevelRoleModelLookupView"/>
+                                </properties>
+                            </action>
+                            <action id="remove" type="remove"/>
+                        </actions>
+                        <columns>
+                            <column property="roleCode"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </details>
+        </formLayout>
+
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

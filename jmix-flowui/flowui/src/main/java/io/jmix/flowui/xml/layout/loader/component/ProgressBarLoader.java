@@ -19,7 +19,6 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 
-//TODO: kremnevda, replace EmailField to JmixEmailField 26.04.2022
 public class ProgressBarLoader extends AbstractComponentLoader<ProgressBar> {
 
     @Override
@@ -34,8 +33,8 @@ public class ProgressBarLoader extends AbstractComponentLoader<ProgressBar> {
         loadDouble(element, "value", resultComponent::setValue);
         loadBoolean(element, "indeterminate", resultComponent::setIndeterminate);
 
-        componentLoader().loadThemeName(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
     }
 }

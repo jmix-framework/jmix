@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "name": "Full-Stack Application with Incubating FlowUI",
+  "order": 180,
+  "addon": false,
+  "description": "<html>Jmix web application in Java that uses Vaadin Flow framework for UI.<p>Contains FlowUI, Security, File Storage subsystems and Data Tools add-on.<br>Uses embedded HSQL database.<p><b>CAUTION:</b>The FlowUI subsystem is currently in incubating state. It is not sufficiently tested yet and does not contain all features of the previous UI.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": false
+    }
+  ]
+}

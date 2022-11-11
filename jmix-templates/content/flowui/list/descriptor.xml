@@ -5,20 +5,21 @@ def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "C
 def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 def isNotPersistEntity = entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')
 
-def tableXml = api.processSnippet('screen/jmix_flow_table.xml',
+def tableXml = api.processSnippet('table.xml',
         ['entity': entity,
         'fetchPlan': listFetchPlan,
         'tableDc': tableDc,
+        'tableDl': tableDl,
         'tableType': tableType,
         'tableId': tableId,
         'multiselect': multiselect,
         'tableActions': tableActions,
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<screen xmlns="http://jmix.io/schema/flowui/screen"
-        xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
-        title="${messageKeys['viewTitle']}"
-        focusComponent="${tableId}">
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="${messageKeys['viewTitle']}"
+      focusComponent="${tableId}">
     <data readOnly="true">
         <collection id="${tableDc}"
                     class="${entity.fqn}"<%if (!is_inline_listFetchPlan) {%>
@@ -33,16 +34,19 @@ def tableXml = api.processSnippet('screen/jmix_flow_table.xml',
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <queryParameters>
+            <pagination component="pagination"/>
+        </queryParameters>
     </facets>
     <actions>
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
     </actions>
-    <layout expand="${tableId}">
+    <layout>
         ${tableXml}
         <hbox id="lookupActions" visible="false">
             <button id="selectBtn" action="selectAction"/>
             <button id="discardBtn" action="discardAction"/>
         </hbox>
     </layout>
-</screen>
+</view>

@@ -27,6 +27,7 @@ import io.jmix.ui.component.data.meta.EntityOptions;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.HasLoader;
+import io.jmix.ui.model.InstanceContainer;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -54,6 +55,7 @@ public class ContainerOptions<E> implements Options<E>, EntityOptions<E>, Contai
 
         this.container.addCollectionChangeListener(this::containerCollectionChanged);
         this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
+        this.container.addItemChangeListener(this::containerItemChanged);
     }
 
     protected void containerCollectionChanged(@SuppressWarnings("unused") CollectionContainer.CollectionChangeEvent<E> e) {
@@ -70,6 +72,10 @@ public class ContainerOptions<E> implements Options<E>, EntityOptions<E>, Contai
     @SuppressWarnings("unchecked")
     protected void containerItemPropertyChanged(@SuppressWarnings("unused") CollectionContainer.ItemPropertyChangeEvent<E> e) {
         events.publish(OptionsChangeEvent.class, new OptionsChangeEvent(this));
+    }
+
+    protected void containerItemChanged(InstanceContainer.ItemChangeEvent<E> e) {
+        events.publish(ValueChangeEvent.class, new ValueChangeEvent<>(this, e.getPrevItem(), e.getItem()));
     }
 
     @Nullable

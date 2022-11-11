@@ -4,7 +4,7 @@ tableId = "${pluralForm}Table"
 def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
 tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 
-def tableXml = api.processSnippet('screen/dto_table.xml',
+def tableXml = api.processSnippet('dto_table.xml',
         ['entity': entity,
         'tableDc': tableDc,
         'tableType': tableType,

@@ -1,6 +1,23 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.shared.Registration;
@@ -8,10 +25,10 @@ import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.component.ListDataComponent;
-import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -76,7 +93,7 @@ public abstract class ListDataComponentAction<A extends ListDataComponentAction<
 
     @SuppressWarnings("unchecked")
     @Override
-    public A withIcon(@Nullable String icon) {
+    public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));
     }
 
@@ -152,6 +169,13 @@ public abstract class ListDataComponentAction<A extends ListDataComponentAction<
     protected void checkTarget() {
         if (target == null) {
             throw new IllegalStateException(String.format("%s target is not set", getClass().getSimpleName()));
+        }
+    }
+
+    protected void checkTargetItems(Class<?> itemsType) {
+        if (!itemsType.isInstance(target.getItems())) {
+            throw new IllegalStateException(String.format("%s target items is null or does not implement %s",
+                    getClass().getSimpleName(), itemsType.getSimpleName()));
         }
     }
 }

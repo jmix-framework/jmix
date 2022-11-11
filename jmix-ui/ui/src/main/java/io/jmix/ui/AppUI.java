@@ -39,7 +39,6 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.sys.ControllerUtils;
-import io.jmix.ui.sys.LinkHandler;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.sys.WebJarResourceResolver;
 import io.jmix.ui.sys.event.UiEventsMulticaster;
@@ -75,7 +74,6 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     protected App app;
 
-    public static final String LAST_REQUEST_ACTION_ATTR = "lastRequestAction";
     public static final String LAST_REQUEST_PARAMS_ATTR = "lastRequestParams";
 
     @Autowired
@@ -282,12 +280,12 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     }
 
     /*
-    * During AppUI initialization process the initial URL is replaced
-    * with the created Root Window route. In case the requested state
-    * contains parameters for the root window, we need to restore it
-    * to keep in sync the browser URL and params that can be obtained
-    * from UrlParamsChangedEvent
-    */
+     * During AppUI initialization process the initial URL is replaced
+     * with the created Root Window route. In case the requested state
+     * contains parameters for the root window, we need to restore it
+     * to keep in sync the browser URL and params that can be obtained
+     * from UrlParamsChangedEvent
+     */
     protected void restoreRouteState(NavigationState requestedState) {
         // Check that the requested state doesn't contain nested route
         // that will be handled by navigation handlers and that there
@@ -390,12 +388,12 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         super.refresh(request);
         urlChangeHandler.restoreState();
         uiEventPublisher.publishEvent(new UIRefreshEvent(this));
-     }
+    }
 
     @Override
     public void handleRequest(VaadinRequest request) {
         // on refresh page call
-         processExternalLink(request, getUrlRouting().getState());
+        processExternalLink(request, getUrlRouting().getState());
     }
 
     /**
@@ -436,9 +434,11 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     @Internal
     public void setTopLevelWindow(@Nullable RootWindow window) {
         if (this.topLevelWindow != window) {
-            this.topLevelWindow = window;
-
             if (window != null) {
+                removePreviousTopLevelWindowConnector();
+
+                this.topLevelWindow = window;
+
                 setContent(topLevelWindow.unwrapComposition(Component.class));
             } else {
                 setContent(null);
@@ -448,6 +448,14 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     public TestIdManager getTestIdManager() {
         return testIdManager;
+    }
+
+    protected void removePreviousTopLevelWindowConnector() {
+        if (isPerformanceTestMode()
+                && topLevelWindow != null
+                && uiProperties.getMainScreenId().equals(topLevelWindow.getId())) {
+            getConnectorTracker().cleanConnectorMap(true);
+        }
     }
 
     /**
@@ -474,42 +482,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
 
     protected void processExternalLink(VaadinRequest request, NavigationState requestedState) {
-        if (isLinkHandlerRequest(request)) {
-            processLinkHandlerRequest(request);
-        } else {
-            processRequest(requestedState);
-        }
-    }
-
-    protected boolean isLinkHandlerRequest(VaadinRequest request) {
-        WrappedSession wrappedSession = request.getWrappedSession();
-        if (wrappedSession == null) {
-            return false;
-        }
-
-        String action = (String) wrappedSession.getAttribute(LAST_REQUEST_ACTION_ATTR);
-
-        return uiProperties.getLinkHandlerActions().contains(action);
-    }
-
-    protected void processLinkHandlerRequest(VaadinRequest request) {
-        WrappedSession wrappedSession = request.getWrappedSession();
-        //noinspection unchecked
-        Map<String, String> params =
-                (Map<String, String>) wrappedSession.getAttribute(LAST_REQUEST_PARAMS_ATTR);
-        params = params != null ? params : Collections.emptyMap();
-
-        try {
-            String action = (String) wrappedSession.getAttribute(LAST_REQUEST_ACTION_ATTR);
-            LinkHandler linkHandler = beanFactory.getBean(LinkHandler.class, app, action, params);
-            if (linkHandler.canHandleLink()) {
-                linkHandler.handle();
-            } else {
-                app.linkHandler = linkHandler;
-            }
-        } catch (Exception e) {
-            error(new com.vaadin.server.ErrorEvent(e));
-        }
+        processRequest(requestedState);
     }
 
     protected void processRequest(@Nullable NavigationState navigationState) {

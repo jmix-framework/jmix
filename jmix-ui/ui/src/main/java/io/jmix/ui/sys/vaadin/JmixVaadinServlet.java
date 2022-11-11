@@ -20,6 +20,7 @@ import com.vaadin.server.*;
 import com.vaadin.spring.internal.UIScopeImpl;
 import com.vaadin.spring.internal.VaadinSessionScope;
 import com.vaadin.spring.server.SpringVaadinServlet;
+import io.jmix.ui.UiProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
@@ -27,6 +28,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 // Exposes JmixUIProvider with customized widgetset lookup
@@ -79,6 +81,15 @@ public class JmixVaadinServlet extends SpringVaadinServlet {
             UIScopeImpl.cleanupSession(session);
             VaadinSessionScope.cleanupSession(session);
         });
+    }
+
+    @Override
+    protected DeploymentConfiguration createDeploymentConfiguration(Properties initParameters) {
+        if (applicationContext.getBean(UiProperties.class).isPerformanceTestMode()) {
+            initParameters.setProperty(SERVLET_PARAMETER_DISABLE_XSRF_PROTECTION, "true");
+        }
+
+        return super.createDeploymentConfiguration(initParameters);
     }
 
     protected List<BootstrapListener> getBootstrapListeners() {

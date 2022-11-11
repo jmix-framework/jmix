@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,23 @@
 package io.jmix.flowui.xml.layout;
 
 import io.jmix.core.JmixOrder;
-import io.jmix.flowui.xml.layout.loader.MainScreenLoader;
-import io.jmix.flowui.xml.layout.loader.ScreenLoader;
+import io.jmix.flowui.xml.layout.loader.MainViewLoader;
+import io.jmix.flowui.xml.layout.loader.ViewLoader;
 import org.dom4j.Element;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-import static io.jmix.flowui.xml.layout.loader.MainScreenLoader.MAIN_SCREEN_ROOT;
-import static io.jmix.flowui.xml.layout.loader.ScreenLoader.SCREEN_ROOT;
+import static io.jmix.flowui.xml.layout.loader.MainViewLoader.MAIN_VIEW_ROOT;
+import static io.jmix.flowui.xml.layout.loader.ViewLoader.VIEW_ROOT;
 
-@SuppressWarnings("rawtypes")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 @Component("flowui_LayoutLoaderConfig")
 public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
 
-    protected Class<? extends ScreenLoader> screenLoader = ScreenLoader.class;
-    protected Class<? extends MainScreenLoader> mainScreenLoader = MainScreenLoader.class;
-//    protected Class<? extends FragmentLoader> fragmentLoader = FragmentLoader.class;
+    protected Class<? extends ViewLoader> viewLoader = ViewLoader.class;
+    protected Class<? extends MainViewLoader> mainViewLoader = MainViewLoader.class;
 
     @Override
     public boolean supports(Element element) {
@@ -48,22 +46,17 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
 
     @Nullable
     @Override
-    public Class<? extends ComponentLoader> getScreenLoader(Element root) {
+    public Class<? extends ComponentLoader> getViewLoader(Element root) {
         String name = root.getName();
         switch (name) {
-            case SCREEN_ROOT:
-                return screenLoader;
-            case MAIN_SCREEN_ROOT:
-                return mainScreenLoader;
+            case VIEW_ROOT:
+                return viewLoader;
+            case MAIN_VIEW_ROOT:
+                return mainViewLoader;
             default:
                 return null;
         }
     }
-
-//    @Override
-//    public Class<? extends ComponentLoader> getFragmentLoader(Element root) {
-//        return fragmentLoader;
-//    }
 
     @Nullable
     public Class<? extends ComponentLoader> getLoader(String name) {

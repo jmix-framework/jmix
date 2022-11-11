@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public abstract class BaseLoaderConfig {
 
         /* Content panel */
         loaders.put("accordion", AccordionLoader.class);
-        loaders.put("accordionPanel", AccordionLoader.AccordionPanelLoader.class);
+        loaders.put("accordionPanel", AccordionPanelLoader.class);
         loaders.put("scroller", ScrollerLoader.class);
         loaders.put("tabs", TabsLoader.class);
         loaders.put("tab", TabsLoader.TabLoader.class);
@@ -63,13 +63,15 @@ public abstract class BaseLoaderConfig {
         loaders.put("textArea", TextAreaLoader.class);
         loaders.put("checkbox", CheckboxLoader.class);
         loaders.put("comboBox", ComboBoxLoader.class);
+        loaders.put("dropdownButton", DropdownButtonLoader.class);
+        loaders.put("comboButton", ComboButtonLoader.class);
         loaders.put("timePicker", TimePickerLoader.class);
         loaders.put("dateTimePicker", DateTimePickerLoader.class);
         loaders.put("datePicker", DatePickerLoader.class);
         loaders.put("avatar", AvatarLoader.class);
         loaders.put("select", SelectLoader.class);
         loaders.put("valuePicker", ValuePickerLoader.class);
-        loaders.put("valuesPicker", ValuesPickerLoader.class);
+        loaders.put("multiValuePicker", MultiValuePickerLoader.class);
         loaders.put("entityPicker", EntityPickerLoader.class);
         loaders.put("comboBoxPicker", ComboBoxPickerLoader.class);
         loaders.put("entityComboBox", EntityComboBoxLoader.class);
@@ -80,6 +82,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("treeDataGrid", TreeDataGridLoader.class);
         loaders.put("loginForm", LoginFormLoader.class);
         loaders.put("loginOverlay", LoginOverlayLoader.class);
+        loaders.put("simplePagination", SimplePaginationLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

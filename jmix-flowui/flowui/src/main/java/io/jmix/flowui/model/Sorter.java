@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,10 @@
 package io.jmix.flowui.model;
 
 import io.jmix.core.Sort;
-import io.jmix.flowui.SameAsUi;
 
 /**
  * Interface for sorting data in {@link CollectionContainer}s.
  */
-@SameAsUi
 public interface Sorter {
 
     /**

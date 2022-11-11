@@ -20,54 +20,54 @@ import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.scroller.JmixScroller;
+import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.ViewComponent;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.sales.Order;
 
 @Route(value = "container-view")
-@UiController("ContainerView")
-@UiDescriptor("container-view.xml")
-public class ContainerView extends StandardScreen {
+@ViewController("ContainerView")
+@ViewDescriptor("container-view.xml")
+public class ContainerView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public InstanceContainer<Order> orderDc;
 
     public void loadData() {
-        getScreenData().loadAll();
+        getViewData().loadAll();
     }
 
-    @ComponentId
+    @ViewComponent
     public VerticalLayout vboxId;
 
-    @ComponentId
+    @ViewComponent
     public HorizontalLayout hboxId;
 
-    @ComponentId
+    @ViewComponent
     public Accordion accordionId;
 
-    @ComponentId
+    @ViewComponent
     public AccordionPanel accordionPanelId;
 
-    @ComponentId
+    @ViewComponent
     public AccordionPanel anotherAccordionPanelId;
 
-    @ComponentId
+    @ViewComponent
     public FormLayout formLayoutId;
 
-    @ComponentId
-    public Scroller scrollerId;
+    @ViewComponent
+    public JmixScroller scrollerId;
 
-    @ComponentId
-    public SplitLayout splitLayoutId;
+    @ViewComponent
+    public JmixSplitLayout splitLayoutId;
 
-    @ComponentId
+    @ViewComponent
     public Tabs tabsId;
 }

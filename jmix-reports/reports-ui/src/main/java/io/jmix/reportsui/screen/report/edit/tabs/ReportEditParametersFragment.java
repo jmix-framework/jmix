@@ -16,7 +16,6 @@
 
 package io.jmix.reportsui.screen.report.edit.tabs;
 
-import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.reports.entity.Report;
@@ -64,7 +63,7 @@ public class ReportEditParametersFragment extends ScreenFragment {
     protected Dialogs dialogs;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -127,8 +126,8 @@ public class ReportEditParametersFragment extends ScreenFragment {
     @Install(to = "validationScriptCodeEditor", subject = "contextHelpIconClickHandler")
     protected void validationScriptCodeEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "parameters.validationScript"))
-                .withMessage(messages.getMessage(getClass(), "parameters.crossFieldValidationScriptHelp"))
+                .withCaption(messageBundle.getMessage("parameters.validationScript"))
+                .withMessage(messageBundle.getMessage("parameters.crossFieldValidationScriptHelp"))
                 .withContentMode(ContentMode.HTML)
                 .withModal(false)
                 .withWidth("600px")

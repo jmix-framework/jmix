@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
@@ -24,11 +25,11 @@ import org.dom4j.Element;
 
 import java.util.List;
 
-public class SplitLayoutLoader extends AbstractContainerLoader<SplitLayout> {
+public class SplitLayoutLoader extends AbstractContainerLoader<JmixSplitLayout> {
 
     @Override
-    protected SplitLayout createComponent() {
-        return factory.create(SplitLayout.class);
+    protected JmixSplitLayout createComponent() {
+        return factory.create(JmixSplitLayout.class);
     }
 
     @Override
@@ -42,8 +43,8 @@ public class SplitLayoutLoader extends AbstractContainerLoader<SplitLayout> {
         loadDouble(element, "splitterPosition", resultComponent::setSplitterPosition);
         loadEnum(element, SplitLayout.Orientation.class, "orientation", resultComponent::setOrientation);
 
-        componentLoader().loadClassName(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadSubComponents();

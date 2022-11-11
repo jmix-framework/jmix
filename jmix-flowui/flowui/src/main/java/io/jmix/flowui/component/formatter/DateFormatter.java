@@ -33,7 +33,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * {@link V} formatter to be used in screen descriptors and controllers.
+ * {@link V} formatter to be used in view descriptors and controllers.
  * <p>
  * This formatter formats the {@link V} value into a string depending on the format string.
  */

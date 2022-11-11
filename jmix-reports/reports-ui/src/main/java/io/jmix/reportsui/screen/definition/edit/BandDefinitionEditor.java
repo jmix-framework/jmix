@@ -17,7 +17,10 @@ package io.jmix.reportsui.screen.definition.edit;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import io.jmix.core.*;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.Metadata;
+import io.jmix.core.Stores;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.entity.*;
@@ -142,8 +145,10 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     protected Stores stores;
     @Autowired
     protected ReportsClientProperties reportsClientProperties;
+
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
+
     @Autowired
     protected Dialogs dialogs;
     @Autowired
@@ -182,7 +187,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         String report = reportDc.getItem().getName();
 
         if (ObjectUtils.isNotEmpty(group) && ObjectUtils.isNotEmpty(report)) {
-            return messages.formatMessage(getClass(), "scriptEditorDialog.captionFormat", report, bandsDc.getItem().getName());
+            return messageBundle.formatMessage("scriptEditorDialog.captionFormat", report, bandsDc.getItem().getName());
         }
         return StringUtils.EMPTY;
     }
@@ -243,8 +248,8 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Install(to = "jsonGroovyCodeEditor", subject = "contextHelpIconClickHandler")
     protected void jsonGroovyCodeEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "dataSet.text"))
-                .withMessage(messages.getMessage(getClass(), "dataSet.jsonSourceGroovyCodeHelp"))
+                .withCaption(messageBundle.getMessage("dataSet.text"))
+                .withMessage(messageBundle.getMessage("dataSet.jsonSourceGroovyCodeHelp"))
                 .withModal(false)
                 .withWidth("700px")
                 .withContentMode(ContentMode.HTML)
@@ -254,8 +259,8 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Install(to = "jsonPathQueryTextAreaField", subject = "contextHelpIconClickHandler")
     protected void jsonPathQueryTextAreaFieldContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "dataSet.text"))
-                .withMessage(messages.getMessage(getClass(), "dataSet.jsonPathQueryHelp"))
+                .withCaption(messageBundle.getMessage("dataSet.text"))
+                .withMessage(messageBundle.getMessage("dataSet.jsonPathQueryHelp"))
                 .withModal(false)
                 .withWidth("700px")
                 .withContentMode(ContentMode.HTML)
@@ -297,7 +302,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
 
     protected void initDataStoreField() {
         Map<String, Object> all = new HashMap<>();
-        all.put(messages.getMessage(getClass(), "dataSet.dataStoreMain"), Stores.MAIN);
+        all.put(messageBundle.getMessage("dataSet.dataStoreMain"), Stores.MAIN);
         for (String additional : stores.getAdditional()) {
             all.put(additional, additional);
         }
@@ -435,7 +440,9 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                 }
                 fetchPlans.put(FetchPlan.LOCAL, FetchPlan.LOCAL);
                 fetchPlans.put(FetchPlan.INSTANCE_NAME, FetchPlan.INSTANCE_NAME);
+                fetchPlans.put(FetchPlan.BASE, FetchPlan.BASE);
                 fetchPlanNameField.setOptionsMap(fetchPlans);
+                fetchPlanNameField.setValue(FetchPlan.BASE);
                 return;
             }
         }
@@ -496,8 +503,8 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                     dataSetScriptField.setMode(SourceCodeEditor.Mode.Groovy);
                     dataSetScriptField.setContextHelpIconClickHandler(e ->
                             dialogs.createMessageDialog()
-                                    .withCaption(messages.getMessage(getClass(), "dataSet.text"))
-                                    .withMessage(messages.getMessage(getClass(), "dataSet.textHelp"))
+                                    .withCaption(messageBundle.getMessage("dataSet.text"))
+                                    .withMessage(messageBundle.getMessage("dataSet.textHelp"))
                                     .withModal(false)
                                     .withWidth("700px")
                                     .withContentMode(ContentMode.HTML)

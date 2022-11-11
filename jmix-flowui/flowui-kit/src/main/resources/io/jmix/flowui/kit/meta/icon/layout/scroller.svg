@@ -1,0 +1,49 @@
+<!--
+  - Copyright 2022 Haulmont.
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -     http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -->
+
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1 1H1V2H3V1Z" fill="#9AA7B0"/>
+    <path d="M1 1H4V2H5V1Z" fill="#9AA7B0"/>
+    <path d="M1 1H6V2H7V1Z" fill="#9AA7B0"/>
+    <path d="M1 1H8V2H9V1Z" fill="#9AA7B0"/>
+    <path d="M1 1H10V2H11V1Z" fill="#9AA7B0"/>
+    <path d="M1 1H12V2H13V1Z" fill="#9AA7B0"/>
+    <path d="M2 3H1V4H2V1Z" fill="#9AA7B0"/>
+    <path d="M2 5H1V6H2V1Z" fill="#9AA7B0"/>
+    <path d="M2 7H1V8H2V1Z" fill="#9AA7B0"/>
+    <path d="M2 9H1V10H2V1Z" fill="#9AA7B0"/>
+    <path d="M2 11H1V12H2V1Z" fill="#9AA7B0"/>
+    <path d="M2 13H1V15H2V1Z" fill="#9AA7B0"/>
+    <path d="M4 14H3V15H4V1Z" fill="#9AA7B0"/>
+    <path d="M6 14H5V15H6V1Z" fill="#9AA7B0"/>
+    <path d="M8 14H7V15H8V1Z" fill="#9AA7B0"/>
+    <path d="M10 12H9V13H10V1Z" fill="#9AA7B0"/>
+    <path d="M10 9H9V11H10V1Z" fill="#9AA7B0"/>
+    <path d="M10 14H9V15H10V1Z" fill="#9AA7B0"/>
+    <path d="M10 3H9V4H10V1Z" fill="#9AA7B0"/>
+    <path d="M10 5H9V7H10V1Z" fill="#9AA7B0"/>
+    <path d="M12 14H11V15H12V1Z" fill="#9AA7B0"/>
+    <path d="M14 6H10V7H14V1Z" fill="#9AA7B0"/>
+    <path d="M14 9H10V10H14V1Z" fill="#9AA7B0"/>
+    <path d="M15 1H14V2H15V1Z" fill="#9AA7B0"/>
+    <path d="M15 3H14V4H15V1Z" fill="#9AA7B0"/>
+    <path d="M15 5H14V7H15V1Z" fill="#9AA7B0"/>
+    <path d="M15 9H14V11H15V1Z" fill="#9AA7B0"/>
+    <path d="M15 12H14V13H15V1Z" fill="#9AA7B0"/>
+    <path d="M15 14H13V15H15V1Z" fill="#9AA7B0"/>
+    <path d="M3 9L5 12L7 9V9Z" fill="#9AA7B0"/>
+    <path d="M5 4L3 7L7 7V7Z" fill="#9AA7B0"/>
+</svg>

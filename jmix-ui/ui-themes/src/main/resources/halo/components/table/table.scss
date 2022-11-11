@@ -299,6 +299,12 @@ $jmix-table-drag-indicator-color: $v-focus-color;
     }
   }
 
+  .v-treetable {
+    .#{$primary-stylename}-cell-wrapper > .v-icon {
+      margin-right: round($v-unit-size/5);
+    }
+  }
+
   @if $jmix-buttonspanel-flow == false {
     .jmix-table-composition {
       .v-csslayout.jmix-flowlayout {
@@ -462,5 +468,11 @@ $jmix-table-drag-indicator-color: $v-focus-color;
         }
       }
     }
+  }
+
+  // Overrides Vaadin value so 'com.vaadin.v7.client.ui.VScrollTable.VScrollTableBody.VScrollTableRow.getRealCellWidth'
+  // returns correct value for header cells
+  .#{$primary-stylename}-table td {
+    box-sizing: content-box;
   }
 }

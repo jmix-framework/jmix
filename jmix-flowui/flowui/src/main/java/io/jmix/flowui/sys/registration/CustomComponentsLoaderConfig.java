@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,8 @@ public class CustomComponentsLoaderConfig implements LoaderConfig {
 
     @Nullable
     @Override
-    public Class<? extends ComponentLoader> getScreenLoader(Element root) {
-        // return null as we do not override screen loader
+    public Class<? extends ComponentLoader> getViewLoader(Element root) {
+        // return null as we do not override view loader
         return null;
     }
 

@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.exception;
 
-import io.jmix.flowui.SimilarToUi;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.annotation.Nullable;
@@ -31,7 +30,6 @@ import java.util.List;
  * pass handled exception class names into constructor, implement
  * {@link #doHandle(String, String, Throwable)} method and annotate the class with {@code @Component}.
  */
-@SimilarToUi
 public abstract class AbstractUiExceptionHandler implements UiExceptionHandler {
 
     protected List<String> classNames;

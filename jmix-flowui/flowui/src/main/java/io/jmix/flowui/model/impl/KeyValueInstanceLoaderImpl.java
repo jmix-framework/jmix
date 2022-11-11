@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.Condition;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.KeyValueContainer;
@@ -41,8 +39,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@SameAsUi
-@RequiresChanges
 public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
 
     @Autowired

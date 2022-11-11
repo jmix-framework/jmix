@@ -85,5 +85,8 @@ public interface MetaClass extends MetadataObject {
      */
     Collection<MetaProperty> getProperties();
 
+    /**
+     * @return store of this entity
+     */
     Store getStore();
 }

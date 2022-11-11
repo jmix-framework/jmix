@@ -54,7 +54,7 @@ public class JpaCacheSupport {
      * @param changes changes in the entity. Null when creating and removing the entity.
      */
     public void evictMasterEntity(Object entity, @Nullable AttributeChanges changes) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         for (MetaProperty property : metaClass.getProperties()) {
             if (!property.getRange().isClass() || property.getRange().getCardinality().isMany())
                 continue;

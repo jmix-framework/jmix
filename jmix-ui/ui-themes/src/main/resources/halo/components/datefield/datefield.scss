@@ -25,6 +25,18 @@ $jmix-default-datefield-width: 120px;
     .jmix-timefield {
       margin-left: $v-layout-spacing-horizontal/2;
     }
+
+    &.inline-icon {
+      .#{$primary-stylename}.v-datefield-day,
+      .#{$primary-stylename}.v-datefield-month,
+      .#{$primary-stylename}.v-datefield-year {
+        width: $jmix-default-datefield-width + $v-unit-size;
+      }
+
+      .v-textfield {
+        padding-left: $v-unit-size;
+      }
+    }
   }
 
   .#{$primary-stylename}-layout.v-has-width {
@@ -107,6 +119,10 @@ $jmix-default-datefield-width: 120px;
   .#{$primary-stylename}.v-datefield-month,
   .#{$primary-stylename}.v-datefield-year {
     width: $jmix-default-datefield-width;
+
+    &.inline-icon {
+      width: $jmix-default-datefield-width + $v-unit-size;
+    }
   }
 
   .#{$primary-stylename}.v-datefield-popup {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package io.jmix.flowui.model;
 
 import io.jmix.core.querycondition.Condition;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -26,13 +24,11 @@ import java.util.Map;
 
 /**
  * The root interface in the <i>data loaders</i> hierarchy. Data loaders are designed to load entity instances and
- * collections from the middle tier to data containers.
+ * collections from DataManager or custom services to data containers.
  *
  * @see InstanceContainer
  * @see CollectionContainer
  */
-@RequiresChanges
-@SameAsUi
 public interface DataLoader {
 
     /**
@@ -43,7 +39,7 @@ public interface DataLoader {
     /**
      * Returns connected container.
      */
-    InstanceContainer getContainer();
+    InstanceContainer<?> getContainer();
 
     /**
      * Returns data context. If the data context is set, all loaded instance will be merged into it.

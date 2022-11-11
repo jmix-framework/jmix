@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package io.jmix.flowui.model.impl;
 
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.CollectionPropertyContainer;
 import org.springframework.beans.factory.BeanFactory;
 
@@ -26,22 +24,20 @@ import java.util.List;
 /**
  * Standard implementation of sorting {@link CollectionPropertyContainer}s.
  */
-@SameAsUi
-@RequiresChanges
 public class CollectionPropertyContainerSorter extends BaseContainerSorter {
 
-    public CollectionPropertyContainerSorter(CollectionPropertyContainer container, BeanFactory beanFactory) {
+    public CollectionPropertyContainerSorter(CollectionPropertyContainer<?> container, BeanFactory beanFactory) {
         super(container, beanFactory);
     }
 
     @Override
-    public CollectionPropertyContainer getContainer() {
-        return (CollectionPropertyContainer) super.getContainer();
+    public CollectionPropertyContainer<?> getContainer() {
+        return (CollectionPropertyContainer<?>) super.getContainer();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    protected void setItemsToContainer(List list) {
-        getContainer().setDisconnectedItems(list);
+    protected void setItemsToContainer(List<?> list) {
+        getContainer().setDisconnectedItems(((List) list));
     }
 }

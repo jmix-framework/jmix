@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
@@ -12,7 +28,7 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.data.DataUnit;
-import io.jmix.flowui.data.grid.TreeGridDataItems;
+import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import org.springframework.beans.factory.InitializingBean;
@@ -28,7 +44,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
 
     protected ApplicationContext applicationContext;
 
-    protected TreeGridDelegate<E> gridDelegate;
+    protected TreeGridDelegate<E, TreeDataGridItems<E>> gridDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -45,16 +61,15 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     }
 
     @SuppressWarnings("unchecked")
-    protected TreeGridDelegate<E> createDelegate() {
+    protected TreeGridDelegate<E, TreeDataGridItems<E>> createDelegate() {
         return applicationContext.getBean(TreeGridDelegate.class, this);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void setDataProvider(HierarchicalDataProvider<E, ?> dataProvider) {
-        // TODO: gg, refactor
-        if (dataProvider instanceof TreeGridDataItems) {
-            gridDelegate.setItems((TreeGridDataItems<E>) dataProvider);
+        if (dataProvider instanceof TreeDataGridItems) {
+            gridDelegate.setItems((TreeDataGridItems<E>) dataProvider);
         }
 
         super.setDataProvider(dataProvider);

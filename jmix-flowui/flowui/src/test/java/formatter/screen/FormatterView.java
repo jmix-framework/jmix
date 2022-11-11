@@ -20,27 +20,27 @@ import com.vaadin.flow.router.Route;
 import io.jmix.core.TimeSource;
 import io.jmix.flowui.component.formatter.NumberFormatter;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
-import io.jmix.flowui.screen.*;
+import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
 @Route(value = "formatter-view")
-@UiController("FormatterView")
-@UiDescriptor("formatter-view.xml")
-public class FormatterView extends StandardScreen {
+@ViewController("FormatterView")
+@ViewDescriptor("formatter-view.xml")
+public class FormatterView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public JmixValuePicker<Date> dateFormatterField;
 
-    @ComponentId
+    @ViewComponent
     public JmixValuePicker<Date> dateTimeFormatterField;
 
-    @ComponentId
+    @ViewComponent
     public JmixValuePicker<Long> numberFormatterField;
 
-    @ComponentId
+    @ViewComponent
     public JmixValuePicker<Long> defaultNumberFormatterField;
 
     @Autowired

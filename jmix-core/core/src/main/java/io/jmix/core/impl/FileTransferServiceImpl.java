@@ -42,6 +42,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Objects;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @Component("core_FileTransferService")
 public class FileTransferServiceImpl implements FileTransferService {
 
@@ -71,7 +73,7 @@ public class FileTransferServiceImpl implements FileTransferService {
             String filename = fileReference.getFileName();
             String contentDisposition = BooleanUtils.isTrue(attachment) ? "attachment" : "inline";
             if (StringUtils.isNotEmpty(filename)) {
-                contentDisposition += "; filename=\"" + URLEncodeUtils.encodeUtf8(filename) + "\"";
+                contentDisposition += "; " + getContentDispositionFilename(filename);
             }
             response.setHeader("Content-Disposition", contentDisposition);
 
@@ -83,6 +85,43 @@ public class FileTransferServiceImpl implements FileTransferService {
         } catch (Exception e) {
             log.error("Error on downloading the file {}", fileReference, e);
             throw new FileTransferException("Error on downloading the file", "", HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
+    }
+
+    private String getContentDispositionFilename(String filename) {
+        String encodedFilename = rfc5987Encode(filename);
+
+        return String.format("filename=\"%s\"; filename*=utf-8''%s",
+                encodedFilename, encodedFilename);
+    }
+
+    private String rfc5987Encode(String value) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < value.length();) {
+            int cp = value.codePointAt(i);
+            if (cp < 127 && (Character.isLetterOrDigit(cp) || cp == '.')) {
+                builder.append((char) cp);
+            } else {
+                // Create string from a single code point
+                String cpAsString = new String(new int[] { cp }, 0, 1);
+
+                appendHexBytes(builder, cpAsString.getBytes(UTF_8));
+            }
+
+            // Advance to the next code point
+            i += Character.charCount(cp);
+        }
+
+        return builder.toString();
+    }
+
+    private void appendHexBytes(StringBuilder builder, byte[] bytes) {
+        for (byte byteValue : bytes) {
+            // mask with 0xFF to compensate for "negative" values
+            int intValue = byteValue & 0xFF;
+            String hexCode = Integer.toString(intValue, 16);
+            builder.append('%').append(hexCode);
         }
     }
 

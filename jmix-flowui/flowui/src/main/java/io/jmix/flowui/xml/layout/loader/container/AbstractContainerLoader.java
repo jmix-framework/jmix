@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public abstract class AbstractContainerLoader<T extends Component> extends Abstr
 
         if (layout instanceof FlexComponent) {
             loadString(element, "expand").ifPresent(componentId -> {
-                Component componentToExpand = UiComponentUtils.findComponent(layout, componentId)
+                Component componentToExpand = UiComponentUtils.findComponent(((Component) layout), componentId)
                         .orElseThrow(() -> new GuiDevelopmentException(
                                 String.format("There is no component with id '%s' to expand", componentId), context));
                 ((FlexComponent) layout).expand(componentToExpand);
@@ -78,6 +78,7 @@ public abstract class AbstractContainerLoader<T extends Component> extends Abstr
         }
     }
 
+    // TODO: what is it?
     /*protected void setComponentsRatio(ComponentContainer resultComponent, Element element) {
         if (!(resultComponent instanceof SupportsExpandRatio)) {
             return;

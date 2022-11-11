@@ -30,7 +30,6 @@ import io.jmix.flowui.component.delegate.CollectionFieldDelegate;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
-import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
@@ -44,8 +43,8 @@ import java.util.*;
 public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
         SupportsTypedValue<JmixCheckboxGroup<V>, ComponentValueChangeEvent<CheckboxGroup<V>, Set<V>>, Collection<V>, Set<V>>,
         SupportsValueSource<Collection<V>>, SupportsDataProvider<V>,
-        SupportsItemsContainer<V>, SupportsValidation<Collection<V>>, HasRequired, ApplicationContextAware,
-        InitializingBean {
+        SupportsItemsContainer<V>, SupportsItemsEnum<V>, SupportsValidation<Collection<V>>,
+        HasRequired, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -122,7 +121,12 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
 
     @Override
     public void setItems(CollectionContainer<V> container) {
-        setItems(new ContainerDataProvider<>(container));
+        dataViewDelegate.setItems(container);
+    }
+
+    @Override
+    public void setItems(Class<V> itemsEnum) {
+        dataViewDelegate.setItems(itemsEnum);
     }
 
     @Override

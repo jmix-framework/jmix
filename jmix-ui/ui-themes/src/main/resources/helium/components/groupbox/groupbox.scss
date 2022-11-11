@@ -105,8 +105,7 @@ $he-groupbox-caption-height--large: round($v-unit-size--large * 1.4);
 
   .#{$primary-stylename}-content {
     border: 0;
-    padding: 0 $padding $padding 0;
-    padding-left: $expander-padding + $expander-size + $expander-padding;
+    padding: 0 $padding $padding ($expander-padding + $expander-size + $expander-padding);
   }
 
   .#{$primary-stylename}.collapsed {
@@ -158,38 +157,24 @@ $he-groupbox-caption-height--large: round($v-unit-size--large * 1.4);
    *           light           *
    *****************************/
 
-  /*$padding--light: $padding / 2;
-
   .#{$primary-stylename}-light {
     border: 0;
 
-    &.collapsed {
-      background-color: transparent;
-    }
-
     .#{$primary-stylename}-caption {
-      padding: 0 $padding--light 0 0;
-    }
-
-    .#{$primary-stylename}-content {
-      padding: 0 0 0 $expander-padding + $expander-size;
-    }
-
-    //.#{$primary-stylename}-caption-start-deco,
-    .#{$primary-stylename}-caption-end-deco {
-      display: inline-block;
-      height: $groupbox-caption-height;
-      padding-top: $groupbox-caption-height / 2;
-
-      div {
-        border-top: 2px solid var(--text-secondary-color);
-      }
-    }
-  }
-
-  .#{$primary-stylename}-nocollapsable.#{$primary-stylename}-light {
-    .#{$primary-stylename}-content {
       padding-left: 0;
     }
-  }*/
+
+    &.collapsed {
+      background-color: transparent;
+
+      .#{$primary-stylename}-content {
+        border-top: he-border($color: --groupbox-border-color);
+        border-radius: 0;
+      }
+    }
+
+    .#{$primary-stylename}-content {
+      padding: 0;
+    }
+  }
 }

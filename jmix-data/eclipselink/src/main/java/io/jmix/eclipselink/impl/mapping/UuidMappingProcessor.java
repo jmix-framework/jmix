@@ -21,6 +21,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.eclipselink.impl.UuidConverter;
+import io.jmix.eclipselink.impl.dbms.UuidMappingInfo;
 import io.jmix.eclipselink.persistence.MappingProcessor;
 import io.jmix.eclipselink.persistence.MappingProcessorContext;
 import org.eclipse.persistence.internal.helper.DatabaseField;
@@ -54,19 +55,36 @@ public class UuidMappingProcessor implements MappingProcessor {
 
         if (metaProperty.getRange().isDatatype()) {
             if (metaProperty.getJavaType().equals(UUID.class)) {
-                ((DirectToFieldMapping) mapping).setConverter(UuidConverter.getInstance());
-                setDatabaseFieldParameters(context.getSession(), mapping.getField());
+                if (context.getSession().getPlatform() instanceof UuidMappingInfo) {
+                    UuidMappingInfo mappingInfo = (UuidMappingInfo) context.getSession().getPlatform();
+                    ((DirectToFieldMapping) mapping).setConverter(mappingInfo.getUuidConverter());
+                    setFieldProperties(mappingInfo, mapping.getField());
+                } else {
+                    ((DirectToFieldMapping) mapping).setConverter(UuidConverter.getInstance());
+                    setDatabaseFieldParameters(context.getSession(), mapping.getField());
+                }
             }
         } else if (metaProperty.getRange().isClass() && !metaProperty.getRange().getCardinality().isMany()) {
             MetaProperty refPkProperty = metadataTools.getPrimaryKeyProperty(metaProperty.getRange().asClass());
             if (refPkProperty != null && refPkProperty.getJavaType().equals(UUID.class)) {
                 for (DatabaseField field : ((OneToOneMapping) mapping).getForeignKeyFields()) {
-                    setDatabaseFieldParameters(context.getSession(), field);
+                    if (context.getSession().getPlatform() instanceof UuidMappingInfo) {
+                        setFieldProperties((UuidMappingInfo) context.getSession().getPlatform(), field);
+                    } else {
+                        setDatabaseFieldParameters(context.getSession(), field);
+                    }
                 }
             }
         }
     }
 
+    private void setFieldProperties(UuidMappingInfo mappingInfo, DatabaseField field) {
+        field.setSqlType(mappingInfo.getUuidSqlType());
+        field.setType(mappingInfo.getUuidType());
+        field.setColumnDefinition(mappingInfo.getUuidColumnDefinition());
+    }
+
+    @Deprecated
     private void setDatabaseFieldParameters(Session session, DatabaseField field) {
         if (session.getPlatform() instanceof PostgreSQLPlatform) {
             field.setSqlType(Types.OTHER);

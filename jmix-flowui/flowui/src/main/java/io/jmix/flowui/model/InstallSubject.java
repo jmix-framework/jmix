@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.SameAsUi;
-
 import java.lang.annotation.*;
 
 /**
@@ -27,7 +25,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Inherited
 @Documented
-@SameAsUi
 public @interface InstallSubject {
 
     String value();

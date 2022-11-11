@@ -1,15 +1,36 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
-import io.jmix.flowui.FlowUiComponentProperties;
+import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.action.AdjustWhenScreenReadOnly;
+import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowUiComponentUtils;
+import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
@@ -20,7 +41,7 @@ import java.util.function.Consumer;
 
 @ActionType(RemoveAction.ID)
 public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction<E>, E>
-        implements AdjustWhenScreenReadOnly {
+        implements AdjustWhenViewReadOnly {
 
     public static final String ID = "remove";
 
@@ -47,7 +68,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
         setConstraintEntityOp(EntityOp.DELETE);
 
         variant = ActionVariant.DANGER;
-        icon = FlowUiComponentUtils.iconToSting(VaadinIcon.CLOSE);
+        icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.TRASH);
     }
 
     @Autowired
@@ -61,7 +82,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowUiComponentProperties flowUiComponentProperties) {
+    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridRemoveShortcut());
     }
 
@@ -80,7 +101,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     }
 
     /**
-     * Returns confirmation dialog text if it was set by {@link #setConfirmationText(String)} or in the screen XML.
+     * Returns confirmation dialog text if it was set by {@link #setConfirmationText(String)} or in the view XML.
      * Otherwise, returns null.
      */
     @Nullable
@@ -96,7 +117,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     }
 
     /**
-     * Returns confirmation dialog header if it was set by {@link #setConfirmationHeader(String)} or in the screen XML.
+     * Returns confirmation dialog header if it was set by {@link #setConfirmationHeader(String)} or in the view XML.
      * Otherwise, returns null.
      */
     @Nullable
@@ -127,16 +148,11 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
 
     @Override
     protected boolean isPermitted() {
-        if (!checkRemovePermission()) {
-            return false;
-        }
-
-        return super.isPermitted();
+        return checkRemovePermission() && super.isPermitted();
     }
 
     protected boolean checkRemovePermission() {
-        // TODO: add security
-/*        if (target == null || !(target.getItems() instanceof ContainerDataUnit)) {
+        if (target == null || !(target.getItems() instanceof ContainerDataUnit)) {
             return false;
         }
 
@@ -147,7 +163,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
             return false;
         }
 
-        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
 
         if (!entityContext.isDeletePermitted()) {
@@ -160,14 +176,14 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
             MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
-            UiEntityAttributeContext entityAttributeContext =
-                    new UiEntityAttributeContext(masterMetaClass, metaProperty.getName());
+            FlowuiEntityAttributeContext entityAttributeContext =
+                    new FlowuiEntityAttributeContext(masterMetaClass, metaProperty.getName());
             accessManager.applyRegisteredConstraints(entityAttributeContext);
 
             if (!entityAttributeContext.canModify()) {
                 return false;
             }
-        }*/
+        }
 
         return true;
     }
@@ -178,11 +194,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     @Override
     public void execute() {
         checkTarget();
-
-        if (!(target.getItems() instanceof ContainerDataUnit)) {
-            throw new IllegalStateException(String.format("%s target items is null or does not implement %s",
-                    getClass().getSimpleName(), ContainerDataUnit.class.getSimpleName()));
-        }
+        checkTargetItems(ContainerDataUnit.class);
 
         RemoveOperation.RemoveBuilder<E> builder = removeOperation.builder(target)
                 .withConfirmation(confirmation);

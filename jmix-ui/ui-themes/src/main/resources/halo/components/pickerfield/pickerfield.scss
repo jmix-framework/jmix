@@ -29,6 +29,12 @@
         border-bottom-right-radius: 0;
       }
     }
+
+    &.inline-icon [class*="input"],
+    &.inline-icon .v-textfield,
+    &.inline-icon .jmix-suggestionfield {
+      padding-left: $v-unit-size;
+    }
   }
 
   .#{$primary-stylename} .v-caption-inline-icon {

@@ -30,7 +30,7 @@ public class UserIndicatorLoader extends AbstractComponentLoader<JmixUserIndicat
     public void loadComponent() {
         componentLoader().loadTitle(resultComponent, element, getComponentContext());
         componentLoader().loadSizeAttributes(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
 
         resultComponent.refreshUser();

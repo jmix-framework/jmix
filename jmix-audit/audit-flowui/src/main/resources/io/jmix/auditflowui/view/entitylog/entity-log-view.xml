@@ -1,0 +1,196 @@
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/ui/jpql-condition"
+      title="msg://EntityLogView.list">
+    <data>
+        <collection id="loggedEntityDc"
+                    class="io.jmix.audit.entity.LoggedEntity">
+            <loader id="loggedEntityDl">
+                <query>select e from audit_LoggedEntity e order by e.name</query>
+            </loader>
+            <fetchPlan>
+                <property name="attributes" fetchPlan="_local"/>
+                <property name="auto"/>
+                <property name="manual"/>
+                <property name="name"/>
+            </fetchPlan>
+        </collection>
+        <collection id="loggedAttrDc"
+                    class="io.jmix.audit.entity.LoggedAttribute"
+                    fetchPlan="_local">
+            <loader id="loggedAttrDl">
+                <query>select a from audit_LoggedAttribute a where a.entity.id = :entityId</query>
+            </loader>
+        </collection>
+        <collection id="entityLogDc"
+                    class="io.jmix.audit.entity.EntityLogItem">
+            <fetchPlan extends="_local">
+                <property name="entityRef" fetchPlan="_local"/>
+            </fetchPlan>
+            <loader id="entityLogDl">
+                <query>
+                    select e from audit_EntityLog e order by e.eventTs
+                    <condition>
+                        <and>
+                            <c:jpql>
+                                <c:where>e.type = :changeType</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>e.entity = :entityName</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>e.username = :user</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where><![CDATA[e.eventTs >= :fromDate]]></c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where><![CDATA[e.eventTs <= :tillDate]]></c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>e.entityRef.entityId = :entityId</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>e.entityRef.stringEntityId = :stringEntityId</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>e.entityRef.intEntityId = :intEntityId</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>e.entityRef.longEntityId = :longEntityId</c:where>
+                            </c:jpql>
+                        </and>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+        <collection id="entityLogAttrDc" class="io.jmix.audit.entity.EntityLogAttr" fetchPlan="_local">
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <tabs id="tabsheet" width="100%">
+            <tab id="view" label="msg://view"/>
+            <tab id="setup" label="msg://setup"/>
+        </tabs>
+
+
+        <vbox id="viewWrapper" visible="true" padding="false" width="100%">
+            <details opened="true" width="100%" summaryText="msg://filterParameters">
+                <formLayout>
+                    <responsiveSteps>
+                        <responsiveStep minWidth="0" columns="1"/>
+                        <responsiveStep minWidth="32em" columns="2"/>
+                        <responsiveStep minWidth="50em" columns="3"/>
+                    </responsiveSteps>
+                    <comboBox id="userField" label="msg://user" autoOpen="true"/>
+                    <select id="changeTypeField" label="msg://changeType"/>
+                    <dateTimePicker id="fromDateField" label="msg://from" datatype="dateTime"/>
+
+                    <comboBox label="msg://entity" id="filterEntityNameField"/>
+                    <valuePicker id="instancePicker" label="msg://instance" enabled="false">
+                        <actions>
+                            <action id="selectAction" type="entity_lookup"/>
+                            <action id="valueClearAction" type="value_clear"/>
+                        </actions>
+                    </valuePicker>
+                    <dateTimePicker id="tillDateField" label="msg://till" datatype="dateTime"/>
+
+                </formLayout>
+                <hbox>
+                    <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
+                    <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
+                </hbox>
+            </details>
+            <formLayout>
+                <responsiveSteps>
+                    <responsiveStep minWidth="0" columns="1"/>
+                    <responsiveStep minWidth="80em" columns="2"/>
+                </responsiveSteps>
+                <dataGrid id="entityLogTable" dataContainer="entityLogDc">
+                    <columns>
+                        <column property="eventTs"/>
+                        <column property="username"/>
+                        <column property="type"/>
+                        <column property="entityInstanceName"/>
+                    </columns>
+                </dataGrid>
+
+                <dataGrid id="entityLogAttrTable" width="100%" dataContainer="entityLogAttrDc">
+                    <columns>
+                        <column property="valueId"/>
+                        <column property="oldValueId"/>
+                    </columns>
+                </dataGrid>
+
+            </formLayout>
+
+        </vbox>
+
+        <hbox id="setupWrapper" visible="false" width="100%">
+            <vbox id="loggedEntityTableBox"
+                  expand="loggedEntityTable" padding="false">
+                <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
+                    <button id="createBtn" action="loggedEntityTable.create"/>
+                    <button id="editBtn" action="loggedEntityTable.edit"/>
+                    <button id="removeBtn" action="loggedEntityTable.remove"/>
+                    <button id="reloadBtn" icon="CHECK" text="msg://reloadConfiguration"/>
+                </hbox>
+                <dataGrid id="loggedEntityTable" minHeight="20em" dataContainer="loggedEntityDc">
+                    <actions>
+                        <action id="create" type="create" icon="FILE_O"/>
+                        <action id="edit" type="edit" icon="PENCIL"/>
+                        <action id="remove" type="remove" icon="CLOSE"/>
+                    </actions>
+                    <columns>
+                        <column property="name"/>
+                        <column property="auto"/>
+                        <column property="manual"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+            <vbox id="loggedEntityMiscBox" width="32em" padding="false" expand="attributesBox">
+                <comboBox id="entityNameField" label="msg://name" width="100%" dataContainer="loggedEntityDc"
+                          property="name"/>
+                <hbox id="checkersBox" padding="false" width="100%">
+                    <checkbox id="autoCheckBox" label="msg://auto" dataContainer="loggedEntityDc"
+                              property="auto"/>
+                    <checkbox id="manualCheckBox" label="msg://manual" dataContainer="loggedEntityDc"
+                              property="manual"/>
+                </hbox>
+                <vbox id="attributesBox" width="100%" padding="false">
+                    <h5 text="msg://attributes"/>
+                    <checkbox id="selectAllCheckBox" label="msg://[all]"/>
+                    <scroller id="attributesScroller" scrollBarsDirection="VERTICAL"
+                              minHeight="15em" maxHeight="20em" width="100%">
+                        <checkboxGroup id="attributesCheckboxGroup" themeNames="vertical"/>
+                    </scroller>
+
+                </vbox>
+                <hbox id="actionsPaneLayout" visible="false" alignItems="END">
+                    <button id="saveBtn" themeNames="primary" text="msg://save" icon="CHECK"/>
+                    <button id="cancelBtn" text="msg://cancel" icon="BAN"/>
+                </hbox>
+            </vbox>
+
+        </hbox>
+
+    </layout>
+</view>

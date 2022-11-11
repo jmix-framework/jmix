@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,15 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
-
 /**
  * Interface to be implemented by containers that work with entities that are properties of other entities.
  */
-@RequiresChanges
-@SameAsUi
 public interface Nested {
 
     /**
      * Returns the container holding the master entity.
      */
-    InstanceContainer getMaster();
+    InstanceContainer<?> getMaster();
 
     /**
      * Returns the name of the master entity property.

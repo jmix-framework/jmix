@@ -167,6 +167,16 @@ public class TagPickerImpl<V> extends ValuesPickerImpl<V> implements TagPicker<V
     }
 
     @Override
+    public int getPageLength() {
+        return getFieldInternal().getPageLength();
+    }
+
+    @Override
+    public void setPageLength(int pageLength) {
+        getFieldInternal().setPageLength(pageLength);
+    }
+
+    @Override
     public boolean isHideSelectedOptions() {
         return hideSelectedOptions;
     }
@@ -326,7 +336,7 @@ public class TagPickerImpl<V> extends ValuesPickerImpl<V> implements TagPicker<V
         getFieldInternal().setItems(CollectionUtils.isEmpty(compValue)
                 ? items.collect(Collectors.toList())
                 : items.filter(item -> !compValue.contains(item))
-                       .collect(Collectors.toList()));
+                .collect(Collectors.toList()));
     }
 
     @Nullable

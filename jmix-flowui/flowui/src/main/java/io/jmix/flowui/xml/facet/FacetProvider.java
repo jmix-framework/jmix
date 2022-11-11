@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import org.dom4j.Element;
 
 /**
- * Interface for Spring Beans providing non-visual components for screens.
+ * Interface for Spring Beans providing non-visual components for views.
  *
  * @param <T> type of facet
  * @see Facet

@@ -17,17 +17,39 @@
 package io.jmix.eclipselink.impl.dbms;
 
 import org.eclipse.persistence.exceptions.ConversionException;
+import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.Oracle10Platform;
 
+import java.sql.Types;
 import java.util.UUID;
 
-public class JmixOraclePlatform extends Oracle10Platform {
+public class JmixOraclePlatform extends Oracle10Platform implements UuidMappingInfo {
 
     @Override
     public Object convertObject(Object sourceObject, Class javaClass) throws ConversionException {
         if (sourceObject instanceof UUID && javaClass == String.class) {
-            return sourceObject.toString().replace("-", "");
+            return String32UuidConverter.getInstance().uuidToString(sourceObject);
         }
         return super.convertObject(sourceObject, javaClass);
+    }
+
+    @Override
+    public int getUuidSqlType() {
+        return Types.VARCHAR;
+    }
+
+    @Override
+    public Class<?> getUuidType() {
+        return String.class;
+    }
+
+    @Override
+    public String getUuidColumnDefinition() {
+        return "varchar2(32)";
+    }
+
+    @Override
+    public Converter getUuidConverter() {
+        return String32UuidConverter.getInstance();
     }
 }

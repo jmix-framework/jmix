@@ -17,7 +17,7 @@
 
 <menu-config xmlns="http://jmix.io/schema/ui/menu">
 
-    <menu id="reports" caption="msg://io.jmix.reportsui/menu.reports" insertAfter="administration">
+    <menu id="reports" caption="msg://io.jmix.reportsui/menu.reports" insertBefore="administration">
         <item id="report_Report.browse" caption="msg://io.jmix.reportsui/menu.report_Report.browse"/>
         <item id="report_ReportGroup.browse" caption="msg://io.jmix.reportsui/menu.report_ReportGroup.browse"/>
         <item id="report_Report.run" caption="msg://io.jmix.reportsui/menu.report_Report.run"/>

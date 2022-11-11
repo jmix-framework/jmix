@@ -17,6 +17,8 @@
 package io.jmix.flowui.kit.component.button;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
@@ -26,6 +28,7 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
 public class JmixButtonActionSupport {
@@ -34,7 +37,7 @@ public class JmixButtonActionSupport {
 
     protected Action action;
 
-    protected Registration registration;
+    protected Registration buttonClickRegistration;
     protected Registration actionPropertyChangeRegistration;
 
     public JmixButtonActionSupport(JmixButton button) {
@@ -56,12 +59,13 @@ public class JmixButtonActionSupport {
             updateText(overrideComponentProperties);
             updateTitle(overrideComponentProperties);
             updateIcon(overrideComponentProperties);
-            updateShortcut(overrideComponentProperties);
+            updateShortcutCombination(overrideComponentProperties);
             updateActionVariant(overrideComponentProperties);
 
-            registration = button.addClickListener(event ->
-                    action.actionPerform(event.getSource()));
-            actionPropertyChangeRegistration = addPropertyChangeListener();
+            buttonClickRegistration =
+                    button.addClickListener(this::onButtonClick);
+            actionPropertyChangeRegistration =
+                    action.addPropertyChangeListener(this::onActionPropertyChange);
         }
     }
 
@@ -102,9 +106,9 @@ public class JmixButtonActionSupport {
 
     protected void removeRegistrations() {
         if (this.action != null) {
-            if (registration != null) {
-                registration.remove();
-                registration = null;
+            if (buttonClickRegistration != null) {
+                buttonClickRegistration.remove();
+                buttonClickRegistration = null;
             }
 
             if (actionPropertyChangeRegistration != null) {
@@ -115,9 +119,8 @@ public class JmixButtonActionSupport {
     }
 
     protected void updateText(boolean overrideComponentProperties) {
-        String text = action.getText();
         if (StringUtils.isEmpty(button.getText()) || overrideComponentProperties) {
-            button.setText(text);
+            button.setText(action.getText());
         }
     }
 
@@ -137,18 +140,13 @@ public class JmixButtonActionSupport {
 
     protected void updateIcon(boolean overrideComponentProperties) {
         if (button.getIcon() == null || overrideComponentProperties) {
-            String icon = action.getIcon();
-            if (StringUtils.isEmpty(icon)) {
-                button.setIcon(null);
-            } else {
-                button.setIcon(new Icon(icon));
-            }
+            button.setIcon(action.getIcon());
         }
     }
 
     protected void updateTitle(boolean overrideComponentProperties) {
-        String description = action.getDescription();
         if (StringUtils.isEmpty(button.getTitle()) || overrideComponentProperties) {
+            String description = action.getDescription();
             if (StringUtils.isNotEmpty(description)) {
                 button.setTitle(description);
             } else {
@@ -169,37 +167,40 @@ public class JmixButtonActionSupport {
         }
     }
 
-    protected void updateShortcut(boolean overrideComponentProperties) {
-        KeyCombination shortcutCombination = action.getShortcutCombination();
+    protected void updateShortcutCombination(boolean overrideComponentProperties) {
         if (button.getShortcutCombination() == null || overrideComponentProperties) {
-            button.setShortcutCombination(shortcutCombination);
+            button.setShortcutCombination(action.getShortcutCombination());
         }
     }
 
-    protected Registration addPropertyChangeListener() {
-        return action.addPropertyChangeListener(event -> {
-            String propertyName = event.getPropertyName();
-            if (Action.PROP_TEXT.equals(propertyName)) {
+    protected void onButtonClick(ClickEvent<Button> event) {
+        this.action.actionPerform(event.getSource());
+    }
+
+    protected void onActionPropertyChange(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case Action.PROP_TEXT:
                 button.setText((String) event.getNewValue());
-            } else if (Action.PROP_ENABLED.equals(propertyName)) {
+                break;
+            case Action.PROP_ENABLED:
                 button.setEnabled((Boolean) event.getNewValue());
-            } else if (Action.PROP_VISIBLE.equals(propertyName)) {
+                break;
+            case Action.PROP_VISIBLE:
                 button.setVisible((Boolean) event.getNewValue());
-            } else if (Action.PROP_ICON.equals(propertyName)) {
-                String icon = (String) event.getNewValue();
-                if (StringUtils.isEmpty(icon)) {
-                    button.setIcon(null);
-                } else {
-                    button.setIcon(new Icon(icon));
-                }
-            } else if (Action.PROP_DESCRIPTION.equals(propertyName)) {
+                break;
+            case Action.PROP_ICON:
+                button.setIcon((Icon) event.getNewValue());
+                break;
+            case Action.PROP_DESCRIPTION:
                 button.setTitle((String) event.getNewValue());
-            } else if (Action.PROP_VARIANT.equals(propertyName)) {
+                break;
+            case Action.PROP_VARIANT:
                 removeActionVariant(button, (ActionVariant) event.getOldValue());
                 addActionVariant(button, (ActionVariant) event.getNewValue());
-            } else if (Action.PROP_SHORTCUT.equals(propertyName)) {
+                break;
+            case Action.PROP_SHORTCUT_COMBINATION:
                 button.setShortcutCombination((KeyCombination) event.getNewValue());
-            }
-        });
+                break;
+        }
     }
 }

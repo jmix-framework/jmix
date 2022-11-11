@@ -19,12 +19,12 @@ package io.jmix.flowui.sys;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import io.jmix.core.AccessManager;
 import io.jmix.flowui.accesscontext.FlowuiMenuContext;
-import io.jmix.flowui.accesscontext.FlowuiShowScreenContext;
+import io.jmix.flowui.accesscontext.FlowuiShowViewContext;
 import io.jmix.flowui.menu.MenuItem;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.ScreenInfo;
-import io.jmix.flowui.screen.ScreenRegistry;
-import io.jmix.flowui.screen.UiController;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewInfo;
+import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.flowui.view.ViewController;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -37,14 +37,14 @@ public class FlowuiAccessChecker {
 
     protected AccessAnnotationChecker accessAnnotationChecker;
     protected AccessManager accessManager;
-    protected ScreenRegistry screenRegistry;
+    protected ViewRegistry viewRegistry;
 
     public FlowuiAccessChecker(@Nullable AccessAnnotationChecker accessAnnotationChecker,
                                AccessManager accessManager,
-                               ScreenRegistry screenRegistry) {
+                               ViewRegistry viewRegistry) {
         this.accessAnnotationChecker = accessAnnotationChecker;
         this.accessManager = accessManager;
-        this.screenRegistry = screenRegistry;
+        this.viewRegistry = viewRegistry;
     }
 
     /**
@@ -55,7 +55,7 @@ public class FlowuiAccessChecker {
      * @return {@code true} if menu item is permitted
      */
     public boolean isMenuPermitted(MenuItem menuItem) {
-        Class<? extends Screen<?>> controllerClass = getControllerClass(menuItem);
+        Class<? extends View<?>> controllerClass = getControllerClass(menuItem);
         boolean hasAccess = accessAnnotationChecker != null && accessAnnotationChecker.hasAccess(controllerClass);
 
         return hasAccess || isMenuItemHasSecurityPermission(menuItem);
@@ -71,26 +71,26 @@ public class FlowuiAccessChecker {
     public boolean isViewPermitted(Class<?> target) {
         boolean hasAccess = accessAnnotationChecker != null && accessAnnotationChecker.hasAccess(target);
 
-        if (!hasAccess && isSupportedScreen(target)) {
-            hasAccess = isScreenHasSecurityPermission(target);
+        if (!hasAccess && isSupportedView(target)) {
+            hasAccess = isViewHasSecurityPermission(target);
         }
 
         return hasAccess;
     }
 
-    protected Class<? extends Screen<?>> getControllerClass(MenuItem menuItem) {
-        ScreenInfo screenInfo = screenRegistry.getScreenInfo(menuItem.getScreen());
-        return screenInfo.getControllerClass();
+    protected Class<? extends View<?>> getControllerClass(MenuItem menuItem) {
+        ViewInfo viewInfo = viewRegistry.getViewInfo(menuItem.getView());
+        return viewInfo.getControllerClass();
     }
 
-    protected boolean isSupportedScreen(Class<?> targetView) {
-        return Screen.class.isAssignableFrom(targetView)
-                && targetView.getAnnotation(UiController.class) != null;
+    protected boolean isSupportedView(Class<?> targetView) {
+        return View.class.isAssignableFrom(targetView)
+                && targetView.getAnnotation(ViewController.class) != null;
     }
 
-    protected boolean isScreenHasSecurityPermission(Class<?> target) {
-        String screenId = UiDescriptorUtils.getInferredScreenId(target);
-        FlowuiShowScreenContext context = new FlowuiShowScreenContext(screenId);
+    protected boolean isViewHasSecurityPermission(Class<?> target) {
+        String viewId = ViewDescriptorUtils.getInferredViewId(target);
+        FlowuiShowViewContext context = new FlowuiShowViewContext(viewId);
         accessManager.applyRegisteredConstraints(context);
         return context.isPermitted();
     }

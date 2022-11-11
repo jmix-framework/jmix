@@ -17,8 +17,10 @@
 package uitest.screen_settings_facet
 
 import io.jmix.ui.screen.Screen
+import io.jmix.ui.settings.component.GroupBoxSettings
 import io.jmix.ui.settings.component.GroupTableSettings
 import test_support.UiDataTestSpecification
+import uitest.screen_settings_facet.screen.FacetAutoExcludeTestScreen
 import uitest.screen_settings_facet.screen.FacetAutoTestScreen
 import uitest.screen_settings_facet.screen.FacetDelegateTestScreen
 import uitest.screen_settings_facet.screen.FacetManualTestScreen
@@ -66,6 +68,32 @@ class ScreenSettingsFacetTest extends UiDataTestSpecification {
         then: "GroupTable's settings should be saved"
         screen.facet.settings
                 .getSettings(screen.projectsTable.id, GroupTableSettings.class)
+                .isPresent()
+    }
+
+    def "ScreenSettingsFacet with auto mode and excluded component"() {
+        showTestMainScreen()
+
+        when: "Open screen, change excluded component state"
+        FacetAutoExcludeTestScreen screen = createAndShow(FacetAutoExcludeTestScreen)
+
+        then: "Check that facet contains excluded component"
+        screen.facet.excludedComponentIds.size() > 0
+        screen.facet.excludedComponentIds.contains("groupBox")
+
+        when: "Reopen screen"
+        screen.closeWithDefaultAction()
+        // we cannot use the same instance, because screen's lifecycle events triggered only once
+        screen = createAndShow(FacetAutoExcludeTestScreen)
+
+        then: "Settings for GroupBox shouldn't be presented"
+
+        !screen.facet.settings
+                .getSettings(screen.groupBox.id, GroupBoxSettings)
+                .isPresent()
+
+        screen.facet.settings
+                .getSettings(screen.projectsTable.id, GroupTableSettings)
                 .isPresent()
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package io.jmix.flowui.model;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.SameAsUi;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -33,7 +32,6 @@ import java.util.function.Consumer;
  *
  * @see CollectionContainer
  */
-@SameAsUi
 public interface InstanceContainer<E> {
 
     /**
@@ -134,7 +132,7 @@ public interface InstanceContainer<E> {
         @SuppressWarnings("unchecked")
         @Override
         public InstanceContainer<T> getSource() {
-            return (InstanceContainer) super.getSource();
+            return (InstanceContainer<T>) super.getSource();
         }
 
         /**
@@ -199,7 +197,7 @@ public interface InstanceContainer<E> {
         @SuppressWarnings("unchecked")
         @Override
         public InstanceContainer<T> getSource() {
-            return (InstanceContainer) super.getSource();
+            return (InstanceContainer<T>) super.getSource();
         }
 
         /**

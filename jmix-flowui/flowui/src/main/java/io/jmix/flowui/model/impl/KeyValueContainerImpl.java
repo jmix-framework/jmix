@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,24 +18,20 @@ package io.jmix.flowui.model.impl;
 
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
-import io.jmix.core.impl.keyvalue.KeyValueMetaPropertyBuilder;
+import io.jmix.core.impl.keyvalue.KeyValueMetaClassFactory;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.KeyValueContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
-@SameAsUi
-@RequiresChanges
 public class KeyValueContainerImpl extends InstanceContainerImpl<KeyValueEntity> implements KeyValueContainer {
 
     private String idName;
 
     @Autowired
-    private KeyValueMetaPropertyBuilder keyValueMetaPropertyBuilder;
+    private KeyValueMetaClassFactory keyValueMetaClassFactory;
 
     public KeyValueContainerImpl() {
         super(new KeyValueMetaClass());
@@ -63,20 +59,28 @@ public class KeyValueContainerImpl extends InstanceContainerImpl<KeyValueEntity>
 
     @Override
     public KeyValueContainer addProperty(String name) {
-        getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, String.class));
+        keyValueMetaClassFactory.configurer(getEntityMetaClass()).addProperty(name, String.class);
         return this;
     }
 
     @Override
-    public KeyValueContainer addProperty(String name, Class aClass) {
-        getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, aClass));
+    public KeyValueContainer addProperty(String name, Class<?> aClass) {
+        keyValueMetaClassFactory.configurer(getEntityMetaClass()).addProperty(name, aClass);
         return this;
     }
 
     @Override
-    public KeyValueContainer addProperty(String name, Datatype datatype) {
-        getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, datatype));
+    public KeyValueContainer addProperty(String name, Datatype<?> datatype) {
+        keyValueMetaClassFactory.configurer(getEntityMetaClass()).addProperty(name, datatype);
         return this;
+    }
+
+    @Override
+    public KeyValueEntity createEntity() {
+        KeyValueEntity entity = new KeyValueEntity();
+        entity.setIdName(idName);
+        entity.setInstanceMetaClass(entityMetaClass);
+        return entity;
     }
 
     @Override

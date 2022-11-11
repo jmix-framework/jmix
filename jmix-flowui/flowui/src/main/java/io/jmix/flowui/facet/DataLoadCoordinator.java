@@ -41,12 +41,12 @@ public interface DataLoadCoordinator extends Facet {
     void setComponentPrefix(String value);
 
     /**
-     * Adds trigger on screen/fragment event.
+     * Adds trigger on view event.
      *
      * @param loader     loader
      * @param eventClass event class
      */
-    void addOnScreenEventLoadTrigger(DataLoader loader, Class<?> eventClass);
+    void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass);
 
     /**
      * Adds trigger on data container {@code ItemChangeEvent}.

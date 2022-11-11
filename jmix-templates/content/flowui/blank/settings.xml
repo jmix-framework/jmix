@@ -18,11 +18,11 @@
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_blank.svg"
           order="0"
-          name="Blank view (FlowUI)">
+          name="Blank view">
     <description>
-        <![CDATA[<html>Blank screen not associated with an entity.</html>]]>
+        <![CDATA[<html>Blank view not associated with an entity.</html>]]>
     </description>
-    <locMessages key="title" expressionKey="${studioUtils.decapitalize(controllerName)}.caption">
+    <locMessages key="title" expressionKey="${studioUtils.decapitalize(controllerName)}.title">
         <message lang="default">
             <![CDATA[${studioUtils.makeScreenNaturalCaption(id, project)}]]>
         </message>
@@ -41,28 +41,28 @@
               required="true"
               dynamic="true"
               sourceName="controller"
-              valueTemplate="${api.evaluateScript('screen/controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
+              valueTemplate="${api.evaluateScript('controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
         <dependency code="descriptorName"/>
     </property>
 
-    <property caption="Screen id"
+    <property caption="View id"
               code="id"
               propertyType="SCREEN_ID"
               advanced="true"
               dynamic="true"
               required="true"
-              valueTemplate="${api.evaluateScript('screen/screenIdByDescriptorName.groovy', ['descriptorName': descriptorName, 'projectId': project_id])}">
+              valueTemplate="${api.evaluateScript('screenIdByDescriptorName.groovy', ['descriptorName': descriptorName, 'projectId': project_id])}">
         <dependency code="descriptorName"/>
     </property>
 
-    <property caption="Screen route"
+    <property caption="View route"
               code="route"
               defaultValue="blank-view"
               propertyType="STRING"
               advanced="true"
               dynamic="true"
               required="true"
-              valueTemplate="${api.evaluateScript('screen/controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
+              valueTemplate="${api.evaluateScript('controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
         <dependency code="descriptorName"/>
     </property>
 
@@ -70,6 +70,7 @@
               code="menuItem"
               propertyType="FLOW_MENU_ITEM"/>
 
+    <!--sources-->
     <source fileExt="xml"
             name="descriptor"/>
 

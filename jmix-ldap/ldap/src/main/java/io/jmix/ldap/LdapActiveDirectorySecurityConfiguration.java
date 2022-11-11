@@ -19,18 +19,27 @@ package io.jmix.ldap;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.security.event.PreAuthenticationCheckEvent;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
-import io.jmix.security.StandardSecurityConfiguration;
+import io.jmix.security.SecurityConfigurers;
+import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.*;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+import org.springframework.security.web.SecurityFilterChain;
 
-public class LdapActiveDirectorySecurityConfiguration extends StandardSecurityConfiguration {
+import java.util.List;
+
+import static io.jmix.security.SecurityConfigurers.uiSecurity;
+
+public class LdapActiveDirectorySecurityConfiguration {
+
+    public static final String SECURITY_CONFIGURER_QUALIFIER = "ldap-active-directory";
 
     @Autowired
     protected LdapProperties ldapProperties;
@@ -41,10 +50,30 @@ public class LdapActiveDirectorySecurityConfiguration extends StandardSecurityCo
     @Autowired
     protected JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
-        auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider());
+    @Bean("ldap_SecurityFilterChain")
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.apply(uiSecurity());
+        http.logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/"));
+        SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
+        return http.build();
+    }
+
+    @Bean("ldap_AuthenticationManager")
+    public AuthenticationManager ldapAuthenticationManager(StandardAuthenticationProvidersProducer providersProducer,
+                                                           AuthenticationEventPublisher authenticationEventPublisher) {
+        List<AuthenticationProvider> providers = providersProducer.getStandardProviders();
+        providers.add(activeDirectoryLdapAuthenticationProvider());
+        ProviderManager providerManager = new ProviderManager(providers);
+        providerManager.setAuthenticationEventPublisher(authenticationEventPublisher);
+        return providerManager;
+    }
+
+    @Bean("ldap_AuthenticationEventPublisher")
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher publisher) {
+        return new DefaultAuthenticationEventPublisher(publisher);
     }
 
     protected AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
@@ -55,6 +84,7 @@ public class LdapActiveDirectorySecurityConfiguration extends StandardSecurityCo
         authenticationProvider.setConvertSubErrorCodesToExceptions(true);
         authenticationProvider.setUserDetailsContextMapper(ldapUserDetailsContextMapper);
         authenticationProvider.setAuthoritiesMapper(grantedAuthoritiesMapper);
+        authenticationProvider.setSearchFilter(ldapProperties.getUserSearchFilter());
         return authenticationProvider;
     }
 

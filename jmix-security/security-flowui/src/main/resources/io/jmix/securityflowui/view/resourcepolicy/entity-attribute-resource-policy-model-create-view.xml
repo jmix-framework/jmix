@@ -1,0 +1,36 @@
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://entityAttributeResourcePolicyModelCreateView.title"
+      focusComponent="form">
+    <data>
+        <collection id="attributesDc"
+                    class="io.jmix.securityflowui.view.resourcepolicy.AttributeResourceModel"/>
+    </data>
+    <actions>
+        <action id="saveAction"/>
+        <action id="closeAction" type="view_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form">
+            <comboBox id="entityField"
+                      label="msg://entityResourcePolicyModelCreateView.entityField.label"/>
+            <textField id="policyGroupField"
+                       label="msg://io.jmix.securityflowui.model/ResourcePolicyModel.policyGroup"/>
+        </formLayout>
+
+        <h4 text="msg://entityAttributeResourcePolicyModelCreateView.attributes"/>
+
+        <dataGrid id="attributesTable"
+                  dataContainer="attributesDc"
+                  selectionMode="NONE"
+                  width="100%">
+            <columns>
+                <column property="caption"/>
+            </columns>
+        </dataGrid>
+
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

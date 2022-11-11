@@ -1,35 +1,51 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.impl;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.FlowUiScreenProperties;
+import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-@Component("flowui_Dialogs")
+@org.springframework.stereotype.Component("flowui_Dialogs")
 public class DialogsImpl implements Dialogs {
 
-    protected Messages messages;
-    protected FlowUiScreenProperties flowUiScreenProperties;
+    protected static final String WIDTH = "25em";
 
-    public DialogsImpl(Messages messages, FlowUiScreenProperties flowUiScreenProperties) {
+    protected Messages messages;
+    protected FlowuiViewProperties flowUiViewProperties;
+
+    public DialogsImpl(Messages messages, FlowuiViewProperties flowUiViewProperties) {
         this.messages = messages;
-        this.flowUiScreenProperties = flowUiScreenProperties;
+        this.flowUiViewProperties = flowUiViewProperties;
     }
 
     @Override
@@ -42,8 +58,7 @@ public class DialogsImpl implements Dialogs {
         return new MessageDialogBuilderImpl();
     }
 
-    // todo gd Use ActionBinder instead?
-    protected Button createButton(Action action) {
+    protected Button createButton(Action action, Dialog dialog) {
         Button button = new Button();
 
         if (action instanceof DialogAction) {
@@ -58,11 +73,12 @@ public class DialogsImpl implements Dialogs {
             button.setText(action.getText());
         }
 
-        if (action.getIcon() == null) {
-            button.setIcon(null);
-        } else {
-            button.setIcon(new Icon(action.getIcon()));
-        }
+        button.setIcon(action.getIcon());
+
+        button.addClickListener(event -> {
+            action.actionPerform(dialog);
+            dialog.close();
+        });
 
         return button;
     }
@@ -70,70 +86,69 @@ public class DialogsImpl implements Dialogs {
     public class OptionDialogBuilderImpl implements OptionDialogBuilder {
 
         protected Dialog dialog;
-        protected H3 header;
-        protected com.vaadin.flow.component.Component text;
-        protected HorizontalLayout buttonsContainer;
+        protected Component content;
 
         protected Action[] actions;
 
         public OptionDialogBuilderImpl() {
-            dialog = new Dialog();
+            dialog = createDialog();
+            initDialog(dialog);
+        }
+
+        protected Dialog createDialog() {
+            return new Dialog();
+        }
+
+        protected void initDialog(Dialog dialog) {
             dialog.setDraggable(true);
-            dialog.setWidth("460px"); // todo: use theme variable
-
-            header = new H3();
-            header.setWidthFull();
-
-            buttonsContainer = new HorizontalLayout();
-            buttonsContainer.setSpacing(true);
-            buttonsContainer.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-
-            dialog.add(header, buttonsContainer);
+            dialog.setCloseOnOutsideClick(false);
+            dialog.setCloseOnEsc(false);
+            dialog.setWidth(WIDTH);
         }
 
         @Override
         public OptionDialogBuilder withHeader(String header) {
-            this.header.setText(header);
+            dialog.setHeaderTitle(header);
             return this;
         }
 
         @Nullable
         @Override
         public String getHeader() {
-            return header.getText();
+            return dialog.getHeaderTitle();
         }
 
         @Override
         public OptionDialogBuilder withText(String text) {
-            if (this.text != null) {
-                dialog.remove(this.text);
+            if (this.content != null) {
+                dialog.remove(this.content);
             }
 
-            this.text = new Paragraph(text);
-            dialog.addComponentAtIndex(1, this.text);
+            this.content = new Paragraph(text);
+            dialog.add(this.content);
             return this;
         }
 
         @Nullable
         @Override
         public String getText() {
-            return text instanceof Paragraph ? ((Paragraph) text).getText() : null;
+            return content instanceof Paragraph ? ((Paragraph) content).getText() : null;
         }
 
         @Override
-        public OptionDialogBuilder withContent(com.vaadin.flow.component.Component content) {
-            if (text != null) {
-                dialog.remove(text);
+        public OptionDialogBuilder withContent(Component content) {
+            if (this.content != null) {
+                dialog.remove(this.content);
             }
 
-            dialog.addComponentAtIndex(1, content);
+            dialog.add(content);
             return this;
         }
 
         @Nullable
         @Override
-        public com.vaadin.flow.component.Component getContent() {
-            return text;
+        public Component getContent() {
+            return content;
         }
 
         @Override
@@ -164,9 +179,22 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        @Nullable
         @Override
         public String getThemeName() {
             return dialog.getThemeName();
+        }
+
+        @Override
+        public OptionDialogBuilder withClassName(@Nullable String className) {
+            dialog.setClassName(className);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getClassName() {
+            return dialog.getClassName();
         }
 
         @Override
@@ -248,7 +276,7 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public void open() {
-            DialogAction firstCommitAction = findFirstActionWithType(actions,
+            DialogAction firstOkAction = findFirstActionWithType(actions,
                     EnumSet.of(DialogAction.Type.YES, DialogAction.Type.OK)
             );
             DialogAction firstDeclineAction = findFirstActionWithType(actions,
@@ -256,12 +284,9 @@ public class DialogsImpl implements Dialogs {
             );
 
             boolean hasPrimaryAction = false;
+            Focusable<?> focusComponent = null;
             for (Action action : actions) {
-                Button button = createButton(action);
-                button.addClickListener(event -> {
-                    action.actionPerform(dialog);
-                    dialog.close();
-                });
+                Button button = createButton(action, dialog);
 
                 switch (action.getVariant()) {
                     case PRIMARY:
@@ -277,23 +302,36 @@ public class DialogsImpl implements Dialogs {
                         break;
                 }
 
-                buttonsContainer.add(button);
+                initKeyCombination(firstOkAction, firstDeclineAction, action, button);
 
-
-                if (action == firstCommitAction) {
-                    KeyCombination commitShortcut = KeyCombination.create(flowUiScreenProperties.getCommitShortcut());
-                    button.addClickShortcut(commitShortcut.getKey(), commitShortcut.getKeyModifiers());
-                } else if (action == firstDeclineAction) {
-                    KeyCombination closeShortcut = KeyCombination.create(flowUiScreenProperties.getCloseShortcut());
-                    button.addClickShortcut(closeShortcut.getKey(), closeShortcut.getKeyModifiers());
+                if (focusComponent == null) {
+                    focusComponent = button;
                 }
+
+                dialog.getFooter().add(button);
             }
 
-            if (!hasPrimaryAction && actions.length > 0) {
-                ((Focusable<?>) buttonsContainer.getComponentAt(0)).focus();
+            if (!hasPrimaryAction && focusComponent != null) {
+                focusComponent.focus();
             }
 
             dialog.open();
+        }
+
+        protected void initKeyCombination(@Nullable DialogAction firstOkAction,
+                                          @Nullable DialogAction firstDeclineAction,
+                                          Action action, Button button) {
+            if (action == firstOkAction) {
+                KeyCombination saveShortcut = KeyCombination.create(flowUiViewProperties.getSaveShortcut());
+                if (saveShortcut != null) {
+                    button.addClickShortcut(saveShortcut.getKey(), saveShortcut.getKeyModifiers());
+                }
+            } else if (action == firstDeclineAction) {
+                KeyCombination closeShortcut = KeyCombination.create(flowUiViewProperties.getCloseShortcut());
+                if (closeShortcut != null) {
+                    button.addClickShortcut(closeShortcut.getKey(), closeShortcut.getKeyModifiers());
+                }
+            }
         }
 
         @Nullable
@@ -313,44 +351,47 @@ public class DialogsImpl implements Dialogs {
     public class MessageDialogBuilderImpl implements MessageDialogBuilder {
 
         protected Dialog dialog;
-        protected H3 header;
         protected Button okButton;
-        protected com.vaadin.flow.component.Component text;
+        protected Component content;
 
         public MessageDialogBuilderImpl() {
-            dialog = new Dialog();
-            dialog.setDraggable(true);
-            dialog.setWidth("460px"); // todo: use theme variable
+            dialog = createDialog();
+            initDialog(dialog);
+        }
 
-            header = new H3();
-            header.setWidthFull();
+        protected Dialog createDialog() {
+            return new Dialog();
+        }
+
+        protected void initDialog(Dialog dialog) {
+            dialog.setDraggable(true);
+            dialog.setCloseOnOutsideClick(false);
+            dialog.setWidth(WIDTH);
 
             HorizontalLayout buttonsContainer = new HorizontalLayout();
             buttonsContainer.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
             DialogAction okAction = new DialogAction(DialogAction.Type.OK);
-            okButton = createButton(okAction);
-            okButton.addClickListener(clickEvent -> {
-                okAction.actionPerform(dialog);
-                dialog.close();
-            });
-            KeyCombination commitShortcut = KeyCombination.create(flowUiScreenProperties.getCommitShortcut());
-            okButton.addClickShortcut(commitShortcut.getKey(), commitShortcut.getKeyModifiers());
-            buttonsContainer.add(okButton);
+            okButton = createButton(okAction, dialog);
 
-            dialog.add(header, buttonsContainer);
+            KeyCombination saveShortcut = KeyCombination.create(flowUiViewProperties.getSaveShortcut());
+            if (saveShortcut != null) {
+                okButton.addClickShortcut(saveShortcut.getKey(), saveShortcut.getKeyModifiers());
+            }
+
+            dialog.getFooter().add(okButton);
         }
 
         @Override
         public MessageDialogBuilder withHeader(String header) {
-            this.header.setText(header);
+            dialog.setHeaderTitle(header);
             return this;
         }
 
         @Nullable
         @Override
         public String getHeader() {
-            return header.getText();
+            return dialog.getHeaderTitle();
         }
 
         @Override
@@ -377,35 +418,35 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public MessageDialogBuilder withText(String text) {
-            if (this.text != null) {
-                dialog.remove(this.text);
+            if (this.content != null) {
+                dialog.remove(this.content);
             }
 
-            this.text = new Paragraph(text);
-            dialog.addComponentAtIndex(1, this.text);
+            this.content = new Paragraph(text);
+            dialog.add(this.content);
             return this;
         }
 
         @Nullable
         @Override
         public String getText() {
-            return text instanceof Paragraph ? ((Paragraph) text).getText() : null;
+            return content instanceof Paragraph ? ((Paragraph) content).getText() : null;
         }
 
         @Override
-        public MessageDialogBuilder withContent(com.vaadin.flow.component.Component content) {
-            if (text != null) {
-                dialog.remove(text);
+        public MessageDialogBuilder withContent(Component content) {
+            if (this.content != null) {
+                dialog.remove(this.content);
             }
 
-            dialog.addComponentAtIndex(1, content);
+            dialog.add(content);
             return this;
         }
 
         @Nullable
         @Override
-        public com.vaadin.flow.component.Component getContent() {
-            return text;
+        public Component getContent() {
+            return content;
         }
 
         @Override
@@ -414,9 +455,22 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        @Nullable
         @Override
         public String getThemeName() {
             return dialog.getThemeName();
+        }
+
+        @Override
+        public MessageDialogBuilder withClassName(@Nullable String className) {
+            dialog.setClassName(className);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getClassName() {
+            return dialog.getClassName();
         }
 
         @Override

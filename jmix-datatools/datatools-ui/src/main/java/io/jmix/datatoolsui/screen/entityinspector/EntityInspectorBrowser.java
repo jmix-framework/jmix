@@ -57,9 +57,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.ui.download.DownloadFormat.JSON;
@@ -69,6 +69,7 @@ import static io.jmix.ui.download.DownloadFormat.ZIP;
 @Route("jmixEntityInspector")
 @UiController("entityInspector.browse")
 @UiDescriptor("entity-inspector-browser.xml")
+@MultipleOpen
 public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     public static final int MAX_TEXT_LENGTH = 50;
@@ -297,7 +298,6 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
             default:
         }
 
-        entitiesDl.load();
         return entitiesDc;
     }
 
@@ -465,6 +465,10 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         createAction.setScreenClass(EntityInspectorEditor.class);
         createAction.setNewEntitySupplier(() -> metadata.create(selectedMeta));
         createAction.setShortcut(componentProperties.getTableInsertShortcut());
+        if (Modifier.isAbstract(selectedMeta.getJavaClass().getModifiers())) {
+            createAction.setEnabled(false);
+        }
+
         return createAction;
     }
 
@@ -474,9 +478,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         editAction.setTarget(table);
         editAction.setScreenClass(EntityInspectorEditor.class);
         editAction.setShortcut(componentProperties.getTableInsertShortcut());
-
-        table.addSelectionListener((Consumer<Table.SelectionEvent>) selectionEvent
-                -> editAction.setEnabled(selectionEvent.getSelected().size() == 1));
+        editAction.addEnabledRule(() -> table.getSelected().size() == 1);
 
         return editAction;
     }
@@ -485,9 +487,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         BulkEditAction bulkEditAction = actions.create(BulkEditAction.class);
         bulkEditAction.setOpenMode(OpenMode.THIS_TAB);
         bulkEditAction.setTarget(table);
-
-        table.addSelectionListener((Consumer<Table.SelectionEvent>) selectionEvent
-                -> bulkEditAction.setEnabled(selectionEvent.getSelected().size() > 1));
+        bulkEditAction.addEnabledRule(() -> table.getSelected().size() > 1);
 
         return bulkEditAction;
     }
@@ -526,7 +526,8 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                 case EMBEDDED:
                 case COMPOSITION:
                     EntityImportPlanProperty property = entityImportPlan.getProperty(metaProperty.getName());
-                    property.setReferenceImportBehaviour(ReferenceImportBehaviour.IGNORE_MISSING);
+                    if (property != null)
+                        property.setReferenceImportBehaviour(ReferenceImportBehaviour.IGNORE_MISSING);
                     break;
                 default:
             }
@@ -544,6 +545,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                     break;
                 case ASSOCIATION:
                 case COMPOSITION:
+                case EMBEDDED:
                     FetchPlan local = fetchPlanRepository.getFetchPlan(metaProperty.getRange().asClass(), FetchPlan.LOCAL);
                     fetchPlanBuilder.add(metaProperty.getName(), local.getName());
                     break;

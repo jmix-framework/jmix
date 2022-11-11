@@ -108,8 +108,6 @@ public abstract class App {
 
     protected AppCookies cookies;
 
-    protected LinkHandler linkHandler;
-
     protected BackgroundTaskManager backgroundTaskManager = new BackgroundTaskManager();
 
     protected ThemeConstants themeConstants;

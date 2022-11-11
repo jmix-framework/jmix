@@ -1,0 +1,24 @@
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://viewResourcePolicyModelDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="resourcePolicyModelDc"
+                  class="io.jmix.securityflowui.model.ResourcePolicyModel">
+        </instance>
+    </data>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="resourcePolicyModelDc">
+            <comboBox id="resourceField" property="resource"/>
+            <textField id="policyGroupField" property="policyGroup"/>
+        </formLayout>
+
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

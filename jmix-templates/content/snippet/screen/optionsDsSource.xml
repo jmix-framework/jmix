@@ -1,0 +1,13 @@
+<%
+def optionsDatasourceAttrs = api.evaluateScript('optionsDatasources.groovy', ['view': view])
+%>
+<%if (optionsDatasourceAttrs) {
+    optionsDatasourceAttrs.each {attr ->%>
+        <collection id="${api.pluralForm(attr.name)}Dc" class="${attr.entityType.fqn}" fetchPlan="_base">
+            <loader id="${api.pluralForm(attr.name)}Dl">
+                <query>
+                    <![CDATA[select e from ${attr.entityType.name} e]]>
+                </query>
+            </loader>
+        </collection>
+<%}}%>

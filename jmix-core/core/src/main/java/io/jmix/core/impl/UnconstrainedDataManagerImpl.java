@@ -153,7 +153,7 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
         Map<String, SaveContext> storeToContextMap = new TreeMap<>();
         Set<Object> toRepeat = new HashSet<>();
         for (Object entity : context.getEntitiesToSave()) {
-            MetaClass metaClass = metadata.getClass(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity);
             String storeName = getStoreName(metaClass);
 
             boolean repeatRequired = writeCrossDataStoreReferences(entity, context.getEntitiesToSave());
@@ -168,7 +168,7 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
                 sc.getFetchPlans().put(entity, fetchPlan);
         }
         for (Object entity : context.getEntitiesToRemove()) {
-            MetaClass metaClass = metadata.getClass(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity);
             String storeName = getStoreName(metaClass);
 
             SaveContext sc = storeToContextMap.computeIfAbsent(storeName, key -> createSaveContext(context));
@@ -335,7 +335,7 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
             return false;
 
         boolean repeatRequired = false;
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         for (MetaProperty property : metaClass.getProperties()) {
             if (property.getRange().isClass() && !property.getRange().getCardinality().isMany()) {
                 MetaClass propertyMetaClass = property.getRange().asClass();
@@ -355,7 +355,7 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
                             EntityValues.setValue(entity, relatedPropertyName, null);
                         } else {
                             Object refEntityId = EntityValues.getId(refEntity);
-                            MetaClass refEntityMetaClass = metadata.getClass(refEntity.getClass());
+                            MetaClass refEntityMetaClass = metadata.getClass(refEntity);
                             if (refEntityId == null) {
                                 Object refEntityGeneratedId = EntityValues.getGeneratedId(refEntity);
                                 if (allEntities.stream().anyMatch(e -> EntityValues.getGeneratedId(e).equals(refEntityGeneratedId))) {

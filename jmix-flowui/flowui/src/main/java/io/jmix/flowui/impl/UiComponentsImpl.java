@@ -1,12 +1,33 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.impl;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.treegrid.TreeGrid;
@@ -14,15 +35,20 @@ import com.vaadin.flow.di.Instantiator;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsDatatype;
+import io.jmix.flowui.component.accordion.JmixAccordion;
+import io.jmix.flowui.component.accordion.JmixAccordionPanel;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
+import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
+import io.jmix.flowui.component.loginform.JmixLoginForm;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -48,6 +74,9 @@ public class UiComponentsImpl implements UiComponents {
     {
         register(DataGrid.class, Grid.class);
         register(TreeDataGrid.class, TreeGrid.class);
+        register(JmixAccordion.class, Accordion.class);
+        register(JmixAccordionPanel.class, AccordionPanel.class);
+        register(JmixDetails.class, Details.class);
         register(JmixButton.class, Button.class);
         register(JmixComboBox.class, ComboBox.class);
         register(TypedTextField.class, TextField.class);
@@ -55,6 +84,8 @@ public class UiComponentsImpl implements UiComponents {
         register(TypedDateTimePicker.class, DateTimePicker.class);
         register(TypedDatePicker.class, DatePicker.class);
         register(JmixBigDecimalField.class, BigDecimalField.class);
+        register(JmixLoginForm.class, LoginForm.class);
+        register(JmixMenuBar.class, MenuBar.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -73,7 +104,6 @@ public class UiComponentsImpl implements UiComponents {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    @Override
     public <T extends Component> T create(ParameterizedTypeReference<T> typeReference) {
         ParameterizedType type = (ParameterizedType) typeReference.getType();
         T component = create((Class<T>) type.getRawType());

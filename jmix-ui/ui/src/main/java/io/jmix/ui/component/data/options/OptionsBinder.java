@@ -96,9 +96,8 @@ public class OptionsBinder {
             optionsTarget.setOptions(source.getOptions());
         }
 
-        @SuppressWarnings("unchecked")
         protected void optionsSourceValueChanged(EntityOptions.ValueChangeEvent<?> event) {
-            ((HasValue) optionsTarget).setValue(event.getValue());
+            // do nothing
         }
 
         @SuppressWarnings("unchecked")

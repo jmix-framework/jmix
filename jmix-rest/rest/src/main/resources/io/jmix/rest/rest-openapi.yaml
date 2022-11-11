@@ -53,7 +53,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: "1.3"
+  version: "1.4"
 servers:
   - url: /rest
 security:
@@ -1083,6 +1083,12 @@ paths:
             The file name. If this parameter is missing then a FileDescriptor id will be used as a file name. In case of
             `multipart\form-data` request a file name may be taken from the `filename` attribute of the `Content-Disposition`
             header.
+          schema:
+            type: string
+        - name: storageName
+          in: query
+          description: |
+            The file storage name. If this parameter is missing then the default file storage of the application is used.
           schema:
             type: string
       responses:

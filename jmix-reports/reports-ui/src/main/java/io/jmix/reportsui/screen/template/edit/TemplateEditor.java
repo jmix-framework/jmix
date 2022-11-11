@@ -151,13 +151,16 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
     protected Messages messages;
 
     @Autowired
+    protected MessageBundle messageBundle;
+
+    @Autowired
     protected Notifications notifications;
 
     @Subscribe
     protected void onInit(InitEvent event) {
         Map<String, Boolean> groovyOptions = new HashMap<>();
-        groovyOptions.put(messages.getMessage(getClass(), "template.freemarkerType"), Boolean.FALSE);
-        groovyOptions.put(messages.getMessage(getClass(), "template.groovyType"), Boolean.TRUE);
+        groovyOptions.put(messageBundle.getMessage("template.freemarkerType"), Boolean.FALSE);
+        groovyOptions.put(messageBundle.getMessage("template.groovyType"), Boolean.TRUE);
         isGroovyRadioButtonGroup.setOptionsMap(groovyOptions);
     }
 
@@ -198,8 +201,8 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
                     setupVisibility(reportTemplate.getCustom(), newOutputType);
                     if (hasHtmlCsvTemplateOutput(prevOutputType) && !hasTemplateOutput(newOutputType)) {
                         dialogs.createMessageDialog()
-                                .withCaption(messages.getMessage(getClass(), "templateEditor.warning"))
-                                .withMessage(messages.getMessage(getClass(), "templateEditor.clearTemplateMessage"))
+                                .withCaption(messageBundle.getMessage("templateEditor.warning"))
+                                .withMessage(messageBundle.getMessage("templateEditor.clearTemplateMessage"))
                                 .show();
                     }
                     break;
@@ -273,9 +276,9 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         fullScreenLinkButton.setVisible(groovyScriptVisibility);
 
         customDefinedByField.setRequired(enabled);
-        customDefinedByField.setRequiredMessage(messages.getMessage(getClass(), "templateEditor.customDefinedBy"));
+        customDefinedByField.setRequiredMessage(messageBundle.getMessage("templateEditor.customDefinedBy"));
         customDefinitionField.setRequired(enabled);
-        customDefinitionField.setRequiredMessage(messages.getMessage(getClass(), "templateEditor.classRequired"));
+        customDefinitionField.setRequiredMessage(messageBundle.getMessage("templateEditor.classRequired"));
 
         boolean supportAlterableForTemplate = templateOutputVisibility && !enabled;
         alterableField.setVisible(supportAlterableForTemplate);
@@ -355,7 +358,7 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
     @Subscribe("templateUploadField")
     protected void onTemplateUploadFieldFileUploadError(UploadField.FileUploadErrorEvent event) {
         notifications.create(Notifications.NotificationType.WARNING)
-                .withCaption(messages.getMessage(getClass(), "templateEditor.uploadUnsuccess"))
+                .withCaption(messageBundle.getMessage("templateEditor.uploadUnsuccess"))
                 .show();
     }
 
@@ -372,7 +375,7 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         updateOutputType();
 
         notifications.create(Notifications.NotificationType.TRAY)
-                .withCaption(messages.getMessage(getClass(), "templateEditor.uploadSuccess"))
+                .withCaption(messageBundle.getMessage("templateEditor.uploadSuccess"))
                 .show();
     }
 
@@ -460,7 +463,7 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
             if (!ReportPrintHelper.getInputOutputTypesMapping().containsKey(inputType) ||
                     !ReportPrintHelper.getInputOutputTypesMapping().get(inputType).contains(outputTypeValue)) {
                 notifications.create(Notifications.NotificationType.TRAY)
-                        .withCaption(messages.getMessage(getClass(), "inputOutputTypesError"))
+                        .withCaption(messageBundle.getMessage("inputOutputTypesError"))
                         .show();
                 return false;
             }
@@ -473,14 +476,14 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         if (!Boolean.TRUE.equals(template.getCustom())
                 && hasTemplateOutput(template.getReportOutputType())
                 && template.getContent() == null) {
-            StringBuilder notification = new StringBuilder(messages.getMessage(getClass(), "template.uploadTemplate"));
+            StringBuilder notification = new StringBuilder(messageBundle.getMessage("template.uploadTemplate"));
 
             if (StringUtils.isEmpty(template.getCode())) {
-                notification.append("\n").append(messages.getMessage(getClass(), "template.codeMsg"));
+                notification.append("\n").append(messageBundle.getMessage("template.codeMsg"));
             }
 
             if (template.getOutputType() == null) {
-                notification.append("\n").append(messages.getMessage(getClass(), "template.outputTypeMsg"));
+                notification.append("\n").append(messageBundle.getMessage("template.outputTypeMsg"));
             }
 
             notifications.create(Notifications.NotificationType.TRAY)
@@ -517,8 +520,8 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
     @Subscribe("customDefinitionHelpLinkButton")
     public void onCustomDefinitionHelpLinkButtonClick(Button.ClickEvent event) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "templateEditor.titleHelpGroovy"))
-                .withMessage(messages.getMessage(getClass(), "templateEditor.textHelpGroovy"))
+                .withCaption(messageBundle.getMessage("templateEditor.titleHelpGroovy"))
+                .withMessage(messageBundle.getMessage("templateEditor.textHelpGroovy"))
                 .withModal(false)
                 .withContentMode(ContentMode.HTML)
                 .withWidth("700px")

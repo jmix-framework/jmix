@@ -123,7 +123,7 @@ public class EntityFetcher {
 
         if (log.isTraceEnabled()) log.trace("Fetching instance " + entity);
 
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
             if (!metaProperty.getRange().isClass() && !isLazyFetchedLocalAttribute(metaProperty)

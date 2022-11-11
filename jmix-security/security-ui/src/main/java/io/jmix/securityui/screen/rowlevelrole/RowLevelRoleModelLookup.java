@@ -26,6 +26,7 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,6 +48,8 @@ public class RowLevelRoleModelLookup extends StandardLookup<ResourceRoleModel> {
     @Autowired
     private RoleFilterFragment filterFragment;
 
+    private List<String> excludedRolesCodes = Collections.emptyList();
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         loadRoles(new RoleFilter());
@@ -57,10 +60,14 @@ public class RowLevelRoleModelLookup extends StandardLookup<ResourceRoleModel> {
 
     private void loadRoles(RoleFilter roleFilter) {
         List<RowLevelRoleModel> roleModels = roleRepository.getAllRoles().stream()
-                .filter(roleFilter::matches)
+                .filter(role -> roleFilter.matches(role) && !excludedRolesCodes.contains(role.getCode()))
                 .map(roleModelConverter::createRowLevelRoleModel)
                 .sorted(Comparator.comparing(RowLevelRoleModel::getName))
                 .collect(Collectors.toList());
         roleModelsDc.setItems(roleModels);
+    }
+
+    public void setExcludedRolesCodes(List<String> excludedRolesCodes) {
+        this.excludedRolesCodes = excludedRolesCodes;
     }
 }

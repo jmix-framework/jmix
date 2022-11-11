@@ -17,7 +17,6 @@
 package io.jmix.reportsui.screen.report.run;
 
 import com.haulmont.yarg.reporting.ReportOutputDocument;
-import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.StandardSerialization;
@@ -77,7 +76,7 @@ public class ShowPivotTableScreen extends Screen {
     protected StandardSerialization serialization;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected Fragments fragments;
@@ -255,7 +254,7 @@ public class ShowPivotTableScreen extends Screen {
     protected void showStubText() {
         if (reportBox.getOwnComponents().isEmpty()) {
             Label<String> label = uiComponents.create(Label.TYPE_STRING);
-            label.setValue(messages.getMessage(getClass(), "showPivotTable.caption"));
+            label.setValue(messageBundle.getMessage("showPivotTable.caption"));
             label.setAlignment(Component.Alignment.MIDDLE_CENTER);
             label.setStyleName("h1");
             reportBox.add(label);

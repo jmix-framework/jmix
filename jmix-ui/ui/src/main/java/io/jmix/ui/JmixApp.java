@@ -74,19 +74,6 @@ public class JmixApp extends App {
         }
     }
 
-    @Override
-    public OperationResult logout() {
-        closeWindowsInternal(true);
-        clearSettingsCache();
-
-        String contextPath = servletContext == null ? null : servletContext.getContextPath();
-        String logoutPath = Strings.isNullOrEmpty(contextPath) ? "/logout" : contextPath + "/logout";
-
-        AppUI.getCurrent().getPage().setLocation(logoutPath);
-
-        return OperationResult.success();
-    }
-
     protected void initializeUi() {
         AppUI currentUi = AppUI.getCurrent();
         if (currentUi != null) {

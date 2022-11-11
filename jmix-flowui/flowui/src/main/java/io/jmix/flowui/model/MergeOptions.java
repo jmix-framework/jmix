@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.SameAsUi;
-
 /**
  * Defines options of the {@link DataContext#merge(Object, MergeOptions)} operation.
  */
-@SameAsUi
 public class MergeOptions {
 
     private boolean fresh;

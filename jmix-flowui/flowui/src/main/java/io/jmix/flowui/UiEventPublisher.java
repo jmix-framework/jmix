@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@
 package io.jmix.flowui;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.VaadinSession;
-import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.sys.event.UiEventsManager;
+import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
@@ -33,8 +32,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * The class fires application events that should be handled in the components (e.g. Screen). To enable handling
- * application events in the {@link Screen}, annotate method with {@link EventListener}. For instance:
+ * Sends application events that should be handled in the components (e.g. views). To enable handling
+ * application events in the {@link View}, annotate a method with {@link EventListener}. For instance:
  * <pre>
  *     &#064;EventListener
  *     public void customUiEventHandler(CustomUiEvent event) {
@@ -42,7 +41,7 @@ import java.util.Collections;
  *     }
  * </pre>
  * To correctly update the UI, class that implements {@link AppShellConfigurator} should contain the {@link Push}
- * annotation. It can be spring boot application class:
+ * annotation. It can be the main Spring Boot application class:
  * <pre>
  *     &#064;Push
  *     &#064;SpringBootApplication
@@ -50,8 +49,6 @@ import java.util.Collections;
  *        // configuration
  *     }
  * </pre>
- * Note that {@link Notification} uses current UI to show the notification. If application listeners use notifications,
- * current UI may display them all.
  */
 @Component("flowui_UiEventPublisher")
 public class UiEventPublisher {

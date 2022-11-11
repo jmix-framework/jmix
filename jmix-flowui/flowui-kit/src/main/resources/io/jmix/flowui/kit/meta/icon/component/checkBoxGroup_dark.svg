@@ -1,0 +1,23 @@
+<!--
+  - Copyright 2022 Haulmont.
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -     http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -->
+
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 3H9V5H15V3Z" fill="#AFB1B3"/>
+<path d="M15 11H9V13H15V11Z" fill="#AFB1B3"/>
+<path d="M1.6 1.5H6.4C6.41599 1.5 6.43687 1.50602 6.45874 1.52945C6.48116 1.55347 6.5 1.59236 6.5 1.64286V6.35714C6.5 6.40764 6.48116 6.44653 6.45874 6.47055C6.43687 6.49398 6.41599 6.5 6.4 6.5H1.6C1.58401 6.5 1.56313 6.49398 1.54126 6.47055C1.51884 6.44653 1.5 6.40764 1.5 6.35714V1.64286C1.5 1.59236 1.51884 1.55347 1.54126 1.52945C1.56313 1.50602 1.58401 1.5 1.6 1.5Z" stroke="#AFB1B3"/>
+<path d="M1.6 9.5H6.4C6.41599 9.5 6.43687 9.50602 6.45874 9.52945C6.48116 9.55347 6.5 9.59236 6.5 9.64286V14.3571C6.5 14.4076 6.48116 14.4465 6.45874 14.4706C6.43687 14.494 6.41599 14.5 6.4 14.5H1.6C1.58401 14.5 1.56313 14.494 1.54126 14.4706C1.51884 14.4465 1.5 14.4076 1.5 14.3571V9.64286C1.5 9.59236 1.51884 9.55347 1.54126 9.52945C1.56313 9.50602 1.58401 9.5 1.6 9.5Z" stroke="#AFB1B3"/>
+<path d="M5 3L3.8659 4.89017C3.83242 4.94596 3.75544 4.95544 3.70944 4.90944L3 4.2" stroke="#AFB1B3"/>
+</svg>

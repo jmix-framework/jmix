@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data readOnly="true">
         <instance id="customerDc"
                   class="test_support.entity.sales.Customer">
@@ -37,7 +37,7 @@
                     autocorrect="true"
                     autofocus="true"
                     autoselect="true"
-                    className="cssClassName1, cssClassName2"
+                    classNames="cssClassName1, cssClassName2"
                     clearButtonVisible="true"
                     enabled="true"
                     errorMessage="errorMessageString"
@@ -58,7 +58,7 @@
                     required="true"
                     requiredMessage="requiredMessage"
                     requiredIndicatorVisible="true"
-                    themeName="small, align-right"
+                    themeNames="small, align-right"
                     title="titleString"
                     value="example@email.com"
                     valueChangeMode="ON_CHANGE"
@@ -67,4 +67,4 @@
                     width="100px"/>
         <emailField id="emailFieldWithValueId" dataContainer="customerDc" property="email"/>
     </layout>
-</screen>
+</view>

@@ -261,7 +261,7 @@ $he-table-header-row-height-scale: 1.5 !default;
   }
 
   .#{$primary-stylename}-caption-container {
-    border-left: none;
+    border-left: $table-inner-border;
   }
 
   .#{$primary-stylename}-cell-content {
@@ -529,6 +529,10 @@ $he-table-header-row-height-scale: 1.5 !default;
 
   [class*="cell-wrapper"] {
     min-height: $font-size;
+
+    > .v-icon {
+      margin-right: round($row-height/5);
+    }
   }
 
   [class*="caption-container"] {

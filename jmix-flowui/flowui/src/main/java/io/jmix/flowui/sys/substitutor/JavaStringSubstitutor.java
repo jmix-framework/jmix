@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.sys.substitutor;
 
-import io.jmix.flowui.SameAsUi;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -25,7 +24,6 @@ import java.util.Map;
  * Substitutes variables of a within a string by values. The default definition of a variable is
  * <code>${variableName}</code>.
  */
-@SameAsUi
 @Component("flowui_StringSubstitutor")
 public class JavaStringSubstitutor implements StringSubstitutor {
 

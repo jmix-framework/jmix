@@ -1,7 +1,8 @@
 {
   "version": 1,
   "name": "REST Service Application",
-  "order": 2,
+  "order": 120,
+  "addon": false,
   "description": "<html>REST web service application in Java.<p>Contains REST API, Security and File Storage subsystems. Doesn't have user interface.<br>Uses embedded HSQL database.<p>You can change the database and include add-ons from the Marketplace at any time when working on the project.</html>",
   "params": [
     {

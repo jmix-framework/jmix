@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data readOnly="true">
         <instance id="orderLineDc"
                   class="test_support.entity.sales.OrderLine">
@@ -38,7 +38,7 @@
                 autocorrect="true"
                 autofocus="true"
                 autoselect="true"
-                className="cssClassName1, cssClassName2"
+                classNames="cssClassName1, cssClassName2"
                 clearButtonVisible="true"
                 enabled="true"
                 errorMessage="errorMessageString"
@@ -58,7 +58,7 @@
                 required="true"
                 requiredIndicatorVisible="true"
                 requiredMessage="requiredMessageString"
-                themeName="small, align-right"
+                themeNames="small, align-right"
                 title="titleString"
                 step="10"
                 value="50"
@@ -68,4 +68,4 @@
                 width="100px"/>
         <integerField id="integerFieldWithValueId" dataContainer="orderLineDc" property="quantity"/>
     </layout>
-</screen>
+</view>

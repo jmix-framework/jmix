@@ -16,12 +16,20 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.login.LoginForm;
+import io.jmix.flowui.component.loginform.JmixLoginForm;
 
-public class LoginFormLoader extends AbstractLoginFormLoader<LoginForm> {
+public class LoginFormLoader extends AbstractLoginFormLoader<JmixLoginForm> {
 
     @Override
-    protected LoginForm createComponent() {
-        return factory.create(LoginForm.class);
+    protected JmixLoginForm createComponent() {
+        return factory.create(JmixLoginForm.class);
+    }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        loadBoolean(element, "rememberMeVisible", resultComponent::setRememberMeVisible);
+        loadBoolean(element, "localesVisible", resultComponent::setLocalesVisible);
     }
 }

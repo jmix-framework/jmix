@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data readOnly="true">
         <collection id="ordersDc"
                     class="test_support.entity.sales.Order">
@@ -32,28 +32,26 @@
     </facets>
     <layout>
         <listBox id="listBox"
-                 className="className, className1"
+                 classNames="className, className1"
                  colspan="1"
                  height="100%"
                  maxHeight="200px"
                  maxWidth="200px"
                  minHeight="100px"
                  minWidth="100px"
-                 optionsContainer="ordersDc"
+                 itemsContainer="ordersDc"
                  readOnly="true"
-                 requiredIndicatorVisible="true"
                  width="100%"/>
         <multiSelectListBox id="multiSelectListBox"
-                            className="className, className1"
+                            classNames="className, className1"
                             colspan="1"
                             height="100%"
                             maxHeight="200px"
                             maxWidth="200px"
                             minHeight="100px"
                             minWidth="100px"
-                            optionsContainer="ordersDc"
+                            itemsContainer="ordersDc"
                             readOnly="true"
-                            requiredIndicatorVisible="true"
                             width="100%"/>
     </layout>
-</screen>
+</view>

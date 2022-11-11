@@ -73,6 +73,11 @@
         <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
     </Match>
     <Match>
+        <Bug pattern="UC_USELESS_OBJECT"/>
+        <Class name="io.jmix.bpmui.screen.modeler.properties.entitydatatask.entityattribute.EntityAttributesFragment"/>
+        <Method name="entityAttributesTableExcludeEnabledRule"/>
+    </Match>
+    <Match>
         <Class name="io.jmix.securityui.screen.rowlevelpolicy.RowLevelPolicyModelEdit"/>
         <Method name="onTestBtnClick"/>
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
@@ -114,6 +119,12 @@
         <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
         <Class name="io.jmix.core.impl.CorePersistentAttributesLoadChecker"/>
         <Method name="checkIsLoadedWithGetter"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+        <Class name="io.jmix.notifications.channel.impl.InAppNotificationChannel"/>
+        <Method name="init"/>
     </Match>
 
     <Match>

@@ -55,7 +55,7 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-edit">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-edit">
         <dependency code="entity"/>
     </property>
 

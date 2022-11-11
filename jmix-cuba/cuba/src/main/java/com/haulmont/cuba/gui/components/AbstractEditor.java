@@ -325,7 +325,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
      */
     protected void handlePreviouslyDeletedCompositionItems(Entity entity, DatasourceImplementation parentDs) {
         Metadata metadata = getApplicationContext().getBean(Metadata.class);
-        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (!PersistenceHelper.isLoaded(entity, property.getName()))
                 return;
 

@@ -18,6 +18,7 @@
 
 ./copy-default-file.sh jmix-audit/audit io/jmix/audit
 ./copy-default-file.sh jmix-audit/audit-ui io/jmix/auditui
+./copy-default-file.sh jmix-audit/audit-flowui io/jmix/auditflowui
 
 ./copy-default-file.sh jmix-bpm/bpm io/jmix/bpm
 ./copy-default-file.sh jmix-bpm/bpm-ui io/jmix/bpmui
@@ -30,12 +31,16 @@
 ./copy-default-file.sh jmix-dashboards/dashboards-chart io/jmix/dashboardschart
 
 ./copy-default-file.sh jmix-datatools/datatools-ui io/jmix/datatoolsui
+./copy-default-file.sh jmix-datatools/datatools-flowui io/jmix/datatoolsflowui
 
 ./copy-default-file.sh jmix-dynattr/dynattr io/jmix/dynattr
 ./copy-default-file.sh jmix-dynattr/dynattr-ui io/jmix/dynattrui
 
 ./copy-default-file.sh jmix-email/email io/jmix/email
 ./copy-default-file.sh jmix-email/email-ui io/jmix/emailui
+
+./copy-default-file.sh jmix-flowui/flowui io/jmix/flowui
+./copy-default-file.sh jmix-flowui/flowui-data io/jmix/flowuidata
 
 ./copy-default-file.sh jmix-emailtemplates/emailtemplates io/jmix/emailtemplates
 ./copy-default-file.sh jmix-emailtemplates/emailtemplates-ui io/jmix/emailtemplatesui
@@ -52,6 +57,7 @@
 ./copy-default-file.sh jmix-security/security io/jmix/security
 ./copy-default-file.sh jmix-security/security-data io/jmix/securitydata
 ./copy-default-file.sh jmix-security/security-ui io/jmix/securityui
+./copy-default-file.sh jmix-security/security-flowui io/jmix/securityflowui
 
 ./copy-default-file.sh jmix-ui/charts io/jmix/charts
 ./copy-default-file.sh jmix-ui/pivot-table io/jmix/pivottable

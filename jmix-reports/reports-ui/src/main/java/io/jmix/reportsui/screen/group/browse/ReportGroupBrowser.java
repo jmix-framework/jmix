@@ -51,7 +51,7 @@ public class ReportGroupBrowser extends StandardLookup<ReportGroup> {
     protected Notifications notifications;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
@@ -69,7 +69,7 @@ public class ReportGroupBrowser extends StandardLookup<ReportGroup> {
         if (group != null) {
             if (group.getSystemFlag()) {
                 notifications.create(Notifications.NotificationType.WARNING)
-                        .withCaption(messages.getMessage(getClass(), "unableToDeleteSystemReportGroup"))
+                        .withCaption(messageBundle.getMessage("unableToDeleteSystemReportGroup"))
                         .show();
             } else {
                 LoadContext<Report> loadContext = new LoadContext(metadata.getClass(Report.class));
@@ -82,7 +82,7 @@ public class ReportGroupBrowser extends StandardLookup<ReportGroup> {
                 Report report = dataManager.load(loadContext);
                 if (report != null) {
                     notifications.create(Notifications.NotificationType.WARNING)
-                            .withCaption(messages.getMessage(getClass(), "unableToDeleteNotEmptyReportGroup"))
+                            .withCaption(messageBundle.getMessage("unableToDeleteNotEmptyReportGroup"))
                             .show();
                 } else {
                     removeAction.execute();

@@ -68,14 +68,18 @@ public class AccessManager {
     }
 
     public <T extends AccessContext> void applyConstraints(T context, Collection<AccessConstraint<?>> constraints) {
-        //noinspection unchecked
-        constraints.stream()
-                .filter(constraint -> constraint.getContextType().isAssignableFrom(context.getClass()))
-                .map(constraint -> (AccessConstraint<T>) constraint)
-                .forEach(constraint -> {
-                    constraint.applyTo(context);
-                    accessLogger.log(constraint, context);
-                });
+        try {
+            //noinspection unchecked
+            constraints.stream()
+                    .filter(constraint -> constraint.getContextType().isAssignableFrom(context.getClass()))
+                    .map(constraint -> (AccessConstraint<T>) constraint)
+                    .forEach(constraint -> {
+                        constraint.applyTo(context);
+                        accessLogger.log(constraint, context);
+                    });
+        } finally {
+            accessLogger.reset();
+        }
     }
 
     public <T extends AccessContext> void applyRegisteredConstraints(T context) {

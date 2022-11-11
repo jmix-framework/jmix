@@ -80,16 +80,30 @@ public interface ScreenSettingsFacet extends Facet {
             itemCaption = "Component Id",
             itemProperties = {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_REF, required = true,
-                            options = {"io.jmix.ui.component.Component"})
+                            options = {"io.jmix.ui.component.Component"}),
+                    @StudioProperty(name = "exclude", type = PropertyType.BOOLEAN, defaultValue = "false")
             },
             itemIcon = "io/jmix/ui/icon/element/component.svg"
     )
     void addComponentIds(String... ids);
 
     /**
-     * @return list of component ids that should be handled when {@link #isAuto()} returns false.
+     * @return set of component ids that should be handled when {@link #isAuto()} returns false.
      */
     Set<String> getComponentIds();
+
+    /**
+     * Adds component ids that should be excluded from applying and saving settings. Excluding is applied despite
+     * {@link #isAuto()} mode and has priority over explicitly added component ids {@link #addComponentIds(String...)}.
+     *
+     * @param ids component ids to exclude
+     */
+    void excludeComponentIds(String... ids);
+
+    /**
+     * @return set of component ids that should be excluded from applying and saving settings.
+     */
+    Set<String> getExcludedComponentIds();
 
     /**
      * Collection depends on {@link #isAuto()} property. If {@link #isAuto()} returns true collection will be

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,17 @@ package io.jmix.flowui.model;
 
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.flowui.SameAsUi;
 
 import javax.annotation.Nullable;
 
 /**
  * Container for a single {@code KeyValueEntity} instance.
  */
-@SameAsUi
 public interface KeyValueContainer extends InstanceContainer<KeyValueEntity> {
 
     /**
      * Sets the name of a property that represents the entity id.
+     *
      * @return this instance for chaining
      */
     KeyValueContainer setIdName(String name);
@@ -42,6 +41,7 @@ public interface KeyValueContainer extends InstanceContainer<KeyValueEntity> {
 
     /**
      * Adds a string property to the meta-class of this loader.
+     *
      * @return this instance for chaining
      */
     KeyValueContainer addProperty(String name);
@@ -49,13 +49,21 @@ public interface KeyValueContainer extends InstanceContainer<KeyValueEntity> {
     /**
      * Adds a property of the given Java class to the meta-class of this loader.
      * The Java class can be an entity or a datatype.
+     *
      * @return this instance for chaining
      */
-    KeyValueContainer addProperty(String name, Class aClass);
+    KeyValueContainer addProperty(String name, Class<?> aClass);
 
     /**
      * Adds a property of the given datatype to the meta-class of this loader.
+     *
      * @return this instance for chaining
      */
-    KeyValueContainer addProperty(String name, Datatype datatype);
+    KeyValueContainer addProperty(String name, Datatype<?> datatype);
+
+    /**
+     * Creates new {@code KeyValueEntity} instance initialized with {@code idName} and {@code instanceMetaClass}
+     * defined for the data container.
+     */
+    KeyValueEntity createEntity();
 }

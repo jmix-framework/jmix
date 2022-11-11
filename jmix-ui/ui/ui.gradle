@@ -31,7 +31,7 @@ dependencies {
     api 'org.springframework:spring-websocket'
     api 'org.springframework.boot:spring-boot-autoconfigure'
 
-    api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20191001.1'
+    api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer'
 
     api 'org.webjars:ace-builds'
     api 'org.webjars:bootstrap'

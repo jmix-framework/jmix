@@ -50,7 +50,7 @@
               dynamic="true"
               advanced="true"
               sourceName="descriptor"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-fragment">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-fragment">
         <dependency code="entity"/>
     </property>
 
@@ -61,7 +61,7 @@
               dynamic="true"
               advanced="true"
               sourceName="controller"
-              valueTemplate="${api.evaluateScript('screen/controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
+              valueTemplate="${api.evaluateScript('controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
         <dependency code="descriptorName"/>
     </property>
 
@@ -71,7 +71,7 @@
               advanced="true"
               dynamic="true"
               required="true"
-              valueTemplate="${api.evaluateScript('screen/screenIdByDescriptorName.groovy', ['descriptorName': descriptorName, 'projectId': project_id])}">
+              valueTemplate="${api.evaluateScript('screenIdByDescriptorName.groovy', ['descriptorName': descriptorName, 'projectId': project_id])}">
         <dependency code="descriptorName"/>
     </property>
 

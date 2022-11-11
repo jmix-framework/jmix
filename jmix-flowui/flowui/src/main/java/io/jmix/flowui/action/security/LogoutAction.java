@@ -23,7 +23,7 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.FlowUiComponentUtils;
+import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.sys.LogoutSupport;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class LogoutAction extends BaseAction implements ExecutableAction, Applic
     }
 
     protected void initAction() {
-        this.icon = FlowUiComponentUtils.iconToSting(VaadinIcon.SIGN_OUT);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.SIGN_OUT);
     }
 
     @Autowired

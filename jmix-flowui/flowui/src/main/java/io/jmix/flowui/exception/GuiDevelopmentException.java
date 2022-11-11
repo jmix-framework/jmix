@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,14 +64,8 @@ public class GuiDevelopmentException extends DevelopmentException {
         return context;
     }
 
-    // TODO: gg, implement
-    /*@Override
+    @Override
     public String toString() {
-        return super.toString() +
-                (getFrameId() != null
-                        ? ", frameId=" + getFrameId()
-                        : context instanceof CompositeComponentContext
-                        ? "componentClass=" + ((CompositeComponentContext) context).getComponentClass()
-                        : "");
-    }*/
+        return super.toString() + (frameId != null ? ", frameId=" + frameId : "");
+    }
 }

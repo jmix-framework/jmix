@@ -73,8 +73,7 @@ public class WindowConfig {
     protected Map<Class, WindowInfo> primaryEditors = new HashMap<>();
     protected Map<Class, WindowInfo> primaryLookups = new HashMap<>();
 
-    @Autowired(required = false)
-    protected List<UiControllersConfiguration> configurations = Collections.emptyList();
+    protected List<UiControllersConfiguration> configurations;
 
     @Autowired
     protected Resources resources;
@@ -96,6 +95,8 @@ public class WindowConfig {
     protected AnnotationScanMetadataReaderFactory metadataReaderFactory;
     @Autowired
     protected JmixModules modules;
+    @Autowired
+    protected UiControllersConfigurationSorter uiControllersConfigurationSorter;
 
     protected volatile boolean initialized;
 
@@ -123,6 +124,14 @@ public class WindowConfig {
             return resolveWindowInfo(windowInfo);
         }
     };
+
+    @Autowired
+    public void setConfigurations(List<UiControllersConfiguration> configurations) {
+        this.configurations = configurations;
+        //sort UiControllersConfiguration list in the same order as Jmix modules. In this case screens overridden
+        //in add-ons or application will replace original screen definitions
+        uiControllersConfigurationSorter.sort(this.configurations);
+    }
 
     protected WindowInfo resolveWindowInfo(WindowInfo windowInfo) {
         Class<? extends FrameOwner> controllerClass;

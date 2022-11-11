@@ -28,8 +28,8 @@ import javax.annotation.Nullable;
 public class UserIndicator<V> extends Composite<Div> implements SupportsFormatter<V>, HasTitle, HasStyle, HasSize,
         HasEnabled {
 
-    protected static final String USER_INDICATOR_STYLE_NAME = "jmix-user-indicator";
-    protected static final String USER_INDICATOR_LABEL_STYLE_NAME = "jmix-user-indicator-label";
+    protected static final String USER_INDICATOR_CLASS_NAME = "jmix-user-indicator";
+    protected static final String USER_INDICATOR_LABEL_CLASS_NAME = "jmix-user-indicator-label";
 
     protected Component userComponent;
     protected Formatter<? super V> userFormatter;
@@ -37,7 +37,7 @@ public class UserIndicator<V> extends Composite<Div> implements SupportsFormatte
     @Override
     protected Div initContent() {
         Div root = super.initContent();
-        root.addClassName(USER_INDICATOR_STYLE_NAME);
+        root.addClassName(USER_INDICATOR_CLASS_NAME);
         return root;
     }
 
@@ -59,7 +59,7 @@ public class UserIndicator<V> extends Composite<Div> implements SupportsFormatte
 
     protected Span createUserIndicator() {
         Span userNameLabel = new Span();
-        userNameLabel.addClassName(USER_INDICATOR_LABEL_STYLE_NAME);
+        userNameLabel.addClassName(USER_INDICATOR_LABEL_CLASS_NAME);
         return userNameLabel;
     }
 

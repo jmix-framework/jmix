@@ -33,9 +33,11 @@ import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.cuba.core.sys.events.AppContextStoppedEvent;
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.data.impl.EntityEventManager;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -86,6 +88,9 @@ public class RunnerBean implements Runner {
 
     @Inject
     protected Configuration configuration;
+
+    @Autowired
+    protected EntityEventManager entityEventManager;
 
     @PostConstruct
     public void init() {
@@ -165,6 +170,8 @@ public class RunnerBean implements Runner {
             execution.setStartTime(new Date(now));
             execution.setServer(serverInfo.getServerId());
 
+
+            entityEventManager.publishEntitySavingEvent(execution, true);//workaround for jmix-framework/jmix#1069
             em.persist(execution);
             tx.commit();
 

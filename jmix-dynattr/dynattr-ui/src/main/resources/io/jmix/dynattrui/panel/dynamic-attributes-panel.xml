@@ -17,7 +17,6 @@
 <composite xmlns="http://jmix.io/schema/ui/composite">
     <vbox id="rootPanel"
           expand="propertiesForm"
-          margin="true"
           spacing="true"
           width="100%">
         <hbox id="categoryFieldBox" width="100%" expand="categoryField" spacing="true">

@@ -82,8 +82,9 @@ public class ReportBrowser extends StandardLookup<Report> {
     protected Metadata metadata;
     @Autowired
     protected EntityStates entityStates;
+
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
     @Autowired
     protected Screens screens;
     @Autowired
@@ -201,7 +202,7 @@ public class ReportBrowser extends StandardLookup<Report> {
             reportDl.load();
         } else {
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage(getClass(), "notification.selectReport"))
+                    .withCaption(messageBundle.getMessage("notification.selectReport"))
                     .show();
         }
     }

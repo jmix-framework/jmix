@@ -1,30 +1,29 @@
 <%
 dcId = "${entity.uncapitalizedClassName}Dc"
-def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': detailFetchPlan, 'embeddable': false])
-def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
+def nestedDatasourceProperties = api.evaluateScript('nestedDatasourceProperties.groovy', ['view': detailFetchPlan, 'embeddable': false])
+def nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
 def collectionAttributesTable = []
 nestedCollectionDatasourceProperties.each { prop ->
     def binding = [
         'nestedDcProperty': prop,
         'fetchPlan': detailFetchPlan]
-    def tableXml = api.processSnippet('screen/jmix_flow_collectionAttributeTable.xml', binding)
+    def tableXml = api.processSnippet('collectionAttributeTable.xml', binding)
     if (!binding['isError']) {
         collectionAttributesTable << tableXml
     }
 }
-def formXml = api.processSnippet('screen/jmix_flow_form.xml',
+def formXml = api.processSnippet('form.xml',
         ['fetchPlan': detailFetchPlan,
         'api': api,
         'dcId': dcId,
         'formId': 'form'])
-def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
+def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         ['view': detailFetchPlan,
         'api': api])
-def expandId = "detailActions"
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<screen xmlns="http://jmix.io/schema/flowui/screen"
-        title="${messageKeys['detailTitle']}"
-        focusComponent="form">
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="${messageKeys['detailTitle']}"
+      focusComponent="form">
     <data>
         <instance id="${dcId}"
                     class="${entity.fqn}"<%if (!entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')) {%> <%if (!is_inline_detailFetchPlan) {%>
@@ -48,17 +47,17 @@ def expandId = "detailActions"
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
-        <action id="commitAction" type="editor_commitClose"/>
-        <action id="closeAction" type="editor_close"/>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout expand="$expandId">
+    <layout>
         ${formXml}
         <%collectionAttributesTable.each{table ->%>
             ${table}
         <%}%>
         <hbox id="detailActions">
-            <button id="commitAndCloseBtn" action="commitAction"/>
+            <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>
-</screen>
+</view>

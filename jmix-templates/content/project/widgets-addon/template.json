@@ -1,7 +1,8 @@
 {
   "version": 1,
   "name": "UI Widgets Add-On",
-  "order": 5,
+  "order": 160,
+  "addon": true,
   "description": "<html>Jmix UI widgets add-ons allow you to reuse custom visual components in different applications.</html>",
   "params": [
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,17 +35,18 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
     protected Context context;
 
+    protected ApplicationContext applicationContext;
+    protected Environment environment;
+
     protected UiComponents factory;
     protected LoaderResolver loaderResolver;
+
     protected LoaderSupport loaderSupport;
-    private ComponentLoaderSupport componentLoaderSupport;
+    protected ComponentLoaderSupport componentLoaderSupport;
 
     protected Element element;
 
     protected T resultComponent;
-
-    protected ApplicationContext applicationContext;
-    protected Environment environment;
 
     protected AbstractComponentLoader() {
     }
@@ -77,13 +78,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return (ComponentContext) context;
     }
 
-    protected ComponentLoaderSupport componentLoader() {
-        if (componentLoaderSupport == null) {
-            componentLoaderSupport = applicationContext.getBean(ComponentLoaderSupport.class, context);
-        }
-        return componentLoaderSupport;
-    }
-
     protected abstract T createComponent();
 
     @Override
@@ -92,13 +86,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         loadId(resultComponent, element);
         loadVisible(resultComponent, element);
     }
-
-    /*protected CompositeComponentContext getCompositeComponentContext() {
-        checkState(context instanceof CompositeComponentContext,
-                "'context' must implement io.jmix.ui.xml.layout.ComponentLoader.CompositeComponentContext");
-
-        return (CompositeComponentContext) context;
-    }*/
 
     @Override
     public UiComponents getFactory() {
@@ -145,15 +132,14 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         this.loaderSupport = loaderSupport;
     }
 
-    /*protected UiProperties getProperties() {
-        return applicationContext.getBean(UiProperties.class);
-    }*/
-
-    protected LayoutLoader getLayoutLoader() {
-        return applicationContext.getBean(LayoutLoader.class, context);
+    protected ComponentLoaderSupport componentLoader() {
+        if (componentLoaderSupport == null) {
+            componentLoaderSupport = applicationContext.getBean(ComponentLoaderSupport.class, context);
+        }
+        return componentLoaderSupport;
     }
 
-    protected LayoutLoader getLayoutLoader(Context context) {
+    protected LayoutLoader getLayoutLoader() {
         return applicationContext.getBean(LayoutLoader.class, context);
     }
 

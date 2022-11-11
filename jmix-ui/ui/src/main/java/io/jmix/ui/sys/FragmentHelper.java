@@ -146,8 +146,12 @@ public class FragmentHelper {
 
             sample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INIT, getFullFrameId(this.fragment)));
 
+            Timer.Sample afterInitSample = Timer.start(meterRegistry);
+
             fireEvent(frameOwner, ScreenFragment.AfterInitEvent.class,
                     new ScreenFragment.AfterInitEvent(frameOwner, options));
+
+            afterInitSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.AFTER_INIT, getFullFrameId(this.fragment)));
 
             if (fragmentLoaderContext != null) {
                 List<UiControllerProperty> properties = fragmentLoaderContext.getProperties();

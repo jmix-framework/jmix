@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component("core_LockManager")
 public class LockManagerImpl implements LockManager {
 
-    protected static class LockKey implements Serializable {
+    public static class LockKey implements Serializable {
         private static final long serialVersionUID = -79055072974087187L;
 
         private final String name;
@@ -66,6 +66,11 @@ public class LockManagerImpl implements LockManager {
             int result = name.hashCode();
             result = 31 * result + (id != null ? id.hashCode() : 0);
             return result;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s[%s]", name, id);
         }
     }
 
@@ -151,7 +156,7 @@ public class LockManagerImpl implements LockManager {
     public LockInfo lock(Object entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
 
         return lock(originalMetaClass.getName(), EntityValues.getId(entity).toString());
@@ -168,7 +173,7 @@ public class LockManagerImpl implements LockManager {
     public void unlock(Object entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
 
         unlock(originalMetaClass.getName(), EntityValues.getId(entity).toString());

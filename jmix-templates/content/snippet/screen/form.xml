@@ -1,0 +1,159 @@
+<%
+class Form {
+    def dcId
+    def fields = [:]
+}
+
+class Field {
+    def tag = "textField"
+    def attrs = [:]
+	def text = null
+
+    def printAttrs() {
+
+        return attrs.findAll {it.key != 'tag'}.toSorted {a, b ->
+			if (a.key == "id")
+				return -1
+			else return a.key <=> b.key
+		}.collect {it -> return "${it.key}=\"${it.value}\""}.join(" ")
+    }
+}
+
+def initDefaultFieldAttrs(attr) {
+    def field = new Field()
+
+	def fieldAttrs = [property: attr.name]
+
+    if ((attr.isDeepInheritor('java.lang.String') || attr.isDeepInheritor('java.net.URI'))
+		&& attr.hasAnnotation('Lob')) {
+        fieldAttrs['rows'] = '5'
+        field.tag = 'textArea'
+    }
+
+	def isDateField = ['java.util.Date', 'java.time.LocalDate', 'java.time.LocalDateTime', 'java.time.OffsetDateTime'].collect {
+		attr.isDeepInheritor(it)
+	}.any()
+    if (isDateField) {
+        field.tag = 'dateField'
+    }
+
+	def isTimeField = ['java.sql.Time', 'java.time.LocalTime', 'java.time.OffsetTime'].collect {
+		attr.isDeepInheritor(it)
+	}.any() || attr.getAnnotation('Temporal')?.params?.get('value')?.endsWith('TIME')
+	if(isTimeField) {
+		field.tag = 'timeField'
+	}
+
+	if(attr.isDeepInheritor('java.util.UUID')) {
+		field.tag = 'maskedField'
+		fieldAttrs['mask'] = 'hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh'
+	}
+
+	if (attr.isDeepInheritor("byte[]")) {
+		field.tag = 'fileUpload'
+	}
+
+	if (attr.isDeepInheritor('io.jmix.core.FileRef')) {
+		field.tag = 'fileStorageUpload'
+	}
+
+	def lookupActions = false
+
+	if (attr.isEntityType()) {
+		field.tag = 'entityPicker'
+		lookupActions = true
+
+		def module = attr.getModule()
+		if (module != null) {
+		    def entityFieldType = api.getProperty("jmix.ui.component.entityFieldType.${attr.ownerEntity.name}", module)
+		    if (entityFieldType != null) {
+		        field.tag = entityFieldType
+
+		   		if (!attr.isOneToOneComposition()
+				       && 'entityComboBox' == entityFieldType
+		               && (attr.hasAnnotation('OneToOne') || attr.hasAnnotation('ManyToOne'))) {
+					fieldAttrs['optionsContainer'] = "${api.pluralForm(attr.name)}Dc"
+				}
+			}
+		}
+	}
+
+	if(attr.isEnumType()) {
+		field.tag = 'comboBox'
+	}
+
+    if (attr.isDeepInheritor('java.lang.Boolean')) {
+		field.tag = 'checkBox'
+	}
+
+	if(attr.isDeepInheritor('com.haulmont.cuba.core.entity.FileDescriptor')) {
+		lookupActions = false
+		field.tag = 'upload'
+		fieldAttrs['fileStoragePutMode'] = 'IMMEDIATE'
+		fieldAttrs['showFileName'] = 'true'
+	}
+
+	if(lookupActions) {
+		def actions = attr.getLookupActions()
+		if(!actions.isEmpty()) {
+			StringBuilder builder = new StringBuilder()
+			builder.append("<actions>")
+			for(String action: attr.getLookupActions()) {
+				if (['entity_open', 'entity_lookup', 'entity_clear', 'entity_openComposition'].contains(action)) {
+					builder.append("<action id=\"${api.camelCase(action)}\" type=\"$action\"/>")
+				}
+			}
+			builder.append("</actions>")
+            field.text = builder.toString()
+		}
+	}
+
+	fieldAttrs['id'] = attr.name + "Field"
+
+	field.attrs = fieldAttrs
+
+    return field
+}
+
+def mainFields = [:]
+
+def allForms = [:]
+Form mainForm = new Form()
+mainForm.dcId = dcId
+mainForm.fields = mainFields
+allForms[formId] = mainForm
+
+def rootProperties = view.orderedRootProperties
+rootProperties.each { property ->
+    def attr = view.entity.getAttribute(property.name)
+    if (attr != null && attr.allowPutToDataAware(true) && !attr.hasAnnotation('Embedded') && !attr.hasAnnotation('EmbeddedId')) {
+        mainFields[attr.name + "Field"] = initDefaultFieldAttrs(attr)
+    }
+
+    if (property.entity != null && property.entity.isEmbeddable()) {
+        //process embedded attributes
+        def subProperties = property.subProperties
+        def propEntity = property.entity
+        subProperties.each { embProp ->
+            def propAttr = propEntity.getAttribute(embProp.name)
+            if (propAttr == null || !propAttr.allowPutToDataAware(true) || propAttr.hasAnnotation('Embedded')) return
+
+            def field = initDefaultFieldAttrs(propAttr)
+			fieldAttrs = field.attrs
+			fieldAttrs['property'] = attr.name + "." + propAttr.name
+			fieldAttrs['id'] = attr.name + propAttr.name.capitalize() + "Field"
+			mainFields[attr.name + propAttr.name.capitalize() + "Field"] = field
+        }
+    }
+}%>
+<%allForms.each {id, form ->%>
+<form id="${id}" dataContainer="${form.dcId}">
+<column width="${columnWidth}">
+	<%form.fields.each {fieldId, field -> %>
+	<${field.tag} ${field.printAttrs()}<%if(field.text == null) {%>/><% } else {%>>
+		${field.text}
+	</${field.tag}><%}%>
+	<%}%>
+</column>
+</form>
+<%}%>

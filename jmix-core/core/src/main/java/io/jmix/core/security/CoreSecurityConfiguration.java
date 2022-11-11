@@ -20,14 +20,18 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationProvider;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This security configuration can be used in test or simple projects, for example:
@@ -42,48 +46,53 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  *        &#64;Override
  *        public UserRepository userRepository() {
  * 	        InMemoryCoreUserRepository repository = new InMemoryCoreUserRepository();
-* 	        repository.addUser(new CoreUser("admin", "{noop}admin", "Administrator"));
+ * 	        repository.addUser(new CoreUser("admin", "{noop}admin", "Administrator"));
  * 	        return repository;
  *        }
  *    }
  * }
  * </pre>
  */
-@Order(JmixOrder.HIGHEST_PRECEDENCE + 50)
-public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class CoreSecurityConfiguration {
 
-    @Autowired
-    private CoreProperties coreProperties;
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository()));
-        auth.authenticationProvider(new SubstitutedUserAuthenticationProvider(userRepository()));
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userRepository());
-        daoAuthenticationProvider.setPreAuthenticationChecks(preAuthenticationChecks());
-        daoAuthenticationProvider.setPostAuthenticationChecks(postAuthenticationChecks());
-
-        auth.authenticationProvider(daoAuthenticationProvider);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/**")
-                .authorizeRequests().anyRequest().permitAll()
-                .and()
-                .anonymous().principal(userRepository().getAnonymousUser()).key(coreProperties.getAnonymousAuthenticationTokenKey())
-                .and()
-                .logout().logoutSuccessUrl("/#login")
-                .and()
-                .csrf().disable()
-                .headers().frameOptions().sameOrigin();
+    @Bean("core_SecurityFilterChain")
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   UserRepository userRepository,
+                                                   CoreProperties coreProperties) throws Exception {
+        http.authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().permitAll()
+                )
+                .anonymous(anonymous -> anonymous
+                        .principal(userRepository.getAnonymousUser())
+                        .key(coreProperties.getAnonymousAuthenticationTokenKey())
+                )
+                .logout(logout -> logout.logoutSuccessUrl("/#login"))
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions().sameOrigin());
+        return http.build();
     }
 
     @Bean(name = "core_authenticationManager")
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public AuthenticationManager authenticationManager(UserRepository userRepository,
+                                                       AuthenticationEventPublisher authenticationEventPublisher,
+                                                       @Qualifier("core_PreAuthenticationChecks") PreAuthenticationChecks preAuthenticationChecks,
+                                                       @Qualifier("core_PostAuthenticationChecks") PostAuthenticationChecks postAuthenticationChecks) throws Exception {
+        List<AuthenticationProvider> providers = new ArrayList<>();
+
+        providers.add(new SystemAuthenticationProvider(userRepository));
+        providers.add(new SubstitutedUserAuthenticationProvider(userRepository));
+
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userRepository);
+        daoAuthenticationProvider.setPreAuthenticationChecks(preAuthenticationChecks);
+        daoAuthenticationProvider.setPostAuthenticationChecks(postAuthenticationChecks);
+
+        providers.add(daoAuthenticationProvider);
+
+        ProviderManager providerManager = new ProviderManager(providers);
+        providerManager.setAuthenticationEventPublisher(authenticationEventPublisher);
+        return providerManager;
     }
 
     @Bean(name = "core_UserRepository")
@@ -99,5 +108,10 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean(name = "core_PostAuthenticationChecks")
     public PostAuthenticationChecks postAuthenticationChecks() {
         return new PostAuthenticationChecks();
+    }
+
+    @Bean("core_AuthenticationEventPublisher")
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher publisher) {
+        return new DefaultAuthenticationEventPublisher(publisher);
     }
 }

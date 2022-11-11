@@ -63,9 +63,24 @@ public class ScreenResourcePolicyModelCreate extends MultipleResourcePolicyModel
 
     private String menuItemId;
 
+    private boolean hasChanges = false;
+
     @Subscribe
     public void onInit(InitEvent event) {
         screenField.setOptionsMap(resourcePolicyEditorUtils.getScreenOptionsMap());
+    }
+
+    @Subscribe("policyGroupField")
+    protected void onPolicyGroupFieldValueChange(HasValue.ValueChangeEvent<String> event) {
+        hasChanges = true;
+    }
+    @Subscribe("menuItemField")
+    protected void onMenuItemFieldValueChange(HasValue.ValueChangeEvent<String> event) {
+        hasChanges = true;
+    }
+    @Subscribe("menuAccessField")
+    protected void onMenuAccessFieldValueChange(HasValue.ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+        hasChanges = true;
     }
 
     @Subscribe("screenField")
@@ -90,6 +105,7 @@ public class ScreenResourcePolicyModelCreate extends MultipleResourcePolicyModel
             menuItemField.setValue(resourcePolicyEditorUtils.getMenuCaption(menuItem));
             menuAccessField.setEditable(true);
         }
+        hasChanges = true;
     }
 
     @Override
@@ -126,5 +142,10 @@ public class ScreenResourcePolicyModelCreate extends MultipleResourcePolicyModel
         }
 
         return policies;
+    }
+
+    @Override
+    public boolean hasUnsavedChanges() {
+        return hasChanges;
     }
 }

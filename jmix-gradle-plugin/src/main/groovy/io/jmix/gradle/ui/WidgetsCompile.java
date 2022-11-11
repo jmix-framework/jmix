@@ -145,18 +145,20 @@ public class WidgetsCompile extends WidgetsTask {
 
         if (Os.isFamily(Os.FAMILY_WINDOWS) && shortClassPath) {
             File classPathFile = getProject().file("build/tmp/compile-widget-set-classpath.dat");
-            ClassPathUtil.createClassPathFile(classPathFile, compilerClassPath);
+            ClassPathUtil.createFormattedClassPathFile(classPathFile, compilerClassPath);
+
+            gwtCompilerJvmArgs.add("@" + classPathFile.getAbsolutePath());
 
             getProject().javaexec(spec -> {
-                spec.setMain("io.jmix.gradle.ClassPathCommandLine");
-                spec.setClasspath(getProject().files(ClassPathUtil.getCommandLineClassPath()));
-                spec.setArgs(ClassPathUtil.getExtendedCommandLineAgs(
-                        classPathFile.getAbsolutePath(), "com.google.gwt.dev.Compiler", gwtCompilerArgs));
+                spec.getMainClass().set("com.google.gwt.dev.Compiler");
+                spec.setArgs(gwtCompilerArgs);
                 spec.setJvmArgs(gwtCompilerJvmArgs);
             });
+
+            deleteQuietly(classPathFile);
         } else {
             getProject().javaexec(spec -> {
-                spec.setMain("com.google.gwt.dev.Compiler");
+                spec.getMainClass().set("com.google.gwt.dev.Compiler");
                 spec.setClasspath(getProject().files(compilerClassPath));
                 spec.setArgs(gwtCompilerArgs);
                 spec.setJvmArgs(gwtCompilerJvmArgs);

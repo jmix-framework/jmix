@@ -16,7 +16,10 @@
 
 package io.jmix.reportsui.screen.report.edit.tabs;
 
-import io.jmix.core.*;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.EntityStates;
+import io.jmix.core.Metadata;
+import io.jmix.core.Sort;
 import io.jmix.reports.entity.*;
 import io.jmix.reportsui.screen.definition.edit.BandDefinitionEditor;
 import io.jmix.reportsui.screen.template.edit.TemplateEditor;
@@ -82,7 +85,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
     protected Notifications notifications;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected Downloader downloader;
@@ -130,12 +133,12 @@ public class ReportEditGeneralFragment extends ScreenFragment {
                 templatesDc.replaceItem(defaultTemplate);
             } else {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withCaption(messages.getMessage(getClass(), "notification.fileIsNotAllowedForSpecificTypes"))
+                        .withCaption(messageBundle.getMessage("notification.fileIsNotAllowedForSpecificTypes"))
                         .show();
             }
         } else {
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage(getClass(), "notification.defaultTemplateIsEmpty"))
+                    .withCaption(messageBundle.getMessage("notification.defaultTemplateIsEmpty"))
                     .show();
         }
     }
@@ -242,7 +245,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
             editor.show();
         } else {
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage(getClass(), "notification.defaultTemplateIsEmpty"))
+                    .withCaption(messageBundle.getMessage("notification.defaultTemplateIsEmpty"))
                     .show();
         }
     }
@@ -279,12 +282,12 @@ public class ReportEditGeneralFragment extends ScreenFragment {
 
             } else {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withCaption(messages.getMessage(getClass(), "notification.fileIsNotAllowedForSpecificTypes"))
+                        .withCaption(messageBundle.getMessage("notification.fileIsNotAllowedForSpecificTypes"))
                         .show();
             }
         } else {
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage(getClass(), "notification.defaultTemplateIsEmpty"))
+                    .withCaption(messageBundle.getMessage("notification.defaultTemplateIsEmpty"))
                     .show();
         }
     }
@@ -300,11 +303,11 @@ public class ReportEditGeneralFragment extends ScreenFragment {
         if (defaultTemplate != null) {
             if (defaultTemplate.isCustom()) {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withCaption(messages.getMessage(getClass(), "unableToSaveTemplateWhichDefinedWithClass"))
+                        .withCaption(messageBundle.getMessage("unableToSaveTemplateWhichDefinedWithClass"))
                         .show();
             } else if (isTemplateWithoutFile(defaultTemplate)) {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withCaption(messages.getMessage(getClass(), "notification.fileIsNotAllowedForSpecificTypes"))
+                        .withCaption(messageBundle.getMessage("notification.fileIsNotAllowedForSpecificTypes"))
                         .show();
             } else {
                 byte[] reportTemplate = defaultTemplate.getContent();
@@ -313,7 +316,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
             }
         } else {
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage(getClass(), "notification.defaultTemplateIsEmpty"))
+                    .withCaption(messageBundle.getMessage("notification.defaultTemplateIsEmpty"))
                     .show();
         }
 

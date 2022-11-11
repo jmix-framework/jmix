@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.impl.CollectionContainerSorter;
 import io.jmix.flowui.model.impl.CollectionPropertyContainerSorter;
 import org.springframework.beans.factory.BeanFactory;
@@ -29,9 +27,7 @@ import javax.annotation.Nullable;
 /**
  * Factory bean for sorters.
  */
-@SameAsUi
-@RequiresChanges
-@Component("ui_SorterFactory")
+@Component("flowui_SorterFactory")
 public class SorterFactory {
 
     protected BeanFactory beanFactory;
@@ -44,14 +40,15 @@ public class SorterFactory {
     /**
      * Creates {@code Sorter}.
      */
-    public Sorter createCollectionContainerSorter(CollectionContainer container, @Nullable BaseCollectionLoader loader) {
+    public Sorter createCollectionContainerSorter(CollectionContainer<?> container,
+                                                  @Nullable BaseCollectionLoader loader) {
         return new CollectionContainerSorter(container, loader, beanFactory);
     }
 
     /**
      * Creates {@code Sorter}.
      */
-    public Sorter createCollectionPropertyContainerSorter(CollectionPropertyContainer container) {
+    public Sorter createCollectionPropertyContainerSorter(CollectionPropertyContainer<?> container) {
         return new CollectionPropertyContainerSorter(container, beanFactory);
     }
 }

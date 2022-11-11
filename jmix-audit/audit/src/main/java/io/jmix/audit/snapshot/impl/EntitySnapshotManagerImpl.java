@@ -347,7 +347,7 @@ public class EntitySnapshotManagerImpl implements EntitySnapshotManager {
             throw new IllegalStateException("FetchPlan could not be used with this propertyValue");
         }
 
-        MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity.getClass()));
+        MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity));
 
         EntitySnapshotModel snapshot = metadata.create(EntitySnapshotModel.class);
         snapshot.setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));

@@ -91,7 +91,7 @@ public class EntityRestoreImpl implements EntityRestore {
     }
 
     private void processOnDeleteProperties(RestorationContext restorationContext) {
-        MetaClass metaClass = metadata.getClass(restorationContext.getEntity().getClass());
+        MetaClass metaClass = metadata.getClass(restorationContext.getEntity());
         List<MetaProperty> properties = new ArrayList<>();
         fillProperties(metaClass, properties, OnDelete.class.getName());
         log.trace("Restore Details of entity: {}. OnDelete properties: {}", restorationContext.getEntity(), properties);

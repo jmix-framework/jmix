@@ -26,9 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 @Component("core_CurrentAuthentication")
 public class CurrentAuthenticationImpl implements CurrentAuthentication {
@@ -41,6 +39,9 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
 
     @Autowired
     private MessageTools messagesTools;
+
+    @Autowired
+    private CurrentAuthenticationUserLoader authenticationUserLoader;
 
     @Override
     public Authentication getAuthentication() {
@@ -64,7 +65,18 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
         Authentication authentication = getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails) {
-            return (UserDetails) principal;
+            return authenticationUserLoader.reloadUser((UserDetails) principal, Collections.emptyMap());
+        } else {
+            throw new RuntimeException("Authentication principal must be UserDetails");
+        }
+    }
+
+    @Override
+    public UserDetails getUser(Map<String, Object> hints) {
+        Authentication authentication = getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return authenticationUserLoader.reloadUser((UserDetails) principal, hints);
         } else {
             throw new RuntimeException("Authentication principal must be UserDetails");
         }

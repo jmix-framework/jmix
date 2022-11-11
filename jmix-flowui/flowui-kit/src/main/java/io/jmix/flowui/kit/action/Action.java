@@ -17,21 +17,22 @@
 package io.jmix.flowui.kit.action;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.component.HasShortcutCombination;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.function.Consumer;
 
-public interface Action {
+public interface Action extends HasShortcutCombination {
     String PROP_TEXT = "text";
     String PROP_ENABLED = "enabled";
     String PROP_VISIBLE = "visible";
     String PROP_ICON = "icon";
     String PROP_DESCRIPTION = "description";
     String PROP_VARIANT = "variant";
-    String PROP_SHORTCUT = "shortcut";
+    String PROP_SHORTCUT_COMBINATION = "shortcutCombination";
 
     String getId();
 
@@ -49,9 +50,9 @@ public interface Action {
     void setVisible(boolean visible);
 
     @Nullable
-    String getIcon();
+    Icon getIcon();
 
-    void setIcon(@Nullable String icon);
+    void setIcon(@Nullable Icon icon);
 
     @Nullable
     String getDescription();
@@ -61,11 +62,6 @@ public interface Action {
     ActionVariant getVariant();
 
     void setVariant(ActionVariant variant);
-
-    @Nullable
-    KeyCombination getShortcutCombination();
-
-    void setShortcutCombination(@Nullable KeyCombination shortcutCombination);
 
     void refreshState();
 

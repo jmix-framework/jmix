@@ -69,14 +69,16 @@ public class MethodsCache {
                 // for Kotlin entity with a property which name starts with "is*" the getter name will be the same as property name,
                 // e.g "isApproved".
                 Field isField = ReflectionUtils.findField(clazz, name);
-                if (isField == null) {//property name is not the same as getter name
+                Field regularField = ReflectionUtils.findField(clazz, StringUtils.uncapitalize(name.substring(3)));
+                if (isField == null || regularField != null) {//property name is not the same as getter name
                     name = StringUtils.uncapitalize(name.substring(2));
                 }
                 getterMethods.put(name, chooseGetter(clazz, name, method, getterMethods.get(name)));
             } else if (name.startsWith("set") && method.getParameterTypes().length == 1) {
                 BiConsumer setter = createSetter(clazz, method);
                 Field isField = ReflectionUtils.findField(clazz, "is" + name.substring(3));
-                if (isField != null) {
+                Field regularField = ReflectionUtils.findField(clazz, StringUtils.uncapitalize(name.substring(3)));//must prefer exact field instead of kotlin-style field getter
+                if (isField != null && regularField == null) {
                     name = "is" + name.substring(3);
                 } else {
                     name = StringUtils.uncapitalize(name.substring(3));

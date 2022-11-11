@@ -1,0 +1,69 @@
+<%def fetchPlanProperty = fetchPlan.getProperty(nestedDcProperty)
+if (fetchPlanProperty == null) {
+    isError = true
+    return
+}
+def entity = fetchPlan.entity
+def ownerEntityClassName
+ownerEntity = entity
+def attribute = null
+while (ownerEntity != null && attribute == null) {
+    attribute = ownerEntity.getAttribute(nestedDcProperty)
+    if (attribute != null) {
+        break
+    }
+    ownerEntity = ownerEntity.parent
+}
+
+if (attribute == null) {
+    isError = true
+    return
+}
+
+def columns = []
+def fetchPlanPropertyEntity = fetchPlanProperty.getEntity()
+fetchPlanProperty.subProperties.each {p ->
+        def attr = fetchPlanPropertyEntity.getAttribute(p.name)
+        if (attr != null && attr.allowPutToDataAware()) {
+            columns << p.name
+        }
+}
+
+def isManyToMany = attribute.hasAnnotation('ManyToMany')
+def isComposition = attribute.hasAnnotation('Composition')
+def oneToOneAnn = attribute.getAnnotation('OneToOne')
+def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim()) || attribute.hasAnnotation('JoinTable')
+%>
+<% if (!isManyToMany || isOwnerAttr) {%>
+<hbox id="buttonsPanel" classNames="buttons-panel">
+    <button action="${nestedDcProperty}Table.create"/>
+    <% if (attribute.hasAnnotation('OneToMany')) {%>
+    <button action="${nestedDcProperty}Table.edit"/>
+    <%}%>
+    <button action="${nestedDcProperty}Table.remove"/>
+</hbox>
+<% }%>
+<dataGrid id="${nestedDcProperty}Table" dataContainer="${nestedDcProperty}Dc" width="100%" minHeight="20em">
+    <% if (!isManyToMany || isOwnerAttr) {%>
+    <actions>
+        <action id="create" type="create">
+            <properties>
+                <property name="openMode" value="DIALOG"/>
+            </properties>
+        </action>
+        <% if (attribute.hasAnnotation('OneToMany')) {%>
+        <action id="edit" type="edit">
+            <properties>
+                <property name="openMode" value="DIALOG"/>
+            </properties>
+        </action>
+        <%}%>
+        <action id="remove" type="remove"/>
+    </actions>
+    <% }%>
+    <columns>
+        <%columns.each {%>
+            <column property="${it}"/>
+        <%}%>
+    </columns>
+</dataGrid>

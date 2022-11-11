@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,7 @@ package io.jmix.flowui.model;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.flowui.SameAsUi;
-import io.jmix.flowui.screen.Subscribe;
+import io.jmix.flowui.view.Subscribe;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -30,7 +29,6 @@ import java.util.function.Function;
 /**
  * Loader of a single entity instance.
  */
-@SameAsUi
 @InstallSubject("loadDelegate")
 public interface InstanceLoader<E> extends DataLoader {
 

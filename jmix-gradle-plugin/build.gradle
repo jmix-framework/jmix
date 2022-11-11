@@ -18,7 +18,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'groovy'
     id 'maven-publish'
-    id 'com.gradle.plugin-publish' version '0.18.0'
+    id 'com.gradle.plugin-publish' version '1.0.0'
 }
 
 group = 'io.jmix.gradle'
@@ -31,7 +31,8 @@ repositories {
 dependencies {
     implementation localGroovy()
 
-    implementation 'org.springframework.boot:spring-boot-gradle-plugin:2.7.0'
+    implementation 'org.springframework.boot:spring-boot-gradle-plugin:2.7.4'
+    implementation 'com.vaadin:vaadin-gradle-plugin:23.1.7'
 
     implementation('org.dom4j:dom4j:2.1.3'){
         exclude group: 'xpp3', module: 'xpp3'
@@ -40,7 +41,7 @@ dependencies {
     implementation 'org.javassist:javassist:3.24.1-GA'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation 'com.google.guava:guava:31.1-jre'
     implementation 'com.yahoo.platform.yui:yuicompressor:2.4.6'
     implementation('com.vaadin:vaadin-sass-compiler:0.9.13') {
         exclude(group: 'com.yahoo.platform.yui', module: 'yuicompressor')
@@ -72,6 +73,7 @@ gradlePlugin {
         jmixPlugin {
             id = 'io.jmix'
             implementationClass = 'io.jmix.gradle.JmixPlugin'
+            displayName = 'Jmix Framework Gradle Plugin'
         }
     }
 }
@@ -81,12 +83,6 @@ pluginBundle {
     vcsUrl = 'https://github.com/jmix-framework/jmix'
     description = 'Jmix Framework Gradle Plugin'
     tags = ['jmix', 'spring']
-
-    plugins {
-        jmixPlugin {
-            displayName = 'Jmix Framework Gradle Plugin'
-        }
-    }
 }
 
 publishing {
@@ -101,5 +97,12 @@ publishing {
                 allowInsecureProtocol = true
             }
         }
+    }
+}
+
+processResources {
+    inputs.property('version', project.version)
+    filesMatching(['io/jmix/gradle/versions.properties']) {
+        expand(version: project.version)
     }
 }

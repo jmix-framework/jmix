@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,10 @@ import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
+import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.model.impl.*;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
@@ -34,26 +33,26 @@ import java.util.Collection;
 /**
  * Factory bean for data API components.
  */
-@SameAsUi
-@RequiresChanges
-@Component("ui_DataComponents")
+@Component("flowui_DataComponents")
 public class DataComponents {
 
-    // TODO: gg, constructor injection
-    @Autowired
     protected AutowireCapableBeanFactory beanFactory;
-
-    @Autowired
     protected Metadata metadata;
-
-    @Autowired
     protected SorterFactory sorterFactory;
-
-    @Autowired
     protected AccessManager accessManager;
-
-    @Autowired
     protected Stores stores;
+
+    public DataComponents(AutowireCapableBeanFactory beanFactory,
+                          Metadata metadata,
+                          SorterFactory sorterFactory,
+                          AccessManager accessManager,
+                          Stores stores) {
+        this.beanFactory = beanFactory;
+        this.metadata = metadata;
+        this.sorterFactory = sorterFactory;
+        this.accessManager = accessManager;
+        this.stores = stores;
+    }
 
     protected void autowire(Object instance) {
         beanFactory.autowireBean(instance);
@@ -98,15 +97,15 @@ public class DataComponents {
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
 
-        // TODO: gg, implement
-//        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
-//        accessManager.applyRegisteredConstraints(entityContext);
+        FlowuiEntityContext entityContext = new FlowuiEntityContext(masterContainer.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(entityContext);
 
-//        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
-//        accessManager.applyRegisteredConstraints(attributeContext);
+        FlowuiEntityAttributeContext attributeContext =
+                new FlowuiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
+        accessManager.applyRegisteredConstraints(attributeContext);
 
-//        if (entityContext.isViewPermitted()
-//                && attributeContext.canView()) {
+        if (entityContext.isViewPermitted()
+                && attributeContext.canView()) {
             masterContainer.addItemChangeListener(e -> {
                 Object item = masterContainer.getItemOrNull();
                 container.setItem(item != null ? EntityValues.getValue(item, property) : null);
@@ -117,7 +116,7 @@ public class DataComponents {
                     container.setItem((E) e.getValue());
                 }
             });
-//        }
+        }
 
         return container;
     }
@@ -144,26 +143,27 @@ public class DataComponents {
         autowire(container);
         container.setSorter(sorterFactory.createCollectionPropertyContainerSorter(container));
 
-        // TODO: gg, implement
-//        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
-//        accessManager.applyRegisteredConstraints(entityContext);
+        FlowuiEntityContext entityContext = new FlowuiEntityContext(masterContainer.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(entityContext);
 
-//        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
-//        accessManager.applyRegisteredConstraints(attributeContext);
+        FlowuiEntityAttributeContext attributeContext =
+                new FlowuiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
+        accessManager.applyRegisteredConstraints(attributeContext);
 
-//        if (attributeContext.canView()
-//                && entityContext.isViewPermitted()) {
+        if (attributeContext.canView()
+                && entityContext.isViewPermitted()) {
+
             masterContainer.addItemChangeListener(e -> {
                 Object item = masterContainer.getItemOrNull();
                 container.setItems(item != null ? EntityValues.getValue(item, property) : null);
             });
 
             masterContainer.addItemPropertyChangeListener(e -> {
-                if (e.getProperty().equals(property) && e.getItem() == masterContainer.getItem()) {
+                if (e.getProperty().equals(property) && e.getItem() == masterContainer.getItemOrNull()) {
                     container.setDisconnectedItems((Collection<E>) e.getValue());
                 }
             });
-//        }
+        }
 
         return container;
     }

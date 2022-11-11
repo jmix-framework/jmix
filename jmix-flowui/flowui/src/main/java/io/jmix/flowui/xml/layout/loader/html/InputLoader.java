@@ -33,7 +33,7 @@ public class InputLoader extends AbstractComponentLoader<Input> {
 
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueChangeMode(resultComponent, element);
     }

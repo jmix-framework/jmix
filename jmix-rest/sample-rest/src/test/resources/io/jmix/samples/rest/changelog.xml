@@ -131,6 +131,15 @@
             </column>
         </createTable>
 
+        <createTable tableName="REST_NSIN_ENTITY">
+            <column name="ID" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
     </changeSet>
 
 </databaseChangeLog>

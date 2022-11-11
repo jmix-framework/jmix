@@ -16,42 +16,20 @@
 
 package io.jmix.core;
 
-import io.jmix.core.impl.TriggerFilesProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
-import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-import java.util.concurrent.Executors;
-
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class CoreScheduleConfiguration {
-    @Autowired
-    private TriggerFilesProcessor triggerFilesProcessor;
-    @Autowired
-    private CoreProperties coreProperties;
 
     @Bean("core_ThreadPoolTaskScheduler")
     public TaskScheduler threadPoolTaskScheduler() {
-        CustomizableThreadFactory threadFactory =
-                new CustomizableThreadFactory("core-");
-        threadFactory.setDaemon(true);
-
-        ConcurrentTaskScheduler taskScheduler = new ConcurrentTaskScheduler(
-                Executors.newScheduledThreadPool(3, threadFactory));
-
-        configureTasks(taskScheduler);
-
-        return taskScheduler;
-    }
-
-    protected void configureTasks(TaskScheduler scheduler) {
-        if (coreProperties.isTriggerFilesEnabled()) {
-            scheduler.scheduleWithFixedDelay(() -> triggerFilesProcessor.process(),
-                    coreProperties.getTriggerFilesProcessInterval().toMillis());
-        }
+        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setThreadNamePrefix("core-");
+        threadPoolTaskScheduler.setPoolSize(3);
+        threadPoolTaskScheduler.setDaemon(true);
+        return threadPoolTaskScheduler;
     }
 }

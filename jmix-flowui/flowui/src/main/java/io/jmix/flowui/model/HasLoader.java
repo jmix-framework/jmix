@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.SameAsUi;
-
 import javax.annotation.Nullable;
 
 /**
  * Interface to be implemented by containers that can be loaded by loaders.
  */
-@SameAsUi
 public interface HasLoader {
 
     /**

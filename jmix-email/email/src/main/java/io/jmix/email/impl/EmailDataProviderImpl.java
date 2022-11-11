@@ -18,6 +18,7 @@ package io.jmix.email.impl;
 
 import io.jmix.core.*;
 import io.jmix.data.PersistenceHints;
+import io.jmix.data.impl.EntityEventManager;
 import io.jmix.email.EmailDataProvider;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.SendingStatus;
@@ -72,6 +73,9 @@ public class EmailDataProviderImpl implements EmailDataProvider {
 
     @Autowired
     protected FileStorageLocator fileStorageLocator;
+
+    @Autowired
+    protected EntityEventManager entityEventManager;
 
     @Autowired
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {
@@ -258,6 +262,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
             message.setContentText(null);
         }
 
+        entityEventManager.publishEntitySavingEvent(message, true);//workaround for jmix-framework/jmix#1069
         entityManager.persist(message);
 
         message.getAttachments().forEach(attachment -> {
@@ -267,6 +272,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
                 attachment.setContent(null);
             }
 
+            entityEventManager.publishEntitySavingEvent(attachment, true);//workaround for jmix-framework/jmix#1069
             entityManager.persist(attachment);
         });
     }

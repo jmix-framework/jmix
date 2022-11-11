@@ -136,7 +136,7 @@ public class DetailsStepFragment extends StepFragment {
     protected void setReportName(ReportData reportData, @Nullable MetaClass prevValue, MetaClass value) {
         String oldName = reportData.getName();
         if (StringUtils.isBlank(oldName)) {
-            reportData.setName(messages.formatMessage(getClass(), "reportNamePattern", messageTools.getEntityCaption(value)));
+            reportData.setName(messageBundle.formatMessage("reportNamePattern", messageTools.getEntityCaption(value)));
         } else {
             if (prevValue != null) {
                 //if old text contains MetaClass name substring, just replace it
@@ -152,10 +152,10 @@ public class DetailsStepFragment extends StepFragment {
                     }
 
                     reportData.setName(newName);
-                    if (!oldName.equals(messages.formatMessage(getClass(), "reportNamePattern", prevEntityCaption))) {
+                    if (!oldName.equals(messageBundle.formatMessage("reportNamePattern", prevEntityCaption))) {
                         //if user changed auto generated report name and we have changed it, we show message to him
                         notifications.create(Notifications.NotificationType.TRAY)
-                                .withCaption(messages.getMessage(getClass(), "reportNameChanged"))
+                                .withCaption(messageBundle.getMessage("reportNameChanged"))
                                 .show();
                     }
                 }
@@ -176,9 +176,9 @@ public class DetailsStepFragment extends StepFragment {
 
     protected Map<String, ReportTypeGenerate> getListedReportOptionsMap() {
         Map<String, ReportTypeGenerate> result = new LinkedHashMap<>(3);
-        result.put(messages.getMessage(getClass(), "singleEntityReport"), ReportTypeGenerate.SINGLE_ENTITY);
-        result.put(messages.getMessage(getClass(), "listOfEntitiesReport"), ReportTypeGenerate.LIST_OF_ENTITIES);
-        result.put(messages.getMessage(getClass(), "listOfEntitiesReportWithQuery"), ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
+        result.put(messageBundle.getMessage("singleEntityReport"), ReportTypeGenerate.SINGLE_ENTITY);
+        result.put(messageBundle.getMessage("listOfEntitiesReport"), ReportTypeGenerate.LIST_OF_ENTITIES);
+        result.put(messageBundle.getMessage("listOfEntitiesReportWithQuery"), ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
         return result;
     }
 
@@ -211,12 +211,12 @@ public class DetailsStepFragment extends StepFragment {
 
     @Override
     public String getCaption() {
-        return messages.getMessage(getClass(), "reportDetails");
+        return messageBundle.getMessage("reportDetails");
     }
 
     @Override
     public String getDescription() {
-        return messages.getMessage(getClass(), "enterMainParameters");
+        return messageBundle.getMessage("enterMainParameters");
     }
 
     protected void clearQuery() {

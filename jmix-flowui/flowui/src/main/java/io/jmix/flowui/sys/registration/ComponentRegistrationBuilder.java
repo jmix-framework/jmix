@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class ComponentRegistrationBuilder {
     /**
      * Sets component loader class.
      *
-     * @param tag             component name in the screen descriptor
+     * @param tag             component name in the view descriptor
      * @param componentLoader component loader class
      * @return builder instance
      */

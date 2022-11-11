@@ -16,14 +16,28 @@
 
 package io.jmix.core;
 
+import javax.annotation.Nullable;
+import javax.persistence.LockModeType;
+
 /**
  * Base interface for load contexts used in {@link DataManager}.
  */
 public interface DataLoadContext {
 
     /**
-     * @param queryString JPQL query string. Only named parameters are supported.
+     * @param queryString query string. Only named parameters are supported.
      * @return  query definition object
      */
     DataLoadContextQuery setQueryString(String queryString);
+
+    /**
+     * @param lockMode lock mode to be used when executing query
+     */
+    void setLockMode(LockModeType lockMode);
+
+    /**
+     * @return lock mode to be used when executing query
+     */
+    @Nullable
+    LockModeType getLockMode();
 }

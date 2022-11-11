@@ -1,7 +1,5 @@
 # Jmix OpenID Connect 
 
-**CAUTION: This add-on is now in the incubating state and its API and behavior may be modified in the future minor and patch releases.**
-
 ## Add-on Overview
 
 The Jmix OpenID Connect add-on provides predefined Spring Security configurations and a set of services that will simplify the following operations:
@@ -236,7 +234,11 @@ implementation("io.jmix.security:jmix-security-oauth2-starter")
 implementation("io.jmix.rest:jmix-rest-starter")
 ```
 
-If you are using an external OpenID Provider for issuing tokens, you don't longer need the `jmix-security-oauth2-starter`, and this dependency may be removed from the build.gradle.
+If you are using an external OpenID Provider for issuing tokens, you don't longer need the `jmix-security-oauth2-starter`, and this dependency must be removed from the build.gradle.
+
+```groovy
+implementation("io.jmix.security:jmix-security-oauth2-starter")
+```
 
 For local keycloak instance access tokens may be obtained by in the following way:
 

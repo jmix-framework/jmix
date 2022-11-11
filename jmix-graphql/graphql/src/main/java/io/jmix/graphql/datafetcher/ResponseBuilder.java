@@ -116,7 +116,7 @@ public class ResponseBuilder {
     }
 
     protected void writeIdField(Entity entity, Map<String, Object> entityAsMap) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         if (metadataTools.hasCompositePrimaryKey(metaClass)) {
             throw new UnsupportedOperationException("Composite primary keys are not supported now for " + metaClass);
         }

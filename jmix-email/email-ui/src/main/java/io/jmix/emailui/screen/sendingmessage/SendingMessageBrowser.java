@@ -95,6 +95,9 @@ public class SendingMessageBrowser extends Screen {
     @Autowired
     protected Notifications notifications;
 
+    @Autowired
+    protected MessageBundle messageBundle;
+
     @Subscribe
     protected void onAfterInit(AfterInitEvent event) {
         fg.add(buildContentTextField(), 0, 5);
@@ -132,7 +135,7 @@ public class SendingMessageBrowser extends Screen {
             }
         });
         showContentButton.setEnabled(false);
-        showContentButton.setCaption(messages.getMessage(getClass(), "showContent"));
+        showContentButton.setCaption(messageBundle.getMessage("showContent"));
 
         contentArea.add(contentTextArea);
         contentArea.add(showContentButton);
@@ -165,7 +168,7 @@ public class SendingMessageBrowser extends Screen {
                 }
             } else {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withCaption(messages.getMessage(getClass(), "noAttachments"))
+                        .withCaption(messageBundle.getMessage("noAttachments"))
                         .show();
             }
         }

@@ -1,0 +1,27 @@
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://menuResourcePolicyModelCreateView.title"
+      focusComponent="form">
+    <actions>
+        <action id="saveAction"/>
+        <action id="closeAction" type="view_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form">
+            <comboBox id="menuItemField"
+                      label="msg://menuResourcePolicyModelCreateView.menuItemField.label"/>
+            <textField id="policyGroupField"
+                       label="msg://io.jmix.securityflowui.model/ResourcePolicyModel.policyGroup"/>
+            <textField id="viewField"
+                       label="msg://menuResourcePolicyModelCreateView.viewField.label"
+                       readOnly="true"/>
+            <checkbox id="viewAccessField"
+                      label="msg://menuResourcePolicyModelCreateView.viewAccessField.label"
+                      readOnly="true"/>
+        </formLayout>
+
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

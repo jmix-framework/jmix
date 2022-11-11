@@ -23,11 +23,11 @@ group = 'io.jmix.templates.studio'
 
 task copyContent(type: Copy) {
     from('content') {
-        exclude '**/gradle/wrapper/**'
+        include '**/*.gradle'
         filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [bomVersion: version])
     }
     from('content') {
-        include '**/gradle/wrapper/**'
+        exclude '**/*.gradle'
     }
     into "$buildDir/content"
 }

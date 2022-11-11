@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
@@ -13,7 +29,7 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
 import io.jmix.flowui.component.delegate.GridDelegate;
 import io.jmix.flowui.data.DataUnit;
-import io.jmix.flowui.data.grid.GridDataItems;
+import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,7 +45,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
 
     protected ApplicationContext applicationContext;
 
-    protected GridDelegate<E> gridDelegate;
+    protected GridDelegate<E, DataGridItems<E>> gridDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -46,15 +62,15 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     }
 
     @SuppressWarnings("unchecked")
-    protected GridDelegate<E> createDelegate() {
+    protected GridDelegate<E, DataGridItems<E>> createDelegate() {
         return applicationContext.getBean(GridDelegate.class, this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public GridDataView<E> setItems(DataProvider<E, Void> dataProvider) {
-        // TODO: gg, refactor
-        if (dataProvider instanceof GridDataItems) {
-            gridDelegate.setItems((GridDataItems<E>) dataProvider);
+        if (dataProvider instanceof DataGridItems) {
+            gridDelegate.setItems((DataGridItems<E>) dataProvider);
         }
 
         return super.setItems(dataProvider);

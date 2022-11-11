@@ -1,0 +1,39 @@
+<!--
+  - Copyright 2022 Haulmont.
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -     http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -->
+
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 5V6H1V5H2Z" fill="#9AA7B0"/>
+<path d="M3 3V4H1V3H3Z" fill="#9AA7B0"/>
+<path d="M15 3V5H14V3H15Z" fill="#9AA7B0"/>
+<path d="M5 3V4H4V3H5Z" fill="#9AA7B0"/>
+<path d="M4 12V13H3V12H4Z" fill="#9AA7B0"/>
+<path d="M2 11L2 13H1L1 11H2Z" fill="#9AA7B0"/>
+<path d="M7 3V4H6V3H7Z" fill="#9AA7B0"/>
+<path d="M6 12V13H5V12H6Z" fill="#9AA7B0"/>
+<path d="M9 3V4H8V3H9Z" fill="#9AA7B0"/>
+<path d="M10 12V13H9V12H10Z" fill="#9AA7B0"/>
+<path d="M8 12V13H7V12H8Z" fill="#9AA7B0"/>
+<path d="M11 3V4H10V3H11Z" fill="#9AA7B0"/>
+<path d="M12 12V13H11V12H12Z" fill="#9AA7B0"/>
+<path d="M13 3V4H12V3H13Z" fill="#9AA7B0"/>
+<path d="M15 12V13H13V12H15Z" fill="#9AA7B0"/>
+<path d="M15 6V7H14V6H15Z" fill="#9AA7B0"/>
+<path d="M2 9V10H1V9H2Z" fill="#9AA7B0"/>
+<path d="M15 8V9H14V8H15Z" fill="#9AA7B0"/>
+<path d="M15 10V11H14V10H15Z" fill="#9AA7B0"/>
+<path d="M2 7V8H1V7H2Z" fill="#9AA7B0"/>
+<path d="M2 7V8H14V7L2 7Z" fill="#9AA7B0"/>
+</svg>

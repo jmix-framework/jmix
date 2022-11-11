@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package test_support;
 
 import com.vaadin.flow.spring.VaadinServletContextInitializer;
@@ -14,7 +30,9 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.view.ViewAttributes;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -26,8 +44,10 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 @Configuration
@@ -74,6 +94,12 @@ public class FlowuiTestConfiguration {
     }
 
     @Bean
+    @Primary
+    TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
+        return new TransactionTemplate(transactionManager);
+    }
+
+    @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
     }
@@ -81,6 +107,19 @@ public class FlowuiTestConfiguration {
     @Bean
     public ServletContextInitializer contextInitializer(ApplicationContext applicationContext) {
         return new VaadinServletContextInitializer(applicationContext);
+    }
+
+    @Bean
+    @Primary
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public ViewAttributes testViewAttributes(String viewId) {
+        return new TestViewAttributes(viewId);
+    }
+
+    @Bean
+    @Primary
+    public ServletContext servletContext() {
+        return new TestServletContext();
     }
 
     @EnableWebSecurity

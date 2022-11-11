@@ -44,6 +44,7 @@ public class DatasourceOptions<E extends Entity, K> implements Options<E>, Entit
         this.datasource.addStateChangeListener(this::datasourceStateChanged);
         this.datasource.addItemPropertyChangeListener(this::datasourceItemPropertyChanged);
         this.datasource.addCollectionChangeListener(this::datasourceCollectionChanged);
+        this.datasource.addItemChangeListener(this::datasourceItemChanged);
 
         CollectionDsHelper.autoRefreshInvalid(datasource, true);
 
@@ -58,6 +59,10 @@ public class DatasourceOptions<E extends Entity, K> implements Options<E>, Entit
 
     protected void datasourceItemPropertyChanged(@SuppressWarnings("unused") Datasource.ItemPropertyChangeEvent<E> e) {
         events.publish(OptionsChangeEvent.class, new OptionsChangeEvent<>(this));
+    }
+
+    protected void datasourceItemChanged(Datasource.ItemChangeEvent<E> e) {
+        events.publish(ValueChangeEvent.class, new ValueChangeEvent<>(this, e.getPrevItem(), e.getItem()));
     }
 
     protected void datasourceStateChanged(Datasource.StateChangeEvent<E> e) {

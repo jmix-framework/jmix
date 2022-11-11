@@ -88,7 +88,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
 
     public void restoreAttributes(Object entity) {
         SecurityState securityState = EntitySystemAccess.getSecurityState(entity);
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         for (String attrName : securityState.getErasedAttributes()) {
             Collection<Object> ids = securityState.getErasedIds(attrName);
             if (!ids.isEmpty()) {
@@ -132,7 +132,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
 
         visited.add(entity);
 
-        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (isPersistentEntityProperty(property) && entityStates.isLoaded(entity, property.getName())) {
                 Object value = EntityValues.getValue(entity, property.getName());
                 if (value instanceof Collection<?>) {

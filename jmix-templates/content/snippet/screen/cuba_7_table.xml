@@ -1,0 +1,55 @@
+<%def isEmbedded(attr) {
+    return attr.hasAnnotation('Embedded') || attr.hasAnnotation('EmbeddedId')
+}
+
+def columns = []
+
+view.orderedRootProperties.each { property ->
+    def attr = entity.getAttribute(property.name)
+    if (attr == null || !attr.allowPutToDataAware()) {
+        return
+    }
+    if (!isEmbedded(attr)
+        && !attr.hasAnnotation('OneToMany') && !attr.hasAnnotation('ManyToMany')
+        && !columns.contains(property.name)
+        && !attr.isDeepInheritor('java.net.URI')) {
+        columns << property.name
+    } else if (property.entity != null) {
+        def subProperties = property.subProperties
+        def propEntity = property.entity
+        subProperties.each { subProp -> 
+            def subPropAttr = propEntity.getAttribute(subProp.name)
+            if (subPropAttr != null && !isEmbedded(subPropAttr)
+                && !subPropAttr.hasAnnotation('OneToMany') && !subPropAttr.hasAnnotation('ManyToMany')
+                && !subPropAttr.hasAnnotation('SystemLevel')
+                && !columns.contains("${property.name}.${subProp.name}")) {
+                    columns << "${property.name}.${subProp.name}"
+            }
+        }
+    }
+}
+
+def isDataGrid = tableType.xmlName.endsWith('Grid')
+
+%>
+<${tableType.xmlName} id="${tableId}"
+        width="100%"
+        dataContainer="${tableDc}"<%
+        (tableType.isHierarchical()) ? print("\nhierarchyProperty=\"${hierarchicalProperty}\"") : print("")
+        if (multiselect && !isDataGrid) {%>\n multiselect="true"<%}%>>
+    <actions><%tableActions.each { action ->%>
+        <action id="${action}" type="${action}"/>
+    <%}%>
+    </actions>
+    <columns><%columns.each {column ->%>
+        <column <%if(isDataGrid){%> property="${column}" <%}%> id="${column}"/>
+    <%}%>
+    </columns>
+    <simplePagination/>
+    <buttonsPanel id="buttonsPanel"
+                  alwaysVisible="true">
+        <%tableActions.each { action ->%>
+            <button id="${action}Btn" action="${tableId}.${action}"/>                
+        <%}%>
+    </buttonsPanel>
+</${tableType.xmlName}>

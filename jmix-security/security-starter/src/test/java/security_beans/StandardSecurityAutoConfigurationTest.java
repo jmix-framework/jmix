@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.Map;
 
@@ -46,9 +46,9 @@ public class StandardSecurityAutoConfigurationTest {
         contextRunner.run(context -> {
             assertThat(context).hasBean("sec_AuthenticationManager");
 
-            Map<String, WebSecurityConfigurerAdapter> beans = context.getBeansOfType(WebSecurityConfigurerAdapter.class);
+            Map<String, SecurityFilterChain> beans = context.getBeansOfType(SecurityFilterChain.class);
             assertThat(beans).hasSize(1);
-            assertThat(beans.values().iterator().next()).isInstanceOf(StandardSecurityConfiguration.class);
+            assertThat(beans.keySet().iterator().next()).isEqualTo("sec_StandardSecurityFilterChain");
         });
     }
 }

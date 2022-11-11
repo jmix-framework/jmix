@@ -17,16 +17,14 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_editor.svg"
-          name="Entity detail view (FlowUI)"
+          name="Entity detail view"
           order="20">
     <tags>
         <tag>ENTITY</tag>
         <tag>JPA</tag>
     </tags>
     <description>
-        <![CDATA[<html>Entity detail view with a form and window action buttons: <i>OK</i> and <i>Cancel</i>.
-<br>Select <b>Extended window actions</b> checkbox to create a detail that can be saved without closing the screen.
-It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html>]]>
+        <![CDATA[<html>Entity detail view with a form and action buttons: <i>OK</i> and <i>Cancel</i>.</html>]]>
     </description>
     <locMessages key="detailTitle" expressionKey="${studioUtils.decapitalize(detailControllerName)}.title">
         <message lang="default">
@@ -55,7 +53,7 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-detail-view">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-detail-view">
         <dependency code="entity"/>
     </property>
 
@@ -75,13 +73,13 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
               propertyType="SCREEN_ID"
               advanced="true"
               dynamic="true"
-              valueTemplate="${entity.name!=null?entity.name:entity.className}.edit"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.detail"
               required="true">
         <dependency code="entity"/>
     </property>
 
-    <property caption="View route prefix"
-              code="routePrefix"
+    <property caption="View route"
+              code="detailRoute"
               propertyType="STRING"
               advanced="true"
               dynamic="true"
@@ -89,6 +87,13 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
               valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
         <dependency code="entity"/>
     </property>
+
+    <property caption="View route parameter"
+              code="detailRouteParam"
+              propertyType="STRING"
+              advanced="true"
+              required="true"
+              defaultValue="id"/>
 
     <source fileExt="xml"
             name="descriptor"/>

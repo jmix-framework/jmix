@@ -17,7 +17,6 @@
 package io.jmix.reportsui.screen.report.run;
 
 import com.haulmont.yarg.reporting.ReportOutputDocument;
-import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ReportSecurityManager;
@@ -80,7 +79,7 @@ public class ShowChartScreen extends Screen {
     protected WindowConfig windowConfig;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected Fragments fragments;
@@ -227,14 +226,14 @@ public class ShowChartScreen extends Screen {
 
     protected void showDiagramStubText() {
         if (chartBox.getOwnComponents().isEmpty()) {
-            chartBox.add(createLabel(messages.getMessage(getClass(), "showChart.caption")));
+            chartBox.add(createLabel(messageBundle.getMessage("showChart.caption")));
         }
     }
 
     protected void showChartsNotIncluded() {
         reportEntityComboBox.setEditable(false);
         chartBox.removeAll();
-        chartBox.add(createLabel(messages.getMessage(getClass(), "showChart.noChartComponent")));
+        chartBox.add(createLabel(messageBundle.getMessage("showChart.noChartComponent")));
     }
 
     protected Label<String> createLabel(String caption) {

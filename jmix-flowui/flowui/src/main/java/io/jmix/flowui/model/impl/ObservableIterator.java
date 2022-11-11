@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@
 package io.jmix.flowui.model.impl;
 
 import com.google.common.collect.ForwardingIterator;
-import io.jmix.flowui.SameAsUi;
 
 import java.util.Iterator;
 
-@SameAsUi
 class ObservableIterator<T> extends ForwardingIterator<T> {
 
     private final Iterator<T> delegate;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2022 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,18 @@
 package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Component;
+import io.jmix.core.ClassManager;
 import io.jmix.flowui.data.SupportsItemsContainer;
+import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.ScreenData;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.UiControllerUtils;
+import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.LoaderResolver;
@@ -45,6 +48,7 @@ public class DataLoaderSupport {
 
     protected Context context;
     protected LoaderResolver loaderResolver;
+    protected ClassManager classManager;
 
     public DataLoaderSupport(Context context) {
         this.context = context;
@@ -53,6 +57,11 @@ public class DataLoaderSupport {
     @Autowired
     public void setLoaderResolver(LoaderResolver loaderResolver) {
         this.loaderResolver = loaderResolver;
+    }
+
+    @Autowired
+    public void setClassManager(ClassManager classManager) {
+        this.classManager = classManager;
     }
 
     public void loadData(SupportsValueSource<?> component, Element element) {
@@ -82,13 +91,23 @@ public class DataLoaderSupport {
                                 "attribute is not defined", containerId, element.attributeValue("id")), context);
             }
 
-            Screen<?> screen = getComponentContext().getScreen();
-            ScreenData screenData = UiControllerUtils.getScreenData(screen);
+            View<?> view = getComponentContext().getView();
+            ViewData viewData = ViewControllerUtils.getViewData(view);
 
-            return Optional.of(screenData.getContainer(containerId));
+            return Optional.of(viewData.getContainer(containerId));
         }
 
         return Optional.empty();
+    }
+
+    public void loadItems(Component component, Element element) {
+        if (component instanceof SupportsItemsContainer) {
+            loadItemsContainer(((SupportsItemsContainer<?>) component), element);
+        }
+
+        if (component instanceof SupportsItemsEnum) {
+            loadItemsEnum(((SupportsItemsEnum<?>) component), element);
+        }
     }
 
     public <E> void loadItemsContainer(SupportsItemsContainer<E> component, Element element) {
@@ -100,9 +119,9 @@ public class DataLoaderSupport {
         String containerId = element.attributeValue("itemsContainer");
         if (containerId != null) {
 
-            Screen<?> screen = getComponentContext().getScreen();
-            ScreenData screenData = UiControllerUtils.getScreenData(screen);
-            InstanceContainer<?> container = screenData.getContainer(containerId);
+            View<?> view = getComponentContext().getView();
+            ViewData viewData = ViewControllerUtils.getViewData(view);
+            InstanceContainer<?> container = viewData.getContainer(containerId);
             if (!(container instanceof CollectionContainer)) {
                 throw new GuiDevelopmentException(String.format("Not a %s: %s",
                         CollectionContainer.class.getSimpleName(), containerId),
@@ -110,6 +129,21 @@ public class DataLoaderSupport {
             }
             //noinspection unchecked
             return Optional.of((CollectionContainer<E>) container);
+        }
+
+        return Optional.empty();
+    }
+
+    public <T> void loadItemsEnum(SupportsItemsEnum<T> component, Element element) {
+        Optional<Class<T>> enumClass = loadItemsEnum(element);
+        enumClass.ifPresent(component::setItems);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> Optional<Class<T>> loadItemsEnum(Element element) {
+        String itemsEnumClass = element.attributeValue("itemsEnum");
+        if (!Strings.isNullOrEmpty(itemsEnumClass)) {
+            return Optional.ofNullable(((Class<T>) classManager.findClass(itemsEnumClass)));
         }
 
         return Optional.empty();

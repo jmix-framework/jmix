@@ -21,36 +21,56 @@
 
   /* Global size */
 
-  &.small .#{$primary-stylename} {
-    @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
-                                         $unit-size         : $v-unit-size--small,
-                                         $font-size         : $v-font-size--small);
+  &.small {
+    .#{$primary-stylename} {
+      @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
+                                           $unit-size         : $v-unit-size--small,
+                                           $font-size         : $v-font-size--small);
+    }
+
+    @include he-currencyfield-caption-size-style($unit-size : $v-unit-size--small);
   }
 
-  &.large .#{$primary-stylename} {
-    @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
-                                         $unit-size         : $v-unit-size--large,
-                                         $font-size         : $v-font-size--large);
+  &.large {
+    .#{$primary-stylename} {
+      @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
+                                           $unit-size         : $v-unit-size--large,
+                                           $font-size         : $v-font-size--large);
+    }
+
+    @include he-currencyfield-caption-size-style($unit-size : $v-unit-size--large);
   }
 
   /* Size within a container */
 
-  .small .#{$primary-stylename} {
-    @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
-                                         $unit-size         : $v-unit-size--small,
-                                         $font-size         : $v-font-size--small);
+  .small {
+    .#{$primary-stylename} {
+      @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
+                                           $unit-size         : $v-unit-size--small,
+                                           $font-size         : $v-font-size--small);
+    }
+
+    @include he-currencyfield-caption-size-style($unit-size : $v-unit-size--small);
   }
 
-  .medium .#{$primary-stylename} {
-    @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
-                                         $unit-size         : $v-unit-size,
-                                         $font-size         : $v-font-size);
+  .medium {
+    .#{$primary-stylename} {
+      @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
+                                           $unit-size         : $v-unit-size,
+                                           $font-size         : $v-font-size);
+    }
+
+    @include he-currencyfield-caption-size-style($unit-size : $v-unit-size);
   }
 
-  .large .#{$primary-stylename} {
-    @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
-                                         $unit-size         : $v-unit-size--large,
-                                         $font-size         : $v-font-size--large);
+  .large {
+    .#{$primary-stylename} {
+      @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
+                                           $unit-size         : $v-unit-size--large,
+                                           $font-size         : $v-font-size--large);
+    }
+
+    @include he-currencyfield-caption-size-style($unit-size : $v-unit-size--large);
   }
 
   /* Own size */
@@ -71,6 +91,20 @@
     @include he-currencyfield-size-style($primary-stylename : $primary-stylename,
                                          $unit-size         : $v-unit-size--large,
                                          $font-size         : $v-font-size--large);
+  }
+
+  /* Own size - Caption */
+
+  .v-caption-inline-icon.v-caption-jmix-currencyfield-label-left-position {
+    &.v-caption-small .v-icon {
+      margin-left: $v-unit-size--small;
+    }
+    &.v-caption-medium .v-icon {
+      margin-left: $v-unit-size;
+    }
+    &.v-caption-large .v-icon {
+      margin-left: $v-unit-size--large;
+    }
   }
 }
 
@@ -130,5 +164,17 @@
   .#{$primary-stylename}-currency {
     font-size: $font-size;
     min-width: $unit-size;
+  }
+
+  &.inline-icon .v-textfield {
+    padding-left: $unit-size;
+  }
+}
+
+@mixin he-currencyfield-caption-size-style($unit-size : $v-unit-size) {
+  .v-caption-inline-icon.v-caption-jmix-currencyfield-label-left-position {
+    .v-icon {
+      margin-left: $unit-size;
+    }
   }
 }

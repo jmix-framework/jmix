@@ -16,7 +16,6 @@
 
 package io.jmix.reportsui.screen.report.wizard.region;
 
-import io.jmix.core.Messages;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.Tree;
@@ -33,7 +32,7 @@ public class EntityTreeLookup extends StandardLookup<EntityTreeNode> {
     protected Tree<EntityTreeNode> entityTree;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected Notifications notifications;
@@ -43,13 +42,13 @@ public class EntityTreeLookup extends StandardLookup<EntityTreeNode> {
         setSelectValidator(validationContext -> {
             if (entityTree.getSingleSelected() == null) {
                 notifications.create(Notifications.NotificationType.TRAY)
-                        .withCaption(messages.getMessage(getClass(),"selectItemForContinue"))
+                        .withCaption(messageBundle.getMessage("selectItemForContinue"))
                         .show();
                 return false;
             } else {
                 if (entityTree.getSingleSelected().getParent() == null) {
                     notifications.create(Notifications.NotificationType.TRAY)
-                            .withCaption(messages.getMessage(getClass(),"selectNotARoot"))
+                            .withCaption(messageBundle.getMessage("selectNotARoot"))
                             .show();
 
                     return false;

@@ -1,10 +1,26 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.xml.layout;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.model.ScreenData;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.ScreenActions;
+import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
@@ -20,9 +36,9 @@ public interface ComponentLoader<T extends Component> {
 
     interface ComponentContext extends Context {
 
-        ScreenData getScreenData();
+        ViewData getViewData();
 
-        ScreenActions getScreenActions();
+        ViewActions getViewActions();
 
         Optional<ComponentContext> getParent();
 
@@ -30,10 +46,12 @@ public interface ComponentLoader<T extends Component> {
 
         String getCurrentFrameId();
 
-        Screen<?> getScreen();
+        View<?> getView();
+
+        void addPreInitTask(InitTask task);
+        void executePreInitTasks();
 
         void addInitTask(InitTask task);
-
         void executeInitTasks();
     }
 
@@ -42,12 +60,12 @@ public interface ComponentLoader<T extends Component> {
      */
     interface InitTask {
         /**
-         * This method will be invoked after screen initialization.
+         * This method will be invoked after view initialization.
          *
          * @param context loader context
-         * @param screen  screen
+         * @param view    view
          */
-        void execute(ComponentContext context, Screen<?> screen);
+        void execute(ComponentContext context, View<?> view);
     }
 
     Context getContext();

@@ -18,7 +18,6 @@ package io.jmix.security.impl.role.builder.extractor;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
@@ -51,9 +50,12 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
 
     protected Metadata metadata;
 
+    protected PolicyExtractorUtils policyExtractorUtils;
+
     @Autowired
-    public EntityPolicyExtractor(Metadata metadata) {
+    public EntityPolicyExtractor(Metadata metadata, PolicyExtractorUtils policyExtractorUtils) {
         this.metadata = metadata;
+        this.policyExtractorUtils = policyExtractorUtils;
     }
 
     @Override
@@ -65,8 +67,7 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
             Class<?> entityClass = annotation.entityClass();
             String entityName = annotation.entityName();
             if (entityClass != NullEntity.class) {
-                MetaClass metaClass = metadata.getClass(entityClass);
-                entityName = metaClass.getName();
+                entityName = policyExtractorUtils.getEntityNameByEntityClass(entityClass);
             } else if (Strings.isNullOrEmpty(entityName)) {
                 log.error("Neither entityClass, nor entityName is defined for the EntityPolicy annotation. " +
                         "Class: {}, method: {}", method.getClass().getName(), method.getName());

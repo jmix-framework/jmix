@@ -18,18 +18,23 @@ package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.CircularBeanReferencesEnabler;
+import io.jmix.core.impl.logging.LogMdcFilter;
 import io.jmix.core.impl.validation.JmixLocalValidatorFactoryBean;
 import io.jmix.core.impl.validation.ValidationClockProvider;
 import io.jmix.core.impl.validation.ValidationTraversableResolver;
+import io.jmix.core.security.CurrentAuthentication;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.MessageInterpolator;
+import java.util.Set;
 
 /**
  * Configuration of the core module.
@@ -80,5 +85,14 @@ public class CoreConfiguration {
     @Bean("core_CircularBeanReferencesEnabler")
     public static CircularBeanReferencesEnabler circularBeanReferencesEnabler() {
         return new CircularBeanReferencesEnabler();
+    }
+
+    @Bean("core_LogMdcFilterRegistrationBean")
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
+    public FilterRegistrationBean<LogMdcFilter> logMdcFilterFilterRegistrationBean(CurrentAuthentication currentAuthentication) {
+        LogMdcFilter logMdcFilter = new LogMdcFilter(currentAuthentication);
+        FilterRegistrationBean<LogMdcFilter> filterRegistration = new FilterRegistrationBean<>(logMdcFilter);
+        filterRegistration.setUrlPatterns(Set.of("/*"));
+        return filterRegistration;
     }
 }

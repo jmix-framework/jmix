@@ -21,19 +21,20 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.security.AuthorizedUrlsProvider;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securityoauth2.SecurityOAuth2Configuration;
+import io.jmix.securityoauth2.config.AuthorizationServerSecurityConfiguration;
+import io.jmix.securityoauth2.config.ResourceServerConfiguration;
 import io.jmix.securityoauth2.configurer.OAuth2AuthorizationServerConfigurer;
 import io.jmix.securityoauth2.configurer.OAuth2ResourceServerConfigurer;
 import io.jmix.securityoauth2.impl.UniqueAuthenticationKeyGenerator;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
@@ -73,16 +74,14 @@ public class SecurityOAuth2AutoConfiguration {
     }
 
     @Configuration(proxyBeanMethods = false)
-    @EnableAuthorizationServer
+    @Import({AuthorizationServerEndpointsConfiguration.class, AuthorizationServerSecurityConfiguration.class})
     @ConditionalOnBean(AuthorizedUrlsProvider.class)
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     public static class Oauth2AuthorizationServerConfiguration extends OAuth2AuthorizationServerConfigurer {
     }
 
     @Configuration(proxyBeanMethods = false)
-    @EnableResourceServer
+    @Import(ResourceServerConfiguration.class)
     @ConditionalOnBean(AuthorizedUrlsProvider.class)
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     public static class Oauth2ResourceServerConfiguration extends OAuth2ResourceServerConfigurer {
     }
 }

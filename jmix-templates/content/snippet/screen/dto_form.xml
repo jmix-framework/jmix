@@ -1,0 +1,142 @@
+<%
+class Form {
+    def dcId
+    def fields = [:]
+}
+
+class Field {
+    def tag = "textField"
+    def attrs = [:]
+    def text = null
+
+    def printAttrs() {
+
+        return attrs.findAll {it.key != 'tag'}.toSorted {a, b ->
+            if (a.key == "id")
+                return -1
+            else return a.key <=> b.key
+        }.collect {it -> return "${it.key}=\"${it.value}\""}.join(" ")
+    }
+}
+
+def initDefaultFieldAttrs(attr) {
+    def field = new Field()
+
+    def fieldAttrs = [property: attr.name]
+
+    if ((attr.isDeepInheritor('java.lang.String') || attr.isDeepInheritor('java.net.URI'))
+        && attr.hasAnnotation('Lob')) {
+        fieldAttrs['rows'] = '5'
+        field.tag = 'textArea'
+    }
+
+    def isDateField = ['java.util.Date', 'java.time.LocalDate', 'java.time.LocalDateTime', 'java.time.OffsetDateTime'].collect {
+        attr.isDeepInheritor(it)
+    }.any()
+    if (isDateField) {
+        field.tag = 'dateField'
+    }
+
+    def isTimeField = ['java.sql.Time', 'java.time.LocalTime', 'java.time.OffsetTime'].collect {
+        attr.isDeepInheritor(it)
+    }.any() || attr.getAnnotation('Temporal')?.params?.get('value')?.endsWith('TIME')
+    if(isTimeField) {
+        field.tag = 'timeField'
+    }
+
+    if(attr.isDeepInheritor('java.util.UUID')) {
+        field.tag = 'maskedField'
+        fieldAttrs['mask'] = 'hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh'
+    }
+
+    if (attr.isDeepInheritor("byte[]")) {
+        field.tag = 'fileUpload'
+    }
+
+    if (attr.isDeepInheritor('io.jmix.core.FileRef')) {
+        field.tag = 'fileStorageUpload'
+    }
+
+    def lookupActions = false
+
+    if (attr.isEntityType()) {
+        field.tag = 'entityPicker'
+        lookupActions = true
+    }
+
+    if(attr.isEnumType()) {
+        field.tag = 'comboBox'
+    }
+
+    if (attr.isDeepInheritor('java.lang.Boolean')) {
+        field.tag = 'checkBox'
+    }
+
+    def oneToOneComposition = attr.isOneToOneComposition()
+
+    def lookupAnn = attr.getAnnotation('Lookup')
+    if (lookupAnn != null
+            && !oneToOneComposition
+            && lookupAnn.params['type']?.endsWith('DROPDOWN')
+            && (attr.hasAnnotation('OneToOne') || attr.hasAnnotation('ManyToOne'))) {
+        fieldAttrs['optionsContainer'] = "${api.pluralForm(attr.name)}Dc"
+        field.tag = 'entityComboBox'
+        lookupActions = true
+    }
+
+    if(attr.isDeepInheritor('com.haulmont.cuba.core.entity.FileDescriptor')) {
+        lookupActions = false
+        field.tag = 'upload'
+        fieldAttrs['fileStoragePutMode'] = 'IMMEDIATE'
+        fieldAttrs['showFileName'] = 'true'
+    }
+
+    if(lookupActions) {
+        def actions = attr.getLookupActions()
+        if(!actions.isEmpty()) {
+            StringBuilder builder = new StringBuilder()
+            builder.append("<actions>")
+            for(String action: attr.getLookupActions()) {
+                if (['open', 'lookup', 'clear', 'openComposition'].contains(action)) {
+                    builder.append("<action id=\"$action\" type=\"entity_$action\"/>")
+                }
+            }
+            builder.append("</actions>")
+            field.text = builder.toString()
+        }
+    }
+
+    fieldAttrs['id'] = attr.name + "Field"
+
+    field.attrs = fieldAttrs
+
+    return field
+}
+
+def mainFields = [:]
+
+def allForms = [:]
+Form mainForm = new Form()
+mainForm.dcId = dcId
+mainForm.fields = mainFields
+allForms[formId] = mainForm
+
+entity.attributes.each { attr ->
+    if (attr != null
+        && attr.allowPutToDataAware(true)
+        && !attr.hasAnnotation('Embedded')
+        && !attr.hasAnnotation('EmbeddedId')) {
+            mainFields[attr.name + "Field"] = initDefaultFieldAttrs(attr)
+    }
+}%>
+<%allForms.each {id, form ->%>
+<form id="${id}" dataContainer="${form.dcId}">
+    <column width="${columnWidth}">
+        <%form.fields.each {fieldId, field -> %>
+            <${field.tag} ${field.printAttrs()}<%if(field.text == null) {%>/><% } else {%>>
+            ${field.text}
+            </${field.tag}><%}%>
+        <%}%>
+    </column>
+</form>
+<%}%>

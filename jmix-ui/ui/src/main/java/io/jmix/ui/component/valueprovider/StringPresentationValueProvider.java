@@ -17,6 +17,7 @@
 package io.jmix.ui.component.valueprovider;
 
 import com.vaadin.data.ValueProvider;
+import io.jmix.core.FileRef;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 
@@ -34,6 +35,10 @@ public class StringPresentationValueProvider<T> implements ValueProvider<T, Stri
 
     @Override
     public String apply(T value) {
+        if (value instanceof FileRef) {
+            return ((FileRef) value).getFileName();
+        }
+
         return metaProperty != null
                 ? metadataTools.format(value, metaProperty)
                 : metadataTools.format(value);

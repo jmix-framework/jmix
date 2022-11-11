@@ -20,24 +20,17 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.*;
+import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.util.converter.ConverterUtil;
 import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.Table.ColumnHeaderMode;
-import io.jmix.core.AccessManager;
-import io.jmix.core.Entity;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
@@ -54,17 +47,14 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Actions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
-import io.jmix.ui.component.data.BindingState;
-import io.jmix.ui.component.data.DataUnit;
-import io.jmix.ui.component.data.HasValueSource;
-import io.jmix.ui.component.data.TableItems;
-import io.jmix.ui.component.data.ValueConversionException;
+import io.jmix.ui.component.data.*;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 import io.jmix.ui.component.data.aggregation.Aggregations;
 import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
@@ -84,7 +74,6 @@ import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
-import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.InstallTargetHandler;
 import io.jmix.ui.screen.ScreenContext;
@@ -106,6 +95,7 @@ import io.jmix.ui.widget.JmixEnhancedTable.AggregationInputValueChangeContext;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
 import io.jmix.ui.widget.compatibility.JmixValueChangeEvent;
 import io.jmix.ui.widget.data.AggregationContainer;
+import io.jmix.ui.widget.data.util.NullContainer;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -746,14 +736,12 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         }
     }
 
-    protected void enableEditableColumns(EntityTableItems<E> entityTableSource,
+    protected void enableEditableColumns(@SuppressWarnings("unused") EntityTableItems<E> entityTableSource, //backward compatibility //todo remove in minor release
                                          Collection<MetaPropertyPath> propertyIds) {
-        MetaClass metaClass = entityTableSource.getEntityMetaClass();
-
         List<MetaPropertyPath> editableColumns = new ArrayList<>(propertyIds.size());
         for (MetaPropertyPath propertyId : propertyIds) {
             UiEntityAttributeContext attributeContext =
-                    new UiEntityAttributeContext(metaClass, propertyId.toString());
+                    new UiEntityAttributeContext(propertyId);
             accessManager.applyRegisteredConstraints(attributeContext);
 
             if (!attributeContext.canModify()) {
@@ -1236,7 +1224,11 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             Formatter formatter = column.getFormatter();
 
             if (formatter != null) {
-                return (String) formatter.apply(generatedValue);
+                return formatter.apply(generatedValue);
+            }
+
+            if (generatedValue instanceof FileRef) {
+                return formatFileRef(((FileRef) generatedValue));
             }
 
             return metadataTools.format(generatedValue);
@@ -1258,7 +1250,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
             if (column != null) {
                 if (column.getFormatter() != null) {
-                    return (String) column.getFormatter().apply(cellValue);
+                    return column.getFormatter().apply(cellValue);
                 } else if (column.getXmlDescriptor() != null) {
                     // vaadin8 move to Column
                     String captionProperty = column.getXmlDescriptor().attributeValue("captionProperty");
@@ -1270,11 +1262,19 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 }
             }
 
+            if (cellValue instanceof FileRef) {
+                return formatFileRef(((FileRef) cellValue));
+            }
+
             return metadataTools.format(cellValue, propertyPath.getMetaProperty());
         }
 
         if (cellValue == null) {
             return "";
+        }
+
+        if (cellValue instanceof FileRef) {
+            return formatFileRef(((FileRef) cellValue));
         }
 
         if (!(cellValue instanceof Component)) {
@@ -1290,6 +1290,10 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         }
 
         return cellValue.toString();
+    }
+
+    protected String formatFileRef(FileRef file) {
+        return file.getFileName();
     }
 
     protected TableFieldFactoryImpl createFieldFactory() {
@@ -1319,6 +1323,11 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     @SuppressWarnings("unchecked")
     @Nullable
     protected String getGeneratedCellStyle(Object itemId, @Nullable Object propertyId) {
+        if (itemId == null) {
+            // it is null for the aggregation row
+            return null;
+        }
+
         if (styleProviders == null) {
             return null;
         }
@@ -1562,14 +1571,14 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         }
     }
 
-    protected List<Object> getPropertyColumns(EntityTableItems<E> entityTableSource, List<Column<E>> columnsOrder) {
-        MetaClass entityMetaClass = entityTableSource.getEntityMetaClass();
+    protected List<Object> getPropertyColumns(@SuppressWarnings("unused") EntityTableItems<E> entityTableSource, //backward compatibility //todo remove in minor release
+                                              List<Column<E>> columnsOrder) {
         return columnsOrder.stream()
                 .filter(c -> {
                     MetaPropertyPath propertyPath = c.getMetaPropertyPath();
                     if (propertyPath != null) {
                         UiEntityAttributeContext attributeContext =
-                                new UiEntityAttributeContext(entityMetaClass, propertyPath.toString());
+                                new UiEntityAttributeContext(propertyPath);
                         accessManager.applyRegisteredConstraints(attributeContext);
 
                         return attributeContext.canView();
@@ -1603,7 +1612,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                     MetaPropertyPath propertyPath = ((MetaPropertyPath) columnId);
 
                     UiEntityAttributeContext attributeContext =
-                            new UiEntityAttributeContext(metaClass, propertyPath.toString());
+                            new UiEntityAttributeContext(propertyPath);
                     accessManager.applyRegisteredConstraints(attributeContext);
 
                     if (attributeContext.canModify() && attributeContext.canView()) {
@@ -1618,8 +1627,10 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 }
 
                 if (column.isCollapsed() && component.isColumnCollapsingAllowed()) {
-                    UiEntityAttributeContext attributeContext =
+                    UiEntityAttributeContext attributeContext = columnId instanceof MetaPropertyPath ?
+                            new UiEntityAttributeContext((MetaPropertyPath) columnId) :
                             new UiEntityAttributeContext(metaClass, columnId.toString());
+
                     accessManager.applyRegisteredConstraints(attributeContext);
 
                     if (!(columnId instanceof MetaPropertyPath) || attributeContext.canView()) {
@@ -2054,11 +2065,15 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
                 if (aggregation == null) {
                     owner.getComponent().removeContainerPropertyAggregation(id);
-                } else if (owner.getItems() instanceof AggregationContainer) {
-                    owner.checkAggregation(aggregation);
-                    if (aggregation.getType() != null) {
-                        owner.getComponent().addContainerPropertyAggregation(id,
-                                WrapperUtils.convertAggregationType(aggregation.getType()));
+                } else {
+                    Container container = owner.getComponent().getContainerDataSource();
+                    if (container instanceof AggregationContainer
+                            && !(container instanceof NullContainer)) {
+                        owner.checkAggregation(aggregation);
+                        if (aggregation.getType() != null) {
+                            owner.getComponent().addContainerPropertyAggregation(id,
+                                    WrapperUtils.convertAggregationType(aggregation.getType()));
+                        }
                     }
                 }
 
@@ -2319,16 +2334,15 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         }
     }
 
-    protected List<Object> getInitialVisibleColumnIds(EntityTableItems<E> entityTableSource) {
+    protected List<Object> getInitialVisibleColumnIds(@SuppressWarnings("unused") EntityTableItems<E> entityTableSource) {//backward compatibility //todo remove in minor release
         List<Object> result = new ArrayList<>();
 
-        MetaClass metaClass = entityTableSource.getEntityMetaClass();
         for (Column column : columnsOrder) {
             if (column.getId() instanceof MetaPropertyPath) {
                 MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();
 
                 UiEntityAttributeContext attributeContext =
-                        new UiEntityAttributeContext(metaClass, propertyPath.toString());
+                        new UiEntityAttributeContext(propertyPath);
                 accessManager.applyRegisteredConstraints(attributeContext);
 
                 if (attributeContext.canView()) {

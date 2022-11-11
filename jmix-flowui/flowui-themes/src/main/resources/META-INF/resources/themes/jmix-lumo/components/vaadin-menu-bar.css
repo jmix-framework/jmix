@@ -1,0 +1,19 @@
+/* DropdownButton Styles */
+
+:host([jmix-role='jmix-dropdown-button']) [part='menu-bar-button'] {
+  margin: var(--lumo-space-xs) calc(var(--lumo-space-xs) / 2);
+  border-radius: var(--lumo-border-radius-m);
+}
+
+/* ComboButton Styles */
+
+:host([jmix-role='jmix-combo-button-icon']) [part='menu-bar-button'] {
+  margin-top: var(--lumo-space-xs);
+  margin-bottom: var(--lumo-space-xs);
+}
+
+:host([jmix-role='jmix-combo-button-icon']) [part='menu-bar-button']:nth-last-of-type(2) {
+  min-width: var(--lumo-button-size);
+  padding-left: calc(var(--lumo-button-size) / 4);
+  padding-right: calc(var(--lumo-button-size) / 4);
+}

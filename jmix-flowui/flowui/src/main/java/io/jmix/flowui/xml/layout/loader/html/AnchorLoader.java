@@ -29,7 +29,7 @@ public class AnchorLoader extends AbstractHtmlContainerLoader<Anchor> {
     public void loadComponent() {
         super.loadComponent();
 
-        loadString(element, "href", resultComponent::setHref);
+        loadResourceString(element, "href", context.getMessageGroup(), resultComponent::setHref);
         loadEnum(element, AnchorTarget.class, "target", resultComponent::setTarget);
     }
 }

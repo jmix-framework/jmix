@@ -1,3 +1,19 @@
+<!--
+  - Copyright 2022 Haulmont.
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -     http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -->
+
 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M13.2 1.5H2.8C2.08203 1.5 1.5 2.1236 1.5 2.89286V13.1071C1.5 13.8764 2.08203 14.5 2.8 14.5H13.2C13.918 14.5 14.5 13.8764 14.5 13.1071V2.89286C14.5 2.1236 13.918 1.5 13.2 1.5Z" stroke="#9AA7B0"/>
 <path d="M12 5.59548L10.8199 4.5L7.34914 9.07621L5.04095 6.52255L4 7.6742L7.46337 11.5L12 5.59548Z" fill="#9AA7B0"/>

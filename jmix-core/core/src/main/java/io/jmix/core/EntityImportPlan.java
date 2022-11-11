@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -87,6 +88,7 @@ public class EntityImportPlan implements Serializable {
         return this;
     }
 
+    @Nullable
     public EntityImportPlanProperty getProperty(String name) {
         return properties.get(name);
     }

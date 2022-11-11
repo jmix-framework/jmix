@@ -49,6 +49,7 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     private static final Logger log = LoggerFactory.getLogger(ScreenSettingsFacetImpl.class);
 
     protected Set<String> componentIds;
+    protected Set<String> excludedComponentIds;
 
     protected boolean auto = false;
     protected boolean isAfterShowHandled = false;
@@ -147,21 +148,43 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     }
 
     @Override
+    public void excludeComponentIds(String... ids) {
+        if (excludedComponentIds == null) {
+            excludedComponentIds = new HashSet<>();
+        }
+
+        excludedComponentIds.addAll(Arrays.asList(ids));
+    }
+
+    @Override
+    public Set<String> getExcludedComponentIds() {
+        if (excludedComponentIds == null) {
+            return Collections.emptySet();
+        }
+        return excludedComponentIds;
+    }
+
+    @Override
     public Collection<Component> getComponents() {
         checkAttachedFrame();
         assert getOwner() != null;
 
-        if (auto) {
-            return fillComponents(getOwner().getComponents());
-        }
+        Collection<Component> components = Collections.emptyList();
 
-        if (CollectionUtils.isNotEmpty(componentIds)) {
-            return getOwner().getComponents().stream()
+        if (auto) {
+            components = fillComponents(getOwner().getComponents());
+        } else if (CollectionUtils.isNotEmpty(componentIds)) {
+            components = getOwner().getComponents().stream()
                     .filter(component -> componentIds.contains(component.getId()))
                     .collect(Collectors.toList());
         }
 
-        return Collections.emptyList();
+        if (CollectionUtils.isNotEmpty(excludedComponentIds)) {
+            components = components.stream()
+                    .filter(component -> !excludedComponentIds.contains(component.getId()))
+                    .collect(Collectors.toList());
+        }
+        return components;
     }
 
     @Override

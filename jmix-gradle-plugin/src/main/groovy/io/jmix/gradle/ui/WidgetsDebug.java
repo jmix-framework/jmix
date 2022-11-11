@@ -92,18 +92,20 @@ public class WidgetsDebug extends WidgetsTask {
             javaTmp.mkdirs();
 
             File classPathFile = getProject().file("build/tmp/debug-widget-set-classpath.dat");
-            ClassPathUtil.createClassPathFile(classPathFile, compilerClassPath);
+            ClassPathUtil.createFormattedClassPathFile(classPathFile, compilerClassPath);
+
+            gwtCompilerJvmArgs.add("@" + classPathFile.getAbsolutePath());
 
             getProject().javaexec(spec -> {
-                spec.setMain("io.jmix.gradle.ClassPathCommandLine");
-                spec.setClasspath(getProject().files(ClassPathUtil.getCommandLineClassPath()));
-                spec.setArgs(ClassPathUtil.getExtendedCommandLineAgs(
-                        classPathFile.getAbsolutePath(), "com.google.gwt.dev.codeserver.CodeServer", gwtCompilerArgs));
+                spec.getMainClass().set("com.google.gwt.dev.codeserver.CodeServer");
+                spec.setArgs(gwtCompilerArgs);
                 spec.setJvmArgs(gwtCompilerJvmArgs);
             });
+
+            FileUtils.deleteQuietly(classPathFile);
         } else {
             getProject().javaexec(javaExecSpec -> {
-                javaExecSpec.setMain("com.google.gwt.dev.codeserver.CodeServer");
+                javaExecSpec.getMainClass().set("com.google.gwt.dev.codeserver.CodeServer");
                 javaExecSpec.setClasspath(getProject().files(compilerClassPath));
                 javaExecSpec.setArgs(gwtCompilerArgs);
                 javaExecSpec.setJvmArgs(gwtCompilerJvmArgs);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import io.jmix.core.JmixModules;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ActionsConfiguration;
-import io.jmix.flowui.sys.UiControllersConfiguration;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -37,15 +37,15 @@ public class FlowuiAutoConfiguration {
 
     @Bean("jmix_AppFlowuiControllers")
     @ConditionalOnMissingBean(name = "jmix_AppFlowuiControllers")
-    public UiControllersConfiguration uiControllersConfiguration(
+    public ViewControllersConfiguration viewControllersConfiguration(
             ApplicationContext applicationContext,
             AnnotationScanMetadataReaderFactory metadataReaderFactory,
             JmixModules jmixModules) {
 
-        UiControllersConfiguration uiControllers
-                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        uiControllers.setBasePackages(Collections.singletonList(jmixModules.getLast().getBasePackage()));
-        return uiControllers;
+        ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(Collections.singletonList(jmixModules.getLast().getBasePackage()));
+        return viewControllers;
     }
 
     @Bean("jmix_AppFlowuiActions")

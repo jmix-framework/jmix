@@ -116,7 +116,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     public String getInstanceName(Object instance) {
         checkNotNullArgument(instance, "instance is null");
 
-        MetaClass metaClass = metadata.getClass(instance.getClass());
+        MetaClass metaClass = metadata.getClass(instance);
 
         Optional<InstanceNameRec> optional = instanceNameRecCache.getUnchecked(metaClass);
         if (!optional.isPresent()) {

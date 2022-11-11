@@ -138,7 +138,7 @@
               sourceName="descriptor"
               group="browse"
               required="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-browse">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-browse">
         <dependency code="entity"/>
     </property>
 
@@ -170,7 +170,7 @@
               group="editor"
               required="true"
               dynamic="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-edit">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-edit">
         <dependency code="entity"/>
     </property>
 

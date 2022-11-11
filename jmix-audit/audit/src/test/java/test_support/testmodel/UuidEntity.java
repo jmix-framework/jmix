@@ -38,6 +38,9 @@ public class UuidEntity {
     @Column(name = "NAME")
     private String name;
 
+    @Column(name = "DESCRIPTION")
+    private String description;
+
     @Transient
     @JmixProperty
     @DependsOnProperties("db1EntityId")
@@ -60,6 +63,14 @@ public class UuidEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setDb1Entity(Db1Entity db1Entity) {

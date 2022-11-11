@@ -35,6 +35,7 @@ dependencies {
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-spring"
     testImplementation 'org.codehaus.groovy:groovy-xml'
+    testImplementation 'ch.qos.logback:logback-classic'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'

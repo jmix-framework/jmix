@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package test_support.spec
 
 import com.google.common.base.Strings
@@ -12,10 +28,10 @@ import com.vaadin.flow.spring.SpringServlet
 import com.vaadin.flow.spring.VaadinServletContextInitializer
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
 import io.jmix.core.security.SystemAuthenticator
-import io.jmix.flowui.ScreenNavigators
-import io.jmix.flowui.screen.Screen
-import io.jmix.flowui.screen.ScreenRegistry
-import io.jmix.flowui.sys.UiControllersConfiguration
+import io.jmix.flowui.ViewNavigators
+import io.jmix.flowui.view.View
+import io.jmix.flowui.sys.ViewControllersConfiguration
+import io.jmix.flowui.view.ViewRegistry
 import org.apache.commons.lang3.ArrayUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
@@ -38,7 +54,10 @@ class FlowuiTestSpecification extends Specification {
     ApplicationContext applicationContext
 
     @Autowired
-    ScreenNavigators screenNavigators
+    ViewNavigators screenNavigators
+
+    @Autowired
+    ViewRegistry viewRegistry
 
     // saving session and UI to avoid it be GC'ed
     protected VaadinSession vaadinSession
@@ -47,11 +66,12 @@ class FlowuiTestSpecification extends Specification {
     void setup() {
         setupAuthentication()
         setupVaadinUi()
-        registerScreenBasePackages()
+        registerScreenBasePackages("test_support.view")
     }
 
     void cleanup() {
         removeAuthentication()
+        resetViewRegistry()
     }
 
     protected void setupAuthentication() {
@@ -101,50 +121,49 @@ class FlowuiTestSpecification extends Specification {
         UI.setCurrent(ui)
     }
 
-    protected void registerScreenBasePackages(String[] screenBasePackages) {
-        if (ArrayUtils.isEmpty(screenBasePackages)) {
+    protected void registerScreenBasePackages(String[] viewBasePackages) {
+        if (ArrayUtils.isEmpty(viewBasePackages)) {
             return
         }
 
         def metadataReaderFactory = applicationContext.getBean(AnnotationScanMetadataReaderFactory.class)
-        ScreenRegistry windowConfig = applicationContext.getBean(ScreenRegistry.class)
 
-        def configuration = new UiControllersConfiguration(applicationContext, metadataReaderFactory)
+        def configuration = new ViewControllersConfiguration(applicationContext, metadataReaderFactory)
 
         def injector = applicationContext.getAutowireCapableBeanFactory()
         injector.autowireBean(configuration)
 
-        configuration.setBasePackages(Arrays.asList(screenBasePackages))
+        configuration.setBasePackages(Arrays.asList(viewBasePackages))
 
         try {
-            def configurationsField = getDeclaredField(ScreenRegistry.class,
+            def configurationsField = getDeclaredField(ViewRegistry.class,
                     "configurations", true)
             //noinspection unchecked
-            def configurations = (Collection<UiControllersConfiguration>) configurationsField.get(windowConfig)
+            def configurations = (Collection<ViewControllersConfiguration>) configurationsField.get(viewRegistry)
 
             def modifiedConfigurations = new ArrayList<>(configurations)
             modifiedConfigurations.add(configuration)
 
-            configurationsField.set(windowConfig, modifiedConfigurations)
+            configurationsField.set(viewRegistry, modifiedConfigurations)
 
-            getDeclaredField(ScreenRegistry.class, "initialized", true)
-                    .set(windowConfig, false)
+            getDeclaredField(ViewRegistry.class, "initialized", true)
+                    .set(viewRegistry, false)
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Cannot register screen packages", e)
         }
 
-        registerScreenRoutes(screenBasePackages)
+        registerViewRoutes(viewBasePackages)
     }
 
-    protected void registerScreenRoutes(String[] screenBasePackages) {
-        if (ArrayUtils.isEmpty(screenBasePackages)) {
+    protected void registerViewRoutes(String[] viewBasePackages) {
+        if (ArrayUtils.isEmpty(viewBasePackages)) {
             return
         }
 
-        def screenRegistry = applicationContext.getBean(ScreenRegistry.class)
-        def screens = screenRegistry.getScreens()
-        screens.forEach({
-            Class<? extends Screen> controllerClass = it.getControllerClass()
+        def views = viewRegistry.getViewInfos()
+                .findAll({ isClassInPackages(it.getControllerClass().getPackageName(), viewBasePackages)})
+        views.forEach({
+            Class<? extends View> controllerClass = it.getControllerClass()
             Route route = controllerClass.getAnnotation(Route.class)
             if (route == null) {
                 return
@@ -156,18 +175,31 @@ class FlowuiTestSpecification extends Specification {
                 return
             }
 
-            routeConfiguration.setRoute(route.value(), controllerClass)
+            if (route.layout() == UI.class) {
+                routeConfiguration.setRoute(route.value(), controllerClass)
+            } else {
+                routeConfiguration.setRoute(route.value(), controllerClass, route.layout())
+            }
         })
     }
 
-    protected <T extends Screen> T openScreen(Class<T> screen) {
+    protected boolean isClassInPackages(String classPackage, String[] screenBasePackages) {
+        return screenBasePackages.findAll {classPackage.startsWith(it)}.size() > 0
+    }
+
+    protected void resetViewRegistry() {
+        viewRegistry.configurations = []
+        viewRegistry.initialized = false
+    }
+
+    protected <T extends View> T openScreen(Class<T> screen) {
         def activeRouterTargetsChain = getRouterChain(screen)
 
         activeRouterTargetsChain.get(0) as T
     }
 
-    protected List<HasElement> getRouterChain(Class<Screen> screenClass) {
-        screenNavigators.screen(screenClass)
+    protected List<HasElement> getRouterChain(Class<View> screenClass) {
+        screenNavigators.view(screenClass)
                 .navigate()
 
         UI.getCurrent().getInternals().getActiveRouterTargetsChain()

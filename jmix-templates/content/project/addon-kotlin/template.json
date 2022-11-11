@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "name": "Add-On (Kotlin)",
+  "order": 140,
+  "addon": true,
+  "description": "<html>Jmix add-on in Kotlin.<p>Jmix add-ons allow you to reuse data model, UI and business logic in different applications.<p>The created project contains a functional module and a starter with auto-configuration.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": true
+    },
+    {
+      "name": "locales",
+      "hidden": true
+    }
+  ]
+}

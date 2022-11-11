@@ -72,8 +72,8 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
         loadEnum(element, NestedNullBehavior.class, "nestedNullBehavior", resultComponent::setNestedNullBehavior);
 
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadData();
@@ -238,7 +238,7 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
             return holder;
         }
 
-        InstanceContainer<?> container = getComponentContext().getScreenData().getContainer(containerId);
+        InstanceContainer<?> container = getComponentContext().getViewData().getContainer(containerId);
 
         CollectionContainer<?> collectionContainer;
         if (container instanceof CollectionContainer) {

@@ -30,10 +30,7 @@ import io.jmix.ui.component.BoxLayout;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.screen.Install;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -68,7 +65,7 @@ public class TableEditFragment extends DescriptionEditFragment {
     protected CollectionContainer<TemplateTableColumn> tableColumnsDc;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected Notifications notifications;
@@ -142,7 +139,7 @@ public class TableEditFragment extends DescriptionEditFragment {
             tableColumnsDc.getMutableItems().add(item);
         } else {
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage(getClass(),"template.bandRequired"))
+                    .withCaption(messageBundle.getMessage("template.bandRequired"))
                     .show();
         }
     }
@@ -239,7 +236,7 @@ public class TableEditFragment extends DescriptionEditFragment {
         for (TemplateTableBand band : tableBandsDc.getItems()) {
             if (band.getBandName() == null) {
                 notifications.create(Notifications.NotificationType.TRAY)
-                        .withCaption(messages.getMessage(getClass(), "template.bandTableOrColumnTableRequired"))
+                        .withCaption(messageBundle.getMessage("template.bandTableOrColumnTableRequired"))
                         .show();
                 return false;
             }
@@ -247,7 +244,7 @@ public class TableEditFragment extends DescriptionEditFragment {
             for (TemplateTableColumn column : band.getColumns()) {
                 if (column.getKey() == null || column.getCaption() == null) {
                     notifications.create(Notifications.NotificationType.TRAY)
-                            .withCaption(messages.getMessage(getClass(), "template.bandTableOrColumnTableRequired"))
+                            .withCaption(messageBundle.getMessage("template.bandTableOrColumnTableRequired"))
                             .show();
                     return false;
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * GenericUI class holding information about the main menu structure.
+ * Holds information about the main menu structure.
  */
 @Component("flowui_MenuConfig")
 public class MenuConfig {
@@ -112,12 +111,15 @@ public class MenuConfig {
                 modules.getPropertyValues(MENU_CONFIG_XML_PROP) :
                 Collections.singletonList(environment.getProperty(MENU_CONFIG_XML_PROP));
 
+        // put the list in default order - from the app down to the add-ons
+        Collections.reverse(locations);
+
+        List<Element> rootElements = new ArrayList<>();
         for (String location : locations) {
             Resource resource = resources.getResource(location);
             if (resource.exists()) {
                 try (InputStream stream = resource.getInputStream()) {
-                    Element rootElement = dom4JTools.readDocument(stream).getRootElement();
-                    loadMenuItems(rootElement, null);
+                    rootElements.add(dom4JTools.readDocument(stream).getRootElement());
                 } catch (IOException e) {
                     throw new RuntimeException("Unable to read menu config", e);
                 }
@@ -125,10 +127,23 @@ public class MenuConfig {
                 log.warn("Resource {} not found, ignore it", location);
             }
         }
+
+        // sort according to the `order` attributes
+        rootElements.sort((e1, e2) -> {
+            String orderStr1 = e1.attributeValue("order");
+            String orderStr2 = e2.attributeValue("order");
+            int order1 = orderStr1 == null ? 0 : Integer.parseInt(orderStr1);
+            int order2 = orderStr2 == null ? 0 : Integer.parseInt(orderStr2);
+            return order1 - order2;
+        });
+
+        for (Element rootElement : rootElements) {
+            loadMenuItems(rootElement, null);
+        }
     }
 
     /**
-     * Make the config to reload screens on next request.
+     * Make the config to reload view on next request.
      */
     public void reset() {
         initialized = false;
@@ -150,25 +165,6 @@ public class MenuConfig {
     protected void loadMenuItems(Element parentElement, @Nullable MenuItem parentItem) {
         for (Element element : parentElement.elements()) {
             MenuItem menuItem = null;
-            MenuItem currentParentItem = parentItem;
-            MenuItem nextToItem = null;
-            boolean addItem = true;
-            boolean before = true;
-            String nextTo = element.attributeValue("insertBefore");
-            if (StringUtils.isBlank(nextTo)) {
-                before = false;
-                nextTo = element.attributeValue("insertAfter");
-            }
-            if (!StringUtils.isBlank(nextTo)) {
-                for (MenuItem rootItem : rootItems) {
-                    nextToItem = findItem(nextTo, rootItem);
-                    if (nextToItem != null) {
-                        if (nextToItem.getParent() != null)
-                            currentParentItem = nextToItem.getParent();
-                        break;
-                    }
-                }
-            }
 
             if ("menu".equals(element.getName())) {
                 String id = element.attributeValue("id");
@@ -177,13 +173,7 @@ public class MenuConfig {
                     log.warn("Invalid menu-config: 'id' attribute not defined");
                 }
 
-                MenuItem existingMenuItem = rootItems.stream()
-                        .filter(item -> Objects.nonNull(findItem(id, item)))
-                        .findFirst()
-                        .orElse(null);
-
-                menuItem = existingMenuItem != null ? existingMenuItem : new MenuItem(currentParentItem, id);
-                addItem = existingMenuItem == null;
+                menuItem = new MenuItem(parentItem, id);
 
                 menuItem.setMenu(true);
                 menuItem.setDescriptor(element);
@@ -195,7 +185,7 @@ public class MenuConfig {
                 loadDescription(element, menuItem);
                 loadMenuItems(element, menuItem);
             } else if ("item".equals(element.getName())) {
-                menuItem = createMenuItem(element, currentParentItem);
+                menuItem = createMenuItem(element, parentItem);
 
                 if (menuItem == null) {
                     continue;
@@ -214,12 +204,10 @@ public class MenuConfig {
                 log.warn(String.format("Unknown tag '%s' in menu-config", element.getName()));
             }
 
-            if (addItem) {
-                if (currentParentItem != null) {
-                    addItem(currentParentItem.getChildren(), menuItem, nextToItem, before);
-                } else {
-                    addItem(rootItems, menuItem, nextToItem, before);
-                }
+            if (parentItem != null) {
+                parentItem.getChildren().add(menuItem);
+            } else {
+                rootItems.add(menuItem);
             }
         }
     }
@@ -230,8 +218,8 @@ public class MenuConfig {
 
         String idFromActions;
 
-        String screen = element.attributeValue("screen");
-        idFromActions = StringUtils.isNotEmpty(screen) ? screen : null;
+        String view = element.attributeValue("view");
+        idFromActions = StringUtils.isNotEmpty(view) ? view : null;
         // todo rp menu
         /*String runnableClass = element.attributeValue("class");
         checkDuplicateAction(idFromActions, runnableClass);
@@ -259,12 +247,12 @@ public class MenuConfig {
         }
 
         if (StringUtils.isNotEmpty(id) && StringUtils.isEmpty(idFromActions)) {
-            screen = id;
+            view = id;
         }
 
         MenuItem menuItem = new MenuItem(currentParentItem, id);
 
-        menuItem.setScreen(screen);
+        menuItem.setView(view);
         // todo rp menu
 //        menuItem.setRunnableClass(runnableClass);
 //        menuItem.setBean(bean);
@@ -327,18 +315,6 @@ public class MenuConfig {
 
     protected String loadResourceString(@Nullable String ref) {
         return messageTools.loadString(ref);
-    }
-
-    protected void addItem(List<MenuItem> items, @Nullable MenuItem menuItem, @Nullable MenuItem beforeItem, boolean before) {
-        if (beforeItem == null) {
-            items.add(menuItem);
-        } else {
-            int i = items.indexOf(beforeItem);
-            if (before)
-                items.add(i, menuItem);
-            else
-                items.add(i + 1, menuItem);
-        }
     }
 
     @Nullable

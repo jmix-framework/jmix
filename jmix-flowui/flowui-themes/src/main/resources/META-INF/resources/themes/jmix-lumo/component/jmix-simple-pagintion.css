@@ -1,0 +1,50 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.buttons-panel .jmix-simple-pagination:last-child {
+    margin-inline-start: auto
+}
+
+.jmix-simple-pagination {
+    align-items: center;
+    display: flex;
+    gap: var(--jmix-simple-pagination-gap);
+}
+
+.jmix-simple-pagination-status-bar {
+    margin: 0 var(--jmix-simple-pagination-gap);
+    display: flex;
+    gap: var(--jmix-simple-pagination-gap);
+}
+
+.jmix-simple-pagination .jmix-items-per-page {
+    gap: var(--jmix-simple-pagination-gap);
+}
+
+.jmix-simple-pagination-total-count.link {
+    color: var(--lumo-primary-text-color);
+    cursor: pointer;
+}
+
+.jmix-simple-pagination-navigation-button.first,
+.jmix-simple-pagination-navigation-button.prev,
+.jmix-simple-pagination-navigation-button.next,
+.jmix-simple-pagination-navigation-button.last {
+    padding: 0;
+    margin: 0;
+    height: 1.5rem;
+    min-width: 1.5rem;
+}

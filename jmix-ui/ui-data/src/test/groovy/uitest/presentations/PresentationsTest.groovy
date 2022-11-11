@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.UiDataTestSpecification
 import uitest.presentations.screen.PresentationsTestScreen
+import uitest.presentations.screen.TextSelectionTestScreen
 
 class PresentationsTest extends UiDataTestSpecification {
 
@@ -124,6 +125,40 @@ class PresentationsTest extends UiDataTestSpecification {
         then: "Components should be loaded from the descriptor"
         screen.componentsPresentations.components.size() == 1
         screen.componentsPresentations.components.contains(screen.groupTable)
+    }
+
+    def "textSelectionEnabled should be saved only when Presentations enabled for the table"() {
+        showTestMainScreen()
+
+        when: "Open screen with ScreenSettings and Presentations facets"
+        def screen = (TextSelectionTestScreen) screens.create(TextSelectionTestScreen)
+        screen.show()
+
+        then: "All tables should have textSelectionEnabled = true"
+        screen.tableAppliedTextSelection.textSelectionEnabled
+        screen.tableNotAppliedTextSelection.textSelectionEnabled
+
+        when: """
+              Programmatically disable textSelectionEnabled and close screen to save
+              their state in UiSetting.
+              """
+
+        screen.tableAppliedTextSelection.textSelectionEnabled = false
+        screen.tableNotAppliedTextSelection.textSelectionEnabled = false
+
+        screen.closeWithDefaultAction()
+
+        screen = (TextSelectionTestScreen) screens.create(TextSelectionTestScreen)
+        screen.show()
+
+        then: """
+              After reopening screen table without Presentations should have enabled
+              text selection.
+              Table with Presentations should have disabled text selection.
+              """
+
+        screen.tableNotAppliedTextSelection.textSelectionEnabled
+        !screen.tableAppliedTextSelection.textSelectionEnabled
     }
 
     protected ColumnSettings getColumnSettings(GroupTableSettings settings, String id) {

@@ -17,7 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.component.grid.JmixGridDataProvider;
+import io.jmix.flowui.data.grid.ContainerDataGridItems;
 
 public class DataGridLoader extends AbstractGridLoader<DataGrid<?>> {
 
@@ -30,7 +30,7 @@ public class DataGridLoader extends AbstractGridLoader<DataGrid<?>> {
     @Override
     protected void setupDataProvider(GridDataHolder holder) {
         if (holder.getContainer() != null) {
-            resultComponent.setItems(new JmixGridDataProvider(holder.getContainer()));
+            resultComponent.setItems(new ContainerDataGridItems(holder.getContainer()));
         }
     }
 }

@@ -37,6 +37,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.AttributeChangesProvider;
 import io.jmix.data.AuditInfoProvider;
+import io.jmix.data.impl.EntityEventManager;
 import io.jmix.data.impl.JpaLifecycleListener;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
@@ -87,6 +88,8 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
     protected DatatypeRegistry datatypeRegistry;
     @Autowired
     protected AttributeChangesProvider attributeChangesProvider;
+    @Autowired
+    protected EntityEventManager entityEventManager;
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -252,6 +255,8 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
 
     protected void saveItem(EntityLogItem item) {
         String storeName = metadata.getClass(item.getEntity()).getStore().getName();
+
+        entityEventManager.publishEntitySavingEvent(item, true);//workaround for jmix-framework/jmix#1069
         if (item.getDbGeneratedIdEntity() == null) {
             if (Stores.isMain(storeName)) {
                 entityManager.persist(item);
@@ -358,7 +363,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
     }
 
     protected String getEntityName(Object entity) {
-        MetaClass metaClass = metadata.getSession().getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         return extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
     }
 
@@ -688,7 +693,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
             return null;
         }
         Set<String> attributes = new HashSet<>();
-        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             Range range = metaProperty.getRange();
             if (range.isClass() && range.getCardinality().isMany()) {

@@ -15,7 +15,6 @@
  */
 package io.jmix.reportsui.screen.valueformat.edit;
 
-import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ParamsMap;
@@ -96,7 +95,7 @@ public class ValueFormatEditor extends StandardEditor<ReportValueFormat> {
     protected Dialogs dialogs;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -118,8 +117,8 @@ public class ValueFormatEditor extends StandardEditor<ReportValueFormat> {
     @Install(to = "groovyField", subject = "contextHelpIconClickHandler")
     protected void groovyCheckBoxContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "valuesFormats.groovyScript"))
-                .withMessage(messages.getMessage(getClass(), "valuesFormats.groovyScriptHelpText"))
+                .withCaption(messageBundle.getMessage("valuesFormats.groovyScript"))
+                .withMessage(messageBundle.getMessage("valuesFormats.groovyScriptHelpText"))
                 .withContentMode(ContentMode.HTML)
                 .withModal(false)
                 .withWidth("700px")

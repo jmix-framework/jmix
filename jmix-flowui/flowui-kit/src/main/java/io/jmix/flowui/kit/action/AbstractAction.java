@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.action;
 
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.event.EventBus;
@@ -33,7 +34,7 @@ public abstract class AbstractAction implements Action {
     protected String text;
     protected boolean enabled = true;
     protected boolean visible = true;
-    protected String icon;
+    protected Icon icon;
     protected String description;
     protected ActionVariant variant = ActionVariant.DEFAULT;
     protected KeyCombination shortcutCombination;
@@ -95,13 +96,13 @@ public abstract class AbstractAction implements Action {
 
     @Nullable
     @Override
-    public String getIcon() {
+    public Icon getIcon() {
         return icon;
     }
 
     @Override
-    public void setIcon(@Nullable String icon) {
-        String oldValue = this.icon;
+    public void setIcon(@Nullable Icon icon) {
+        Icon oldValue = this.icon;
         if (!Objects.equals(oldValue, icon)) {
             this.icon = icon;
             firePropertyChange(Action.PROP_ICON, oldValue, icon);
@@ -150,7 +151,7 @@ public abstract class AbstractAction implements Action {
         KeyCombination oldValue = this.shortcutCombination;
         if (!Objects.equals(oldValue, shortcutCombination)) {
             this.shortcutCombination = shortcutCombination;
-            firePropertyChange(Action.PROP_SHORTCUT, oldValue, shortcutCombination);
+            firePropertyChange(Action.PROP_SHORTCUT_COMBINATION, oldValue, shortcutCombination);
         }
     }
 

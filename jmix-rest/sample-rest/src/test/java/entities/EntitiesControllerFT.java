@@ -54,6 +54,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     private String compositeKeyEntityIdString;
     private String compositeKeyEntityTenantIdString;
     private String secretEntityIdString;
+    private Integer nonStandardIdEntityId;
 
     private String modelName = "Audi A3";
     private String model2Name = "BMW X5";
@@ -98,6 +99,33 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals("compositeEntity", ctx.read("$.name"));
+        }
+    }
+
+    @Test
+    public void loadEntityWithNonStandardIdName() throws Exception {
+        String url = baseUrl + "/entities/rest_NonStandardIdNameEntity/" + nonStandardIdEntityId;
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(nonStandardIdEntityId, ctx.read("$.code"));
+            assertEquals(nonStandardIdEntityId.toString(), ctx.read("$.id"));
+            assertEquals("entity-without-id-property", ctx.read("$._instanceName"));
+            assertEquals("entity-without-id-property", ctx.read("$.name"));
+        }
+    }
+
+    @Test
+    public void deleteEntityWithNonStandardIdName() throws Exception {
+        String url = baseUrl + "/entities/rest_NonStandardIdNameEntity/" + nonStandardIdEntityId;
+        try (CloseableHttpResponse response = sendDelete(url, oauthToken, null)) {
+            assertEquals(HttpStatus.SC_NO_CONTENT, statusCode(response));
+        }
+
+        try (PreparedStatement stmt = conn.prepareStatement("select * from REST_NSIN_ENTITY where CODE = ?")) {
+            stmt.setObject(1, nonStandardIdEntityId);
+            ResultSet rs = stmt.executeQuery();
+            assertFalse(rs.next());
         }
     }
 
@@ -1952,7 +1980,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     void deleteCar() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         try (CloseableHttpResponse response = sendDelete(url, oauthToken, null)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            assertEquals(HttpStatus.SC_NO_CONTENT, statusCode(response));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select DELETE_TS from REF_CAR where ID = ?")) {
@@ -2306,7 +2334,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         params.put("modelVersion", "1.0");
 
         try (CloseableHttpResponse response = sendDelete(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            assertEquals(HttpStatus.SC_NO_CONTENT, statusCode(response));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select DELETE_TS from REF_CAR where ID = ?")) {
@@ -2598,6 +2626,11 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
                 "nameValue",
                 "secret"
         );
+
+        nonStandardIdEntityId = dirtyData.createNonStandardIdNameEntityId();
+        executePrepared("insert into REST_NSIN_ENTITY (code, name) values (?, ?)",
+                nonStandardIdEntityId,
+                "entity-without-id-property");
 
         dynAttrMetadata.reload();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import io.jmix.core.Metadata;
 import io.jmix.core.SaveContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.MergeOptions;
 import org.springframework.context.ApplicationContext;
@@ -34,9 +33,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Dummy implementation of {@link DataContext} used for read-only screens like entity browsers.
+ * Dummy implementation of {@link DataContext} used for read-only views like entity list views.
  */
-@SameAsUi
 public class NoopDataContext implements DataContext {
 
     protected ApplicationContext applicationContext;
@@ -132,7 +130,7 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public EntitySet commit() {
+    public EntitySet save() {
         return EntitySet.of(Collections.emptySet());
     }
 
@@ -151,21 +149,21 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public Subscription addPreCommitListener(Consumer<PreCommitEvent> listener) {
+    public Subscription addPreSaveListener(Consumer<PreSaveEvent> listener) {
         return VoidSubscription.INSTANCE;
     }
 
     @Override
-    public Subscription addPostCommitListener(Consumer<PostCommitEvent> listener) {
+    public Subscription addPostSaveListener(Consumer<PostSaveEvent> listener) {
         return VoidSubscription.INSTANCE;
     }
 
     @Override
-    public Function<SaveContext, Set<Object>> getCommitDelegate() {
+    public Function<SaveContext, Set<Object>> getSaveDelegate() {
         return null;
     }
 
     @Override
-    public void setCommitDelegate(Function<SaveContext, Set<Object>> delegate) {
+    public void setSaveDelegate(Function<SaveContext, Set<Object>> delegate) {
     }
 }

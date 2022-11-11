@@ -46,14 +46,18 @@ public class PivotTableAggregationEdit extends StandardEditor<PivotTableAggregat
     protected Dialogs dialogs;
     @Autowired
     protected Messages messages;
+
+    @Autowired
+    protected MessageBundle messageBundle;
+
     @Autowired
     protected ScreenValidation screenValidation;
 
     @Install(to = "sourceCodeEditor", subject = "contextHelpIconClickHandler")
     protected void sourceCodeEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "pivotTable.functionHelpCaption"))
-                .withMessage(messages.getMessage(getClass(), "pivotTable.aggregationFunctionHelp"))
+                .withCaption(messageBundle.getMessage("pivotTable.functionHelpCaption"))
+                .withMessage(messageBundle.getMessage("pivotTable.aggregationFunctionHelp"))
                 .withModal(false)
                 .withWidth("560px")
                 .withContentMode(ContentMode.HTML)
@@ -78,7 +82,7 @@ public class PivotTableAggregationEdit extends StandardEditor<PivotTableAggregat
                             Objects.equals(aggregation.getCaption(), e.getCaption()));
             if (hasMatches) {
                 ValidationErrors validationErrors = new ValidationErrors();
-                validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.uniqueAggregationOptionCaption"));
+                validationErrors.add(messageBundle.getMessage("pivotTableEdit.uniqueAggregationOptionCaption"));
 
                 screenValidation.showValidationErrors(this, validationErrors);
                 event.preventCommit();

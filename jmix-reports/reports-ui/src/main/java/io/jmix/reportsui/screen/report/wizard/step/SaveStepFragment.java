@@ -142,12 +142,12 @@ public class SaveStepFragment extends StepFragment {
 
     @Override
     public String getCaption() {
-        return messages.getMessage(getClass(), "saveReport");
+        return messageBundle.getMessage("saveReport");
     }
 
     @Override
     public String getDescription() {
-        return messages.getMessage(getClass(), "finishPrepareReport");
+        return messageBundle.getMessage("finishPrepareReport");
     }
 
     protected String generateOutputFileName(String fileExtension) {
@@ -201,7 +201,7 @@ public class SaveStepFragment extends StepFragment {
         ReportData reportData = reportDataDc.getItem();
         MetaClass entityMetaClass = metadata.findClass(reportData.getEntityName());
         return entityMetaClass != null ?
-                messages.formatMessage(getClass(), "downloadTemplateFileNamePattern", reportData.getName(), fileExtension) :
+                messageBundle.formatMessage("downloadTemplateFileNamePattern", reportData.getName(), fileExtension) :
                 "";
     }
 
@@ -219,7 +219,7 @@ public class SaveStepFragment extends StepFragment {
                     DownloadFormat.getByExtension(templateFileType.toString().toLowerCase()));
         } catch (TemplateGenerationException e) {
             notifications.create(Notifications.NotificationType.WARNING)
-                    .withCaption(messages.getMessage(getClass(), "templateGenerationException"))
+                    .withCaption(messageBundle.getMessage("templateGenerationException"))
                     .show();
         }
     }

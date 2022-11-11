@@ -103,7 +103,7 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
             JsonObject jsonObject = new JsonObject();
             for (DataGrid.Column<Object> column : dataGrid.getColumns()) {
                 Object columnValue = getColumnValue(dataGrid, column, entity);
-                MetaPropertyPath metaPropertyPath = metadata.getClass(entity.getClass()).getPropertyPath(column.getId());
+                MetaPropertyPath metaPropertyPath = metadata.getClass(entity).getPropertyPath(column.getId());
                 if (columnValue != null) {
                     jsonObject.add(column.getId(),
                             new JsonPrimitive(formatValue(columnValue, metaPropertyPath)));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.MergeOptions;
 import org.apache.commons.lang3.StringUtils;
@@ -45,10 +44,8 @@ import java.util.stream.Collectors;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Standard implementation of {@link DataContext} which commits data to {@link DataManager}.
+ * Standard implementation of {@link DataContext} which saves data to {@link DataManager}.
  */
-@SameAsUi
-@SuppressWarnings("rawtypes")
 public class DataContextImpl implements DataContextInternal {
 
     private static final Logger log = LoggerFactory.getLogger(DataContextImpl.class);
@@ -88,7 +85,7 @@ public class DataContextImpl implements DataContextInternal {
 
     protected DataContextInternal parentContext;
 
-    protected Function<SaveContext, Set<Object>> commitDelegate;
+    protected Function<SaveContext, Set<Object>> saveDelegate;
 
     protected Map<Object, Map<String, EmbeddedPropertyChangeListener>> embeddedPropertyListeners = new WeakHashMap<>();
 
@@ -260,15 +257,17 @@ public class DataContextImpl implements DataContextInternal {
     protected void mergeState(Object srcEntity, Object dstEntity, Map<Object, Object> mergedMap,
                               boolean isRoot, MergeOptions options) {
         boolean srcNew = entityStates.isNew(srcEntity);
+        boolean dstNew = entityStates.isNew(dstEntity);
 
         mergeSystemState(srcEntity, dstEntity, isRoot, options);
 
-        MetaClass metaClass = metadata.getClass(srcEntity.getClass());
+        MetaClass metaClass = getEntityMetaClass(srcEntity);
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
-            if (!property.getRange().isClass()                                             // local
-                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {          // loaded src
+            if (!property.getRange().isClass()                                   // local
+                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))// loaded src
+                    && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {// loaded dst - have to check to avoid unfetched for local properties
 
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
@@ -284,7 +283,7 @@ public class DataContextImpl implements DataContextInternal {
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (property.getRange().isClass()                                               // refs and collections
-                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {           // loaded src
+                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {        // loaded src
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
                 // ignore null values in non-root source entities
@@ -293,7 +292,9 @@ public class DataContextImpl implements DataContextInternal {
                 }
 
                 if (value == null || !entityStates.isLoaded(dstEntity, propertyName)) {
-                    setPropertyValue(dstEntity, property, value);
+                    if (!metadataTools.isEmbedded(property)) {//dstEntity property value will be lazy loaded and replaced by srcEntity property value
+                        setPropertyValue(dstEntity, property, value);
+                    }
                     continue;
                 }
 
@@ -359,9 +360,9 @@ public class DataContextImpl implements DataContextInternal {
         EntityPreconditions.checkEntityType(srcEntity);
         EntityPreconditions.checkEntityType(dstEntity);
 
+        entitySystemStateSupport.copySystemState((Entity) srcEntity, (Entity) dstEntity);
         EntityValues.setId(dstEntity, EntityValues.getId(srcEntity));
         EntityValues.setGeneratedId(dstEntity, EntityValues.getGeneratedId(srcEntity));
-        entitySystemStateSupport.copySystemState((Entity) srcEntity, (Entity) dstEntity);
 
         if (EntityValues.isVersionSupported(dstEntity)) {
             EntityValues.setVersion(dstEntity, EntityValues.getVersion(srcEntity));
@@ -376,7 +377,7 @@ public class DataContextImpl implements DataContextInternal {
 
     protected void mergeLazyLoadingState(Object srcEntity, Object dstEntity) {
         boolean srcNew = entityStates.isNew(srcEntity);
-        MetaClass metaClass = metadata.getClass(srcEntity.getClass());
+        MetaClass metaClass = getEntityMetaClass(srcEntity);
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
@@ -636,81 +637,88 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     @Override
-    public EntitySet commit() {
-        PreCommitEvent preCommitEvent = new PreCommitEvent(this, modifiedInstances, removedInstances);
-        events.publish(PreCommitEvent.class, preCommitEvent);
-        if (preCommitEvent.isCommitPrevented())
+    public EntitySet save() {
+        PreSaveEvent preSaveEvent = new PreSaveEvent(this, modifiedInstances, removedInstances);
+        events.publish(PreSaveEvent.class, preSaveEvent);
+        if (preSaveEvent.isSavePrevented())
             return EntitySet.of(Collections.emptySet());
 
-        EntitySet committedAndMerged;
+        EntitySet savedAndMerged;
         try {
-            Set<Object> committed = performCommit();
-            committedAndMerged = mergeCommitted(committed);
+            Set<Object> saved = performSave();
+            savedAndMerged = mergeSaved(saved);
         } finally {
             nullIdEntitiesMap.clear();
         }
 
-        events.publish(PostCommitEvent.class, new PostCommitEvent(this, committedAndMerged));
+        events.publish(PostSaveEvent.class, new PostSaveEvent(this, savedAndMerged));
 
         modifiedInstances.clear();
         removedInstances.clear();
 
-        return committedAndMerged;
+        return savedAndMerged;
     }
 
     @Override
-    public Subscription addPreCommitListener(Consumer<PreCommitEvent> listener) {
-        return events.subscribe(PreCommitEvent.class, listener);
+    public Subscription addPreSaveListener(Consumer<PreSaveEvent> listener) {
+        return events.subscribe(PreSaveEvent.class, listener);
     }
 
     @Override
-    public Subscription addPostCommitListener(Consumer<PostCommitEvent> listener) {
-        return events.subscribe(PostCommitEvent.class, listener);
+    public Subscription addPostSaveListener(Consumer<PostSaveEvent> listener) {
+        return events.subscribe(PostSaveEvent.class, listener);
     }
 
     @Override
-    public Function<SaveContext, Set<Object>> getCommitDelegate() {
-        return commitDelegate;
+    public Function<SaveContext, Set<Object>> getSaveDelegate() {
+        return saveDelegate;
     }
 
     @Override
-    public void setCommitDelegate(Function<SaveContext, Set<Object>> delegate) {
-        this.commitDelegate = delegate;
+    public void setSaveDelegate(Function<SaveContext, Set<Object>> delegate) {
+        this.saveDelegate = delegate;
     }
 
-    protected Set<Object> performCommit() {
+    protected Set<Object> performSave() {
         if (!hasChanges())
             return Collections.emptySet();
 
         if (parentContext == null) {
-            return commitToDataManager();
+            return saveToDataManager();
         } else {
-            return commitToParentContext();
+            return saveToParentContext();
         }
     }
 
-    protected Set<Object> commitToDataManager() {
+    protected Set<Object> saveToDataManager() {
         SaveContext saveContext = new SaveContext()
-                .saving(isolate(filterCommittedInstances(modifiedInstances)))
-                .removing(isolate(filterCommittedInstances(removedInstances)));
+                .saving(isolate(filterSavedInstances(modifiedInstances)))
+                .removing(isolate(filterSavedInstances(removedInstances)));
 
         entityReferencesNormalizer.updateReferences(saveContext.getEntitiesToSave());
+        updateFetchPlans(saveContext);
 
         for (Object entity : saveContext.getEntitiesToSave()) {
             saveContext.getFetchPlans().put(entity, entityStates.getCurrentFetchPlan(entity));
         }
 
-        if (commitDelegate == null) {
+        if (saveDelegate == null) {
             return dataManager.save(saveContext);
         } else {
-            return commitDelegate.apply(saveContext);
+            return saveDelegate.apply(saveContext);
         }
     }
 
-    protected List filterCommittedInstances(Set<Object> instances) {
+    protected List filterSavedInstances(Set<Object> instances) {
         return instances.stream()
                 .filter(entity -> !metadataTools.isJpaEmbeddable(entity.getClass()))
                 .collect(Collectors.toList());
+    }
+
+    protected void updateFetchPlans(SaveContext saveContext) {
+        for (Object entity : saveContext.getEntitiesToSave()) {
+            saveContext.getFetchPlans().put(entity, entityStates.getCurrentFetchPlan(entity));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -727,18 +735,18 @@ public class DataContextImpl implements DataContextInternal {
         return isolatedEntities;
     }
 
-    protected Set<Object> commitToParentContext() {
-        Set<Object> committedEntities = new HashSet<>();
+    protected Set<Object> saveToParentContext() {
+        Set<Object> savedEntities = new HashSet<>();
         for (Object entity : modifiedInstances) {
             Object merged = parentContext.merge(entity);
             parentContext.getModifiedInstances().add(merged);
-            committedEntities.add(merged);
+            savedEntities.add(merged);
         }
         for (Object entity : removedInstances) {
             parentContext.remove(entity);
             cleanupContextAfterRemoveEntity(parentContext, entity);
         }
-        return committedEntities;
+        return savedEntities;
     }
 
     protected void cleanupContextAfterRemoveEntity(DataContextInternal context, Object removedEntity) {
@@ -749,8 +757,8 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     protected boolean entityHasReference(Object entity, Object refEntity) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
-        MetaClass refMetaClass = metadata.getClass(refEntity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
+        MetaClass refMetaClass = metadata.getClass(refEntity);
 
         return metaClass.getProperties().stream()
                 .anyMatch(metaProperty -> metaProperty.getRange().isClass()
@@ -758,10 +766,10 @@ public class DataContextImpl implements DataContextInternal {
                         && Objects.equals(EntityValues.getValue(entity, metaProperty.getName()), refEntity));
     }
 
-    protected EntitySet mergeCommitted(Set<Object> committed) {
+    protected EntitySet mergeSaved(Set<Object> saved) {
         // transform into sorted collection to have reproducible behavior
         List<Object> entitiesToMerge = new ArrayList<>();
-        for (Object entity : committed) {
+        for (Object entity : saved) {
             Object e = nullIdEntitiesMap.getOrDefault(entity, entity);
             if (contains(e)) {
                 entitiesToMerge.add(entity);
@@ -807,7 +815,7 @@ public class DataContextImpl implements DataContextInternal {
         }
         visited.add(entity);
 
-        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (!property.getRange().isClass() || !entityStates.isLoaded(entity, property.getName()))
                 continue;
             Object value = EntityValues.getValue(entity, property.getName());
@@ -838,13 +846,24 @@ public class DataContextImpl implements DataContextInternal {
         return modifiedInstances;
     }
 
+    protected MetaClass getEntityMetaClass(Object entity) {
+        return metadata.getClass(entity);
+    }
+
+    @Nullable
+    protected String getPrimaryKeyPropertyName(Object entity) {
+        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(entity.getClass());
+        if (primaryKeyProperty != null) {
+            return primaryKeyProperty.getName();
+        }
+        return null;
+    }
+
     protected class PropertyChangeListener implements EntityPropertyChangeListener {
         @Override
         public void propertyChanged(EntityPropertyChangeEvent e) {
             // if id has been changed, put the entity to the content with the new id
-            MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(e.getItem().getClass());
-            if (primaryKeyProperty != null
-                    && e.getProperty().equals(primaryKeyProperty.getName())) {
+            if (e.getProperty().equals(getPrimaryKeyPropertyName(e.getItem()))) {
                 Map<Object, Object> entityMap = content.get(e.getItem().getClass());
                 if (entityMap != null) {
                     if (e.getPrevValue() == null) {

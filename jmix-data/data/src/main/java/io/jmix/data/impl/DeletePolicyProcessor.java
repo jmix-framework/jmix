@@ -76,7 +76,7 @@ public class DeletePolicyProcessor {
 
     public void setEntity(Object entity) {
         this.entity = entity;
-        this.metaClass = metadata.getClass(entity.getClass());
+        this.metaClass = metadata.getClass(entity);
         primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
 
         String storeName = metaClass.getStore().getName();
@@ -258,7 +258,7 @@ public class DeletePolicyProcessor {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void beforeCompletion() {
-                MetaClass entityMetaClass = metadata.getClass(entity.getClass());
+                MetaClass entityMetaClass = metadata.getClass(entity);
                 while (!entityMetaClass.equals(property.getDomain())) {
                     MetaClass ancestor = entityMetaClass.getAncestor();
                     if (ancestor == null)
@@ -289,7 +289,7 @@ public class DeletePolicyProcessor {
             return EntityValues.getValue(entity, property.getName());
         else {
             Query query = entityManager.createQuery(
-                    "select e." + property.getName() + " from " + metadata.getClass(entity.getClass()).getName()
+                    "select e." + property.getName() + " from " + metadata.getClass(entity).getName()
                             + " e where e." + primaryKeyName + " = ?1");
             query.setParameter(1, EntityValues.getId(entity));
             List list = query.getResultList();

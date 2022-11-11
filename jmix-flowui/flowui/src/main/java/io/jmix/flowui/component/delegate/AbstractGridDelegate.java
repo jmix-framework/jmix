@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
@@ -21,11 +37,8 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.ListDataComponent;
-import io.jmix.flowui.data.ContainerDataUnit;
-import io.jmix.flowui.data.EmptyDataUnit;
-import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.data.binding.JmixBinding;
-import io.jmix.flowui.data.grid.GridDataItems;
+import io.jmix.flowui.data.*;
+import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.model.CollectionContainer;
@@ -38,7 +51,8 @@ import org.springframework.context.ApplicationContextAware;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent<E> & HasActions, E>
+public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent<E> & HasActions, E,
+        ITEMS extends DataGridItems<E>>
         extends AbstractComponentDelegate<C>
         implements ApplicationContextAware, InitializingBean {
 
@@ -48,9 +62,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected MessageTools messageTools;
     protected UiComponents uiComponents;
 
-    protected GridDataItems<E> dataBinding;
+    protected ITEMS dataGridItems;
 
-    protected Registration selectedItemChangeRegistration;
     protected Registration selectionListenerRegistration;
     protected Set<SelectionListener<Grid<E>, E>> selectionListeners = new HashSet<>();
 
@@ -77,56 +90,36 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected void initComponent() {
         component.addSortListener(this::onSort);
-    }
-
-    protected void onSort(SortEvent<Grid<E>, GridSortOrder<E>> event) {
-        if (!(dataBinding instanceof GridDataItems.Sortable)
-                || !(dataBinding instanceof EntityDataUnit)) {
-            return;
-        }
-
-        GridDataItems.Sortable<E> dataProvider = (GridDataItems.Sortable<E>) dataBinding;
-
-        List<GridSortOrder<E>> sortOrders = event.getSortOrder();
-        if (sortOrders.isEmpty()) {
-            dataProvider.resetSortOrder();
-        } else {
-            GridSortOrder<E> sortOrder = sortOrders.get(0);
-
-            Grid.Column<E> column = sortOrder.getSorted();
-            if (column != null
-                    && !Strings.isNullOrEmpty(column.getKey())) {
-                MetaClass metaClass = ((EntityDataUnit) dataBinding).getEntityMetaClass();
-                MetaPropertyPath mpp = metaClass.getPropertyPath(column.getKey());
-                if (mpp != null) {
-                    boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
-                    dataProvider.sort(new Object[]{mpp}, new boolean[]{ascending});
-                }
-            }
-        }
+        addSelectionListener(this::notifyDataProviderSelectionChanged);
     }
 
     @Nullable
-    public GridDataItems<E> getItems() {
-        return dataBinding;
+    public ITEMS getItems() {
+        return dataGridItems;
     }
 
-    public void setItems(@Nullable GridDataItems<E> gridDataItems) {
+    public void setItems(@Nullable ITEMS dataGridItems) {
         unbind();
 
-        if (gridDataItems != null && isSupportedDataItems(gridDataItems)) {
-            dataBinding = gridDataItems;
+        if (dataGridItems != null) {
+            this.dataGridItems = dataGridItems;
 
-            if (dataBinding instanceof JmixBinding) {
-                ((JmixBinding) dataBinding).bind();
-            }
-
-            selectedItemChangeRegistration = dataBinding
-                    .addSelectedItemChangeListener(this::onDataProviderSelectedItemChange);
+            bind(dataGridItems);
 
             if (component.getColumns().isEmpty()) {
-                setupAutowiredColumns(gridDataItems);
+                setupAutowiredColumns(dataGridItems);
             }
+        }
+    }
+
+    protected void bind(DataGridItems<E> dataGridItems) {
+        // do nothing
+    }
+
+    protected void unbind() {
+        if (dataGridItems != null) {
+            dataGridItems = null;
+            setupEmptyDataProvider();
         }
     }
 
@@ -196,36 +189,12 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         return addColumnInternal(key, metaPropertyPath);
     }
 
-    protected void unbind() {
-        if (dataBinding != null) {
-            if (dataBinding instanceof JmixBinding) {
-                ((JmixBinding) dataBinding).unbind();
-            }
-
-            dataBinding = null;
-            setupEmptyDataProvider();
-        }
-
-        if (selectedItemChangeRegistration != null) {
-            selectedItemChangeRegistration.remove();
-            selectedItemChangeRegistration = null;
-        }
-    }
-
     protected void setupEmptyDataProvider() {
         component.setItems(new ListDataProvider<>(Collections.emptyList()));
     }
 
-    protected boolean isSupportedDataItems(GridDataItems<E> gridDataItems) {
-        return true;
-    }
-
-    protected void onDataProviderSelectedItemChange(GridDataItems.SelectedItemChangeEvent<E> event) {
-        // todo rp should we react on container select item change?
-    }
-
-    protected void setupAutowiredColumns(GridDataItems<E> gridDataItems) {
-        Collection<MetaPropertyPath> paths = getAutowiredProperties(gridDataItems);
+    protected void setupAutowiredColumns(ITEMS dataGridItems) {
+        Collection<MetaPropertyPath> paths = getAutowiredProperties(dataGridItems);
 
         for (MetaPropertyPath metaPropertyPath : paths) {
             MetaProperty property = metaPropertyPath.getMetaProperty();
@@ -237,9 +206,9 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     @SuppressWarnings("unchecked")
-    protected Collection<MetaPropertyPath> getAutowiredProperties(GridDataItems<E> gridDataItems) {
-        if (gridDataItems instanceof ContainerDataUnit) {
-            CollectionContainer<E> container = ((ContainerDataUnit<E>) gridDataItems).getContainer();
+    protected Collection<MetaPropertyPath> getAutowiredProperties(ITEMS dataGridItems) {
+        if (dataGridItems instanceof ContainerDataUnit) {
+            CollectionContainer<E> container = ((ContainerDataUnit<E>) dataGridItems).getContainer();
 
             return container.getFetchPlan() != null ?
                     // if a fetchPlan is specified - use fetchPlan properties
@@ -248,8 +217,9 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                     metadataTools.getPropertyPaths(container.getEntityMetaClass());
         }
 
-        if (gridDataItems instanceof EmptyDataUnit && gridDataItems instanceof EntityDataUnit) {
-            return metadataTools.getPropertyPaths(((EntityDataUnit) gridDataItems).getEntityMetaClass());
+        if (dataGridItems instanceof EmptyDataUnit
+                && dataGridItems instanceof EntityDataUnit) {
+            return metadataTools.getPropertyPaths(((EntityDataUnit) dataGridItems).getEntityMetaClass());
         }
 
         return Collections.emptyList();
@@ -316,5 +286,54 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected GridSelectionModel<E> getSelectionModel() {
         return component.getSelectionModel();
+    }
+
+    protected void onSort(SortEvent<Grid<E>, GridSortOrder<E>> event) {
+        if (!(dataGridItems instanceof DataGridItems.Sortable)
+                || !(dataGridItems instanceof EntityDataUnit)) {
+            return;
+        }
+
+        //noinspection unchecked
+        DataGridItems.Sortable<E> dataProvider = (DataGridItems.Sortable<E>) dataGridItems;
+
+        List<GridSortOrder<E>> sortOrders = event.getSortOrder();
+        if (sortOrders.isEmpty()) {
+            dataProvider.resetSortOrder();
+        } else {
+            GridSortOrder<E> sortOrder = sortOrders.get(0);
+
+            Grid.Column<E> column = sortOrder.getSorted();
+            if (column != null
+                    && !Strings.isNullOrEmpty(column.getKey())) {
+                MetaClass metaClass = ((EntityDataUnit) dataGridItems).getEntityMetaClass();
+                MetaPropertyPath mpp = metaClass.getPropertyPath(column.getKey());
+                if (mpp != null) {
+                    boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
+                    dataProvider.sort(new Object[]{mpp}, new boolean[]{ascending});
+                }
+            }
+        }
+    }
+
+    protected void notifyDataProviderSelectionChanged(SelectionEvent<Grid<E>, E> ignore) {
+        ITEMS items = getItems();
+
+        if (items == null
+                || items.getState() == BindingState.INACTIVE) {
+            return;
+        }
+
+        Set<E> selected = getSelectedItems();
+        if (selected.isEmpty()) {
+            items.setSelectedItem(null);
+        } else {
+            E newItem = selected.iterator().next();
+            // In some cases, the container may not contain
+            // an item that we want to set as the selected
+            if (items.containsItem(newItem)) {
+                items.setSelectedItem(newItem);
+            }
+        }
     }
 }

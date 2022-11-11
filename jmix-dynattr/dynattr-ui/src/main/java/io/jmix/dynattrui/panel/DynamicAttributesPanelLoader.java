@@ -44,6 +44,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
         loadRowsCount(resultComponent, element);
         loadFieldWidth(resultComponent, element);
         loadFieldCaptionWidth(resultComponent, element);
+        loadMargin(resultComponent, element);
     }
 
     protected void loadDataContainer(DynamicAttributesPanel resultComponent, Element element) {

@@ -43,8 +43,8 @@ public class TextAreaLoader extends AbstractComponentLoader<JmixTextArea> {
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
-        componentLoader().loadClassName(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadAutocomplete(resultComponent, element);
         componentLoader().loadAutocapitalize(resultComponent, element);

@@ -27,7 +27,7 @@ import java.util.*;
 
 @SuppressWarnings("deprecation")
 public class NullTreeTableContainer extends ContainerHierarchicalWrapper
-        implements TreeTableContainer, AggregationContainer, Container.Ordered {
+        implements TreeTableContainer, AggregationContainer, Container.Ordered, NullContainer {
 
     public static final String ERROR_MESSAGE = "Wrapped container is not TreeTableContainer";
 

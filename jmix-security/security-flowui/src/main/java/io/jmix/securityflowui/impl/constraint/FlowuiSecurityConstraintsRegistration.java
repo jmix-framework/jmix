@@ -19,7 +19,7 @@ package io.jmix.securityflowui.impl.constraint;
 import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.securityflowui.constraint.FlowuiEntityConstraint;
 import io.jmix.securityflowui.constraint.FlowuiMenuConstraint;
-import io.jmix.securityflowui.constraint.FlowuiShowScreenConstraint;
+import io.jmix.securityflowui.constraint.FlowuiShowViewConstraint;
 import org.springframework.beans.factory.BeanFactory;
 
 import javax.annotation.PostConstruct;
@@ -37,7 +37,7 @@ public class FlowuiSecurityConstraintsRegistration {
 
     @PostConstruct
     public void registerConstraints() {
-        accessConstraintsRegistry.register(beanFactory.getBean(FlowuiShowScreenConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(FlowuiShowViewConstraint.class));
 
         accessConstraintsRegistry.register(beanFactory.getBean(FlowuiMenuConstraint.class));
 

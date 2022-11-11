@@ -51,7 +51,7 @@ public class GridMenuItemActionSupport {
         this.action = action;
 
         if (action != null) {
-            menuItem.setText(generateTitle(action));
+            menuItem.setText(action.getText());
             menuItem.setEnabled(action.isEnabled());
             menuItem.setVisible(action.isVisible());
 
@@ -59,6 +59,15 @@ public class GridMenuItemActionSupport {
                     action.actionPerform(event.getSource()));
             actionPropertyChangeRegistration = addPropertyChangeListener();
         }
+
+        updateVisible();
+    }
+
+    protected void updateVisible() {
+        menuItem.setVisible(
+                !Strings.isNullOrEmpty(menuItem.getText())
+                        && action != null && action.isVisible()
+        );
     }
 
     protected void removeRegistrations() {
@@ -80,35 +89,17 @@ public class GridMenuItemActionSupport {
             String propertyName = event.getPropertyName();
             switch (propertyName) {
                 case Action.PROP_TEXT:
-                case Action.PROP_SHORTCUT:
-                    menuItem.setText(generateTitle(action));
+                    menuItem.setText(action.getText());
+                    updateVisible();
                     break;
                 case Action.PROP_ENABLED:
                     menuItem.setEnabled(action.isEnabled());
                     break;
                 case Action.PROP_VISIBLE:
-                    menuItem.setVisible(action.isVisible());
+                    updateVisible();
                     break;
                 default:
             }
         });
-    }
-
-    @Nullable
-    protected String generateTitle(Action action) {
-        String text = action.getText();
-        String shortcutCombination = action.getShortcutCombination() != null
-                ? action.getShortcutCombination().format()
-                : null;
-
-        if (!Strings.isNullOrEmpty(text)) {
-            return Strings.isNullOrEmpty(shortcutCombination)
-                    ? text
-                    : String.format("%s (%s)", text, shortcutCombination);
-        } else if (!Strings.isNullOrEmpty(shortcutCombination)) {
-            return shortcutCombination;
-        } else {
-            return null;
-        }
     }
 }

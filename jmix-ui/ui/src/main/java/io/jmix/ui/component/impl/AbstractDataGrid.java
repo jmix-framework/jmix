@@ -1930,13 +1930,12 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     protected List<Column<E>> getInitialVisibleColumns() {
-        MetaClass metaClass = getEntityDataGridItems().getEntityMetaClass();
         return columnsOrder.stream()
                 .filter(column -> {
                     MetaPropertyPath propertyPath = column.getPropertyPath();
                     if (propertyPath != null) {
                         UiEntityAttributeContext attributeContext =
-                                new UiEntityAttributeContext(metaClass, propertyPath.toString());
+                                new UiEntityAttributeContext(propertyPath);
                         accessManager.applyRegisteredConstraints(attributeContext);
                         return attributeContext.canView();
                     }
@@ -2940,7 +2939,9 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     protected void updateAggregationRow() {
-        boolean isAggregatable = isAggregatable() && getItems() != null;
+        boolean isAggregatable = isAggregatable()
+                && getItems() != null
+                && !component.getAggregationPropertyIds().isEmpty();
         if (isAggregatable) {
             Map<String, String> results = __aggregate();
             fillAggregationRow(results);

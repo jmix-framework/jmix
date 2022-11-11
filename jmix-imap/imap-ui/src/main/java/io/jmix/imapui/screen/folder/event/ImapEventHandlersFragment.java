@@ -16,7 +16,6 @@
 
 package io.jmix.imapui.screen.folder.event;
 
-import io.jmix.core.Messages;
 import io.jmix.imap.AvailableBeansProvider;
 import io.jmix.imap.entity.ImapEventHandler;
 import io.jmix.imap.entity.ImapEventType;
@@ -82,7 +81,7 @@ public class ImapEventHandlersFragment extends ScreenFragment {
     protected Notifications notifications;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     protected Map<ImapEventHandler, ComboBox> handlerMethodComboBoxFields = Collections.emptyMap();
 
@@ -146,7 +145,7 @@ public class ImapEventHandlersFragment extends ScreenFragment {
                         .count() == methods.size()) {
 
                     notifications.create(Notifications.NotificationType.HUMANIZED)
-                            .withCaption(messages.getMessage(getClass(), "beanNameConflictWarning"))
+                            .withCaption(messageBundle.getMessage("beanNameConflictWarning"))
                             .show();
                     item.setBeanName(event.getPrevValue() != null ? event.getPrevValue().toString() : null);
                 } else {
@@ -165,7 +164,7 @@ public class ImapEventHandlersFragment extends ScreenFragment {
                     .filter(eventHandler -> eventHandler != item && methodName.equals(eventHandler.getMethodName()) && item.getBeanName().equals(eventHandler.getBeanName()))
                     .findFirst().ifPresent(eventHandler -> {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withCaption(messages.getMessage(getClass(), "methodNameConflictWarning"))
+                        .withCaption(messageBundle.getMessage("methodNameConflictWarning"))
                         .show();
                 item.setMethodName(event.getPrevValue() != null ? event.getPrevValue().toString() : null);
             });
@@ -206,7 +205,7 @@ public class ImapEventHandlersFragment extends ScreenFragment {
                     .map(handler -> String.format("%s#%s", handler.getBeanName(), handler.getMethodName()))
                     .collect(Collectors.toList());
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.formatMessage(getClass(), "missedHandlersWarning", beanMethods))
+                    .withCaption(messageBundle.formatMessage("missedHandlersWarning", beanMethods))
                     .show();
             handlersDc.getMutableItems().removeAll(missedHandlers);
         }

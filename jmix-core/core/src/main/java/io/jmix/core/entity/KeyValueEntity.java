@@ -16,6 +16,7 @@
 
 package io.jmix.core.entity;
 
+import io.jmix.core.CopyingSystemState;
 import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.UuidProvider;
@@ -47,7 +48,7 @@ import java.util.UUID;
 @SystemLevel
 @DisableEnhancing
 public class KeyValueEntity
-        implements HasInstanceMetaClass, Entity {
+        implements HasInstanceMetaClass, Entity, CopyingSystemState<KeyValueEntity> {
 
     protected UUID uuid;
 
@@ -76,12 +77,12 @@ public class KeyValueEntity
 
         @Override
         public Object getGeneratedIdOrNull() {
-            return getEntityId();
+            return ((KeyValueEntity) source).uuid;
         }
 
         @Override
         public void setGeneratedId(Object id) {
-            //do not needed because {@code generatedId} is the same as {@code entityId} for {@code KeyValueEntity}
+            ((KeyValueEntity) source).uuid = (UUID) id;
         }
 
         @Override
@@ -110,6 +111,11 @@ public class KeyValueEntity
      */
     public void setInstanceMetaClass(MetaClass metaClass) {
         this.metaClass = metaClass;
+    }
+
+    @Override
+    public boolean hasInstanceMetaClass() {
+        return metaClass != null;
     }
 
     /**
@@ -199,5 +205,12 @@ public class KeyValueEntity
         KeyValueEntityEntry newEntityEntry = new KeyValueEntityEntry(this);
         newEntityEntry.copy(entityEntry);
         entityEntry = newEntityEntry;
+    }
+
+    @Override
+    public void copyFrom(KeyValueEntity source) {
+        uuid = source.uuid;
+        idName = source.idName;
+        metaClass = source.metaClass;
     }
 }

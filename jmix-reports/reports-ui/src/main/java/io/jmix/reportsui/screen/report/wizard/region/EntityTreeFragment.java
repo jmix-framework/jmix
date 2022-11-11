@@ -16,7 +16,10 @@
 
 package io.jmix.reportsui.screen.report.wizard.region;
 
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.LoadContext;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
@@ -75,7 +78,7 @@ public class EntityTreeFragment extends ScreenFragment {
     protected CollectionLoader<EntityTreeNode> reportEntityTreeNodeDl;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected Notifications notifications;
@@ -154,7 +157,7 @@ public class EntityTreeFragment extends ScreenFragment {
         reportEntityTreeNodeDl.load();
         if (reportEntityTreeNodeDc.getItems().isEmpty()) {
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage(getClass(), "valueNotFound"))
+                    .withCaption(messageBundle.getMessage("valueNotFound"))
                     .show();
         } else {
             if (StringUtils.isEmpty(reportPropertyName.getValue())) {

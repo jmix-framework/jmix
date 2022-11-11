@@ -21,6 +21,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.LockModeType;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -164,6 +165,15 @@ public class FluentValueLoader<T> extends AbstractFluentValueLoader {
     @Override
     public FluentValueLoader<T> maxResults(int maxResults) {
         super.maxResults(maxResults);
+        return this;
+    }
+
+    /**
+     * Sets a lock mode to be used when executing query.
+     */
+    @Override
+    public FluentValueLoader<T> lockMode(LockModeType lockMode) {
+        super.lockMode(lockMode);
         return this;
     }
 }

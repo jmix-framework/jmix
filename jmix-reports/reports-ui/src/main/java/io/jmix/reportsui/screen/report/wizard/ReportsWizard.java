@@ -51,6 +51,8 @@ import java.util.*;
 public class ReportsWizard {
 
     public static final String ROOT_BAND_DEFINITION_NAME = "Root";
+    protected static final String DEFAULT_SINGLE_ENTITY_NAME = "Entity";
+    protected static final String DEFAULT_LIST_OF_ENTITIES_NAME = "Entities";
     protected static final String DEFAULT_SINGLE_ENTITY_ALIAS = "entity";//cause Thesis used it for running reports from screens without selection input params
     protected static final String DEFAULT_LIST_OF_ENTITIES_ALIAS = "entities";//cause Thesis will use it for running reports from screens without selection input params
 
@@ -230,14 +232,15 @@ public class ReportsWizard {
     protected ReportInputParameter createMainInputParameter(Report report, ReportData reportData) {
         ReportInputParameter reportInputParameter = createParameter(report, 1);
 
-        reportInputParameter.setName(reportData.getEntityTreeRootNode().getLocalizedName());
         String metaClassName = reportData.getEntityTreeRootNode().getMetaClassName();
 
         reportInputParameter.setEntityMetaClass(metaClassName);
         if (ReportTypeGenerate.LIST_OF_ENTITIES == reportData.getReportTypeGenerate()) {
+            reportInputParameter.setName(DEFAULT_LIST_OF_ENTITIES_NAME);
             reportInputParameter.setType(ParameterType.ENTITY_LIST);
             reportInputParameter.setAlias(DEFAULT_LIST_OF_ENTITIES_ALIAS);
         } else {
+            reportInputParameter.setName(DEFAULT_SINGLE_ENTITY_NAME);
             reportInputParameter.setType(ParameterType.ENTITY);
             reportInputParameter.setAlias(DEFAULT_SINGLE_ENTITY_ALIAS);
         }

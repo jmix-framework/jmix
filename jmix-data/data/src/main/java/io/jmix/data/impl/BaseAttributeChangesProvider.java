@@ -65,7 +65,7 @@ public abstract class BaseAttributeChangesProvider implements AttributeChangesPr
         }
 
         if (entityStates.isNew(entity)) {
-            for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
+            for (MetaProperty property : metadata.getClass(entity).getProperties()) {
                 if (metadataTools.isJpa(property)) {
                     builder.withChange(property.getName(), EntityValues.getValue(entity, property.getName()));
                 }
@@ -93,7 +93,7 @@ public abstract class BaseAttributeChangesProvider implements AttributeChangesPr
         }
 
         if (entityStates.isNew(entity)) {
-            return metadata.getClass(entity.getClass()).getProperties().stream()
+            return metadata.getClass(entity).getProperties().stream()
                     .filter(property -> metadataTools.isJpa(property))
                     .map(MetadataObject::getName)
                     .collect(Collectors.toSet());

@@ -1,7 +1,8 @@
 {
   "version": 1,
   "name": "Composite Project",
-  "order": 6,
+  "order": 170,
+  "addon": false,
   "description": "<html>The composite project allows you to develop multiple add-ons and applications in one IDE workspace. It enables transparent refactorings and eliminates the need to publish add-ons before using them in an application.<br>The nested projects can be stored in the same or different source code repositories.<p>The created structure contains only the aggregating <code>all</code> project with a set of build scripts. Refer to its README for more information.</html>",
   "params": [
     {

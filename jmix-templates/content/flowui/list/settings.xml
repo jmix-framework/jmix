@@ -17,14 +17,14 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_browse.svg"
-          name="Entity list view (FlowUI)"
+          name="Entity list view"
           order="10">
     <tags>
         <tag>ENTITY</tag>
         <tag>JPA</tag>
     </tags>
     <description>
-        <![CDATA[<html>Entity list view with a table consuming all available space.</html>]]>
+        <![CDATA[<html>Entity list view. Displays a list of entities in the DataGrid component.</html>]]>
     </description>
     <locMessages key="viewTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.title">
         <message lang="default">
@@ -55,15 +55,12 @@
               propertyType="HIERARCHICAL_PROPERTY"
               relatedProperty="tableType"
               required="false"/>
-    <property caption="Parent menu item"
-              code="menuItem"
-              propertyType="FLOW_MENU_ITEM"/>
     <property caption="Table actions"
               code="tableActions"
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
               preferences="true"
-              optionsString="create,edit,remove"/>
+              optionsString="${actionSearch.getWizardTableActions()}"/>
     <property caption="Multiselect"
               code="multiselect"
               propertyType="BOOLEAN"
@@ -76,7 +73,7 @@
               dynamic="true"
               sourceName="descriptor"
               required="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-list-view">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-list-view">
         <dependency code="entity"/>
     </property>
 
@@ -97,12 +94,12 @@
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${entity.name!=null?entity.name:entity.className}.browse">
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.list">
         <dependency code="entity"/>
     </property>
 
     <property caption="View route"
-              code="route"
+              code="listRoute"
               propertyType="STRING"
               advanced="true"
               dynamic="true"
@@ -111,7 +108,11 @@
         <dependency code="entity"/>
     </property>
 
+    <property caption="Parent menu item"
+              code="menuItem"
+              propertyType="FLOW_MENU_ITEM"/>
 
+    <!--sources-->
     <source fileExt="xml"
             name="descriptor"/>
     <source fileExt="java"

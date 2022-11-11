@@ -75,5 +75,34 @@ class EntityEnhancingTest extends DataSpec {
         !entity.isPositiveInvoked
     }
 
+    def "property and isProperty conflict does not occurs"() {
+        def entity = new GetterConflictEntity()
+
+        when:
+        EntityValues.getValue(entity, "commission");
+        EntityValues.setValue(entity, "commission", "someTestValue")
+
+        then:
+        entity.getCommissionInvoked
+        entity.setCommissionInvoked
+
+        !entity.getIsCommissionInvoked
+        !entity.setIsCommissionInvoked
+
+        when:
+        entity = new GetterConflictEntity()
+        EntityValues.getValue(entity, "isCommission");
+        EntityValues.setValue(entity, "isCommission", "anotherTestValue")
+
+        then:
+        entity.getIsCommissionInvoked
+        entity.setIsCommissionInvoked
+
+        !entity.getCommissionInvoked
+        !entity.setCommissionInvoked
+
+
+    }
+
 
 }

@@ -24,6 +24,7 @@ dependencies {
     api project(':reports')
 
     compileOnly project(':security-oauth2')
+    compileOnly project(':oidc')
 
     api ('com.haulmont.yarg:yarg-api') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'

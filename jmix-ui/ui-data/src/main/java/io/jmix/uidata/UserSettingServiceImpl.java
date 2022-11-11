@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.event.UserRemovedEvent;
+import io.jmix.data.impl.EntityEventManager;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.uidata.entity.UiSetting;
 import io.jmix.uidata.entity.UiTablePresentation;
@@ -63,6 +64,8 @@ public class UserSettingServiceImpl implements UserSettingService {
 
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected EntityEventManager entityEventManager;
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -98,7 +101,7 @@ public class UserSettingServiceImpl implements UserSettingService {
                 us.setUsername(authentication.getUser().getUsername());
                 us.setName(name);
                 us.setValue(value);
-
+                entityEventManager.publishEntitySavingEvent(us, true);//workaround for jmix-framework/jmix#1069
                 entityManager.persist(us);
             } else {
                 us.setValue(value);
@@ -170,6 +173,7 @@ public class UserSettingServiceImpl implements UserSettingService {
                 } catch (Exception e) {
                     newSetting.setValue(currSetting.getValue());
                 }
+                entityEventManager.publishEntitySavingEvent(newSetting, true);//workaround for jmix-framework/jmix#1069
                 entityManager.persist(newSetting);
             }
         });
@@ -231,6 +235,7 @@ public class UserSettingServiceImpl implements UserSettingService {
                 newPresentation.setName(presentation.getName());
                 newPresentation.setSettings(presentation.getSettings());
                 presentationMap.put(presentation.getId(), newPresentation);
+                entityEventManager.publishEntitySavingEvent(newPresentation, true);//workaround for jmix-framework/jmix#1069
                 entityManager.persist(newPresentation);
             }
             return presentationMap;

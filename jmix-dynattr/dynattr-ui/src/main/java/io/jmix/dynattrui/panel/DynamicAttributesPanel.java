@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
         canvasIcon = "io/jmix/dynattrui/icon/component/dynamicAttributesPanel_canvas.svg",
         canvasIconSize = CanvasIconSize.LARGE)
 @CompositeDescriptor("dynamic-attributes-panel.xml")
-public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> implements Validatable {
+public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> implements Validatable, HasMargin {
 
     public static final String NAME = "dynamicAttributesPanel";
 
@@ -93,6 +93,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
 
         categoryFieldBox = getInnerComponent("categoryFieldBox");
         categoryField.setWidth(fieldWidth);
+        getComposition().setMargin(false);
     }
 
     protected void initPropertiesForm() {
@@ -326,6 +327,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
         this.fieldWidth = fieldWidth;
     }
 
+
     /**
      * Sets the width of the fields caption. {@code fieldCaptionWidth} with '%' unit is unsupported.
      *
@@ -361,5 +363,15 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     @Override
     public void validate() throws ValidationException {
         ComponentsHelper.traverseValidatable(propertiesForm, Validatable::validate);
+    }
+
+    @Override
+    public void setMargin(MarginInfo marginInfo) {
+        getComposition().setMargin(marginInfo);
+    }
+
+    @Override
+    public MarginInfo getMargin() {
+        return getComposition().getMargin();
     }
 }

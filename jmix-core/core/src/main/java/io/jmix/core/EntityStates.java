@@ -332,20 +332,18 @@ public class EntityStates {
             if (!isLoaded(entity, property.getName()))
                 continue;
             if (property.getRange().isClass()) {
-                FetchPlanBuilder propertyBuilder = fetchPlans.builder(property.getRange().asClass().getJavaClass());
-                // The input object graph can be large, so we use FetchMode.UNDEFINED to avoid huge SQLs with
-                // unpredictably high number of joins
-                builder.add(property.getName(), propertyBuilder, FetchMode.UNDEFINED);
-                if (isLoaded(entity, property.getName())) {
-                    Object value = EntityValues.getValue(entity, property.getName());
-                    if (value != null) {
-                        if (value instanceof Collection) {
-                            for (Object item : ((Collection) value)) {
-                                recursivelyConstructCurrentFetchPlan((Entity) item, propertyBuilder, visited);
-                            }
-                        } else {
-                            recursivelyConstructCurrentFetchPlan((Entity) value, propertyBuilder, visited);
+                Object value = EntityValues.getValue(entity, property.getName());
+                if (value != null) {
+                    FetchPlanBuilder propertyBuilder = fetchPlans.builder(property.getRange().asClass().getJavaClass());
+                    // The input object graph can be large, so we use FetchMode.UNDEFINED to avoid huge SQLs with
+                    // unpredictably high number of joins
+                    builder.add(property.getName(), propertyBuilder, FetchMode.UNDEFINED);
+                    if (value instanceof Collection) {
+                        for (Object item : ((Collection<?>) value)) {
+                            recursivelyConstructCurrentFetchPlan((Entity) item, propertyBuilder, visited);
                         }
+                    } else {
+                        recursivelyConstructCurrentFetchPlan((Entity) value, propertyBuilder, visited);
                     }
                 }
             } else {

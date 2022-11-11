@@ -28,7 +28,7 @@ import java.io.Serializable;
 public class JmixRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable>
         extends RepositoryFactoryBeanSupport<T, S, ID> implements ApplicationContextAware {
 
-    private ApplicationContext ctx;
+    protected ApplicationContext ctx;
 
     public JmixRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
         super(repositoryInterface);

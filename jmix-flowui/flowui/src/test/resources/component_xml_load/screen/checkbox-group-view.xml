@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data readOnly="true">
         <collection id="ordersDc"
                     class="test_support.entity.sales.Order">
@@ -32,22 +32,22 @@
     </facets>
     <layout>
         <checkboxGroup id="checkboxGroup"
-                          className="className, className1"
-                          colspan="1"
-                          errorMessage="errorMessage"
-                          height="100%"
-                          helperText="helperText"
-                          label="label"
-                          maxHeight="200px"
-                          maxWidth="200px"
-                          minHeight="100px"
-                          minWidth="100px"
-                          optionsContainer="ordersDc"
-                          readOnly="true"
-                          required="true"
-                          requiredIndicatorVisible="true"
-                          requiredMessage="requiredMessage"
-                          themeName="LUMO_HELPER_ABOVE_FIELD, LUMO_VERTICAL"
-                          width="100%"/>
+                       classNames="className, className1"
+                       colspan="1"
+                       errorMessage="errorMessage"
+                       height="100%"
+                       helperText="helperText"
+                       label="label"
+                       maxHeight="200px"
+                       maxWidth="200px"
+                       minHeight="100px"
+                       minWidth="100px"
+                       itemsContainer="ordersDc"
+                       readOnly="true"
+                       required="true"
+                       requiredIndicatorVisible="true"
+                       requiredMessage="requiredMessage"
+                       themeNames="helper-above-field, vertical"
+                       width="100%"/>
     </layout>
-</screen>
+</view>

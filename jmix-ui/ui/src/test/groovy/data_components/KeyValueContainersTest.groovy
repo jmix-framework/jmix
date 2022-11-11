@@ -189,4 +189,30 @@ class KeyValueContainersTest extends ScreenSpecification {
         entity2.getMetaClass().getProperty('amount') != null
         entity2.getIdName() == 'custName'
     }
+
+    def "new entity has correct MetaClass when created by KeyValueContainer"() {
+        KeyValueContainer container = factory.createKeyValueContainer()
+        container.addProperty('custName').addProperty('amount').setIdName('custName')
+
+        when:
+        def entity = container.createEntity()
+
+        then:
+        entity.getInstanceMetaClass().findProperty('custName') != null
+        entity.getInstanceMetaClass().findProperty('amount') != null
+        entity.getIdName() == 'custName'
+    }
+
+    def "new entity has correct MetaClass when created by KeyValueCollectionContainer"() {
+        KeyValueCollectionContainer container = factory.createKeyValueCollectionContainer()
+        container.addProperty('custName').addProperty('amount').setIdName('custName')
+
+        when:
+        def entity = container.createEntity()
+
+        then:
+        entity.getInstanceMetaClass().findProperty('custName') != null
+        entity.getInstanceMetaClass().findProperty('amount') != null
+        entity.getIdName() == 'custName'
+    }
 }

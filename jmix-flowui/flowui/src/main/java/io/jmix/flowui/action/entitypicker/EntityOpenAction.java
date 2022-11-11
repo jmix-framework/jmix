@@ -1,25 +1,39 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.action.entitypicker;
 
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.DialogWindowBuilders;
-import io.jmix.flowui.FlowUiComponentProperties;
+import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.action.ScreenOpeningAction;
+import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
-import io.jmix.flowui.kit.component.FlowUiComponentUtils;
+import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.flowui.screen.*;
-import io.jmix.flowui.screen.builder.EditorWindowBuilder;
-import io.jmix.flowui.sys.ActionScreenInitializer;
+import io.jmix.flowui.sys.ActionViewInitializer;
+import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -30,17 +44,17 @@ import static com.google.common.base.Preconditions.checkState;
 
 @ActionType(EntityOpenAction.ID)
 public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, EntityPickerComponent<E>, E>
-        implements ScreenOpeningAction {
+        implements ViewOpeningAction {
 
     public static final String ID = "entity_open";
 
     protected Messages messages;
     protected Notifications notifications;
-    protected DialogWindowBuilders dialogBuilders;
+    protected DialogWindows dialogWindows;
 
-    protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
+    protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
 
-    protected Consumer<E> afterCommitHandler;
+    protected Consumer<E> afterSaveHandler;
     protected Function<E, E> transformation;
 
     public EntityOpenAction() {
@@ -55,12 +69,12 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowUiComponentUtils.iconToSting(VaadinIcon.SEARCH);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.SEARCH);
     }
 
     @Autowired
-    public void setDialogBuilders(DialogWindowBuilders dialogBuilders) {
-        this.dialogBuilders = dialogBuilders;
+    public void setDialogWindows(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     @Autowired
@@ -75,7 +89,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowUiComponentProperties flowUiComponentProperties) {
+    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getPickerOpenShortcut());
     }
 
@@ -87,8 +101,8 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         super.setTarget(target);
     }
 
-    public void setAfterCommitHandler(Consumer<E> afterCommitHandler) {
-        this.afterCommitHandler = afterCommitHandler;
+    public void setAfterSaveHandler(Consumer<E> afterSaveHandler) {
+        this.afterSaveHandler = afterSaveHandler;
     }
 
     public void setTransformation(Function<E, E> transformation) {
@@ -98,64 +112,64 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     @Nullable
     @Override
     public OpenMode getOpenMode() {
-        // Lookup screen opens in a dialog window only
+        // Lookup view opens in a dialog window only
         return OpenMode.DIALOG;
     }
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup screen opens in a dialog window only");
+        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Nullable
     @Override
-    public String getScreenId() {
-        return screenInitializer.getScreenId();
+    public String getViewId() {
+        return viewInitializer.getViewId();
     }
 
     @Override
-    public void setScreenId(@Nullable String screenId) {
-        screenInitializer.setScreenId(screenId);
-    }
-
-    @Nullable
-    @Override
-    public Class<? extends Screen> getScreenClass() {
-        return screenInitializer.getScreenClass();
-    }
-
-    @Override
-    public void setScreenClass(@Nullable Class<? extends Screen> screenClass) {
-        screenInitializer.setScreenClass(screenClass);
+    public void setViewId(@Nullable String viewId) {
+        viewInitializer.setViewId(viewId);
     }
 
     @Nullable
     @Override
-    public RouteParameters getRouteParameters() {
-        // Lookup screen opens in a dialog window only
+    public Class<? extends View> getViewClass() {
+        return viewInitializer.getViewClass();
+    }
+
+    @Override
+    public void setViewClass(@Nullable Class<? extends View> viewClass) {
+        viewInitializer.setViewClass(viewClass);
+    }
+
+    @Nullable
+    @Override
+    public RouteParametersProvider getRouteParametersProvider() {
+        // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
-    public void setRouteParameters(@Nullable RouteParameters routeParameters) {
-        throw new UnsupportedOperationException("Lookup screen opens in a dialog window only");
+    public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
+        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Nullable
     @Override
-    public QueryParameters getQueryParameters() {
-        // Lookup screen opens in a dialog window only
+    public QueryParametersProvider getQueryParametersProvider() {
+        // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
-    public void setQueryParameters(@Nullable QueryParameters queryParameters) {
-        throw new UnsupportedOperationException("Lookup screen opens in a dialog window only");
+    public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
+        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Override
-    public <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler) {
-        screenInitializer.setAfterCloseHandler(afterCloseHandler);
+    public <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler) {
+        viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
     @SuppressWarnings("unchecked")
@@ -178,21 +192,21 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
                     "for the " + target.getClass().getSimpleName(), "action ID", getId());
         }
 
-        EditorWindowBuilder<E, Screen<?>> builder = dialogBuilders.editor(target);
+        DetailWindowBuilder<E, View<?>> builder = dialogWindows.detail(target);
 
-        builder = screenInitializer.initWindowBuilder(builder);
+        builder = viewInitializer.initWindowBuilder(builder);
 
         if (transformation != null) {
-            builder.withTransformation(transformation);
+            builder = builder.withTransformation(transformation);
         }
 
         DialogWindow<?> dialogWindow = builder.build();
-        if (afterCommitHandler != null) {
+        if (afterSaveHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
-                if (event.closedWith(StandardOutcome.COMMIT)
-                        && event.getScreen() instanceof EditorScreen) {
-                    E committedEntity = ((EditorScreen<E>) event.getScreen()).getEditedEntity();
-                    afterCommitHandler.accept(committedEntity);
+                if (event.closedWith(StandardOutcome.SAVE)
+                        && event.getView() instanceof DetailView) {
+                    E savedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
+                    afterSaveHandler.accept(savedEntity);
                 }
             });
         }
@@ -200,8 +214,24 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         dialogWindow.open();
     }
 
-    public EntityOpenAction<E> withAfterCommitHandler(Consumer<E> afterCommitHandler) {
-        setAfterCommitHandler(afterCommitHandler);
+    /**
+     * @see #setViewId(String)
+     */
+    public EntityOpenAction<E> withViewId(@Nullable String viewId) {
+        setViewId(viewId);
+        return this;
+    }
+
+    /**
+     * @see #setViewClass(Class)
+     */
+    public EntityOpenAction<E> withViewClass(@Nullable Class<? extends View> viewClass) {
+        setViewClass(viewClass);
+        return this;
+    }
+
+    public EntityOpenAction<E> withAfterSaveHandler(Consumer<E> afterSaveHandler) {
+        setAfterSaveHandler(afterSaveHandler);
         return this;
     }
 

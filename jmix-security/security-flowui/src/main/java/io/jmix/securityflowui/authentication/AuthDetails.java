@@ -26,17 +26,16 @@ import java.util.TimeZone;
  * Example usage:
  * <pre>
  * &#64;Autowired
- * private LoginScreenAuthenticator authenticator;
+ * private LoginViewSupport authenticator;
  *
  * private void doLogin(String username, String password) {
- *     Authentication authentication = authenticationSupport.authenticate(
- *             AuthDetails.of(username, password)
- *                     .withLocale(localesField.getValue())
- *                     .withRememberMe(rememberMeCheckBox.isChecked()), this);
+ *     loginViewSupport.authenticate(
+ *         AuthDetails.of(event.getUsername(), event.getPassword())
+ *     );
  * }
  * </pre>
  *
- * @see LoginScreenSupport
+ * @see LoginViewSupport
  */
 public class AuthDetails {
 

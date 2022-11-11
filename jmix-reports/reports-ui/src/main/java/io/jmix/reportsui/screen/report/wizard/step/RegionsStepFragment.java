@@ -147,16 +147,16 @@ public class RegionsStepFragment extends StepFragment {
 
     @Override
     public String getCaption() {
-        return messages.getMessage(getClass(), "reportRegions");
+        return messageBundle.getMessage("reportRegions");
     }
 
     @Override
     public String getDescription() {
         if (getReportTypeGenerate() != null && getReportTypeGenerate().isList()) {
             MetaClass entityMetaClass = metadata.getClass(reportDataDc.getItem().getEntityName());
-            return messages.formatMessage(getClass(), "regionTabulatedMessage", messageTools.getEntityCaption(entityMetaClass));
+            return messageBundle.formatMessage("regionTabulatedMessage", messageTools.getEntityCaption(entityMetaClass));
         } else {
-            return messages.getMessage(getClass(), "addPropertiesAndTableAreas");
+            return messageBundle.getMessage("addPropertiesAndTableAreas");
         }
     }
 
@@ -188,7 +188,7 @@ public class RegionsStepFragment extends StepFragment {
     @Install(to = "regionsTable.name", subject = "columnGenerator")
     protected Component regionsTableNameColumnGenerator(ReportRegion reportRegion) {
         String messageKey = reportRegion.isTabulatedRegion() ? "ReportRegion.tabulatedName" : "ReportRegion.simpleName";
-        return new Table.PlainTextCell(messages.formatMessage(getClass(), messageKey, reportRegion.getOrderNum()));
+        return new Table.PlainTextCell(messageBundle.formatMessage(messageKey, reportRegion.getOrderNum()));
     }
 
     @Install(to = "regionsTable.entity", subject = "columnGenerator")
@@ -292,7 +292,7 @@ public class RegionsStepFragment extends StepFragment {
     public void onRunBtnClick(Button.ClickEvent event) {
         if (reportDataDc.getItem().getReportRegions().isEmpty()) {
             notifications.create(Notifications.NotificationType.TRAY)
-                    .withCaption(messages.getMessage(getClass(), "addRegionsWarn"))
+                    .withCaption(messageBundle.getMessage("addRegionsWarn"))
                     .show();
             return;
         }
@@ -352,7 +352,7 @@ public class RegionsStepFragment extends StepFragment {
     public List<String> validateFragment() {
         List<String> validationMessages = super.validateFragment();
         if (reportRegionsDc.getItems().isEmpty()) {
-            validationMessages.add(messages.getMessage(getClass(), "addRegionsWarn"));
+            validationMessages.add(messageBundle.getMessage("addRegionsWarn"));
         }
         return validationMessages;
     }

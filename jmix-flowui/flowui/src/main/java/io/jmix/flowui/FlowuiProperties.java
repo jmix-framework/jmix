@@ -20,19 +20,23 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Map;
+
 @ConfigurationProperties(prefix = "jmix.flowui")
 @ConstructorBinding
 public class FlowuiProperties {
 
     /**
-     * Screen that will be used as Login screen.
+     * View that will be used as Login view.
      */
-    String loginScreenId;
+    String loginViewId;
 
     /**
-     * Screen that will be used as Main screen.
+     * View that will be used as Main view.
      */
-    String mainScreenId;
+    String mainViewId;
 
     /**
      * Defines whether menu should be built with menu items from add-ons. {@code true} means using menu items from
@@ -40,26 +44,40 @@ public class FlowuiProperties {
      */
     boolean compositeMenu;
 
-    public FlowuiProperties(@DefaultValue("login") String loginScreenId,
-                            @DefaultValue("main") String mainScreenId,
-                            @DefaultValue("true") boolean compositeMenu) {
-        this.loginScreenId = loginScreenId;
-        this.mainScreenId = mainScreenId;
+    Integer defaultMaxFetchSize;
+    Map<String, Integer> entityMaxFetchSize;
+
+    Integer defaultPageSize;
+    Map<String, Integer> entityPageSize;
+
+    public FlowuiProperties(@DefaultValue("login") String loginViewId,
+                            @DefaultValue("main") String mainViewId,
+                            @DefaultValue("true") boolean compositeMenu,
+                            @DefaultValue("10000") Integer defaultMaxFetchSize,
+                            @Nullable Map<String, Integer> entityMaxFetchSize,
+                            @DefaultValue("50") Integer defaultPageSize,
+                            @Nullable Map<String, Integer> entityPageSize) {
+        this.loginViewId = loginViewId;
+        this.mainViewId = mainViewId;
         this.compositeMenu = compositeMenu;
+        this.defaultMaxFetchSize = defaultMaxFetchSize;
+        this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
+        this.defaultPageSize = defaultPageSize;
+        this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
     }
 
     /**
-     * @see #loginScreenId
+     * @see #loginViewId
      */
-    public String getLoginScreenId() {
-        return loginScreenId;
+    public String getLoginViewId() {
+        return loginViewId;
     }
 
     /**
-     * @see #mainScreenId
+     * @see #mainViewId
      */
-    public String getMainScreenId() {
-        return mainScreenId;
+    public String getMainViewId() {
+        return mainViewId;
     }
 
     /**
@@ -67,5 +85,27 @@ public class FlowuiProperties {
      */
     public boolean isCompositeMenu() {
         return compositeMenu;
+    }
+
+    public int getDefaultMaxFetchSize() {
+        return defaultMaxFetchSize;
+    }
+
+    public int getEntityMaxFetchSize(String entityName) {
+        Integer forEntity = entityMaxFetchSize.get(entityName);
+        if (forEntity != null)
+            return forEntity;
+        return defaultMaxFetchSize;
+    }
+
+    public int getDefaultPageSize() {
+        return defaultPageSize;
+    }
+
+    public int getEntityPageSize(String entityName) {
+        Integer forEntity = entityPageSize.get(entityName);
+        if (forEntity != null)
+            return forEntity;
+        return defaultPageSize;
     }
 }

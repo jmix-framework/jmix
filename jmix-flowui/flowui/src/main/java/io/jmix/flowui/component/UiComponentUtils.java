@@ -1,56 +1,78 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.sys.ValuePathHelper;
+import io.jmix.flowui.view.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class UiComponentUtils {
 
+    private static final Logger log = LoggerFactory.getLogger(UiComponentUtils.class);
+
     private UiComponentUtils() {
     }
 
-    public static Optional<Component> findOwnComponent(HasComponents container, String id) {
-        if (container instanceof EnhancedHasComponents) {
-            return ((EnhancedHasComponents) container).findOwnComponent(id);
-        } else if (container instanceof HasOrderedComponents) {
-            return ((HasOrderedComponents) container).getChildren()
-                    .filter(component -> sameId(component, id))
-                    .findFirst();
-        } else if (container instanceof Component) {
-            return ((Component) container).getChildren()
-                    .filter(component -> sameId(component, id))
-                    .findFirst();
-        } else {
-            throw new IllegalArgumentException(container.getClass().getSimpleName() +
-                    " have no API to obtain component list");
+    public static Optional<Component> findComponent(View<?> view, String id) {
+        Component content = view.getContent();
+        if (isContainer(content)) {
+            return findComponent(content, id);
         }
+
+        throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
     }
 
-    public static Optional<Component> findComponent(HasComponents container, String id) {
+    public static Component getComponent(View<?> view, String id) {
+        return findComponent(view, id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("Component with id '%s' not found", id)));
+    }
+
+    public static Optional<Component> findComponent(Component container, String id) {
         String[] elements = ValuePathHelper.parse(id);
         if (elements.length == 1) {
             Optional<Component> component = findOwnComponent(container, id);
             if (component.isPresent()) {
                 return component;
             } else {
-                return getComponentByIteration(container, id);
+                return getComponentRecursively(getOwnComponents(container), id);
             }
         } else {
             Optional<Component> innerComponentOpt = findOwnComponent(container, elements[0]);
             if (innerComponentOpt.isEmpty()) {
-                return getComponentByIteration(container, id);
+                // FIXME: gg, is id correct?
+                return getComponentRecursively(getOwnComponents(container), id);
             } else {
                 Component innerComponent = innerComponentOpt.get();
-                if (innerComponent instanceof HasComponents) {
+                if (isContainer(innerComponent)) {
                     String subPath = ValuePathHelper.pathSuffix(elements);
-                    return findComponent(((HasComponents) innerComponent), subPath);
+                    return findComponent(innerComponent, subPath);
                 }
 
                 return Optional.empty();
@@ -58,95 +80,34 @@ public final class UiComponentUtils {
         }
     }
 
-    public static Optional<Component> findComponent(Screen<?> screen, String id) {
-        Component content = screen.getContent();
-        if (!(content instanceof HasComponents)) {
-            throw new IllegalStateException("Screen content doesn't contain components");
-        }
-
-        return findComponent(((HasComponents) content), id);
-    }
-
-    public static Component findComponentOrElseThrow(Screen<?> screen, String id) {
-        Component content = screen.getContent();
-        if (!(content instanceof HasComponents)) {
-            throw new IllegalStateException("Screen content doesn't contain components");
-        }
-
-        return findComponent(((HasComponents) content), id)
-                .orElseThrow(() -> new IllegalStateException(
-                        String.format("Component with id '%s' not found", id)));
-    }
-
-    // todo rework using Component class
-    public static Optional<Component> findComponent(AppLayout appLayout, String id) {
-        List<Component> components = appLayout.getChildren().collect(Collectors.toList());
-
-        String[] elements = ValuePathHelper.parse(id);
-        if (elements.length == 1) {
-            Optional<Component> component = components.stream()
-                    .filter(c -> sameId(c, id))
-                    .findFirst();
-
-            if (component.isPresent()) {
-                return component;
-            } else {
-                return Optional.ofNullable(getComponentByIteration(components, id));
-            }
-        } else {
-            Optional<Component> innerComponentOpt = components.stream()
-                    .filter(c -> sameId(c, elements[0]))
-                    .findFirst();
-
-            if (innerComponentOpt.isEmpty()) {
-                return Optional.ofNullable(getComponentByIteration(components, id));
-            } else {
-                Component innerComponent = innerComponentOpt.get();
-                if (innerComponent instanceof HasComponents) {
-                    String subPath = ValuePathHelper.pathSuffix(elements);
-                    return findComponent(((HasComponents) innerComponent), subPath);
-                }
-
-                return Optional.empty();
-            }
-        }
-    }
-
-    private static Optional<Component> getComponentByIteration(HasComponents container, String id) {
-        return Optional.ofNullable(getComponentByIteration(getOwnComponents(container), id));
-    }
-
-    @Nullable
-    private static Component getComponentByIteration(Collection<Component> components, String id) {
+    private static Optional<Component> getComponentRecursively(Collection<Component> components, String id) {
         for (Component component : components) {
             if (sameId(component, id)) {
-                return component;
-            } else if (component instanceof HasComponents) {
-                Collection<Component> ownComponents = getOwnComponents((HasComponents) component);
-                Component innerComponent = getComponentByIteration(ownComponents, id);
-                if (innerComponent != null) {
+                return Optional.of(component);
+            } else if (isContainer(component)) {
+                Optional<Component> innerComponent =
+                        getComponentRecursively(getOwnComponents(component), id);
+                if (innerComponent.isPresent()) {
                     return innerComponent;
                 }
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
-    public static Collection<Component> getOwnComponents(HasComponents container) {
-        if (container instanceof EnhancedHasComponents) {
-            return ((EnhancedHasComponents) container).getOwnComponents();
-        } else if (container instanceof HasOrderedComponents) {
-            return ((HasOrderedComponents) container).getChildren().sequential().collect(Collectors.toList());
-        } else if (container instanceof Component) {
-            return ((Component) container).getChildren().sequential().collect(Collectors.toList());
+    public static Collection<Component> getOwnComponents(Component container) {
+        if (container instanceof ComponentContainer) {
+            return ((ComponentContainer) container).getOwnComponents();
+        } else if (container instanceof HasComponents) {
+            return container.getChildren().sequential().collect(Collectors.toList());
         } else {
             throw new IllegalArgumentException(container.getClass().getSimpleName() +
-                    " have no API to obtain component list");
+                    " has no API to obtain component list");
         }
     }
 
-    public static Collection<Component> getComponents(HasComponents container) {
+    public static Collection<Component> getComponents(Component container) {
         // do not return LinkedHashSet, it uses much more memory than ArrayList
         Collection<Component> components = new ArrayList<>();
 
@@ -159,24 +120,27 @@ public final class UiComponentUtils {
         return Collections.unmodifiableCollection(components);
     }
 
-    private static void fillChildComponents(HasComponents container, Collection<Component> components) {
-        Collection<Component> ownComponents;
-        if (container instanceof EnhancedHasComponents) {
-            ownComponents = ((EnhancedHasComponents) container).getOwnComponents();
-        } else if (container instanceof HasOrderedComponents) {
-            ownComponents = ((HasOrderedComponents) container).getChildren().sequential().collect(Collectors.toList());
-        } else if (container instanceof Component) {
-            ownComponents = ((Component) container).getChildren().sequential().collect(Collectors.toList());
+    public static Optional<Component> findOwnComponent(Component container, String id) {
+        if (container instanceof ComponentContainer) {
+            return ((ComponentContainer) container).findOwnComponent(id);
+        } else if (container instanceof HasComponents) {
+            return container.getChildren()
+                    .filter(component -> sameId(component, id))
+                    .findFirst();
         } else {
             throw new IllegalArgumentException(container.getClass().getSimpleName() +
-                    " have no API to obtain component list");
+                    " has no API to obtain component list");
         }
+    }
+
+    private static void fillChildComponents(Component container, Collection<Component> components) {
+        Collection<Component> ownComponents = getOwnComponents(container);
 
         components.addAll(ownComponents);
 
         for (Component component : ownComponents) {
-            if (component instanceof HasComponents) {
-                fillChildComponents((HasComponents) component, components);
+            if (isContainer(component)) {
+                fillChildComponents(component, components);
             }
         }
     }
@@ -186,14 +150,86 @@ public final class UiComponentUtils {
         return componentId.isPresent() && id.equals(componentId.get());
     }
 
+    public static Optional<Focusable<?>> findFocusComponent(View<?> view, String componentId) {
+        Optional<Component> optionalComponent = findComponent(view, componentId);
+        if (optionalComponent.isEmpty()) {
+            log.error("Can't find focus component: {}", componentId);
+            return Optional.empty();
+        }
+
+        Component component = optionalComponent.get();
+        if (canBeFocused(component)) {
+            return Optional.of(((Focusable<?>) component));
+        } else if (isContainer(component)) {
+            return findFocusComponent(component);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<Focusable<?>> findFocusComponent(View<?> view) {
+        Component content = view.getContent();
+        if (isContainer(content)) {
+            return findFocusComponent(content);
+        }
+
+        throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
+    }
+
+    public static Optional<Focusable<?>> findFocusComponent(Component container) {
+        Collection<Component> ownComponents = getOwnComponents(container);
+        return findFocusComponent(ownComponents);
+    }
+
+    public static Optional<Focusable<?>> findFocusComponent(Collection<Component> components) {
+        for (Component child : components) {
+            if (child instanceof Accordion
+                /*|| child instanceof TabSheet*/) {
+                // we don't know about selected tab after request
+                // may be focused component located on not selected tab
+                // it may break component tree
+                continue;
+            }
+
+            if (canBeFocused(child)) {
+                return Optional.of(((Focusable<?>) child));
+            }
+
+            if (isContainer(child)) {
+                return findFocusComponent(child);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public static boolean isContainer(Component component) {
+        return component instanceof ComponentContainer
+                || component instanceof HasComponents;
+    }
+
+    private static boolean canBeFocused(Component component) {
+        if (!(component instanceof Focusable)
+                || !((Focusable<?>) component).isEnabled()) {
+            return false;
+        }
+
+        if (component instanceof HasValue
+                && ((HasValue<?, ?>) component).isReadOnly()) {
+            return false;
+        }
+
+        return component.isVisible();
+    }
+
     @Nullable
-    public static Screen<?> findScreen(Component component) {
-        if (component instanceof Screen) {
-            return (Screen<?>) component;
+    public static View<?> findView(Component component) {
+        if (component instanceof View) {
+            return (View<?>) component;
         }
 
         Optional<Component> parent = component.getParent();
-        return parent.map(UiComponentUtils::findScreen).orElse(null);
+        return parent.map(UiComponentUtils::findView).orElse(null);
     }
 
     /**
@@ -247,7 +283,7 @@ public final class UiComponentUtils {
     public static boolean isComponentAttachedToDialog(Component component) {
         Preconditions.checkNotNullArgument(component);
 
-        Screen<?> parent = UiComponentUtils.findScreen(component);
+        View<?> parent = UiComponentUtils.findView(component);
         if (parent == null) {
             return false;
         }

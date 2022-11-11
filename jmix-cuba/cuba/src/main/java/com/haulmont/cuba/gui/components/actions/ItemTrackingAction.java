@@ -66,7 +66,7 @@ public class ItemTrackingAction extends ListAction
         }
 
         if (constraintEntityOp != null) {
-            MetaClass metaClass = metadata.getClass(singleSelected.getClass());
+            MetaClass metaClass = metadata.getClass(singleSelected);
             InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass, applicationContext);
             accessManager.applyRegisteredConstraints(context);
 

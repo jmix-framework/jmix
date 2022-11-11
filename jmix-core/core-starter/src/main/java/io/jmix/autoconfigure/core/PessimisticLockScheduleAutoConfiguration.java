@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import(CoreConfiguration.class)
 @ConditionalOnClass(Job.class)
-@ConditionalOnProperty(name = "jmix.pessimistic-lock.use-default-quartz-configuration", matchIfMissing = true)
+@ConditionalOnProperty(name = "jmix.core.pessimistic-lock.use-default-quartz-configuration", matchIfMissing = true)
 public class PessimisticLockScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(PessimisticLockScheduleAutoConfiguration.class);

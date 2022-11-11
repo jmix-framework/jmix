@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data readOnly="true">
         <instance id="orderDc"
                   class="test_support.entity.sales.Order">
@@ -15,7 +31,7 @@
         <vbox id="vboxId"
               alignItems="STRETCH"
               boxSizing="BORDER_BOX"
-              className="cssClassName1, cssClassName2"
+              classNames="cssClassName1, cssClassName2"
               enabled="true"
               expand="expanded"
               height="50px"
@@ -35,7 +51,7 @@
         <hbox id="hboxId"
               alignItems="STRETCH"
               boxSizing="BORDER_BOX"
-              className="cssClassName1, cssClassName2"
+              classNames="cssClassName1, cssClassName2"
               enabled="true"
               expand="expanded"
               height="50px"
@@ -53,7 +69,7 @@
         </hbox>
 
         <accordion id="accordionId"
-                   className="cssClassName1, cssClassName2"
+                   classNames="cssClassName1, cssClassName2"
                    height="50px"
                    maxHeight="55px"
                    maxWidth="120px"
@@ -62,7 +78,7 @@
                    visible="true"
                    width="100px">
             <accordionPanel id="accordionPanelId"
-                            className="cssClassName1, cssClassName2"
+                            classNames="cssClassName1, cssClassName2"
                             enabled="true"
                             height="50px"
                             maxHeight="55px"
@@ -70,12 +86,12 @@
                             minHeight="40px"
                             minWidth="80px"
                             summaryText="summaryTextString"
-                            themeName="small, reverse"
+                            themeNames="small, reverse"
                             visible="true"
                             width="100px">
             </accordionPanel>
             <accordionPanel id="anotherAccordionPanelId"
-                            className="cssClassName1, cssClassName2"
+                            classNames="cssClassName1, cssClassName2"
                             enabled="true"
                             height="50px"
                             maxHeight="55px"
@@ -83,14 +99,14 @@
                             minHeight="40px"
                             minWidth="80px"
                             summaryText="summaryTextString"
-                            themeName="small, reverse"
+                            themeNames="small, reverse"
                             visible="true"
                             width="100px">
             </accordionPanel>
         </accordion>
 
         <formLayout id="formLayoutId"
-                    className="cssClassName1, cssClassName2"
+                    classNames="cssClassName1, cssClassName2"
                     dataContainer="orderDc"
                     enabled="true"
                     height="50px"
@@ -119,7 +135,7 @@
         </formLayout>
 
         <scroller id="scrollerId"
-                  className="cssClassName1, cssClassName2"
+                  classNames="cssClassName1, cssClassName2"
                   height="50px"
                   maxHeight="55px"
                   maxWidth="120px"
@@ -132,7 +148,7 @@
         </scroller>
 
         <split id="splitLayoutId"
-               className="cssClassName1, cssClassName2"
+               classNames="cssClassName1, cssClassName2"
                height="50px"
                maxHeight="55px"
                maxWidth="120px"
@@ -140,7 +156,7 @@
                minWidth="80px"
                orientation="HORIZONTAL"
                splitterPosition="5.6"
-               themeName="small, minimal"
+               themeNames="small, minimal"
                visible="true"
                width="100px">
             <scroller id="splitPrimaryChild"/>
@@ -148,32 +164,32 @@
         </split>
 
         <tabs id="tabsId"
-              className="cssClassName1, cssClassName2"
+              classNames="cssClassName1, cssClassName2"
               height="50px"
               maxHeight="55px"
               maxWidth="120px"
               minHeight="40px"
               minWidth="80px"
               orientation="HORIZONTAL"
-              themeName="small, minimal"
+              themeNames="small, minimal"
               visible="true"
               width="100px">
             <tab id="tab1"
-                 className="cssClassName1, cssClassName2"
+                 classNames="cssClassName1, cssClassName2"
                  enabled="true"
                  flexGrow="45.54"
                  label="labelString"
-                 themeName="icon-on-top"
+                 themeNames="icon-on-top"
                  visible="true">
             </tab>
             <tab id="tab2"
-                 className="cssClassName1, cssClassName2"
+                 classNames="cssClassName1, cssClassName2"
                  enabled="true"
                  flexGrow="45.44"
-                 themeName="icon-on-top"
+                 themeNames="icon-on-top"
                  visible="true">
                 <textField id="tab2Child"/>
             </tab>
         </tabs>
     </layout>
-</screen>
+</view>

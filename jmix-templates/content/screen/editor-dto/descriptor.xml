@@ -5,7 +5,7 @@ dlId = "${entity.uncapitalizedClassName}Dl"
 def createScrollBox = entity.attributes.size() > 10 || (editorActionBottom && !modalDialog)
 def createModalVbox = modalDialog && editorActionBottom && !createScrollBox
 
-def formXml = api.processSnippet('screen/dto_form.xml',
+def formXml = api.processSnippet('dto_form.xml',
         ['entity': entity,
         'api': api,
         'dcId': dcId,

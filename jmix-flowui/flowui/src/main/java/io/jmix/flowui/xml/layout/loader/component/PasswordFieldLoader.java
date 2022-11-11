@@ -46,8 +46,8 @@ public class PasswordFieldLoader extends AbstractComponentLoader<JmixPasswordFie
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
-        componentLoader().loadThemeName(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadAutocomplete(resultComponent, element);
         componentLoader().loadAutocapitalize(resultComponent, element);

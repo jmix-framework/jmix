@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
 /**
  * Marker interface for component loaders.
  */
-@SuppressWarnings("rawtypes")
 public interface LoaderConfig {
 
     /**
@@ -41,17 +40,9 @@ public interface LoaderConfig {
     Class<? extends ComponentLoader> getLoader(Element element);
 
     /**
-     * @param root fragment's root element
-     * @return loader class for fragment or {@code null} if config does not support given {@code root}
-     */
-    /*@SuppressWarnings("rawtypes")
-    @Nullable
-    Class<? extends ComponentLoader> getFragmentLoader(Element root);*/
-
-    /**
-     * @param root window's root element
-     * @return loader class for window or {@code null} if config does not support given {@code root}
+     * @param root view's root element
+     * @return loader class for view or {@code null} if config does not support given {@code root}
      */
     @Nullable
-    Class<? extends ComponentLoader> getScreenLoader(Element root);
+    Class<? extends ComponentLoader> getViewLoader(Element root);
 }

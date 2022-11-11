@@ -49,7 +49,7 @@ public final class ControllerUtils {
             if (location.getQuery() != null) {
                 baseUrl.delete(baseUrl.indexOf("?" + location.getQuery()), baseUrl.length());
             } else if (location.getFragment() != null) {
-                baseUrl.delete(baseUrl.indexOf("#" + location.getFragment()), baseUrl.length());
+                baseUrl.delete(baseUrl.indexOf("#" + location.getRawFragment()), baseUrl.length());
             }
             String baseUrlString = baseUrl.toString();
             return baseUrlString.endsWith("/") ? baseUrlString : baseUrlString + "/";

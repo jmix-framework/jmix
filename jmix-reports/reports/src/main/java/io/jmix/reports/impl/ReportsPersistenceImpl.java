@@ -22,6 +22,7 @@ import io.jmix.core.security.EntityOp;
 import io.jmix.data.DataProperties;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.exception.UniqueConstraintViolationException;
+import io.jmix.data.impl.EntityEventManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.reports.ReportsPersistence;
@@ -75,6 +76,8 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
     protected EntityManager em;
     @Autowired
     private MetadataTools metadataTools;
+    @Autowired
+    protected EntityEventManager entityEventManager;
 
     @Override
     public Report save(Report report) {
@@ -129,6 +132,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
                     report.setGroup(group);
                 }
             } else {
+                entityEventManager.publishEntitySavingEvent(group, true);//workaround for jmix-framework/jmix#1069
                 em.persist(group);
             }
         }
@@ -144,6 +148,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
 
             if (existingReport != null) {
                 report.setVersion(existingReport.getVersion());
+                entityEventManager.publishEntitySavingEvent(report, false);//workaround for jmix-framework/jmix#1069
                 report = em.merge(report);
                 if (existingReport.getTemplates() != null) {
                     existingTemplates = existingReport.getTemplates();
@@ -156,6 +161,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
                 report.setTemplates(null);
             } else {
                 report.setVersion(0);
+                entityEventManager.publishEntitySavingEvent(report, true);//workaround for jmix-framework/jmix#1069
                 report = em.merge(report);
             }
 
@@ -180,6 +186,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
                     }
 
                     loadedTemplate.setReport(report);
+                    entityEventManager.publishEntitySavingEvent(loadedTemplate, entityStates.isNew(loadedTemplate));//workaround for jmix-framework/jmix#1069
                     savedTemplates.add(em.merge(loadedTemplate));
                 }
             }
@@ -204,6 +211,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
         }
         report.setDefaultTemplate(defaultTemplate);
         report.setTemplates(savedTemplates);
+        em.flush();
         return report;
     }
 

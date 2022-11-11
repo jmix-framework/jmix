@@ -247,6 +247,19 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
         forRemove.addAll(databaseIds);
     }
 
+    @Install(to = "childRolesTable.add", subject = "screenConfigurer")
+    private void childRolesTableAddScreenConfigurer(Screen screen) {
+        List<String> excludedRolesCodes = childRolesDc.getItems().stream()
+                .map(BaseRoleModel::getCode)
+                .collect(Collectors.toList());
+
+        if (!codeField.isEnabled()) {
+            excludedRolesCodes.add(getEditedEntity().getCode());
+        }
+
+        ((RowLevelRoleModelLookup) screen).setExcludedRolesCodes(excludedRolesCodes);
+    }
+
     private void saveRoleEntityToDatabase(Collection<Object> modifiedInstances) {
         RowLevelRoleModel roleModel = getEditedEntity();
         String roleDatabaseId = roleModel.getCustomProperties().get("databaseId");

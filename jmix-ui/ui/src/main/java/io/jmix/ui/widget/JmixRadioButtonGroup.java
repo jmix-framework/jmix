@@ -16,6 +16,7 @@
 
 package io.jmix.ui.widget;
 
+import com.vaadin.data.provider.DataProvider;
 import io.jmix.ui.widget.client.radiobuttongroup.JmixRadioButtonGroupState;
 import com.vaadin.shared.ui.Orientation;
 import com.vaadin.ui.RadioButtonGroup;
@@ -40,5 +41,14 @@ public class JmixRadioButtonGroup<T> extends RadioButtonGroup<T> {
         if (orientation != getOrientation()) {
             getState().orientation = orientation;
         }
+    }
+
+    @Override
+    public void setDataProvider(DataProvider<T, ?> dataProvider) {
+        // The default implementation clears selected item,
+        // which results in a bug when a ContainerOptions is used,
+        // because we can't guarantee that options is loaded before,
+        // a value is set.
+        internalSetDataProvider(dataProvider);
     }
 }

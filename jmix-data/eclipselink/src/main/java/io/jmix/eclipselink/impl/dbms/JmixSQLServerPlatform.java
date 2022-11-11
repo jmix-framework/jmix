@@ -16,11 +16,13 @@
 
 package io.jmix.eclipselink.impl.dbms;
 
+import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.SQLServerPlatform;
 
+import java.sql.Types;
 import java.util.UUID;
 
-public class JmixSQLServerPlatform extends SQLServerPlatform {
+public class JmixSQLServerPlatform extends SQLServerPlatform implements UuidMappingInfo {
 
     @Override
     public Object convertObject(Object sourceObject, Class javaClass) {
@@ -33,5 +35,25 @@ public class JmixSQLServerPlatform extends SQLServerPlatform {
         }
 
         return super.convertObject(sourceObject, javaClass);
+    }
+
+    @Override
+    public int getUuidSqlType() {
+        return Types.VARCHAR;
+    }
+
+    @Override
+    public Class<?> getUuidType() {
+        return String.class;
+    }
+
+    @Override
+    public String getUuidColumnDefinition() {
+        return "uniqueidentifier";
+    }
+
+    @Override
+    public Converter getUuidConverter() {
+        return UppercaseStringUuidConverter.getInstance();
     }
 }

@@ -200,7 +200,7 @@ public class EmailTemplatesImpl implements EmailTemplates {
                 .orElse(null);
 
         if (emailTemplate != null) {
-            MetaClass metaClass = metadata.getClass(emailTemplate.getClass());
+            MetaClass metaClass = metadata.getClass(emailTemplate);
             emailTemplate = (EmailTemplate) dataManager.load(metaClass.getJavaClass())
                     .query("select e from " + metaClass.getName() + " e where e.code = :code")
                     .parameter("code", emailTemplateCode)

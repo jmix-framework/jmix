@@ -27,8 +27,8 @@ The process:
 
 ### Working with Code
 
-- Install JDK 8
-- Install IntelliJ IDEA
+- Install JDK 11
+- Install latest IntelliJ IDEA
 - Import `build.gradle` file of the project into the IDE
 - Work on your issue
 - When finished, run tests: `./gradlew test`

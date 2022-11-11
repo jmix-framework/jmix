@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package io.jmix.flowui.model;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.EntitySet;
 import io.jmix.core.SaveContext;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.flowui.SameAsUi;
-import io.jmix.flowui.screen.Subscribe;
+import io.jmix.flowui.view.Subscribe;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -31,18 +31,18 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Interface for tracking changes in entities loaded to the client tier.
+ * Interface for tracking changes in entities loaded to UI.
  * <p>
  * Within {@code DataContext}, an entity with the given identifier is represented by a single object instance, no matter
  * where and how many times it is used in object graphs.
  */
 @SuppressWarnings("rawtypes")
-@SameAsUi
-@InstallSubject("commitDelegate")
+@InstallSubject("saveDelegate")
 public interface DataContext {
 
     /**
      * Returns an entity instance by its class and id.
+     *
      * @return entity instance or null if there is no such entity in the context
      */
     @Nullable
@@ -50,6 +50,7 @@ public interface DataContext {
 
     /**
      * Returns the instance of entity with the same id if it exists in this context.
+     *
      * @return entity instance or null if there is no such entity in the context
      */
     @Nullable
@@ -68,15 +69,15 @@ public interface DataContext {
      * and returned.
      * <p>
      * If the given instance is new and the context doesn't contain an instance with the same identifier, the context
-     * will save the new instance on {@link #commit()}. Otherwise, even if some attributes of the merged instance are changed
-     * as a result of copying the state of the passed instance, the merged instance will not be committed. Such modifications
+     * will save the new instance on {@link #save()}. Otherwise, even if some attributes of the merged instance are changed
+     * as a result of copying the state of the passed instance, the merged instance will not be saved. Such modifications
      * are considered as a result of loading more fresh state from the database.
      * <p>
      * WARNING: use the returned value because it is always a different object instance.
      * The only case when you get the same instance is if the input was previously returned from the same context as a
      * result of {@link #find(Class, Object)} or {@code merge()}.
      *
-     * @param entity instance to merge
+     * @param entity  instance to merge
      * @param options merge options
      * @return the instance which is tracked by the context
      */
@@ -113,7 +114,7 @@ public interface DataContext {
 
     /**
      * Removes the entity from the context and registers it as deleted. The entity will be removed from the data store
-     * upon subsequent call to {@link #commit()}.
+     * upon subsequent call to {@link #save()}.
      * <p>
      * If the given entity is not in the context, nothing happens.
      */
@@ -145,6 +146,7 @@ public interface DataContext {
      * <pre>
      * Foo foo = dataContext.merge(metadata.create(Foo.class));
      * </pre>
+     *
      * @param entityClass entity class
      * @return a new instance which is tracked by the context
      */
@@ -184,24 +186,27 @@ public interface DataContext {
     Set<Object> getRemoved();
 
     /**
-     * Commits changed and removed instances to the middleware. After successful commit, the context contains
-     * updated instances returned from the middleware.
+     * Saves changed and removed instances using DataManager or a custom save delegate.
+     * After successful save, the context contains updated instances returned from the
+     * backend code.
      *
      * @see #setParent(DataContext)
-     * @return set of committed and merged back to the context instances. Does not contain removed instances.
+     * @return set of saved and merged back to the context instances. Does not contain removed instances.
      */
-    EntitySet commit();
+    EntitySet save();
 
     /**
-     * Returns a parent context, if any. If the parent context is set, {@link #commit()} method merges the changed instances
-     * to it instead of sending to the middleware.
+     * Returns a parent context, if any. If the parent context is set, {@link #save()}
+     * method merges the changed instances to it instead of sending them to DataManager
+     * or a custom save delegate.
      */
     @Nullable
     DataContext getParent();
 
     /**
-     * Sets the parent context. If the parent context is set, {@link #commit()} method merges the changed instances
-     * to it instead of sending to the middleware.
+     * Sets the parent context. If the parent context is set, {@link #save()} method
+     * merges the changed instances to it instead of sending them to DataManager or
+     * a custom save delegate.
      */
     void setParent(DataContext parentContext);
 
@@ -248,36 +253,38 @@ public interface DataContext {
     Subscription addChangeListener(Consumer<ChangeEvent> listener);
 
     /**
-     * Event sent before committing changes.
+     * Event sent before saving changes.
      * <p>
-     * In this event listener, you can add arbitrary entity instances to the committed collections returned by
-     * {@link #getModifiedInstances()} and {@link #getRemovedInstances()} methods, for example:
+     * In this event listener, you can add arbitrary entity instances to the
+     * saved collections returned by {@link #getModifiedInstances()} and
+     * {@link #getRemovedInstances()} methods, for example:
      * <pre>
      *     &#64;Subscribe(target = Target.DATA_CONTEXT)
-     *     protected void onPreCommit(DataContext.PreCommitEvent event) {
+     *     protected void onPreSave(DataContext.PreSaveEvent event) {
      *         event.getModifiedInstances().add(customer);
      *     }
      * </pre>
-     *
-     * You can also prevent commit using the {@link #preventCommit()} method of the event, for example:
+     * <p>
+     * You can also prevent saving using the {@link #preventSave()} method
+     * of the event, for example:
      * <pre>
      *     &#64;Subscribe(target = Target.DATA_CONTEXT)
-     *     protected void onPreCommit(DataContext.PreCommitEvent event) {
-     *         if (doNotCommit()) {
-     *             event.preventCommit();
+     *     protected void onPreSave(DataContext.PreSaveEvent event) {
+     *         if (doNotSave()) {
+     *             event.preventSave();
      *         }
      *     }
      * </pre>
      *
-     * @see #addPreCommitListener(Consumer)
+     * @see #addPreSaveListener(Consumer)
      */
-    class PreCommitEvent extends EventObject {
+    class PreSaveEvent extends EventObject {
 
         private final Collection modifiedInstances;
         private final Collection removedInstances;
-        private boolean commitPrevented;
+        private boolean savePrevented;
 
-        public PreCommitEvent(DataContext dataContext, Collection modified, Collection removed) {
+        public PreSaveEvent(DataContext dataContext, Collection modified, Collection removed) {
             super(dataContext);
             this.modifiedInstances = modified;
             this.removedInstances = removed;
@@ -306,27 +313,27 @@ public interface DataContext {
         }
 
         /**
-         * Invoke this method if you want to abort the commit.
+         * Invoke this method if you want to abort the saving process.
          */
-        public void preventCommit() {
-            commitPrevented = true;
+        public void preventSave() {
+            savePrevented = true;
         }
 
         /**
-         * Returns true if {@link #preventCommit()} method was called and commit will be aborted.
+         * Returns true if {@link #preventSave()} method was called and save will be aborted.
          */
-        public boolean isCommitPrevented() {
-            return commitPrevented;
+        public boolean isSavePrevented() {
+            return savePrevented;
         }
     }
 
     /**
-     * Adds a listener to {@link PreCommitEvent}.
+     * Adds a listener to {@link PreSaveEvent}.
      * <p>
      * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
      * <pre>
      *    &#64;Subscribe(target = Target.DATA_CONTEXT)
-     *    protected void onPreCommit(DataContext.PreCommitEvent event) {
+     *    protected void onPreSave(DataContext.PreSaveEvent event) {
      *       // handle event here
      *    }
      * </pre>
@@ -334,28 +341,30 @@ public interface DataContext {
      * @param listener listener
      * @return subscription
      */
-    Subscription addPreCommitListener(Consumer<PreCommitEvent> listener);
+    Subscription addPreSaveListener(Consumer<PreSaveEvent> listener);
 
     /**
-     * Event sent after committing changes.
+     * Event sent after saving changes.
      * <p>
-     * In this event listener, you can get the collection of committed entities returned from the middle tier, for example:
+     * In this event listener, you can get the collection of saved entities returned
+     * from {@link DataManager} or a custom service. These entities are already merged
+     * into the DataContext. For example:
      * <pre>
      *     &#64;Subscribe(target = Target.DATA_CONTEXT)
-     *     protected void onPostCommit(DataContext.PostCommitEvent event) {
-     *         log.debug("Committed: " + event.getCommittedInstances());
+     *     protected void onPostSave(DataContext.PostSaveEvent event) {
+     *         log.debug("Saved: " + event.getSavedInstances());
      *     }
      * </pre>
      *
-     * @see #addPostCommitListener(Consumer)
+     * @see #addPostSaveListener(Consumer)
      */
-    class PostCommitEvent extends EventObject {
+    class PostSaveEvent extends EventObject {
 
-        private final Collection committedInstances;
+        private final Collection savedInstances;
 
-        public PostCommitEvent(DataContext dataContext, Collection committedInstances) {
+        public PostSaveEvent(DataContext dataContext, Collection savedInstances) {
             super(dataContext);
-            this.committedInstances = committedInstances;
+            this.savedInstances = savedInstances;
         }
 
         /**
@@ -367,20 +376,20 @@ public interface DataContext {
         }
 
         /**
-         * Returns the collection of committed entities.
+         * Returns the collection of saved entities.
          */
-        public EntitySet getCommittedInstances() {
-            return EntitySet.of(committedInstances);
+        public EntitySet getSavedInstances() {
+            return EntitySet.of(savedInstances);
         }
     }
 
     /**
-     * Adds a listener to {@link PostCommitEvent}.
+     * Adds a listener to {@link PostSaveEvent}.
      * <p>
      * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
      * <pre>
      *    &#64;Subscribe(target = Target.DATA_CONTEXT)
-     *    protected void onPostCommit(DataContext.PostCommitEvent event) {
+     *    protected void onPostSave(DataContext.PostSaveEvent event) {
      *       // handle event here
      *    }
      * </pre>
@@ -388,16 +397,16 @@ public interface DataContext {
      * @param listener listener
      * @return subscription
      */
-    Subscription addPostCommitListener(Consumer<PostCommitEvent> listener);
+    Subscription addPostSaveListener(Consumer<PostSaveEvent> listener);
 
     /**
-     * Returns a function which will be used to commit data instead of standard implementation.
+     * Returns a function which will be used to save data instead of standard implementation.
      */
     @Nullable
-    Function<SaveContext, Set<Object>> getCommitDelegate();
+    Function<SaveContext, Set<Object>> getSaveDelegate();
 
     /**
-     * Sets a function which will be used to commit data instead of standard implementation.
+     * Sets a function which will be used to save data instead of standard implementation.
      */
-    void setCommitDelegate(Function<SaveContext, Set<Object>> delegate);
+    void setSaveDelegate(Function<SaveContext, Set<Object>> delegate);
 }

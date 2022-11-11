@@ -24,7 +24,7 @@
         <tag>JPA</tag>
     </tags>
     <description>
-        <![CDATA[<html>Standard list and detail views created at once.</html>]]>
+        <![CDATA[<html>Entity list and detail views created at once.</html>]]>
     </description>
     <locMessages key="viewTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.title">
         <message lang="default">
@@ -66,7 +66,7 @@
               code="tableActions"
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
-              optionsString="create,edit,remove"/>
+              optionsString="${actionSearch.getWizardTableActions()}"/>
     <property caption="Multiselect"
               code="multiselect"
               step="1"
@@ -92,7 +92,7 @@
               dynamic="true"
               sourceName="descriptor"
               required="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-list-view">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-list-view">
         <dependency code="entity"/>
     </property>
     <property caption="List view controller name"
@@ -113,11 +113,11 @@
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${entity.name!=null?entity.name:entity.className}.browse">
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.list">
         <dependency code="entity"/>
     </property>
     <property caption="List view route"
-              code="route"
+              code="listRoute"
               propertyType="STRING"
               group="list"
               advanced="true"
@@ -135,7 +135,7 @@
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-detail-view">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-detail-view">
         <dependency code="entity"/>
     </property>
     <property caption="Detail view controller name"
@@ -155,12 +155,12 @@
               group="detail"
               advanced="true"
               dynamic="true"
-              valueTemplate="${entity.name!=null?entity.name:entity.className}.edit"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.detail"
               required="true">
         <dependency code="entity"/>
     </property>
-    <property caption="Detail view route prefix"
-              code="routePrefix"
+    <property caption="Detail view route"
+              code="detailRoute"
               propertyType="STRING"
               group="detail"
               advanced="true"
@@ -169,6 +169,17 @@
               valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
         <dependency code="entity"/>
     </property>
+
+    <property caption="Detail view route parameter"
+              code="detailRouteParam"
+              propertyType="STRING"
+              advanced="true"
+              required="true"
+              defaultValue="id"/>
+
+    <property caption="Parent menu item"
+              code="menuItem"
+              propertyType="FLOW_MENU_ITEM"/>
 
     <!--sources-->
     <source fileExt="xml"

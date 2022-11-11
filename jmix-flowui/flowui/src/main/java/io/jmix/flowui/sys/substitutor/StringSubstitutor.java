@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package io.jmix.flowui.sys.substitutor;
 
 import java.util.Map;
 
-// todo tp moved from jmix-ui
 /**
  * Substitutes variables within a string by values.
  */

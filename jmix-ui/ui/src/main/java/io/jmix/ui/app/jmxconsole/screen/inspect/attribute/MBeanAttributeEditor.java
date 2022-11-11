@@ -51,6 +51,9 @@ public class MBeanAttributeEditor extends StandardEditor<ManagedBeanAttribute> {
     protected Messages messages;
 
     @Autowired
+    protected MessageBundle messageBundle;
+
+    @Autowired
     protected Notifications notifications;
 
     @Autowired
@@ -76,7 +79,7 @@ public class MBeanAttributeEditor extends StandardEditor<ManagedBeanAttribute> {
         valueContainer.add(valueHolder.getComponent(), 1, 0);
 
         if (mba.getName() != null) {
-            getWindow().setCaption(messages.formatMessage(getClass(), "editAttribute.caption.format", mba.getName()));
+            getWindow().setCaption(messageBundle.formatMessage("editAttribute.caption.format", mba.getName()));
         }
     }
 
@@ -105,7 +108,7 @@ public class MBeanAttributeEditor extends StandardEditor<ManagedBeanAttribute> {
             String width = themeConstants.get("jmix.ui.jmxconsole.MBeanAttributeEdit.messageDialog.width");
 
             dialogs.createMessageDialog()
-                    .withCaption(messages.formatMessage(getClass(), "editAttribute.exception", mba.getName()))
+                    .withCaption(messageBundle.formatMessage("editAttribute.exception", mba.getName()))
                     .withMessage(e.getClass().getCanonicalName() + " " + e.getMessage() + "\n")
                     .withWidth(width)
                     .show();
@@ -113,7 +116,7 @@ public class MBeanAttributeEditor extends StandardEditor<ManagedBeanAttribute> {
             return false;
         }
         notifications.create()
-                .withCaption(messages.getMessage(getClass(), "editAttribute.conversionError"))
+                .withCaption(messageBundle.getMessage("editAttribute.conversionError"))
                 .withType(Notifications.NotificationType.HUMANIZED)
                 .show();
 

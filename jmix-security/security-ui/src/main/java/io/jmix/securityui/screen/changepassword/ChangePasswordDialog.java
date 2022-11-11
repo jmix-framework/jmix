@@ -21,8 +21,11 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
+import io.jmix.securityui.password.PasswordValidation;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.PasswordField;
+import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +49,8 @@ public class ChangePasswordDialog extends Screen {
     protected ScreenValidation screenValidation;
     @Autowired
     protected PasswordEncoder passwordEncoder;
+    @Autowired
+    protected PasswordValidation passwordValidation;
     @Autowired
     protected UserRepository userRepository;
 
@@ -173,6 +178,10 @@ public class ChangePasswordDialog extends Screen {
                 && !Strings.isNullOrEmpty(confirmPassword)
                 && !Objects.equals(password, confirmPassword)) {
             errors.add(confirmPasswordField, messageBundle.getMessage("ChangePasswordDialog.passwordsDoNotMatch"));
+        }
+
+        for (String errorMessage : passwordValidation.validate(user, password)) {
+            errors.add(errorMessage);
         }
 
         if (errors.isEmpty()) {

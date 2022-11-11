@@ -19,9 +19,27 @@ package io.jmix.core.entity;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 
+/**
+ * Interface to be implemented by entities that are not included in static metadata, but can provide a {@code MetaClass}
+ * specifically for each instance.
+ */
 @Internal
 public interface HasInstanceMetaClass {
 
+    /**
+     * @return metaclass of this entity instance.
+     * @throws IllegalStateException if the instance has no metaclass specified
+     */
     MetaClass getInstanceMetaClass();
+
+    /**
+     * Sets the instance metaclass
+     * @param metaClass
+     */
     void setInstanceMetaClass(MetaClass metaClass);
+
+    /**
+     * @return true if the instance has a metaclass and call of {@link #getInstanceMetaClass()} is safe
+     */
+    boolean hasInstanceMetaClass();
 }

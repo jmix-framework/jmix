@@ -16,7 +16,6 @@
 
 package io.jmix.ui.app.jmxconsole.screen.inspect.operation;
 
-import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
@@ -52,7 +51,7 @@ public class MBeanOperationFragment extends ScreenFragment {
     protected Label<String> nameLabel;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected Notifications notifications;
@@ -133,7 +132,7 @@ public class MBeanOperationFragment extends ScreenFragment {
         } catch (Exception e) {
             log.error("Conversion error", e);
             notifications.create()
-                    .withCaption(messages.getMessage(getClass(), "invokeOperation.conversionError"))
+                    .withCaption(messageBundle.getMessage("invokeOperation.conversionError"))
                     .withType(Notifications.NotificationType.HUMANIZED)
                     .show();
             return;

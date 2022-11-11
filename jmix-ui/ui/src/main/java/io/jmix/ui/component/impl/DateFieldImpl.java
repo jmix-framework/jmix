@@ -83,6 +83,7 @@ public class DateFieldImpl<V extends Comparable<V>>
     protected String dateTimeFormat;
 
     protected boolean editable = true;
+    protected boolean required = false;
 
     protected ThemeConstants theme;
 
@@ -585,6 +586,8 @@ public class DateFieldImpl<V extends Comparable<V>>
     protected void setEditableToComponent(boolean editable) {
         timeField.setReadOnly(!editable);
         dateField.setReadOnly(!editable);
+
+        updateRequiredIndicator();
     }
 
     @Override
@@ -605,19 +608,29 @@ public class DateFieldImpl<V extends Comparable<V>>
 
     @Override
     public boolean isRequired() {
-        return component.isRequiredIndicatorVisible();
+        return required;
     }
 
     @Override
     public void setRequired(boolean required) {
-        boolean isRequiredIndicatorVisible = required && isEditable();
-        // Set requiredIndicatorVisible to a component
-        // in order to show required indicator
-        component.setRequiredIndicatorVisible(isRequiredIndicatorVisible);
+        if (this.required == required) {
+            return;
+        }
+
+        this.required = required;
 
         setupComponentErrorProvider(required, component);
         setupComponentErrorProvider(required, dateField);
         setupComponentErrorProvider(required, timeField);
+
+        updateRequiredIndicator();
+    }
+
+    private void updateRequiredIndicator() {
+        boolean isRequiredIndicatorVisible = isRequired() && isEditable();
+        // Set requiredIndicatorVisible to a component
+        // in order to show required indicator
+        component.setRequiredIndicatorVisible(isRequiredIndicatorVisible);
     }
 
     protected void setupComponentErrorProvider(boolean required, AbstractComponent component) {

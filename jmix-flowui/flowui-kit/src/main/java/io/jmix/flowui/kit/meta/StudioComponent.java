@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.kit.meta;
 
+import com.vaadin.flow.component.HasComponents;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
@@ -41,5 +43,14 @@ public @interface StudioComponent {
 
     String xmlnsAlias() default "";
 
+    /**
+     * Describes the available place in the hierarchy.
+     * By default, components can be located inside layout or inside a component inherited from {@link HasComponents}
+     */
+    String availablePlaceRegExp() default "((^(mainView/appLayout)?((/drawerLayout)|/navigationBar))$)|(^view/layout$)" +
+            "|((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar))|(^view/layout))?(/hasComponents)*$)";
+
     StudioProperty[] properties() default {};
+
+    StudioPropertiesBinding[] propertiesBindings() default {};
 }

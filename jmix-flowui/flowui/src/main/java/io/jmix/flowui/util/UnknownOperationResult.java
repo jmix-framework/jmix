@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ public class UnknownOperationResult implements OperationResult {
 
     @Override
     public OperationResult compose(Supplier<OperationResult> nextStep) {
-        // TODO: gg, refactor. Can status be another type?
         if (status == Status.SUCCESS) {
             return nextStep.get();
         }

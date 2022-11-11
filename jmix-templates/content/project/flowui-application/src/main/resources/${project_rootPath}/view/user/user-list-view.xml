@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://UserListView.title"
+      focusComponent="usersTable">
+    <data readOnly="true">
+        <collection id="usersDc"
+                    class="${project_rootPackage}.entity.User">
+            <fetchPlan extends="_base"/>
+            <loader id="usersDl">
+                <query>
+                    <![CDATA[select e from ${normalizedPrefix_underscore}User e order by e.username]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <queryParameters>
+            <pagination component="pagination"/>
+        </queryParameters>
+    </facets>
+    <layout expand="usersTable">
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="usersTable.create"/>
+            <button id="editBtn" action="usersTable.edit"/>
+            <button id="removeBtn" action="usersTable.remove"/>
+            <button id="showRoleAssignmentsBtn" action="usersTable.showRoleAssignments"/>
+            <dropdownButton id="additionalBtn" text="msg://additionalMenu" icon="COG">
+                <items>
+                    <actionItem id="changePasswordItem" ref="usersTable.changePassword"/>
+                    <actionItem id="resetPasswordItem" ref="usersTable.resetPassword"/>
+                </items>
+            </dropdownButton>
+            <simplePagination id="pagination" dataLoader="usersDl"/>
+        </hbox>
+        <dataGrid id="usersTable"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="usersDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+                <action id="showRoleAssignments" type="showRoleAssignments"/>
+                <action id="changePassword" type="changePassword"/>
+                <action id="resetPassword" type="resetPassword"/>
+            </actions>
+            <columns>
+                <column property="username"/>
+                <column property="firstName"/>
+                <column property="lastName"/>
+                <column property="email"/>
+                <column property="timeZoneId"/>
+                <column property="active"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

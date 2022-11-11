@@ -30,20 +30,13 @@ public class DrawerToggleLoader extends AbstractComponentLoader<DrawerToggle> {
 
     @Override
     public void loadComponent() {
-        loadIcon();
-
         getLoaderSupport().loadResourceString(element, "ariaLabel",
                 getComponentContext().getMessageGroup(), ariaLabel ->
                         resultComponent.getElement().setAttribute(ARIA_LABEL_PROPERTY_NAME, ariaLabel));
 
-        componentLoader().loadClassName(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
+        componentLoader().loadIcon(element, resultComponent::setIcon);
+        componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
     }
-
-    protected void loadIcon() {
-        componentLoader().loadIcon(resultComponent, element)
-                .ifPresent(icon -> resultComponent.setIcon(icon.create()));
-    }
-
 }

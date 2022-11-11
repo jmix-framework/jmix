@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -43,6 +44,17 @@ public interface CurrentAuthentication {
      */
     UserDetails getUser();
 
+    /**
+     * Returns the authenticated user using hints. If you need to get the user substitution information use the {@link
+     * io.jmix.core.usersubstitution.CurrentUserSubstitution}. See supported hints in the {@link CurrentUserHints}.
+     *
+     * @param hints hints with user retrieval instructions
+     * @return currently authenticated user
+     * @throws RuntimeException if Authentication is not set to {@link org.springframework.security.core.context.SecurityContext}
+     *                          or user information cannot be extracted from current authentication
+     * @see CurrentUserHints
+     */
+    UserDetails getUser(Map<String, Object> hints);
     /**
      * @return locale of the current authentication or default locale if current authentication doesn't contain locale
      * information

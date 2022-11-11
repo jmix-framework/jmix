@@ -53,7 +53,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
     @Override
     public void loadComponent() {
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         loadLabelPosition(resultComponent, element);
 

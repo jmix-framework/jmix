@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-@import url('app/dialog-window.css');
 @import url('app/exception-dialog-window.css');
-@import url('app/main-screen.css');
+@import url('app/main-view.css');
 @import url('app/misc.css');
-@import url('app/login-screen.css');
+@import url('app/login-view.css');
 
 @import url('component/jmix-list-menu.css');
 @import url('component/jmix-notification.css');
 @import url('component/jmix-user-indicator.css');
+@import url('component/jmix-simple-pagintion.css');
+@import url('component/jmix-items-per-page.css');
+@import url('component/jmix-dropdown-button-item-icon.css');
 
 html {
   --jmix-lumo-warning-background-color: hsla(43, 100%, 74%, 1);
@@ -30,4 +32,6 @@ html {
   --jmix-lumo-warning-background-color-10pct: hsla(43, 100%, 74%, 0.1);
   --jmix-lumo-warning-primary-text-color: hsl(48, 98%, 59%);
   --jmix-lumo-warning-color: #3f3f3f;
+
+  --jmix-simple-pagination-gap: 0.3em;
 }

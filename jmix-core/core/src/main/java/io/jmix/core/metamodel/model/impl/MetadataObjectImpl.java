@@ -25,7 +25,7 @@ public abstract class MetadataObjectImpl implements MetadataObject {
 
     protected String name;
 
-    private Map<String, Object> annotations = new HashMap<>();
+    protected Map<String, Object> annotations = new HashMap<>();
 
     @Override
     public String getName() {

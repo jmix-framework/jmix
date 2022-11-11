@@ -22,7 +22,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.data.SupportsDataProvider;
 import io.jmix.flowui.data.SupportsItemsContainer;
-import io.jmix.flowui.data.items.ContainerDataProvider;
+import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,7 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 public class JmixMultiSelectListBox<V> extends MultiSelectListBox<V> implements SupportsDataProvider<V>,
-        SupportsItemsContainer<V>, ApplicationContextAware, InitializingBean {
+        SupportsItemsContainer<V>, SupportsItemsEnum<V>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
     protected MetadataTools metadataTools;
@@ -64,7 +64,12 @@ public class JmixMultiSelectListBox<V> extends MultiSelectListBox<V> implements 
 
     @Override
     public void setItems(CollectionContainer<V> container) {
-        setItems(new ContainerDataProvider<>(container));
+        dataViewDelegate.setItems(container);
+    }
+
+    @Override
+    public void setItems(Class<V> itemsEnum) {
+        dataViewDelegate.setItems(itemsEnum);
     }
 
     @Override

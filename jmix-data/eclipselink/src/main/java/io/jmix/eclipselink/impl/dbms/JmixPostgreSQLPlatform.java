@@ -19,12 +19,13 @@ package io.jmix.eclipselink.impl.dbms;
 import io.jmix.core.UuidProvider;
 import org.eclipse.persistence.exceptions.ConversionException;
 import org.eclipse.persistence.internal.helper.DatabaseField;
+import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.PostgreSQLPlatform;
 
 import java.sql.Types;
 import java.util.UUID;
 
-public class JmixPostgreSQLPlatform extends PostgreSQLPlatform {
+public class JmixPostgreSQLPlatform extends PostgreSQLPlatform implements UuidMappingInfo {
 
     @Override
     public Object convertObject(Object sourceObject, Class javaClass) throws ConversionException {
@@ -38,5 +39,25 @@ public class JmixPostgreSQLPlatform extends PostgreSQLPlatform {
     @Override
     public int getJDBCTypeForSetNull(DatabaseField field) {
         return Types.NULL;
+    }
+
+    @Override
+    public int getUuidSqlType() {
+        return Types.OTHER;
+    }
+
+    @Override
+    public Class<?> getUuidType() {
+        return UUID.class;
+    }
+
+    @Override
+    public String getUuidColumnDefinition() {
+        return "UUID";
+    }
+
+    @Override
+    public Converter getUuidConverter() {
+        return UuidUuidConverter.getInstance();
     }
 }

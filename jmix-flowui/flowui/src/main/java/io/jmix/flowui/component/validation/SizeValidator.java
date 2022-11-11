@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.validation;
 
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -48,7 +47,6 @@ import java.util.Collection;
  *
  * @param <T> Collection or String
  */
-@SameAsUi
 @Component("flowui_SizeValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SizeValidator<T> extends AbstractValidator<T> implements InitializingBean {

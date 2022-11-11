@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2022 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,31 +30,27 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
 
     @Override
     public void loadComponent() {
-        loadIcon();
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "iconAfterText", resultComponent::setIconAfterText);
         loadBoolean(element, "disableOnClick", resultComponent::setDisableOnClick);
 
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadText(resultComponent, element);
+        componentLoader().loadIcon(element, resultComponent::setIcon);
         componentLoader().loadWhiteSpace(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
-        loadAction(resultComponent, element);
-    }
 
-    protected void loadIcon() {
-        componentLoader().loadIcon(resultComponent, element)
-                .ifPresent(icon -> resultComponent.setIcon(icon.create()));
+        loadAction(resultComponent, element);
     }
 
     protected void loadAction(JmixButton component, Element element) {
         loadString(element, "action")
                 .ifPresent(actionId -> getComponentContext().addInitTask(
-                        new AssignActionInitTask<>(component, actionId, getComponentContext().getScreen())
+                        new AssignActionInitTask<>(component, actionId, getComponentContext().getView())
                 ));
     }
 }

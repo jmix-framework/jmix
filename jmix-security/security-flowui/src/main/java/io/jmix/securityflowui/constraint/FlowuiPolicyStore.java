@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 public interface FlowuiPolicyStore {
 
-    Stream<ResourcePolicy> getScreenResourcePolicies(String windowId);
+    Stream<ResourcePolicy> getViewResourcePolicies(String viewId);
 
     Stream<ResourcePolicy> getMenuResourcePolicies(String menuId);
 }

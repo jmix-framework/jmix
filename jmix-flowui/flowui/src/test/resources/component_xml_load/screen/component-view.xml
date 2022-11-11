@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data readOnly="true">
         <instance id="orderDc"
                   class="test_support.entity.sales.Order">
@@ -39,7 +39,7 @@
     <layout>
         <avatar id="avatarId"
                 abbreviation="abbreviationString"
-                className="cssClassName1, cssClassName2"
+                classNames=",cssClassName1  ,,,   cssClassName2  "
                 colorIndex="50"
                 height="50px"
                 image="imageString"
@@ -48,7 +48,7 @@
                 minHeight="40px"
                 minWidth="80px"
                 name="nameString"
-                themeName="large"
+                themeNames="large"
                 visible="true"
                 width="100px"/>
 
@@ -59,7 +59,7 @@
                 autocorrect="true"
                 autofocus="true"
                 autoselect="true"
-                className="cssClassName1, cssClassName2"
+                classNames="cssClassName1, cssClassName2"
                 clearButtonVisible="true"
                 enabled="true"
                 errorMessage="errorMessageString"
@@ -76,7 +76,7 @@
                 required="true"
                 requiredIndicatorVisible="true"
                 requiredMessage="requiredMessageString"
-                themeName="small, align-right"
+                themeNames="small, align-right"
                 title="titleString"
                 value="50.5"
                 valueChangeMode="ON_CHANGE"
@@ -87,7 +87,7 @@
 
         <button id="buttonId"
                 autofocus="true"
-                className="cssClassName1, cssClassName2"
+                classNames="cssClassName1, cssClassName2"
                 disableOnClick="true"
                 enabled="true"
                 height="50px"
@@ -98,7 +98,7 @@
                 minHeight="40px"
                 minWidth="80px"
                 text="textString"
-                themeName="large, primary"
+                themeNames="large,,,  ,, primary"
                 title="buttonTitle"
                 visible="true"
                 whiteSpace="PRE"
@@ -110,7 +110,7 @@
         <checkbox id="checkBoxId"
                   ariaLabel="ariaLabelString"
                   autofocus="true"
-                  className="cssClassName1, cssClassName2"
+                  classNames="cssClassName1, cssClassName2"
                   enabled="true"
                   height="50px"
                   indeterminate="true"
@@ -130,7 +130,7 @@
                   allowCustomValue="true"
                   autoOpen="true"
                   autofocus="true"
-                  className="cssClassName1, cssClassName2"
+                  classNames="cssClassName1, cssClassName2"
                   clearButtonVisible="true"
                   dataContainer="orderDc"
                   enabled="true"
@@ -152,13 +152,13 @@
                   required="true"
                   requiredIndicatorVisible="true"
                   requiredMessage="requiredMessageString"
-                  themeName="small, align-center"
+                  themeNames="small, align-center"
                   visible="true"
                   width="100px"/>
 
         <datePicker id="datePickerId"
                     autoOpen="true"
-                    className="cssClassName1, cssClassName2"
+                    classNames="cssClassName1, cssClassName2"
                     clearButtonVisible="true"
                     dataContainer="orderDc"
                     datatype="localDate"
@@ -180,14 +180,14 @@
                     required="true"
                     requiredIndicatorVisible="true"
                     requiredMessage="requiredMessageString"
-                    themeName="small, align-center"
+                    themeNames="small, align-center"
                     visible="true"
                     weekNumbersVisible="true"
                     width="100px"/>
 
         <timePicker id="timePickerId"
                     autoOpen="true"
-                    className="cssClassName1, cssClassName2"
+                    classNames="cssClassName1, cssClassName2"
                     clearButtonVisible="true"
                     dataContainer="orderDc"
                     datatype="localTime"
@@ -207,12 +207,13 @@
                     required="true"
                     requiredIndicatorVisible="true"
                     requiredMessage="requiredMessageString"
+                    themeNames="small, align-center"
                     visible="true"
                     width="100px"/>
 
         <dateTimePicker id="dateTimePickerId"
                         autoOpen="true"
-                        className="cssClassName1, cssClassName2"
+                        classNames="cssClassName1, cssClassName2"
                         dataContainer="orderDc"
                         datatype="dateTime"
                         datePlaceholder="datePlaceholderString"
@@ -231,14 +232,14 @@
                         required="true"
                         requiredIndicatorVisible="true"
                         requiredMessage="requiredMessageString"
-                        themeName="small, align-center"
+                        themeNames="small, align-center"
                         timePlaceholder="timePlaceholderString"
                         visible="true"
                         weekNumbersVisible="true"
                         width="100px"/>
 
         <details id="detailsId"
-                 className="cssClassName1, cssClassName2"
+                 classNames="cssClassName1, cssClassName2"
                  enabled="true"
                  height="50px"
                  maxHeight="55px"
@@ -246,7 +247,7 @@
                  minHeight="40px"
                  minWidth="80px"
                  summaryText="summaryTextString"
-                 themeName="small, filled"
+                 themeNames="small, filled"
                  visible="true"
                  width="100px">
             <details id="detailsChild"/>
@@ -258,7 +259,7 @@
                      autocorrect="true"
                      autofocus="true"
                      autoselect="true"
-                     className="cssClassName1, cssClassName2"
+                     classNames="cssClassName1, cssClassName2"
                      clearButtonVisible="true"
                      enabled="true"
                      errorMessage="errorMessageString"
@@ -279,7 +280,7 @@
                      requiredIndicatorVisible="true"
                      requiredMessage="requiredMessageString"
                      step="5"
-                     themeName="small, align-right"
+                     themeNames="small, align-right"
                      title="titleString"
                      value="300"
                      valueChangeMode="ON_CHANGE"
@@ -294,7 +295,7 @@
                        autocorrect="true"
                        autofocus="true"
                        autoselect="true"
-                       className="cssClassName1, cssClassName2"
+                       classNames="cssClassName1, cssClassName2"
                        clearButtonVisible="true"
                        enabled="true"
                        errorMessage="errorMessageString"
@@ -313,7 +314,7 @@
                        required="true"
                        requiredIndicatorVisible="true"
                        requiredMessage="requiredMessageString"
-                       themeName="small, align-right"
+                       themeNames="small, align-right"
                        title="titleString"
                        value="password"
                        valueChangeMode="ON_CHANGE"
@@ -323,7 +324,7 @@
         <passwordField id="passwordFieldWithValueId" dataContainer="orderDc" property="user.password"/>
 
         <progressBar id="progressBarId"
-                     className="cssClassName1, cssClassName2"
+                     classNames="cssClassName1, cssClassName2"
                      height="50px"
                      indeterminate="false"
                      max="95"
@@ -332,13 +333,13 @@
                      min="5"
                      minHeight="40px"
                      minWidth="80px"
-                     themeName="LUMO_ERROR"
+                     themeNames="error"
                      value="67"
                      visible="true"
                      width="100px"/>
 
         <radioButtonGroup id="radioButtonGroupId"
-                          className="cssClassName1, cssClassName2"
+                          classNames="cssClassName1, cssClassName2"
                           dataContainer="orderDc"
                           enabled="true"
                           errorMessage="errorMessageString"
@@ -354,12 +355,12 @@
                           readOnly="false"
                           required="true"
                           requiredIndicatorVisible="true"
-                          themeName="LUMO_VERTICAL"
+                          themeNames="LUMO_VERTICAL"
                           visible="true"
                           width="100px"/>
 
         <select id="selectId"
-                className="cssClassName1, cssClassName2"
+                classNames="cssClassName1, cssClassName2"
                 height="50px"
                 width="100px"
                 maxHeight="55px"
@@ -389,7 +390,7 @@
                   autocorrect="true"
                   autofocus="true"
                   autoselect="true"
-                  className="cssClassName1, cssClassName2"
+                  classNames="cssClassName1, cssClassName2"
                   clearButtonVisible="true"
                   enabled="true"
                   errorMessage="errorMessageString"
@@ -407,7 +408,7 @@
                   required="true"
                   requiredIndicatorVisible="true"
                   requiredMessage="requiredMessageString"
-                  themeName="LUMO_SMALL, MATERIAL_ALWAYS_FLOAT_LABEL"
+                  themeNames="small, always-float-label"
                   value="textAreaValue"
                   valueChangeMode="TIMEOUT"
                   valueChangeTimeout="50"
@@ -421,7 +422,7 @@
                    autocorrect="true"
                    autofocus="true"
                    autoselect="true"
-                   className="cssClassName1, cssClassName2"
+                   classNames="cssClassName1, cssClassName2"
                    clearButtonVisible="true"
                    datatype="int"
                    enabled="true"
@@ -442,7 +443,7 @@
                    required="true"
                    requiredIndicatorVisible="true"
                    requiredMessage="requiredMessageString"
-                   themeName="small, align-right"
+                   themeNames="small, align-right"
                    title="titleString"
                    value="5050"
                    valueChangeMode="ON_CHANGE"
@@ -454,7 +455,7 @@
         <valuePicker id="valuePickerId"
                      allowCustomValue="true"
                      autofocus="true"
-                     className="cssClassName1, cssClassName2"
+                     classNames="cssClassName1, cssClassName2"
                      enabled="true"
                      errorMessage="errorMessageString"
                      height="50px"
@@ -470,7 +471,7 @@
                      required="true"
                      requiredIndicatorVisible="true"
                      requiredMessage="requiredMessageString"
-                     themeName="theme1, theme2"
+                     themeNames="theme1, theme2"
                      title="titleString"
                      visible="true"
                      width="100px"
@@ -483,42 +484,42 @@
             </actions>
         </valuePicker>
 
-        <valuesPicker id="valuesPickerId"
-                      allowCustomValue="true"
-                      autofocus="true"
-                      className="cssClassName1, cssClassName2"
-                      enabled="true"
-                      errorMessage="errorMessageString"
-                      height="50px"
-                      helperText="helperTextString"
-                      invalid="false"
-                      label="labelString"
-                      maxHeight="55px"
-                      maxWidth="120px"
-                      minHeight="40px"
-                      minWidth="80px"
-                      placeholder="placeholderString"
-                      readOnly="true"
-                      required="true"
-                      requiredIndicatorVisible="true"
-                      requiredMessage="requiredMessageString"
-                      themeName="theme1, theme2"
-                      title="titleString"
-                      visible="true"
-                      width="100px"
+        <multiValuePicker id="valuesPickerId"
+                          allowCustomValue="true"
+                          autofocus="true"
+                          classNames="cssClassName1, cssClassName2"
+                          enabled="true"
+                          errorMessage="errorMessageString"
+                          height="50px"
+                          helperText="helperTextString"
+                          invalid="false"
+                          label="labelString"
+                          maxHeight="55px"
+                          maxWidth="120px"
+                          minHeight="40px"
+                          minWidth="80px"
+                          placeholder="placeholderString"
+                          readOnly="true"
+                          required="true"
+                          requiredIndicatorVisible="true"
+                          requiredMessage="requiredMessageString"
+                          themeNames="theme1, theme2"
+                          title="titleString"
+                          visible="true"
+                          width="100px"
 
-                      dataContainer="orderDc"
-                      property="orderLines">
+                          dataContainer="orderDc"
+                          property="orderLines">
             <actions>
                 <action id="action1" icon="GAMEPAD"/>
                 <action id="action2" icon="DIPLOMA"/>
             </actions>
-        </valuesPicker>
+        </multiValuePicker>
 
         <entityPicker id="entityPickerId"
                       allowCustomValue="true"
                       autofocus="true"
-                      className="cssClassName1, cssClassName2"
+                      classNames="cssClassName1, cssClassName2"
                       enabled="true"
                       errorMessage="errorMessageString"
                       height="50px"
@@ -534,7 +535,7 @@
                       required="true"
                       requiredIndicatorVisible="true"
                       requiredMessage="requiredMessageString"
-                      themeName="theme1, theme2"
+                      themeNames="theme1, theme2"
                       title="titleString"
                       visible="true"
                       width="100px"
@@ -552,7 +553,7 @@
                         allowCustomValue="true"
                         autofocus="true"
                         autoOpen="true"
-                        className="cssClassName1, cssClassName2"
+                        classNames="cssClassName1, cssClassName2"
                         clearButtonVisible="true"
                         enabled="true"
                         errorMessage="errorMessageString"
@@ -572,7 +573,7 @@
                         readOnly="true"
                         required="true"
                         requiredIndicatorVisible="true"
-                        themeName="small, align-right"
+                        themeNames="small, align-right"
                         title="titleString"
                         visible="true"
                         width="100px">
@@ -586,7 +587,7 @@
                         allowCustomValue="true"
                         autofocus="true"
                         autoOpen="true"
-                        className="cssClassName1, cssClassName2"
+                        classNames="cssClassName1, cssClassName2"
                         clearButtonVisible="true"
                         enabled="true"
                         errorMessage="errorMessageString"
@@ -607,7 +608,7 @@
                         required="true"
                         requiredIndicatorVisible="true"
                         requiredMessage="requiredMessageString"
-                        themeName="small, align-right"
+                        themeNames="small, align-right"
                         title="titleString"
                         visible="true"
                         width="100px"
@@ -615,5 +616,64 @@
                         dataContainer="orderDc" property="customer"/>
 
         <entityComboBox id="metaClassComboBoxId" metaClass="test_Order"/>
+
+        <dropdownButton id="dropdownButtonId"
+                        classNames="cssClassName1, cssClassName2"
+                        enabled="true"
+                        height="50px"
+                        icon="GAMEPAD"
+                        maxHeight="55px"
+                        maxWidth="120px"
+                        minHeight="40px"
+                        minWidth="80px"
+                        openOnHover="true"
+                        text="dropdownButtonText"
+                        themeNames="small primary"
+                        title="dropdownButtonTitle"
+                        visible="true"
+                        whiteSpace="PRE"
+                        width="100px">
+            <items>
+                <actionItem id="firstActionItem">
+                    <action id="action2" icon="DIPLOMA"/>
+                </actionItem>
+                <separator/>
+                <actionItem id="secondActionItem" ref="buttonAction"/>
+                <componentItem id="componentItem">
+                    <span text="content"/>
+                </componentItem>
+                <textItem id="textItem" text="textItemContent"/>
+            </items>
+        </dropdownButton>
+
+        <comboButton id="comboButtonId"
+                     action="buttonAction"
+                     classNames="cssClassName1, cssClassName2"
+                     enabled="true"
+                     height="50px"
+                     icon="GAMEPAD"
+                     maxHeight="55px"
+                     maxWidth="120px"
+                     minHeight="40px"
+                     minWidth="80px"
+                     openOnHover="true"
+                     text="comboButtonText"
+                     themeNames="success small"
+                     title="comboButtonTitle"
+                     visible="true"
+                     whiteSpace="PRE"
+                     width="100px">
+            <items>
+                <actionItem id="firstActionItem">
+                    <action id="action2" icon="DIPLOMA"/>
+                </actionItem>
+                <separator/>
+                <actionItem id="secondActionItem" ref="buttonAction"/>
+                <componentItem id="componentItem">
+                    <span text="content"/>
+                </componentItem>
+                <textItem id="textItem" text="textItemContent"/>
+            </items>
+        </comboButton>
     </layout>
-</screen>
+</view>

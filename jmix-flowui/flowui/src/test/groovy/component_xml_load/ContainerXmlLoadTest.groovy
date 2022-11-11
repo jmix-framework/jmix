@@ -23,7 +23,6 @@ import com.vaadin.flow.component.orderedlayout.Scroller
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
 import component_xml_load.screen.ContainerView
-import io.jmix.flowui.component.checkbox.JmixCheckbox
 import io.jmix.flowui.component.textfield.TypedTextField
 import io.jmix.flowui.kit.component.button.JmixButton
 import org.springframework.boot.test.context.SpringBootTest
@@ -126,7 +125,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             scrollDirection == Scroller.ScrollDirection.BOTH
             visible
             width == "100px"
-            (children.find() as JmixCheckbox).id.get() == "scrollerChild"
+            getOwnComponents().first().id.get() == "scrollerChild"
         }
     }
 

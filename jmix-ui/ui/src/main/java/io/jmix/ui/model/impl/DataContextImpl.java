@@ -252,7 +252,8 @@ public class DataContextImpl implements DataContextInternal {
         Object dstEntity;
         try {
             dstEntity = srcEntity.getClass().getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
             throw new RuntimeException("Cannot create an instance of " + srcEntity.getClass(), e);
         }
         copySystemState(srcEntity, dstEntity);
@@ -266,7 +267,7 @@ public class DataContextImpl implements DataContextInternal {
 
         mergeSystemState(srcEntity, dstEntity, isRoot, options);
 
-        MetaClass metaClass = metadata.getClass(srcEntity.getClass());
+        MetaClass metaClass = getEntityMetaClass(srcEntity);
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
@@ -366,9 +367,9 @@ public class DataContextImpl implements DataContextInternal {
         EntityPreconditions.checkEntityType(srcEntity);
         EntityPreconditions.checkEntityType(dstEntity);
 
+        entitySystemStateSupport.copySystemState((Entity) srcEntity, (Entity) dstEntity);
         EntityValues.setId(dstEntity, EntityValues.getId(srcEntity));
         EntityValues.setGeneratedId(dstEntity, EntityValues.getGeneratedId(srcEntity));
-        entitySystemStateSupport.copySystemState((Entity) srcEntity, (Entity) dstEntity);
 
         if (EntityValues.isVersionSupported(dstEntity)) {
             EntityValues.setVersion(dstEntity, EntityValues.getVersion(srcEntity));
@@ -383,8 +384,8 @@ public class DataContextImpl implements DataContextInternal {
 
     protected void mergeLazyLoadingState(Object srcEntity, Object dstEntity) {
         boolean srcNew = entityStates.isNew(srcEntity);
-        MetaClass metaClass = metadata.getClass(srcEntity.getClass());
 
+        MetaClass metaClass = getEntityMetaClass(srcEntity);
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (property.getRange().isClass()) {
@@ -702,10 +703,7 @@ public class DataContextImpl implements DataContextInternal {
                 .removing(isolate(filterCommittedInstances(removedInstances)));
 
         entityReferencesNormalizer.updateReferences(saveContext.getEntitiesToSave());
-
-        for (Object entity : saveContext.getEntitiesToSave()) {
-            saveContext.getFetchPlans().put(entity, entityStates.getCurrentFetchPlan(entity));
-        }
+        updateFetchPlans(saveContext);
 
         if (commitDelegate == null) {
             return dataManager.save(saveContext);
@@ -718,6 +716,12 @@ public class DataContextImpl implements DataContextInternal {
         return instances.stream()
                 .filter(entity -> !metadataTools.isJpaEmbeddable(entity.getClass()))
                 .collect(Collectors.toList());
+    }
+
+    protected void updateFetchPlans(SaveContext saveContext) {
+        for (Object entity : saveContext.getEntitiesToSave()) {
+            saveContext.getFetchPlans().put(entity, entityStates.getCurrentFetchPlan(entity));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -756,8 +760,8 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     protected boolean entityHasReference(Object entity, Object refEntity) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
-        MetaClass refMetaClass = metadata.getClass(refEntity.getClass());
+        MetaClass metaClass = metadata.getClass(entity);
+        MetaClass refMetaClass = metadata.getClass(refEntity);
 
         return metaClass.getProperties().stream()
                 .anyMatch(metaProperty -> metaProperty.getRange().isClass()
@@ -814,7 +818,7 @@ public class DataContextImpl implements DataContextInternal {
         }
         visited.add(entity);
 
-        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (!property.getRange().isClass() || !entityStates.isLoaded(entity, property.getName()))
                 continue;
             Object value = EntityValues.getValue(entity, property.getName());
@@ -845,13 +849,24 @@ public class DataContextImpl implements DataContextInternal {
         return modifiedInstances;
     }
 
+    protected MetaClass getEntityMetaClass(Object entity) {
+        return metadata.getClass(entity);
+    }
+
+    @Nullable
+    protected String getPrimaryKeyPropertyName(Object entity) {
+        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(entity.getClass());
+        if (primaryKeyProperty != null) {
+            return primaryKeyProperty.getName();
+        }
+        return null;
+    }
+
     protected class PropertyChangeListener implements EntityPropertyChangeListener {
         @Override
         public void propertyChanged(EntityPropertyChangeEvent e) {
             // if id has been changed, put the entity to the content with the new id
-            MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(e.getItem().getClass());
-            if (primaryKeyProperty != null
-                    && e.getProperty().equals(primaryKeyProperty.getName())) {
+            if (e.getProperty().equals(getPrimaryKeyPropertyName(e.getItem()))) {
                 Map<Object, Object> entityMap = content.get(e.getItem().getClass());
                 if (entityMap != null) {
                     if (e.getPrevValue() == null) {

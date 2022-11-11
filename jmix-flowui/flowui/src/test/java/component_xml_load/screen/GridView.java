@@ -19,35 +19,35 @@ package component_xml_load.screen;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.ViewComponent;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
 @Route(value = "grid-view")
-@UiController("GridView")
-@UiDescriptor("grid-view.xml")
-public class GridView extends StandardScreen {
+@ViewController("GridView")
+@ViewDescriptor("grid-view.xml")
+public class GridView extends StandardView {
 
-    @ComponentId
+    @ViewComponent
     public DataGrid<?> dataGrid;
 
-    @ComponentId
+    @ViewComponent
     public DataGrid<?> anotherDataGrid;
 
-    @ComponentId
+    @ViewComponent
     public DataGrid<?> metaClassDataGrid;
 
-    @ComponentId
+    @ViewComponent
     public TreeDataGrid<?> treeDataGrid;
 
-    @ComponentId
+    @ViewComponent
     public TreeDataGrid<?> anotherTreeDataGrid;
 
-    @ComponentId
+    @ViewComponent
     public TreeDataGrid<?> metaClassTreeDataGrid;
 
     public void loadData() {
-        getScreenData().loadAll();
+        getViewData().loadAll();
     }
 }

@@ -26,7 +26,6 @@ dependencies {
     api project(':eclipselink')
     api project(':security')
     api project(':security-data')
-    api project(':security-ui')
 
     testImplementation project(':security-ui')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'

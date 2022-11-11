@@ -17,7 +17,6 @@
 package io.jmix.multitenancy.core.impl;
 
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.CurrentUserHints;
 import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.multitenancy.core.AcceptsTenant;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,7 +46,7 @@ public class TenantProviderImpl implements TenantProvider {
         if (!currentAuthentication.isSet()) {
             return TenantProvider.NO_TENANT;
         }
-        UserDetails userDetails = currentAuthentication.getUser(Map.of(CurrentUserHints.RELOAD_USER, false));
+        UserDetails userDetails = currentAuthentication.getUser();
         if (!(userDetails instanceof AcceptsTenant)) {
             return TenantProvider.NO_TENANT;
         }

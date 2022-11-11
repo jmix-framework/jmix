@@ -50,11 +50,6 @@ public class TestCurrentAuthentication implements CurrentAuthentication {
     }
 
     @Override
-    public UserDetails getUser(Map<String, Object> hints) {
-        return user;
-    }
-
-    @Override
     public Locale getLocale() {
         return Locale.ENGLISH;
     }

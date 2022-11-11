@@ -17,46 +17,29 @@
 package io.jmix.core.security.impl;
 
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.CurrentAuthenticationUserLoader;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.Map;
-
 @Component("sec_CurrentUserSubstitution")
 public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
 
     protected CurrentAuthentication currentAuthentication;
 
-    protected CurrentAuthenticationUserLoader currentAuthenticationUserLoader;
-
     @Autowired
-    public CurrentUserSubstitutionImpl(CurrentAuthentication currentAuthentication, CurrentAuthenticationUserLoader currentAuthenticationUserLoader) {
+    public CurrentUserSubstitutionImpl(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
-        this.currentAuthenticationUserLoader = currentAuthenticationUserLoader;
     }
 
     @Override
     public UserDetails getAuthenticatedUser() {
-        return getAuthenticatedUser(Collections.emptyMap());
-    }
-
-    @Override
-    public UserDetails getAuthenticatedUser(Map<String, Object> hints) {
-        return currentAuthentication.getUser(hints);
+        return currentAuthentication.getUser();
     }
 
     @Override
     public UserDetails getSubstitutedUser() {
-        return getSubstitutedUser(Collections.emptyMap());
-    }
-
-    @Override
-    public UserDetails getSubstitutedUser(Map<String, Object> hints) {
         if (!currentAuthentication.isSet()) {
             return null;
         }
@@ -64,7 +47,7 @@ public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
         if (SubstitutedUserAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
             Object substitutedPrincipal = ((SubstitutedUserAuthenticationToken) authentication).getSubstitutedPrincipal();
             if (substitutedPrincipal instanceof UserDetails) {
-                return currentAuthenticationUserLoader.reloadUser((UserDetails) substitutedPrincipal, hints);
+                return (UserDetails) substitutedPrincipal;
             } else {
                 throw new RuntimeException("Substituted principal must be UserDetails");
             }
@@ -74,12 +57,7 @@ public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
 
     @Override
     public UserDetails getEffectiveUser() {
-        return getEffectiveUser(Collections.emptyMap());
-    }
-
-    @Override
-    public UserDetails getEffectiveUser(Map<String, Object> hints) {
-        UserDetails substitutedUser = getSubstitutedUser(hints);
-        return substitutedUser != null ? substitutedUser : getAuthenticatedUser(hints);
+        UserDetails substitutedUser = getSubstitutedUser();
+        return substitutedUser != null ? substitutedUser : getAuthenticatedUser();
     }
 }

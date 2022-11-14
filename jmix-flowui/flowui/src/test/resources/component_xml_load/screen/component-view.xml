@@ -588,7 +588,6 @@
                         autofocus="true"
                         autoOpen="true"
                         classNames="cssClassName1, cssClassName2"
-                        clearButtonVisible="true"
                         enabled="true"
                         errorMessage="errorMessageString"
                         height="50px"

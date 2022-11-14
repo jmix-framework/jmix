@@ -700,8 +700,6 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autoOpen", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "dataContainer",
                             type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,

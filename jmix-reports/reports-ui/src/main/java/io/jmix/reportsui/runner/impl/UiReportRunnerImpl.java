@@ -44,6 +44,7 @@ import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.TaskLifeCycle;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         }
 
         FrameOwner originFrameOwner = context.getOriginFrameOwner();
-        if (originFrameOwner!= null && context.getInBackground()) {
+        if (originFrameOwner != null && context.getInBackground()) {
             Screen hostScreen = UiControllerUtils.getScreen(originFrameOwner);
             runInBackground(context, hostScreen);
         } else {
@@ -109,7 +110,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         }
 
         FrameOwner originFrameOwner = context.getOriginFrameOwner();
-        if (originFrameOwner!= null && context.getInBackground()) {
+        if (originFrameOwner != null && context.getInBackground()) {
             Report targetReport = getReportForPrinting(context.getReport());
             long timeout = reportsClientProperties.getBackgroundReportProcessingTimeoutMs();
             Screen hostScreen = UiControllerUtils.getScreen(originFrameOwner);
@@ -334,7 +335,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
             return true;
         }
         if (mode == null || mode == ParametersDialogShowMode.IF_REQUIRED) {
-            return CollectionUtils.isNotEmpty(report.getInputParameters()) || inputParametersRequiredByTemplates(report);
+            return containsVisibleInputParameters(report) || inputParametersRequiredByTemplates(report);
         }
         return false;
     }
@@ -349,5 +350,11 @@ public class UiReportRunnerImpl implements UiReportRunner {
             throw new ReportingException(String.format("Unable to find parameter by alias [%s] for report [%s]", multiParamAlias, report.getName()));
         }
         return multiParameter;
+    }
+
+    protected boolean containsVisibleInputParameters(Report report) {
+        List<ReportInputParameter> inputParameters = report.getInputParameters();
+        return CollectionUtils.isNotEmpty(inputParameters)
+                && inputParameters.stream().anyMatch(inputParameter -> BooleanUtils.isNotTrue(inputParameter.getHidden()));
     }
 }

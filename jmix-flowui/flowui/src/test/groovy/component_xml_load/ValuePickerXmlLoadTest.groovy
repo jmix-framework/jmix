@@ -248,7 +248,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
-            clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
             height == "50px"

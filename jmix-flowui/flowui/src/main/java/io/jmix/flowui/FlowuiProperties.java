@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "jmix.flowui")
@@ -50,13 +51,26 @@ public class FlowuiProperties {
     Integer defaultPageSize;
     Map<String, Integer> entityPageSize;
 
+    /**
+     * File extensions that can be opened for viewing in a browser.
+     */
+    List<String> viewFileExtensions;
+
+    /**
+     * Threshold in bytes on which downloaded through {@code ByteArrayDownloadDataProvider} byte arrays will be saved to
+     * temporary files to prevent HTTP session memory leaks. Default is 100 KB.
+     */
+    int saveExportedByteArrayDataThresholdBytes;
+
     public FlowuiProperties(@DefaultValue("login") String loginViewId,
                             @DefaultValue("main") String mainViewId,
                             @DefaultValue("true") boolean compositeMenu,
                             @DefaultValue("10000") Integer defaultMaxFetchSize,
                             @Nullable Map<String, Integer> entityMaxFetchSize,
                             @DefaultValue("50") Integer defaultPageSize,
-                            @Nullable Map<String, Integer> entityPageSize) {
+                            @Nullable Map<String, Integer> entityPageSize,
+                            @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
+                            @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes) {
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
         this.compositeMenu = compositeMenu;
@@ -64,6 +78,8 @@ public class FlowuiProperties {
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
         this.defaultPageSize = defaultPageSize;
         this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
+        this.viewFileExtensions = viewFileExtensions;
+        this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
     }
 
     /**
@@ -107,5 +123,19 @@ public class FlowuiProperties {
         if (forEntity != null)
             return forEntity;
         return defaultPageSize;
+    }
+
+    /**
+     * @see #viewFileExtensions
+     */
+    public List<String> getViewFileExtensions() {
+        return viewFileExtensions;
+    }
+
+    /**
+     * @see #saveExportedByteArrayDataThresholdBytes
+     */
+    public int getSaveExportedByteArrayDataThresholdBytes() {
+        return saveExportedByteArrayDataThresholdBytes;
     }
 }

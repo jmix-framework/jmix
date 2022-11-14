@@ -86,26 +86,28 @@ public class ScreenResourcePolicyModelCreate extends MultipleResourcePolicyModel
     @Subscribe("screenField")
     public void onScreenFieldValueChange(HasValue.ValueChangeEvent<String> event) {
         String screenId = event.getValue();
-        policyGroupField.setValue(resourcePolicyGroupResolver.resolvePolicyGroup(ResourcePolicyType.SCREEN, screenId));
+        if(screenId!=null) {
+            policyGroupField.setValue(resourcePolicyGroupResolver.resolvePolicyGroup(ResourcePolicyType.SCREEN, screenId));
 
-        menuItemId = null;
-        MenuItem menuItem = null;
-        if (screenId != null) {
-            menuItem = resourcePolicyEditorUtils.findMenuItemByScreen(screenId);
-            if (menuItem != null) {
-                menuItemId = menuItem.getId();
+            menuItemId = null;
+            MenuItem menuItem = null;
+            if (screenId != null) {
+                menuItem = resourcePolicyEditorUtils.findMenuItemByScreen(screenId);
+                if (menuItem != null) {
+                    menuItemId = menuItem.getId();
+                }
             }
-        }
 
-        if (this.menuItemId == null) {
-            menuItemField.setValue(null);
-            menuAccessField.setValue(Boolean.FALSE);
-            menuAccessField.setEditable(false);
-        } else {
-            menuItemField.setValue(resourcePolicyEditorUtils.getMenuCaption(menuItem));
-            menuAccessField.setEditable(true);
+            if (this.menuItemId == null) {
+                menuItemField.setValue(null);
+                menuAccessField.setValue(Boolean.FALSE);
+                menuAccessField.setEditable(false);
+            } else {
+                menuItemField.setValue(resourcePolicyEditorUtils.getMenuCaption(menuItem));
+                menuAccessField.setEditable(true);
+            }
+            hasChanges = true;
         }
-        hasChanges = true;
     }
 
     @Override

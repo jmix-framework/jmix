@@ -16,6 +16,16 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="Base title">
+    <data>
+        <instance id="lineDc"
+                  class="test_support.entity.sales.OrderLine">
+            <fetchPlan extends="_base">
+                <property name="params" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="lineDl"/>
+            <collection id="paramsDc" property="params"/>
+        </instance>
+    </data>
     <layout>
         <hbox id="hboxAddNew">
             <div id="base1" text="base1"/>

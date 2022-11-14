@@ -18,6 +18,17 @@
       extends="xml_inheritance/view/xml-inheritance-base-test-view.xml"
       xmlns:ext="http://jmix.io/schema/flowui/view-ext"
       title="Extended title">
+    <data>
+        <instance id="lineDc"
+                  class="test_support.entity.sales.OrderLine">
+            <fetchPlan extends="_base">
+                <!-- testing FetchPlanPropertyElementTargetLocator, fetchPlan was _base -->
+                <property name="params" fetchPlan="_instance_name"/>
+            </fetchPlan>
+            <loader id="lineDl"/>
+            <collection id="paramsDc" property="params"/>
+        </instance>
+    </data>
     <layout>
         <hbox id="hboxAddNew">
             <div id="new1" ext:index="0"/>

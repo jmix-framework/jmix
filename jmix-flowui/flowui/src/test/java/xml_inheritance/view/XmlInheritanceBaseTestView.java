@@ -18,10 +18,12 @@ package xml_inheritance.view;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.flowui.component.pagination.SimplePagination;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
+import test_support.entity.sales.OrderLine;
 
 @ViewController
 @ViewDescriptor("xml-inheritance-base-test-view.xml")
@@ -35,5 +37,8 @@ public class XmlInheritanceBaseTestView extends StandardView {
 
     @ViewComponent
     public HorizontalLayout hboxMoveBaseToDown;
+
+    @ViewComponent
+    public InstanceContainer<OrderLine> lineDc;
 
 }

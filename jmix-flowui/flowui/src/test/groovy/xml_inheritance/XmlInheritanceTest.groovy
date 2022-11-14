@@ -52,4 +52,12 @@ class XmlInheritanceTest extends FlowuiTestSpecification {
         then: "Title from extended view is used"
         view.pageTitle == "Extended title"
     }
+
+    def "fetchPlan property from extended view used"() {
+        when: "Create view that extends another one"
+        def view = (XmlInheritanceExtBaseTestView) openScreen(XmlInheritanceExtBaseTestView)
+
+        then: "FetchPlan from extended view is used"
+        view.lineDc.fetchPlan.getProperty("params").fetchPlan.name == "_instance_name"
+    }
 }

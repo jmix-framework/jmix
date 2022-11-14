@@ -16,7 +16,8 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       extends="xml_inheritance/view/xml-inheritance-base-test-view.xml"
-      xmlns:ext="http://jmix.io/schema/flowui/view-ext">
+      xmlns:ext="http://jmix.io/schema/flowui/view-ext"
+      title="Extended title">
     <layout>
         <hbox id="hboxAddNew">
             <div id="new1" ext:index="0"/>

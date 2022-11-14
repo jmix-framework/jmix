@@ -14,7 +14,8 @@
   ~ limitations under the License.
   -->
 
-<view xmlns="http://jmix.io/schema/flowui/view">
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="Base title">
     <layout>
         <hbox id="hboxAddNew">
             <div id="base1" text="base1"/>

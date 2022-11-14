@@ -30,7 +30,7 @@ class XmlInheritanceTest extends FlowuiTestSpecification {
     }
 
     def "ext:index in extended view"() {
-        when: "Created view that extends another one"
+        when: "Create view that extends another one"
         def view = (XmlInheritanceExtBaseTestView) openScreen(XmlInheritanceExtBaseTestView)
 
         then: "Components that use ext:index should change their position"
@@ -43,5 +43,13 @@ class XmlInheritanceTest extends FlowuiTestSpecification {
 
         def hboxDown = view.hboxMoveBaseToDown
         hboxDown.getComponentAt(1).id.get() == "down3"
+    }
+
+    def "title from extended view is used"() {
+        when: "Create view that extends another one"
+        def view = (XmlInheritanceExtBaseTestView) openScreen(XmlInheritanceExtBaseTestView)
+
+        then: "Title from extended view is used"
+        view.pageTitle == "Extended title"
     }
 }

@@ -354,9 +354,7 @@ public class Notifications {
 
             Component content;
             if (text != null) {
-                HasComponents textLayout = createTextLayout();
-                textLayout.add(createMessageComponent(text));
-                content = (Component) textLayout;
+                content = createTextComponent(text);
             } else if (title != null && message != null) {
                 HasComponents textLayout = createTextLayout();
                 textLayout.add(createTitleComponent(title));
@@ -374,6 +372,7 @@ public class Notifications {
                 closeableLayout.getElement().getClassList().add(COMPONENT_CONTENT_CLASS_NAME);
                 return (Component) closeableLayout;
             }
+
             return content;
         }
 
@@ -386,6 +385,10 @@ public class Notifications {
                 div.setClassName(TEXT_LAYOUT_CLASS_NAME);
             }
             return div;
+        }
+
+        protected Component createTextComponent(String text) {
+            return new Text(text);
         }
 
         protected Component createTitleComponent(String title) {

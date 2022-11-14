@@ -46,9 +46,14 @@ public class JmixListQuery extends JmixStructuredQuery {
     public Object execute(Object[] parameters) {
         FluentLoader.ByCondition<?> loader = dataManager.load(metadata.getDomainType())
                 .condition(conditions)
-                .fetchPlan(fetchPlan)
                 .hints(queryHints)
                 .parameters(buildNamedParametersMap(parameters));
+
+        if (fetchPlanIndex != -1) {
+            loader.fetchPlan((FetchPlan) parameters[fetchPlanIndex]);
+        } else {
+            loader.fetchPlan(fetchPlan);
+        }
 
         if (maxResults != null) {
             loader.maxResults(maxResults);

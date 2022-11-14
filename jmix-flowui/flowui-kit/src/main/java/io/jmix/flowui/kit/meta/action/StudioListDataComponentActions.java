@@ -75,7 +75,7 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "PENCIL",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
-                            initialValue = "create"),
+                            initialValue = "edit"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
                             defaultValue = "ENTER"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
@@ -172,7 +172,7 @@ public interface StudioListDataComponentActions {
     @StudioAction(
             type = "exclude",
             description = "Excludes entities from the list. The excluded entities are not deleted.",
-            classFqn = "io.jmix.flowui.action.list.RemoveAction",
+            classFqn = "io.jmix.flowui.action.list.ExcludeAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             availableInViewWizard = true,
             properties = {
@@ -248,7 +248,7 @@ public interface StudioListDataComponentActions {
     @StudioAction(
             type = "refresh",
             description = "Reloads a list of entities from the database",
-            classFqn = "io.jmix.flowui.action.list.ItemTrackingAction",
+            classFqn = "io.jmix.flowui.action.list.RefreshAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,

@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security;
+package io.jmix.core.impl.repository.query;
+
+import io.jmix.core.FetchPlan;
+import org.springframework.core.MethodParameter;
+import org.springframework.data.repository.query.Parameter;
 
 /**
- * Interface contains a list of hints supported by {@link CurrentAuthentication} and {@link io.jmix.core.usersubstitution.CurrentUserSubstitution}
+ * {@link Parameter} extension required to support {@link io.jmix.core.FetchPlan} special parameter.
  */
-public interface CurrentUserHints {
+public class JmixParameter extends Parameter {
 
-    /**
-     * Whether the user should be reloaded. Set value to false if you don't want it to happen. The default value is true.
-     */
-    String RELOAD_USER = "reloadUser";
+    protected JmixParameter(MethodParameter parameter) {
+        super(parameter);
+    }
+
+    @Override
+    public boolean isSpecialParameter() {
+        return super.isSpecialParameter() || FetchPlan.class.isAssignableFrom(getType());
+    }
 }

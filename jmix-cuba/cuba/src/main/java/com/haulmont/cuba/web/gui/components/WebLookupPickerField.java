@@ -20,9 +20,12 @@ import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.compatibility.LookupFieldNewOptionHandlerAdapter;
 import io.jmix.core.Entity;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.ui.component.data.options.ListEntityOptions;
 import io.jmix.ui.component.impl.EntityComboBoxImpl;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -126,5 +129,11 @@ public class WebLookupPickerField<V extends Entity> extends EntityComboBoxImpl<V
     @Override
     public boolean isRefreshOptionsOnLookupClose() {
         return refreshOptionsOnLookupClose;
+    }
+
+    @Override
+    public void setOptionsList(List<V> optionsList) {
+        Preconditions.checkNotNullArgument(optionsList);
+        setOptions(new ListEntityOptions<>(optionsList, metadata));
     }
 }

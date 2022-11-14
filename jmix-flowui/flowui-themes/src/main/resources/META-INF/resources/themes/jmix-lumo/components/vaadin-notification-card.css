@@ -27,8 +27,11 @@
   --_lumo-button-primary-color: var(--jmix-lumo-warning-primary-text-color);
 }
 
-:host([theme~='contrast']) [part='overlay'] {
+[part='content'] {
+  padding: unset;
+}
+
+[part='overlay'] {
   display: flex;
   justify-content: center;
-  width: 100%;
 }

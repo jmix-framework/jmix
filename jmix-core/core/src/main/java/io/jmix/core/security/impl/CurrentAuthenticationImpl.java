@@ -40,9 +40,6 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     @Autowired
     private MessageTools messagesTools;
 
-    @Autowired
-    private CurrentAuthenticationUserLoader authenticationUserLoader;
-
     @Override
     public Authentication getAuthentication() {
         Authentication authentication = SecurityContextHelper.getAuthentication();
@@ -65,18 +62,7 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
         Authentication authentication = getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails) {
-            return authenticationUserLoader.reloadUser((UserDetails) principal, Collections.emptyMap());
-        } else {
-            throw new RuntimeException("Authentication principal must be UserDetails");
-        }
-    }
-
-    @Override
-    public UserDetails getUser(Map<String, Object> hints) {
-        Authentication authentication = getAuthentication();
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserDetails) {
-            return authenticationUserLoader.reloadUser((UserDetails) principal, hints);
+            return (UserDetails) principal;
         } else {
             throw new RuntimeException("Authentication principal must be UserDetails");
         }

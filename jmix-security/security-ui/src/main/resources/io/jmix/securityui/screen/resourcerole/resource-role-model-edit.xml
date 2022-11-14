@@ -47,7 +47,8 @@
         <tabSheet id="policiesTabSheet">
             <tab id="resourcePoliciesTab" caption="msg://io.jmix.securityui.model/ResourceRoleModel.resourcePolicies"
                  spacing="true" margin="true;false;false;false;">
-                <groupTable id="resourcePoliciesTable" dataContainer="resourcePoliciesDc" width="100%" height="100%">
+                <groupTable id="resourcePoliciesTable" dataContainer="resourcePoliciesDc" multiselect="true"
+                            width="100%" height="100%">
                     <actions>
                         <action id="createMenuPolicy" caption="msg://ResourceRoleModelEdit.menuPolicy"/>
                         <action id="createScreenPolicy" caption="msg://ResourceRoleModelEdit.screenPolicy"/>
@@ -97,7 +98,8 @@
             </tab>
             <tab id="childRolesTab" caption="msg://io.jmix.securityui.model/ResourceRoleModel.childRoles"
                  margin="true,false,false,false" spacing="true">
-                <groupTable id="childRolesTable" dataContainer="childRolesDc" width="100%" height="100%">
+                <groupTable id="childRolesTable" dataContainer="childRolesDc" multiselect="true"
+                            width="100%" height="100%">
                     <actions>
                         <action id="add" type="add"/>
                         <action id="remove" type="remove"/>

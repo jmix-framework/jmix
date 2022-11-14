@@ -43,6 +43,14 @@
         height: 100%;
       }
     }
+
+    &.inline-icon .v-textfield {
+      padding-left: $v-unit-size;
+    }
+  }
+
+  .v-caption-jmix-currencyfield-label-left-position.v-caption-inline-icon .v-icon {
+    margin-left: $v-unit-size;
   }
 
   .#{$primary-stylename}-layout {
@@ -133,5 +141,9 @@
 
   .jmix-currencyfield-currency {
     font-size: $font-size;
+  }
+
+  &.inline-icon .v-textfield {
+    padding-left: $jmix-unit-size;
   }
 }

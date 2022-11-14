@@ -133,12 +133,41 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
 
     private Set<UUID> forRemove;
 
+    private final Map<String, String> RESOURCE_ROLE_TYPE_TO_MESSAGE_MAP = ImmutableMap.of(
+            ResourcePolicyType.SCREEN, "ResourcePolicyType.SCREEN",
+            ResourcePolicyType.GRAPHQL, "ResourcePolicyType.GRAPHQL",
+            ResourcePolicyType.ENTITY, "ResourcePolicyType.ENTITY",
+            ResourcePolicyType.ENTITY_ATTRIBUTE, "ResourcePolicyType.ENTITY_ATTRIBUTE",
+            ResourcePolicyType.SPECIFIC, "ResourcePolicyType.SPECIFIC",
+            ResourcePolicyType.MENU, "ResourcePolicyType.MENU"
+            );
+
+    private final Map<String, String> ROLE_SOURCE_TO_MESSAGE_MAP = ImmutableMap.of(
+            RoleSource.ANNOTATED_CLASS, "RoleSource.ANNOTATED_CLASS",
+            RoleSource.DATABASE, "RoleSource.DATABASE"
+    );
+
     private boolean resourcePoliciesTableExpanded = true;
     @Named("resourcePoliciesTable.createGraphQLPolicy")
     private BaseAction resourcePoliciesTableCreateGraphQLPolicy;
 
     public void setOpenedByCreateAction(boolean openedByCreateAction) {
         this.openedByCreateAction = openedByCreateAction;
+    }
+
+    @Install(to = "childRolesTable.source", subject = "formatter")
+    private String childRolesTableSourceFormatter(String value) {
+        return messages.getMessage(ResourceRoleModelEdit.class, ROLE_SOURCE_TO_MESSAGE_MAP.get(value));
+    }
+
+    @Install(to = "resourcePoliciesTable.type", subject = "formatter")
+    private String resourcePoliciesTableTypeFormatter(String value) {
+        return messages.getMessage(ResourceRoleModelEdit.class, RESOURCE_ROLE_TYPE_TO_MESSAGE_MAP.get(value));
+    }
+
+    @Install(to = "resourcePoliciesTable.action", subject = "formatter")
+    private String resourcePoliciesTableActionFormatter(String value) {
+        return messages.getMessage(ResourceRoleModelEdit.class, "RoleAction." +value);
     }
 
     @Install(to = "childRolesDl", target = Target.DATA_LOADER)
@@ -158,6 +187,19 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
             }
         }
         return childRoleModels;
+    }
+
+    @Install(to = "childRolesTable.add", subject = "screenConfigurer")
+    private void childRolesTableAddScreenConfigurer(Screen screen) {
+        List<String> excludedRolesCodes = childRolesDc.getItems().stream()
+                .map(BaseRoleModel::getCode)
+                .collect(Collectors.toList());
+
+        if (!codeField.isEnabled()) {
+            excludedRolesCodes.add(getEditedEntity().getCode());
+        }
+
+        ((ResourceRoleModelLookup) screen).setExcludedRolesCodes(excludedRolesCodes);
     }
 
     @Subscribe
@@ -358,6 +400,8 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
                 return ScreenResourcePolicyModelEdit.class;
             case ResourcePolicyType.ENTITY:
                 return EntityResourcePolicyModelEdit.class;
+            case ResourcePolicyType.GRAPHQL:
+                return GraphQLResourcePolicyModelEdit.class;
             case ResourcePolicyType.ENTITY_ATTRIBUTE:
                 return EntityAttributeResourcePolicyModelEdit.class;
             case ResourcePolicyType.SPECIFIC:

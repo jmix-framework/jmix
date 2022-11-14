@@ -23,6 +23,7 @@
         <property name="username"/>
         <property name="autoSave"/>
         <property name="isDefault"/>
+        <property name="sysTenantId"/>
     </fetchPlan>
 
 </fetchPlans>

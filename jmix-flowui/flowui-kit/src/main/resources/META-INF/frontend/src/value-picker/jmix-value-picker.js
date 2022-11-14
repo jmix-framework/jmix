@@ -21,9 +21,23 @@ import { InputController } from '@vaadin/field-base/src/input-controller.js';
 import { InputFieldMixin } from '@vaadin/field-base/src/input-field-mixin.js';
 import { LabelledInputController } from '@vaadin/field-base/src/labelled-input-controller.js';
 import { inputFieldShared } from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
-import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import { css, registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-registerStyles('jmix-value-picker', inputFieldShared, {
+/*
+* CAUTION! Styles for 'jmix-value-picker' component are applied in wrong order.
+* The 'inputFieldShared' from 'field-base/src/styles/input-field-shared-styles.js'
+* takes precedence over
+* 'inputFieldShared' from 'vaadin-lumo-styles/mixins/input-field-shared.js'
+* that is registered in 'jmix-value-picker-styles.js'. However, the same approach of
+* registering styles works correctly for Vaadin components.
+*/
+const valuePicker = css`
+  :host::before {
+    display: inline-flex;
+  }
+`;
+
+registerStyles('jmix-value-picker', [inputFieldShared, valuePicker], {
     moduleId: 'jmix-value-picker-styles'
 });
 

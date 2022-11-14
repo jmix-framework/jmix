@@ -35,10 +35,16 @@
             </responsiveSteps>
             <textField id="userName" datatype="string"
                        label="msg://nameField"/>
-            <dateTimePicker id="lastRequestDateFrom" datatype="date"
-                            label="msg://lastRequestDateFrom"/>
-            <dateTimePicker id="lastRequestDateTo" datatype="date"
-                            label="msg://lastRequestDateTo"/>
+            <div classNames="datetime-picker-container">
+                <datePicker id="lastRequestDateFrom" datatype="localDate"
+                                label="msg://lastRequestDateFrom"/>
+                <timePicker id="lastRequestTimeFrom" datatype="localTime"/>
+            </div>
+            <div classNames="datetime-picker-container">
+                <datePicker id="lastRequestDateTo" datatype="localDate"
+                                label="msg://lastRequestDateTo"/>
+                <timePicker id="lastRequestTimeTo" datatype="localTime"/>
+            </div>
             <button id="clearButton" text="msg://clear" icon="ERASER"/>
         </formLayout>
         <hbox id="buttonsPanel" classNames="buttons-panel">

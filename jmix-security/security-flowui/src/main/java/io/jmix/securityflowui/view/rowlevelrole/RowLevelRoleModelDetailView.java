@@ -21,11 +21,13 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.flowui.model.DataContext;
@@ -89,6 +91,8 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     private RowLevelRoleRepository roleRepository;
     @Autowired
     private UrlParamSerializer urlParamSerializer;
+    @Autowired
+    private DialogWindows dialogWindows;
 
     private boolean openedByCreateAction = false;
     private final Set<UUID> forRemove = new HashSet<>();
@@ -187,6 +191,25 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
             }
         }
         return childRoleModels;
+    }
+
+    @Subscribe("childRolesTable.add")
+    public void onChildRolesTableAdd(ActionPerformedEvent event) {
+        DialogWindow<RowLevelRoleModelLookupView> lookupDialog = dialogWindows.lookup(childRolesTable)
+                .withViewClass(RowLevelRoleModelLookupView.class)
+                .build();
+
+        List<String> excludedRolesCodes = childRolesDc.getItems().stream()
+                .map(BaseRoleModel::getCode)
+                .collect(Collectors.toList());
+
+        if (codeField.isReadOnly()) {
+            excludedRolesCodes.add(getEditedEntity().getCode());
+        }
+
+        lookupDialog.getView().setExcludedRoles(excludedRolesCodes);
+
+        lookupDialog.open();
     }
 
     @Install(to = "rowLevelPoliciesTable.remove", subject = "afterActionPerformedHandler")

@@ -170,15 +170,17 @@ public class DefaultResourcePolicyGroupResolver {
     @Nullable
     private String resolvePolicyGroupForMenuPolicy(String menuId) {
         MenuItem item = null;
-        for (MenuItem rootItem : menuConfig.getRootItems()) {
-            item = menuConfig.findItem(menuId, rootItem);
-            if (item != null) break;
-        }
+        if (menuId!=null) {
+            for (MenuItem rootItem : menuConfig.getRootItems()) {
+                item = menuConfig.findItem(menuId, rootItem);
+                if (item != null) break;
+            }
 
-        if (item != null) {
-            String screenId = item.getScreen();
-            if (!Strings.isNullOrEmpty(screenId)) {
-                return resolvePolicyGroupForScreenPolicy(screenId);
+            if (item != null) {
+                String screenId = item.getScreen();
+                if (!Strings.isNullOrEmpty(screenId)) {
+                    return resolvePolicyGroupForScreenPolicy(screenId);
+                }
             }
         }
         return null;

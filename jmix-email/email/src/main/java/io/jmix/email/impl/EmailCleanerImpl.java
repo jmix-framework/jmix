@@ -24,6 +24,8 @@ import io.jmix.data.PersistenceHints;
 import io.jmix.email.EmailCleaner;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.entity.SendingMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +39,8 @@ import java.util.stream.Collectors;
 
 @Component("email_EmailCleaner")
 public class EmailCleanerImpl implements EmailCleaner {
+
+    private static final Logger log = LoggerFactory.getLogger(EmailCleanerImpl.class);
 
     @Autowired
     private EmailerProperties emailerProperties;
@@ -56,6 +60,7 @@ public class EmailCleanerImpl implements EmailCleaner {
     @Transactional
     @Override
     public Integer deleteOldEmails() {
+        log.trace("Start deletion of old emails...");
         int maxAgeOfImportantMessages = emailerProperties.getMaxAgeOfImportantMessages();
         int maxAgeOfNonImportantMessages = emailerProperties.getMaxAgeOfNonImportantMessages();
         entityManager.setProperty(PersistenceHints.SOFT_DELETION, false);
@@ -69,6 +74,7 @@ public class EmailCleanerImpl implements EmailCleaner {
             result += deleteMessages(maxAgeOfImportantMessages, true);
         }
 
+        log.trace("{} emails was deleted", result);
         return result;
     }
 

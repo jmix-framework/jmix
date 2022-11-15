@@ -96,9 +96,11 @@ public class ImapSynchronizer {
     public void synchronize(ImapMailBox imapMailBox) {
         authenticator.begin();
         try {
+            log.trace("Start synchronization of mailbox (id={})", imapMailBox.getId());
             ImapMailBox mailBox = imapDataProvider.findMailBox(imapMailBox.getId());
 
             if (mailBox == null) {
+                log.trace("Mailbox not found by id={}", imapMailBox.getId());
                 return;
             }
 
@@ -110,6 +112,7 @@ public class ImapSynchronizer {
                 for (ImapFolder jmixFolder : mailBox.getProcessableFolders()) {
                     IMAPFolder imapFolder = null;
                     try {
+                        log.trace("Synchronize folder '{}' of mailbox '{}'", jmixFolder.getName(), mailBox);
                         Date tenMinutesAgo = DateUtils.addMinutes(timeSource.currentTimestamp(), -10);
                         imapMessageSyncDataProvider.removeOldSyncs(jmixFolder, tenMinutesAgo);
 
@@ -152,11 +155,12 @@ public class ImapSynchronizer {
                                         ImapFolder folder,
                                         IMAPFolder imapFolder) throws MessagingException {
 
-
+        log.trace("Handle existing messages for folder '{}'", folder.getName());
         Date tenMinutesAgo = DateUtils.addMinutes(timeSource.currentTimestamp(), -10);
         Date threeMinutesAgo = DateUtils.addMinutes(tenMinutesAgo, 7);
 
         Collection<ImapMessage> messagesForSync = new ArrayList<>(imapMessageSyncDataProvider.findMessagesForSync(folder));
+        log.trace("Found {} messages for synchronization", messagesForSync.size());
 
         imapMessageSyncDataProvider.createSyncForMessages(messagesForSync, ImapSyncStatus.IN_SYNC);
 
@@ -192,6 +196,7 @@ public class ImapSynchronizer {
                                      List<ImapMessage> missedMessages,
                                      ImapFolder jmixFolder,
                                      IMAPFolder imapFolder) throws MessagingException {
+        log.trace("Handle new messages for folder '{}'", jmixFolder.getName());
         ImapMailBox mailBox = jmixFolder.getMailBox();
         List<IMAPMessage> imapMessages = imapOperations.search(
                 imapFolder,
@@ -219,6 +224,7 @@ public class ImapSynchronizer {
     protected void handleMissedMessages(ImapMailBox mailBox, IMAPStore store, List<ImapMessage> missedMessages) throws MessagingException {
         List<ImapMessage> foundMessages = new ArrayList<>();
         for (ImapFolder jmixFolder : mailBox.getProcessableFolders()) {
+            log.trace("Handle missed messages for folder '{}'", jmixFolder.getName());
             IMAPFolder imapFolder = null;
             try {
                 imapFolder = (IMAPFolder) store.getFolder(jmixFolder.getName());

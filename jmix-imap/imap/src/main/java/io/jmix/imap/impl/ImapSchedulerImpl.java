@@ -74,6 +74,7 @@ public class ImapSchedulerImpl implements ImapScheduler {
     @Override
     public void syncImap() {
         List<ImapMailBox> mailBoxes = imapDataProvider.findMailBoxes();
+        log.trace("IMAP synchronization: found {} mailboxes", mailBoxes.size());
 
         Map<ImapMailBox, Future> tasks = new HashMap<>(mailBoxes.size());
         mailBoxes.forEach(mailBox -> {
@@ -108,8 +109,10 @@ public class ImapSchedulerImpl implements ImapScheduler {
     }
 
     protected void handleFolderMessages(ImapMailBox imapMailBox) {
+        log.trace("Handle folder messages of mailbox with id={}", imapMailBox.getId());
         ImapMailBox mailBox = imapDataProvider.findMailBox(imapMailBox.getId());
         if (mailBox == null) {
+            log.trace("Mailbox with id={} not found", imapMailBox.getId());
             return;
         }
         mailBox.getProcessableFolders()

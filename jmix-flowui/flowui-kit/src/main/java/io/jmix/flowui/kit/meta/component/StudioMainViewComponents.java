@@ -61,6 +61,7 @@ public interface StudioMainViewComponents {
             icon = "io/jmix/flowui/kit/meta/icon/mainview/appLayout.svg",
             availablePlaceRegExp = "^mainView$",
             properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "drawerOpened", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "primarySection", type = StudioPropertyType.ENUMERATION,
@@ -71,7 +72,7 @@ public interface StudioMainViewComponents {
 
     @StudioComponent(
             name = "UserIndicator",
-            classFqn = "io.jmix.flowui.kit.component.main.UserIndicator",
+            classFqn = "io.jmix.flowui.component.main.JmixUserIndicator",
             category = "Main View",
             xmlElement = "userIndicator",
             icon = "io/jmix/flowui/kit/meta/icon/mainview/userIndicator.svg",

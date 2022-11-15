@@ -33,7 +33,7 @@ public interface StudioLayouts {
 
     @StudioComponent(
             name = "Details",
-            classFqn = "com.vaadin.flow.component.details.Details",
+            classFqn = "io.jmix.flowui.component.details.JmixDetails",
             category = "Layouts",
             xmlElement = "details",
             icon = "io/jmix/flowui/kit/meta/icon/layout/details.svg",
@@ -196,7 +196,7 @@ public interface StudioLayouts {
 
     @StudioComponent(
             name = "Accordion",
-            classFqn = "com.vaadin.flow.component.accordion.Accordion",
+            classFqn = "io.jmix.flowui.component.accordion.JmixAccordion",
             category = "Layouts",
             xmlElement = "accordion",
             icon = "io/jmix/flowui/kit/meta/icon/layout/accordion.svg",

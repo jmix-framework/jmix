@@ -254,7 +254,7 @@ public class EmailerImpl implements Emailer {
 
     @Override
     public String processQueuedEmails() {
-        log.trace("Start processing of queued Emails...");
+        log.trace("Start processing of queued emails...");
         int callsToSkip = emailerProperties.getScheduledSendingDelayCallCount();
         int count = callCount.getAndAdd(1);
         if (count < callsToSkip) {
@@ -273,7 +273,7 @@ public class EmailerImpl implements Emailer {
             log.error("Error", e);
             resultMessage = e.getMessage();
         }
-        log.trace("Finish processing of queued Emails. Result: {}", resultMessage);
+        log.trace("Finish processing of queued emails. Result: {}", resultMessage);
         return resultMessage;
     }
 

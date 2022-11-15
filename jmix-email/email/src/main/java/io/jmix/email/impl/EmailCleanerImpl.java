@@ -60,7 +60,7 @@ public class EmailCleanerImpl implements EmailCleaner {
     @Transactional
     @Override
     public Integer deleteOldEmails() {
-        log.trace("Start deletion of old Emails...");
+        log.trace("Start deletion of old emails...");
         int maxAgeOfImportantMessages = emailerProperties.getMaxAgeOfImportantMessages();
         int maxAgeOfNonImportantMessages = emailerProperties.getMaxAgeOfNonImportantMessages();
         entityManager.setProperty(PersistenceHints.SOFT_DELETION, false);
@@ -74,7 +74,7 @@ public class EmailCleanerImpl implements EmailCleaner {
             result += deleteMessages(maxAgeOfImportantMessages, true);
         }
 
-        log.trace("{} Emails was deleted", result);
+        log.trace("{} emails was deleted", result);
         return result;
     }
 

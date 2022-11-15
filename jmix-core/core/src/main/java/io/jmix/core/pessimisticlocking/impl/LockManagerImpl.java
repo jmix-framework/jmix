@@ -202,7 +202,7 @@ public class LockManagerImpl implements LockManager {
     @Override
     public void expireLocks() {
         if (cacheOperations.isIterableCache(locks)) {
-            log.debug("Start expiring locks operation");
+            log.trace("Start expiring locks operation");
             Collection<LockKey> keys = cacheOperations.getKeys(locks);
             for (LockKey key : keys) {
                 LockInfo lockInfo = locks.get(key, LockInfo.class);

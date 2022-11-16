@@ -36,6 +36,10 @@ $jmix-suggestionfield-edit-color: scale-color(lighten($v-focus-color, 35%), $sat
       height: $v-unit-size--huge;
       line-height: normal;
     }
+
+    &.inline-icon {
+      padding-left: $v-unit-size;
+    }
   }
 
   .#{$primary-stylename}-error {

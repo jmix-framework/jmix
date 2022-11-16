@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancy.security.role;
+package io.jmix.multitenancyui.security.role;
 
 import io.jmix.multitenancy.entity.Tenant;
 import io.jmix.security.model.EntityAttributePolicyAction;

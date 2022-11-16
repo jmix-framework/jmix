@@ -17,6 +17,7 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleRepository;
@@ -68,6 +69,8 @@ public class RoleAssignmentView extends StandardView {
     private UserRepository userRepository;
     @Autowired
     private Notifications notifications;
+    @Autowired
+    protected UrlParamSerializer urlParamSerializer;
 
     private UserDetails user;
 
@@ -117,7 +120,9 @@ public class RoleAssignmentView extends StandardView {
         String username = routeParameters.get("username")
                 .orElseThrow(() -> new IllegalStateException("Username not found"));
 
-        user = userRepository.loadUserByUsername(username);
+        String decodedUsername = urlParamSerializer.deserialize(String.class, username);
+
+        user = userRepository.loadUserByUsername(decodedUsername);
     }
 
     private void preventUnsavedChanges(BeforeCloseEvent event) {

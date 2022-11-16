@@ -190,8 +190,10 @@ dependencies {
 
         api "io.jmix.multitenancy:jmix-multitenancy:$freeVersion"
         api "io.jmix.multitenancy:jmix-multitenancy-ui:$freeVersion"
+        api "io.jmix.multitenancy:jmix-multitenancy-flowui:$freeVersion"
         api "io.jmix.multitenancy:jmix-multitenancy-starter:$freeVersion"
         api "io.jmix.multitenancy:jmix-multitenancy-ui-starter:$freeVersion"
+        api "io.jmix.multitenancy:jmix-multitenancy-flowui-starter:$freeVersion"
 
         api "io.jmix.notifications:jmix-notifications:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-ui:$premiumVersion"

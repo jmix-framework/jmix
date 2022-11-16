@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+@Internal
+package io.jmix.multitenancyflowui.impl;
 
-group = 'io.jmix.multitenancy'
-archivesBaseName = 'jmix-multitenancy-ui'
-
-dependencies {
-    api project(':multitenancy')
-
-    api project(':ui')
-    api project(':security-ui')
-}
+import io.jmix.core.annotation.Internal;

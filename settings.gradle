@@ -98,8 +98,10 @@ includeProject('localfs-starter', 'jmix-localfs/localfs-starter')
 
 includeProject('multitenancy', 'jmix-multitenancy/multitenancy')
 includeProject('multitenancy-ui', 'jmix-multitenancy/multitenancy-ui')
+includeProject('multitenancy-flowui', 'jmix-multitenancy/multitenancy-flowui')
 includeProject('multitenancy-starter', 'jmix-multitenancy/multitenancy-starter')
 includeProject('multitenancy-ui-starter', 'jmix-multitenancy/multitenancy-ui-starter')
+includeProject('multitenancy-flowui-starter', 'jmix-multitenancy/multitenancy-flowui-starter')
 
 includeProject('oidc', 'jmix-oidc/oidc')
 includeProject('oidc-starter', 'jmix-oidc/oidc-starter')

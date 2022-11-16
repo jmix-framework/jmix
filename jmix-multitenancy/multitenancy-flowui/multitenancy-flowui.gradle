@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.multitenancy'
-archivesBaseName = 'jmix-multitenancy-ui'
+archivesBaseName = 'jmix-multitenancy-flowui'
 
 dependencies {
     api project(':multitenancy')
 
-    api project(':ui')
-    api project(':security-ui')
+    api project(':flowui')
 }

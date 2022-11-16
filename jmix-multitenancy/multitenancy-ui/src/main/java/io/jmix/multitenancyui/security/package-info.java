@@ -16,7 +16,7 @@
 
 @NonNullApi
 @Internal
-package io.jmix.multitenancy.security;
+package io.jmix.multitenancyui.security;
 
 import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

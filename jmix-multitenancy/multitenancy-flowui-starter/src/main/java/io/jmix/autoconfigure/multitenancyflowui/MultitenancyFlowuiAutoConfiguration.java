@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.autoconfigure.multitenancyflowui;
 
-group = 'io.jmix.multitenancy'
-archivesBaseName = 'jmix-multitenancy-ui'
+import io.jmix.multitenancyflowui.MultitenancyFlowuiConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.context.annotation.Import;
 
-dependencies {
-    api project(':multitenancy')
-
-    api project(':ui')
-    api project(':security-ui')
+@AutoConfiguration
+@Import({MultitenancyFlowuiConfiguration.class})
+public class MultitenancyFlowuiAutoConfiguration {
 }

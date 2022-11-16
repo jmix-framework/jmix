@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.multitenancyflowui;
 
-group = 'io.jmix.multitenancy'
-archivesBaseName = 'jmix-multitenancy-ui'
+import com.vaadin.flow.router.Location;
 
-dependencies {
-    api project(':multitenancy')
+import java.util.List;
 
-    api project(':ui')
-    api project(':security-ui')
+public interface MultitenancyFlowuiSupport {
+
+    String getUsernameByLocation(String username, Location location);
+
+    String getUsernameByTenant(String username, String tenantId);
+
+    List<String> getTenantOptions();
 }

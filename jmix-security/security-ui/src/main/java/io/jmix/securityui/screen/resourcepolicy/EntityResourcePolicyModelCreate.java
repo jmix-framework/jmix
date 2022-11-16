@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class EntityResourcePolicyModelCreate extends MultipleResourcePolicyModel
 
     private Set<String> getPolicyActions() {
         Set<String> actions = actionsCheckBoxGroup.getValue() != null ? new HashSet<>(actionsCheckBoxGroup.getValue()
-                .stream().map(EntityPolicyAction::getId).collect(Collectors.toList())) : new HashSet<>();
+                .stream().map(EntityPolicyAction::getId).collect(Collectors.toList())) : Collections.emptySet();
         return actions;
     }
 

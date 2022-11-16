@@ -86,6 +86,10 @@ $jmix-tagfield-tag-border-radius: $jmix-taglabel-border-radius !default;
     }
   }
 
+  .#{$primary-stylename}.empty.inline-icon {
+    padding-left: $v-unit-size;
+  }
+
   .#{$primary-stylename}.clear-all:not(.empty) {
     position: relative;
 

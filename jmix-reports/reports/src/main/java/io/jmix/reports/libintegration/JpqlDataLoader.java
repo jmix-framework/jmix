@@ -121,7 +121,7 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
             //insert parameters to their position
             for (QueryParameter queryParameter : pack.getParams()) {
                 Object value = queryParameter.getValue();
-                select.setParameter(queryParameter.getPosition(), convertParameter(value));
+                select.setParameter(resolveNamedParameterName(queryParameter), convertParameter(value));
             }
         }
         return select;
@@ -129,8 +129,14 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
 
     @Override
     protected String insertParameterToQuery(String query, QueryParameter parameter) {
-        query = query.replaceFirst(parameter.getParamRegexp(), "?" + parameter.getPosition());
+        query = query.replaceFirst(parameter.getParamRegexp(), ":" + resolveNamedParameterName(parameter));
         return query;
+    }
+
+    protected String resolveNamedParameterName(QueryParameter parameter) {
+        //Just transform positional parameters into named - the simplest solution to the problem of mixing
+        // input parameters and JPQL macros without modification of YARG (#805).
+        return "param_" + parameter.getPosition();
     }
 
     protected String trimQuery(String query) {

@@ -22,7 +22,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -53,8 +52,10 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
@@ -80,7 +81,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -151,9 +154,13 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected HorizontalLayout actionsPaneLayout;
     @ViewComponent
-    protected DateTimePicker tillDateField;
+    protected TypedDatePicker<LocalDate> tillDateField;
     @ViewComponent
-    protected DateTimePicker fromDateField;
+    protected TypedTimePicker<LocalTime> tillTimeField;
+    @ViewComponent
+    protected TypedDatePicker<LocalDate> fromDateField;
+    @ViewComponent
+    protected TypedTimePicker<LocalTime> fromTimeField;
     @ViewComponent
     protected Button cancelBtn;
     @ViewComponent
@@ -200,6 +207,31 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                 viewWrapper.setVisible(false);
                 setupWrapper.setVisible(false);
         }
+    }
+
+    protected LocalDateTime getTillDateTime() {
+        LocalDateTime tillDateTime = null;
+        if (tillDateField.getTypedValue() != null || tillTimeField.getTypedValue()!=null) {
+
+            LocalDate afterDate = tillDateField.getTypedValue() != null ? tillDateField.getTypedValue() :
+                    LocalDate.now();
+            LocalTime afterTime = tillTimeField.getTypedValue() != null ? tillTimeField.getTypedValue() :
+                    LocalTime.MAX;
+            tillDateTime = LocalDateTime.of(afterDate, afterTime);
+        }
+        return tillDateTime;
+    }
+
+    protected LocalDateTime getFromDateTime() {
+        LocalDateTime fromDateTime = null;
+        if (fromDateField.getTypedValue() != null || fromTimeField.getTypedValue()!=null) {
+            LocalDate fromDate = fromDateField.getTypedValue() != null ? fromDateField.getTypedValue() :
+                    LocalDate.now();
+            LocalTime fromTime = fromTimeField.getTypedValue() != null ? fromTimeField.getTypedValue() :
+                    LocalTime.MIN;
+            fromDateTime = LocalDateTime.of(fromDate, fromTime);
+        }
+        return fromDateTime;
     }
 
     @Subscribe
@@ -514,10 +546,14 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
     protected void setDateFieldTime() {
         Date date = timeSource.currentTimestamp();
-        fromDateField.setValue(LocalDateTime.ofInstant(DateUtils.addDays(date, -1).toInstant(),
-                ZoneId.systemDefault()));
-        tillDateField.setValue(LocalDateTime.ofInstant(DateUtils.addDays(date, 1).toInstant(),
-                ZoneId.systemDefault()));
+        LocalDateTime dayAgo = LocalDateTime.ofInstant(DateUtils.addDays(date, -1).toInstant(),
+                ZoneId.systemDefault());
+        fromDateField.setValue(dayAgo.toLocalDate());
+        fromTimeField.setValue(dayAgo.toLocalTime());
+        LocalDateTime nextDay = LocalDateTime.ofInstant(DateUtils.addDays(date, 1).toInstant(),
+                ZoneId.systemDefault());
+        tillDateField.setValue(nextDay.toLocalDate());
+        tillTimeField.setValue(nextDay.toLocalTime());
     }
 
     protected boolean isEntityHaveAttribute(String propertyName, MetaClass metaClass, Set<LoggedAttribute> enabledAttr) {
@@ -639,15 +675,17 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         } else {
             entityLogDl.removeParameter("entityName");
         }
-        if (fromDateField.getValue() != null) {
+        LocalDateTime fromDateTime = getFromDateTime();
+        if (getFromDateTime() != null) {
             entityLogDl.setParameter("fromDate",
-                    Date.from(fromDateField.getValue().atZone(ZoneId.systemDefault()).toInstant()));
+                    Date.from(fromDateTime.atZone(ZoneId.systemDefault()).toInstant()));
         } else {
             entityLogDl.removeParameter("fromDate");
         }
+        LocalDateTime tillDateTime = getTillDateTime();
         if (tillDateField.getValue() != null) {
             entityLogDl.setParameter("tillDate",
-                    Date.from(tillDateField.getValue().atZone(ZoneId.systemDefault()).toInstant()));
+                    Date.from(tillDateTime.atZone(ZoneId.systemDefault()).toInstant()));
         } else {
             entityLogDl.removeParameter("tillDate");
         }

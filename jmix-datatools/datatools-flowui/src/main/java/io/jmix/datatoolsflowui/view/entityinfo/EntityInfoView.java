@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-@ViewController("EntityInfoView")
+@ViewController("entityInfoView")
 @ViewDescriptor("entity-info-view.xml")
 @DialogMode(width = "50em", height = "37.5em", resizable = true)
 public class EntityInfoView extends StandardView {

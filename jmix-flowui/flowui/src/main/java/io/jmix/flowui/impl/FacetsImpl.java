@@ -33,7 +33,7 @@ import java.util.Map;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-@Component("fowui_Facets")
+@Component("flowui_Facets")
 public class FacetsImpl implements Facets, ApplicationContextAware {
 
     protected ApplicationContext applicationContext;

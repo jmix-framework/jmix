@@ -1837,6 +1837,44 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="baseComboBoxPickerComponent">
+            <xs:complexContent>
+                <xs:extension base="baseComponent">
+                    <xs:sequence>
+                        <xs:element name="actions" minOccurs="0">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:choice maxOccurs="unbounded">
+                                        <xs:element name="action" type="pickerAction"/>
+                                    </xs:choice>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+
+                    <xs:attribute name="opened" type="xs:boolean"/>
+                    <xs:attribute name="pattern" type="xs:string"/>
+                    <xs:attribute name="autoOpen" type="xs:boolean"/>
+                    <xs:attribute name="pageSize" type="xs:integer"/>
+                    <xs:attribute name="autofocus" type="xs:boolean"/>
+                    <xs:attribute name="required" type="xs:boolean"/>
+                    <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+                    <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
+                    <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+
+                    <xs:attributeGroup ref="hasSize"/>
+                    <xs:attributeGroup ref="hasTitle"/>
+                    <xs:attributeGroup ref="hasLabel"/>
+                    <xs:attributeGroup ref="hasEnabled"/>
+                    <xs:attributeGroup ref="hasClassNames"/>
+                    <xs:attributeGroup ref="hasValidation"/>
+                    <xs:attributeGroup ref="hasHelperText"/>
+                    <xs:attributeGroup ref="hasPlaceholder"/>
+                    <xs:attributeGroup ref="hasValueAndElement"/>
+                </xs:extension>
+            </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="securityConstraintAction">
         <xs:complexContent>
             <xs:extension base="baseAction">
@@ -2256,39 +2294,8 @@
     <!-- ComboBoxPicker-->
     <xs:complexType name="comboBoxPickerComponent">
         <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:sequence>
-                    <xs:element name="actions" minOccurs="0">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:choice maxOccurs="unbounded">
-                                    <xs:element name="action" type="pickerAction"/>
-                                </xs:choice>
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-
-                <xs:attribute name="opened" type="xs:boolean"/>
-                <xs:attribute name="pattern" type="xs:string"/>
-                <xs:attribute name="autoOpen" type="xs:boolean"/>
-                <xs:attribute name="pageSize" type="xs:integer"/>
-                <xs:attribute name="autofocus" type="xs:boolean"/>
-                <xs:attribute name="required" type="xs:boolean"/>
-                <xs:attribute name="allowCustomValue" type="xs:boolean"/>
-                <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
+            <xs:extension base="baseComboBoxPickerComponent">
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
-                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
-
-                <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasTitle"/>
-                <xs:attributeGroup ref="hasLabel"/>
-                <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasValidation"/>
-                <xs:attributeGroup ref="hasHelperText"/>
-                <xs:attributeGroup ref="hasPlaceholder"/>
-                <xs:attributeGroup ref="hasValueAndElement"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2296,7 +2303,7 @@
     <!-- EntityComboBox-->
     <xs:complexType name="entityComboBoxComponent">
         <xs:complexContent>
-            <xs:extension base="comboBoxPickerComponent">
+            <xs:extension base="baseComboBoxPickerComponent">
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
 

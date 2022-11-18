@@ -37,6 +37,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
+import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
@@ -200,7 +201,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "CheckboxGroup",
-            classFqn = "com.vaadin.flow.component.checkbox.CheckboxGroup",
+            classFqn = "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
             category = "Components",
             xmlElement = "checkboxGroup",
             icon = "io/jmix/flowui/kit/meta/icon/component/checkBoxGroup.svg",
@@ -250,7 +251,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "Checkbox",
-            classFqn = "com.vaadin.flow.component.checkbox.Checkbox",
+            classFqn = "io.jmix.flowui.component.checkbox.JmixCheckbox",
             category = "Components",
             xmlElement = "checkbox",
             icon = "io/jmix/flowui/kit/meta/icon/component/checkbox.svg",
@@ -421,7 +422,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
             }
     )
-    MenuBar comboButton();
+    ComboButton comboButton();
 
     @StudioComponent(
             name = "ComboBoxPicker",
@@ -610,7 +611,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "EmailField",
-            classFqn = "com.vaadin.flow.component.textfield.EmailField",
+            classFqn = "io.jmix.flowui.component.textfield.JmixEmailField",
             category = "Components",
             xmlElement = "emailField",
             icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
@@ -700,8 +701,6 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autoOpen", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "dataContainer",
                             type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -932,7 +931,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "NumberField",
-            classFqn = "com.vaadin.flow.component.textfield.NumberField",
+            classFqn = "io.jmix.flowui.component.textfield.JmixNumberField",
             category = "Components",
             xmlElement = "numberField",
             icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
@@ -1011,7 +1010,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "PasswordField",
-            classFqn = "com.vaadin.flow.component.textfield.PasswordField",
+            classFqn = "io.jmix.flowui.component.textfield.JmixPasswordField",
             category = "Components",
             xmlElement = "passwordField",
             icon = "io/jmix/flowui/kit/meta/icon/component/passwordField.svg",
@@ -1118,7 +1117,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "RadioButtonGroup",
-            classFqn = "com.vaadin.flow.component.radiobutton.RadioButtonGroup",
+            classFqn = "io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup",
             category = "Components",
             xmlElement = "radioButtonGroup",
             icon = "io/jmix/flowui/kit/meta/icon/component/radioButtonGroup.svg",
@@ -1166,7 +1165,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "Select",
-            classFqn = "com.vaadin.flow.component.select.Select",
+            classFqn = "io.jmix.flowui.component.select.JmixSelect",
             category = "Components",
             xmlElement = "select",
             icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
@@ -1258,7 +1257,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "TextArea",
-            classFqn = "com.vaadin.flow.component.textfield.TextArea",
+            classFqn = "io.jmix.flowui.component.textarea.JmixTextArea",
             category = "Components",
             xmlElement = "textArea",
             icon = "io/jmix/flowui/kit/meta/icon/component/textArea.svg",

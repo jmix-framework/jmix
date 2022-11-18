@@ -35,6 +35,7 @@ package repository
 import com.google.common.collect.Lists
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
+import io.jmix.core.FetchPlans
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
@@ -59,6 +60,8 @@ class CustomerRepositoryTest extends DataSpec {
     protected SystemAuthenticator authenticator
     @Autowired
     protected InMemoryUserRepository userRepository
+    @Autowired
+    protected FetchPlans fetchPlans;
 
     private Customer customer1, customer2, customer3
 
@@ -231,6 +234,49 @@ class CustomerRepositoryTest extends DataSpec {
         then:
         customers.size() == 1
         customers.get(0) == customer1
+        !entityStates.isLoaded(customers.get(0), "address") //loaded with _instance_name fetchPlan
+    }
+
+    void testFetchPlanParameterWithQueryAnnotation() {
+        when:
+        List<Customer> customers = customerRepository.findByNameStartingWithAndUseFetchPlan(
+                fetchPlans.builder(Customer).addAll("name", "address.city").build(),
+                "cust")
+        then:
+        customers.size() == 1
+        customers.get(0) == customer1
+        entityStates.isLoaded(customers.get(0), "address")
+
+
+        when:
+        customers = customerRepository.findByNameWithNamedParameterAndUseFetchPlan("cust",
+                fetchPlans.builder(Customer).addAll("name", "address.city").build())
+        then:
+        customers.size() == 1
+        customers.get(0) == customer1
+        entityStates.isLoaded(customers.get(0), "address")
+
+    }
+
+    void testFetchPlanParameter() {
+        when:
+        List<Customer> customers = customerRepository.findByName("some cust 2",
+                fetchPlans.builder(Customer).addAll("address.street").build())
+        then:
+        customers.size() == 1
+        customers.get(0) == customer2
+        entityStates.isLoaded(customers.get(0), "address")
+        !entityStates.isLoaded(customers.get(0), "name")
+
+
+        when:
+        Customer one = customerRepository.getByName(
+                fetchPlans.builder(Customer).addAll("address.city").build(),
+                "another cust 3")
+        then:
+        one == customer3
+        entityStates.isLoaded(one, "address")
+        !entityStates.isLoaded(one, "name")
     }
 
     void testQueryWithPositionalParam() {

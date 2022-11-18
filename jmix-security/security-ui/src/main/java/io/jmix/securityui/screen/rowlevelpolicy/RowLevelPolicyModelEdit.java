@@ -145,7 +145,7 @@ public class RowLevelPolicyModelEdit extends StandardEditor<RowLevelPolicyModel>
                 scriptField.setVisible(true);
                 whereClauseField.setVisible(false);
                 joinClauseField.setVisible(false);
-                actionField.setEditable(true);
+                actionField.setEditable(!this.isReadOnly());
                 getEditedEntity().setWhereClause(null);
                 getEditedEntity().setJoinClause(null);
                 break;
@@ -252,11 +252,4 @@ public class RowLevelPolicyModelEdit extends StandardEditor<RowLevelPolicyModel>
                 .show();
     }
 
-    @Subscribe("docsBtn")
-    public void onDocsBtnClick(Button.ClickEvent event) {
-        webBrowserTools.showWebPage(
-                messageBundle.getMessage("docUrl"),
-                ParamsMap.of("target", "_blank")
-        );
-    }
 }

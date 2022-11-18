@@ -33,6 +33,7 @@ public class ComboBoxPickerLoader extends AbstractComboBoxLoader<ComboBoxPicker<
         super.loadComponent();
 
         loadBoolean(element, "required", resultComponent::setRequired);
+        loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
 
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);

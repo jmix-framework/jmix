@@ -18,6 +18,7 @@ package io.jmix.autoconfigure.securityoauth2;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixOrder;
+import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.security.AuthorizedUrlsProvider;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securityoauth2.SecurityOAuth2Configuration;
@@ -26,6 +27,7 @@ import io.jmix.securityoauth2.config.ResourceServerConfiguration;
 import io.jmix.securityoauth2.configurer.OAuth2AuthorizationServerConfigurer;
 import io.jmix.securityoauth2.configurer.OAuth2ResourceServerConfigurer;
 import io.jmix.securityoauth2.impl.UniqueAuthenticationKeyGenerator;
+import io.jmix.securityoauth2.token.store.JmixJdbcTokenStore;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -37,7 +39,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 import javax.sql.DataSource;
 
@@ -54,8 +55,8 @@ public class SecurityOAuth2AutoConfiguration {
     public static class JdbcTokenStoreConfiguration {
         @Bean(name = "sec_TokenStore")
         @ConditionalOnMissingBean(TokenStore.class)
-        public TokenStore tokenStore(DataSource dataSource) {
-            JdbcTokenStore tokenStore = new JdbcTokenStore(dataSource);
+        public TokenStore tokenStore(DataSource dataSource, StandardSerialization standardSerialization) {
+            JmixJdbcTokenStore tokenStore = new JmixJdbcTokenStore(dataSource, standardSerialization);
             tokenStore.setAuthenticationKeyGenerator(new UniqueAuthenticationKeyGenerator());
             return tokenStore;
         }

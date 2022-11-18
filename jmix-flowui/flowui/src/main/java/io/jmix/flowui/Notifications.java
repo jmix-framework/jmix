@@ -64,7 +64,7 @@ public class Notifications {
     /**
      * Shows a notification with a title and message.
      *
-     * @param title notification title
+     * @param title   notification title
      * @param message notification message
      */
     public void show(String title, String message) {
@@ -100,7 +100,7 @@ public class Notifications {
     /**
      * Returns a builder for configuring and displaying the notification.
      *
-     * @param title notification title
+     * @param title   notification title
      * @param message notification message
      */
     public NotificationBuilder create(String title, String message) {
@@ -143,10 +143,10 @@ public class Notifications {
         protected static final String CLOSE_BUTTON_CLASS_NAME = "close-button";
 
         protected static final String TEXT_LAYOUT_CLASS_NAME = "jmix-text-layout";
+        protected static final String CLOSEABLE_TEXT_LAYOUT_CLASS_NAME = "jmix-text-layout-closeable";
         protected static final String TITLE_CLASS_NAME = "title";
         protected static final String MESSAGE_CLASS_NAME = "message";
 
-        protected static final String TEXT_CONTENT_CLASS_NAME = "text-content";
         protected static final String COMPONENT_CONTENT_CLASS_NAME = "component-content";
 
         protected static final String WARNING_THEME_NAME = "warning";
@@ -173,7 +173,7 @@ public class Notifications {
         }
 
         /**
-         * @param title notification title
+         * @param title   notification title
          * @param message notification message
          */
         public NotificationBuilder(String title, String message) {
@@ -354,7 +354,7 @@ public class Notifications {
 
             Component content;
             if (text != null) {
-                content = new Text(text);
+                content = createTextComponent(text);
             } else if (title != null && message != null) {
                 HasComponents textLayout = createTextLayout();
                 textLayout.add(createTitleComponent(title));
@@ -369,18 +369,26 @@ public class Notifications {
 
             if (closeableLayout != null) {
                 closeableLayout.addComponentAsFirst(content);
-                closeableLayout.getElement().getClassList().add(content instanceof Text
-                        ? TEXT_CONTENT_CLASS_NAME
-                        : COMPONENT_CONTENT_CLASS_NAME);
+                closeableLayout.getElement().getClassList().add(COMPONENT_CONTENT_CLASS_NAME);
                 return (Component) closeableLayout;
             }
+
             return content;
         }
 
         protected HasComponents createTextLayout() {
             Div div = new Div();
-            div.setClassName(TEXT_LAYOUT_CLASS_NAME);
+
+            if (isInternalCloseable()) {
+                div.setClassName(CLOSEABLE_TEXT_LAYOUT_CLASS_NAME);
+            } else {
+                div.setClassName(TEXT_LAYOUT_CLASS_NAME);
+            }
             return div;
+        }
+
+        protected Component createTextComponent(String text) {
+            return new Text(text);
         }
 
         protected Component createTitleComponent(String title) {

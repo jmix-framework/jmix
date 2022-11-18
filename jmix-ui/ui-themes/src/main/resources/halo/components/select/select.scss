@@ -52,7 +52,11 @@
       input {
         color: transparent;
       }
-    }
+  }
+
+  .#{$primary-stylename}.inline-icon [class*="input"] {
+    padding-left: $v-unit-size;
+  }
 
   .v-ios.v-touch &,
   .v-android.v-touch & {

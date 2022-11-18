@@ -21,6 +21,10 @@
     @include valo-textfield-style;
     height: $v-unit-size;
     width: $v-default-field-width;
+
+    &.inline-icon {
+      padding-left: $v-unit-size;
+    }
   }
 
   .#{$primary-stylename}.v-readonly {

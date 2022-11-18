@@ -63,32 +63,50 @@ public class ScreenResourcePolicyModelCreate extends MultipleResourcePolicyModel
 
     private String menuItemId;
 
+    private boolean hasChanges = false;
+
     @Subscribe
     public void onInit(InitEvent event) {
         screenField.setOptionsMap(resourcePolicyEditorUtils.getScreenOptionsMap());
     }
 
+    @Subscribe("policyGroupField")
+    protected void onPolicyGroupFieldValueChange(HasValue.ValueChangeEvent<String> event) {
+        hasChanges = true;
+    }
+    @Subscribe("menuItemField")
+    protected void onMenuItemFieldValueChange(HasValue.ValueChangeEvent<String> event) {
+        hasChanges = true;
+    }
+    @Subscribe("menuAccessField")
+    protected void onMenuAccessFieldValueChange(HasValue.ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+        hasChanges = true;
+    }
+
     @Subscribe("screenField")
     public void onScreenFieldValueChange(HasValue.ValueChangeEvent<String> event) {
         String screenId = event.getValue();
-        policyGroupField.setValue(resourcePolicyGroupResolver.resolvePolicyGroup(ResourcePolicyType.SCREEN, screenId));
+        if(screenId!=null) {
+            policyGroupField.setValue(resourcePolicyGroupResolver.resolvePolicyGroup(ResourcePolicyType.SCREEN, screenId));
 
-        menuItemId = null;
-        MenuItem menuItem = null;
-        if (screenId != null) {
-            menuItem = resourcePolicyEditorUtils.findMenuItemByScreen(screenId);
-            if (menuItem != null) {
-                menuItemId = menuItem.getId();
+            menuItemId = null;
+            MenuItem menuItem = null;
+            if (screenId != null) {
+                menuItem = resourcePolicyEditorUtils.findMenuItemByScreen(screenId);
+                if (menuItem != null) {
+                    menuItemId = menuItem.getId();
+                }
             }
-        }
 
-        if (this.menuItemId == null) {
-            menuItemField.setValue(null);
-            menuAccessField.setValue(Boolean.FALSE);
-            menuAccessField.setEditable(false);
-        } else {
-            menuItemField.setValue(resourcePolicyEditorUtils.getMenuCaption(menuItem));
-            menuAccessField.setEditable(true);
+            if (this.menuItemId == null) {
+                menuItemField.setValue(null);
+                menuAccessField.setValue(Boolean.FALSE);
+                menuAccessField.setEditable(false);
+            } else {
+                menuItemField.setValue(resourcePolicyEditorUtils.getMenuCaption(menuItem));
+                menuAccessField.setEditable(true);
+            }
+            hasChanges = true;
         }
     }
 
@@ -126,5 +144,10 @@ public class ScreenResourcePolicyModelCreate extends MultipleResourcePolicyModel
         }
 
         return policies;
+    }
+
+    @Override
+    public boolean hasUnsavedChanges() {
+        return hasChanges;
     }
 }

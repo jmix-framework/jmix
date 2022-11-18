@@ -102,7 +102,11 @@
                     </responsiveSteps>
                     <comboBox id="userField" label="msg://user" autoOpen="true"/>
                     <select id="changeTypeField" label="msg://changeType"/>
-                    <dateTimePicker id="fromDateField" label="msg://from" datatype="dateTime"/>
+                    <div classNames="datetime-picker-container">
+                        <datePicker id="fromDateField" datatype="localDate"
+                                    label="msg://from"/>
+                        <timePicker id="fromTimeField" datatype="localTime"/>
+                    </div>
 
                     <comboBox label="msg://entity" id="filterEntityNameField"/>
                     <valuePicker id="instancePicker" label="msg://instance" enabled="false">
@@ -111,7 +115,11 @@
                             <action id="valueClearAction" type="value_clear"/>
                         </actions>
                     </valuePicker>
-                    <dateTimePicker id="tillDateField" label="msg://till" datatype="dateTime"/>
+                    <div classNames="datetime-picker-container">
+                        <datePicker id="tillDateField" datatype="localDate"
+                                    label="msg://till"/>
+                        <timePicker id="tillTimeField" datatype="localTime"/>
+                    </div>
 
                 </formLayout>
                 <hbox>

@@ -91,5 +91,23 @@ $jmix-timefield-second-width: 84px;
 
   .jmix-timefield-ampm {
     width: round($jmix-timefield-ampm-width * $scaling-factor);
+    min-width: round($jmix-timefield-ampm-width * $scaling-factor);
+  }
+
+  .jmix-timefield-wrapper.inline-icon {
+    $icon-offset: round($v-unit-size * $scaling-factor);
+
+    .#{$primary-stylename}-hour {
+      width: round($jmix-timefield-hour-width * $scaling-factor) + $icon-offset;
+      padding-left: $icon-offset;
+    }
+    .#{$primary-stylename}-minute {
+      width: round($jmix-timefield-minute-width * $scaling-factor) + $icon-offset;
+      padding-left: $icon-offset;
+    }
+    .#{$primary-stylename}-second {
+      width: round($jmix-timefield-second-width * $scaling-factor) + $icon-offset;
+      padding-left: $icon-offset;
+    }
   }
 }

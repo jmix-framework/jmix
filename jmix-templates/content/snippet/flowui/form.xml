@@ -46,7 +46,7 @@ def initDefaultFieldAttrs(attr) {
 
     def isDateTimePicker = ['java.time.LocalDateTime', 'java.time.OffsetDateTime'].collect {
         attr.isDeepInheritor(it)
-    }.any()
+    }.any() || (isDatePicker && attr.getAnnotation('Temporal')?.params?.get('value')?.endsWith('TIMESTAMP'))
     if (isDateTimePicker) {
         field.tag = 'dateTimePicker'
     }

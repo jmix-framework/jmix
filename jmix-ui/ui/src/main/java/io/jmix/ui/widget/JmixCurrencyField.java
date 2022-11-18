@@ -33,6 +33,8 @@ public class JmixCurrencyField extends CustomField<String> {
     protected static final String CURRENCYFIELD_LAYOUT_STYLENAME = "jmix-currencyfield-layout";
     protected static final String CURRENCY_STYLENAME = "jmix-currencyfield-currency";
     protected static final String CURRENCYFIELD_TEXT_STYLENAME = "jmix-currencyfield-text";
+    protected static final String CURRENCYFIELD_LABEL_LEFT_POSITION_STYLENAME =
+            CURRENCYFIELD_STYLENAME + "-label-left-position";
 
     protected static final String CURRENCY_VISIBLE = "currency-visible";
     protected static final String IE9_INPUT_WRAP_STYLENAME = "ie9-input-wrap";
@@ -159,6 +161,12 @@ public class JmixCurrencyField extends CustomField<String> {
         } else {
             container.addComponent(currencyLabel, 1);
         }
+
+        if (currencyLabelPosition == CurrencyLabelPosition.LEFT) {
+            addStyleName(CURRENCYFIELD_LABEL_LEFT_POSITION_STYLENAME);
+        } else {
+            removeStyleName(CURRENCYFIELD_LABEL_LEFT_POSITION_STYLENAME);
+        }
     }
 
     @Override
@@ -245,5 +253,18 @@ public class JmixCurrencyField extends CustomField<String> {
     @Override
     public Supplier<ErrorMessage> getComponentErrorProvider() {
         return textField.getComponentErrorProvider();
+    }
+
+    @Override
+    public void setStyleName(String style) {
+        super.setStyleName(getCurrencyLabelPosition() == CurrencyLabelPosition.LEFT
+                ? style + CURRENCYFIELD_LABEL_LEFT_POSITION_STYLENAME
+                : style);
+    }
+
+    @Override
+    public String getStyleName() {
+        return StringUtils.normalizeSpace(super.getStyleName()
+                .replace(CURRENCYFIELD_LABEL_LEFT_POSITION_STYLENAME, ""));
     }
 }

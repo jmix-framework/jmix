@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security;
+@NonNullApi
+package io.jmix.flowui.download;
 
-/**
- * Interface contains a list of hints supported by {@link CurrentAuthentication} and {@link io.jmix.core.usersubstitution.CurrentUserSubstitution}
- */
-public interface CurrentUserHints {
-
-    /**
-     * Whether the user should be reloaded. Set value to false if you don't want it to happen. The default value is true.
-     */
-    String RELOAD_USER = "reloadUser";
-}
+import org.springframework.lang.NonNullApi;

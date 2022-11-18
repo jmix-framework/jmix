@@ -103,6 +103,6 @@ public final class FlowuiComponentUtils {
     }
 
     private static <T> ItemLabelGenerator<T> createItemLabelGenerator(Map<T, String> items) {
-        return items::get;
+        return item -> items.getOrDefault(item, String.valueOf(item));
     }
 }

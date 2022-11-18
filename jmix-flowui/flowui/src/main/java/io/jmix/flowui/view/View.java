@@ -111,7 +111,6 @@ public class View<T extends Component> extends Composite<T>
 
                 if (beforeCloseEvent.isClosePrevented()) {
                     closeActionPerformed = false;
-                    event.postpone();
                     return;
                 }
 

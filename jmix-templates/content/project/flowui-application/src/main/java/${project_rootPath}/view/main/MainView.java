@@ -6,7 +6,7 @@ import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
 @Route("")
-@ViewController("${normalizedPrefix_underscore}MainView")
+@ViewController("MainView")
 @ViewDescriptor("main-view.xml")
 public class MainView extends StandardMainView {
 }

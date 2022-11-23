@@ -94,11 +94,11 @@ public class ReadEntityQueryContext implements AccessContext {
                         transformer.addWhere(condition.where);
                     }
                 } catch (Exception e) {
-                    log.error("An error occurred when applying row level for entity {}. Join clause {}, where clause {}",
+                    log.error("Error applying row-level policy to entity {}. Join clause {}, where clause {}",
                             entityClass.getName(), condition.join, condition.where, e);
 
                     throw new RuntimeException(
-                            String.format("An error occurred when applying row level for entity %s", entityClass.getName()));
+                            String.format("Error applying row-level policy to entity %s", entityClass.getName()));
                 }
             }
 
@@ -108,7 +108,7 @@ public class ReadEntityQueryContext implements AccessContext {
             originalQuery.setQueryString(transformer.getResult());
 
             if (log.isTraceEnabled()) {
-                log.trace("Query with row-level constraints applied: {}", printQuery(originalQuery.getQueryString()));
+                log.trace("Query with row-level policies applied: {}", printQuery(originalQuery.getQueryString()));
             }
         }
     }

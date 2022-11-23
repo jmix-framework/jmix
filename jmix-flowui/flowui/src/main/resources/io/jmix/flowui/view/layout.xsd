@@ -2040,8 +2040,8 @@
         <xs:attribute name="key" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="width" type="xs:string"/>
-        <xs:attribute name="header" type="xs:string"/>
-        <xs:attribute name="footer" type="xs:string"/>
+        <xs:attribute name="header" type="resourceString"/>
+        <xs:attribute name="footer" type="resourceString"/>
         <xs:attribute name="frozen" type="xs:boolean"/>
         <xs:attribute name="property" type="xs:string"/>
         <xs:attribute name="sortable" type="xs:boolean"/>

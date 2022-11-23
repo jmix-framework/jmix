@@ -177,8 +177,8 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
 
         Column column = resultComponent.addColumn(key, metaPropertyPath);
         loadString(element, "width", column::setWidth);
-        loadString(element, "header", column::setHeader);
-        loadString(element, "footer", column::setFooter);
+        loadResourceString(element, "header", context.getMessageGroup(), column::setHeader);
+        loadResourceString(element, "footer", context.getMessageGroup(), column::setFooter);
         loadBoolean(element, "frozen", column::setFrozen);
         loadBoolean(element, "sortable", column::setSortable);
         loadInteger(element, "flexGrow", column::setFlexGrow);

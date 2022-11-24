@@ -177,9 +177,9 @@ public class JmixTableFormatter extends AbstractFormatter {
     }
 
     protected JmixTableData getTableData(TemplateTableDescription templateTableDescription,
-                                             Map<String, List<KeyValueEntity>> transformedData,
-                                             Map<String, Set<JmixTableData.ColumnInfo>> headerMap,
-                                             Map<String, List<BandData>> childrenBands) {
+                                         Map<String, List<KeyValueEntity>> transformedData,
+                                         Map<String, Set<JmixTableData.ColumnInfo>> headerMap,
+                                         Map<String, List<BandData>> childrenBands) {
         for (TemplateTableBand band : templateTableDescription.getTemplateTableBands()) {
             String bandName = band.getBandName();
 
@@ -213,7 +213,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                 KeyValueEntity entityRow = new KeyValueEntity();
 
                 for (TemplateTableColumn column : band.getColumns()) {
-                    String key = column.getKey();
+                    String key = column.getDataKey();
                     Object value = data.get(key);
 
                     if (INSTANCE_NAME_KEY.equals(key)) {
@@ -235,7 +235,7 @@ public class JmixTableFormatter extends AbstractFormatter {
 
                 if (headers.isEmpty() || headers.size() < data.size()) {
                     for (TemplateTableColumn column : band.getColumns()) {
-                        String key = column.getKey();
+                        String key = column.getDataKey();
                         Object value = data.get(key);
 
                         if (INSTANCE_NAME_KEY.equals(key)) {

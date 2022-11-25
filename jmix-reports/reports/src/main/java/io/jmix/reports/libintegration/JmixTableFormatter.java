@@ -213,7 +213,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                 KeyValueEntity entityRow = new KeyValueEntity();
 
                 for (TemplateTableColumn column : band.getColumns()) {
-                    String key = column.getDataKey();
+                    String key = column.getKey();
                     Object value = data.get(key);
 
                     if (INSTANCE_NAME_KEY.equals(key)) {
@@ -235,7 +235,7 @@ public class JmixTableFormatter extends AbstractFormatter {
 
                 if (headers.isEmpty() || headers.size() < data.size()) {
                     for (TemplateTableColumn column : band.getColumns()) {
-                        String key = column.getDataKey();
+                        String key = column.getKey();
                         Object value = data.get(key);
 
                         if (INSTANCE_NAME_KEY.equals(key)) {

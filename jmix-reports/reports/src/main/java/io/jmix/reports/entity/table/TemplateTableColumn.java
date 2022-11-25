@@ -19,7 +19,6 @@ package io.jmix.reports.entity.table;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Id;
 import java.util.UUID;
@@ -31,44 +30,8 @@ public class TemplateTableColumn {
     @JmixGeneratedValue
     protected UUID id;
 
-    /**
-     * Full path in the properties tree.
-     */
     @JmixProperty
     protected String key;
-
-    /**
-     * Key to extract value from band data.
-     * <p>In most cases coincides with the {@link #key} value but in case of displaying some properties of elements
-     * of reference collection it shouldn't include root collection property itself because band data keeps values
-     * relatively to properties within region. And collection property requires new tabulated region.
-     * <ul>
-     *     <li>
-     *         Single-reference attribute:
-     *         <ul>
-     *             <li>
-     *                 key: singleReference.name
-     *             </li>
-     *             <li>
-     *                 dataKey: singleReference.name
-     *             </li>
-     *         </ul>
-     *     </li>
-     *     <li>
-     *         Multi-reference attribute
-     *         <ul>
-     *             <li>
-     *                 key: multiReference.name
-     *             </li>
-     *             <li>
-     *                 dataKey: name
-     *             </li>
-     *         </ul>
-     *     </li>
-     * </ul>
-     */
-    @JmixProperty
-    protected String dataKey;
 
     @JmixProperty
     protected String caption;
@@ -98,16 +61,6 @@ public class TemplateTableColumn {
 
     public void setKey(String key) {
         this.key = key;
-    }
-
-    public String getDataKey() {
-        return StringUtils.isNotEmpty(dataKey)
-                ? dataKey
-                : key;
-    }
-
-    public void setDataKey(String dataKey) {
-        this.dataKey = dataKey;
     }
 
     public String getCaption() {

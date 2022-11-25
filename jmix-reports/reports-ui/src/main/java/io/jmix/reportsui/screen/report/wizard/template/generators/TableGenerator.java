@@ -64,12 +64,11 @@ public class TableGenerator implements Generator {
                 RegionProperty regionProperty = reportRegion.getRegionProperties().get(j);
 
                 String caption = regionProperty.getHierarchicalLocalizedNameExceptRoot().replace('.', ' ');
-                String dataKey = resolveDataKey(regionProperty);
+                String key = resolveKey(regionProperty);
 
                 TemplateTableColumn column = dataManager.create(TemplateTableColumn.class);
                 column.setPosition(j);
-                column.setKey(regionProperty.getHierarchicalNameExceptRoot());
-                column.setDataKey(dataKey);
+                column.setKey(key);
                 column.setCaption(caption);
 
                 columns.add(column);
@@ -83,7 +82,7 @@ public class TableGenerator implements Generator {
         return TemplateTableDescription.toJsonString(templateTableDescription).getBytes(StandardCharsets.UTF_8);
     }
 
-    protected String resolveDataKey(RegionProperty regionProperty) {
+    protected String resolveKey(RegionProperty regionProperty) {
         String hierarchicalNameExceptRoot = regionProperty.getHierarchicalNameExceptRoot();
         if (!hierarchicalNameExceptRoot.contains(".")) {
             return hierarchicalNameExceptRoot;

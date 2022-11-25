@@ -17,18 +17,13 @@
 package io.jmix.reportsui.screen.report.wizard.template.generators;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.Metadata;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
 import io.jmix.reports.entity.table.TemplateTableDescription;
-import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reportsui.screen.report.wizard.template.Generator;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -45,9 +40,6 @@ public class TableGenerator implements Generator {
     @Autowired
     private DataManager dataManager;
 
-    @Autowired
-    private Metadata metadata;
-
     @Override
     public byte[] generate(ReportData reportData) {
         TemplateTableDescription templateTableDescription = dataManager.create(TemplateTableDescription.class);
@@ -61,15 +53,13 @@ public class TableGenerator implements Generator {
 
             List<TemplateTableColumn> columns = new LinkedList<>();
             for (int j = 0; j < reportRegion.getRegionProperties().size(); j++) {
-                RegionProperty regionProperty = reportRegion.getRegionProperties().get(j);
+                RegionProperty regionProperty = reportData.getReportRegions().get(i).getRegionProperties().get(j);
 
                 String caption = regionProperty.getHierarchicalLocalizedNameExceptRoot().replace('.', ' ');
-                String dataKey = resolveDataKey(regionProperty);
 
                 TemplateTableColumn column = dataManager.create(TemplateTableColumn.class);
                 column.setPosition(j);
                 column.setKey(regionProperty.getHierarchicalNameExceptRoot());
-                column.setDataKey(dataKey);
                 column.setCaption(caption);
 
                 columns.add(column);
@@ -81,40 +71,5 @@ public class TableGenerator implements Generator {
         templateTableDescription.setTemplateTableBands(bands);
 
         return TemplateTableDescription.toJsonString(templateTableDescription).getBytes(StandardCharsets.UTF_8);
-    }
-
-    protected String resolveDataKey(RegionProperty regionProperty) {
-        String hierarchicalNameExceptRoot = regionProperty.getHierarchicalNameExceptRoot();
-        if (!hierarchicalNameExceptRoot.contains(".")) {
-            return hierarchicalNameExceptRoot;
-        }
-
-        //Remove first property from full property path if it's a collection to match further band data
-        EntityTreeNode childNode = regionProperty.getEntityTreeNode();
-        EntityTreeNode parentNode;
-        String parentMetaClassName = null;
-        String childPropertyName = null;
-        while (childNode.getParent() != null) {
-            parentNode = childNode.getParent();
-            parentMetaClassName = parentNode.getMetaClassName();
-            childPropertyName = childNode.getMetaPropertyName();
-            childNode = parentNode;
-        }
-
-        String key = hierarchicalNameExceptRoot;
-        if (StringUtils.isNotEmpty(parentMetaClassName) && StringUtils.isNotEmpty(childPropertyName)) {
-            MetaClass rootMetaClass = metadata.getClass(parentMetaClassName);
-            MetaPropertyPath childProperty = rootMetaClass.getPropertyPath(childPropertyName);
-            if (childProperty != null) {
-                boolean many = childProperty.getRange().getCardinality().isMany();
-                if (many) {
-                    String[] propertyParts = hierarchicalNameExceptRoot.split("\\.", 2);
-                    if (propertyParts.length == 2) {
-                        key = propertyParts[1];
-                    }
-                }
-            }
-        }
-        return key;
     }
 }

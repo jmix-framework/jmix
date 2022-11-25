@@ -48,6 +48,7 @@
             <xs:attribute name="messagesGroup" type="xs:string"/>
             <xs:attribute name="title" type="layout:resourceString"/>
             <xs:attribute name="focusComponent" type="xs:string"/>
+            <xs:attribute name="extends" type="xs:string"/>
         </xs:complexType>
     </xs:element>
 

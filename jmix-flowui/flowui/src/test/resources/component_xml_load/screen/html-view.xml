@@ -460,6 +460,24 @@
             <orderedList text="orderedListChild"/>
         </orderedList>
 
+        <label id="labelId"
+               classNames="cssClassName1, cssClassName2"
+               enabled="true"
+               height="50px"
+               maxHeight="55px"
+               maxWidth="120px"
+               minHeight="40px"
+               minWidth="80px"
+               setFor="inputId"
+               text="labelText"
+               themeNames="primary, small"
+               title="labelTitle"
+               visible="true"
+               whiteSpace="PRE"
+               width="100px">
+            <label text="labelChild"/>
+        </label>
+
         <!--        Components-->
         <hr id="hrId"
             classNames="cssClassName1, cssClassName2"

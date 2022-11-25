@@ -121,5 +121,6 @@ public abstract class BaseLoaderConfig {
         loaders.put("p", ParagraphLoader.class);
         loaders.put("htmlObject", HtmlObjectLoader.class);
         loaders.put("anchor", AnchorLoader.class);
+        loaders.put("label", LabelLoader.class);
     }
 }

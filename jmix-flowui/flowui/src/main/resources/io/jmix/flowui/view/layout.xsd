@@ -2853,6 +2853,15 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Label-->
+    <xs:complexType name="labelComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlContainer">
+                <xs:attribute name="setFor" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
 
     <!-- Facets -->
 
@@ -2963,6 +2972,7 @@
                 <xs:element name="aside" type="baseHtmlContainer"/>
                 <xs:element name="emphasis" type="baseHtmlContainer"/>
                 <xs:element name="anchor" type="anchor"/>
+                <xs:element name="label" type="labelComponent"/>
                 <xs:element name="article" type="baseHtmlContainer"/>
                 <xs:element name="input" type="inputHtmlComponent"/>
                 <xs:element name="image" type="imageHtmlComponent"/>

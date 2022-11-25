@@ -62,7 +62,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         where:
         container << ["article", "aside", "descriptionList", "term", "description", "div", "emphasis", "footer", "h1",
                       "h2", "h3", "h4", "h5", "h6", "header", "listItem", "p", "pre", "section", "span",
-                      "unorderedList", "anchor", "htmlObject", "image", "main", "nav", "orderedList"]
+                      "unorderedList", "anchor", "htmlObject", "label", "image", "main", "nav", "orderedList"]
     }
 
     def "Load specific anchor attributes from XML"() {
@@ -89,6 +89,16 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             data == "data"
             type.get() == "type"
         }
+    }
+
+    def "Load specific label attributes from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = openScreen(HtmlView.class)
+
+        then: "Specific label attributes will be loaded"
+        def label = htmlView.labelId
+
+        label.getFor().orElse("") == "inputId"
     }
 
     def "Load specific #container attributes from XML"() {

@@ -101,6 +101,36 @@ public class ReportImportExportImpl implements ReportImportExport {
         return new ArrayList<>(importResult.getImportedReports());
     }
 
+    @Override
+    public Collection<Report> importReports(String path) {
+        return importReports(path, null);
+    }
+
+    @Override
+    public Collection<Report> importReports(String path, @Nullable EnumSet<ReportImportOption> importOptions) {
+        File target = new File(path);
+        if(target.isFile()) {
+            byte[] zipBytes = readFileToByteArray(target);
+            return importReports(zipBytes, importOptions);
+        }
+
+        if(target.isDirectory()) {
+            File[] files = target.listFiles();
+            if(files != null && files.length != 0) {
+                Collection<Report> result = new ArrayList<>();
+                for(File file : files) {
+                    if(file.isFile()) {
+                        byte[] zipBytes = readFileToByteArray(file);
+                        result.addAll(importReports(zipBytes, importOptions));
+                    }
+                }
+                return result;
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
     public ReportImportResult importReportsWithResult(byte[] zipBytes, @Nullable EnumSet<ReportImportOption> importOptions) {
         log.info("Import started...");
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(zipBytes);
@@ -252,6 +282,13 @@ public class ReportImportExportImpl implements ReportImportExport {
         return report;
     }
 
+    protected byte[] readFileToByteArray(File file) {
+        try {
+            return FileUtils.readFileToByteArray(file);
+        } catch (IOException e) {
+            throw new ReportingException("Unable to read file '" + file.getName() + "'");
+        }
+    }
 
     protected void updateReportTemplate(Report report, byte[] zipBytes) throws IOException {
         // importing template files

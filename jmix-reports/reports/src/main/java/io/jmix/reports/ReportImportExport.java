@@ -65,6 +65,27 @@ public interface ReportImportExport {
     Collection<Report> importReports(byte[] zipBytes, @Nullable EnumSet<ReportImportOption> importOptions);
 
     /**
+     * Imports reports from ZIP archive(s) by path.
+     * Path can point to the ZIP file directly or to some directory with ZIP files.
+     * Archive file format is the same as produced by exportReports.
+     *
+     * @param path path to archive file or directory
+     * @return Collection of imported reports.
+     */
+    Collection<Report> importReports(String path);
+
+    /**
+     * Imports reports from ZIP archive(s) by path.
+     * Path can point to the archive file directly or to some directory with archive files.
+     * Archive file format is the same as produced by exportReports.
+     *
+     * @param path          path to archive file or directory
+     * @param importOptions report import options
+     * @return Collection of imported reports.
+     */
+    Collection<Report> importReports(String path, @Nullable EnumSet<ReportImportOption> importOptions);
+
+    /**
      * Imports reports from ZIP archive. Archive file format is described in exportReports method.
      *
      * @param zipBytes      ZIP archive as a byte array.
@@ -87,7 +108,7 @@ public interface ReportImportExport {
      *
      * @param path to folder with reports
      * @return collection of imported reports
-     * @throws IOException  if any I/O error occurs
+     * @throws IOException if any I/O error occurs
      */
     Collection<Report> importReportsFromPath(String path) throws IOException;
 }

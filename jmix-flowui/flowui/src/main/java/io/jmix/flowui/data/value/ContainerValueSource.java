@@ -213,7 +213,7 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
         if (this.state != state) {
             this.state = state;
 
-            events.fireEvent(new StateChangeEvent(this, BindingState.ACTIVE));
+            events.fireEvent(new StateChangeEvent(this, this.state));
         }
     }
 

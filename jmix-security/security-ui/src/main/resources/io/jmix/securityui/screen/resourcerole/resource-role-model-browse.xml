@@ -39,6 +39,7 @@
                 <action id="edit" type="edit"/>
                 <action id="remove" type="remove"/>
                 <action id="refresh" type="refresh"/>
+                <action id="assignToUsers" type="assignToUsers"/>
             </actions>
             <columns>
                 <column id="name"/>
@@ -54,6 +55,7 @@
                 <button id="editBtn" action="roleModelsTable.edit"/>
                 <button id="removeBtn" action="roleModelsTable.remove"/>
                 <button id="refreshBtn" action="roleModelsTable.refresh"/>
+                <button id="assignToUsersBtn" action="roleModelsTable.assignToUsers"/>
                 <popupButton id="exportBtn" caption="msg://export" icon="DOWNLOAD">
                     <actions>
                         <action id="exportJSON" caption="msg://exportJSON"/>

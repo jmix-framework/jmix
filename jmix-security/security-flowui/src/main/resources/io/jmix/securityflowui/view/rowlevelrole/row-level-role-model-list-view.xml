@@ -32,6 +32,7 @@
             <button id="createBtn" action="roleModelsTable.create"/>
             <button id="editBtn" action="roleModelsTable.edit"/>
             <button id="removeBtn" action="roleModelsTable.remove"/>
+            <button id="assignToUsersBtn" action="roleModelsTable.assignToUsers"/>
         </hbox>
         <dataGrid id="roleModelsTable"
                   dataContainer="roleModelsDc"
@@ -40,6 +41,7 @@
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>
                 <action id="remove" type="remove"/>
+                <action id="assignToUsers" type="assignToUsers"/>
             </actions>
             <columns>
                 <column property="name"/>

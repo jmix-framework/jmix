@@ -45,6 +45,14 @@ task contentJarDe(type: Jar) {
     }
 }
 
+task contentJarNl(type: Jar) {
+    archiveBaseName = 'jmix-translations-nl'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_nl.properties")
+    }
+}
+
 task contentJarZhCn(type: Jar) {
     archiveBaseName = 'jmix-translations-zh-cn'
     includeEmptyDirs = false
@@ -77,7 +85,7 @@ task contentJarCkb(type: Jar) {
     }
 }
 
-assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarZhCn, contentJarRo, contentJarEl, contentJarCkb)
+assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarNl, contentJarZhCn, contentJarRo, contentJarEl, contentJarCkb)
 
 publishing {
     publications {
@@ -92,6 +100,10 @@ publishing {
         De(MavenPublication) {
             artifactId = 'jmix-translations-de'
             artifact(contentJarDe)
+        }
+        Nl(MavenPublication) {
+            artifactId = 'jmix-translations-nl'
+            artifact(contentJarNl)
         }
         ZhCn(MavenPublication) {
             artifactId = 'jmix-translations-zh-cn'

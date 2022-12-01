@@ -198,7 +198,6 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         dataManager.save(saveContext);
     }
 
-    @SuppressWarnings("unchecked")
     protected void showNotification(DialogWindow.AfterCloseEvent<View<?>> viewAfterCloseEvent) {
         if (!viewAfterCloseEvent.closedWith(StandardOutcome.SELECT)) {
             return;

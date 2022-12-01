@@ -129,7 +129,9 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
     protected void onClearButtonClick(ClickEvent<Button> event) {
         userName.clear();
         lastRequestDateFrom.clear();
+        lastRequestTimeFrom.clear();
         lastRequestDateTo.clear();
+        lastRequestTimeTo.clear();
         refreshDlItems();
     }
 

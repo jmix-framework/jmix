@@ -84,6 +84,10 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <queryParameters>
+            <pagination component="paginationEntityLog"/>
+            <pagination component="paginationLoggedEntity"/>
+        </queryParameters>
     </facets>
     <layout>
         <tabs id="tabsheet" width="100%">
@@ -125,6 +129,7 @@
                 <hbox>
                     <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
                     <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
+                    <simplePagination id="paginationEntityLog" dataLoader="entityLogDl"/>
                 </hbox>
             </details>
             <formLayout>
@@ -134,17 +139,17 @@
                 </responsiveSteps>
                 <dataGrid id="entityLogTable" dataContainer="entityLogDc">
                     <columns>
-                        <column property="eventTs"/>
-                        <column property="username"/>
-                        <column property="type"/>
-                        <column property="entityInstanceName"/>
+                        <column property="eventTs" resizable="true"/>
+                        <column property="username" resizable="true"/>
+                        <column property="type" resizable="true"/>
+                        <column property="entityInstanceName" resizable="true"/>
                     </columns>
                 </dataGrid>
 
                 <dataGrid id="entityLogAttrTable" width="100%" dataContainer="entityLogAttrDc">
                     <columns>
-                        <column property="valueId"/>
-                        <column property="oldValueId"/>
+                        <column property="valueId" resizable="true"/>
+                        <column property="oldValueId" resizable="true"/>
                     </columns>
                 </dataGrid>
 
@@ -152,14 +157,18 @@
 
         </vbox>
 
-        <hbox id="setupWrapper" visible="false" width="100%">
+        <formLayout id="setupWrapper" visible="false" width="100%">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="32em" columns="3"/>
+            </responsiveSteps>
             <vbox id="loggedEntityTableBox"
                   expand="loggedEntityTable" padding="false">
                 <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
                     <button id="createBtn" action="loggedEntityTable.create"/>
                     <button id="editBtn" action="loggedEntityTable.edit"/>
                     <button id="removeBtn" action="loggedEntityTable.remove"/>
-                    <button id="reloadBtn" icon="CHECK" text="msg://reloadConfiguration"/>
+                    <simplePagination id="paginationLoggedEntity" dataLoader="loggedEntityDl"/>
                 </hbox>
                 <dataGrid id="loggedEntityTable" minHeight="20em" dataContainer="loggedEntityDc">
                     <actions>
@@ -174,7 +183,7 @@
                     </columns>
                 </dataGrid>
             </vbox>
-            <vbox id="loggedEntityMiscBox" width="32em" padding="false" expand="attributesBox">
+            <vbox id="loggedEntityMiscBox" padding="false" expand="attributesBox">
                 <comboBox id="entityNameField" label="msg://name" width="100%" dataContainer="loggedEntityDc"
                           property="name"/>
                 <hbox id="checkersBox" padding="false" width="100%">
@@ -197,8 +206,7 @@
                     <button id="cancelBtn" text="msg://cancel" icon="BAN"/>
                 </hbox>
             </vbox>
-
-        </hbox>
+        </formLayout>
 
     </layout>
 </view>

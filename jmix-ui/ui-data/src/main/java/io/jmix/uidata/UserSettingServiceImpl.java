@@ -183,7 +183,7 @@ public class UserSettingServiceImpl implements UserSettingService {
     public void deleteScreenSettings(Set<String> screens) {
         transaction.executeWithoutResult(status -> {
             TypedQuery<UiSetting> selectQuery = entityManager.createQuery(
-                    "select e from ui_Setting e where e.user.id = ?1",
+                    "select e from ui_Setting e where e.username = ?1",
                     UiSetting.class);
             selectQuery.setParameter(1, authentication.getUser().getUsername());
 

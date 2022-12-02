@@ -244,6 +244,7 @@ dependencies {
         api "io.jmix.translations:jmix-translations-ro:$freeVersion"
         api "io.jmix.translations:jmix-translations-el:$freeVersion"
         api "io.jmix.translations:jmix-translations-ckb:$freeVersion"
+        api "io.jmix.translations:jmix-translations-nl:$freeVersion"
 
         api "io.jmix.ui:jmix-ui:$freeVersion"
         api "io.jmix.ui:jmix-ui-data:$freeVersion"

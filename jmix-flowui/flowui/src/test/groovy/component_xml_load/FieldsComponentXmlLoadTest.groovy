@@ -145,6 +145,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             themeNames.containsAll(["small", "align-center"])
+            title == "titleString"
             value == order.number
             visible
             width == "100px"

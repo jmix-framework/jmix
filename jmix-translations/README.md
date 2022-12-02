@@ -7,6 +7,11 @@ For more information see:
 * Jmix Core project source [repository](https://github.com/Haulmont/jmix-core).
 * Jmix [documentation](https://docs.jmix.io).
 
+## Editing
+
+Be sure that the file encoding for the Properties Files is set to **UTF-8** :bangbang:
+> IDE - Preferences - File Encodings - Properties Files
+
 ## Building
 
 Publish all translations to `.m2`:

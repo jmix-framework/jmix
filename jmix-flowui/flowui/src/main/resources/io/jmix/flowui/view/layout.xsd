@@ -2285,6 +2285,7 @@
                 <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
 
+                <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
             </xs:extension>

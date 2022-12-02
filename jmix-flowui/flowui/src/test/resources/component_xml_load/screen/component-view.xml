@@ -153,6 +153,7 @@
                   requiredIndicatorVisible="true"
                   requiredMessage="requiredMessageString"
                   themeNames="small, align-center"
+                  title="titleString"
                   visible="true"
                   width="100px"/>
 

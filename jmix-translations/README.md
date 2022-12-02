@@ -9,8 +9,8 @@ For more information see:
 
 ## Editing
 
-Be sure that the file encoding for the Properties Files is set to **UTF-8** :bangbang:
-> IDE - Preferences - File Encodings - Properties Files
+Be sure that the file encoding for the Properties Files is set to UTF-8 in
+ *Preferences -> File Encodings -> Properties Files*.
 
 ## Building
 
@@ -27,11 +27,12 @@ Publish only Russian translation to `.m2`:
 ## Usage
 
 ```groovy
+implementation 'io.jmix.translations:jmix-translations-ckb'
 implementation 'io.jmix.translations:jmix-translations-de'
+implementation 'io.jmix.translations:jmix-translations-el'
 implementation 'io.jmix.translations:jmix-translations-fr'
+implementation 'io.jmix.translations:jmix-translations-nl'
+implementation 'io.jmix.translations:jmix-translations-ro'
 implementation 'io.jmix.translations:jmix-translations-ru'
 implementation 'io.jmix.translations:jmix-translations-zh-cn'
-implementation 'io.jmix.translations:jmix-translations-ro'
-implementation 'io.jmix.translations:jmix-translations-el'
-implementation 'io.jmix.translations:jmix-translations-ckb'
 ```

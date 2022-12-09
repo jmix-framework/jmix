@@ -1,0 +1,16 @@
+<%
+def rootTagName = 'window'
+def rootTagNamespace = 'http://jmix.io/schema/flowui/view'
+def view = extendView.screen
+if (view.descriptor != null && view.descriptor.rootTag != null) {
+    def rootTag = view.descriptor.rootTag
+    rootTagName = rootTag.name
+    rootTagNamespace = rootTag.namespace
+}
+%>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<$rootTagName xmlns="$rootTagNamespace"
+        title="${title}"
+        extends="${extendView.reference}">
+    <layout/>
+</$rootTagName>

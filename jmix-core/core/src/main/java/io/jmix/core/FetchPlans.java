@@ -16,7 +16,6 @@
 
 package io.jmix.core;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,13 +26,17 @@ import org.springframework.stereotype.Component;
 public class FetchPlans {
 
     @Autowired
-    protected ObjectProvider<FetchPlanBuilder> fetchPlanBuilderProvider;
+    protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
 
     /**
      * Returns {@link FetchPlan} builder for the given entity class.
      */
     public FetchPlanBuilder builder(Class<?> entityClass) {
-        return fetchPlanBuilderProvider.getObject(entityClass);
+        return new FetchPlanBuilder(this, entityClass);
     }
 
     /**

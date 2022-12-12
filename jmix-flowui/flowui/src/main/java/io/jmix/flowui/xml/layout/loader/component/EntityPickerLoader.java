@@ -41,8 +41,12 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker<?
             loadMetaClass();
 
             if (resultComponent.getMetaClass() == null) {
-                throw new GuiDevelopmentException(
-                        String.format("%s doesn't have data binding", resultComponent.getClass().getSimpleName()),
+                String message = String.format(
+                        "%s doesn't have data binding. Set either dataContainer and property or metaClass attribute.",
+                        resultComponent.getClass().getSimpleName()
+                );
+
+                throw new GuiDevelopmentException(message,
                         context, "Component ID", resultComponent.getId().orElse("null"));
             }
         }

@@ -89,8 +89,12 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
 
         if (!holder.isContainerLoaded()
                 && holder.getMetaClass() == null) {
-            throw new GuiDevelopmentException("DataGrid doesn't have data binding",
-                    context, "DataGrid ID", element.attributeValue("id"));
+            String message = String.format(
+                    "%s doesn't have data binding. Set either dataContainer and property or metaClass attribute.",
+                    resultComponent.getClass().getSimpleName()
+            );
+
+            throw new GuiDevelopmentException(message, context, "Component ID", element.attributeValue("id"));
         }
         Element columns = element.element("columns");
 

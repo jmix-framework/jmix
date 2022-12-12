@@ -70,6 +70,6 @@
             <vbox id="operations" spacing="true">
             </vbox>
         </scrollBox>
-        <button id="closeBtn" action="" caption="msg://close" icon="icons/close.png" primary="true"/>
+        <button id="closeBtn" action="" caption="msg://close" icon="font-icon:BAN" primary="true"/>
     </layout>
 </window>

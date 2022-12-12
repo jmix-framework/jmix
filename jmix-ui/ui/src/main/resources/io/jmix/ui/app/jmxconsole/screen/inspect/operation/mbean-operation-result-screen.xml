@@ -30,8 +30,8 @@
             </scrollBox>
         </vbox>
         <hbox spacing="true">
-            <button id="closeBtn" icon="icons/ok.png" caption="msg://actions.Close"/>
-            <button id="exportBtn" icon="icons/download.png" caption="msg://actions.Export" enable="false"/>
+            <button id="closeBtn" icon="font-icon:CHECK" caption="msg://actions.Close"/>
+            <button id="exportBtn" icon="font-icon:DOWNLOAD" caption="msg://actions.Export" enable="false"/>
         </hbox>
     </layout>
 </window>

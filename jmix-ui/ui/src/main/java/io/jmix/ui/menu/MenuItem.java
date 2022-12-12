@@ -215,7 +215,7 @@ public class MenuItem {
         this.properties = properties;
     }
 
-    protected static class MenuItemProperty {
+    public static class MenuItemProperty {
 
         protected String name;
         protected Object value;

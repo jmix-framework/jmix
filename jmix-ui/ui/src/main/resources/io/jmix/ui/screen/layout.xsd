@@ -3925,14 +3925,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="ftsFieldComponent">
-        <xs:complexContent>
-            <xs:extension base="baseMainElement">
-
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="newWindowButtonComponent">
         <xs:complexContent>
             <xs:extension base="baseMainElement"/>
@@ -4049,7 +4041,6 @@
                 <xs:element name="userActionsButton" type="userActionsButton"/>
                 <xs:element name="logoutButton" type="logoutButtonComponent"/>
                 <xs:element name="newWindowButton" type="newWindowButtonComponent"/>
-                <xs:element name="ftsField" type="ftsFieldComponent"/>
                 <xs:element name="userIndicator" type="userIndicatorComponent"/>
                 <xs:element name="timeZoneIndicator" type="timeZoneIndicatorComponent"/>
                 <xs:element name="workArea" type="workAreaComponent"/>

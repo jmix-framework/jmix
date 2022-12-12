@@ -123,7 +123,6 @@ public abstract class BaseLoaderConfig {
         loaders.put(LogoutButton.NAME, LogoutButtonLoader.class);
         loaders.put(NewWindowButton.NAME, NewWindowButtonLoader.class);
         loaders.put(UserIndicator.NAME, UserIndicatorLoader.class);
-//        loaders.put(FtsField.NAME, FtsFieldLoader.class); // todo fts field
         loaders.put(TimeZoneIndicator.NAME, TimeZoneIndicatorLoader.class);
         loaders.put(SideMenu.NAME, SideMenuLoader.class);
     }

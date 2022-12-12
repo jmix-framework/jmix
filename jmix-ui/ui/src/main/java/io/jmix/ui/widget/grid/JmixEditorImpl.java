@@ -168,9 +168,10 @@ public class JmixEditorImpl<T> extends EditorImpl<T> {
                     return ok;
                 } else {
                     confirmSave(true);
-                    rpc.setErrorMessage(null, Collections.emptyList());
                 }
             }
+            // Hide error message
+            rpc.setErrorMessage(null, Collections.emptyList());
         } else {
             confirmSave(false);
 

@@ -35,10 +35,11 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker> 
 
     @Override
     public void loadComponent() {
-        super.loadComponent();
-
-        loadCaptionProperty(resultComponent, element);
+        // MetaClass must be loaded before actions are loaded
         loadMetaClass(element, resultComponent::setMetaClass);
+        loadCaptionProperty(resultComponent, element);
+
+        super.loadComponent();
     }
 
     protected void loadCaptionProperty(EntityPicker resultComponent, Element element) {

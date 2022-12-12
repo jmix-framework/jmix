@@ -61,10 +61,6 @@ public class TagPickerLoader extends AbstractValuePickerLoader<TagPicker> {
         loadInputPrompt(resultComponent, element);
 
         loadValidation(resultComponent, element);
-        loadActions(resultComponent, element);
-        if (resultComponent.getActions().isEmpty()) {
-            addDefaultActions();
-        }
 
         loadBoolean(element, "inlineTags",
                 resultComponent::setInlineTags);
@@ -78,6 +74,11 @@ public class TagPickerLoader extends AbstractValuePickerLoader<TagPicker> {
                 resultComponent.setMetaClass(getMetadata().getClass(s)));
         loadInteger(element, "pageLength",
                 resultComponent::setPageLength);
+
+        loadActions(resultComponent, element);
+        if (resultComponent.getActions().isEmpty()) {
+            addDefaultActions();
+        }
     }
 
     protected Metadata getMetadata() {

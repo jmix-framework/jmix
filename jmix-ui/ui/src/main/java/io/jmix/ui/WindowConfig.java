@@ -43,6 +43,7 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -128,9 +129,13 @@ public class WindowConfig {
     @Autowired
     public void setConfigurations(List<UiControllersConfiguration> configurations) {
         this.configurations = configurations;
+    }
+
+    @PostConstruct
+    protected void postConstruct() {
         //sort UiControllersConfiguration list in the same order as Jmix modules. In this case screens overridden
         //in add-ons or application will replace original screen definitions
-        uiControllersConfigurationSorter.sort(this.configurations);
+        this.configurations = uiControllersConfigurationSorter.sort(this.configurations);
     }
 
     protected WindowInfo resolveWindowInfo(WindowInfo windowInfo) {

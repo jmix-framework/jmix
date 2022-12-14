@@ -21,10 +21,9 @@ import io.jmix.core.JmixModules;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Class sorts the list of {@link UiControllersConfiguration} in the same order as Jmix modules containing the screens
@@ -39,13 +38,15 @@ public class UiControllersConfigurationSorter {
         this.jmixModules = jmixModules;
     }
 
-    public void sort(List<UiControllersConfiguration> configurations) {
-        configurations.sort((o1, o2) -> {
+    public List<UiControllersConfiguration> sort(List<UiControllersConfiguration> configurations) {
+        List<UiControllersConfiguration> sortedConfigurations = new ArrayList<>(configurations);
+        sortedConfigurations.sort((o1, o2) -> {
             JmixModuleDescriptor module1 = evaluateJmixModule(o1.getBasePackages());
             JmixModuleDescriptor module2 = evaluateJmixModule(o2.getBasePackages());
             if (module1 == null || module2 == null) return 0;
             return module1.dependsOn(module2) ? 1 : -1;
         });
+        return sortedConfigurations;
     }
 
     /**
@@ -64,11 +65,26 @@ public class UiControllersConfigurationSorter {
 
     @Nullable
     protected JmixModuleDescriptor evaluateJmixModule(String screensBasePackage) {
-        return jmixModules.getAll().stream()
-                .filter(module -> module.getBasePackage().equals(screensBasePackage) ||
-                        isNestedSubpackage(module.getBasePackage(), screensBasePackage))
+        //first try to find jmix module with exactly the same base package
+        JmixModuleDescriptor jmixModule = jmixModules.getAll().stream()
+                .filter(module -> module.getBasePackage().equals(screensBasePackage))
                 .findAny()
                 .orElse(null);
+        if (jmixModule != null) {
+            return jmixModule;
+        }
+
+        //Find Jmix module where the screen base package is a subpackage of module base package.
+        //If multiple modules found then the module with the longest base package (maximum number of dots) is selected,
+        //i.e. com.company.app.addon will be selected in preference to com.company.app
+        List<JmixModuleDescriptor> matchingModules = jmixModules.getAll().stream()
+                .filter(module -> isNestedSubpackage(screensBasePackage, module.getBasePackage()))
+                .sorted(Comparator.comparing(jm -> charsCount(jm.getBasePackage(), '.')))
+                .collect(Collectors.toList());
+
+        return !matchingModules.isEmpty() ?
+                matchingModules.get(matchingModules.size() - 1) :
+                null;
     }
 
     /**
@@ -76,6 +92,15 @@ public class UiControllersConfigurationSorter {
      * subpackage of <i>com.company.greeting</i>
      */
     protected boolean isNestedSubpackage(String package1, String package2) {
-        return Pattern.compile(package1.replace(".", "\\.") + "\\..+").matcher(package2).matches();
+        return Pattern.compile(package2.replace(".", "\\.") + "\\..+").matcher(package1).matches();
+    }
+
+    /**
+     * Returns count of specific character in a string
+     */
+    protected long charsCount(String string, Character character) {
+        return string.chars()
+                .filter(ch -> ch == character)
+                .count();
     }
 }

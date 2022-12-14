@@ -140,6 +140,12 @@ public class ReportsProperties {
 
     boolean useOfficeForDocumentConversion;
 
+    /**
+     * If enabled - all xlsx-formulas (if exist) will be forcibly evaluated after document is formed.
+     * Helpful if formulas in document are not automatically evaluated when opening with some software.
+     */
+    boolean formulasPostProcessingEvaluationEnabled;
+
     public ReportsProperties(@DefaultValue("/") String officePath,
                              @DefaultValue({"8100", "8101", "8102", "8103"}) List<Integer> officePorts,
                              @DefaultValue("20") int docFormatterTimeout,
@@ -161,7 +167,8 @@ public class ReportsProperties {
                              @DefaultValue("730") int historyCleanupMaxDays,
                              @DefaultValue("1000") int historyCleanupMaxItemsPerReport,
                              @DefaultValue("3") int countOfRetry,
-                             @DefaultValue("false") boolean useOfficeForDocumentConversion) {
+                             @DefaultValue("false") boolean useOfficeForDocumentConversion,
+                             @DefaultValue("true") boolean formulasPostProcessingEvaluationEnabled) {
         this.officePath = officePath;
         this.officePorts = officePorts;
         this.docFormatterTimeout = docFormatterTimeout;
@@ -184,6 +191,7 @@ public class ReportsProperties {
         this.historyCleanupMaxItemsPerReport = historyCleanupMaxItemsPerReport;
         this.countOfRetry = countOfRetry;
         this.useOfficeForDocumentConversion = useOfficeForDocumentConversion;
+        this.formulasPostProcessingEvaluationEnabled = formulasPostProcessingEvaluationEnabled;
     }
 
     /**
@@ -329,5 +337,12 @@ public class ReportsProperties {
 
     public boolean isUseOfficeForDocumentConversion() {
         return useOfficeForDocumentConversion;
+    }
+
+    /**
+     * @see #formulasPostProcessingEvaluationEnabled
+     */
+    public boolean isFormulasPostProcessingEvaluationEnabled() {
+        return formulasPostProcessingEvaluationEnabled;
     }
 }

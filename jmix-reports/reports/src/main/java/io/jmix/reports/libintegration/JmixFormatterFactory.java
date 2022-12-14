@@ -20,6 +20,7 @@ import com.haulmont.yarg.formatters.factory.DefaultFormatterFactory;
 import com.haulmont.yarg.formatters.impl.DocxFormatter;
 import com.haulmont.yarg.formatters.impl.HtmlFormatter;
 import com.haulmont.yarg.formatters.impl.XlsxFormatter;
+import io.jmix.reports.ReportsProperties;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,6 +28,8 @@ public class JmixFormatterFactory extends DefaultFormatterFactory {
 
     @Autowired
     protected BeanFactory beanFactory;
+    @Autowired
+    protected ReportsProperties reportsProperties;
 
     protected boolean useOfficeForDocumentConversion = true;
 
@@ -61,6 +64,7 @@ public class JmixFormatterFactory extends DefaultFormatterFactory {
             xlsxFormatter.setDefaultFormatProvider(defaultFormatProvider);
             xlsxFormatter.setDocumentConverter(documentConverter);
             xlsxFormatter.setScripting(scripting);
+            xlsxFormatter.setFormulasPostProcessingEvaluationEnabled(reportsProperties.isFormulasPostProcessingEvaluationEnabled());
             return xlsxFormatter;
         };
         formattersMap.put("xlsx", xlsxCreator);

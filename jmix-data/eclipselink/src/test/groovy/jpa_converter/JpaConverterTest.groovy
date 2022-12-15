@@ -18,11 +18,13 @@ package jpa_converter
 
 import io.jmix.core.DataManager
 import io.jmix.core.Id
+import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
+import test_support.entity.TestAppEntity
+import test_support.entity.TestAppEntityItem
 import test_support.entity.TestConverterEntity
 import test_support.entity.TestPhone
 
-import org.springframework.beans.factory.annotation.Autowired
 import javax.sql.DataSource
 
 class JpaConverterTest extends DataSpec {
@@ -54,5 +56,30 @@ class JpaConverterTest extends DataSpec {
         resultSet.next()
         def dataType = resultSet.getInt('DATA_TYPE')
         dataType == java.sql.Types.VARCHAR
+    }
+
+    def "test UUID conversion for 'in' clause"() {
+        when:
+        def appEntity = dataManager.create(TestAppEntity)
+        appEntity.name = "test app entity 1"
+
+        def appEntityItem = dataManager.create(TestAppEntityItem)
+        appEntityItem.appEntity = appEntity
+
+        dataManager.save(appEntity, appEntityItem)
+
+        List<TestAppEntityItem> items = dataManager.load(TestAppEntityItem)
+                .query("select i from test_TestAppEntityItem i where ((i.appEntity in :appEntities) and (('1' = '1') or (i.name = '1')))")
+                .parameter("appEntities", List.of(appEntity))
+                .list()
+        then:
+        noExceptionThrown()
+        items.size() == 1
+        items.iterator().next() == appEntityItem
+
+        cleanup:
+        if (appEntityItem != null) dataManager.remove(appEntityItem)
+        if (appEntity != null) dataManager.remove(appEntity)
+
     }
 }

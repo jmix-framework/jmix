@@ -18,6 +18,8 @@ package io.jmix.eclipselink.impl.dbms;
 
 import org.eclipse.persistence.mappings.converters.Converter;
 
+import java.util.UUID;
+
 public interface UuidMappingInfo {
 
     int getUuidSqlType();
@@ -27,4 +29,22 @@ public interface UuidMappingInfo {
     String getUuidColumnDefinition();
 
     Converter getUuidConverter();
+
+    /**
+     * Sometimes for some complex queries Eclipselink does not process collection parameter elements with converters.
+     * It only appends them to query using limited set of conversion checks instead.
+     * E.g. in org.eclipse.persistence.internal.databaseaccess.DatabasePlatform#setParameterValueInDatabaseCall(..)
+     * or in org.eclipse.persistence.internal.databaseaccess.DatabasePlatform#printValuelist(..)
+     * for case jmix-framework/jmix#1073
+     * <p>
+     * We have to convert UUID manually in such cases for several database types.
+     *
+     * @return converted to db type UUID parameter or the same parameter for other types
+     */
+    default Object convertToDataValueIfUUID(Object parameter) {
+        if (parameter instanceof UUID) {
+            parameter = getUuidConverter().convertObjectValueToDataValue(parameter, null);
+        }
+        return parameter;
+    }
 }

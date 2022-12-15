@@ -86,7 +86,8 @@ public class QuartzService {
 
                         if (!isTriggeredNow) {
                             triggerModels.add(triggerModel);
-                            if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL) {
+                            if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL &&
+                                    scheduler.isStarted() && !scheduler.isInStandbyMode()) {
                                 isActive = true;
                             }
                         }

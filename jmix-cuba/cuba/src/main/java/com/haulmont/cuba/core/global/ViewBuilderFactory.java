@@ -33,7 +33,7 @@ public class ViewBuilderFactory extends FetchPlans {
 
     @Override
     public ViewBuilder builder(Class<?> entityClass) {
-        return new ViewBuilder(this, (Class<? extends Entity>) entityClass);
+        return new ViewBuilder(this, metadata, metadataTools, fetchPlanRepository, (Class<? extends Entity>) entityClass);
     }
 
 }

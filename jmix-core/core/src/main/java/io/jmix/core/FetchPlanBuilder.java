@@ -48,11 +48,17 @@ public class FetchPlanBuilder {
     protected String name = "";
     protected FetchPlan result = null;
 
-    protected FetchPlanBuilder(FetchPlans fetchPlansFactory, Class<?> entityClass) {
+    protected FetchPlanBuilder(
+            FetchPlans fetchPlansFactory,
+            Metadata metadata,
+            MetadataTools metadataTools,
+            FetchPlanRepository fetchPlanRepository,
+            Class<?> entityClass
+    ) {
         this.fetchPlansFactory = fetchPlansFactory;
-        this.metadata = fetchPlansFactory.metadata;
-        this.metadataTools = fetchPlansFactory.metadataTools;
-        this.fetchPlanRepository = fetchPlansFactory.fetchPlanRepository;
+        this.metadata = metadata;
+        this.metadataTools = metadataTools;
+        this.fetchPlanRepository = fetchPlanRepository;
         this.entityClass = entityClass;
         this.metaClass = metadata.getClass(entityClass);
     }

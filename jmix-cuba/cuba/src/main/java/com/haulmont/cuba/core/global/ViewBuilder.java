@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.global;
 
 import io.jmix.core.*;
+import io.jmix.core.Metadata;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -31,8 +32,14 @@ public class ViewBuilder extends FetchPlanBuilder {
         return AppBeans.getPrototype(ViewBuilderFactory.class).builder(entityClass);
     }
 
-    protected ViewBuilder(ViewBuilderFactory factory, Class<? extends Entity> entityClass) {
-        super(factory, entityClass);
+    protected ViewBuilder(
+            ViewBuilderFactory builderFactory,
+            Metadata metadata,
+            MetadataTools metadataTools,
+            FetchPlanRepository fetchPlanRepository,
+            Class<? extends Entity> entityClass
+    ) {
+        super(builderFactory, metadata, metadataTools, fetchPlanRepository, entityClass);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class FetchPlans {
      * Returns {@link FetchPlan} builder for the given entity class.
      */
     public FetchPlanBuilder builder(Class<?> entityClass) {
-        return new FetchPlanBuilder(this, entityClass);
+        return new FetchPlanBuilder(this, metadata, metadataTools, fetchPlanRepository, entityClass);
     }
 
     /**

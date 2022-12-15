@@ -361,8 +361,8 @@ public class PropertyFilterSupport {
                 if (idProperty != null && idProperty.getRange().isDatatype()) {
                     Object idValue = idProperty.getRange().asDatatype().parse(value);
                     if (idValue != null) {
-                        return dataManager.load(Id.of(idValue, metaClass.getJavaClass()))
-                                .one();
+                        return dataManager.load(Id.of(idValue, metaClass.getJavaClass())).optional()
+                                .orElse(null);
                     }
                 }
             } else if (range.isEnum()) {

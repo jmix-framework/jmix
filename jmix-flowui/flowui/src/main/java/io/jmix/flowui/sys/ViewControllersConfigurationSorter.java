@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.sys;
+package io.jmix.flowui.sys;
 
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
@@ -26,20 +26,20 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Class sorts the list of {@link UiControllersConfiguration} in the same order as Jmix modules containing the screens
+ * Class sorts the list of {@link ViewControllersConfiguration} in the same order as Jmix modules containing the screens
  * have been sorted.
  */
-@Component("ui_UiControllersConfigurationSorter")
-public class UiControllersConfigurationSorter {
+@Component("flowui_ViewControllersConfigurationSorter")
+public class ViewControllersConfigurationSorter {
 
     private JmixModules jmixModules;
 
-    public UiControllersConfigurationSorter(JmixModules jmixModules) {
+    public ViewControllersConfigurationSorter(JmixModules jmixModules) {
         this.jmixModules = jmixModules;
     }
 
-    public List<UiControllersConfiguration> sort(List<UiControllersConfiguration> configurations) {
-        List<UiControllersConfiguration> sortedConfigurations = new ArrayList<>(configurations);
+    public List<ViewControllersConfiguration> sort(List<ViewControllersConfiguration> configurations) {
+        List<ViewControllersConfiguration> sortedConfigurations = new ArrayList<>(configurations);
         sortedConfigurations.sort((o1, o2) -> {
             JmixModuleDescriptor module1 = evaluateJmixModule(o1.getBasePackages());
             JmixModuleDescriptor module2 = evaluateJmixModule(o2.getBasePackages());

@@ -28,10 +28,7 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.FlowuiProperties;
 import io.jmix.flowui.exception.NoSuchViewException;
-import io.jmix.flowui.sys.ViewControllerDefinition;
-import io.jmix.flowui.sys.ViewControllerMeta;
-import io.jmix.flowui.sys.ViewControllersConfiguration;
-import io.jmix.flowui.sys.ViewDescriptorUtils;
+import io.jmix.flowui.sys.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -43,6 +40,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -89,6 +87,8 @@ public class ViewRegistry implements ApplicationContextAware {
 
     protected RouteConfiguration routeConfiguration;
 
+    protected ViewControllersConfigurationSorter viewControllersConfigurationSorter;
+
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Autowired
@@ -121,6 +121,11 @@ public class ViewRegistry implements ApplicationContextAware {
         this.metadataReaderFactory = metadataReaderFactory;
     }
 
+    @Autowired
+    public void setViewControllersConfigurationSorter(ViewControllersConfigurationSorter viewControllersConfigurationSorter) {
+        this.viewControllersConfigurationSorter = viewControllersConfigurationSorter;
+    }
+
     @Autowired(required = false)
     public void setConfigurations(List<ViewControllersConfiguration> configurations) {
         this.configurations = configurations;
@@ -129,6 +134,13 @@ public class ViewRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    @PostConstruct
+    protected void postConstruct() {
+        //sort ViewControllersConfiguration list in the same order as Jmix modules. In this case screens overridden
+        //in add-ons or application will replace original screen definitions
+        this.configurations = viewControllersConfigurationSorter.sort(this.configurations);
     }
 
     /**

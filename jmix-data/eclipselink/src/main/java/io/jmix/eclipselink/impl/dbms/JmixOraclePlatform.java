@@ -17,9 +17,14 @@
 package io.jmix.eclipselink.impl.dbms;
 
 import org.eclipse.persistence.exceptions.ConversionException;
+import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.Oracle10Platform;
+import org.eclipse.persistence.queries.Call;
 
+import java.io.Writer;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.UUID;
 
@@ -31,6 +36,16 @@ public class JmixOraclePlatform extends Oracle10Platform implements UuidMappingI
             return String32UuidConverter.getInstance().uuidToString(sourceObject);
         }
         return super.convertObject(sourceObject, javaClass);
+    }
+
+    @Override
+    public int appendParameterInternal(Call call, Writer writer, Object parameter) {
+        return super.appendParameterInternal(call, writer, convertToDataValueIfUUID(parameter));
+    }
+
+    @Override
+    public void setParameterValueInDatabaseCall(Object parameter, PreparedStatement statement, int index, AbstractSession session) throws SQLException {
+        super.setParameterValueInDatabaseCall(convertToDataValueIfUUID(parameter), statement, index, session);
     }
 
     @Override

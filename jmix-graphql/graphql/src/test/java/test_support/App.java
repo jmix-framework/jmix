@@ -38,7 +38,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import test_support.custom.service.CarEntityDataFetcher;
 import test_support.custom.service.CarModifier;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.TimeZone;
 
 
 @SpringBootApplication(scanBasePackages = "io.jmix.graphql")
@@ -46,6 +48,11 @@ public class App {
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
+    }
+
+    @PostConstruct
+    public void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+4:00"));
     }
 
     @Bean

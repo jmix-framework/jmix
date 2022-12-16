@@ -67,4 +67,8 @@ public class CubaSession implements Session {
     public Collection<MetaClass> getClasses() {
         return delegate.getClasses();
     }
+
+    public io.jmix.core.metamodel.model.Session getDelegate() {
+        return delegate;
+    }
 }

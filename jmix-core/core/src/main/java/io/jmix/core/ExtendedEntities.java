@@ -24,10 +24,10 @@ import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Session;
+import io.jmix.core.metamodel.model.SessionClassRegistrars;
 import io.jmix.core.metamodel.model.impl.ClassRange;
 import io.jmix.core.metamodel.model.impl.MetaClassImpl;
 import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
-import io.jmix.core.metamodel.model.impl.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,12 +45,14 @@ import java.util.Map;
 public class ExtendedEntities {
 
     protected Metadata metadata;
+    protected SessionClassRegistrars sessionClassRegistrars;
 
     protected Map<Class, MetaClass> replacedMetaClasses = new HashMap<>();
 
     @Autowired
-    public ExtendedEntities(Metadata metadata) {
+    public ExtendedEntities(Metadata metadata, SessionClassRegistrars sessionClassRegistrars) {
         this.metadata = metadata;
+        this.sessionClassRegistrars = sessionClassRegistrars;
         replaceExtendedMetaClasses();
     }
 
@@ -96,7 +98,7 @@ public class ExtendedEntities {
             registerReplacedMetaClass(replacedMetaClass);
 
             MetaClassImpl effectiveMetaClass = (MetaClassImpl) replace.getSecond();
-            ((SessionImpl) session).registerClass(replacedMetaClass.getName(), replacedMetaClass.getJavaClass(), effectiveMetaClass);
+            sessionClassRegistrars.registerMetaClass(session, replacedMetaClass.getName(), replacedMetaClass.getJavaClass(), effectiveMetaClass);
         }
     }
 

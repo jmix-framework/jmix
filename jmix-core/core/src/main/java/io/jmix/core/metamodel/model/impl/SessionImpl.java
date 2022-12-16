@@ -72,14 +72,14 @@ public class SessionImpl implements Session {
                 .collect(Collectors.toList());
     }
 
-    public void registerClass(MetaClassImpl metaClass) {
+    public void registerClass(MetaClass metaClass) {
         classByName.put(metaClass.getName(), metaClass);
         if (metaClass.getJavaClass() != null) {
             classByClass.put(metaClass.getJavaClass(), metaClass);
         }
     }
 
-    public void registerClass(String name, Class javaClass, MetaClassImpl metaClass) {
+    public void registerClass(String name, Class javaClass, MetaClass metaClass) {
         classByName.put(name, metaClass);
         classByClass.put(javaClass, metaClass);
     }

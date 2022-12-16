@@ -98,13 +98,17 @@ public class MetaModelLoader {
 
     protected FormatStringsRegistry formatStringsRegistry;
 
+    protected SessionClassRegistrars sessionClassRegistrars;
+
     private static final Logger log = LoggerFactory.getLogger(MetaModelLoader.class);
 
     @Autowired
-    public MetaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry) {
+    public MetaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry,
+                           SessionClassRegistrars sessionClassRegistrars) {
         this.datatypes = datatypes;
         this.stores = stores;
         this.formatStringsRegistry = formatStringsRegistry;
+        this.sessionClassRegistrars = sessionClassRegistrars;
     }
 
     public void loadModel(Session session, Set<String> classNames) {
@@ -221,6 +225,8 @@ public class MetaModelLoader {
 
             metaClass = new MetaClassImpl(session, name);
             metaClass.setJavaClass(javaClass);
+            sessionClassRegistrars.registerMetaClass(session, metaClass);
+
 
             return metaClass;
         }

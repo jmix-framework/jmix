@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba;
 
+import com.haulmont.chile.core.model.impl.CubaSessionClassRegistrar;
 import com.haulmont.cuba.core.global.CubaMessageTools;
 import com.haulmont.cuba.core.global.CubaMetadataTools;
 import com.haulmont.cuba.core.global.EntityStates;
@@ -51,6 +52,7 @@ import io.jmix.core.impl.MetadataLoader;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
+import io.jmix.core.metamodel.model.SessionClassRegistrars;
 import io.jmix.data.impl.NumberIdCache;
 import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsui.DatatoolsUiConfiguration;
@@ -165,6 +167,11 @@ public class CubaConfiguration {
         return new CubaMetadata(metadataLoader);
     }
 
+    @Bean("cuba_SessionClassRegistrar")
+    protected CubaSessionClassRegistrar cubaSessionClassRegistrar() {
+        return new CubaSessionClassRegistrar();
+    }
+
     @Bean("cuba_InstanceNameProvider")
     @Primary
     protected InstanceNameProvider instanceNameProvider() {
@@ -179,8 +186,9 @@ public class CubaConfiguration {
 
     @Bean("cuba_MetaModelLoader")
     @Primary
-    protected MetaModelLoader metaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry) {
-        return new CubaMetaModelLoader(datatypes, stores, formatStringsRegistry);
+    protected MetaModelLoader metaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry,
+                                              SessionClassRegistrars sessionClassRegistrars) {
+        return new CubaMetaModelLoader(datatypes, stores, formatStringsRegistry, sessionClassRegistrars);
     }
 
     @Bean("cuba_NumberIdCache")

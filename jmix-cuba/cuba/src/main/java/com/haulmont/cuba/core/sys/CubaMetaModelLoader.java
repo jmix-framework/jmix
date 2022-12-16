@@ -27,6 +27,7 @@ import io.jmix.core.impl.MetaModelLoader;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.SessionClassRegistrars;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -45,8 +46,9 @@ public class CubaMetaModelLoader extends MetaModelLoader {
     );
 
 
-    public CubaMetaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry) {
-        super(datatypes, stores, formatStringsRegistry);
+    public CubaMetaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry,
+                               SessionClassRegistrars sessionClassRegistrars) {
+        super(datatypes, stores, formatStringsRegistry, sessionClassRegistrars);
     }
 
     @Override

@@ -49,7 +49,7 @@
         <formLayout id="resourcesForm">
             <responsiveSteps>
                 <responsiveStep minWidth="0" columns="1"/>
-                <responsiveStep minWidth="80em" columns="2"/>
+                <responsiveStep minWidth="60em" columns="2"/>
             </responsiveSteps>
 
             <details id="resourceRolesBox"

@@ -29,6 +29,11 @@ public interface LookupComponent<T> {
     Set<T> getSelectedItems();
 
     interface MultiSelectLookupComponent<T> extends LookupComponent<T> {
-        void enableMultiSelect();
+
+        default void enableMultiSelect() {
+            setMultiSelect(true);
+        }
+
+        void setMultiSelect(boolean multiSelect);
     }
 }

@@ -167,7 +167,13 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     public void enableMultiSelect() {
-        component.setSelectionMode(Grid.SelectionMode.MULTI);
+        setMultiSelect(true);
+    }
+
+    public void setMultiSelect(boolean multiSelect) {
+        component.setSelectionMode(multiSelect
+                ? Grid.SelectionMode.MULTI
+                : Grid.SelectionMode.SINGLE);
     }
 
     public Registration addSelectionListener(SelectionListener<Grid<E>, E> listener) {

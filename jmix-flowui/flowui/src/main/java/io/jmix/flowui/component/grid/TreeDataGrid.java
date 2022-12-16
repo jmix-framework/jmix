@@ -128,6 +128,11 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     }
 
     @Override
+    public void setMultiSelect(boolean multiSelect) {
+        gridDelegate.setMultiSelect(multiSelect);
+    }
+
+    @Override
     public GridSelectionModel<E> setSelectionMode(SelectionMode selectionMode) {
         GridSelectionModel<E> selectionModel = super.setSelectionMode(selectionMode);
 

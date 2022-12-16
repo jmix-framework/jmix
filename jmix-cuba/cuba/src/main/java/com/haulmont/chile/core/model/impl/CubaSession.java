@@ -18,16 +18,20 @@ package com.haulmont.chile.core.model.impl;
 
 import com.haulmont.chile.core.model.Session;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.SessionImplementation;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 
-public class CubaSession implements Session {
+public class CubaSession implements Session, SessionImplementation {
 
-    private io.jmix.core.metamodel.model.Session delegate;
+    private io.jmix.core.metamodel.model.SessionImplementation delegate;
 
     public CubaSession(io.jmix.core.metamodel.model.Session delegate) {
-        this.delegate = delegate;
+        if (!(delegate instanceof SessionImplementation)) {
+            throw new IllegalStateException("The session delegate of CubaSession must implement the SessionImplementation interface");
+        }
+        this.delegate = (SessionImplementation) delegate;
     }
 
     @Nullable
@@ -66,5 +70,15 @@ public class CubaSession implements Session {
     @Override
     public Collection<MetaClass> getClasses() {
         return delegate.getClasses();
+    }
+
+    @Override
+    public void registerClass(MetaClass metaClass) {
+        delegate.registerClass(metaClass);
+    }
+
+    @Override
+    public void registerClass(String name, Class javaClass, MetaClass metaClass) {
+        delegate.registerClass(name, javaClass, metaClass);
     }
 }

@@ -17,7 +17,7 @@
 package io.jmix.core.metamodel.model.impl;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.Session;
+import io.jmix.core.metamodel.model.SessionImplementation;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SessionImpl implements Session {
+public class SessionImpl implements SessionImplementation {
 
     private Map<String, MetaClass> classByName = new HashMap<>();
     private Map<Class, MetaClass> classByClass = new HashMap<>();
@@ -72,14 +72,16 @@ public class SessionImpl implements Session {
                 .collect(Collectors.toList());
     }
 
-    public void registerClass(MetaClassImpl metaClass) {
+    @Override
+    public void registerClass(MetaClass metaClass) {
         classByName.put(metaClass.getName(), metaClass);
         if (metaClass.getJavaClass() != null) {
             classByClass.put(metaClass.getJavaClass(), metaClass);
         }
     }
 
-    public void registerClass(String name, Class javaClass, MetaClassImpl metaClass) {
+    @Override
+    public void registerClass(String name, Class javaClass, MetaClass metaClass) {
         classByName.put(name, metaClass);
         classByClass.put(javaClass, metaClass);
     }

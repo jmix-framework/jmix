@@ -142,7 +142,12 @@ public class AssignToUsersAction<E extends BaseRoleModel>
                 .withAfterCloseListener(this::showNotification)
                 .build();
 
-        DataLoader viewLoader = findViewLoader(dialog.getView(), userClass);
+        View<?> view = dialog.getView();
+        if (view instanceof MultiSelectLookupView) {
+            ((MultiSelectLookupView) view).setLookupComponentMultiSelect(true);
+        }
+
+        DataLoader viewLoader = findViewLoader(view, userClass);
         configureViewLoader(viewLoader);
 
         dialog.open();

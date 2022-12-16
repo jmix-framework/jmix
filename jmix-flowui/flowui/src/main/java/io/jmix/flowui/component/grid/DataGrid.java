@@ -129,6 +129,11 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     }
 
     @Override
+    public void setMultiSelect(boolean multiSelect) {
+        gridDelegate.setMultiSelect(multiSelect);
+    }
+
+    @Override
     public GridSelectionModel<E> setSelectionMode(SelectionMode selectionMode) {
         GridSelectionModel<E> selectionModel = super.setSelectionMode(selectionMode);
 

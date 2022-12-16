@@ -75,7 +75,6 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     }
 
     public <E, V extends View<?>> DialogWindow<V> build(LookupWindowBuilder<E, V> builder) {
-
         V view = createView(builder);
 
         if (!(view instanceof LookupView)) {
@@ -91,10 +90,11 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
             lookupView.setSelectionHandler(items ->
                     handleSelectionWithContainer(builder, container, items)
             );
-        }
 
-        builder.getSelectHandler().ifPresent(lookupView::setSelectionHandler);
-        builder.getSelectValidator().ifPresent(lookupView::setSelectionValidator);
+            if (view instanceof MultiSelectLookupView) {
+                ((MultiSelectLookupView) view).setLookupComponentMultiSelect(true);
+            }
+        }
 
         DialogWindow<V> dialog = createDialog(view);
         initDialog(builder, dialog);
@@ -107,7 +107,14 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
 
             lookupView.setSelectionHandler(items ->
                     handleSelectionWithField(builder, field, items));
+
+            if (view instanceof MultiSelectLookupView) {
+                ((MultiSelectLookupView) view).setLookupComponentMultiSelect(builder.isFieldCollectionValue());
+            }
         });
+
+        builder.getSelectHandler().ifPresent(lookupView::setSelectionHandler);
+        builder.getSelectValidator().ifPresent(lookupView::setSelectionValidator);
 
         builder.getListDataComponent().ifPresent(listDataComponent -> {
             if (listDataComponent instanceof Focusable) {

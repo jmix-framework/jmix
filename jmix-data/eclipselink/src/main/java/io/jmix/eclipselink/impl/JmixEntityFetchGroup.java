@@ -16,9 +16,9 @@
 
 package io.jmix.eclipselink.impl;
 
+import io.jmix.core.Entity;
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.Entity;
 import org.eclipse.persistence.core.queries.CoreAttributeGroup;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.FetchGroupManager;
@@ -44,6 +44,8 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
 
     protected static ThreadLocal<Boolean> accessLocalUnfetched = new ThreadLocal<>();
 
+    protected static ThreadLocal<Boolean> unfetchedExceptionAlreadyOccurred = new ThreadLocal<>();
+
     public JmixEntityFetchGroup(FetchGroup fetchGroup, EntityStates entityStates) {
         this.wrappedFetchGroup = fetchGroup;
         this.entityStates = entityStates;
@@ -61,10 +63,22 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
     @Override
     @Nullable
     public String onUnfetchedAttribute(FetchGroupTracker entity, String attributeName) {
-        if (cannotAccessUnfetched(entity))
-            return "Cannot get unfetched attribute [" + attributeName + "] from object " + entity;
 
-        return wrappedFetchGroup.onUnfetchedAttribute(entity, attributeName);
+        //Do not invoke entity.toString() when it causes unfetched exception inside and leads to stackoverflow.
+        //It may happen for custom toString() implementations (not recommended)
+        // or if strange things happens with composite id (see jmix-framework/jmix#1273).
+        if (Boolean.TRUE.equals(unfetchedExceptionAlreadyOccurred.get()))
+            return "Cannot get unfetched attribute [" + attributeName + "] from " + entity.getClass();
+
+        unfetchedExceptionAlreadyOccurred.set(true);
+        try {
+            if (cannotAccessUnfetched(entity))
+                return "Cannot get unfetched attribute [" + attributeName + "] from object " + entity;
+
+            return wrappedFetchGroup.onUnfetchedAttribute(entity, attributeName);
+        } finally {
+            unfetchedExceptionAlreadyOccurred.set(false);
+        }
     }
 
     protected boolean cannotAccessUnfetched(FetchGroupTracker entity) {

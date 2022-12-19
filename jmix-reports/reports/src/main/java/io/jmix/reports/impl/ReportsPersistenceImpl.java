@@ -19,32 +19,22 @@ package io.jmix.reports.impl;
 import io.jmix.core.*;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
-import io.jmix.data.DataProperties;
 import io.jmix.data.PersistenceHints;
-import io.jmix.data.exception.UniqueConstraintViolationException;
-import io.jmix.data.impl.EntityEventManager;
-import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.entity.*;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -69,15 +59,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
-    protected DbmsSpecifics dbmsSpecifics;
-    @Autowired
-    protected DataProperties dataProperties;
-    @PersistenceContext
-    protected EntityManager em;
-    @Autowired
     private MetadataTools metadataTools;
-    @Autowired
-    protected EntityEventManager entityEventManager;
 
     @Override
     public Report save(Report report) {
@@ -94,27 +76,50 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
 
     @NotNull
     protected Report saveReport(Report report) {
-        ReportTemplate defaultTemplate = report.getDefaultTemplate();
-        List<ReportTemplate> loadedTemplates = report.getTemplates();
-        List<ReportTemplate> savedTemplates = new ArrayList<>();
+        ReportTemplate incomingDefaultTemplate = report.getDefaultTemplate();
+        List<ReportTemplate> incomingTemplates = report.getTemplates();
 
         report.setDefaultTemplate(null);
         report.setTemplates(null);
 
+        SaveContext saveContext = new SaveContext();
+
+        manageGroup(report, saveContext);
+        Report existingReport = manageReport(report);
+        incomingDefaultTemplate = manageTemplates(report, incomingTemplates, incomingDefaultTemplate, existingReport, saveContext);
+        saveContext.saving(report);
+
+        EntitySet saved = dataManager.save(saveContext);
+        Report savedReport = saved.get(report);
+        if (incomingDefaultTemplate != null) {
+            ReportTemplate savedDefaultTemplate = saved.get(incomingDefaultTemplate);
+            savedReport.setDefaultTemplate(savedDefaultTemplate);
+            savedReport = dataManager.save(savedReport);
+        }
+        return savedReport;
+    }
+
+    /**
+     * Manages report group: sets existent or creates completely new or based on deleted one.
+     *
+     * @param report      incoming report
+     * @param saveContext save context
+     */
+    protected void manageGroup(Report report, SaveContext saveContext) {
         ReportGroup group = report.getGroup();
         if (group != null) {
             FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(ReportGroup.class, FetchPlan.LOCAL);
+            List<ReportGroup> existingGroups = dataManager.load(ReportGroup.class)
+                    .query("select g from report_ReportGroup g where g.title = :title")
+                    .parameter("title", group.getTitle())
+                    .fetchPlan(fetchPlan).list();
             ReportGroup existingGroup;
-            List<ReportGroup> existingGroups = em.createQuery(
-                    "select g from report_ReportGroup g where g.title = :title", ReportGroup.class)
-                    .setParameter("title", group.getTitle())
-                    .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
-                    .getResultList();
             if (CollectionUtils.isEmpty(existingGroups)) {
-                em.setProperty(PersistenceHints.SOFT_DELETION, false);
-                existingGroup = em.find(ReportGroup.class, report.getGroup().getId(),
-                        PersistenceHints.builder().withFetchPlan(fetchPlan).build());
-                em.setProperty(PersistenceHints.SOFT_DELETION, true);
+                existingGroup = dataManager.load(ReportGroup.class)
+                        .id(report.getGroup().getId())
+                        .hint(PersistenceHints.SOFT_DELETION, false)
+                        .optional()
+                        .orElse(null);
             } else {
                 existingGroup = existingGroups.get(0);
             }
@@ -130,89 +135,107 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
                     group.setDeletedBy(null);
                     group.setId(newId);
                     report.setGroup(group);
+                    saveContext.saving(group);
                 }
             } else {
-                entityEventManager.publishEntitySavingEvent(group, true);//workaround for jmix-framework/jmix#1069
-                em.persist(group);
+                saveContext.saving(group);
             }
         }
+    }
 
-        em.setProperty(PersistenceHints.SOFT_DELETION, false);
-        Report existingReport;
+    /**
+     * Manages local attributes of incoming report: fills index fields, merges incoming report with existent (if exists)
+     *
+     * @param report incoming report
+     * @return Existing report with the same id
+     */
+    @Nullable
+    protected Report manageReport(Report report) {
+        storeIndexFields(report);
+
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(Report.class, "report.withTemplates");
+        Report existingReport = dataManager.load(Report.class)
+                .id(report.getId())
+                .hint(PersistenceHints.SOFT_DELETION, false)
+                .fetchPlan(fetchPlan)
+                .optional()
+                .orElse(null);
+        if (existingReport != null) {
+            report.setVersion(existingReport.getVersion());
+            if (entityStates.isNew(report)) {
+                entityStates.makeDetached(report);
+            }
+        } else {
+            report.setVersion(0);
+        }
+
+        return existingReport;
+    }
+
+    /**
+     * Manages templates:
+     * <ul>
+     *     <li>Removes unnecessary templates of existent report</li>
+     *     <li>Creates or updates actual templates</li>
+     *     <li>Evaluate actual default template</li>
+     * </ul>
+     *
+     * @param report                  incoming report
+     * @param incomingTemplates       templates of incoming report
+     * @param incomingDefaultTemplate default template
+     * @param existingReport          existing report with the same id
+     * @param saveContext             save context
+     * @return Actual default template
+     */
+    @Nullable
+    protected ReportTemplate manageTemplates(Report report,
+                                             @Nullable List<ReportTemplate> incomingTemplates,
+                                             @Nullable ReportTemplate incomingDefaultTemplate,
+                                             @Nullable Report existingReport,
+                                             SaveContext saveContext) {
         List<ReportTemplate> existingTemplates = null;
-        try {
-            FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(Report.class, "report.withTemplates");
-            existingReport = em.find(Report.class, report.getId(),
-                    PersistenceHints.builder().withFetchPlan(fetchPlan).build());
-            storeIndexFields(report);
-
-            if (existingReport != null) {
-                report.setVersion(existingReport.getVersion());
-                entityEventManager.publishEntitySavingEvent(report, false);//workaround for jmix-framework/jmix#1069
-                report = em.merge(report);
-                if (existingReport.getTemplates() != null) {
-                    existingTemplates = existingReport.getTemplates();
-                }
-                if (existingReport.getDeleteTs() != null) {
-                    existingReport.setDeleteTs(null);
-                    existingReport.setDeletedBy(null);
-                }
-                report.setDefaultTemplate(null);
-                report.setTemplates(null);
-            } else {
-                report.setVersion(0);
-                entityEventManager.publishEntitySavingEvent(report, true);//workaround for jmix-framework/jmix#1069
-                report = em.merge(report);
-            }
-
-            if (loadedTemplates != null) {
-                if (existingTemplates != null) {
-                    for (ReportTemplate template : existingTemplates) {
-                        if (!loadedTemplates.contains(template)) {
-                            em.remove(template);
-                        }
-                    }
-                }
-
-                for (ReportTemplate loadedTemplate : loadedTemplates) {
-                    ReportTemplate existingTemplate = em.find(ReportTemplate.class, loadedTemplate.getId());
-                    if (existingTemplate != null) {
-                        loadedTemplate.setVersion(existingTemplate.getVersion());
-                        if (entityStates.isNew(loadedTemplate)) {
-                            entityStates.makeDetached(loadedTemplate);
-                        }
-                    } else {
-                        loadedTemplate.setVersion(0);
-                    }
-
-                    loadedTemplate.setReport(report);
-                    entityEventManager.publishEntitySavingEvent(loadedTemplate, entityStates.isNew(loadedTemplate));//workaround for jmix-framework/jmix#1069
-                    savedTemplates.add(em.merge(loadedTemplate));
-                }
-            }
-
-            em.flush();
-        } catch (PersistenceException e) {
-            Pattern pattern = getUniqueConstraintViolationPattern();
-            Matcher matcher = pattern.matcher(e.toString());
-            if (matcher.find()) {
-                throw new UniqueConstraintViolationException(e.getMessage(), resolveConstraintName(matcher), e);
-            }
-            throw e;
-        } finally {
-            em.setProperty(PersistenceHints.SOFT_DELETION, true);
+        if (existingReport != null && existingReport.getTemplates() != null) {
+            existingTemplates = existingReport.getTemplates();
         }
 
+        List<ReportTemplate> savedTemplates = new ArrayList<>();
+        if (incomingTemplates != null) {
+            if (existingTemplates != null) {
+                for (ReportTemplate existingTemplate : existingTemplates) {
+                    if (!incomingTemplates.contains(existingTemplate) && !entityStates.isDeleted(existingTemplate)) {
+                        saveContext.removing(existingTemplate);
+                    }
+                }
+            }
+
+            for (ReportTemplate incomingTemplate : incomingTemplates) {
+                ReportTemplate existingTemplate = dataManager.load(ReportTemplate.class)
+                        .id(incomingTemplate.getId())
+                        .optional()
+                        .orElse(null);
+                if (existingTemplate != null) {
+                    incomingTemplate.setVersion(existingTemplate.getVersion());
+                    if (entityStates.isNew(incomingTemplate)) {
+                        entityStates.makeDetached(incomingTemplate);
+                    }
+                } else {
+                    incomingTemplate.setVersion(0);
+                }
+
+                incomingTemplate.setReport(report);
+                saveContext.saving(incomingTemplate);
+                savedTemplates.add(incomingTemplate);
+            }
+        }
+
+        ReportTemplate effectiveDefaultTemplate = incomingDefaultTemplate;
         for (ReportTemplate savedTemplate : savedTemplates) {
-            if (savedTemplate.equals(defaultTemplate)) {
-                defaultTemplate = savedTemplate;
+            if (savedTemplate.equals(incomingDefaultTemplate)) {
+                effectiveDefaultTemplate = savedTemplate;
                 break;
             }
         }
-        report.setDefaultTemplate(defaultTemplate);
-        report.setTemplates(savedTemplates);
-        em.flush();
-        return report;
+        return effectiveDefaultTemplate;
     }
 
     protected void checkPermission(Report report) {
@@ -255,37 +278,5 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
             }
             report.setRolesIdx(roles.length() > 1 ? roles.toString() : null);
         }
-    }
-
-    protected Pattern getUniqueConstraintViolationPattern() {
-        String defaultPatternExpression = dbmsSpecifics.getDbmsFeatures().getUniqueConstraintViolationPattern();
-        String patternExpression = dataProperties.getUniqueConstraintViolationPattern();
-
-        Pattern pattern;
-        if (StringUtils.isBlank(patternExpression)) {
-            pattern = Pattern.compile(defaultPatternExpression);
-        } else {
-            try {
-                pattern = Pattern.compile(patternExpression);
-            } catch (PatternSyntaxException e) {
-                pattern = Pattern.compile(defaultPatternExpression);
-            }
-        }
-        return pattern;
-    }
-
-    protected String resolveConstraintName(Matcher matcher) {
-        String constraintName = "";
-        if (matcher.groupCount() == 1) {
-            constraintName = matcher.group(1);
-        } else {
-            for (int i = 1; i < matcher.groupCount(); i++) {
-                if (isNotBlank(matcher.group(i))) {
-                    constraintName = matcher.group(i);
-                    break;
-                }
-            }
-        }
-        return constraintName.toUpperCase();
     }
 }

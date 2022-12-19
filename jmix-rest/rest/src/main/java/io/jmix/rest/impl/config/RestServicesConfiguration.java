@@ -32,7 +32,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nullable;
@@ -212,11 +211,6 @@ public class RestServicesConfiguration {
         //we need to know actual interfaces implemented by the service (this is required when parameterized
         //collection of entities is passed as an argument)
         Method[] methods = serviceClass.getMethods();
-
-        if (!serviceClass.isAnnotationPresent(Service.class)) {
-            log.error("Bean {} does not have @Service annotation", serviceName);
-            return null;
-        }
 
         if (paramTypes.isEmpty()) {
             List<Method> appropriateMethods = new ArrayList<>();

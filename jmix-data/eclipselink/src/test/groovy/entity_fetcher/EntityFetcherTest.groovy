@@ -32,6 +32,8 @@ import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
 import test_support.entity.sales.Status
+import test_support.entity.unfetched_composite_id.BadEntity
+import test_support.entity.unfetched_composite_id.BadEntityCompKey
 
 class EntityFetcherTest extends DataSpec {
 
@@ -189,5 +191,27 @@ class EntityFetcherTest extends DataSpec {
                 .one()
         then: "All entities of the same class have this local property loaded"
         employee.supervisor.name != null
+    }
+
+
+    def "stackoverflow during unfetched attribute exception throwing should not occur"() {
+        setup:
+        BadEntity badEntity1 = dataManager.create(BadEntity)
+        badEntity1.bval = true
+        badEntity1.id = dataManager.create(BadEntityCompKey)
+        badEntity1.id.bilds = "1"
+        badEntity1.id.uname = "abc"
+        dataManager.save(badEntity1)
+
+        when: "unfetched exception message building causes unfethed"
+        var loaded = dataManager.load(BadEntity.class).all().fetchPlan(fetchPlans.builder(BadEntity.class).build()).one();
+        loaded.setBval(false)
+        dataManager.save(loaded)
+
+        then: "no stackoverflow occurs"
+        thrown(IllegalStateException)
+
+        cleanup:
+        if (badEntity1 != null) dataManager.remove(badEntity1)
     }
 }

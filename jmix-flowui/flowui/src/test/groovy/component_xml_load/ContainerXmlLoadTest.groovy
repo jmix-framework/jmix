@@ -17,10 +17,13 @@
 package component_xml_load
 
 import com.vaadin.flow.component.accordion.AccordionPanel
+import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.orderedlayout.BoxSizing
 import com.vaadin.flow.component.orderedlayout.FlexComponent
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.Scroller
 import com.vaadin.flow.component.tabs.Tab
+import com.vaadin.flow.component.tabs.TabSheetVariant
 import com.vaadin.flow.component.tabs.Tabs
 import component_xml_load.screen.ContainerView
 import io.jmix.flowui.component.textfield.TypedTextField
@@ -170,6 +173,40 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             themeName == "icon-on-top"
             visible
             (children.findAny().get() as TypedTextField<?>).id.get() == "tab2Child"
+        }
+    }
+
+
+    def "Load tabSheet component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = openScreen(ContainerView.class)
+
+        then: "TabSheet attributes will be loaded"
+        def tabSheet = componentView.tabSheetId
+        def tabs = tabSheet.getOwnComponents()
+        def childHbox = tabSheet.getContentByTab(tabs[0] as Tab) as HorizontalLayout
+
+        verifyAll(tabSheet) {
+            id.get() == "tabSheetId"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            height == "50px"
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            themeNames.containsAll([TabSheetVariant.LUMO_TABS_SMALL.getVariantName(),
+                                    TabSheetVariant.LUMO_BORDERED.getVariantName()])
+            visible
+            width == "100px"
+
+            (tabs[0] as Tab).getId().orElse(null) == "tab1"
+            (tabs[0] as Tab).getLabel() == "tab1Label"
+            (childHbox.getComponentAt(0) as Label).text == "tab1Child1"
+            (childHbox.getComponentAt(1) as Label).text == "tab1Child2"
+
+            (tabs[1] as Tab).getId().orElse(null) == "tab2"
+            (tabs[1] as Tab).getLabel() == "tab2Label"
+            (tabSheet.getContentByTab(tabs[1] as Tab) as TypedTextField).getValue() == "tab2Child"
         }
     }
 }

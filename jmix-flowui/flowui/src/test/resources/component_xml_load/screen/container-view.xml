@@ -191,5 +191,29 @@
                 <textField id="tab2Child"/>
             </tab>
         </tabs>
+
+
+        <tabSheet id="tabSheetId"
+                  classNames="cssClassName1, cssClassName2"
+                  height="50px"
+                  maxHeight="55px"
+                  maxWidth="120px"
+                  minHeight="40px"
+                  minWidth="80px"
+                  themeNames="small bordered"
+                  visible="true"
+                  width="100px">
+            <tab id="tab1"
+                 label="tab1Label">
+                <hbox>
+                    <label text="tab1Child1"/>
+                    <label text="tab1Child2"/>
+                </hbox>
+            </tab>
+            <tab id="tab2"
+                 label="tab2Label">
+                <textField value="tab2Child"/>
+            </tab>
+        </tabSheet>
     </layout>
 </view>

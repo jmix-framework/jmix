@@ -25,6 +25,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.scroller.JmixScroller;
 import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
+import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
@@ -70,4 +71,7 @@ public class ContainerView extends StandardView {
 
     @ViewComponent
     public Tabs tabsId;
+
+    @ViewComponent
+    public JmixTabSheet tabSheetId;
 }

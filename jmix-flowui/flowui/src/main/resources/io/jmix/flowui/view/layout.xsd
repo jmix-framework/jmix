@@ -1564,6 +1564,26 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="tabSheetThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="icon-on-top"/>
+                    <xs:enumeration value="centered"/>
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="minimal"/>
+                    <xs:enumeration value="hide-scroll-buttons"/>
+                    <xs:enumeration value="equal-width-tabs"/>
+                    <xs:enumeration value="bordered"/>
+                    <xs:enumeration value="fixed"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="buttonThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -1873,6 +1893,19 @@
                     <xs:attributeGroup ref="hasValueAndElement"/>
                 </xs:extension>
             </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseTabsComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="tab" type="tabComponent"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasSize"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="securityConstraintAction">
@@ -2605,35 +2638,35 @@
     <!-- Tabs-->
     <xs:complexType name="tabsContainer">
         <xs:complexContent>
-            <xs:extension base="baseComponent">
-
-                <!-- Tab-->
-                <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                    <xs:element name="tab">
-                        <xs:complexType>
-                            <xs:complexContent>
-                                <xs:extension base="baseComponent">
-                                    <xs:group ref="singleLayoutOrComponent"/>
-
-                                    <xs:attribute name="themeNames" type="tabThemeNames"/>
-                                    <xs:attribute name="flexGrow" type="xs:double"/>
-
-                                    <xs:attributeGroup ref="hasLabel"/>
-                                    <xs:attributeGroup ref="hasEnabled"/>
-                                    <xs:attributeGroup ref="hasClassNames"/>
-                                </xs:extension>
-                            </xs:complexContent>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-
-                <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasSize"/>
+            <xs:extension base="baseTabsComponent">
+                <xs:attribute name="orientation" type="orientationType"/>
 
                 <xs:attribute name="themeNames" type="tabsThemeNames"/>
-                <xs:attribute name="orientation" type="orientationType"/>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <!-- TabSheet-->
+    <xs:complexType name="tabSheetComponent">
+        <xs:complexContent>
+            <xs:extension base="baseTabsComponent">
+                <xs:attribute name="themeNames" type="tabSheetThemeNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Tab-->
+    <xs:complexType name="tabComponent">
+        <xs:group ref="singleLayoutOrComponent"/>
+
+        <xs:attribute name="themeNames" type="tabThemeNames"/>
+        <xs:attribute name="flexGrow" type="xs:double"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+
+        <xs:attributeGroup ref="requiresId"/>
+        <xs:attributeGroup ref="hasLabel"/>
+        <xs:attributeGroup ref="hasEnabled"/>
+        <xs:attributeGroup ref="hasClassNames"/>
     </xs:complexType>
 
     <!-- Select-->
@@ -3029,6 +3062,7 @@
                 <xs:element name="loginForm" type="loginFormComponent"/>
                 <xs:element name="loginOverlay" type="loginOverlayComponent"/>
                 <xs:element name="simplePagination" type="simplePaginationComponent"/>
+                <xs:element name="tabSheet" type="tabSheetComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

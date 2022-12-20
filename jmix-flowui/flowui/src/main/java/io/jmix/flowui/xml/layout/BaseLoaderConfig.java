@@ -41,8 +41,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("accordion", AccordionLoader.class);
         loaders.put("accordionPanel", AccordionPanelLoader.class);
         loaders.put("scroller", ScrollerLoader.class);
+        loaders.put("tabSheet", TabSheetLoader.class);
         loaders.put("tabs", TabsLoader.class);
-        loaders.put("tab", TabsLoader.TabLoader.class);
         loaders.put("details", DetailsLoader.class);
         loaders.put("split", SplitLayoutLoader.class);
         loaders.put("formLayout", FormLayoutLoader.class);

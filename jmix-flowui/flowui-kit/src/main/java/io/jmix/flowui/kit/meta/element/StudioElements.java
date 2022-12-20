@@ -79,7 +79,7 @@ public interface StudioElements {
     @StudioElement(
             name = "Tab",
             classFqn = "com.vaadin.flow.component.tabs.Tab",
-            target = {"com.vaadin.flow.component.tabs.Tabs"},
+            target = {"com.vaadin.flow.component.tabs.Tabs", "com.vaadin.flow.component.tabs.TabSheet"},
             xmlElement = "tab",
             visible = true,
             properties = {
@@ -87,7 +87,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "flewGrow", type = StudioPropertyType.DOUBLE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
                             options = {"icon-on-top"}),

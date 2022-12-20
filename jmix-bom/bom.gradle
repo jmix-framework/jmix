@@ -304,9 +304,9 @@ dependencies {
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
 
-        api 'org.webjars:ace-builds:1.1.9-1-cuba'
+        api 'org.webjars:ace-builds:1.1.9.jmix.1'
         api 'org.webjars:bootstrap:4.5.3-0-jmix'
-        api 'org.webjars:diff-match-patch:0.1.cuba.1'
+        api 'org.webjars:diff-match-patch:0.1.jmix.1'
         api 'org.webjars:jquery:3.6.0'
         api 'org.webjars:jquery-ui:1.13.0'
         api 'org.webjars.bower:jquery-file-upload:9.22.0.cuba.0'

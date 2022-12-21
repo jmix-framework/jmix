@@ -85,18 +85,26 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
         SaveContext saveContext = new SaveContext();
 
         manageGroup(report, saveContext);
-        storeIndexFields(report);
-        incomingDefaultTemplate = manageTemplates(report, incomingTemplates, incomingDefaultTemplate, saveContext);
+        Report existingReport = manageReport(report);
+        incomingDefaultTemplate = manageTemplates(report, incomingTemplates, incomingDefaultTemplate, existingReport, saveContext);
         saveContext.saving(report);
 
         EntitySet saved = dataManager.save(saveContext);
         Report savedReport = saved.get(report);
-        ReportTemplate savedDefaultTemplate = saved.get(incomingDefaultTemplate);
-
-        savedReport.setDefaultTemplate(savedDefaultTemplate);
-        return dataManager.save(savedReport);
+        if (incomingDefaultTemplate != null) {
+            ReportTemplate savedDefaultTemplate = saved.get(incomingDefaultTemplate);
+            savedReport.setDefaultTemplate(savedDefaultTemplate);
+            savedReport = dataManager.save(savedReport);
+        }
+        return savedReport;
     }
 
+    /**
+     * Manages report group: sets existent or creates completely new or based on deleted one.
+     *
+     * @param report      incoming report
+     * @param saveContext save context
+     */
     protected void manageGroup(Report report, SaveContext saveContext) {
         ReportGroup group = report.getGroup();
         if (group != null) {
@@ -135,33 +143,66 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
         }
     }
 
-    protected ReportTemplate manageTemplates(Report report, @Nullable List<ReportTemplate> incomingTemplates, ReportTemplate incomingDefaultTemplate, SaveContext saveContext) {
+    /**
+     * Manages local attributes of incoming report: fills index fields, merges incoming report with existent (if exists)
+     *
+     * @param report incoming report
+     * @return Existing report with the same id
+     */
+    @Nullable
+    protected Report manageReport(Report report) {
+        storeIndexFields(report);
+
         FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(Report.class, "report.withTemplates");
         Report existingReport = dataManager.load(Report.class)
                 .id(report.getId())
+                .hint(PersistenceHints.SOFT_DELETION, false)
                 .fetchPlan(fetchPlan)
                 .optional()
                 .orElse(null);
-
-        List<ReportTemplate> existingTemplates = null;
         if (existingReport != null) {
             report.setVersion(existingReport.getVersion());
-            if (existingReport.getTemplates() != null) {
-                existingTemplates = existingReport.getTemplates();
-            }
-            if (existingReport.getDeleteTs() != null) {
-                existingReport.setDeleteTs(null);
-                existingReport.setDeletedBy(null);
+            if (entityStates.isNew(report)) {
+                entityStates.makeDetached(report);
             }
         } else {
             report.setVersion(0);
+        }
+
+        return existingReport;
+    }
+
+    /**
+     * Manages templates:
+     * <ul>
+     *     <li>Removes unnecessary templates of existent report</li>
+     *     <li>Creates or updates actual templates</li>
+     *     <li>Evaluate actual default template</li>
+     * </ul>
+     *
+     * @param report                  incoming report
+     * @param incomingTemplates       templates of incoming report
+     * @param incomingDefaultTemplate default template
+     * @param existingReport          existing report with the same id
+     * @param saveContext             save context
+     * @return Actual default template
+     */
+    @Nullable
+    protected ReportTemplate manageTemplates(Report report,
+                                             @Nullable List<ReportTemplate> incomingTemplates,
+                                             @Nullable ReportTemplate incomingDefaultTemplate,
+                                             @Nullable Report existingReport,
+                                             SaveContext saveContext) {
+        List<ReportTemplate> existingTemplates = null;
+        if (existingReport != null && existingReport.getTemplates() != null) {
+            existingTemplates = existingReport.getTemplates();
         }
 
         List<ReportTemplate> savedTemplates = new ArrayList<>();
         if (incomingTemplates != null) {
             if (existingTemplates != null) {
                 for (ReportTemplate existingTemplate : existingTemplates) {
-                    if (!incomingTemplates.contains(existingTemplate)) {
+                    if (!incomingTemplates.contains(existingTemplate) && !entityStates.isDeleted(existingTemplate)) {
                         saveContext.removing(existingTemplate);
                     }
                 }

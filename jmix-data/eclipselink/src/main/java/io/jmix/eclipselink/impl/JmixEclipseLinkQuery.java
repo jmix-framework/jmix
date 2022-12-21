@@ -642,19 +642,22 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         }
     }
 
+    @Nullable
     private Object convertParamValue(@Nullable Object value) {
         // Here you can convert type used in jpql query params
-        if (value instanceof Id) {
-            value = ((Id<?>) value).getValue();
+        if (value != null) {
+            if (value instanceof Id) {
+                value = ((Id<?>) value).getValue();
 
-        } else if (value instanceof Ids) {
-            value = ((Ids<?>) value).getValues();
+            } else if (value instanceof Ids) {
+                value = ((Ids<?>) value).getValues();
 
-        } else if (value instanceof EnumClass) {
-            value = ((EnumClass<?>) value).getId();
+            } else if (value instanceof EnumClass) {
+                value = ((EnumClass<?>) value).getId();
 
-        } else if (isCollectionOfEntitiesOrEnums(value)) {
-            value = convertToCollectionOfIds(value);
+            } else if (isCollectionOfEntitiesOrEnums(value)) {
+                value = convertToCollectionOfIds(value);
+            }
         }
         return value;
     }

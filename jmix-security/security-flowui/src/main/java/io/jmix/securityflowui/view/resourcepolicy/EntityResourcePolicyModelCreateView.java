@@ -53,6 +53,8 @@ public class EntityResourcePolicyModelCreateView extends MultipleResourcePolicyM
     @Autowired
     private MessageBundle messageBundle;
 
+    private boolean hasChanges = false;
+
     @Subscribe
     public void onInit(InitEvent event) {
         FlowuiComponentUtils.setItemsMap(entityField, resourcePolicyEditorUtils.getEntityOptionsMap());
@@ -73,6 +75,13 @@ public class EntityResourcePolicyModelCreateView extends MultipleResourcePolicyM
         } else {
             policyGroupField.clear();
         }
+
+        hasChanges = true;
+    }
+
+    @Subscribe("policyGroupField")
+    public void onPolicyGroupFieldValueChange(ComponentValueChangeEvent<TypedTextField<String>, String> event) {
+        hasChanges = true;
     }
 
     private void onActionGroupValueChange(
@@ -88,6 +97,8 @@ public class EntityResourcePolicyModelCreateView extends MultipleResourcePolicyM
         } else {
             allActions.setIndeterminate(true);
         }
+
+        hasChanges = true;
     }
 
     private void onAllActionValueChange(ComponentValueChangeEvent<Checkbox, Boolean> event) {
@@ -96,6 +107,8 @@ public class EntityResourcePolicyModelCreateView extends MultipleResourcePolicyM
         } else {
             actionsGroup.deselectAll();
         }
+
+        hasChanges = true;
     }
 
     @Override
@@ -136,5 +149,10 @@ public class EntityResourcePolicyModelCreateView extends MultipleResourcePolicyM
         return actionsGroup.getValue().stream()
                 .map(EntityPolicyAction::getId)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean hasUnsavedChanges() {
+        return hasChanges;
     }
 }

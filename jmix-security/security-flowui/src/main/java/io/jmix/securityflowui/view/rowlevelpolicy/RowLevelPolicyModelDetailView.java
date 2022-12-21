@@ -151,7 +151,7 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
                 getEditedEntity().setScript(null);
                 break;
             case PREDICATE:
-                actionField.setReadOnly(false);
+                actionField.setReadOnly(isReadOnly());
 
                 joinClauseField.setVisible(false);
                 whereClauseField.setVisible(false);

@@ -81,20 +81,29 @@ class JmixPlugin implements Plugin<Project> {
                 project.configurations.create('enhancing')
                 project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix')
 
-                if (javaPlugin) {
-                    project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))
-                    project.tasks.findByName('compileTestJava').doLast(new EnhancingAction('test'))
-                }
+                if (javaPlugin && kotlinPlugin) {
+                    project.tasks.create("enhanceSeparately",
+                            SeparateEnhancingTask,
+                            'main')
+                    project.tasks.create("enhanceTestSeparately",
+                            SeparateEnhancingTask,
+                            'test')
+                } else {
+                    if (javaPlugin) {
+                        project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))
+                        project.tasks.findByName('compileTestJava').doLast(new EnhancingAction('test'))
+                    }
 
-                /**
-                 * If project 100% kotlin, compileJava will not execute and EnhancingAction will not run.
-                 * So we need run EnhancingAction after compileKotlin.
-                 */
-                if (kotlinPlugin) {
-                    project.tasks.findByName('compileKotlin').doLast(new EnhancingAction('main'))
-                    project.tasks.findByName('compileTestKotlin').doLast(new EnhancingAction('test'))
-                }
+                    /**
+                     * If project 100% kotlin, compileJava will not execute and EnhancingAction will not run.
+                     * So we need run EnhancingAction after compileKotlin.
+                     */
+                    if (kotlinPlugin) {
+                        project.tasks.findByName('compileKotlin').doLast(new EnhancingAction('main'))
+                        project.tasks.findByName('compileTestKotlin').doLast(new EnhancingAction('test'))
+                    }
 
+                }
                 project.tasks.findByName('classes').doLast({ EnhancingAction.copyGeneratedFiles(project, 'main') })
                 project.tasks.findByName('testClasses').doLast({ EnhancingAction.copyGeneratedFiles(project, 'test') })
             }
@@ -135,14 +144,14 @@ class JmixPlugin implements Plugin<Project> {
                     .collect { it.toInteger() }
             int majorVersion = kotlinPluginVersionNumbers[0]
             int minorVersion = kotlinPluginVersionNumbers[1]
-            project.tasks.getByName('compileKotlin', {task ->
+            project.tasks.getByName('compileKotlin', { task ->
                 if (majorVersion == 1 && minorVersion < 7) {
                     task.destinationDir = project.sourceSets.main.java.outputDir
                 } else {
                     task.destinationDirectory = project.sourceSets.main.java.outputDir
                 }
             })
-            project.tasks.getByName('compileTestKotlin', {task ->
+            project.tasks.getByName('compileTestKotlin', { task ->
                 if (majorVersion == 1 && minorVersion < 7) {
                     task.destinationDir = project.sourceSets.test.java.outputDir
                 } else {

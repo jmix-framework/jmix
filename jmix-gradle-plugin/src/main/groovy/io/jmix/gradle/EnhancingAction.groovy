@@ -24,6 +24,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.SourceSet
 
 import static io.jmix.gradle.DescriptorGenerationUtils.CONVERTERS_LIST_PROPERTY
@@ -45,6 +46,10 @@ class EnhancingAction implements Action<Task> {
     @Override
     void execute(Task task) {
         Project project = task.getProject()
+        performAction(project)
+    }
+
+    void performAction(Project project) {
         project.logger.lifecycle "Enhancing entities in $project for source set '$sourceSetName'"
         SourceSet sourceSet = project.sourceSets.findByName(sourceSetName)
 

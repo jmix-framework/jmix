@@ -236,6 +236,8 @@ dependencies {
         api "io.jmix.sessions:jmix-sessions:$freeVersion"
         api "io.jmix.sessions:jmix-sessions-starter:$freeVersion"
 
+        api "io.jmix.templates.studio:jmix-studio-templates:$freeVersion"
+
         api "io.jmix.translations:jmix-translations-fr:$freeVersion"
         api "io.jmix.translations:jmix-translations-ru:$freeVersion"
         api "io.jmix.translations:jmix-translations-de:$freeVersion"

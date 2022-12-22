@@ -26,6 +26,7 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.security.StandardSecurityConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -46,6 +47,8 @@ import java.util.TimeZone;
 @SpringBootApplication(scanBasePackages = "io.jmix.graphql")
 public class App {
 
+    public static String TEST_TIMEZONE = "GMT+4:00";
+
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }
@@ -53,6 +56,17 @@ public class App {
     @PostConstruct
     public void init() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT+4:00"));
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jacksonObjectMapperCustomization() {
+        return jacksonObjectMapperBuilder ->
+                jacksonObjectMapperBuilder.timeZone(TimeZone.getTimeZone(TEST_TIMEZONE));
+    }
+
+    @PostConstruct
+    public void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone(TEST_TIMEZONE));
     }
 
     @Bean

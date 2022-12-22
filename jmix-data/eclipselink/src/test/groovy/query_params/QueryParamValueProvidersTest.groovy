@@ -39,6 +39,7 @@ class QueryParamValueProvidersTest extends DataSpec {
         customer = dataManager.create(Customer)
         customer.setName('test1')
         customer.setStatus(Status.OK)
+
         dataManager.save(customer)
     }
 
@@ -105,6 +106,21 @@ class QueryParamValueProvidersTest extends DataSpec {
 
         cleanup:
         testQueryParamValueProvider.clear('customerName')
+        testQueryParamValueProvider.clear('customerStatus')
+    }
+
+    def "enum as param query"() {
+        testQueryParamValueProvider.setValue('customerStatus', Status.OK)
+
+        when:
+        def customer1 = dataManager.load(Customer)
+                .query('e.status = :test_customerStatus')
+                .one()
+
+        then:
+        customer1 == customer
+
+        cleanup:
         testQueryParamValueProvider.clear('customerStatus')
     }
 

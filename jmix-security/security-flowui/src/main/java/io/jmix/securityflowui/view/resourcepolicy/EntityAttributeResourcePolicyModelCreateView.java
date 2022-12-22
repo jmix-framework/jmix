@@ -56,6 +56,8 @@ public class EntityAttributeResourcePolicyModelCreateView extends MultipleResour
     @Autowired
     private MessageBundle messageBundle;
 
+    private boolean hasChanges = false;
+
     @Subscribe
     public void onInit(InitEvent event) {
         FlowuiComponentUtils.setItemsMap(entityField, resourcePolicyEditorUtils.getEntityOptionsMap());
@@ -75,6 +77,13 @@ public class EntityAttributeResourcePolicyModelCreateView extends MultipleResour
         }
 
         fillAttributesTable(entityName);
+
+        hasChanges = true;
+    }
+
+    @Subscribe("policyGroupField")
+    public void onPolicyGroupFieldValueChange(ComponentValueChangeEvent<TypedTextField<String>, String> event) {
+        this.hasChanges = true;
     }
 
     private void initTable() {
@@ -127,6 +136,11 @@ public class EntityAttributeResourcePolicyModelCreateView extends MultipleResour
         }
 
         return validationErrors;
+    }
+
+    @Override
+    public boolean hasUnsavedChanges() {
+        return hasChanges;
     }
 
     @Override

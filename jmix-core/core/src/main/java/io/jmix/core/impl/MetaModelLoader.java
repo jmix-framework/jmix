@@ -221,6 +221,7 @@ public class MetaModelLoader {
 
             metaClass = new MetaClassImpl(session, name);
             metaClass.setJavaClass(javaClass);
+            ((SessionImplementation) session).registerClass(metaClass);
 
             return metaClass;
         }

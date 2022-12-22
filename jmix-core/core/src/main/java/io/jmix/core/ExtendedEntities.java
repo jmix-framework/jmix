@@ -24,6 +24,7 @@ import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Session;
+import io.jmix.core.metamodel.model.SessionImplementation;
 import io.jmix.core.metamodel.model.impl.ClassRange;
 import io.jmix.core.metamodel.model.impl.MetaClassImpl;
 import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
@@ -96,7 +97,7 @@ public class ExtendedEntities {
             registerReplacedMetaClass(replacedMetaClass);
 
             MetaClassImpl effectiveMetaClass = (MetaClassImpl) replace.getSecond();
-            ((SessionImpl) session).registerClass(replacedMetaClass.getName(), replacedMetaClass.getJavaClass(), effectiveMetaClass);
+            ((SessionImplementation) session).registerClass(replacedMetaClass.getName(), replacedMetaClass.getJavaClass(), effectiveMetaClass);
         }
     }
 

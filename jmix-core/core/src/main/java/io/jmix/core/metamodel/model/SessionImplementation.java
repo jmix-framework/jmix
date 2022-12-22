@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component;
-
-import java.util.Set;
+package io.jmix.core.metamodel.model;
 
 /**
- * A component which can be set as lookup component for a view.
+ * Interface stores internal methods for {@link Session} implementations.
  */
-public interface LookupComponent<T> {
+public interface SessionImplementation extends Session {
 
-    // TODO: gg, add analog of setLookupSelectHandler (if set, overrides Enter Press and Double Click handlers)
+    void registerClass(MetaClass metaClass);
 
-    // TODO: gg, move to a more general interface?
-    Set<T> getSelectedItems();
+    void registerClass(String name, Class javaClass, MetaClass metaClass);
 
-    interface MultiSelectLookupComponent<T> extends LookupComponent<T> {
-
-        default void enableMultiSelect() {
-            setMultiSelect(true);
-        }
-
-        void setMultiSelect(boolean multiSelect);
-    }
 }

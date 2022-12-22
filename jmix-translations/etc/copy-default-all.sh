@@ -16,6 +16,9 @@
 
 #!/bin/sh
 
+./copy-default-file.sh jmix-appsettings/appsettings io/jmix/appsettings
+./copy-default-file.sh jmix-appsettings/appsettings-ui io/jmix/appsettingsui
+
 ./copy-default-file.sh jmix-audit/audit io/jmix/audit
 ./copy-default-file.sh jmix-audit/audit-ui io/jmix/auditui
 ./copy-default-file.sh jmix-audit/audit-flowui io/jmix/auditflowui

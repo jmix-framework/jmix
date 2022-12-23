@@ -39,6 +39,12 @@ public class TreeGridDelegate<E, ITEMS extends DataGridItems<E>>
         super(component);
     }
 
+    public Grid.Column<E> addHierarchyColumn(String key, MetaPropertyPath metaPropertyPath) {
+        Grid.Column<E> column = addHierarchyColumnInternal(key, metaPropertyPath);
+        propertyColumns.put(column, metaPropertyPath);
+        return column;
+    }
+
     @Override
     protected void setupEmptyDataProvider() {
         component.setDataProvider(new TreeDataProvider<>(new TreeData<>()));
@@ -65,9 +71,15 @@ public class TreeGridDelegate<E, ITEMS extends DataGridItems<E>>
     }
 
     protected Grid.Column<E> addHierarchyColumnInternal(MetaPropertyPath metaPropertyPath) {
+        return addHierarchyColumnInternal(metaPropertyPath.getMetaProperty().getName(), metaPropertyPath);
+    }
+
+    protected Grid.Column<E> addHierarchyColumnInternal(String key, MetaPropertyPath metaPropertyPath) {
         ValueProvider<E, ?> valueProvider = getValueProvider(metaPropertyPath);
 
+        // Also it leads to adding column to {@link #columns} list
         Grid.Column<E> column = component.addHierarchyColumn(valueProvider);
+        column.setKey(key);
 
         initColumn(column, metaPropertyPath);
 

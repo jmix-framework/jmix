@@ -2103,6 +2103,7 @@
         <xs:complexContent>
             <xs:extension base="dataGridComponent">
                 <xs:attribute name="hierarchyProperty" type="xs:string" use="required"/>
+                <xs:attribute name="hierarchyColumn" type="xs:string"/>
                 <xs:attribute name="showOrphans" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>

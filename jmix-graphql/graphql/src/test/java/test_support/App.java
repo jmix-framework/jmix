@@ -53,11 +53,6 @@ public class App {
         SpringApplication.run(App.class, args);
     }
 
-    @PostConstruct
-    public void init() {
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT+4:00"));
-    }
-
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jacksonObjectMapperCustomization() {
         return jacksonObjectMapperBuilder ->

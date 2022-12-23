@@ -17,14 +17,17 @@
 package io.jmix.flowui.menu;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.main.JmixListMenu;
+import io.jmix.flowui.kit.component.main.ListMenu;
+import io.jmix.flowui.sys.FlowuiAccessChecker;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.sys.FlowuiAccessChecker;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -35,28 +38,33 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Component("flowui_ListMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ListMenuBuilder {
     private static final Logger log = LoggerFactory.getLogger(ListMenuBuilder.class);
+    protected static final String GENERATED_SEPARATOR_ID_PREFIX = "separator-";
 
     protected MenuConfig menuConfig;
     protected ViewRegistry viewRegistry;
     protected UiComponents uiComponents;
     protected MessageTools messageTools;
     protected FlowuiAccessChecker flowuiAccessChecker;
+    protected MenuItemCommands menuItemCommands;
 
     public ListMenuBuilder(MenuConfig menuConfig,
                            ViewRegistry viewRegistry,
                            UiComponents uiComponents,
                            MessageTools messageTools,
-                           FlowuiAccessChecker flowuiAccessChecker) {
+                           FlowuiAccessChecker flowuiAccessChecker,
+                           MenuItemCommands menuItemCommands) {
         this.menuConfig = menuConfig;
         this.viewRegistry = viewRegistry;
         this.uiComponents = uiComponents;
         this.messageTools = messageTools;
         this.flowuiAccessChecker = flowuiAccessChecker;
+        this.menuItemCommands = menuItemCommands;
     }
 
     public JmixListMenu build() {
@@ -97,15 +105,14 @@ public class ListMenuBuilder {
             }
 
             return Optional.of(menuBarItem);
-        } else {
-            if (!isPermitted(menuItem)) {
-                log.debug("Menu item '{}' is not permitted by access constraint", menuItem.getId());
-                return Optional.empty();
-            }
+        } else if (menuItem.isSeparator()) {
+            JmixListMenu.MenuItem listMenuSeparator = createMenuSeparator();
 
+            return Optional.of(listMenuSeparator);
+        } else {
             JmixListMenu.MenuItem listMenuItem = createMenuItem(menuItem);
 
-            return Optional.of(listMenuItem);
+            return Optional.ofNullable(listMenuItem);
         }
     }
 
@@ -122,16 +129,57 @@ public class ListMenuBuilder {
         return menuBarItem;
     }
 
+    @Nullable
     protected JmixListMenu.MenuItem createMenuItem(MenuItem menuItem) {
+        if (menuItem.getView() != null) {
+            return createViewMenuItem(menuItem);
+        } else if (menuItem.getBean() != null && menuItem.getBeanMethod() != null) {
+            return createBeanMenuItem(menuItem);
+        }
+
+        throw new IllegalStateException("Unknown time of menu item");
+    }
+
+    @Nullable
+    protected ListMenu.MenuItem createViewMenuItem(MenuItem menuItem) {
+        if (!isPermitted(menuItem)) {
+            log.debug("Menu item '{}' is not permitted by access constraint", menuItem.getId());
+            return null;
+        }
+
         JmixListMenu.ViewMenuItem listMenuItem = new JmixListMenu.ViewMenuItem(menuItem.getId())
                 .withTitle(menuConfig.getItemTitle(menuItem))
                 .withDescription(getDescription(menuItem))
-                .withClassNames(Arrays.asList(getClassNames(menuItem)));
+                .withClassNames(Arrays.asList(getClassNames(menuItem)))
+                .withQueryParameters(menuItem.getQueryParameters())
+                .withRouteParameters(menuItem.getRouteParameters())
+                .withShortcutCombination(menuItem.getShortcutCombination());
 
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
             listMenuItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
         }
+
         return listMenuItem;
+    }
+
+    protected JmixListMenu.MenuItem createBeanMenuItem(MenuItem menuItem) {
+        JmixListMenu.BeanMenuItem beanMenuItem = new JmixListMenu.BeanMenuItem(menuItem.getId())
+                .withTitle(menuConfig.getItemTitle(menuItem))
+                .withDescription(getDescription(menuItem))
+                .withClassNames(Arrays.asList(getClassNames(menuItem)))
+                .withShortcutCombination(menuItem.getShortcutCombination());
+
+        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
+            beanMenuItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
+        }
+
+        beanMenuItem.withClickHandler(new MenuCommandExecutor(menuItem, menuItemCommands));
+
+        return beanMenuItem;
+    }
+
+    protected JmixListMenu.MenuItem createMenuSeparator() {
+        return new ListMenu.MenuSeparatorItem(generateSeparatorId());
     }
 
     @Nullable
@@ -153,14 +201,46 @@ public class ListMenuBuilder {
     }
 
     protected String[] getClassNames(MenuItem menuItem) {
-        if (Strings.isNullOrEmpty(menuItem.getClassName())) {
+        if (Strings.isNullOrEmpty(menuItem.getClassNames())) {
             return new String[0];
         }
 
-        return menuItem.getClassName().split(",");
+        return menuItem.getClassNames().split(",");
     }
 
     protected boolean isPermitted(MenuItem menuItem) {
         return flowuiAccessChecker.isMenuPermitted(menuItem);
+    }
+
+    protected String generateSeparatorId() {
+        return GENERATED_SEPARATOR_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
+    }
+
+    public static class MenuCommandExecutor implements Consumer<ListMenu.MenuItem> {
+        protected final MenuItem item;
+        protected final MenuItemCommands menuItemCommands;
+
+        public MenuCommandExecutor(MenuItem item, MenuItemCommands menuItemCommands) {
+            this.item = item;
+            this.menuItemCommands = menuItemCommands;
+        }
+
+        @Override
+        public void accept(ListMenu.MenuItem menuItem) {
+            ListMenu menuComponent = menuItem.getMenuComponent();
+
+            if (menuComponent != null) {
+                menuComponent.getUI()
+                        .ifPresent(this::executeCommand);
+            }
+        }
+
+        protected void executeCommand(UI ui) {
+            MenuItemCommand command = menuItemCommands.create(ui, item);
+
+            if (command != null) {
+                command.run();
+            }
+        }
     }
 }

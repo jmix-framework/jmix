@@ -15,10 +15,13 @@
  */
 package io.jmix.flowui.menu;
 
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.kit.component.KeyCombination;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,15 +33,26 @@ public class MenuItem {
     private List<MenuItem> children = new ArrayList<>();
 
     private String id;
+
     private String view;
-    private String className;
+
+    private String bean;
+    private String beanMethod;
+
+    private String classNames;
     private String icon;
     private String title;
     private String description;
     private Element descriptor;
+    private boolean separator = false;
     private boolean opened = false;
 
+    private KeyCombination shortcutCombination;
     private boolean isMenu = false;
+
+    protected List<MenuItemProperty> properties;
+    protected List<MenuItemParameter> queryParameters;
+    protected List<MenuItemParameter> routeParameters;
 
     public MenuItem(@Nullable MenuItem parent, String id) {
         this.parent = parent;
@@ -121,29 +135,30 @@ public class MenuItem {
         this.description = description;
     }
 
-    public String getClassName() {
-        return className;
+    public String getClassNames() {
+        return classNames;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setClassNames(String classNames) {
+        this.classNames = classNames;
     }
 
-//    public KeyCombination getShortcut() {
-//        return shortcut;
-//    }
+    @Nullable
+    public KeyCombination getShortcutCombination() {
+        return shortcutCombination;
+    }
 
-//    public void setShortcut(@Nullable KeyCombination shortcut) {
-//        this.shortcut = shortcut;
-//    }
+    public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+        this.shortcutCombination = shortcutCombination;
+    }
 
-//    public boolean isSeparator() {
-//        return separator || "-".equals(id);
-//    }
+    public boolean isSeparator() {
+        return separator || "-".equals(id);
+    }
 
-//    public void setSeparator(boolean separator) {
-//        this.separator = separator;
-//    }
+    public void setSeparator(boolean separator) {
+        this.separator = separator;
+    }
 
     @Nullable
     public String getIcon() {
@@ -162,35 +177,133 @@ public class MenuItem {
         this.opened = expanded;
     }
 
+    @Nullable
     public String getView() {
         return view;
     }
 
-    public void setView(String view) {
+    public void setView(@Nullable String view) {
         this.view = view;
     }
 
-//    public String getRunnableClass() {
-//        return runnableClass;
-//    }
+    @Nullable
+    public String getBean() {
+        return bean;
+    }
 
-//    public void setRunnableClass(String runnableClass) {
-//        this.runnableClass = runnableClass;
-//    }
+    public void setBean(@Nullable String bean) {
+        this.bean = bean;
+    }
 
-//    public String getBean() {
-//        return bean;
-//    }
+    @Nullable
+    public String getBeanMethod() {
+        return beanMethod;
+    }
 
-//    public void setBean(String bean) {
-//        this.bean = bean;
-//    }
+    public void setBeanMethod(@Nullable String beanMethod) {
+        this.beanMethod = beanMethod;
+    }
 
-//    public String getBeanMethod() {
-//        return beanMethod;
-//    }
+    public List<MenuItemProperty> getProperties() {
+        if (properties == null) {
+            return Collections.emptyList();
+        }
+        return properties;
+    }
 
-//    public void setBeanMethod(String beanMethod) {
-//        this.beanMethod = beanMethod;
-//    }
+    public void setProperties(List<MenuItemProperty> properties) {
+        this.properties = properties;
+    }
+
+    public List<MenuItemParameter> getQueryParameters() {
+        if (queryParameters == null) {
+            return Collections.emptyList();
+        }
+        return queryParameters;
+    }
+
+    public void setQueryParameters(List<MenuItemParameter> queryParameters) {
+        this.queryParameters = queryParameters;
+    }
+
+    public List<MenuItemParameter> getRouteParameters() {
+        if (routeParameters == null) {
+            return Collections.emptyList();
+        }
+        return routeParameters;
+    }
+
+    public void setRouteParameters(List<MenuItemParameter> routeParameters) {
+        this.routeParameters = routeParameters;
+    }
+
+    public static class MenuItemProperty {
+
+        protected String name;
+        protected Object value;
+
+        protected MetaClass entityClass;
+        protected Object entityId;
+        protected String fetchPlanName;
+
+        public MenuItemProperty(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Nullable
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(@Nullable Object value) {
+            this.value = value;
+        }
+
+        public MetaClass getEntityClass() {
+            return entityClass;
+        }
+
+        public void setEntityClass(MetaClass entityClass) {
+            this.entityClass = entityClass;
+        }
+
+        public Object getEntityId() {
+            return entityId;
+        }
+
+        public void setEntityId(Object entityId) {
+            this.entityId = entityId;
+        }
+
+        public String getFetchPlanName() {
+            return fetchPlanName;
+        }
+
+        public void setFetchPlanName(String fetchPlanName) {
+            this.fetchPlanName = fetchPlanName;
+        }
+    }
+
+    public static class MenuItemParameter {
+
+        protected String name;
+        protected String value;
+
+        public MenuItemParameter(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 }

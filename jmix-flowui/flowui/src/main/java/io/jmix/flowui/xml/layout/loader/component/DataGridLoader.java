@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
+import io.jmix.flowui.data.grid.EmptyDataGridItems;
 
 public class DataGridLoader extends AbstractGridLoader<DataGrid<?>> {
 
@@ -26,11 +27,20 @@ public class DataGridLoader extends AbstractGridLoader<DataGrid<?>> {
         return factory.create(DataGrid.class);
     }
 
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        loadData();
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected void setupDataProvider(GridDataHolder holder) {
         if (holder.getContainer() != null) {
             resultComponent.setItems(new ContainerDataGridItems(holder.getContainer()));
+        } else if (holder.getMetaClass() != null) {
+            resultComponent.setItems(new EmptyDataGridItems(holder.getMetaClass()));
         }
     }
 }

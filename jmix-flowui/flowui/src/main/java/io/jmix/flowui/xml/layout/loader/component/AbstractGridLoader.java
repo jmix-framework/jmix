@@ -76,16 +76,11 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
-        loadData();
         getActionLoaderSupport().loadActions(resultComponent, element);
     }
 
     protected void loadData() {
         GridDataHolder holder = initDataGridDataHolder();
-
-        setupDataProvider(holder);
-
-        resultComponent.removeAllColumns();
 
         if (!holder.isContainerLoaded()
                 && holder.getMetaClass() == null) {
@@ -108,6 +103,8 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
 
             loadColumns(resultComponent, columns, holder.getMetaClass(), fetchPlan);
         }
+
+        setupDataProvider(holder);
     }
 
     protected void loadColumns(T resultComponent, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
@@ -179,7 +176,7 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
         String key = loadString(element, "key")
                 .orElseGet(() -> metaPropertyPath.getMetaProperty().getName());
 
-        Column column = resultComponent.addColumn(key, metaPropertyPath);
+        Column column = addColumn(key, metaPropertyPath);
         loadString(element, "width", column::setWidth);
         loadResourceString(element, "header", context.getMessageGroup(), column::setHeader);
         loadResourceString(element, "footer", context.getMessageGroup(), column::setFooter);
@@ -190,6 +187,11 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
         loadBoolean(element, "autoWidth", column::setAutoWidth);
         loadBoolean(element, "visible", column::setVisible);
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected Column addColumn(String key, MetaPropertyPath metaPropertyPath) {
+        return resultComponent.addColumn(key, metaPropertyPath);
     }
 
     protected Collection<String> getAppliedProperties(Element columnsElement, @Nullable FetchPlan fetchPlan, MetaClass metaClass) {

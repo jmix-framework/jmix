@@ -273,7 +273,10 @@ public class ReportRestControllerManager {
         reportInfo.id = report.getId().toString();
         reportInfo.code = report.getCode();
         reportInfo.name = report.getName();
-        reportInfo.group = report.getGroup().getId().toString();
+        reportInfo.group = Optional.ofNullable(report.getGroup())
+                .map(ReportGroup::getId)
+                .map(UUID::toString)
+                .orElse(null);
 
         if (entityStates.isLoaded(report, "templates")) {
             if (report.getTemplates() != null) {

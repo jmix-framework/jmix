@@ -22,6 +22,9 @@
                 <collection id="regionPropertiesDc" property="regionProperties" provided="true"/>
             </collection>
         </instance>
+        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup" provided="true">
+            <loader id="groupsDl" provided="true"/>
+        </collection>
     </data>
 
     <layout width="100%" expand="groupBox">
@@ -43,6 +46,9 @@
                                required="true"
                                requiredMessage="msg://fillReportNameMsg"
                                width="100%"/>
+                    <entityComboBox id="groupField"
+                              caption="msg://group"
+                              description="msg://groupHintMsg" width="100%" optionsContainer="groupsDc"/>
                     <radioButtonGroup id="reportTypeGenerateField"
                                       caption="msg://reportBuildType"
                                       description="msg://singleMultiEntityHintMsg"

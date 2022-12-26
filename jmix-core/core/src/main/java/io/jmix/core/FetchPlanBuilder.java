@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 public class FetchPlanBuilder {
 
-    protected FetchPlans fetchPlansFactory;
+    protected FetchPlans fetchPlans;
     protected Metadata metadata;
     protected MetadataTools metadataTools;
     protected FetchPlanRepository fetchPlanRepository;
@@ -41,7 +41,7 @@ public class FetchPlanBuilder {
     protected MetaClass metaClass;
     protected Set<String> properties = new LinkedHashSet<>();
     protected Map<String, FetchPlanBuilder> builders = new HashMap<>();
-    protected Map<String, FetchPlan> fetchPlans = new HashMap<>();
+    protected Map<String, FetchPlan> propertiesToFetchPlans = new HashMap<>();
     protected Map<String, FetchMode> fetchModes = new HashMap<>();
     protected boolean systemProperties = false;
     protected boolean loadPartialEntities = false;
@@ -49,13 +49,13 @@ public class FetchPlanBuilder {
     protected FetchPlan result = null;
 
     protected FetchPlanBuilder(
-            FetchPlans fetchPlansFactory,
+            FetchPlans fetchPlans,
             Metadata metadata,
             MetadataTools metadataTools,
             FetchPlanRepository fetchPlanRepository,
             Class<?> entityClass
     ) {
-        this.fetchPlansFactory = fetchPlansFactory;
+        this.fetchPlans = fetchPlans;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.fetchPlanRepository = fetchPlanRepository;
@@ -82,7 +82,7 @@ public class FetchPlanBuilder {
             FetchPlanBuilder builder = builders.get(property);
 
             fetchPlanProperties.add(new FetchPlanProperty(property,
-                    builder != null ? builder.build() : fetchPlans.get(property),
+                    builder != null ? builder.build() : propertiesToFetchPlans.get(property),
                     fetchModes.getOrDefault(property, FetchMode.AUTO)));
         }
 
@@ -114,7 +114,7 @@ public class FetchPlanBuilder {
         if (metaProperty.getRange().isClass()) {
             if (!builders.containsKey(propName)) {
                 Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
-                builders.put(propName, fetchPlansFactory.builder(refClass));
+                builders.put(propName, fetchPlans.builder(refClass));
             }
         }
         if (parts.length > 1) {
@@ -138,7 +138,7 @@ public class FetchPlanBuilder {
         checkState();
         properties.add(property);
         Class<?> refClass = metaClass.getProperty(property).getRange().asClass().getJavaClass();
-        FetchPlanBuilder builder = fetchPlansFactory.builder(refClass);
+        FetchPlanBuilder builder = fetchPlans.builder(refClass);
         consumer.accept(builder);
         builders.put(property, builder);
         return this;
@@ -299,7 +299,7 @@ public class FetchPlanBuilder {
         checkState();
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             properties.add(property.getName());
-            fetchPlans.put(property.getName(), property.getFetchPlan());
+            propertiesToFetchPlans.put(property.getName(), property.getFetchPlan());
             fetchModes.put(property.getName(), property.getFetchMode());
         }
         return this;
@@ -340,14 +340,14 @@ public class FetchPlanBuilder {
 
         if (propFetchPlan != null) {
             if (isNew) {
-                fetchPlans.put(propName, propFetchPlan);
+                propertiesToFetchPlans.put(propName, propFetchPlan);
             } else {//property already exists
                 MetaProperty metaProperty = metaClass.getProperty(propName);
                 if (metaProperty.getRange().isClass()) {//ref property need to be merged with existing property
                     if (!builders.containsKey(propName)) {
                         Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
-                        builders.put(propName, fetchPlansFactory.builder(refClass));
-                        builders.get(propName).merge(fetchPlans.get(propName));
+                        builders.put(propName, fetchPlans.builder(refClass));
+                        builders.get(propName).merge(propertiesToFetchPlans.get(propName));
                     }
                     builders.get(propName).merge(propFetchPlan);
                 }
@@ -378,9 +378,9 @@ public class FetchPlanBuilder {
                 if (!builders.containsKey(propName)) {
                     Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
 
-                    FetchPlanBuilder newNestedBuilder = fetchPlansFactory.builder(refClass);
-                    if (fetchPlans.containsKey(propName)) {
-                        newNestedBuilder.merge(fetchPlans.get(propName));
+                    FetchPlanBuilder newNestedBuilder = fetchPlans.builder(refClass);
+                    if (propertiesToFetchPlans.containsKey(propName)) {
+                        newNestedBuilder.merge(propertiesToFetchPlans.get(propName));
                     }
 
                     builders.put(propName, newNestedBuilder);

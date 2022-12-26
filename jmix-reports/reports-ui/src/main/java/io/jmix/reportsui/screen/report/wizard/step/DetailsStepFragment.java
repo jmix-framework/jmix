@@ -19,6 +19,7 @@ package io.jmix.reportsui.screen.report.wizard.step;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.entity.wizard.ReportTypeGenerate;
@@ -33,9 +34,7 @@ import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.RadioButtonGroup;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -130,6 +129,18 @@ public class DetailsStepFragment extends StepFragment {
         reportRegionsDc.getMutableItems().clear();
         reportData.setEntityName(value.getName());
 
+        clearQuery();
+    }
+
+    @Subscribe("groupField")
+    public void onGroupValueChange(HasValue.ValueChangeEvent<ReportGroup> event) {
+        ReportData reportData = reportDataDc.getItem();
+        ReportGroup group = event.getValue();
+        updateReportGroup(reportData, group);
+    }
+
+    protected void updateReportGroup(ReportData reportData, @Nullable ReportGroup group) {
+        reportData.setGroup(group);
         clearQuery();
     }
 

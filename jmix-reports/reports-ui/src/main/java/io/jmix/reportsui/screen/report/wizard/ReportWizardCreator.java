@@ -21,7 +21,6 @@ import io.jmix.core.Stores;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.entity.wizard.ReportTypeGenerate;
@@ -58,9 +57,6 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
 
     @Autowired
     protected CollectionContainer<ReportRegion> reportRegionsDc;
-
-    @Autowired
-    protected CollectionContainer<ReportGroup> groupsDc;
 
     @Autowired
     protected Button nextBtn;
@@ -123,11 +119,6 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
         stepFragmentManager.showCurrentFragment();
     }
 
-    @Subscribe
-    public void onAfterShow(AfterShowEvent event) {
-        setReportGroup();
-    }
-
     @Subscribe(id = "reportDataDc", target = Target.DATA_CONTAINER)
     public void onReportDataDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<ReportData> event) {
         if (event.getProperty().equals("reportTypeGenerate")) {
@@ -137,12 +128,6 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
             }
 
             stepFragmentManager.setStepFragments(stepFragments);
-        }
-    }
-
-    protected void setReportGroup() {
-        if (!groupsDc.getItems().isEmpty()) {
-            getItem().setGroup(groupsDc.getItems().iterator().next());
         }
     }
 

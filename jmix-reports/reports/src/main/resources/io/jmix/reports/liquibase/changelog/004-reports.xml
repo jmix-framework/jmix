@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2020 Haulmont.
+  ~ Copyright 2022 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,20 +21,16 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
-    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+    <changeSet id="1-other" author="reports" dbms="postgresql,hsqldb,oracle">
+        <dropNotNullConstraint tableName="REPORT_REPORT" columnName="GROUP_ID"/>
+    </changeSet>
 
-    <property name="byte_array.type" dbms="mysql" value="LONGBLOB"/>
-    <property name="byte_array.type" dbms="mariadb" value="LONGBLOB"/>
-    <property name="byte_array.type" dbms="postgresql" value="bytea"/>
-    <property name="byte_array.type" dbms="mssql" value="varbinary(max)"/>
-    <property name="byte_array.type" dbms="oracle" value="BLOB"/>
-    <property name="byte_array.type" dbms="hsqldb" value="BLOB"/>
+    <changeSet id="1-mysql" author="reports" dbms="mysql,mariadb">
+        <dropNotNullConstraint tableName="REPORT_REPORT" columnName="GROUP_ID" columnDataType="varchar(32)"/>
+    </changeSet>
 
-    <include file="io/jmix/reports/liquibase/changelog/001-reports.xml"/>
-    <include file="io/jmix/reports/liquibase/changelog/002-reports.xml"/>
-    <include file="io/jmix/reports/liquibase/changelog/003-reports.xml"/>
-    <include file="io/jmix/reports/liquibase/changelog/004-reports.xml"/>
-
+    <changeSet id="1-mssql" author="reports" dbms="mssql">
+        <dropNotNullConstraint tableName="REPORT_REPORT" columnName="GROUP_ID" columnDataType="${uuid.type}"/>
+    </changeSet>
 
 </databaseChangeLog>

@@ -92,7 +92,7 @@ public class Report implements com.haulmont.yarg.structure.Report {
     @Column(name = "CODE", length = 255)
     protected String code;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_ID")
     protected ReportGroup group;
 

@@ -1,11 +1,8 @@
 # Jmix Translations
 
-This repository contains translations for the [Jmix](https://jmix.io) framework.
+This folder contains translations for the [Jmix](https://jmix.io) framework.
 
-For more information see:
-
-* Jmix Core project source [repository](https://github.com/Haulmont/jmix-core).
-* Jmix [documentation](https://docs.jmix.io).
+For more information see Jmix [documentation](https://docs.jmix.io/jmix/localization/framework-translations.html).
 
 ## Editing
 
@@ -17,11 +14,6 @@ Be sure that the file encoding for the Properties Files is set to UTF-8 in
 Publish all translations to `.m2`:
 ```
 ./gradlew publishToMavenLocal
-```
-
-Publish only Russian translation to `.m2`:
-```
-./gradlew publishRuPublicationToMavenLocal
 ```
 
 ## Usage

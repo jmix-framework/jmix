@@ -44,12 +44,13 @@ import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.function.Consumer;
 
 public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
-        implements SupportsValueSource<V>,
-        SupportsTypedValue<TypedDateTimePicker<V>,
-                        ComponentValueChangeEvent<DateTimePicker, LocalDateTime>, V, LocalDateTime>, HasZoneId,
-        SupportsDatatype<V>, SupportsValidation<V>, HasRequired, InitializingBean, ApplicationContextAware {
+        implements SupportsValueSource<V>, SupportsTypedValue<TypedDateTimePicker<V>,
+        ComponentValueChangeEvent<DateTimePicker, LocalDateTime>, V, LocalDateTime>, HasZoneId,
+        SupportsDatatype<V>, SupportsValidation<V>, SupportsStatusChangeHandler<TypedDateTimePicker<V>>,
+        HasRequired, InitializingBean, ApplicationContextAware {
 
     protected ApplicationContext applicationContext;
     protected DateTimeTransformations dateTimeTransformations;
@@ -174,6 +175,22 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
         }
     }
 
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<TypedDateTimePicker<V>>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
+    }
+
     @Override
     public void setMin(LocalDateTime min) {
         super.setMin(min);
@@ -217,6 +234,7 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
         }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Registration addTypedValueChangeListener(
             ComponentEventListener<TypedValueChangeEvent<TypedDateTimePicker<V>, V>> listener) {
@@ -289,6 +307,7 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
 
         ZonedDateTime zonedDateTime = presentationValue.atZone(getZoneIdInternal());
 
+        //noinspection unchecked
         return (V) dateTimeTransformations.transformFromZDT(zonedDateTime, valueType);
     }
 

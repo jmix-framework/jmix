@@ -20,10 +20,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.component.EntityPickerComponent;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.LookupComponent;
-import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.delegate.EntityFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.ValueSource;
@@ -38,10 +35,11 @@ import org.springframework.context.ApplicationContextAware;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class EntityPicker<V> extends ValuePickerBase<EntityPicker<V>, V>
-        implements EntityPickerComponent<V>, LookupComponent<V>,
-        SupportsValidation<V>, HasRequired, HasPrefixAndSuffix,
+        implements EntityPickerComponent<V>, LookupComponent<V>, SupportsValidation<V>,
+        SupportsStatusChangeHandler<EntityPicker<V>>, HasRequired, HasPrefixAndSuffix,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -83,6 +81,22 @@ public class EntityPicker<V> extends ValuePickerBase<EntityPicker<V>, V>
     @Override
     public void setInvalid(boolean invalid) {
         fieldDelegate.setInvalid(invalid);
+    }
+
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<EntityPicker<V>>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
     }
 
     @Nullable

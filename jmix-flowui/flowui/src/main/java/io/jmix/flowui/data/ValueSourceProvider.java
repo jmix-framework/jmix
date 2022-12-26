@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.grid;
+package io.jmix.flowui.data;
 
-import com.vaadin.flow.component.grid.Grid;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
-
-import java.util.List;
-
-public interface EnhancedDataGrid<T> {
-
-    Grid.Column<T> addColumn(MetaPropertyPath metaPropertyPath);
-
-    Grid.Column<T> addColumn(String key, MetaPropertyPath metaPropertyPath);
-
-    boolean isEditorCreated();
+/**
+ * Provides instances of {@link ValueSource}, for instance, for child components.
+ */
+public interface ValueSourceProvider {
 
     /**
-     * @return a copy of columns that are visible and not hidden by security
+     * @param property a property to get a {@link ValueSource}
+     * @return an instance of {@link ValueSource} for a given property
      */
-    List<Grid.Column<T>> getVisibleColumns();
+    <V> ValueSource<V> getValueSource(String property);
 }

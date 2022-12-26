@@ -30,17 +30,15 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.data.ConversionException;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsDatatype;
-import io.jmix.flowui.component.SupportsTypedValue;
-import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.TextInputFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.kit.component.HasTitle;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -48,12 +46,13 @@ import org.springframework.context.ApplicationContextAware;
 import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class TypedTextField<V> extends TextField
-        implements SupportsValidation<V>, SupportsDatatype<V>,
+        implements SupportsValidation<V>, SupportsStatusChangeHandler<TypedTextField<V>>, SupportsDatatype<V>,
         SupportsTypedValue<TypedTextField<V>, ComponentValueChangeEvent<TextField, String>, V, String>,
-        SupportsValueSource<V>, HasRequired, ApplicationContextAware, InitializingBean {
+        SupportsValueSource<V>, HasRequired, HasTitle, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -134,6 +133,22 @@ public class TypedTextField<V> extends TextField
 
     @Nullable
     @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<TypedTextField<V>>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
+    }
+
+    @Nullable
+    @Override
     public ValueSource<V> getValueSource() {
         return fieldDelegate.getValueSource();
     }
@@ -188,6 +203,7 @@ public class TypedTextField<V> extends TextField
         return super.addValueChangeListener(listenerWrapper);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Registration addTypedValueChangeListener(ComponentEventListener<TypedValueChangeEvent<TypedTextField<V>, V>> listener) {
         return getEventBus().addListener(TypedValueChangeEvent.class, (ComponentEventListener) listener);
@@ -305,6 +321,7 @@ public class TypedTextField<V> extends TextField
                 throw new ConversionException(e.getLocalizedMessage());
             }
         }
+        //noinspection unchecked
         return (V) presentationValue;
     }
 

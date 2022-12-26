@@ -21,20 +21,24 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.kit.component.HasTitle;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 public class JmixPasswordField extends PasswordField implements SupportsValueSource<String>,
-        SupportsValidation<String>, HasRequired, ApplicationContextAware, InitializingBean {
+        SupportsValidation<String>, SupportsStatusChangeHandler<JmixPasswordField>, HasRequired,
+        HasTitle, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -54,6 +58,7 @@ public class JmixPasswordField extends PasswordField implements SupportsValueSou
         fieldDelegate = createFieldDelegate();
     }
 
+    @SuppressWarnings("unchecked")
     protected FieldDelegate<JmixPasswordField, String, String> createFieldDelegate() {
         return applicationContext.getBean(FieldDelegate.class, this);
     }
@@ -103,6 +108,22 @@ public class JmixPasswordField extends PasswordField implements SupportsValueSou
         } else {
             super.setInvalid(invalid);
         }
+    }
+
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<JmixPasswordField>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
     }
 
     @Override

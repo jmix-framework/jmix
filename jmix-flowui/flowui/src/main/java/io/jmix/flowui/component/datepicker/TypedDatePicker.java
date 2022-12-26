@@ -25,12 +25,9 @@ import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsDatatype;
-import io.jmix.flowui.component.SupportsTypedValue;
-import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.DatePickerDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
@@ -41,11 +38,12 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
 import java.time.LocalDate;
+import java.util.function.Consumer;
 
 public class TypedDatePicker<V extends Comparable> extends DatePicker
-        implements SupportsValueSource<V>,
-        SupportsTypedValue<TypedDatePicker<V>, ComponentValueChangeEvent<DatePicker, LocalDate>, V, LocalDate>,
-        SupportsDatatype<V>, SupportsValidation<V>, HasRequired, InitializingBean, ApplicationContextAware {
+        implements SupportsValueSource<V>, SupportsTypedValue<TypedDatePicker<V>,
+        ComponentValueChangeEvent<DatePicker, LocalDate>, V, LocalDate>, SupportsDatatype<V>, SupportsValidation<V>,
+        SupportsStatusChangeHandler<TypedDatePicker<V>>, HasRequired, InitializingBean, ApplicationContextAware {
 
     protected ApplicationContext applicationContext;
     protected DateTimeTransformations dateTimeTransformations;
@@ -123,6 +121,7 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
         }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Registration addTypedValueChangeListener(
             ComponentEventListener<TypedValueChangeEvent<TypedDatePicker<V>, V>> listener) {
@@ -190,6 +189,22 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
         } else {
             super.setInvalid(invalid);
         }
+    }
+
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<TypedDatePicker<V>>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
     }
 
     @Nullable
@@ -262,6 +277,7 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     protected V convertToModel(@Nullable LocalDate presentationValue) {
         if (presentationValue == null) {

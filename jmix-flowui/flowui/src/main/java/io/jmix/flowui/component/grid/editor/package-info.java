@@ -14,23 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.grid;
+@NonNullApi
+package io.jmix.flowui.component.grid.editor;
 
-import com.vaadin.flow.component.grid.Grid;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
-
-import java.util.List;
-
-public interface EnhancedDataGrid<T> {
-
-    Grid.Column<T> addColumn(MetaPropertyPath metaPropertyPath);
-
-    Grid.Column<T> addColumn(String key, MetaPropertyPath metaPropertyPath);
-
-    boolean isEditorCreated();
-
-    /**
-     * @return a copy of columns that are visible and not hidden by security
-     */
-    List<Grid.Column<T>> getVisibleColumns();
-}
+import org.springframework.lang.NonNullApi;

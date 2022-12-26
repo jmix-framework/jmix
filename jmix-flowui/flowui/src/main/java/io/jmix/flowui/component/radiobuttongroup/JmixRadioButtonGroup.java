@@ -21,6 +21,7 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -33,10 +34,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements SupportsValueSource<V>,
         SupportsDataProvider<V>, SupportsItemsContainer<V>, SupportsItemsEnum<V>, SupportsValidation<V>,
-        HasRequired, ApplicationContextAware, InitializingBean {
+        SupportsStatusChangeHandler<JmixRadioButtonGroup<V>>, HasRequired, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -135,10 +137,28 @@ public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements Supp
         fieldDelegate.executeValidators();
     }
 
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<JmixRadioButtonGroup<V>>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
+    }
+
+    @SuppressWarnings("unchecked")
     protected FieldDelegate<JmixRadioButtonGroup<V>, V, V> createFieldDelegate() {
         return applicationContext.getBean(FieldDelegate.class, this);
     }
 
+    @SuppressWarnings("unchecked")
     protected DataViewDelegate<JmixRadioButtonGroup<V>, V> createDataViewDelegate() {
         return applicationContext.getBean(DataViewDelegate.class, this);
     }

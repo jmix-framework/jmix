@@ -137,6 +137,7 @@ public class ValidationErrors {
             this.description = description;
         }
 
+        @Nullable
         public Component getComponent() {
             return component;
         }

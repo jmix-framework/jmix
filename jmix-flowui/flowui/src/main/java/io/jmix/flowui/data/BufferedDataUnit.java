@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.grid;
+package io.jmix.flowui.data;
 
-import com.vaadin.flow.component.grid.Grid;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
-
-import java.util.List;
-
-public interface EnhancedDataGrid<T> {
-
-    Grid.Column<T> addColumn(MetaPropertyPath metaPropertyPath);
-
-    Grid.Column<T> addColumn(String key, MetaPropertyPath metaPropertyPath);
-
-    boolean isEditorCreated();
+public interface BufferedDataUnit {
 
     /**
-     * @return a copy of columns that are visible and not hidden by security
+     * Writes all changes since the last time this method is invoked.
      */
-    List<Grid.Column<T>> getVisibleColumns();
+    void write();
+
+    /**
+     * Discards all changes since the last time {@link #write} is invoked.
+     */
+    void discard();
+
+    /**
+     * @return {@code true} if this data unit in buffered mode, {@code false} otherwise.
+     */
+    boolean isBuffered();
+
+    /**
+     * @return {@code true} if this data unit stores changed data, {@code false} otherwise.
+     */
+    boolean isModified();
 }

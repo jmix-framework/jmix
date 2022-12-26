@@ -25,10 +25,11 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.flowui.component.SupportsTypedValue;
+import io.jmix.flowui.component.SupportsStatusChangeHandler.StatusContext;
+import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.ConversionException;
 import io.jmix.flowui.data.EntityValueSource;
-import io.jmix.flowui.component.SupportsTypedValue;
-import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ComponentValidationException;
 import io.jmix.flowui.exception.ValidationException;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,8 +42,10 @@ import org.springframework.context.ApplicationContextAware;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static io.jmix.flowui.component.SupportsValidation.PROPERTY_ERROR_MESSAGE;
 import static io.jmix.flowui.component.UiComponentUtils.isComponentEnabled;
 import static io.jmix.flowui.component.UiComponentUtils.isComponentVisible;
 
@@ -65,6 +68,9 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     protected Datatype<T> datatype;
 
     protected Function<V, T> toModelConverter;
+
+    protected Consumer<StatusContext<C>> statusChangeHandler;
+    protected String errorMessage;
 
     protected String requiredMessage;
     protected boolean explicitlyInvalid = true;
@@ -113,7 +119,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     public void executeValidators() throws ValidationException {
         if (isInvalidInternal()) {
             setInvalidInternal(false);
-            setComponentErrorMessage(null);
+            setErrorMessage(null);
         }
 
         if (component.isReadOnly()
@@ -132,7 +138,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
                         .trace("Unable to convert presentation value to model", e);
 
                 setInvalidInternal(true);
-                setComponentErrorMessage(e.getMessage());
+                setErrorMessage(e.getMessage());
                 throw new ComponentValidationException(e.getMessage(), component);
             }
         }
@@ -152,7 +158,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
                     validator.accept(value);
                 } catch (ValidationException e) {
                     setInvalidInternal(true);
-                    setComponentErrorMessage(e.getDetailsMessage());
+                    setErrorMessage(e.getDetailsMessage());
                     throw new ComponentValidationException(e.getDetailsMessage(), component, e);
                 }
             }
@@ -187,17 +193,23 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         this.datatype = datatype;
     }
 
-    protected void setComponentErrorMessage(@Nullable String errorMessage) {
-        if (component instanceof HasValidation) {
-            ((HasValidation) component).setErrorMessage(errorMessage);
+    public void setErrorMessage(@Nullable String errorMessage) {
+        this.errorMessage = errorMessage;
+
+        if (statusChangeHandler != null) {
+            statusChangeHandler.accept(new StatusContext<>(component, errorMessage));
+        } else if (component instanceof HasValidation) {
+            component.getElement().setProperty(PROPERTY_ERROR_MESSAGE, Strings.nullToEmpty(errorMessage));
         }
     }
 
     @Nullable
-    protected String getComponentErrorMessage() {
-        return component instanceof HasValidation
-                ? ((HasValidation) component).getErrorMessage()
-                : null;
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<C>> statusChangeHandler) {
+        this.statusChangeHandler = statusChangeHandler;
     }
 
     public boolean isInvalid() {
@@ -243,7 +255,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
             errorMessage = getMessage("validationFail.defaultRequiredMessage");
         }
         setInvalidInternal(true);
-        setComponentErrorMessage(errorMessage);
+        setErrorMessage(errorMessage);
     }
 
     protected String getRequiredErrorMessage() {

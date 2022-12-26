@@ -30,6 +30,8 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
+import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
@@ -49,6 +51,8 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     protected ApplicationContext applicationContext;
 
     protected TreeGridDelegate<E, TreeDataGridItems<E>> gridDelegate;
+
+    protected boolean editorCreated = false;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -243,6 +247,34 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     @Override
     public List<Column<E>> getColumns() {
         return gridDelegate.getColumns();
+    }
+
+    @Override
+    public boolean isEditorCreated() {
+        return editorCreated;
+    }
+
+    @Override
+    protected void onDataProviderChange() {
+        super.onDataProviderChange();
+
+        if (isEditorCreated()) {
+            DataGridEditor<E> editor = getEditor();
+            if (editor instanceof DataGridDataProviderChangeObserver) {
+                ((DataGridDataProviderChangeObserver) editor).dataProviderChanged();
+            }
+        }
+    }
+
+    @Override
+    public DataGridEditor<E> getEditor() {
+        return ((DataGridEditor<E>) super.getEditor());
+    }
+
+    @Override
+    protected DataGridEditor<E> createEditor() {
+        editorCreated = true;
+        return new DataGridEditorImpl<>(this, applicationContext);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

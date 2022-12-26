@@ -192,7 +192,7 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
         return container.getItemOrNull() == null ? BindingState.INACTIVE : BindingState.ACTIVE;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Registration addInstanceChangeListener(Consumer<InstanceChangeEvent<E>> listener) {
         return events.addListener(InstanceChangeEvent.class, (Consumer) listener);
@@ -203,7 +203,7 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
         return events.addListener(StateChangeEvent.class, listener);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Registration addValueChangeListener(Consumer<ValueChangeEvent<V>> listener) {
         return events.addListener(ValueChangeEvent.class, (Consumer) listener);
@@ -218,19 +218,18 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected void containerItemChanged(InstanceContainer.ItemChangeEvent e) {
+    protected void containerItemChanged(InstanceContainer.ItemChangeEvent<E> e) {
         if (e.getItem() != null) {
             setState(BindingState.ACTIVE);
         } else {
             setState(BindingState.INACTIVE);
         }
 
-        events.fireEvent(new InstanceChangeEvent(this, e.getPrevItem(), e.getItem()));
+        events.fireEvent(new InstanceChangeEvent<>(this, e.getPrevItem(), e.getItem()));
     }
 
     @SuppressWarnings("unchecked")
-    protected void containerItemPropertyChanged(InstanceContainer.ItemPropertyChangeEvent e) {
+    protected void containerItemPropertyChanged(InstanceContainer.ItemPropertyChangeEvent<E> e) {
         if (Objects.equals(e.getProperty(), metaPropertyPath.toPathString())) {
             events.fireEvent(new ValueChangeEvent<>(this, (V) e.getPrevValue(), (V) e.getValue()));
         }

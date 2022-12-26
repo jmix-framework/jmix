@@ -16,21 +16,10 @@
 
 package io.jmix.flowui.component.grid;
 
-import com.vaadin.flow.component.grid.Grid;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.annotation.Internal;
 
-import java.util.List;
+@Internal
+public interface DataGridDataProviderChangeObserver {
 
-public interface EnhancedDataGrid<T> {
-
-    Grid.Column<T> addColumn(MetaPropertyPath metaPropertyPath);
-
-    Grid.Column<T> addColumn(String key, MetaPropertyPath metaPropertyPath);
-
-    boolean isEditorCreated();
-
-    /**
-     * @return a copy of columns that are visible and not hidden by security
-     */
-    List<Grid.Column<T>> getVisibleColumns();
+    void dataProviderChanged();
 }

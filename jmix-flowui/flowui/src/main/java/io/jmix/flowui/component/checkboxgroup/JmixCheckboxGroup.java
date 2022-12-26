@@ -26,6 +26,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.CollectionFieldDelegate;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -39,12 +40,13 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 
-public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
-        SupportsTypedValue<JmixCheckboxGroup<V>, ComponentValueChangeEvent<CheckboxGroup<V>, Set<V>>, Collection<V>, Set<V>>,
-        SupportsValueSource<Collection<V>>, SupportsDataProvider<V>,
-        SupportsItemsContainer<V>, SupportsItemsEnum<V>, SupportsValidation<Collection<V>>,
-        HasRequired, ApplicationContextAware, InitializingBean {
+public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
+        implements SupportsTypedValue<JmixCheckboxGroup<V>,
+        ComponentValueChangeEvent<CheckboxGroup<V>, Set<V>>, Collection<V>, Set<V>>, SupportsValueSource<Collection<V>>,
+        SupportsDataProvider<V>, SupportsItemsContainer<V>, SupportsItemsEnum<V>, SupportsValidation<Collection<V>>,
+        SupportsStatusChangeHandler<JmixCheckboxGroup<V>>, HasRequired, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -117,6 +119,22 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
     @Override
     public void setInvalid(boolean invalid) {
         fieldDelegate.setInvalid(invalid);
+    }
+
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<JmixCheckboxGroup<V>>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
     }
 
     @Override
@@ -260,10 +278,12 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
         return fieldDelegate.equalCollections(value, oldValue);
     }
 
+    @SuppressWarnings("unchecked")
     protected CollectionFieldDelegate<JmixCheckboxGroup<V>, V, V> createFieldDelegate() {
         return applicationContext.getBean(CollectionFieldDelegate.class, this);
     }
 
+    @SuppressWarnings("unchecked")
     protected DataViewDelegate<JmixCheckboxGroup<V>, V> createDataViewDelegate() {
         return applicationContext.getBean(DataViewDelegate.class, this);
     }

@@ -18,6 +18,7 @@ package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.grid.*;
+import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
@@ -36,8 +37,13 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
-import io.jmix.flowui.data.*;
+import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.data.BindingState;
+import io.jmix.flowui.data.ContainerDataUnit;
+import io.jmix.flowui.data.EmptyDataUnit;
+import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.component.HasActions;
@@ -53,8 +59,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent<E> & HasActions & EnhancedDataGrid<E>, E,
-        ITEMS extends DataGridItems<E>>
+public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent<E> & EnhancedDataGrid<E> & HasActions,
+        E, ITEMS extends DataGridItems<E>>
         extends AbstractComponentDelegate<C>
         implements ApplicationContextAware, InitializingBean {
 
@@ -68,6 +74,9 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected ITEMS dataGridItems;
 
     protected Registration selectionListenerRegistration;
+    protected Registration itemSetChangeRegistration;
+    protected Registration valueChangeRegistration;
+
     protected Set<SelectionListener<Grid<E>, E>> selectionListeners = new HashSet<>();
     protected Consumer<ColumnSecurityContext<E>> afterColumnSecurityApplyHandler;
 
@@ -133,7 +142,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void bind(DataGridItems<E> dataGridItems) {
-        // do nothing
+        itemSetChangeRegistration = dataGridItems.addItemSetChangeListener(this::itemsItemSetChanged);
+        valueChangeRegistration = dataGridItems.addValueChangeListener(this::itemsValueChanged);
     }
 
     protected void unbind() {
@@ -141,6 +151,65 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             dataGridItems = null;
             setupEmptyDataProvider();
         }
+
+        if (itemSetChangeRegistration != null) {
+            itemSetChangeRegistration.remove();
+            itemSetChangeRegistration = null;
+        }
+
+        if (valueChangeRegistration != null) {
+            valueChangeRegistration.remove();
+            valueChangeRegistration = null;
+        }
+    }
+
+    protected void itemsItemSetChanged(DataGridItems.ItemSetChangeEvent<E> event) {
+        closeEditorIfOpened();
+        component.getDataCommunicator().reset();
+    }
+
+    protected void closeEditorIfOpened() {
+        if (getComponent().isEditorCreated()
+                && getComponent().getEditor().isOpen()) {
+            Editor<E> editor = getComponent().getEditor();
+            if (editor.isBuffered()) {
+                editor.cancel();
+            } else {
+                editor.closeEditor();
+            }
+
+            if (editor instanceof DataGridDataProviderChangeObserver) {
+                ((DataGridDataProviderChangeObserver) editor).dataProviderChanged();
+            }
+        }
+    }
+
+    protected void itemsValueChanged(DataGridItems.ValueChangeEvent<E> event) {
+        if (itemIsBeingEdited(event.getItem())) {
+            DataGridEditor<E> editor = ((DataGridEditor<E>) getComponent().getEditor());
+            // Do not interrupt the save process
+            if (editor.isBuffered() && !editor.isSaving()) {
+                editor.cancel();
+            } else {
+                // In case of unbuffered editor, we don't need to refresh an item,
+                // because it results in row repainting, i.e. all editor components
+                // are recreated and focus lost. In case of buffered editor in a
+                // save process, an item will be refreshed after editor is closed.
+                return;
+            }
+        }
+
+        component.getDataCommunicator().refresh(event.getItem());
+    }
+
+    protected boolean itemIsBeingEdited(E item) {
+        if (getComponent().isEditorCreated()) {
+            Editor<E> editor = getComponent().getEditor();
+            return editor.isOpen()
+                    && Objects.equals(item, editor.getItem());
+        }
+
+        return false;
     }
 
     @Nullable

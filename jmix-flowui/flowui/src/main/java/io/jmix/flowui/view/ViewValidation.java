@@ -83,6 +83,18 @@ public class ViewValidation {
         return errors;
     }
 
+    public ValidationErrors validateUiComponent(Component component) {
+        Preconditions.checkNotNullArgument(component);
+
+        if (component instanceof SupportsValidation) {
+            ValidationErrors errors = new ValidationErrors();
+            validate((SupportsValidation<?>) component).forEach(errors::add);
+            return errors;
+        } else {
+            return ValidationErrors.none();
+        }
+    }
+
     public ValidationErrors validateBeanGroup(Class<?> groupClass, Object item) {
         ValidationErrors errors = new ValidationErrors();
 

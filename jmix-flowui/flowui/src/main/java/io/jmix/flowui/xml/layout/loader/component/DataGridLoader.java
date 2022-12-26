@@ -27,13 +27,6 @@ public class DataGridLoader extends AbstractGridLoader<DataGrid<?>> {
         return factory.create(DataGrid.class);
     }
 
-    @Override
-    public void loadComponent() {
-        super.loadComponent();
-
-        loadData();
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected void setupDataProvider(GridDataHolder holder) {

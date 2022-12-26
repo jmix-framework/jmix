@@ -76,6 +76,8 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
+        loadData();
+
         getActionLoaderSupport().loadActions(resultComponent, element);
     }
 

@@ -34,13 +34,6 @@ public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
         return factory.create(TreeDataGrid.class);
     }
 
-    @Override
-    public void loadComponent() {
-        super.loadComponent();
-
-        loadData();
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected void setupDataProvider(GridDataHolder holder) {

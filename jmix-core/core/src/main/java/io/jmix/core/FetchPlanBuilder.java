@@ -19,14 +19,8 @@ package io.jmix.core;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -36,37 +30,37 @@ import java.util.stream.Collectors;
  * <p>
  * Use {@link FetchPlans} factory to get the builder.
  */
-@Component("core_FetchPlanBuilder")
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FetchPlanBuilder {
 
-    @Autowired
-    protected ApplicationContext applicationContext;
-    @Autowired
+    protected FetchPlans fetchPlans;
     protected Metadata metadata;
-    @Autowired
     protected MetadataTools metadataTools;
-    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
     protected Class<?> entityClass;
     protected MetaClass metaClass;
     protected Set<String> properties = new LinkedHashSet<>();
     protected Map<String, FetchPlanBuilder> builders = new HashMap<>();
-    protected Map<String, FetchPlan> fetchPlans = new HashMap<>();
+    protected Map<String, FetchPlan> propertiesToFetchPlans = new HashMap<>();
     protected Map<String, FetchMode> fetchModes = new HashMap<>();
     protected boolean systemProperties = false;
     protected boolean loadPartialEntities = false;
     protected String name = "";
     protected FetchPlan result = null;
 
-    protected FetchPlanBuilder(Class<?> entityClass) {
+    protected FetchPlanBuilder(
+            FetchPlans fetchPlans,
+            Metadata metadata,
+            MetadataTools metadataTools,
+            FetchPlanRepository fetchPlanRepository,
+            Class<?> entityClass
+    ) {
+        this.fetchPlans = fetchPlans;
+        this.metadata = metadata;
+        this.metadataTools = metadataTools;
+        this.fetchPlanRepository = fetchPlanRepository;
         this.entityClass = entityClass;
-    }
-
-    @PostConstruct
-    protected void postConstruct() {
-        metaClass = metadata.getClass(entityClass);
+        this.metaClass = metadata.getClass(entityClass);
     }
 
     /**
@@ -88,7 +82,7 @@ public class FetchPlanBuilder {
             FetchPlanBuilder builder = builders.get(property);
 
             fetchPlanProperties.add(new FetchPlanProperty(property,
-                    builder != null ? builder.build() : fetchPlans.get(property),
+                    builder != null ? builder.build() : propertiesToFetchPlans.get(property),
                     fetchModes.getOrDefault(property, FetchMode.AUTO)));
         }
 
@@ -120,7 +114,7 @@ public class FetchPlanBuilder {
         if (metaProperty.getRange().isClass()) {
             if (!builders.containsKey(propName)) {
                 Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
-                builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
+                builders.put(propName, fetchPlans.builder(refClass));
             }
         }
         if (parts.length > 1) {
@@ -144,7 +138,7 @@ public class FetchPlanBuilder {
         checkState();
         properties.add(property);
         Class<?> refClass = metaClass.getProperty(property).getRange().asClass().getJavaClass();
-        FetchPlanBuilder builder = applicationContext.getBean(FetchPlanBuilder.class, refClass);
+        FetchPlanBuilder builder = fetchPlans.builder(refClass);
         consumer.accept(builder);
         builders.put(property, builder);
         return this;
@@ -305,7 +299,7 @@ public class FetchPlanBuilder {
         checkState();
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             properties.add(property.getName());
-            fetchPlans.put(property.getName(), property.getFetchPlan());
+            propertiesToFetchPlans.put(property.getName(), property.getFetchPlan());
             fetchModes.put(property.getName(), property.getFetchMode());
         }
         return this;
@@ -346,14 +340,14 @@ public class FetchPlanBuilder {
 
         if (propFetchPlan != null) {
             if (isNew) {
-                fetchPlans.put(propName, propFetchPlan);
+                propertiesToFetchPlans.put(propName, propFetchPlan);
             } else {//property already exists
                 MetaProperty metaProperty = metaClass.getProperty(propName);
                 if (metaProperty.getRange().isClass()) {//ref property need to be merged with existing property
                     if (!builders.containsKey(propName)) {
                         Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
-                        builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
-                        builders.get(propName).merge(fetchPlans.get(propName));
+                        builders.put(propName, fetchPlans.builder(refClass));
+                        builders.get(propName).merge(propertiesToFetchPlans.get(propName));
                     }
                     builders.get(propName).merge(propFetchPlan);
                 }
@@ -384,9 +378,9 @@ public class FetchPlanBuilder {
                 if (!builders.containsKey(propName)) {
                     Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
 
-                    FetchPlanBuilder newNestedBuilder = applicationContext.getBean(FetchPlanBuilder.class, refClass);
-                    if (fetchPlans.containsKey(propName)) {
-                        newNestedBuilder.merge(fetchPlans.get(propName));
+                    FetchPlanBuilder newNestedBuilder = fetchPlans.builder(refClass);
+                    if (propertiesToFetchPlans.containsKey(propName)) {
+                        newNestedBuilder.merge(propertiesToFetchPlans.get(propName));
                     }
 
                     builders.put(propName, newNestedBuilder);

@@ -17,10 +17,7 @@
 package com.haulmont.cuba.core.global;
 
 import io.jmix.core.*;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import io.jmix.core.Metadata;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -29,19 +26,20 @@ import java.util.function.Consumer;
  * @deprecated use only in legacy CUBA code. In new code, use {@link FetchPlanBuilder}.
  */
 @Deprecated
-@Component(ViewBuilder.NAME)
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Primary
 public class ViewBuilder extends FetchPlanBuilder {
 
-    public static final String NAME = "cuba_ViewBuilder";
-
     public static ViewBuilder of(Class<? extends Entity> entityClass) {
-        return AppBeans.getPrototype(ViewBuilder.class, entityClass);
+        return AppBeans.getPrototype(ViewBuilderFactory.class).builder(entityClass);
     }
 
-    protected ViewBuilder(Class<? extends Entity> entityClass) {
-        super(entityClass);
+    protected ViewBuilder(
+            ViewBuilderFactory builderFactory,
+            Metadata metadata,
+            MetadataTools metadataTools,
+            FetchPlanRepository fetchPlanRepository,
+            Class<? extends Entity> entityClass
+    ) {
+        super(builderFactory, metadata, metadataTools, fetchPlanRepository, entityClass);
     }
 
     @Override

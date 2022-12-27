@@ -64,7 +64,7 @@ public class FluentLoader<E> {
     protected ApplicationContext applicationContext;
 
     @Autowired
-    private ObjectProvider<FetchPlanBuilder> fetchPlanBuilderProvider;
+    private FetchPlans fetchPlans;
 
     @Autowired
     private AccessConstraintsRegistry accessConstraintsRegistry;
@@ -121,7 +121,7 @@ public class FluentLoader<E> {
 
     protected void createFetchPlanBuilder() {
         if (fetchPlanBuilder == null) {
-            fetchPlanBuilder = fetchPlanBuilderProvider.getObject(entityClass);
+            fetchPlanBuilder = fetchPlans.builder(entityClass);
         }
     }
 

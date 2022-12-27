@@ -1,11 +1,7 @@
 package io.jmix.graphql.datafetcher;
 
 import graphql.schema.DataFetchingEnvironment;
-import io.jmix.core.AccessManager;
-import io.jmix.core.Entity;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
@@ -33,6 +29,8 @@ public class DataFetcherPlanBuilder {
     private EnvironmentUtils environmentUtils;
     @Autowired
     private AccessManager accessManager;
+    @Autowired
+    private FetchPlans fetchPlans;
 
     private final static Logger log = LoggerFactory.getLogger(DataFetcherPlanBuilder.class);
 
@@ -43,7 +41,7 @@ public class DataFetcherPlanBuilder {
         log.debug("properties {}", properties);
 
         // todo inject correctly
-        io.jmix.core.FetchPlanBuilder fetchPlanBuilder = context.getBean(io.jmix.core.FetchPlanBuilder.class, entityClass);
+        io.jmix.core.FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(entityClass);
 
         // todo support _instName for nested entities too
         if (environmentUtils.hasInstanceNameProperty(environment)) {

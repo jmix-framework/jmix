@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
@@ -171,9 +172,7 @@ public class JmixTabSheet extends Component
 
     @Override
     public Optional<Component> findOwnComponent(String id) {
-        return getChildren()
-                .filter(component -> component instanceof Tabs)
-                .flatMap(Component::getChildren)
+        return getOwnComponents().stream()
                 .filter(component -> sameId(component, id))
                 .findAny();
     }
@@ -181,10 +180,21 @@ public class JmixTabSheet extends Component
     @Override
     public Collection<Component> getOwnComponents() {
         return getChildren()
-                .filter(component -> component instanceof Tabs)
-                .flatMap(Component::getChildren)
                 .sequential()
+                .map(component -> getContentByTab((Tab) component))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the child components of tab sheet in {@link Element} tree.
+     *
+     * @return the stream of tab sheet tab
+     */
+    @Override
+    public Stream<Component> getChildren() {
+        return super.getChildren()
+                .filter(component -> component instanceof Tabs)
+                .flatMap(Component::getChildren);
     }
 
     /**

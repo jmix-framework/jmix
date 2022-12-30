@@ -183,8 +183,8 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
         then: "TabSheet attributes will be loaded"
         def tabSheet = componentView.tabSheetId
-        def tabs = tabSheet.getOwnComponents()
-        def childHbox = tabSheet.getContentByTab(tabs[0] as Tab) as HorizontalLayout
+        def tabs = tabSheet.getChildren().collect()
+        def childHbox = tabSheet.getOwnComponents()[0] as HorizontalLayout
 
         verifyAll(tabSheet) {
             id.get() == "tabSheetId"

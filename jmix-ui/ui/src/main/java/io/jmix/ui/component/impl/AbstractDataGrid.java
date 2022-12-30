@@ -42,6 +42,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -53,17 +54,16 @@ import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.data.BindingState;
-import io.jmix.ui.component.data.DataGridItems;
-import io.jmix.ui.component.data.DataUnit;
-import io.jmix.ui.component.data.ValueSourceProvider;
+import io.jmix.ui.component.data.*;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 import io.jmix.ui.component.data.aggregation.Aggregations;
 import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
+import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EmptyDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
+import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
 import io.jmix.ui.component.datagrid.DataGridDataProvider;
@@ -74,12 +74,15 @@ import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import io.jmix.ui.component.pagination.data.PaginationDataUnitBinder;
 import io.jmix.ui.component.pagination.data.PaginationEmptyBinder;
 import io.jmix.ui.component.renderer.RendererWrapper;
+import io.jmix.ui.component.validation.Validator;
+import io.jmix.ui.component.validator.BeanPropertyValidator;
 import io.jmix.ui.component.valueprovider.EntityValueProvider;
 import io.jmix.ui.component.valueprovider.FormatterBasedValueProvider;
 import io.jmix.ui.component.valueprovider.StringPresentationValueProvider;
 import io.jmix.ui.component.valueprovider.YesNoIconPresentationValueProvider;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.ScreenValidation;
@@ -101,11 +104,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import javax.validation.metadata.BeanDescriptor;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.component.ComponentsHelper.findActionById;
@@ -115,10 +120,11 @@ import static io.jmix.ui.screen.LookupScreen.LOOKUP_ITEM_CLICK_ACTION_ID;
 public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, E>
         extends AbstractComponent<C>
         implements DataGrid<E>, SecuredActionsHolder, LookupComponent.LookupSelectionChangeNotifier<E>,
-        DataGridItemsEventsDelegate<E>, HasInnerComponents, InitializingBean {
+        DataGridItemsEventsDelegate<E>, HasInnerComponents, InitializingBean, Validatable, HasValidator<Collection<E>> {
 
     protected static final String HAS_TOP_PANEL_STYLE_NAME = "has-top-panel";
     protected static final String TEXT_SELECTION_ENABLED_STYLE = "text-selection-enabled";
+    protected static final int VALIDATORS_LIST_INITIAL_CAPACITY = 2;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractDataGrid.class);
 
@@ -191,6 +197,8 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     protected Map<E, Object> itemDatasources; // lazily initialized WeakHashMap;
     protected Consumer<EmptyStateClickEvent<E>> emptyStateClickEventHandler;
 
+    protected List<Validator<Collection<E>>> validators;
+
     public AbstractDataGrid() {
         component = createComponent();
         componentComposition = createComponentComposition();
@@ -247,6 +255,67 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         initContextMenu();
 
         initSidebarMenu();
+    }
+
+    @Override
+    public boolean isValid() {
+        try {
+            validate();
+            return true;
+        } catch (ValidationException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public void validate() throws ValidationException {
+        if (hasValidationError()) {
+            setValidationError(null);
+        }
+
+        if (!isVisibleRecursive() || !isEnabledRecursive()) {
+            return;
+        }
+
+        DataGridItems<E> dataGridItems = dataBinding.getDataGridItems();
+        if (CollectionUtils.isNotEmpty(validators)) {
+            List<E> items = dataGridItems.getItems(0, dataGridItems.size());
+            try {
+                for (Validator<Collection<E>> validator : validators) {
+                    validator.accept(items);
+                }
+            } catch (ValidationException e) {
+                setValidationError(e.getDetailsMessage());
+                throw new ValidationFailedException(e.getDetailsMessage(), this, e);
+            }
+        }
+    }
+
+    @Override
+    public void addValidator(Validator<? super Collection<E>> validator) {
+        if (validators == null) {
+            validators = new ArrayList<>(VALIDATORS_LIST_INITIAL_CAPACITY);
+        }
+
+        if (!validators.contains(validator)) {
+            validators.add((Validator<Collection<E>>) validator);
+        }
+    }
+
+    @Override
+    public Collection<Validator<Collection<E>>> getValidators() {
+        if (validators == null) {
+            return Collections.emptyList();
+        }
+
+        return Collections.unmodifiableCollection(validators);
+    }
+
+    @Override
+    public void removeValidator(Validator<Collection<E>> validator) {
+        if (validators != null) {
+            validators.remove(validator);
+        }
     }
 
     @Autowired
@@ -941,9 +1010,32 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
             refreshActionsState();
 
             setUiTestId(dataGridItems);
+
+            initBeanValidator(dataGridItems);
         }
 
         initEmptyState();
+    }
+
+    protected void initBeanValidator(DataGridItems<E> dataGridItems) {
+        if (dataGridItems instanceof ContainerDataGridItems) {
+            CollectionContainer<E> container = ((ContainerDataGridItems<E>) dataGridItems).getContainer();
+            if (container instanceof CollectionPropertyContainer) {
+                InstanceContainer<?> masterContainer = ((CollectionPropertyContainer<E>) container).getMaster();
+                MetaClass entityMetaClass = masterContainer.getEntityMetaClass();
+                Class<?> enclosingJavaClass = entityMetaClass.getJavaClass();
+                String property = ((CollectionPropertyContainer<E>) container).getProperty();
+
+                if (enclosingJavaClass != KeyValueEntity.class) {
+                    javax.validation.Validator validator = applicationContext.getBean(javax.validation.Validator.class);
+                    BeanDescriptor beanDescriptor = validator.getConstraintsForClass(enclosingJavaClass);
+
+                    if (beanDescriptor.isBeanConstrained()) {
+                        addValidator(applicationContext.getBean(BeanPropertyValidator.class, enclosingJavaClass, property));
+                    }
+                }
+            }
+        }
     }
 
     protected void setUiTestId(DataGridItems<E> items) {

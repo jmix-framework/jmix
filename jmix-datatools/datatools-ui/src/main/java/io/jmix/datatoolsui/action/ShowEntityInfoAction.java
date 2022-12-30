@@ -99,4 +99,19 @@ public class ShowEntityInfoAction extends SecuredListAction implements Action.Ex
 
         screen.show();
     }
+
+    @Override
+    protected boolean isApplicable() {
+        final ListComponent<?> target = getTarget();
+        if (Objects.isNull(target)) {
+            return false;
+        }
+
+        final Collection<?> selected = target.getSelected();
+        if (selected.size() != 1) {
+            return false;
+        }
+
+        return Objects.nonNull(selected.iterator().next());
+    }
 }

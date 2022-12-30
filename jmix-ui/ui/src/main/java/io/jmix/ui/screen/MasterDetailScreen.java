@@ -478,6 +478,10 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
         this.crossFieldValidate = crossFieldValidate;
     }
 
+    protected boolean isUiListComponentsValidationEnabled() {
+        return true;
+    }
+
     /**
      * Validates screen data. Default implementation validates visible and enabled UI components. <br>
      * Can be overridden in subclasses.
@@ -500,7 +504,18 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
      */
     protected ValidationErrors validateUiComponents() {
         ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
-        return screenValidation.validateUiComponents(getForm().getComponents());
+        ValidationErrors validationErrors = screenValidation.validateUiComponents(getForm().getComponents());
+
+        if (isUiListComponentsValidationEnabled()) {
+            validationErrors.addAll(validateUiListComponents(screenValidation));
+        }
+
+        return validationErrors;
+    }
+
+    protected ValidationErrors validateUiListComponents(ScreenValidation screenValidation) {
+        ComponentContainer editBox = getEditBox();
+        return screenValidation.validateUiListComponents(editBox);
     }
 
     /**

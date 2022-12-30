@@ -57,6 +57,8 @@ public class ScreenValidation {
     protected Icons icons;
     @Autowired
     protected Validator validator;
+    @Autowired
+    protected ScreenListComponentValidation screenListComponentValidation;
 
     /**
      * Validates UI components by invoking their {@link Validatable#validate()}.
@@ -89,6 +91,27 @@ public class ScreenValidation {
 
         ComponentsHelper.traverseValidatable(container,
                 v -> validate(v, errors)
+        );
+        return errors;
+    }
+
+    /**
+     * Validate UI List components by performing validation of underlying entity instances
+     * and its collection properties if those components are able to modify their collections within source screen
+     * (due to visibility, standard actions etc).
+     *
+     * @param container components container
+     * @return validation errors
+     */
+    public ValidationErrors validateUiListComponents(ComponentContainer container) {
+        ValidationErrors errors = new ValidationErrors();
+
+        ComponentsHelper.traverseComponents(container,
+                c -> {
+                    if (c instanceof ListComponent) {
+                        screenListComponentValidation.validateListComponent((ListComponent<?>) c, errors);
+                    }
+                }
         );
         return errors;
     }
@@ -181,7 +204,7 @@ public class ScreenValidation {
     /**
      * Shows standard unsaved changes dialog with Discard and Cancel actions.
      *
-     * @param origin screen controller
+     * @param origin      screen controller
      * @param closeAction close action
      * @return result
      */
@@ -215,7 +238,7 @@ public class ScreenValidation {
     /**
      * Shows standard save confirmation dialog with Save, Discard and Cancel actions.
      *
-     * @param origin screen controller
+     * @param origin      screen controller
      * @param closeAction close action
      * @return result
      */

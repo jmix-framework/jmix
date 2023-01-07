@@ -4,6 +4,7 @@ import io.jmix.core.annotation.JmixModule
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
+import io.jmix.ui.sys.ActionsConfiguration
 import io.jmix.ui.sys.UiControllersConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.context.ApplicationContext
@@ -24,6 +25,15 @@ open class ${project_id.capitalize()}Configuration {
                 metadataReaderFactory: AnnotationScanMetadataReaderFactory
     ): UiControllersConfiguration {
         return UiControllersConfiguration(applicationContext, metadataReaderFactory).apply {
+            basePackages = listOf("${project_rootPackage}")
+        }
+    }
+
+    @Bean("${project_id}_${project_id.capitalize()}UiActions")
+    open fun actions(applicationContext: ApplicationContext,
+                metadataReaderFactory: AnnotationScanMetadataReaderFactory
+    ): ActionsConfiguration {
+        return ActionsConfiguration(applicationContext, metadataReaderFactory).apply {
             basePackages = listOf("${project_rootPackage}")
         }
     }

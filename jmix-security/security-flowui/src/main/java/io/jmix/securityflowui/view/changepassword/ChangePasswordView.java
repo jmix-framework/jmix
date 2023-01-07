@@ -116,6 +116,8 @@ public class ChangePasswordView extends StandardView {
         Preconditions.checkNotNullArgument(username,
                 messageBundle.getMessage("changePasswordView.emptyUsernameMessage"));
         user = userRepository.loadUserByUsername(username);
+        if (currentPasswordField.isVisible())
+            currentPasswordField.focus();
     }
 
     @Override

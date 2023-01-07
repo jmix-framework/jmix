@@ -16,12 +16,14 @@
 
 package io.jmix.core.common.xmlparsing;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+@Internal
 @Component("core_Dom4jToolsShutdownListener")
 public class Dom4jToolsShutdownListener {
 

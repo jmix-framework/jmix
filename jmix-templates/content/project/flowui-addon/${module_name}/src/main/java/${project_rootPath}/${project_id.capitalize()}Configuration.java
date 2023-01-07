@@ -4,6 +4,7 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
@@ -28,5 +29,14 @@ public class ${project_id.capitalize()}Configuration {
                 = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
         viewControllers.setBasePackages(Collections.singletonList("${project_rootPackage}"));
         return viewControllers;
+    }
+
+    @Bean("${project_id}_${project_id.capitalize()}Actions")
+    public ActionsConfiguration actions(ApplicationContext applicationContext,
+                                                AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actions
+                = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actions.setBasePackages(Collections.singletonList("${project_rootPackage}"));
+        return actions;
     }
 }

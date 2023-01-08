@@ -51,6 +51,8 @@
 ./copy-default-file.sh jmix-imap/imap io/jmix/imap
 ./copy-default-file.sh jmix-imap/imap-ui io/jmix/imapui
 
+./copy-default-file.sh jmix-quartz/quartz io/jmix/quartz
+
 ./copy-default-file.sh jmix-reports/reports io/jmix/reports
 ./copy-default-file.sh jmix-reports/reports-ui io/jmix/reportsui
 

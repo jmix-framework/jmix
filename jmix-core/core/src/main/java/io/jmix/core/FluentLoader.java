@@ -127,6 +127,17 @@ public class FluentLoader<E> {
 
     /**
      * Load by entity identifier.
+     * <p>
+     * For example:
+     * <pre>
+     * Customer customer = dataManager.load(Customer.class)
+     *          .id(someId)
+     *          .one();
+     *
+     * Optional&lt;Customer&gt; customer = dataManager.load(Customer.class)
+     *          .id(someId)
+     *          .optional();
+     * </pre>
      */
     public ById<E> id(Object id) {
         return new ById<>(this, id);
@@ -134,6 +145,15 @@ public class FluentLoader<E> {
 
     /**
      * Load by array of entity identifiers.
+     * <p>
+     * For example:
+     * <pre>
+     * List&lt;Customer&gt; customers = dataManager.load(Customer.class)
+     *          .ids(id1, id2)
+     *          .list();
+     * </pre>
+     * Entities in the result list have the same order as provided identifiers. If an instance from the list
+     * cannot be loaded for some reason, the whole operation fails with {@code EntityAccessException}.
      */
     public ByIds<E> ids(Object... ids) {
         return new ByIds<>(this, Arrays.asList(ids));
@@ -141,6 +161,15 @@ public class FluentLoader<E> {
 
     /**
      * Load by collection of entity identifiers.
+     * <p>
+     * For example:
+     * <pre>
+     * List&lt;Customer&gt; customers = dataManager.load(Customer.class)
+     *          .ids(idCollection)
+     *          .list();
+     * </pre>
+     * Entities in the result list have the same order as provided identifiers. If an instance from the list
+     * cannot be loaded for some reason, the whole operation fails with {@code EntityAccessException}.
      */
     public ByIds<E> ids(Collection ids) {
         return new ByIds<>(this, ids);
@@ -148,6 +177,16 @@ public class FluentLoader<E> {
 
     /**
      * Load by query.
+     * <p>
+     * For example:
+     * <pre>
+     * List&lt;Customer&gt; customers = dataManager.load(Customer.class)
+     *      .query("select c from Customer c where c.name like :name")
+     *      .parameter("name", "(?i)%doe%") // case-insensitive substring search
+     *      .maxResults(100)
+     *      .list();
+     * </pre>
+     * @see #query(String, Object...)
      */
     public ByQuery<E> query(String queryString) {
         return new ByQuery<>(this, queryString, applicationContext);
@@ -155,6 +194,16 @@ public class FluentLoader<E> {
 
     /**
      * Load by query with positional parameters (e.g. {@code "e.name = ?1 and e.status = ?2"}).
+     * <p>
+     * Always use {@code e} as the entity alias.
+     * <p>
+     * For example:
+     * <pre>
+     * List&lt;Customer&gt; customers = dataManager.load(Customer.class)
+     *      .query("e.name like ?1", "(?i)%doe%") // case-insensitive substring search
+     *      .maxResults(100)
+     *      .list();
+     * </pre>
      */
     public ByQuery<E> query(String queryString, Object... parameters) {
         return new ByQuery<>(this, queryString, parameters, applicationContext);
@@ -162,6 +211,14 @@ public class FluentLoader<E> {
 
     /**
      * Load by condition.
+     * <p>
+     * For example:
+     * <pre>
+     * List&lt;Customer&gt; customers = dataManager.load(Customer.class)
+     *      .condition(PropertyCondition.contains("name", "(?i)%doe%")) // case-insensitive substring search
+     *      .maxResults(100)
+     *      .list();
+     * </pre>
      */
     public ByCondition<E> condition(Condition condition) {
         MetaClass metaClass = metadata.getClass(entityClass);
@@ -170,6 +227,14 @@ public class FluentLoader<E> {
 
     /**
      * Load all instances.
+     * <p>
+     * For example:
+     * <pre>
+     * List&lt;Customer&gt; customers = dataManager.load(Customer.class)
+     *      .all()
+     *      .maxResults(100)
+     *      .list();
+     * </pre>
      */
     public ByCondition<E> all() {
         return condition(LogicalCondition.and());

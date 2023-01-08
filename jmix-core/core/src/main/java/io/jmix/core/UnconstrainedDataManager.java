@@ -122,13 +122,13 @@ public interface UnconstrainedDataManager {
      * Customer customer = dataManager.load(Customer.class).id(someId).one();
      *
      * List&lt;Customer&gt; customers = dataManager.load(Customer.class)
-     *      .query("select c from sample$Customer c where c.name = :name")
+     *      .query("select c from Customer c where c.name = :name")
      *      .parameter("name", "Smith")
-     *      .fetchPlan("customer-fetch-plan")
+     *      .maxResults(100)
      *      .list();
      * </pre>
      *
-     * @param entityClass class of entity that needs to be loaded
+     * @param entityClass class of the loaded entity
      */
     <E> FluentLoader<E> load(Class<E> entityClass);
 
@@ -137,10 +137,10 @@ public interface UnconstrainedDataManager {
      * <p>
      * Usage example:
      * <pre>
-     * Customer customer = dataManager.load(customerId).fetchPlan("with-grade").one();
+     * Customer customer = dataManager.load(customerId).one();
      * </pre>
      *
-     * @param entityId {@link Id} of entity that needs to be loaded
+     * @param entityId {@link Id} of the loaded entity
      */
     <E> FluentLoader.ById<E> load(Id<E> entityId);
 
@@ -150,13 +150,13 @@ public interface UnconstrainedDataManager {
      * Usage examples:
      * <pre>
      * List&lt;KeyValueEntity&gt; customerDataList = dataManager.loadValues(
-     *          "select c.name, c.status from sample$Customer c where c.name = :n")
+     *          "select c.name, c.status from Customer c where c.name = :n")
      *      .properties("custName", "custStatus")
      *      .parameter("name", "Smith")
      *      .list();
      *
      * KeyValueEntity customerData = dataManager.loadValues(
-     *          "select c.name, count(c) from sample$Customer c group by c.name")
+     *          "select c.name, count(c) from Customer c group by c.name")
      *      .properties("custName", "custCount")
      *      .one();
      * </pre>
@@ -176,7 +176,7 @@ public interface UnconstrainedDataManager {
      * Usage examples:
      * <pre>
      * Long customerCount = dataManager.loadValue(
-     *          "select count(c) from sample$Customer c", Long.class).one();
+     *          "select count(c) from Customer c", Long.class).one();
      * </pre>
      *
      * @param queryString query string

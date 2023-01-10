@@ -573,8 +573,7 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
-     * Iterates over all registered views and registers their routes if needed.
-     * Replaces route registration in case a newer view class is available.
+     * Iterates over all registered views and registers their routes.
      */
     public void registerViewRoutes() {
         for (ViewInfo viewInfo : getViewInfos()) {
@@ -583,8 +582,7 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
-     * Registers route for the passed viewInfo instance if needed. Replaces
-     * route registration in case a newer view class is available.
+     * Registers route for the passed viewInfo instance.
      *
      * @param viewInfo a viewInfo instance to register route
      */
@@ -593,8 +591,7 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
-     * Registers route for the passed view class if needed. Replaces
-     * route registration in case a newer view class is available.
+     * Registers route for the passed view class.
      *
      * @param viewClass a view class to register route
      */
@@ -605,14 +602,8 @@ public class ViewRegistry implements ApplicationContextAware {
         }
 
         RouteConfiguration routeConfiguration = getRouteConfiguration();
-        if (routeConfiguration.isRouteRegistered(viewClass)) {
-            log.debug("Skipping route '{}' for class '{}' since it was already registered",
-                    route.value(), viewClass.getName());
-            return;
-        }
 
-        // Controller class can be hot-deployed, thus route path
-        // was registered for prev version of class
+        // The route can be already registered because of hot-deploy or different order of init listeners.
         if (routeConfiguration.isPathAvailable(route.value())) {
             routeConfiguration.removeRoute(route.value());
         }

@@ -57,7 +57,7 @@ public class FormatStrings {
     }
 
     public DecimalFormatSymbols getFormatSymbols() {
-        return formatSymbols;
+        return (DecimalFormatSymbols) formatSymbols.clone();
     }
 
     public String getIntegerFormat() {

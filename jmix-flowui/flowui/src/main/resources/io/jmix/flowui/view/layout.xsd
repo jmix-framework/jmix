@@ -2357,6 +2357,28 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- MultiSelectComboBox-->
+    <xs:complexType name="multiSelectComboBoxComponent">
+        <xs:complexContent>
+            <xs:extension base="baseFieldComponent">
+                <xs:attribute name="opened" type="xs:boolean"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
+                <xs:attribute name="autoOpen" type="xs:boolean"/>
+                <xs:attribute name="pageSize" type="xs:integer"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="tooltipText" type="resourceString"/>
+                <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+                <xs:attribute name="allowedCharPattern" type="xs:string"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
+
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasPlaceholder"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- ComboBoxPicker-->
     <xs:complexType name="comboBoxPickerComponent">
         <xs:complexContent>
@@ -3079,6 +3101,7 @@
                 <xs:element name="dropdownButton" type="dropdownButtonComponent"/>
                 <xs:element name="comboButton" type="comboButtonComponent"/>
                 <xs:element name="comboBox" type="comboBoxComponent"/>
+                <xs:element name="multiSelectComboBox" type="multiSelectComboBoxComponent"/>
                 <xs:element name="valuePicker" type="valuePickerComponent"/>
                 <xs:element name="multiValuePicker" type="valuePickerComponent"/>
                 <xs:element name="entityPicker" type="entityPickerComponent"/>

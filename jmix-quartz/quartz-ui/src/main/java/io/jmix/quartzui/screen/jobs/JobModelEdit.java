@@ -1,9 +1,9 @@
-package io.jmix.quartz.screen.jobs;
+package io.jmix.quartzui.screen.jobs;
 
 import com.google.common.base.Strings;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.quartz.model.*;
-import io.jmix.quartz.screen.trigger.TriggerModelEdit;
+import io.jmix.quartzui.screen.trigger.TriggerModelEdit;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
 import io.jmix.ui.ScreenBuilders;

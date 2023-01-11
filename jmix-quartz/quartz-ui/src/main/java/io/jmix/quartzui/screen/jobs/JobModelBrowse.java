@@ -1,4 +1,4 @@
-package io.jmix.quartz.screen.jobs;
+package io.jmix.quartzui.screen.jobs;
 
 import com.google.common.base.Strings;
 import io.jmix.quartz.model.JobModel;

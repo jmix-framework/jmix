@@ -108,6 +108,8 @@ includeProject('oidc-starter', 'jmix-oidc/oidc-starter')
 
 includeProject('quartz', 'jmix-quartz/quartz')
 includeProject('quartz-starter', 'jmix-quartz/quartz-starter')
+includeProject('quartz-ui', 'jmix-quartz/quartz-ui')
+includeProject('quartz-ui-starter', 'jmix-quartz/quartz-ui-starter')
 
 includeProject('rest', 'jmix-rest/rest')
 includeProject('rest-starter', 'jmix-rest/rest-starter')

@@ -8,7 +8,6 @@ import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
-import io.jmix.ui.component.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

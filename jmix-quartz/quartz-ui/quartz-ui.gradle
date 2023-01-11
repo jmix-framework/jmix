@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.quartz'
-archivesBaseName = 'jmix-quartz'
+archivesBaseName = 'jmix-quartz-ui'
 
 dependencies {
-    api project(':core')
-    api project(':data')
-
-    api 'org.springframework.boot:spring-boot-starter-quartz'
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-quartz'
-    testImplementation project(':eclipselink')
-    testImplementation 'org.liquibase:liquibase-core'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    api project(':quartz')
+    api project(':ui')
 }

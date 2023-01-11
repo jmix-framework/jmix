@@ -1,4 +1,4 @@
-package io.jmix.quartz.screen.trigger;
+package io.jmix.quartzui.screen.trigger;
 
 import com.google.common.base.Strings;
 import io.jmix.quartz.model.ScheduleType;

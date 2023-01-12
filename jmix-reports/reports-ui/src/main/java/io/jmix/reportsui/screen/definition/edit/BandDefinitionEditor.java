@@ -183,11 +183,11 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     }
 
     protected String getScriptEditorDialogCaption() {
-        ReportGroup group = reportDc.getItem().getGroup();
         String report = reportDc.getItem().getName();
+        String bandName = bandsDc.getItem().getName();
 
-        if (ObjectUtils.isNotEmpty(group) && ObjectUtils.isNotEmpty(report)) {
-            return messageBundle.formatMessage("scriptEditorDialog.captionFormat", report, bandsDc.getItem().getName());
+        if (ObjectUtils.isNotEmpty(bandName) && ObjectUtils.isNotEmpty(report)) {
+            return messageBundle.formatMessage("scriptEditorDialog.captionFormat", report, bandName);
         }
         return StringUtils.EMPTY;
     }

@@ -23,7 +23,6 @@ archivesBaseName = 'jmix-quartz'
 dependencies {
     api project(':core')
     api project(':data')
-    api project(':ui')
 
     api 'org.springframework.boot:spring-boot-starter-quartz'
 

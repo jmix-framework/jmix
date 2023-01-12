@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 public class FetchPlanBuilder {
 
     protected FetchPlans fetchPlans;
-    protected Metadata metadata;
     protected MetadataTools metadataTools;
     protected FetchPlanRepository fetchPlanRepository;
 
@@ -56,7 +55,6 @@ public class FetchPlanBuilder {
             Class<?> entityClass
     ) {
         this.fetchPlans = fetchPlans;
-        this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.fetchPlanRepository = fetchPlanRepository;
         this.entityClass = entityClass;

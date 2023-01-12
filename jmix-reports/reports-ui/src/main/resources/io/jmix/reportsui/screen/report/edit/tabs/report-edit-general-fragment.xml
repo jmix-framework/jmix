@@ -55,7 +55,7 @@
                         </entityComboBox>
                     </column>
                     <column width="250px">
-                        <entityComboBox id="group" required="true" property="group" optionsContainer="groupsDc"
+                        <entityComboBox id="group" property="group" optionsContainer="groupsDc"
                                         requiredMessage="msg://report.reportTypeMsg"/>
                         <textField id="code" property="code"/>
                     </column>

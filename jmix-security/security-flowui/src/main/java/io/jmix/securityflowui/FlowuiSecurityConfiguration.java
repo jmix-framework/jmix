@@ -17,6 +17,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.configurer.AnonymousConfigurer;
+import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
 import io.jmix.securityflowui.access.FlowuiViewAccessChecker;
@@ -149,6 +150,7 @@ public class FlowuiSecurityConfiguration {
 
         http.apply(new AnonymousConfigurer());
         http.apply(new SessionManagementConfigurer());
+        http.apply(new RememberMeConfigurer());
 
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry =
                 http.authorizeRequests();

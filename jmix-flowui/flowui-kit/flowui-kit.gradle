@@ -20,9 +20,45 @@ apply plugin: 'io.jmix'
 group = 'io.jmix.flowui'
 archivesBaseName = 'jmix-flowui-kit'
 
+configurations {
+    api.setCanBeResolved(true)
+}
+
 dependencies {
+    compileOnlyApi("com.vaadin:flow-server:$vaadinFlowVersion")
     api 'com.google.guava:guava'
     api ("com.vaadin:vaadin-core") {
+        exclude module: "atmosphere-runtime"
+        exclude module: "byte-buddy"
+        exclude module: "commons-codec"
+        exclude module: "commons-compress"
+        exclude module: "commons-fileupload"
+        exclude module: "commons-io"
+        exclude module: "commons-logging"
         exclude module: 'fusion-endpoint'
+        exclude module: "gentyref"
+        exclude module: "gwt-elemental"
+        exclude module: "httpclient"
+        exclude module: "httpcore"
+        exclude module: "slf4j-api"
+        exclude module: "flow-push"
+        exclude module: "flow-server"
+        exclude module: "jackson-annotations"
+        exclude module: "jackson-core"
+        exclude module: "jackson-databind"
+        exclude module: "javax.annotation-api"
+        exclude module: "javax"
+        exclude module: "jsoup"
+        exclude module: "jsr305"
+        exclude module: "ph-commons"
+        exclude module: "ph-css"
+        exclude module: "vaadin-dev-server"
+    }
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+    from {
+        configurations.api.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }

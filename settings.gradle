@@ -78,6 +78,7 @@ includeProject('flowui-kit', 'jmix-flowui/flowui-kit')
 includeProject('flowui-themes', 'jmix-flowui/flowui-themes')
 includeProject("flowui-data", 'jmix-flowui/flowui-data')
 includeProject("flowui-data-starter", 'jmix-flowui/flowui-data-starter')
+includeProject("flowui-devserver", 'jmix-flowui/flowui-devserver')
 
 includeProject('grapesjs', 'jmix-grapesjs/grapesjs')
 includeProject('grapesjs-starter', 'jmix-grapesjs/grapesjs-starter')
@@ -108,6 +109,8 @@ includeProject('oidc-starter', 'jmix-oidc/oidc-starter')
 
 includeProject('quartz', 'jmix-quartz/quartz')
 includeProject('quartz-starter', 'jmix-quartz/quartz-starter')
+includeProject('quartz-ui', 'jmix-quartz/quartz-ui')
+includeProject('quartz-ui-starter', 'jmix-quartz/quartz-ui-starter')
 
 includeProject('rest', 'jmix-rest/rest')
 includeProject('rest-starter', 'jmix-rest/rest-starter')

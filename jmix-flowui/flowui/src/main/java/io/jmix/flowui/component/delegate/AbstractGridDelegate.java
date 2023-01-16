@@ -41,13 +41,10 @@ import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.data.BindingState;
-import io.jmix.flowui.data.ContainerDataUnit;
-import io.jmix.flowui.data.EmptyDataUnit;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.component.HasActions;
-import io.jmix.flowui.model.CollectionContainer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -132,10 +129,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             this.dataGridItems = dataGridItems;
 
             bind(dataGridItems);
-
-            if (component.getColumns().isEmpty()) {
-                setupAutowiredColumns(dataGridItems);
-            }
 
             applySecurityToPropertyColumns();
         }
@@ -293,42 +286,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected void setupEmptyDataProvider() {
         component.setItems(new ListDataProvider<>(Collections.emptyList()));
-    }
-
-    protected void setupAutowiredColumns(ITEMS dataGridItems) {
-        Collection<MetaPropertyPath> paths = getAutowiredProperties(dataGridItems);
-
-        for (MetaPropertyPath metaPropertyPath : paths) {
-            MetaProperty property = metaPropertyPath.getMetaProperty();
-            if (!property.getRange().getCardinality().isMany()
-                    && !metadataTools.isSystem(property)) {
-                addColumnInternal(metaPropertyPath);
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected Collection<MetaPropertyPath> getAutowiredProperties(ITEMS dataGridItems) {
-        if (dataGridItems instanceof ContainerDataUnit) {
-            CollectionContainer<E> container = ((ContainerDataUnit<E>) dataGridItems).getContainer();
-
-            return container.getFetchPlan() != null ?
-                    // if a fetchPlan is specified - use fetchPlan properties
-                    metadataTools.getFetchPlanPropertyPaths(container.getFetchPlan(), container.getEntityMetaClass()) :
-                    // otherwise use all properties from meta-class
-                    metadataTools.getPropertyPaths(container.getEntityMetaClass());
-        }
-
-        if (dataGridItems instanceof EmptyDataUnit
-                && dataGridItems instanceof EntityDataUnit) {
-            return metadataTools.getPropertyPaths(((EntityDataUnit) dataGridItems).getEntityMetaClass());
-        }
-
-        return Collections.emptyList();
-    }
-
-    protected Grid.Column<E> addColumnInternal(MetaPropertyPath metaPropertyPath) {
-        return addColumnInternal(metaPropertyPath.getMetaProperty().getName(), metaPropertyPath);
     }
 
     protected Grid.Column<E> addColumnInternal(String key, MetaPropertyPath metaPropertyPath) {

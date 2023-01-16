@@ -21,9 +21,8 @@ import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
 
 import javax.annotation.Nullable;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalQuery;
@@ -44,18 +43,18 @@ public class OffsetDateTimeDatatype extends AbstractTemporalDatatype<OffsetDateT
             return format(value, locale);
         }
         OffsetDateTime offsetDateTime = (OffsetDateTime) value;
-        LocalDateTime localDateTime = offsetDateTime.atZoneSameInstant(timeZone.toZoneId()).toLocalDateTime();
-        return format(localDateTime, locale);
+        ZonedDateTime zonedDateTime = offsetDateTime.atZoneSameInstant(timeZone.toZoneId());
+        return format(zonedDateTime, locale);
     }
 
     @Override
     protected DateTimeFormatter getDateTimeFormatter() {
-        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withZone(ZoneId.systemDefault());
+        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
     }
 
     @Override
     protected DateTimeFormatter getDateTimeFormatter(FormatStrings formatStrings, Locale locale) {
-        return DateTimeFormatter.ofPattern(formatStrings.getDateTimeFormat(), locale).withZone(ZoneId.systemDefault());
+        return DateTimeFormatter.ofPattern(formatStrings.getOffsetDateTimeFormat(), locale);
     }
 
     @Override

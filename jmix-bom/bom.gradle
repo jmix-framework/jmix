@@ -89,6 +89,9 @@ dependencies {
         
         api 'gr.netmechanics.jmix:duration-field:1.4.0'
         api 'gr.netmechanics.jmix:duration-field-starter:1.4.0'
+
+        api 'dev.warhammster.jmix:miniofs:1.4.0'
+        api 'dev.warhammster.jmix:miniofs-starter:1.4.0'
         
         // end community add-ons
 

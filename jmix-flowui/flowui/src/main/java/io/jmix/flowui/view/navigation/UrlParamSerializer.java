@@ -16,11 +16,18 @@
 
 package io.jmix.flowui.view.navigation;
 
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.URLEncodeUtils;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.FlowuiNavigationProperties;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -28,9 +35,15 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class UrlParamSerializer {
 
     protected FlowuiNavigationProperties navigationProperties;
+    protected MetadataTools metadataTools;
+    protected Metadata metadata;
 
-    public UrlParamSerializer(FlowuiNavigationProperties navigationProperties) {
+    public UrlParamSerializer(FlowuiNavigationProperties navigationProperties,
+                              MetadataTools metadataTools,
+                              Metadata metadata) {
         this.navigationProperties = navigationProperties;
+        this.metadataTools = metadataTools;
+        this.metadata = metadata;
     }
 
     /**
@@ -50,11 +63,14 @@ public class UrlParamSerializer {
 
         if (String.class == type
                 || Integer.class == type
-                || Long.class == type) {
+                || Long.class == type
+                || Boolean.class == type) {
             serialized = serializePrimitive(value);
 
         } else if (UUID.class == type) {
             serialized = serializeUuid((UUID) value);
+        } else if (metadataTools.isJpaEmbeddable(type)) {
+            serialized = serializeComposite(value);
         } else {
             throw new IllegalArgumentException(
                     String.format("Unable to serialize value '%s' of type '%s'", value, type));
@@ -71,6 +87,26 @@ public class UrlParamSerializer {
         return navigationProperties.isUseCrockfordUuidEncoder()
                 ? CrockfordUuidEncoder.encode(value)
                 : URLEncodeUtils.encodeUtf8(value.toString());
+    }
+
+    protected String serializeComposite(Object value) {
+        MetaClass metaClass = metadata.getClass(value);
+        Collection<MetaProperty> properties = metaClass.getProperties();
+
+        List<String> params = new ArrayList<>();
+
+        for (MetaProperty property : properties) {
+            String propertyName = property.getName();
+            Object propertyValue = EntityValues.getValue(value, propertyName);
+
+            if (propertyValue != null) {
+                String propertyStringValue = serialize(propertyValue);
+
+                params.add(String.join("=", propertyName, propertyStringValue));
+            }
+        }
+
+        return String.join("&", params);
     }
 
     /**
@@ -91,7 +127,10 @@ public class UrlParamSerializer {
         String decoded = URLEncodeUtils.decodeUtf8(serializedValue);
 
         try {
-            if (String.class == type) {
+            if (Boolean.class == type) {
+                return ((T) parseBoolean(decoded));
+
+            } else if (String.class == type) {
                 return ((T) parseString(decoded));
 
             } else if (Integer.class == type) {
@@ -102,6 +141,10 @@ public class UrlParamSerializer {
 
             } else if (UUID.class == type) {
                 return ((T) parseUuid(serializedValue));
+
+            } else if (metadataTools.isJpaEmbeddable(type)) {
+                return parseComposite(type, serializedValue);
+
             } else {
                 throw new IllegalArgumentException(
                         String.format("Unable to deserialize id '%s' of type '%s'", serializedValue, type));
@@ -111,6 +154,10 @@ public class UrlParamSerializer {
                     String.format("An error occurred while deserializing id: '%s' of type '%s'",
                             serializedValue, type));
         }
+    }
+
+    protected Boolean parseBoolean(String decoded) {
+        return Boolean.valueOf(decoded);
     }
 
     protected String parseString(String decoded) {
@@ -132,5 +179,39 @@ public class UrlParamSerializer {
             String decoded = URLEncodeUtils.decodeUtf8(serializedValue);
             return UUID.fromString(decoded);
         }
+    }
+
+    protected <T> T parseComposite(Class<T> type, String serializedValue) {
+        T composite = metadata.create(type);
+
+        MetaClass metaClass = metadata.getClass(composite);
+        Collection<MetaProperty> properties = metaClass.getProperties();
+
+        Map<String, String> propertyNameValueMap = Arrays.stream(serializedValue.split("&"))
+                .collect(Collectors.toMap(this::propertyNameMapper, this::propertyValueMapper));
+
+        for (MetaProperty property : properties) {
+            String propertyName = property.getName();
+            String propertyValue = propertyNameValueMap.get(propertyName);
+
+            if (StringUtils.isNotEmpty(propertyValue)) {
+                Class<?> propertyClass = property.getJavaType();
+                Object deserializedValue = deserialize(propertyClass, propertyValue);
+
+                EntityValues.setValue(composite, propertyName, deserializedValue);
+            }
+        }
+
+        return composite;
+    }
+
+    protected String propertyNameMapper(String property) {
+        String[] splitProperty = property.split("=", 2);
+        return splitProperty[0];
+    }
+
+    protected String propertyValueMapper(String property) {
+        String[] splitProperty = property.split("=", 2);
+        return splitProperty[1];
     }
 }

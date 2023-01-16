@@ -68,7 +68,7 @@ public class MaxValidator<T extends Number> extends AbstractValidator<T> impleme
      *
      * @param max max value
      */
-    public void setMin(int max) {
+    public void setMax(int max) {
         this.max = max;
     }
 

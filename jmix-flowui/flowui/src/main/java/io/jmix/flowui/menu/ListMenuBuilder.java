@@ -148,6 +148,7 @@ public class ListMenuBuilder {
         }
 
         JmixListMenu.ViewMenuItem listMenuItem = new JmixListMenu.ViewMenuItem(menuItem.getId())
+                .withControllerClass(getControllerClass(menuItem))
                 .withTitle(menuConfig.getItemTitle(menuItem))
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.asList(getClassNames(menuItem)))

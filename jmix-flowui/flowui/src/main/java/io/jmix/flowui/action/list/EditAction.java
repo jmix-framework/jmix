@@ -19,6 +19,7 @@ package io.jmix.flowui.action.list;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
@@ -52,6 +53,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;
+    protected MetadataTools metadataTools;
 
     protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
     protected Consumer<E> afterSaveHandler;
@@ -76,6 +78,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
         setConstraintEntityOp(EntityOp.UPDATE);
         this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PENCIL);
+    }
+
+    @Autowired
+    protected void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
     }
 
     @Nullable
@@ -308,7 +315,8 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         }
 
         if (openMode == OpenMode.DIALOG
-                || UiComponentUtils.isComponentAttachedToDialog((Component) target)) {
+                || UiComponentUtils.isComponentAttachedToDialog((Component) target)
+                || !metadataTools.isJpaEntity(editedEntity.getClass())) {
             openDialog(editedEntity);
         } else {
             navigate(editedEntity);

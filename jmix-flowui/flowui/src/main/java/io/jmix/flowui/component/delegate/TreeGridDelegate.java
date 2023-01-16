@@ -20,15 +20,12 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.provider.hierarchy.TreeData;
 import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import com.vaadin.flow.function.ValueProvider;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.DataGridItems;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.Collection;
 
 @Component("flowui_TreeGridDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -48,30 +45,6 @@ public class TreeGridDelegate<E, ITEMS extends DataGridItems<E>>
     @Override
     protected void setupEmptyDataProvider() {
         component.setDataProvider(new TreeDataProvider<>(new TreeData<>()));
-    }
-
-    @Override
-    protected void setupAutowiredColumns(ITEMS gridDataItems) {
-        Collection<MetaPropertyPath> paths = getAutowiredProperties(gridDataItems);
-
-        Grid.Column<E> hierarchyColumn = null;
-        for (MetaPropertyPath metaPropertyPath : paths) {
-            MetaProperty property = metaPropertyPath.getMetaProperty();
-            if (!property.getRange().getCardinality().isMany()
-                    && !metadataTools.isSystem(property)) {
-
-                if (hierarchyColumn != null) {
-                    addColumnInternal(metaPropertyPath);
-                } else {
-                    // init first column as hierarchy column
-                    hierarchyColumn = addHierarchyColumnInternal(metaPropertyPath);
-                }
-            }
-        }
-    }
-
-    protected Grid.Column<E> addHierarchyColumnInternal(MetaPropertyPath metaPropertyPath) {
-        return addHierarchyColumnInternal(metaPropertyPath.getMetaProperty().getName(), metaPropertyPath);
     }
 
     protected Grid.Column<E> addHierarchyColumnInternal(String key, MetaPropertyPath metaPropertyPath) {

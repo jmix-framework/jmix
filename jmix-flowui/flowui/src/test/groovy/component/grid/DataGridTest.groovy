@@ -16,7 +16,7 @@
 
 package component.grid
 
-
+import component.grid.view.DataGridTestView
 import io.jmix.flowui.Actions
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.action.list.CreateAction
@@ -36,6 +36,11 @@ class DataGridTest extends FlowuiTestSpecification {
     @Autowired
     Actions actions
 
+    @Override
+    void setup() {
+        registerScreenBasePackages("component.grid")
+    }
+
     def "Add actions without text"() {
         def dataGrid = uiComponents.create(DataGrid)
 
@@ -52,5 +57,14 @@ class DataGridTest extends FlowuiTestSpecification {
 
         then:
         noExceptionThrown()
+    }
+
+    def "Load DataGrid without columns in XML"() {
+        when: "Open View with DatGrid without columns"
+        def screen = openScreen(DataGridTestView)
+
+        then: "DataGrid should be loaded without columns"
+
+        screen.dataGridWithoutColumns.columns.isEmpty()
     }
 }

@@ -53,7 +53,7 @@ public class PessimisticLockScheduleAutoConfiguration {
     }
 
     @Bean("core_PessimisticLockExpiringTrigger")
-    Trigger emailSendingTrigger(@Qualifier("core_PessimisticLockExpiringJob") JobDetail pessimisticLockExpiringJob) {
+    Trigger pessimisticLockExpiringTrigger(@Qualifier("core_PessimisticLockExpiringJob") JobDetail pessimisticLockExpiringJob) {
         String cron = coreProperties.getPessimisticLock().getExpirationCron();
         log.info("Schedule pessimistic lock expiring using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()

@@ -1895,6 +1895,35 @@
             </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="baseDropdownButtonComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="items">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="actionItem" type="dropdownActionItemType" minOccurs="0"/>
+                                <xs:element name="componentItem" type="dropdownComponentItemType" minOccurs="0"/>
+                                <xs:element name="textItem" type="dropdownTextItemType" minOccurs="0"/>
+                                <xs:element name="separator" minOccurs="0"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="openOnHover" type="xs:boolean"/>
+                <xs:attribute name="themeNames" type="dropdownButtonThemeNames"/>
+                <xs:attribute name="icon" type="vaadinIconEnum"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="baseTabsComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
@@ -2300,29 +2329,8 @@
     <!-- DropdownButton-->
     <xs:complexType name="dropdownButtonComponent">
         <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:sequence>
-                    <xs:element name="items">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="actionItem" type="dropdownActionItemType" minOccurs="0"/>
-                                <xs:element name="componentItem" type="dropdownComponentItemType" minOccurs="0"/>
-                                <xs:element name="textItem" type="dropdownTextItemType" minOccurs="0"/>
-                                <xs:element name="separator" minOccurs="0"/>
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-
-                <xs:attribute name="openOnHover" type="xs:boolean"/>
-                <xs:attribute name="themeNames" type="dropdownButtonThemeNames"/>
-                <xs:attribute name="icon" type="vaadinIconEnum"/>
-
-                <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasText"/>
-                <xs:attributeGroup ref="hasTitle"/>
-                <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasEnabled"/>
+            <xs:extension base="baseDropdownButtonComponent">
+                <xs:attribute name="dropdownIndicatorVisible" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2330,8 +2338,9 @@
     <!-- ComboButton-->
     <xs:complexType name="comboButtonComponent">
         <xs:complexContent>
-            <xs:extension base="dropdownButtonComponent">
+            <xs:extension base="baseDropdownButtonComponent">
                 <xs:attribute name="action" type="xs:string"/>
+                <xs:attribute name="dropdownIcon" type="vaadinIconEnum"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

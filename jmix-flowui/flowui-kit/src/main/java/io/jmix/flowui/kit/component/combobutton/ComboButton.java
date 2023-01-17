@@ -16,12 +16,7 @@
 
 package io.jmix.flowui.kit.component.combobutton;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ClickNotifier;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.KeyModifier;
-import com.vaadin.flow.component.ShortcutRegistration;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -138,6 +133,24 @@ public class ComboButton extends AbstractDropdownButton
     @Override
     public Action getAction() {
         return getActionSupport().getAction();
+    }
+
+    @Nullable
+    public Icon getDropdownIcon() {
+        return dropdownIcon;
+    }
+
+    public void setDropdownIcon(@Nullable Icon icon) {
+        if (dropdownIcon != null) {
+            dropdownIcon.getParent()
+                    .ifPresent(component -> dropdownIcon.getElement().removeFromParent());
+        }
+
+        dropdownIcon = icon;
+
+        if (dropdownIcon != null) {
+            getDropdownItem().add(dropdownIcon);
+        }
     }
 
     @Override

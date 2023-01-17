@@ -24,4 +24,11 @@ public class DropdownButtonLoader extends AbstractDropdownButtonLoader<DropdownB
     protected DropdownButton createComponent() {
         return factory.create(DropdownButton.class);
     }
+
+    @Override
+    public void loadComponent() {
+        loadBoolean(element, "dropdownIndicatorVisible", resultComponent::setDropdownIndicatorVisible);
+
+        super.loadComponent();
+    }
 }

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import org.dom4j.Element;
@@ -31,6 +32,7 @@ public class ComboButtonLoader extends AbstractDropdownButtonLoader<ComboButton>
     public void loadComponent() {
         super.loadComponent();
 
+        loadDropdownIcon(resultComponent, element);
         loadAction(resultComponent, element);
     }
 
@@ -39,5 +41,11 @@ public class ComboButtonLoader extends AbstractDropdownButtonLoader<ComboButton>
                 .ifPresent(actionId -> getComponentContext().addInitTask(
                         new AssignActionInitTask<>(component, actionId, getComponentContext().getView())
                 ));
+    }
+
+    protected void loadDropdownIcon(ComboButton component, Element element) {
+        loaderSupport.loadString(element, "dropdownIcon")
+                .map(FlowuiComponentUtils::parseIcon)
+                .ifPresent(component::setDropdownIcon);
     }
 }

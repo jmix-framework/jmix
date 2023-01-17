@@ -33,11 +33,7 @@ import io.jmix.flowui.kit.event.EventBus;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
@@ -373,6 +369,26 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     @Override
     public boolean isEnabled() {
         return getContent().isEnabled();
+    }
+
+    public void setTabIndex(int tabIndex) {
+        getContent().setTabIndex(tabIndex);
+    }
+
+    public int getTabIndex() {
+        return getContent().getTabIndex();
+    }
+
+    public void focus() {
+        getContent().focus();
+    }
+
+    public void blur() {
+        getContent().blur();
+    }
+
+    public ShortcutRegistration addFocusShortcut(Key key, KeyModifier... keyModifiers) {
+        return getContent().addFocusShortcut(key, keyModifiers);
     }
 
     @Override

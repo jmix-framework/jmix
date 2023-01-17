@@ -159,6 +159,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.dropdownButtonId) {
             id.get() == "dropdownButtonId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            (!dropdownIndicatorVisible)
             enabled
             height == "50px"
             icon.element.getAttribute("icon") ==
@@ -192,6 +193,8 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "comboButtonId"
             action.getText() == "Action Text"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            getDropdownIcon().element.getAttribute("icon")
+                    == VaadinIcon.CHECK.create().element.getAttribute("icon")
             enabled
             height == "50px"
             icon.element.getAttribute("icon") ==

@@ -619,6 +619,7 @@
 
         <dropdownButton id="dropdownButtonId"
                         classNames="cssClassName1, cssClassName2"
+                        dropdownIndicatorVisible="false"
                         enabled="true"
                         height="50px"
                         icon="GAMEPAD"
@@ -649,6 +650,7 @@
         <comboButton id="comboButtonId"
                      action="buttonAction"
                      classNames="cssClassName1, cssClassName2"
+                     dropdownIcon="CHECK"
                      enabled="true"
                      height="50px"
                      icon="GAMEPAD"

@@ -787,10 +787,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         Element childElement = formatterElement.elements().get(0);
         FormatterLoadFactory loadFactory = applicationContext.getBean(FormatterLoadFactory.class);
         if (loadFactory.isFormatter(childElement)) {
-            FormatterLoadFactory.Context formatterLoadContext = new FormatterLoadFactory.Context();
-            formatterLoadContext.setMessageGroup(context.getMessageGroup());
-
-            return loadFactory.createFormatter(childElement, formatterLoadContext);
+            return loadFactory.createFormatter(childElement);
         }
 
         return null;

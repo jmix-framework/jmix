@@ -17,7 +17,6 @@ package io.jmix.ui.component.formatter;
 
 
 import io.jmix.core.LocaleResolver;
-import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -38,7 +37,7 @@ import java.text.DecimalFormat;
  * Number formatter to be used in screen descriptors and controllers.
  * <p>
  * This formatter formats the {@link Number} value into a string depending on the format string.
-*/
+ */
 @StudioElement(
         caption = "NumberFormatter",
         xmlElement = "number",
@@ -53,8 +52,6 @@ public class NumberFormatter implements Formatter<Number> {
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
-    @Autowired
-    protected Messages messages;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
     @Autowired
@@ -82,13 +79,13 @@ public class NumberFormatter implements Formatter<Number> {
             Datatype datatype = datatypeRegistry.get(value.getClass());
             return datatype.format(value, currentAuthentication.getLocale());
         } else {
-            if (format.startsWith("msg://")) {
-                format = messages.getMessage(format.substring(6));
-            }
             FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale());
-            if (formatStrings == null)
+
+            if (formatStrings == null) {
                 throw new IllegalStateException("FormatStrings are not defined for " +
                         LocaleResolver.localeToString(currentAuthentication.getLocale()));
+            }
+
             DecimalFormat decimalFormat = new DecimalFormat(format, formatStrings.getFormatSymbols());
             return decimalFormat.format(value);
         }

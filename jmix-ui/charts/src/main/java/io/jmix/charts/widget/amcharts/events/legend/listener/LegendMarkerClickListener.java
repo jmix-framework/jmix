@@ -16,13 +16,14 @@
 
 package io.jmix.charts.widget.amcharts.events.legend.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.legend.LegendMarkerClickEvent;
 
 /**
  * Note: set switchable for Legend to false.
  *
  */
-public interface LegendMarkerClickListener {
+public interface LegendMarkerClickListener extends SerializableEventListener {
 
     void onClick(LegendMarkerClickEvent event);
 }

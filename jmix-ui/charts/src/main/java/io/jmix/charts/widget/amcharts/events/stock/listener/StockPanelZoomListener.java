@@ -16,9 +16,10 @@
 
 package io.jmix.charts.widget.amcharts.events.stock.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.stock.StockPanelZoomEvent;
 
-public interface StockPanelZoomListener {
+public interface StockPanelZoomListener extends SerializableEventListener {
 
     void onZoom(StockPanelZoomEvent event);
 }

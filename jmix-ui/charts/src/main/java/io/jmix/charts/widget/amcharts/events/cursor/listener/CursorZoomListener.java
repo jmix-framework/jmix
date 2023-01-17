@@ -16,9 +16,10 @@
 
 package io.jmix.charts.widget.amcharts.events.cursor.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.cursor.CursorZoomEvent;
 
-public interface CursorZoomListener {
+public interface CursorZoomListener extends SerializableEventListener {
 
     void onZoom(CursorZoomEvent event);
 }

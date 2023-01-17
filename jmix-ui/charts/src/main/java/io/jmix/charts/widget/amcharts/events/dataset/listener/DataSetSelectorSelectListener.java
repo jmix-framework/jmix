@@ -16,9 +16,10 @@
 
 package io.jmix.charts.widget.amcharts.events.dataset.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.dataset.DataSetSelectorSelectEvent;
 
-public interface DataSetSelectorSelectListener {
+public interface DataSetSelectorSelectListener extends SerializableEventListener {
 
     void onSelect(DataSetSelectorSelectEvent event);
 }

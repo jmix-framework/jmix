@@ -16,13 +16,14 @@
 
 package io.jmix.charts.widget.amcharts.events.legend.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.legend.LegendLabelClickEvent;
 
 /**
  * Note: set textClickEnabled for Legend to true.
  *
  */
-public interface LegendLabelClickListener {
+public interface LegendLabelClickListener extends SerializableEventListener {
 
     void onClick(LegendLabelClickEvent event);
 }

@@ -16,7 +16,9 @@
 
 package io.jmix.charts.widget.amcharts.events.axis;
 
-public interface AxisZoomListener {
+import com.vaadin.event.SerializableEventListener;
+
+public interface AxisZoomListener extends SerializableEventListener {
 
     void onZoom(AxisZoomEvent event);
 }

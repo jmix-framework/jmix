@@ -16,9 +16,10 @@
 
 package io.jmix.charts.widget.amcharts.events.legend.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.legend.LegendItemHideEvent;
 
-public interface LegendItemHideListener {
+public interface LegendItemHideListener extends SerializableEventListener {
 
     void onHide(LegendItemHideEvent event);
 }

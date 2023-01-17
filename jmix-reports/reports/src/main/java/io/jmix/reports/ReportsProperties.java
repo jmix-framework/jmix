@@ -168,7 +168,7 @@ public class ReportsProperties {
                              @DefaultValue("1000") int historyCleanupMaxItemsPerReport,
                              @DefaultValue("3") int countOfRetry,
                              @DefaultValue("false") boolean useOfficeForDocumentConversion,
-                             @DefaultValue("true") boolean formulasPostProcessingEvaluationEnabled) {
+                             @DefaultValue("false") boolean formulasPostProcessingEvaluationEnabled) {
         this.officePath = officePath;
         this.officePorts = officePorts;
         this.docFormatterTimeout = docFormatterTimeout;

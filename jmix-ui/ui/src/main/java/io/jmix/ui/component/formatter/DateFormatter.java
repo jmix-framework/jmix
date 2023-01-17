@@ -18,7 +18,6 @@ package io.jmix.ui.component.formatter;
 
 import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.LocaleResolver;
-import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.security.CurrentAuthentication;
@@ -55,8 +54,6 @@ public class DateFormatter<V> implements Formatter<V> {
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
-    @Autowired
-    protected Messages messages;
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
     @Autowired
@@ -109,9 +106,10 @@ public class DateFormatter<V> implements Formatter<V> {
         if (StringUtils.isBlank(format)) {
             if (type != null) {
                 FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale());
-                if (formatStrings == null)
+                if (formatStrings == null) {
                     throw new IllegalStateException("FormatStrings are not defined for " +
                             LocaleResolver.localeToString(currentAuthentication.getLocale()));
+                }
                 switch (type) {
                     case "DATE":
                         format = formatStrings.getDateFormat();
@@ -133,10 +131,6 @@ public class DateFormatter<V> implements Formatter<V> {
     }
 
     protected String applyFormatInternal(V value) {
-        if (format.startsWith("msg://")) {
-            format = messages.getMessage(format.substring(6));
-        }
-
         ZonedDateTime zonedDateTime = dateTimeTransformations.transformToZDT(value);
         DateTimeFormatter df = DateTimeFormatter.ofPattern(format);
 

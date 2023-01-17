@@ -16,9 +16,10 @@
 
 package io.jmix.charts.widget.amcharts.events.stock.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.stock.StockEventRollOverEvent;
 
-public interface StockEventRollOverListener {
+public interface StockEventRollOverListener extends SerializableEventListener {
 
     void onRollOver(StockEventRollOverEvent event);
 }

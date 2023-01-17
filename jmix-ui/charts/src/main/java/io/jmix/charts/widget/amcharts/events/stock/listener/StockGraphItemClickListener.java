@@ -16,9 +16,10 @@
 
 package io.jmix.charts.widget.amcharts.events.stock.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.stock.StockGraphItemClickEvent;
 
-public interface StockGraphItemClickListener {
+public interface StockGraphItemClickListener extends SerializableEventListener {
 
     void onClick(StockGraphItemClickEvent event);
 }

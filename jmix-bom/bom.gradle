@@ -60,7 +60,7 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinVersion = '8.14.3-0-jmix'
+def vaadinVersion = '8.14.3-1-jmix'
 def vaadinFlowVersion = '23.1.7'
 
 javaPlatform {

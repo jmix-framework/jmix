@@ -13,6 +13,7 @@
  */
 package io.jmix.ui.widget.addon.aceeditor;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.ui.widget.WebJarResource;
 import io.jmix.ui.widget.client.addon.aceeditor.*;
 import com.vaadin.event.FieldEvents.*;
@@ -58,7 +59,7 @@ public class AceEditor extends AbstractField<String> implements BlurNotifier,
 		}
 	}
 
-	public interface DiffListener extends Serializable {
+	public interface DiffListener extends SerializableEventListener {
 		Method diffMethod = ReflectTools.findMethod(
 				DiffListener.class, "diff", DiffEvent.class);
 
@@ -79,7 +80,7 @@ public class AceEditor extends AbstractField<String> implements BlurNotifier,
 		}
 	}
 
-	public interface SelectionChangeListener extends Serializable {
+	public interface SelectionChangeListener extends SerializableEventListener {
 		Method selectionChangedMethod = ReflectTools
 				.findMethod(SelectionChangeListener.class, "selectionChanged",
 						SelectionChangeEvent.class);

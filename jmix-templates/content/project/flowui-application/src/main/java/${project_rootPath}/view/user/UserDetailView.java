@@ -6,7 +6,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.EntityStates;
-import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,6 @@ public class UserDetailView extends StandardDetailView<User> {
     @Autowired
     private MessageBundle messageBundle;
     @Autowired
-    private Notifications notifications;
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Subscribe
@@ -60,14 +57,16 @@ public class UserDetailView extends StandardDetailView<User> {
     }
 
     @Subscribe
+    public void onValidation(ValidationEvent event) {
+        if (entityStates.isNew(getEditedEntity())
+                && !Objects.equals(passwordField.getValue(), confirmPasswordField.getValue())) {
+            event.getErrors().add(messageBundle.getMessage("passwordsDoNotMatch"));
+        }
+    }
+
+    @Subscribe
     protected void onBeforeSave(BeforeSaveEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
-            if (!Objects.equals(passwordField.getValue(), confirmPasswordField.getValue())) {
-                notifications.create(messageBundle.getMessage("passwordsDoNotMatch"))
-                        .withType(Notifications.Type.WARNING)
-                        .show();
-                event.preventSave();
-            }
             getEditedEntity().setPassword(passwordEncoder.encode(passwordField.getValue()));
         }
     }

@@ -514,8 +514,10 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     protected EntityImportPlan createEntityImportPlan(String content, MetaClass metaClass) {
         JsonElement rootElement = JsonParser.parseString(content);
-        EntityImportPlan entityImportPlan = importPlanJsonBuilder.buildFromJson(
-                rootElement.isJsonArray() ? rootElement.getAsJsonArray().get(0).toString() : rootElement.toString(), metaClass);
+        EntityImportPlan entityImportPlan = rootElement.isJsonArray()
+                ? importPlanJsonBuilder.buildFromJsonArray(rootElement.getAsJsonArray(), metaClass)
+                : importPlanJsonBuilder.buildFromJson(rootElement.toString(), metaClass);
+
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (!metadataTools.isJpa(metaProperty)) {
                 continue;

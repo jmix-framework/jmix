@@ -52,11 +52,11 @@ public class DropdownButton extends AbstractDropdownButton {
     }
 
     protected void updateDropdownIconSlot() {
+        dropdownIcon.getParent()
+                .ifPresent(component -> dropdownIcon.getElement().removeFromParent());
+
         if (dropdownIndicatorVisible) {
             getDropdownItem().add(dropdownIcon);
-        } else {
-            dropdownIcon.getParent()
-                    .ifPresent(component -> dropdownIcon.getElement().removeFromParent());
         }
     }
 

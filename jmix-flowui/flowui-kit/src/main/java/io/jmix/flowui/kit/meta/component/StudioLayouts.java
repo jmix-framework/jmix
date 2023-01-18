@@ -39,6 +39,7 @@ public interface StudioLayouts {
             icon = "io/jmix/flowui/kit/meta/icon/layout/details.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -72,6 +73,7 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.BoxSizing", defaultValue = "UNDEFINED",
                             options = {"UNDEFINED", "CONTENT_BOX", "BORDER_BOX"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "expand", type = StudioPropertyType.STRING),
@@ -113,6 +115,7 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.BoxSizing", defaultValue = "UNDEFINED",
                             options = {"UNDEFINED", "CONTENT_BOX", "BORDER_BOX"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "expand", type = StudioPropertyType.STRING),

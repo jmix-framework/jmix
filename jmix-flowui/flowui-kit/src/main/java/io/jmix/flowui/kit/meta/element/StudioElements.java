@@ -148,7 +148,7 @@ public interface StudioElements {
                             options = {"CENTER", "END", "START"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100px")
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "UNDEFINED")
             }
     )
     Grid.Column column();

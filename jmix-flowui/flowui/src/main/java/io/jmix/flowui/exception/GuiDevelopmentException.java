@@ -28,7 +28,7 @@ public class GuiDevelopmentException extends DevelopmentException {
     protected String frameId;
     protected Context context;
 
-    public GuiDevelopmentException(String message, String frameId) {
+    public GuiDevelopmentException(String message, @Nullable String frameId) {
         super(message);
         this.frameId = frameId;
     }

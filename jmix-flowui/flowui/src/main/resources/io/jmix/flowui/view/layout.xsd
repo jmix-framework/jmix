@@ -1607,6 +1607,22 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="imageThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="fill"/>
+                    <xs:enumeration value="contain"/>
+                    <xs:enumeration value="cover"/>
+                    <xs:enumeration value="scale-down"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -2363,7 +2379,7 @@
     <!-- MultiSelectComboBox-->
     <xs:complexType name="multiSelectComboBoxComponent">
         <xs:complexContent>
-            <xs:extension base="baseFieldComponent">
+            <xs:extension base="validatableBaseFieldComponent">
                 <xs:attribute name="opened" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
@@ -2928,6 +2944,16 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- Image -->
+    <xs:complexType name="imageComponent">
+        <xs:complexContent>
+            <xs:extension base="imageHtmlComponent">
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attribute name="themeNames" type="imageThemeNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!--    HTML-->
     <!-- Anchor-->
     <xs:complexType name="anchor">
@@ -3123,7 +3149,7 @@
                 <xs:element name="label" type="labelComponent"/>
                 <xs:element name="article" type="baseHtmlContainer"/>
                 <xs:element name="input" type="inputHtmlComponent"/>
-                <xs:element name="image" type="imageHtmlComponent"/>
+                <xs:element name="image" type="imageComponent"/>
                 <xs:element name="iframe" type="iframeHtmlComponent"/>
                 <xs:element name="htmlObject" type="htmlObjectComponent"/>
                 <xs:element name="descriptionList" type="baseHtmlDescription"/>

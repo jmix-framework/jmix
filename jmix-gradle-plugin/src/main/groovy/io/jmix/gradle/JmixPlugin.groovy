@@ -48,7 +48,6 @@ class JmixPlugin implements Plugin<Project> {
                 project.dependencies.add('implementation', platform)
                 project.dependencies.add(THEMES_CONFIGURATION_NAME, platform)
                 project.dependencies.add(WIDGETS_CONFIGURATION_NAME, platform)
-                project.dependencies.add(KIT_CONFIGURATION_NAME, platform)
 
                 if (project.plugins.hasPlugin('war')) {
                     project.dependencies.add(PROVIDED_RUNTIME_CONFIGURATION_NAME, platform)

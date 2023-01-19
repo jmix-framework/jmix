@@ -39,7 +39,7 @@ public class ContainerGroupTableItems<E>
 
     protected Map<GroupInfo, GroupInfo> parents;
 
-    protected Map<GroupInfo, List<GroupInfo>> children;
+    protected Map<GroupInfo, Set<GroupInfo>> children;
 
     protected List<GroupInfo> roots;
 
@@ -111,7 +111,7 @@ public class ContainerGroupTableItems<E>
     }
 
     @Nullable
-    protected GroupInfo<MetaPropertyPath> groupItems(int propertyIndex, @Nullable GroupInfo parent, List<GroupInfo> children,
+    protected GroupInfo<MetaPropertyPath> groupItems(int propertyIndex, @Nullable GroupInfo parent, Collection<GroupInfo> children,
                                                      E item, LinkedMap<MetaPropertyPath, Object> groupValues) {
         MetaPropertyPath property = (MetaPropertyPath) groupProperties[propertyIndex++];
         Object itemValue = getValueByProperty(item, property);
@@ -128,8 +128,8 @@ public class ContainerGroupTableItems<E>
             children.add(groupInfo);
         }
 
-        List<GroupInfo> groupChildren =
-                this.children.computeIfAbsent(groupInfo, k -> new ArrayList<>());
+        Set<GroupInfo> groupChildren =
+                this.children.computeIfAbsent(groupInfo, k -> new LinkedHashSet<>());
 
         if (propertyIndex < groupProperties.length) {
             groupInfo = groupItems(propertyIndex, groupInfo, groupChildren, item, groupValues);
@@ -156,14 +156,14 @@ public class ContainerGroupTableItems<E>
     @Override
     public boolean hasChildren(GroupInfo groupId) {
         boolean groupExists = containsGroup(groupId);
-        List<GroupInfo> groupChildren = this.children.get(groupId);
+        Set<GroupInfo> groupChildren = this.children.get(groupId);
         return groupExists && CollectionUtils.isNotEmpty(groupChildren);
     }
 
     @Override
     public List<GroupInfo> getChildren(GroupInfo groupId) {
         if (hasChildren(groupId)) {
-            return Collections.unmodifiableList(children.get(groupId));
+            return List.copyOf(children.get(groupId));
         }
         return Collections.emptyList();
     }
@@ -194,7 +194,7 @@ public class ContainerGroupTableItems<E>
 
             // if current group contains other groups
             if (hasChildren(groupId)) {
-                List<GroupInfo> children = getChildrenInternal(groupId);
+                Set<GroupInfo> children = getChildrenInternal(groupId);
                 for (GroupInfo childGroup : children) {
                     entities.addAll(getChildItems(childGroup));
                 }
@@ -211,11 +211,11 @@ public class ContainerGroupTableItems<E>
     }
 
     // return collection as is
-    public List<GroupInfo> getChildrenInternal(GroupInfo groupId) {
+    protected Set<GroupInfo> getChildrenInternal(GroupInfo groupId) {
         if (hasChildren(groupId)) {
             return children.get(groupId);
         }
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
     @Nullable
@@ -283,7 +283,7 @@ public class ContainerGroupTableItems<E>
             List itemIds;
             if ((itemIds = groupItems.get(groupId)) == null) {
                 itemIds = new ArrayList<>();
-                List<GroupInfo> children = getChildrenInternal(groupId);
+                Set<GroupInfo> children = getChildrenInternal(groupId);
                 for (GroupInfo child : children) {
                     itemIds.addAll(getGroupItemIds(child));
                 }
@@ -299,7 +299,7 @@ public class ContainerGroupTableItems<E>
             List itemIds;
             if ((itemIds = groupItems.get(groupId)) == null) {
                 int count = 0;
-                List<GroupInfo> children = getChildrenInternal(groupId);
+                Set<GroupInfo> children = getChildrenInternal(groupId);
                 for (GroupInfo child : children) {
                     count += getGroupItemsCount(child);
                 }

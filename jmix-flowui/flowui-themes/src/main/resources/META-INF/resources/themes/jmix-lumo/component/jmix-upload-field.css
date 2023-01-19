@@ -1,0 +1,68 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.jmix-upload-field-input-container {
+    align-items: center;
+    display: flex;
+    gap: var(--lumo-space-s);
+}
+
+.jmix-upload-field-file-name {
+    cursor: pointer;
+}
+.jmix-upload-field-file-name:hover {
+    text-decoration: underline;
+}
+
+.jmix-upload-field-file-name.empty {
+    color: var(--lumo-body-text-color);
+    cursor: default;
+}
+
+.jmix-upload-field-clear {
+    color: var(--lumo-contrast-60pct);
+    font-size: var(--lumo-icon-size-m);
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+}
+
+.jmix-upload-field-clear:focus {
+    outline: none;
+    border-radius: var(--lumo-border-radius-s);
+    box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
+}
+
+.jmix-upload-field-clear::before {
+    content: var(--lumo-icons-cross);
+    font-family: 'lumo-icons';
+    display: block;
+}
+
+.jmix-upload-field-clear:hover {
+    color: var(--lumo-contrast-90pct);
+}
+
+.jmix-upload-dialog-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 20em;
+}
+
+.jmix-upload-dialog-cancel-button {
+    align-self: end;
+}

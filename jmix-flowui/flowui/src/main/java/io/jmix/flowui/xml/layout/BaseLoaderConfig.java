@@ -84,6 +84,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("loginForm", LoginFormLoader.class);
         loaders.put("loginOverlay", LoginOverlayLoader.class);
         loaders.put("simplePagination", SimplePaginationLoader.class);
+        loaders.put("fileUploadField", FileUploadFieldLoader.class);
+        loaders.put("fileStorageUploadField", FileStorageUploadFieldLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

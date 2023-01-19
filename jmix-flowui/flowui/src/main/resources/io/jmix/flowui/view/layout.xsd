@@ -1809,15 +1809,10 @@
     <xs:complexType name="baseFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:sequence>
-                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
-                </xs:sequence>
-
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
@@ -1825,9 +1820,21 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="baseTextFieldComponent">
+    <xs:complexType name="validatableBaseFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasValidation"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseTextFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="validatableBaseFieldComponent">
                 <xs:attribute name="value" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="autoselect" type="xs:boolean"/>
@@ -2335,7 +2342,7 @@
     <!-- ComboBox-->
     <xs:complexType name="comboBoxComponent">
         <xs:complexContent>
-            <xs:extension base="baseFieldComponent">
+            <xs:extension base="validatableBaseFieldComponent">
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="pageSize" type="xs:integer"/>
@@ -2400,7 +2407,7 @@
     <!-- TimePicker-->
     <xs:complexType name="timePickerComponent">
         <xs:complexContent>
-            <xs:extension base="baseFieldComponent">
+            <xs:extension base="validatableBaseFieldComponent">
                 <xs:sequence>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
@@ -2422,7 +2429,7 @@
     <!-- DatePicker-->
     <xs:complexType name="datePickerComponent">
         <xs:complexContent>
-            <xs:extension base="baseFieldComponent">
+            <xs:extension base="validatableBaseFieldComponent">
                 <xs:sequence>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
@@ -2443,7 +2450,7 @@
     <!-- DateTimePicker-->
     <xs:complexType name="dateTimePickerComponent">
         <xs:complexContent>
-            <xs:extension base="baseFieldComponent">
+            <xs:extension base="validatableBaseFieldComponent">
                 <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
                 <!--                <xs:attribute name="min" type="timePickerMinVariants"/>-->
                 <!--                <xs:attribute name="locale" type="timePickerLocaleVariants"/>-->
@@ -2590,7 +2597,7 @@
     <!-- ValuePicker-->
     <xs:complexType name="valuePickerComponent">
         <xs:complexContent>
-            <xs:extension base="baseFieldComponent">
+            <xs:extension base="validatableBaseFieldComponent">
                 <xs:sequence>
                     <xs:element name="actions" minOccurs="0">
                         <xs:complexType>
@@ -2864,6 +2871,63 @@
         <xs:attribute name="description" type="resourceString"/>
     </xs:complexType>
 
+    <!-- FileUploadField -->
+
+    <xs:complexType name="fileUploadFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseUploadFieldComponent">
+                <xs:attribute name="fileName" type="resourceString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- FileStorageUploadField -->
+
+    <xs:complexType name="fileStorageUploadFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseUploadFieldComponent">
+                <xs:attribute name="fileStoragePutMode" type="fileStoragePutMode"/>
+                <xs:attribute name="fileStorageName" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseUploadFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseFieldComponent">
+                <xs:attribute name="uploadText" type="resourceString"/>
+                <xs:attribute name="fileNotSelectedText" type="resourceString"/>
+                <xs:attribute name="fileTooBigText" type="resourceString"/>
+                <xs:attribute name="incorrectFileTypeText" type="resourceString"/>
+                <xs:attribute name="processingStatusText" type="resourceString"/>
+                <xs:attribute name="connectingStatusText" type="resourceString"/>
+                <xs:attribute name="remainingTimeText" type="resourceString"/>
+                <xs:attribute name="remainingTimeUnknownText" type="resourceString"/>
+                <xs:attribute name="uploadDialogTitle" type="resourceString"/>
+                <xs:attribute name="uploadDialogCancelText" type="resourceString"/>
+
+                <xs:attribute name="clearButtonAriaLabel" type="resourceString"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="fileNameVisible" type="xs:boolean"/>
+
+                <xs:attribute name="maxFileSize" type="xs:int"/>
+                <xs:attribute name="acceptedFileTypes" type="xs:string"/>
+                <xs:attribute name="uploadIcon" type="vaadinIconEnum"/>
+                <xs:attribute name="dropAllowed" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasValidation"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="fileStoragePutMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="MANUAL"/>
+            <xs:enumeration value="IMMEDIATE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!--    HTML-->
     <!-- Anchor-->
     <xs:complexType name="anchor">
@@ -3114,6 +3178,8 @@
                 <xs:element name="loginOverlay" type="loginOverlayComponent"/>
                 <xs:element name="simplePagination" type="simplePaginationComponent"/>
                 <xs:element name="tabSheet" type="tabSheetComponent"/>
+                <xs:element name="fileUploadField" type="fileUploadFieldComponent"/>
+                <xs:element name="fileStorageUploadField" type="fileStorageUploadFieldComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

@@ -19,6 +19,7 @@ package io.jmix.flowui.component.factory;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import io.jmix.core.FileRef;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -37,6 +38,8 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.component.upload.FileStorageUploadField;
+import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.data.SupportsValueSource;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -129,6 +132,10 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
             return createDateTimePicker(context);
         } else if (Number.class.isAssignableFrom(type)) {
             return createNumberField(context);
+        } else if (type.equals(FileRef.class)) {
+            return createFileStorageUploadField(context);
+        } else if (type.equals(byte[].class)) {
+            return createFileUploadField(context);
         }
         return null;
     }
@@ -227,6 +234,27 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 
         setValueSource((SupportsValueSource<?>) entityComponent, context);
         return entityComponent;
+    }
+
+    protected Component createFileUploadField(ComponentGenerationContext context) {
+        FileUploadField fileUploadField = uiComponents.create(FileUploadField.class);
+
+        fileUploadField.setFileNameVisible(true);
+        fileUploadField.setClearButtonVisible(true);
+
+        setValueSource(fileUploadField, context);
+        return fileUploadField;
+    }
+
+    protected Component createFileStorageUploadField(ComponentGenerationContext context) {
+        FileStorageUploadField fileStorageUploadField = uiComponents.create(FileStorageUploadField.class);
+
+        fileStorageUploadField.setFileNameVisible(true);
+        fileStorageUploadField.setClearButtonVisible(true);
+
+        setValueSource(fileStorageUploadField, context);
+
+        return fileStorageUploadField;
     }
 
     //TODO: kremnevda, implement after https://github.com/jmix-framework/jmix/issues/1044 27.09.2022

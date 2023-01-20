@@ -422,7 +422,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         }
 
         protected Collection<Object> getInstances(UnitOfWork unitOfWork, String store) {
-            Set<Object> set = new HashSet<>();
+            Set<Object> set = createEntitySet();
             Map<UnitOfWork, Set<Object>> unitOfWorkMap = unitsOfWorkToStores.get(store);
             if (unitOfWorkMap != null) {
                 Set<Object> entities = unitOfWorkMap.get(unitOfWork);

@@ -79,6 +79,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             required
             requiredIndicatorVisible
+            tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             getTitle() == "titleString"
             getTypedValue().containsAll([Status.OK, Status.NOT_OK])

@@ -115,6 +115,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             requiredIndicatorVisible
+            tabIndex == 3
             themeNames.containsAll(["theme1", "theme2"])
             title == "titleString"
             visible
@@ -224,6 +225,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             required
             requiredIndicatorVisible
+            tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
             visible
@@ -267,6 +269,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
             visible

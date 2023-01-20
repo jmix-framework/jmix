@@ -89,6 +89,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             readOnly
             requiredIndicatorVisible
+            tabIndex == 3
             value
             visible
             width == "100px"
@@ -144,6 +145,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             title == "titleString"
             value == order.number
@@ -184,6 +186,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             typedValue == order.date
             visible
@@ -222,6 +225,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             typedValue == order.time
             themeNames.containsAll(["small", "align-center"])
             visible
@@ -258,6 +262,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             timePlaceholder == "timePlaceholderString"
             typedValue == order.dateTime
@@ -326,6 +331,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             requiredIndicatorVisible
+            tabIndex == 3
             value == order.number
             visible
             width == "100px"

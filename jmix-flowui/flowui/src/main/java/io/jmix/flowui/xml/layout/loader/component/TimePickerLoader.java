@@ -44,6 +44,7 @@ public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
+        componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);

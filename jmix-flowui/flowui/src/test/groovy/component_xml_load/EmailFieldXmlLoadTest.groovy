@@ -87,6 +87,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredMessage == "requiredMessage"
             requiredIndicatorVisible
+            tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
             value == "example@email.com"

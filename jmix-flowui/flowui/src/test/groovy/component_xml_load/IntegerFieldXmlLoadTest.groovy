@@ -116,6 +116,7 @@ class IntegerFieldXmlLoadTest extends FlowuiTestSpecification {
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             step == 10
+            tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
             value == 50

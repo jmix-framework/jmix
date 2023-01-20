@@ -58,6 +58,7 @@
                     required="true"
                     requiredMessage="requiredMessage"
                     requiredIndicatorVisible="true"
+                    tabIndex="3"
                     themeNames="small, align-right"
                     title="titleString"
                     value="example@email.com"

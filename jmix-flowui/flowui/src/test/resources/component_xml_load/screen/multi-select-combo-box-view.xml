@@ -56,6 +56,7 @@
                              readOnly="true"
                              required="true"
                              requiredIndicatorVisible="true"
+                             tabIndex="3"
                              themeNames="small, align-center"
                              title="titleString"
                              tooltipText="tooltipTextString"

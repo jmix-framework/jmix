@@ -17,23 +17,36 @@
 package io.jmix.flowui.impl;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.Messages;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.action.inputdialog.InputDialogAction;
+import io.jmix.flowui.app.inputdialog.DialogActions;
+import io.jmix.flowui.app.inputdialog.InputDialog;
+import io.jmix.flowui.app.inputdialog.InputParameter;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.view.DialogWindow;
+import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.EnumSet;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @org.springframework.stereotype.Component("flowui_Dialogs")
 public class DialogsImpl implements Dialogs {
@@ -42,10 +55,12 @@ public class DialogsImpl implements Dialogs {
 
     protected Messages messages;
     protected FlowuiViewProperties flowUiViewProperties;
+    protected DialogWindows dialogWindows;
 
-    public DialogsImpl(Messages messages, FlowuiViewProperties flowUiViewProperties) {
+    public DialogsImpl(Messages messages, FlowuiViewProperties flowUiViewProperties, DialogWindows dialogWindows) {
         this.messages = messages;
         this.flowUiViewProperties = flowUiViewProperties;
+        this.dialogWindows = dialogWindows;
     }
 
     @Override
@@ -56,6 +71,11 @@ public class DialogsImpl implements Dialogs {
     @Override
     public MessageDialogBuilder createMessageDialog() {
         return new MessageDialogBuilderImpl();
+    }
+
+    @Override
+    public InputDialogBuilder createInputDialog(View<?> origin) {
+        return new InputDialogBuilderImpl(origin);
     }
 
     protected Button createButton(Action action, Dialog dialog) {
@@ -575,6 +595,139 @@ public class DialogsImpl implements Dialogs {
         @Override
         public void open() {
             dialog.open();
+        }
+    }
+
+    public class InputDialogBuilderImpl implements InputDialogBuilder {
+
+        protected InputDialog inputDialog;
+        protected DialogWindow<InputDialog> dialogBuild;
+
+        public InputDialogBuilderImpl(View<?> origin) {
+            dialogBuild = dialogWindows.view(origin, InputDialog.class)
+                    .build();
+            dialogBuild.setWidth("35em");
+
+            inputDialog = dialogBuild.getView();
+        }
+
+        @Override
+        public InputDialogBuilder withHeader(String header) {
+            inputDialog.setPageTitle(header);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getHeader() {
+            return inputDialog.getPageTitle();
+        }
+
+        @Override
+        public InputDialogBuilder withWidth(String width) {
+            dialogBuild.setWidth(width);
+            return this;
+        }
+
+        @Override
+        public String getWidth() {
+            return dialogBuild.getWidth();
+        }
+
+        @Override
+        public InputDialogBuilder withHeight(String height) {
+            dialogBuild.setHeight(height);
+            return this;
+        }
+
+        @Override
+        public String getHeight() {
+            return dialogBuild.getHeight();
+        }
+
+        @Override
+        public InputDialogBuilder withParameter(InputParameter parameter) {
+            inputDialog.setParameter(parameter);
+            return this;
+        }
+
+        @Override
+        public InputDialogBuilder withParameters(InputParameter... parameters) {
+            inputDialog.setParameters(parameters);
+            return this;
+        }
+
+        public Collection<InputParameter> getParameters() {
+            return inputDialog.getParameters();
+        }
+
+        public InputDialogBuilder withLabelsPosition(LabelsPosition labelsPosition) {
+            inputDialog.setLabelsPosition(labelsPosition);
+            return this;
+        }
+
+        public LabelsPosition getLabelsPosition() {
+            return inputDialog.getLabelsPosition();
+        }
+
+        @Override
+        public InputDialogBuilder withCloseListener(ComponentEventListener<InputDialog.InputDialogCloseEvent> listener) {
+            inputDialog.addCloseListener(listener);
+            return this;
+        }
+
+        @Override
+        public InputDialogBuilder withActions(InputDialogAction... actions) {
+            inputDialog.setActions(actions);
+            return this;
+        }
+
+        public Collection<Action> getActions() {
+            return inputDialog.getActions();
+        }
+
+        @Override
+        public InputDialogBuilder withActions(DialogActions actions) {
+            inputDialog.setDialogActions(actions);
+            return this;
+        }
+
+        @Override
+        public InputDialogBuilder withActions(DialogActions actions, Consumer<InputDialog.InputDialogResult> resultHandler) {
+            inputDialog.setDialogActions(actions);
+            inputDialog.setResultHandler(resultHandler);
+            return this;
+        }
+
+        public DialogActions getDialogActions() {
+            return inputDialog.getDialogActions();
+        }
+
+        @Nullable
+        public Consumer<InputDialog.InputDialogResult> getResultHandler() {
+            return inputDialog.getResultHandler();
+        }
+
+        @Override
+        public InputDialogBuilder withValidator(Function<InputDialog.ValidationContext, ValidationErrors> validator) {
+            inputDialog.setValidator(validator);
+            return this;
+        }
+
+        public Function<InputDialog.ValidationContext, ValidationErrors> getValidator() {
+            return inputDialog.getValidator();
+        }
+
+        @Override
+        public InputDialog open() {
+            DialogWindow<InputDialog> build = build();
+            build.open();
+            return build.getView();
+        }
+
+        @Override
+        public DialogWindow<InputDialog> build() {
+            return dialogBuild;
         }
     }
 }

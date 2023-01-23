@@ -432,7 +432,7 @@ public class MetadataTools {
     }
 
     /**
-     * @return whether the given property is a method-based attribute.
+     * Determine whether the given property is a method-based attribute of a JPA entity or embeddable.
      */
     public boolean isMethodBased(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");

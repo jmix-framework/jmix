@@ -81,7 +81,7 @@ public class InspectorFetchPlanBuilder {
         if (withSystemProperties) {
             fetchPlanBuilder.addSystem();
         }
-        fetchPlanBuilder.addFetchPlan(FetchPlan.LOCAL);
+        fetchPlanBuilder.addFetchPlan(FetchPlan.BASE);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             switch (metaProperty.getType()) {
                 case EMBEDDED:

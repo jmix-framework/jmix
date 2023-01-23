@@ -31,6 +31,8 @@ public interface EnhancedDataGrid<T> {
 
     /**
      * @return a copy of columns that are visible and not hidden by security
+     * @deprecated use {@link Grid#getColumns()} and filter returned list by visibility property
      */
+    @Deprecated
     List<Grid.Column<T>> getVisibleColumns();
 }

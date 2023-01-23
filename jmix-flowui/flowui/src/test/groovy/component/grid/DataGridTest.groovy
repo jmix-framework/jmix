@@ -67,4 +67,41 @@ class DataGridTest extends FlowuiTestSpecification {
 
         screen.dataGridWithoutColumns.columns.isEmpty()
     }
+
+    def "Move columns in DataGrid"() {
+        when: """
+              Columns in DataGrid has the following order:
+              |number|date|dateTime|time|amount|
+              |  0   | 1  |   2    | 3  |  4   |
+              
+              Change "number" position to 3. 
+              """
+        def screen = openScreen(DataGridTestView)
+
+        def numberColumn = screen.dataGridMoveColumns.getColumnByKey("number")
+        screen.dataGridMoveColumns.setColumnPosition(numberColumn, 3)
+
+        then: """
+              Columns should be in the following order:
+              |date|dateTime|time|number|amount|
+              | 0  |   1    | 2  |  3   |  4   |
+              """
+
+        screen.dataGridMoveColumns.allColumns.get(0).key == "date"
+        screen.dataGridMoveColumns.allColumns.get(1).key == "dateTime"
+        screen.dataGridMoveColumns.allColumns.get(2).key == "time"
+        screen.dataGridMoveColumns.allColumns.get(3).key == "number"
+        screen.dataGridMoveColumns.allColumns.get(4).key == "amount"
+
+        when: """
+             Index to move is equal to columns size
+             """
+        screen.dataGridMoveColumns.setColumnPosition(numberColumn, 5)
+
+        then: """
+              Exception should be thrown.
+              """
+
+        thrown(IndexOutOfBoundsException)
+    }
 }

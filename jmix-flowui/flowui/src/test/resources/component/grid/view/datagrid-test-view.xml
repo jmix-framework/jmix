@@ -30,5 +30,15 @@
                 <!-- empty -->
             </columns>
         </dataGrid>
+        <dataGrid id="dataGridMoveColumns"
+                  dataContainer="ordersDc">
+            <columns>
+                <column property="number"/>
+                <column property="date"/>
+                <column property="dateTime"/>
+                <column property="time"/>
+                <column property="amount"/>
+            </columns>
+        </dataGrid>
     </layout>
 </view>

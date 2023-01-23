@@ -237,16 +237,38 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     }
 
     /**
-     * Gets an unmodifiable list of all currently added {@link Column}s.
+     * <strong>Note:</strong> If column reordering is enabled with
+     * {@link #setColumnReorderingAllowed(boolean)} and the user has reordered
+     * the columns, the order of the list returned by this method might be
+     * incorrect.
+     *
+     * @return an unmodifiable list of {@link Column}s that are not hidden by security
+     */
+    @Override
+    public List<Column<E>> getColumns() {
+        return super.getColumns();
+    }
+
+    /**
+     * Gets an unmodifiable list of all currently added {@link Column}s including hidden by security.
      * <p>
      * If column reordering is enabled with {@link #setColumnReorderingAllowed(boolean)}
      * and the user has reordered the columns, the order of the returned list will be correct.
      *
-     * @return a copy of all currently added columns
+     * @return a copy of all currently added {@link Column}s including hidden by security
      */
-    @Override
-    public List<Column<E>> getColumns() {
+    public List<Column<E>> getAllColumns() {
         return gridDelegate.getColumns();
+    }
+
+    /**
+     * Moves column to a provided position in the {@link DataGrid}.
+     *
+     * @param column column to move
+     * @param index  new index of column in {@link #getAllColumns() list
+     */
+    public void setColumnPosition(Column<E> column, int index) {
+        gridDelegate.setColumnPosition(column, index);
     }
 
     @Override

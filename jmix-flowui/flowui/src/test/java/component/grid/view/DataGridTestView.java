@@ -31,4 +31,6 @@ public class DataGridTestView extends StandardView {
 
     @ViewComponent
     public DataGrid<Order> dataGridWithoutColumns;
+    @ViewComponent
+    public DataGrid<Order> dataGridMoveColumns;
 }

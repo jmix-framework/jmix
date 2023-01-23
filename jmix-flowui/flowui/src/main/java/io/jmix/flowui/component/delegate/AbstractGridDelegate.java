@@ -349,10 +349,18 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void onColumnReorderChange(ColumnReorderEvent<E> event) {
-        columns = getNewColumnsOrder(event.getColumns());
+        // Grid doesn't know about columns hidden by security permissions,
+        // so we need to return them back to their previous positions
+        columns = restoreColumnsOrder(event.getColumns());
     }
 
-    protected List<Grid.Column<E>> getNewColumnsOrder(List<Grid.Column<E>> visibleColumns) {
+    /**
+     * Inserts columns hidden by security permissions into a list of visible columns in their original positions.
+     *
+     * @param visibleColumns the list of DataGrid columns, not hidden by security permissions
+     * @return a list of all columns in DataGrid
+     */
+    protected List<Grid.Column<E>> restoreColumnsOrder(List<Grid.Column<E>> visibleColumns) {
         List<Grid.Column<E>> newOrderColumns = new ArrayList<>(visibleColumns);
         for (Grid.Column<E> column : columns) {
             if (!newOrderColumns.contains(column)) {
@@ -360,6 +368,13 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             }
         }
         return newOrderColumns;
+    }
+
+    protected List<Grid.Column<E>> deleteHiddenColumns(List<Grid.Column<E>> allColumns) {
+        return allColumns.stream()
+                .filter(c -> !propertyColumns.containsKey(c)
+                        || isPropertyEnabledBySecurity(propertyColumns.get(c)))
+                .collect(Collectors.toList());
     }
 
     protected void onSort(SortEvent<Grid<E>, GridSortOrder<E>> event) {
@@ -413,19 +428,11 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected void applySecurityToPropertyColumns() {
         for (Map.Entry<Grid.Column<E>, MetaPropertyPath> e : propertyColumns.entrySet()) {
-            applySecurityToPropertyColumn(e.getKey(), e.getValue());
-
             if (afterColumnSecurityApplyHandler != null) {
                 afterColumnSecurityApplyHandler.accept(
                         new ColumnSecurityContext<>(e.getKey(), e.getValue(),
                                 isPropertyEnabledBySecurity(e.getValue())));
             }
-        }
-    }
-
-    protected void applySecurityToPropertyColumn(Grid.Column<E> column, MetaPropertyPath metaPropertyPath) {
-        if (!isPropertyEnabledBySecurity(metaPropertyPath)) {
-            column.setVisible(false);
         }
     }
 
@@ -439,9 +446,15 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         return List.copyOf(columns);
     }
 
+    /**
+     * @return a copy of columns that are visible and not hidden by security
+     * @deprecated use {@link Grid#getColumns()} and filter by visibility
+     */
+    @Deprecated
     public List<Grid.Column<E>> getVisibleColumns() {
         return columns.stream()
-                .filter(Grid.Column::isVisible)
+                .filter(c -> c.isVisible()
+                        && (!propertyColumns.containsKey(c) || isPropertyEnabledBySecurity(propertyColumns.get(c))))
                 .collect(Collectors.toList());
     }
 
@@ -465,6 +478,22 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     public boolean isDataGridOwner(Grid.Column<E> column) {
         return column.getGrid().equals(component)
                 && column.getElement().getParent() != null;
+    }
+
+    public void setColumnPosition(Grid.Column<E> column, int index) {
+        Preconditions.checkNotNullArgument(column);
+        if (index >= columns.size() || index < 0) {
+            throw new IndexOutOfBoundsException(String.format("Index '%s' is out of range. Available indexes " +
+                    "to move column: from 0 to %s including bounds", index, columns.size() - 1));
+        }
+
+        columns.remove(column);
+        columns.add(index, column);
+
+        // remove hidden columns by security
+        List<Grid.Column<E>> newColumnOrder = deleteHiddenColumns(columns);
+
+        component.setColumnOrder(newColumnOrder);
     }
 
     @Nullable

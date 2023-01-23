@@ -388,11 +388,12 @@ public class DataContextImpl implements DataContextInternal {
         MetaClass metaClass = getEntityMetaClass(srcEntity);
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
-            if (property.getRange().isClass()) {
-                if (!srcNew && !entityStates.isLoaded(srcEntity, propertyName)) {
-                    entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, property,
-                            collection -> wrapLazyValueIntoObservableCollection(collection, dstEntity));
-                }
+            if (property.getRange().isClass() && !metadataTools.isMethodBased(property)
+                    && !srcNew && !entityStates.isLoaded(srcEntity, propertyName)) {
+
+                entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, property,
+                        collection -> wrapLazyValueIntoObservableCollection(collection, dstEntity));
+
             }
         }
     }

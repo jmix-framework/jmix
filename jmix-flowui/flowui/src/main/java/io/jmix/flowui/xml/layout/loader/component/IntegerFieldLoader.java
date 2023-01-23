@@ -47,6 +47,7 @@ public class IntegerFieldLoader extends AbstractComponentLoader<JmixIntegerField
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
+        componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);

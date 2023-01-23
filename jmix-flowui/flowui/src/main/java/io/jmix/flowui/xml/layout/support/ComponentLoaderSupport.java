@@ -172,6 +172,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadInteger(element, "valueChangeTimeout", component::setValueChangeTimeout);
     }
 
+    public void loadTabIndex(Focusable<?> component, Element element) {
+        loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
+    }
+
     public void loadThemeNames(HasTheme component, Element element) {
         loaderSupport.loadString(element, "themeNames")
                 .ifPresent(themesString -> split(themesString, component::addThemeName));

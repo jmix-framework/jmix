@@ -48,3 +48,7 @@
     height: 1.5rem;
     min-width: 1.5rem;
 }
+
+.jmix-simple-pagination-navigation-button vaadin-icon[dir='rtl'] {
+    rotate: 180deg;
+}

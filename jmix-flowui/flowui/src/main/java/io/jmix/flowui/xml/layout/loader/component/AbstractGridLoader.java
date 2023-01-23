@@ -85,6 +85,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 

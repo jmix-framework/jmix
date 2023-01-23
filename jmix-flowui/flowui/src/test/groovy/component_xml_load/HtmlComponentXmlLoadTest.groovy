@@ -74,6 +74,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
         verifyAll(anchor) {
             href == "anchorHref"
+            tabIndex == 3
             target.get() == AnchorTarget.PARENT.value
         }
     }
@@ -87,6 +88,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
         verifyAll(htmlObject) {
             data == "data"
+            tabIndex == 3
             type.get() == "type"
         }
     }
@@ -184,6 +186,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             minHeight == "40px"
             minWidth == "80px"
             placeholder.get() == "placeholderString"
+            tabIndex == 3
             type == "password"
             valueChangeMode == ValueChangeMode.ON_CHANGE
             valueChangeTimeout == 50

@@ -32,6 +32,7 @@ public class InputLoader extends AbstractComponentLoader<Input> {
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
 
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);

@@ -81,6 +81,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             nestedNullBehavior == Grid.NestedNullBehavior.THROW
             pageSize == 20
             rowsDraggable
+            tabIndex == 3
             themeNames.containsAll(["column-borders", "compact"])
             verticalScrollingEnabled
             visible
@@ -142,6 +143,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             nestedNullBehavior == Grid.NestedNullBehavior.THROW
             pageSize == 20
             rowsDraggable
+            tabIndex == 3
             themeNames.containsAll(["column-borders", "compact"])
             verticalScrollingEnabled
             visible

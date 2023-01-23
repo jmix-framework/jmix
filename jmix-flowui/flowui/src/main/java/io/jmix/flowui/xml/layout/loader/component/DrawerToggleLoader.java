@@ -36,6 +36,7 @@ public class DrawerToggleLoader extends AbstractComponentLoader<DrawerToggle> {
 
         componentLoader().loadIcon(element, resultComponent::setIcon);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
     }

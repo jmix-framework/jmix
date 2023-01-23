@@ -47,6 +47,7 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);

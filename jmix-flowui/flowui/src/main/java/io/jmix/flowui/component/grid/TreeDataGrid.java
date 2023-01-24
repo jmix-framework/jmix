@@ -265,7 +265,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
      * Moves column to a provided position in the {@link DataGrid}.
      *
      * @param column column to move
-     * @param index  new index of column in {@link #getAllColumns() list
+     * @param index  new index of column in {@link #getAllColumns()} list
      */
     public void setColumnPosition(Column<E> column, int index) {
         gridDelegate.setColumnPosition(column, index);

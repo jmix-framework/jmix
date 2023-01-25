@@ -37,15 +37,28 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
+    @Autowired
+    protected MetadataTools metadataTools;
+
+    @Autowired
+    protected EntityStates entityStates;
+
     @Nullable
     protected Entity reloadEntityByDataSetFetchPlan(ReportQuery reportQuery, Object inputObject) {
         Entity entity = null;
         if (inputObject instanceof Entity && reportQuery instanceof DataSet) {
             entity = (Entity) inputObject;
+            if (!metadataTools.isJpaEntity(entity.getClass())) {
+                // Don't reload DTO
+                return (Entity) inputObject;
+            }
+
             DataSet dataSet = (DataSet) reportQuery;
             FetchPlan fetchPlan = getFetchPlan(entity, dataSet);
             if (fetchPlan != null) {
-                entity = reloadEntity(entity, fetchPlan);
+                if(!entityStates.isLoadedWithFetchPlan(entity, fetchPlan)) {
+                    entity = reloadEntity(entity, fetchPlan);
+                }
             }
         }
 

@@ -44,5 +44,13 @@
         </property>
     </fetchPlan>
 
+    <fetchPlan class="test_support.app.entity.sales.OrderLine" name="fetchPlanAncestor">
+        <property name="quantity"/>
+        <property name="id"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.app.entity.sales.OrderLineA" extends="fetchPlanAncestor" name="fetchPlanDescendant">
+        <property name="param1"/>
+    </fetchPlan>
 
 </fetchPlans>

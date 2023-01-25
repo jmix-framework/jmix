@@ -28,6 +28,7 @@ import test_support.app.entity.fetch_plans.ChildTestEntity
 import test_support.app.entity.fetch_plans.ParentTestEntity
 import test_support.app.entity.fetch_plans.spaceport.Waybill
 import test_support.app.entity.fetch_plans.spaceport.WaybillItem
+import test_support.app.entity.sales.OrderLineA
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 class FetchPlanRepositoryTest extends Specification {
@@ -138,6 +139,18 @@ class FetchPlanRepositoryTest extends Specification {
         def referenceFetchPlan = baseFetchPlan.getProperty("waybillCategory").getFetchPlan()
         referenceFetchPlan.containsProperty("name")
         referenceFetchPlan.containsProperty("code")
+    }
+
+    def "fetch plan inherited from fetchPlan ancestor"() {
+
+        given:
+        def fetchPlanDescendant = repository.getFetchPlan(OrderLineA, "fetchPlanDescendant")
+
+        expect:
+
+        fetchPlanDescendant.containsProperty("param1")
+        fetchPlanDescendant.containsProperty("quantity")
+        fetchPlanDescendant.containsProperty("id")
     }
 }
 

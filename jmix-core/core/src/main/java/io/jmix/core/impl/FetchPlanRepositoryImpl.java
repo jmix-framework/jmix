@@ -563,11 +563,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
             if (ancestorFetchPlan == null) {
                 // Last resort - search for all ancestors
                 for (MetaClass ancestorMetaClass : metaClass.getAncestors()) {
-                    if (ancestorMetaClass.equals(metaClass)) {
-                        ancestorFetchPlan = retrieveFetchPlan(ancestorMetaClass, ancestor, visited);
-                        if (ancestorFetchPlan != null)
-                            break;
-                    }
+                    ancestorFetchPlan = retrieveFetchPlan(ancestorMetaClass, ancestor, visited);
+                    if (ancestorFetchPlan != null)
+                        break;
                 }
             }
             if (ancestorFetchPlan == null) {

@@ -86,7 +86,9 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
 
         @Override
         protected void createSubComponents(HasComponents container, Element containerElement) {
-            if (containerElement.elements().size() != 1) {
+            if (containerElement.elements().size() != 1 &&
+                    (containerElement.elements().size() != 2 ||
+                            containerElement.element("tooltip") == null)) {
                 String message = String.format("%s should have only one child component",
                         resultComponent.getClass().getSimpleName());
 
@@ -96,11 +98,13 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
             LayoutLoader loader = getLayoutLoader();
 
             for (Element subElement : containerElement.elements()) {
-                ComponentLoader<?> componentLoader = loader.createComponentLoader(subElement);
-                componentLoader.initComponent();
-                pendingLoadComponents.add(componentLoader);
+                if (!isChildElementIgnored(subElement)) {
+                    ComponentLoader<?> componentLoader = loader.createComponentLoader(subElement);
+                    componentLoader.initComponent();
+                    pendingLoadComponents.add(componentLoader);
 
-                content = componentLoader.getResultComponent();
+                    content = componentLoader.getResultComponent();
+                }
             }
         }
 

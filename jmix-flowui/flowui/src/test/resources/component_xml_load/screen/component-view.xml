@@ -83,7 +83,16 @@
                 valueChangeMode="ON_CHANGE"
                 valueChangeTimeout="50"
                 visible="true"
-                width="100px"/>
+                width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </bigDecimalField>
         <bigDecimalField id="bigDecimalFieldWithValueId" dataContainer="orderDc" property="amount"/>
 
         <button id="buttonId"
@@ -104,7 +113,16 @@
                 title="buttonTitle"
                 visible="true"
                 whiteSpace="PRE"
-                width="100px"/>
+                width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </button>
 
         <button id="buttonWithActionId"
                 action="buttonAction"/>
@@ -126,7 +144,16 @@
                   tabIndex="3"
                   value="true"
                   visible="true"
-                  width="100px"/>
+                  width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </checkbox>
         <checkbox id="checkBoxWithDataId" dataContainer="orderDc" property="user.active"/>
 
         <comboBox id="comboBoxId"
@@ -159,7 +186,16 @@
                   themeNames="small, align-center"
                   title="titleString"
                   visible="true"
-                  width="100px"/>
+                  width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </comboBox>
 
         <datePicker id="datePickerId"
                     autoOpen="true"
@@ -189,7 +225,16 @@
                     themeNames="small, align-center"
                     visible="true"
                     weekNumbersVisible="true"
-                    width="100px"/>
+                    width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </datePicker>
 
         <timePicker id="timePickerId"
                     autoOpen="true"
@@ -216,7 +261,16 @@
                     tabIndex="3"
                     themeNames="small, align-center"
                     visible="true"
-                    width="100px"/>
+                    width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </timePicker>
 
         <dateTimePicker id="dateTimePickerId"
                         autoOpen="true"
@@ -244,7 +298,16 @@
                         timePlaceholder="timePlaceholderString"
                         visible="true"
                         weekNumbersVisible="true"
-                        width="100px"/>
+                        width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </dateTimePicker>
 
         <details id="detailsId"
                  classNames="cssClassName1, cssClassName2"
@@ -259,6 +322,14 @@
                  visible="true"
                  width="100px">
             <details id="detailsChild"/>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </details>
 
         <numberField id="numberFieldId"
@@ -295,7 +366,16 @@
                      valueChangeMode="ON_CHANGE"
                      valueChangeTimeout="50"
                      visible="true"
-                     width="100px"/>
+                     width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </numberField>
         <numberField id="numberFieldWithValueId" dataContainer="orderDc" property="total"/>
 
         <passwordField id="passwordFieldId"
@@ -330,7 +410,16 @@
                        valueChangeMode="ON_CHANGE"
                        valueChangeTimeout="50"
                        visible="true"
-                       width="100px"/>
+                       width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </passwordField>
         <passwordField id="passwordFieldWithValueId" dataContainer="orderDc" property="user.password"/>
 
         <progressBar id="progressBarId"
@@ -367,7 +456,16 @@
                           requiredIndicatorVisible="true"
                           themeNames="LUMO_VERTICAL"
                           visible="true"
-                          width="100px"/>
+                          width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </radioButtonGroup>
 
         <select id="selectId"
                 classNames="cssClassName1, cssClassName2"
@@ -393,7 +491,16 @@
                 emptySelectionCaption="emptySelectionString"
                 emptySelectionAllowed="true"
                 dataContainer="orderDc"
-                property="number"/>
+                property="number">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </select>
 
         <textArea id="textAreaId"
                   autocapitalize="SENTENCES"
@@ -425,7 +532,16 @@
                   valueChangeMode="TIMEOUT"
                   valueChangeTimeout="50"
                   visible="true"
-                  width="100px"/>
+                  width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </textArea>
         <textArea id="textAreaWithValueId" dataContainer="orderDc" property="number"/>
 
         <textField id="textFieldId"
@@ -462,7 +578,16 @@
                    valueChangeMode="ON_CHANGE"
                    valueChangeTimeout="50"
                    visible="true"
-                   width="100px"/>
+                   width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </textField>
         <textField id="textFieldWithValueId" datatype="string" dataContainer="orderDc" property="number"/>
 
         <valuePicker id="valuePickerId"
@@ -496,6 +621,14 @@
                 <action id="action1" icon="GAMEPAD"/>
                 <action id="action2" icon="DIPLOMA"/>
             </actions>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </valuePicker>
 
         <multiValuePicker id="valuesPickerId"
@@ -529,6 +662,14 @@
                 <action id="action1" icon="GAMEPAD"/>
                 <action id="action2" icon="DIPLOMA"/>
             </actions>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </multiValuePicker>
 
         <entityPicker id="entityPickerId"
@@ -561,6 +702,14 @@
                 <action id="action1" icon="GAMEPAD" type="entity_lookup"/>
                 <action id="action2" icon="DIPLOMA" type="entity_clear"/>
             </actions>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </entityPicker>
 
         <entityPicker id="metaClassEntityPickerId" metaClass="test_Order"/>
@@ -598,6 +747,14 @@
                 <action id="action1" icon="GAMEPAD"/>
                 <action id="action2" icon="DIPLOMA"/>
             </actions>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </comboBoxPicker>
 
         <entityComboBox id="entityComboBoxId"
@@ -630,7 +787,16 @@
                         visible="true"
                         width="100px"
 
-                        dataContainer="orderDc" property="customer"/>
+                        dataContainer="orderDc" property="customer">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </entityComboBox>
 
         <entityComboBox id="metaClassComboBoxId" metaClass="test_Order"/>
 
@@ -663,6 +829,15 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
+
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </dropdownButton>
 
         <comboButton id="comboButtonId"
@@ -695,6 +870,15 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
+
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </comboButton>
     </layout>
 </view>

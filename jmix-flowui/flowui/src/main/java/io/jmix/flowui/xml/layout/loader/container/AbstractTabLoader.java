@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.tabs.Tab;
+import org.dom4j.Element;
 
 public abstract class AbstractTabLoader extends AbstractContainerLoader<Tab>{
 
@@ -26,9 +27,15 @@ public abstract class AbstractTabLoader extends AbstractContainerLoader<Tab>{
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
 
         loadSubComponents();
+    }
+
+    @Override
+    protected boolean isChildElementIgnored(Element subElement) {
+        return "tooltip".equals(subElement.getName());
     }
 }

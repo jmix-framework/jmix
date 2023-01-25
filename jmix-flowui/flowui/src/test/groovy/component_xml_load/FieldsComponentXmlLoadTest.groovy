@@ -17,6 +17,7 @@
 package component_xml_load
 
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.ComponentView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
@@ -93,6 +94,14 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             value
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -151,6 +160,14 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             value == order.number
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -192,6 +209,14 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             visible
             weekNumbersVisible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -230,6 +255,14 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             themeNames.containsAll(["small", "align-center"])
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -269,6 +302,14 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             visible
             weekNumbersVisible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -335,6 +376,14 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             value == order.number
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 }

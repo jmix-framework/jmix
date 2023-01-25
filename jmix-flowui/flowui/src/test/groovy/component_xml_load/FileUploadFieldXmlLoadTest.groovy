@@ -16,6 +16,7 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.FileUploadFieldView
 import io.jmix.core.DataManager
 import io.jmix.core.FileRef
@@ -85,6 +86,14 @@ class FileUploadFieldXmlLoadTest extends FlowuiTestSpecification {
         field.uploadIcon != null
         field.uploadText == "uploadText"
         !field.visible
+
+        field.tooltip.text == "tooltipText"
+        field.tooltip.focusDelay == 1
+        field.tooltip.hideDelay == 2
+        field.tooltip.hoverDelay == 3
+        field.tooltip.manual
+        field.tooltip.opened
+        field.tooltip.position == Tooltip.TooltipPosition.BOTTOM
 
         view.readOnlyFileUploadField.readOnly
         !view.disabledFileUploadField.enabled

@@ -93,5 +93,17 @@
         <simplePagination id="simplePagination8"
                           itemsPerPageItems="2, 3, 4"
                           itemsPerPageVisible="true"/>
+        <simplePagination id="simplePagination9"
+                          itemsPerPageItems="2, 3, 4"
+                          itemsPerPageVisible="true">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </simplePagination>
     </layout>
 </view>

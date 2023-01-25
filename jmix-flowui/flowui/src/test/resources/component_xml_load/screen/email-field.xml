@@ -65,7 +65,16 @@
                     valueChangeMode="ON_CHANGE"
                     valueChangeTimeout="50"
                     visible="true"
-                    width="100px"/>
+                    width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </emailField>
         <emailField id="emailFieldWithValueId" dataContainer="customerDc" property="email"/>
     </layout>
 </view>

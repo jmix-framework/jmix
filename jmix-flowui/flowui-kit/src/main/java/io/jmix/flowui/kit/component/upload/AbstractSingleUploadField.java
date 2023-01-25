@@ -24,6 +24,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.upload.*;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.dom.Element;
@@ -42,7 +43,7 @@ import java.util.List;
 @JsModule("./src/uploadfield/jmix-upload-field.js")
 public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadField<C, V>, V>
         extends AbstractField<C, V>
-        implements HasLabel, HasHelper, HasSize, HasStyle {
+        implements HasLabel, HasHelper, HasSize, HasStyle, HasTooltip {
 
     protected static final String INPUT_CONTAINER_CLASS_NAME = "jmix-upload-field-input-container";
     protected static final String FILE_NAME_COMPONENT_CLASS_NAME = "jmix-upload-field-file-name";

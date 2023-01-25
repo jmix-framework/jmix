@@ -35,6 +35,7 @@ public abstract class AbstractValuePickerLoader<T extends ValuePickerBase<?, ?>>
 
         componentLoader().loadFormatter(resultComponent, element);
         componentLoader().loadPlaceholder(resultComponent, element);
+        componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadAutofocus(resultComponent, element);
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadLabel(resultComponent, element);

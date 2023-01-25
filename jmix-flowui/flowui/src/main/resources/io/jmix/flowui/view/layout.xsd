@@ -1036,6 +1036,23 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="tooltipPosition">
+        <xs:restriction>
+            <xs:enumeration value="TOP_START"/>
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="TOP_END"/>
+            <xs:enumeration value="BOTTOM_START"/>
+            <xs:enumeration value="BOTTOM"/>
+            <xs:enumeration value="BOTTOM_END"/>
+            <xs:enumeration value="START_TOP"/>
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="START_BOTTOM"/>
+            <xs:enumeration value="END_TOP"/>
+            <xs:enumeration value="END"/>
+            <xs:enumeration value="END_BOTTOM"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="boxSizingType">
         <xs:restriction>
             <xs:enumeration value="CONTENT_BOX"/>
@@ -1855,6 +1872,10 @@
     <xs:complexType name="baseTextFieldComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="value" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="autoselect" type="xs:boolean"/>
@@ -1885,6 +1906,8 @@
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
+
+                        <xs:element name="tooltip" type="tooltipElement"/>
                     </xs:sequence>
 
                     <xs:attribute name="opened" type="xs:boolean"/>
@@ -1925,6 +1948,8 @@
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
+
+                    <xs:element name="tooltip" type="tooltipElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="openOnHover" type="xs:boolean"/>
@@ -2037,6 +2062,16 @@
         <xs:attribute name="value" type="xs:string"/>
     </xs:complexType>
 
+    <xs:complexType name="tooltipElement">
+        <xs:attribute name="text" type="resourceString" use="required"/>
+        <xs:attribute name="focusDelay" type="xs:int"/>
+        <xs:attribute name="hideDelay" type="xs:int"/>
+        <xs:attribute name="hoverDelay" type="xs:int"/>
+        <xs:attribute name="manual" type="xs:boolean"/>
+        <xs:attribute name="opened" type="xs:boolean"/>
+        <xs:attribute name="position" type="tooltipPosition"/>
+    </xs:complexType>
+
     <!-- Components -->
 
     <!-- ListMenu -->
@@ -2055,6 +2090,10 @@
     <xs:complexType name="simplePaginationComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="dataLoader" type="xs:string"/>
 
                 <xs:attribute name="itemsPerPageDefaultValue" type="xs:integer"/>
@@ -2071,6 +2110,10 @@
     <xs:complexType name="buttonComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="action" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="iconAfterText" type="xs:boolean"/>
@@ -2092,6 +2135,10 @@
     <xs:complexType name="drawerToggleComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="buttonThemeNames"/>
 
@@ -2108,6 +2155,10 @@
     <xs:complexType name="userIndicatorComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -2306,6 +2357,10 @@
     <xs:complexType name="checkboxComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="value" type="xs:boolean"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="indeterminate" type="xs:boolean"/>
@@ -2370,6 +2425,10 @@
     <xs:complexType name="comboBoxComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="pageSize" type="xs:integer"/>
@@ -2392,6 +2451,10 @@
     <xs:complexType name="multiSelectComboBoxComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="opened" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
@@ -2439,6 +2502,7 @@
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
                 <xs:sequence>
+                    <xs:element name="tooltip" type="tooltipElement"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
                 <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
@@ -2462,6 +2526,7 @@
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
                 <xs:sequence>
+                    <xs:element name="tooltip" type="tooltipElement"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
                 <xs:attribute name="name" type="xs:string"/>
@@ -2483,6 +2548,10 @@
     <xs:complexType name="dateTimePickerComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
                 <!--                <xs:attribute name="min" type="timePickerMinVariants"/>-->
                 <!--                <xs:attribute name="locale" type="timePickerLocaleVariants"/>-->
@@ -2521,6 +2590,10 @@
     <xs:complexType name="radioButtonGroupComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="themeNames" type="radioButtonGroupThemeNames"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
@@ -2542,6 +2615,10 @@
     <xs:complexType name="checkboxGroupComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
 
@@ -2564,6 +2641,10 @@
     <xs:complexType name="listBoxComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="readOnly" type="xs:boolean"/>
@@ -2579,6 +2660,10 @@
     <xs:complexType name="multiSelectListBoxComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="readOnly" type="xs:boolean"/>
@@ -2594,6 +2679,10 @@
     <xs:complexType name="textAreaComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="value" type="xs:string"/>
                 <xs:attribute name="pattern" type="xs:string"/>
@@ -2643,6 +2732,7 @@
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+                    <xs:element name="tooltip" type="tooltipElement"/>
                 </xs:sequence>
                 <xs:attribute name="invalid" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="xs:string"/>
@@ -2749,7 +2839,10 @@
 
     <!-- Tab-->
     <xs:complexType name="tabComponent">
-        <xs:group ref="singleLayoutOrComponent"/>
+        <xs:sequence minOccurs="0">
+            <xs:group ref="singleLayoutOrComponent"/>
+            <xs:element name="tooltip" type="tooltipElement"/>
+        </xs:sequence>
 
         <xs:attribute name="themeNames" type="tabThemeNames"/>
         <xs:attribute name="flexGrow" type="xs:double"/>
@@ -2765,6 +2858,10 @@
     <xs:complexType name="selectComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="emptySelectionCaption" type="resourceString"/>
                 <xs:attribute name="emptySelectionAllowed" type="xs:boolean"/>
@@ -2790,7 +2887,10 @@
     <xs:complexType name="detailsComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:group ref="layoutOrComponent"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:sequence>
 
                 <xs:attribute name="summaryText" type="resourceString"/>
                 <xs:attribute name="themeNames" type="detailsThemeNames"/>
@@ -2931,6 +3031,10 @@
     <xs:complexType name="baseUploadFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:choice>
+
                 <xs:attribute name="uploadText" type="resourceString"/>
                 <xs:attribute name="fileNotSelectedText" type="resourceString"/>
                 <xs:attribute name="fileTooBigText" type="resourceString"/>

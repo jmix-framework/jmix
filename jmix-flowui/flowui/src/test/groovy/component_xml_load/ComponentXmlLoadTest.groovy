@@ -21,6 +21,7 @@ import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.progressbar.ProgressBarVariant
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.ComponentView
 import io.jmix.flowui.kit.component.dropdownbutton.ActionItem
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem
@@ -86,6 +87,15 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             visible
             whiteSpace == HasText.WhiteSpace.PRE
             width == "100px"
+
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -126,6 +136,14 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             visible
             width == "100px"
             (getContent().find() as Component).getId().get() == "detailsChild"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -183,6 +201,14 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -218,6 +244,14 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 }

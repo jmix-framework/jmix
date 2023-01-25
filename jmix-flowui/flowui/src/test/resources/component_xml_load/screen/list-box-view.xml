@@ -41,7 +41,16 @@
                  minWidth="100px"
                  itemsContainer="ordersDc"
                  readOnly="true"
-                 width="100%"/>
+                 width="100%">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </listBox>
         <multiSelectListBox id="multiSelectListBox"
                             classNames="className, className1"
                             colspan="1"
@@ -52,6 +61,15 @@
                             minWidth="100px"
                             itemsContainer="ordersDc"
                             readOnly="true"
-                            width="100%"/>
+                            width="100%">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </multiSelectListBox>
     </layout>
 </view>

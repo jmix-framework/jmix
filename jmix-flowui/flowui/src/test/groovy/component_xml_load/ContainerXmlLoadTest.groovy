@@ -22,6 +22,7 @@ import com.vaadin.flow.component.orderedlayout.BoxSizing
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.Scroller
+import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.TabSheetVariant
 import com.vaadin.flow.component.tabs.Tabs
@@ -112,6 +113,23 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         accordionPanel << ["accordionPanel", "anotherAccordionPanel"]
     }
 
+    def "Load accordionPanel tooltip from XML"() {
+        when: "Open the ContainerView"
+        def containerView = openScreen(ContainerView.class)
+
+        then: "AccordionPanel tooltip will be loaded"
+        def panel = containerView.accordionId.children.find {it.id.get() == "accordionPanelId"}
+        verifyAll (panel as AccordionPanel) {
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
+        }
+    }
+
     def "Load scroller container from XML"() {
         when: "Open the ContainerView"
         def containerView = openScreen(ContainerView.class)
@@ -163,6 +181,13 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             label == "labelString"
             themeName == "icon-on-top"
             visible
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
 
         verifyAll(tabsChild[1] as Tab) {
@@ -203,6 +228,14 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             (tabs[0] as Tab).getLabel() == "tab1Label"
             (childHbox.getComponentAt(0) as Label).text == "tab1Child1"
             (childHbox.getComponentAt(1) as Label).text == "tab1Child2"
+
+            (tabs[0] as Tab).tooltip.text == "tooltipText"
+            (tabs[0] as Tab).tooltip.focusDelay == 1
+            (tabs[0] as Tab).tooltip.hideDelay == 2
+            (tabs[0] as Tab).tooltip.hoverDelay == 3
+            (tabs[0] as Tab).tooltip.manual
+            (tabs[0] as Tab).tooltip.opened
+            (tabs[0] as Tab).tooltip.position == Tooltip.TooltipPosition.BOTTOM
 
             (tabs[1] as Tab).getId().orElse(null) == "tab2"
             (tabs[1] as Tab).getLabel() == "tab2Label"

@@ -42,6 +42,7 @@ public abstract class AbstractUploadFieldLoader<C extends AbstractSingleUploadFi
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
 
         componentLoader().loadHelperText(resultComponent, element);

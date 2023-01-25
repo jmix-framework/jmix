@@ -16,6 +16,7 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.MultiSelectComboBoxView
 import io.jmix.core.DataManager
 import org.springframework.beans.factory.annotation.Autowired
@@ -84,9 +85,16 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             getTitle() == "titleString"
             getTypedValue().containsAll([Status.OK, Status.NOT_OK])
             getValue().containsAll([Status.OK, Status.NOT_OK])
-            tooltip.getText() == "tooltipTextString"
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 }

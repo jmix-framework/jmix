@@ -16,18 +16,16 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.textfield.Autocapitalize
 import com.vaadin.flow.component.textfield.Autocomplete
 import com.vaadin.flow.data.value.ValueChangeMode
-import component_xml_load.screen.ComponentView
 import component_xml_load.screen.EmailFieldView
 import io.jmix.core.DataManager
-import io.jmix.core.SaveContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Customer
-import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -95,6 +93,14 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
             valueChangeTimeout == 50
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 

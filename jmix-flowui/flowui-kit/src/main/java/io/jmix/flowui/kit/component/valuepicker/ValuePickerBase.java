@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.component.valuepicker;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
@@ -39,7 +40,7 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
         extends AbstractField<C, V>
         implements SupportsFormatter<V>, SupportsUserAction<V>,
         HasLabel, HasHelper, HasStyle, HasTheme, HasSize, HasPlaceholder,
-        HasTitle, HasAutofocus, HasActions, Focusable<C> {
+        HasTitle, HasAutofocus, HasActions, Focusable<C>, HasTooltip {
 
     protected static final String PROPERTY_VALUE = "value";
     protected static final String PROPERTY_ALLOW_CUSTOM_VALUE = "allowCustomValue";

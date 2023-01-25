@@ -36,6 +36,7 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
 
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadText(resultComponent, element);
+        componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadIcon(element, resultComponent::setIcon);
         componentLoader().loadWhiteSpace(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);

@@ -64,7 +64,16 @@
                                 uploadDialogTitle="uploadDialogTitle"
                                 uploadIcon="CHECK_CIRCLE"
                                 uploadText="uploadText"
-                                visible="false"/>
+                                visible="false">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </fileStorageUploadField>
         <fileStorageUploadField id="readOnlyFileStorageUploadField"
                                 readOnly="true"/>
         <fileStorageUploadField id="disabledFileStorageUploadField"

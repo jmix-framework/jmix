@@ -21,6 +21,7 @@ import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.MenuItemsArrayGenerator;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.function.SerializableConsumer;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 
@@ -29,7 +30,7 @@ import java.util.stream.Stream;
 
 // CAUTION: copied from com.vaadin.flow.component.menubar.MenuBar [since Vaadin 23.1.7]
 public class JmixMenuBar extends MenuBar
-        implements HasMenuItemsEnhanced, Focusable<JmixMenuBar> {
+        implements HasMenuItemsEnhanced, Focusable<JmixMenuBar>, HasTooltip {
 
     protected JmixMenuManager<MenuBar, MenuItem, SubMenu> menuManager;
     protected MenuItemsArrayGenerator<MenuItem> menuItemsArrayGenerator;

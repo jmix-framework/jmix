@@ -89,6 +89,14 @@
                             themeNames="small, reverse"
                             visible="true"
                             width="100px">
+                <tooltip text="tooltipText"
+                         focusDelay="1"
+                         hideDelay="2"
+                         hoverDelay="3"
+                         manual="true"
+                         opened="true"
+                         position="BOTTOM"
+                />
             </accordionPanel>
             <accordionPanel id="anotherAccordionPanelId"
                             classNames="cssClassName1, cssClassName2"
@@ -181,6 +189,14 @@
                  label="labelString"
                  themeNames="icon-on-top"
                  visible="true">
+                <tooltip text="tooltipText"
+                         focusDelay="1"
+                         hideDelay="2"
+                         hoverDelay="3"
+                         manual="true"
+                         opened="true"
+                         position="BOTTOM"
+                />
             </tab>
             <tab id="tab2"
                  classNames="cssClassName1, cssClassName2"
@@ -209,6 +225,14 @@
                     <label text="tab1Child1"/>
                     <label text="tab1Child2"/>
                 </hbox>
+                <tooltip text="tooltipText"
+                         focusDelay="1"
+                         hideDelay="2"
+                         hoverDelay="3"
+                         manual="true"
+                         opened="true"
+                         position="BOTTOM"
+                />
             </tab>
             <tab id="tab2"
                  label="tab2Label">

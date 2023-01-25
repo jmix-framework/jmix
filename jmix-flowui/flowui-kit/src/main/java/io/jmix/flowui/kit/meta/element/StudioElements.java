@@ -20,6 +20,7 @@ import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.login.LoginI18n;
+import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
@@ -252,4 +253,57 @@ public interface StudioElements {
             }
     )
     void pagination();
+
+    @StudioElement(
+            name = "Tooltip",
+            classFqn = "com.vaadin.flow.component.shared.Tooltip",
+            xmlElement = "tooltip",
+            target = {"io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.kit.component.button.JmixButton",
+                    "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
+                    "io.jmix.flowui.component.checkbox.JmixCheckbox",
+                    "io.jmix.flowui.component.combobox.JmixComboBox",
+                    "io.jmix.flowui.kit.component.combobox.ComboBoxPicker",
+                    "io.jmix.flowui.kit.component.combobutton.ComboButton",
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
+                    "com.vaadin.flow.component.applayout.DrawerToggle",
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.upload.FileStorageUploadField",
+                    "io.jmix.flowui.component.upload.FileUploadField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.listbox.JmixListBox",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.listbox.JmixMultiSelectListBox",
+                    "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup",
+                    "io.jmix.flowui.component.select.JmixSelect",
+                    "io.jmix.flowui.component.pagination.SimplePagination",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.TypedTextField",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.main.JmixUserIndicator",
+                    "io.jmix.flowui.component.valuepicker.JmixValuePicker",
+                    "io.jmix.flowui.component.accordion.JmixAccordionPanel",
+                    "io.jmix.flowui.component.details.JmixDetails",
+                    "com.vaadin.flow.component.tabs.Tab"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "focusDelay", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "hideDelay", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "hoverDelay", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "manual", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "opened", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.shared.Tooltip.TooltipPosition",
+                            options = {"TOP_START", "TOP", "TOP_END", "BOTTOM_START", "BOTTOM", "BOTTOM_END",
+                                    "START_TOP", "START", "START_BOTTOM", "END_TOP", "END", "END_BOTTOM"})
+            }
+    )
+    Tooltip tooltip();
 }

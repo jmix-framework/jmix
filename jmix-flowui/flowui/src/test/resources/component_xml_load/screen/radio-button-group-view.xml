@@ -48,6 +48,15 @@
                           requiredIndicatorVisible="true"
                           requiredMessage="requiredMessage"
                           themeNames="helper-above-field, vertical"
-                          width="100%"/>
+                          width="100%">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </radioButtonGroup>
     </layout>
 </view>

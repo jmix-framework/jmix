@@ -16,6 +16,7 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.ListBoxView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
@@ -68,6 +69,14 @@ class ListBoxXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             visible
             width == "100%"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -88,6 +97,14 @@ class ListBoxXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             visible
             width == "100%"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 }

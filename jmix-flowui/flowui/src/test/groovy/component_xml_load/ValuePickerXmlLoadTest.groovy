@@ -48,6 +48,7 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.ComponentView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
@@ -122,6 +123,14 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             width == "100px"
             getAction("action1") != null
             getAction("action2") != null
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
 
         where:
@@ -232,6 +241,14 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             width == "100px"
             getAction("action1") != null
             getAction("action2") != null
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -275,6 +292,14 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             visible
             width == "100px"
             value == customer
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
 
         when: "metaClassComboBoxId is loaded"

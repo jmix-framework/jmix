@@ -61,6 +61,15 @@
                              title="titleString"
                              tooltipText="tooltipTextString"
                              visible="true"
-                             width="100px"/>
+                             width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </multiSelectComboBox>
     </layout>
 </view>

@@ -93,6 +93,9 @@ dependencies {
         api 'dev.warhammster.jmix:miniofs:1.3.0'
         api 'dev.warhammster.jmix:miniofs-starter:1.3.0'
 
+        api 'de.diedavids.jmix.wizard:jmix-wizard:1.3.0'
+        api 'de.diedavids.jmix.wizard:jmix-wizard-starter:1.3.0'
+
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"
@@ -403,7 +406,10 @@ dependencies {
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
 
+
         runtime 'org.hsqldb:hsqldb:2.4.1'
+
+
     }
 }
 

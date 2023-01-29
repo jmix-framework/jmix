@@ -94,8 +94,8 @@ dependencies {
         api 'dev.warhammster.jmix:miniofs-starter:1.4.0'
 
 
-        api 'de.diedavids.jmix.wizard:jmix-wizard:1.4.0'
-        api 'de.diedavids.jmix.wizard:jmix-wizard-starter:1.4.0'
+        api 'de.diedavids.jmix.wizard:jmix-wizard:1.4.1'
+        api 'de.diedavids.jmix.wizard:jmix-wizard-starter:1.4.1'
 
         // end community add-ons
 

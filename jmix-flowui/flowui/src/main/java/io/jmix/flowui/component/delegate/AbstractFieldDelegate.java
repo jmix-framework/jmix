@@ -213,7 +213,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     }
 
     protected void updateInvalidState() {
-        boolean invalid = explicitlyInvalid && !validatorsPassed();
+        boolean invalid = explicitlyInvalid || !validatorsPassed();
 
         setInvalidInternal(invalid);
     }

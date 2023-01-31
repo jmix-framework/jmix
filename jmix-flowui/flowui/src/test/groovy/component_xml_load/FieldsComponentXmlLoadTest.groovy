@@ -325,7 +325,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.radioButtonGroupId) {
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             enabled
-            errorMessage == "errorMessageString"
+            errorMessage == null
             height == "50px"
             helperText == "helperTextString"
             !invalid
@@ -337,6 +337,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             !readOnly
             required
             requiredIndicatorVisible
+            requiredMessage == "requiredMessageString"
             themeNames.containsAll([RadioGroupVariant.LUMO_VERTICAL.name()])
             value == order.number
             visible

@@ -454,6 +454,7 @@
                           readOnly="false"
                           required="true"
                           requiredIndicatorVisible="true"
+                          requiredMessage="requiredMessageString"
                           themeNames="LUMO_VERTICAL"
                           visible="true"
                           width="100px">

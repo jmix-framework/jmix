@@ -67,7 +67,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     protected Function<V, T> toModelConverter;
 
     protected String requiredMessage;
-    protected boolean explicitlyInvalid = true;
+    protected boolean explicitlyInvalid = false;
 
     public AbstractFieldDelegate(C component) {
         super(component);

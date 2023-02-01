@@ -55,7 +55,7 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
 
     /**
      * Component manually handles Vaadin value change event: when programmatically sets value
-     * (see {@link #setValueInternal(Collection, Set)}) and client-side sets value
+     * (see {@link #setValueInternal(Collection, Set, boolean)}) and client-side sets value
      * (see {@link #onValueChange(ComponentValueChangeEvent)}). Therefore, any Vaadin value change listener has a
      * wrapper and disabled for handling event.
      */
@@ -157,15 +157,15 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
 
     @Override
     public void setTypedValue(@Nullable Collection<V> value) {
-        setValueInternal(value, fieldDelegate.convertToPresentation(value));
+        setValueInternal(value, fieldDelegate.convertToPresentation(value), false);
     }
 
     @Override
     public void setValue(Set<V> value) {
-        setValueInternal(null, value);
+        setValueInternal(null, value, false);
     }
 
-    protected void setValueInternal(@Nullable Collection<V> modelValue, Set<V> presentationValue) {
+    protected void setValueInternal(@Nullable Collection<V> modelValue, Set<V> presentationValue, boolean fromClient) {
         try {
             if (modelValue == null) {
                 modelValue = fieldDelegate.convertToModel(presentationValue, getDataProvider().fetch(new Query<>()));
@@ -174,10 +174,10 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
             super.setValue(presentationValue);
 
             Collection<V> oldValue = internalValue;
-            this.internalValue = modelValue;
+            internalValue = modelValue;
 
             if (!fieldValueEquals(modelValue, oldValue)) {
-                fireAllValueChangeEvents(modelValue, oldValue, false);
+                fireAllValueChangeEvents(modelValue, oldValue, fromClient);
             }
         } catch (ConversionException e) {
             throw new IllegalArgumentException("Cannot convert value to a model type");
@@ -216,18 +216,11 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
             try {
                 value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
 
-                setValue(fieldDelegate.convertToPresentation(value));
+                setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
             } catch (ConversionException e) {
                 setErrorMessage(e.getLocalizedMessage());
                 setInvalid(true);
                 return;
-            }
-
-            Collection<V> oldValue = internalValue;
-            internalValue = value;
-
-            if (!fieldValueEquals(value, oldValue)) {
-                fireAllValueChangeEvents(value, oldValue, true);
             }
         }
 

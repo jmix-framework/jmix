@@ -63,7 +63,7 @@ public class TypedTextField<V> extends TextField
 
     /**
      * Component manually handles Vaadin value change event: when programmatically sets value
-     * (see {@link #setValueInternal(Object, String)}) and client-side sets value
+     * (see {@link #setValueInternal(Object, String, boolean)} ) and client-side sets value
      * (see {@link #onValueChange(ComponentValueChangeEvent)}). Therefore, any Vaadin value change listener has a
      * wrapper and disabled for handling event.
      */
@@ -151,15 +151,15 @@ public class TypedTextField<V> extends TextField
 
     @Override
     public void setTypedValue(@Nullable V value) {
-        setValueInternal(value, convertToPresentation(value));
+        setValueInternal(value, convertToPresentation(value), false);
     }
 
     @Override
     public void setValue(String value) {
-        setValueInternal(null, value);
+        setValueInternal(null, value, false);
     }
 
-    protected void setValueInternal(@Nullable V modelValue, String presentationValue) {
+    protected void setValueInternal(@Nullable V modelValue, String presentationValue, boolean fromClient) {
         try {
             if (modelValue == null) {
                 modelValue = convertToModel(presentationValue);
@@ -171,7 +171,7 @@ public class TypedTextField<V> extends TextField
             this.internalValue = modelValue;
 
             if (!fieldValueEquals(modelValue, oldValue)) {
-                fireAllValueChangeEvents(modelValue, oldValue, false);
+                fireAllValueChangeEvents(modelValue, oldValue, fromClient);
             }
         } catch (ConversionException e) {
             throw new IllegalArgumentException("Cannot convert value to a model type");
@@ -262,18 +262,10 @@ public class TypedTextField<V> extends TextField
             try {
                 value = convertToModel(presValue);
 
-                setValue(convertToPresentation(value));
+                setValueInternal(value, convertToPresentation(value), true);
             } catch (ConversionException e) {
                 setErrorMessage(e.getLocalizedMessage());
                 setInvalid(true);
-                return;
-            }
-
-            V oldValue = internalValue;
-            internalValue = value;
-
-            if (!fieldValueEquals(value, oldValue)) {
-                fireAllValueChangeEvents(value, oldValue, true);
             }
         }
     }

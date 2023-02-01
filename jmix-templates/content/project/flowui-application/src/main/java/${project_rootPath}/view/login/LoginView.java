@@ -25,7 +25,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 
 @Route(value = "login")
-@ViewController("LoginView")
+@ViewController("${normalizedPrefix_underscore}LoginView")
 @ViewDescriptor("login-view.xml")
 public class LoginView extends StandardView implements LocaleChangeObserver {
 

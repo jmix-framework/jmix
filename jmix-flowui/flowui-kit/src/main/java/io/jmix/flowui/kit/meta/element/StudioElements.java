@@ -274,6 +274,7 @@ public interface StudioElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.upload.FileStorageUploadField",
                     "io.jmix.flowui.component.upload.FileUploadField",
+                    "com.vaadin.flow.component.icon.Icon",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.listbox.JmixListBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",

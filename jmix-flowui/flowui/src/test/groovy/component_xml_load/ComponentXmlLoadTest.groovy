@@ -22,6 +22,7 @@ import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.progressbar.ProgressBarVariant
 import com.vaadin.flow.component.shared.Tooltip
+import com.vaadin.flow.dom.ElementConstants
 import component_xml_load.screen.ComponentView
 import io.jmix.flowui.kit.component.dropdownbutton.ActionItem
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem
@@ -58,6 +59,22 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             themeName == "large"
             visible
             width == "100px"
+        }
+    }
+
+    def "Load icon component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = openScreen(ComponentView.class)
+
+        then: "Icon component will be loaded"
+        verifyAll(componentView.iconId) {
+            id.get() == "iconId"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            color == "purple"
+            getElement().getAttribute("icon") == "vaadin:check"
+            getStyle().get(ElementConstants.STYLE_WIDTH) == "2em"
+            getStyle().get(ElementConstants.STYLE_HEIGHT) == "2em"
+            visible
         }
     }
 

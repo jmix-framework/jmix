@@ -2783,6 +2783,23 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Icon-->
+    <xs:complexType name="iconComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="icon" type="vaadinIconEnum" use="required"/>
+                <xs:attribute name="color" type="resourceString"/>
+                <xs:attribute name="size" type="componentSize"/>
+
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Scroller -->
     <xs:complexType name="scrollerContainer">
         <xs:complexContent>
@@ -3300,6 +3317,7 @@
                 <xs:element name="listMenu" type="listMenuComponent"/>
                 <xs:element name="button" type="buttonComponent"/>
                 <xs:element name="avatar" type="avatarComponent"/>
+                <xs:element name="icon" type="iconComponent"/>
                 <xs:element name="select" type="selectComponent"/>
                 <xs:element name="details" type="detailsComponent"/>
                 <xs:element name="checkbox" type="checkboxComponent"/>

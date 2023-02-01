@@ -52,6 +52,13 @@
                 visible="true"
                 width="100px"/>
 
+        <icon id="iconId"
+              classNames="cssClassName1, cssClassName2"
+              color="purple"
+              icon="CHECK"
+              size="2em"
+              visible="true"/>
+
         <bigDecimalField
                 id="bigDecimalFieldId"
                 autocapitalize="SENTENCES"

@@ -279,7 +279,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.radioButtonGroupId) {
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             enabled
-            errorMessage == null
+            errorMessage == ""
             height == "50px"
             helperText == "helperTextString"
             !invalid

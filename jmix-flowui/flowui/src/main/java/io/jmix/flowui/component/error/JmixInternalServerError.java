@@ -18,6 +18,7 @@ package io.jmix.flowui.component.error;
 
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.ErrorEvent;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.exception.UiExceptionHandlers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class JmixInternalServerError extends InternalServerError {
     public int setErrorParameter(BeforeEnterEvent event, ErrorParameter<Exception> parameter) {
         forwardToPreviousView(event);
 
-        uiExceptionHandlers.error(new ErrorEvent(parameter.getException()));
+        handleException(new ErrorContext(event, parameter));
 
         return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
@@ -82,5 +83,36 @@ public class JmixInternalServerError extends InternalServerError {
         return routes.stream()
                 .filter(routeData -> target.equals(routeData.getNavigationTarget()))
                 .findFirst();
+    }
+
+    protected void handleException(ErrorContext errorContext) {
+        errorContext.handleExceptionAfterNavigation();
+    }
+
+    protected class ErrorContext {
+
+        protected BeforeEnterEvent beforeEnterEvent;
+        protected ErrorParameter<Exception> errorParameter;
+        protected Registration uiAfterNagigationRegistration;
+
+        public ErrorContext(BeforeEnterEvent beforeEnterEvent, ErrorParameter<Exception> errorParameter) {
+            this.beforeEnterEvent = beforeEnterEvent;
+            this.errorParameter = errorParameter;
+        }
+
+        public void handleExceptionAfterNavigation() {
+            removeUiAfterNavigationRegistration();
+            uiAfterNagigationRegistration = beforeEnterEvent.getUI().addAfterNavigationListener(event1 -> {
+                uiExceptionHandlers.error(new ErrorEvent(errorParameter.getException()));
+                removeUiAfterNavigationRegistration();
+            });
+        }
+
+        protected void removeUiAfterNavigationRegistration() {
+            if (uiAfterNagigationRegistration != null) {
+                uiAfterNagigationRegistration.remove();
+                uiAfterNagigationRegistration = null;
+            }
+        }
     }
 }

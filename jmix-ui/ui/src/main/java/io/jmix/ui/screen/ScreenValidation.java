@@ -18,6 +18,10 @@ package io.jmix.ui.screen;
 
 import com.google.common.collect.Iterables;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
@@ -25,10 +29,19 @@ import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
+import io.jmix.ui.action.list.AddAction;
+import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.DataGridItems;
+import io.jmix.ui.component.data.TableItems;
+import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
+import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.UiScreenProperties;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionPropertyContainer;
+import io.jmix.ui.model.InstanceContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -57,6 +70,10 @@ public class ScreenValidation {
     protected Icons icons;
     @Autowired
     protected Validator validator;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     /**
      * Validates UI components by invoking their {@link Validatable#validate()}.
@@ -93,6 +110,16 @@ public class ScreenValidation {
         return errors;
     }
 
+    public ValidationErrors validateUiListComponents(ComponentContainer container) {
+        ValidationErrors errors = new ValidationErrors();
+
+        ComponentsHelper.traverseListComponents(container,
+                v -> validateListComponent(v, errors)
+        );
+
+        return errors;
+    }
+
     protected void validate(Validatable validatable, ValidationErrors errors) {
         try {
             validatable.validate();
@@ -107,6 +134,54 @@ public class ScreenValidation {
 
             ComponentsHelper.fillErrorMessages(validatable, e, errors);
         }
+    }
+
+    protected void validateListComponent(ListComponent<?> listComponent, ValidationErrors errors) {
+        if (!listComponent.isVisibleRecursive() || !listComponent.isEnabledRecursive() || !hasListModificationActions(listComponent)) {
+            return;
+        }
+
+        CollectionContainer<?> collectionContainer = null;
+
+        if (listComponent instanceof Table) {
+            Table<?> table = (Table<?>) listComponent;
+            TableItems<?> tableItems = table.getItems();
+            if (tableItems instanceof ContainerTableItems) {
+                collectionContainer = ((ContainerTableItems<?>) tableItems).getContainer();
+            }
+        } else if (listComponent instanceof DataGrid) {
+            DataGrid<?> dataGrid = (DataGrid<?>) listComponent;
+            DataGridItems<?> dataGridItems = dataGrid.getItems();
+            if(dataGridItems instanceof ContainerDataGridItems) {
+                collectionContainer = ((ContainerDataGridItems<?>) dataGridItems).getContainer();
+            }
+        }
+
+        if(collectionContainer == null) {
+            return;
+        }
+
+        if (collectionContainer instanceof CollectionPropertyContainer) {
+            InstanceContainer<?> instanceContainer = ((CollectionPropertyContainer<?>) collectionContainer).getMaster();
+            String collectionPropertyName = ((CollectionPropertyContainer<?>) collectionContainer).getProperty();
+            MetaClass metaClass = instanceContainer.getEntityMetaClass();
+            Class<?> javaClass = metaClass.getJavaClass();
+            Object instance = instanceContainer.getItem();
+            if (javaClass != KeyValueEntity.class) {
+                Set<ConstraintViolation<Object>> constraintViolations = validator.validateProperty(instance, collectionPropertyName);
+                constraintViolations.forEach(violation -> errors.add(listComponent, violation.getMessage()));
+            }
+        }
+    }
+
+    protected boolean hasListModificationActions(ListComponent<?> listComponent) {
+        Collection<Action> actions = listComponent.getActions();
+        return actions.stream().anyMatch(action -> {
+            if (!action.isEnabled() || !action.isVisible()) {
+                return false;
+            }
+            return action instanceof AddAction || action instanceof CreateAction;
+        });
     }
 
     /**

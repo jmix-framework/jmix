@@ -523,6 +523,10 @@ public abstract class StandardEditor<T> extends Screen
         this.crossFieldValidate = crossFieldValidate;
     }
 
+    protected boolean isUiListComponentsValidationEnabled() {
+        return true;
+    }
+
     /**
      * Validates screen data. Default implementation validates visible and enabled UI components. <br>
      * Can be overridden in subclasses.
@@ -545,7 +549,12 @@ public abstract class StandardEditor<T> extends Screen
      */
     protected ValidationErrors validateUiComponents() {
         ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
-        return screenValidation.validateUiComponents(getWindow());
+        ValidationErrors validationErrors = screenValidation.validateUiComponents(getWindow());
+
+        if(isUiListComponentsValidationEnabled()) {
+            validationErrors.addAll(screenValidation.validateUiListComponents(getWindow()));
+        }
+        return validationErrors;
     }
 
     protected void validateAdditionalRules(ValidationErrors errors) {

@@ -39,9 +39,11 @@ import io.jmix.ui.util.UnknownOperationResult;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Displays a list of entities on the left and details of the currently selected instance on the right.
@@ -478,6 +480,10 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
         this.crossFieldValidate = crossFieldValidate;
     }
 
+    protected boolean isUiListComponentsValidationEnabled() {
+        return true;
+    }
+
     /**
      * Validates screen data. Default implementation validates visible and enabled UI components. <br>
      * Can be overridden in subclasses.
@@ -500,7 +506,27 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
      */
     protected ValidationErrors validateUiComponents() {
         ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
-        return screenValidation.validateUiComponents(getForm().getComponents());
+        ValidationErrors validationErrors = screenValidation.validateUiComponents(getForm().getComponents());
+
+        if(isUiListComponentsValidationEnabled()) {
+            validateUiListComponents(screenValidation, validationErrors);
+        }
+
+        return validationErrors;
+    }
+
+    protected void validateUiListComponents(ScreenValidation screenValidation, ValidationErrors validationErrors) {
+        TabSheet tabSheet = getTabSheet();
+        if(tabSheet != null) {
+            Collection<ComponentContainer> componentContainers = tabSheet.getOwnComponents().stream()
+                    .filter(c -> c instanceof ComponentContainer)
+                    .map(c -> (ComponentContainer) c)
+                    .collect(Collectors.toList());
+
+            componentContainers.stream()
+                    .map(screenValidation::validateUiListComponents)
+                    .forEach(validationErrors::addAll);
+        }
     }
 
     /**

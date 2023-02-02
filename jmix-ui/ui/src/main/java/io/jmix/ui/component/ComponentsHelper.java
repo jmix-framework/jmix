@@ -79,6 +79,19 @@ public abstract class ComponentsHelper {
                 });
     }
 
+    public static void traverseListComponents(HasComponents container, Consumer<ListComponent<?>> visitor) {
+        container.getOwnComponentsStream()
+                .forEach(c -> {
+                    if(c instanceof ListComponent) {
+                        visitor.accept((ListComponent<?>)c);
+                    }
+
+                    if (c instanceof HasComponents) {
+                        traverseListComponents((HasComponents) c, visitor);
+                    }
+                });
+    }
+
     /**
      * Visit all {@link Validatable} components below the specified container.
      *

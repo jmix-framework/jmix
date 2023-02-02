@@ -36,7 +36,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -63,18 +62,14 @@ import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EmptyDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.component.data.meta.EntityTableItems;
-import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import io.jmix.ui.component.pagination.data.PaginationDataUnitBinder;
 import io.jmix.ui.component.pagination.data.PaginationEmptyBinder;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.component.table.*;
-import io.jmix.ui.component.validation.Validator;
-import io.jmix.ui.component.validator.BeanPropertyValidator;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.presentation.TablePresentations;
@@ -101,7 +96,6 @@ import io.jmix.ui.widget.ShortcutListenerDelegate;
 import io.jmix.ui.widget.compatibility.JmixValueChangeEvent;
 import io.jmix.ui.widget.data.AggregationContainer;
 import io.jmix.ui.widget.data.util.NullContainer;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -111,7 +105,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import javax.validation.metadata.BeanDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
@@ -129,7 +122,7 @@ import static io.jmix.ui.screen.LookupScreen.LOOKUP_ITEM_CLICK_ACTION_ID;
 public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhancedTable, E>
         extends AbstractActionsHolderComponent<T>
         implements Table<E>, TableItemsEventsDelegate<E>, LookupSelectionChangeNotifier<E>,
-        HasInnerComponents, InstallTargetHandler, InitializingBean, Validatable, HasValidator<Collection<E>> {
+        HasInnerComponents, InstallTargetHandler, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractTable.class);
 
@@ -149,8 +142,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     // Vaadin considers null as row header property id
     protected static final Object ROW_HEADER_PROPERTY_ID = null;
-
-    protected static final int VALIDATORS_LIST_INITIAL_CAPACITY = 2;
 
     // Beans
 
@@ -180,7 +171,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     protected Map<Object, Column<E>> columns = new HashMap<>();
     protected List<Column<E>> columnsOrder = new ArrayList<>();
-    protected List<Validator<Collection<E>>> validators;
 
     protected boolean sortable = true;
     protected boolean editable;
@@ -228,67 +218,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     protected Consumer<EmptyStateClickEvent<E>> emptyStateClickLinkHandler;
 
     protected AbstractTable() {
-    }
-
-    @Override
-    public boolean isValid() {
-        try {
-            validate();
-            return true;
-        } catch (ValidationException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public void validate() throws ValidationException {
-        if (hasValidationError()) {
-            setValidationError(null);
-        }
-
-        if (!isVisibleRecursive() || !isEnabledRecursive()) {
-            return;
-        }
-
-        TableItems<E> tableItems = dataBinding.getTableItems();
-        if (CollectionUtils.isNotEmpty(validators)) {
-            Collection<E> items = tableItems.getItems();
-            try {
-                for (Validator<Collection<E>> validator : validators) {
-                    validator.accept(items);
-                }
-            } catch (ValidationException e) {
-                setValidationError(e.getDetailsMessage());
-                throw new ValidationFailedException(e.getDetailsMessage(), this, e);
-            }
-        }
-    }
-
-    @Override
-    public void addValidator(Validator<? super Collection<E>> validator) {
-        if (validators == null) {
-            validators = new ArrayList<>(VALIDATORS_LIST_INITIAL_CAPACITY);
-        }
-
-        if (!validators.contains(validator)) {
-            validators.add((Validator<Collection<E>>) validator);
-        }
-    }
-
-    @Override
-    public void removeValidator(Validator<Collection<E>> validator) {
-        if (validators != null) {
-            validators.remove(validator);
-        }
-    }
-
-    @Override
-    public Collection<Validator<Collection<E>>> getValidators() {
-        if (validators == null) {
-            return Collections.emptyList();
-        }
-
-        return Collections.unmodifiableCollection(validators);
     }
 
     @Override
@@ -1623,32 +1552,9 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             refreshActionsState();
 
             setUiTestId(tableItems);
-
-            initBeanValidator(tableItems);
         }
 
         initEmptyState();
-    }
-
-    protected void initBeanValidator(TableItems<E> tableItems) {
-        if (tableItems instanceof ContainerTableItems) {
-            CollectionContainer<E> container = ((ContainerTableItems<E>) tableItems).getContainer();
-            if (container instanceof CollectionPropertyContainer) {
-                InstanceContainer<?> masterContainer = ((CollectionPropertyContainer<E>) container).getMaster();
-                MetaClass entityMetaClass = masterContainer.getEntityMetaClass();
-                Class<?> enclosingJavaClass = entityMetaClass.getJavaClass();
-                String property = ((CollectionPropertyContainer<E>) container).getProperty();
-
-                if (enclosingJavaClass != KeyValueEntity.class) {
-                    javax.validation.Validator validator = applicationContext.getBean(javax.validation.Validator.class);
-                    BeanDescriptor beanDescriptor = validator.getConstraintsForClass(enclosingJavaClass);
-
-                    if (beanDescriptor.isBeanConstrained()) {
-                        addValidator(applicationContext.getBean(BeanPropertyValidator.class, enclosingJavaClass, property));
-                    }
-                }
-            }
-        }
     }
 
     protected void setUiTestId(TableItems<E> items) {

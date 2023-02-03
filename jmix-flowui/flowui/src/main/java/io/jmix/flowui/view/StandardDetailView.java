@@ -36,8 +36,10 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
@@ -527,8 +529,25 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     protected void initExistingEntity(String serializedEntityId) {
+        if (!entityCanBeLoaded()) {
+            throw new GuiDevelopmentException(String.format(
+                    "Entity '%s' cannot be loaded by id '%s' " +
+                            "due to it is non-JPA entity or load delegate is not set. To correctly handle editing non-" +
+                            "JPA entities open editor in DIALOG mode. Another way is using 'routeParametersProvider'" +
+                            " in %s and installing load delegate in editor or overriding 'initExistingEntity' method",
+                    getEditedEntityContainer().getEntityMetaClass().getJavaClass().getSimpleName(),
+                    serializedEntityId, EditAction.class.getSimpleName()
+            ), getId().orElse(null));
+        }
+
         Object entityId = getUrlParamSerializer().deserialize(getSerializedIdType(), serializedEntityId);
         getEditedEntityLoader().setEntityId(entityId);
+    }
+
+    @SuppressWarnings("ConstantValue")
+    protected boolean entityCanBeLoaded() {
+        return getMetadataTools().isJpaEntity(getEditedEntityContainer().getEntityMetaClass())
+                || getEditedEntityLoader().getLoadDelegate() != null;
     }
 
     private Class<?> getSerializedIdType() {

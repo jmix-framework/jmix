@@ -17,10 +17,7 @@
 package test_support;
 
 import com.vaadin.flow.spring.VaadinServletContextInitializer;
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.CoreSecurityConfiguration;
@@ -39,6 +36,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -120,6 +118,12 @@ public class FlowuiTestConfiguration {
     @Primary
     public ServletContext servletContext() {
         return new TestServletContext();
+    }
+
+    @Order(JmixOrder.LOWEST_PRECEDENCE - 50)
+    @Bean
+    public TestAssistExceptionHandler testAssistExceptionHandler() {
+        return new TestAssistExceptionHandler();
     }
 
     @EnableWebSecurity

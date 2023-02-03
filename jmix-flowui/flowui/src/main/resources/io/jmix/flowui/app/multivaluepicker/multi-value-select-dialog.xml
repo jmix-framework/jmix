@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://multiValueSelectDialog.title">
+    <actions>
+        <action id="select"
+                text="msg:///actions.Select"
+                icon="CHECK"
+                actionVariant="PRIMARY"/>
+        <action id="cancel"
+                text="msg:///actions.Cancel"
+                icon="BAN"/>
+    </actions>
+    <layout expand="scroller">
+        <hbox id="addItemLayout" width="100%"/>
+
+        <scroller id="scroller" scrollBarsDirection="BOTH" width="100%">
+            <vbox id="multiValueLayout" justifyContent="START" padding="false"/>
+        </scroller>
+
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="selectBtn" action="select"/>
+            <button id="cancelBtn" action="cancel"/>
+        </hbox>
+    </layout>
+</view>

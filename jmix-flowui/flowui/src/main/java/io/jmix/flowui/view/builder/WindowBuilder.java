@@ -35,6 +35,17 @@ public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> i
 
     protected Class<V> viewClass;
 
+    protected WindowBuilder(WindowBuilder<V> builder, Class<V> viewClass) {
+        super(builder.origin, builder.handler);
+
+        this.viewId = builder.viewId;
+
+        this.afterOpenListener = builder.afterOpenListener;
+        this.afterCloseListener = builder.afterCloseListener;
+
+        this.viewClass = viewClass;
+    }
+
     public WindowBuilder(View<?> origin,
                          Class<V> viewClass,
                          Function<? extends WindowBuilder<V>, DialogWindow<V>> handler) {
@@ -61,6 +72,16 @@ public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> i
     public WindowBuilder<V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
         return this;
+    }
+
+    public WindowBuilder<V> withViewId(@Nullable String viewId) {
+        this.viewId = viewId;
+        return this;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public <T extends View<?>> WindowBuilder<T> withViewClass(Class<T> viewClass) {
+        return new WindowBuilder(this, viewClass);
     }
 
     @Override

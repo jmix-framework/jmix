@@ -23,8 +23,13 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.Optional;
 
+/**
+ * @deprecated Use ui.login.defaultUsername, ui.login.defaultPassword properties instead.
+ *
+ */
 @ConfigurationProperties(prefix = "jmix.flowui.login")
 @ConstructorBinding
+@Deprecated
 public class FlowuiLoginProperties {
 
     /**

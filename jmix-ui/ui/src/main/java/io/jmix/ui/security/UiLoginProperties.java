@@ -20,8 +20,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+/**
+ * @deprecated Use ui.login.defaultUsername, ui.login.defaultPassword properties instead.
+ *
+ */
 @ConfigurationProperties(prefix = "jmix.ui.login")
 @ConstructorBinding
+@Deprecated
 public class UiLoginProperties {
 
     String defaultUsername;

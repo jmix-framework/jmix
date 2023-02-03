@@ -32,6 +32,7 @@ import io.jmix.ui.screen.Subscribe;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -304,6 +305,10 @@ public class UiControllerReflectionInspector {
 
         if (element.isAnnotationPresent(WindowParam.class)) {
             return WindowParam.class;
+        }
+
+        if (element.isAnnotationPresent(Value.class)) {
+            return Value.class;
         }
 
         return null;

@@ -30,14 +30,15 @@ public class WebTasksWatchDog extends TasksWatchDog {
     @Override
     protected ExecutionStatus getExecutionStatus(long actualTimeMs, TaskHandlerImpl taskHandler) {
         long timeout = taskHandler.getTimeoutMs();
-        if (timeout > 0 && (actualTimeMs - taskHandler.getStartTimeStamp()) > timeout) {
-            return ExecutionStatus.TIMEOUT_EXCEEDED;
-        }
 
         // kill tasks, which do not update status for latency milliseconds
         long latencyMs = TimeUnit.SECONDS.toMillis(properties.getTimeoutSeconds());
         if (timeout > 0 && (actualTimeMs - taskHandler.getStartTimeStamp()) > timeout + latencyMs) {
             return ExecutionStatus.SHOULD_BE_KILLED;
+        }
+
+        if (timeout > 0 && (actualTimeMs - taskHandler.getStartTimeStamp()) > timeout) {
+            return ExecutionStatus.TIMEOUT_EXCEEDED;
         }
 
         return ExecutionStatus.NORMAL;

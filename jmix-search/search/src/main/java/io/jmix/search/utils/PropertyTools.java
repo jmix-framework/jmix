@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Transient;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -45,7 +46,7 @@ public class PropertyTools {
     /**
      * Finds properties of entity by provided path string. Path string supports wildcard '*'.
      *
-     * @param metaClass  entity meta class
+     * @param metaClass  entity metaclass
      * @param pathString path to property to find
      * @return map with effective property path as a key and property itself as a value
      */
@@ -55,11 +56,11 @@ public class PropertyTools {
             return findPropertiesByWildcardPath(metaClass, pathString);
         } else {
             MetaPropertyPath propertyPath = metaClass.getPropertyPath(pathString);
-            if (propertyPath == null) {
-                log.debug("Entity '{}' doesn't have property '{}'", metaClass, pathString);
-                return Collections.emptyMap();
-            } else {
+            if (propertyPath != null && isPropertyPathSuitableToDirectDeclaration(propertyPath)) {
                 return Collections.singletonMap(pathString, propertyPath);
+            } else {
+                log.debug("Entity '{}' doesn't have property '{}' or it's not suitable", metaClass, pathString);
+                return Collections.emptyMap();
             }
         }
     }
@@ -88,13 +89,13 @@ public class PropertyTools {
                 Pattern pattern = Pattern.compile(pathItem.replace("*", ".*"));
                 List<MetaProperty> localPropertiesByPattern = findLocalPropertiesByPattern(metaClass, pattern);
                 result = localPropertiesByPattern.stream()
-                        .filter(this::isSearchableProperty)
+                        .filter(this::isPropertySuitableToWildcardDeclaration)
                         .filter(property -> !isInverseProperty(property, parentPath))
                         .map(property -> createPropertyPath(parentPath, property))
                         .collect(Collectors.toMap(MetaPropertyPath::toPathString, Function.identity()));
             } else {
                 MetaProperty property = metaClass.findProperty(pathItem);
-                if (property != null && isSearchableProperty(property)) {
+                if (property != null && isPropertySuitableToDirectDeclaration(property)) {
                     result = new HashMap<>();
                     MetaPropertyPath newPath = createPropertyPath(parentPath, property);
                     result.put(newPath.toPathString(), newPath);
@@ -108,7 +109,7 @@ public class PropertyTools {
                 List<MetaProperty> localPropertiesByPattern = findLocalPropertiesByPattern(metaClass, pattern);
                 result = new HashMap<>();
                 for (MetaProperty property : localPropertiesByPattern) {
-                    if (isReferenceProperty(property) && !isInverseProperty(property, parentPath)) {
+                    if (isPropertySuitableToWildcardDeclaration(property) && isReferenceProperty(property) && !isInverseProperty(property, parentPath)) {
                         MetaClass nextMetaClass = property.getRange().asClass();
                         MetaPropertyPath nextPath = createPropertyPath(parentPath, property);
                         result.putAll(findPropertiesByPathItems(nextMetaClass, Arrays.copyOfRange(pathItems, 1, pathItems.length), nextPath));
@@ -117,7 +118,7 @@ public class PropertyTools {
 
             } else {
                 MetaProperty property = metaClass.findProperty(pathItem);
-                if (property != null && isReferenceProperty(property)) {
+                if (property != null && isPropertySuitableToDirectDeclaration(property) && isReferenceProperty(property)) {
                     MetaClass nextMetaClass = property.getRange().asClass();
                     MetaPropertyPath nextPath = createPropertyPath(parentPath, property);
                     result = findPropertiesByPathItems(nextMetaClass, Arrays.copyOfRange(pathItems, 1, pathItems.length), nextPath);
@@ -140,12 +141,33 @@ public class PropertyTools {
                 .collect(Collectors.toList());
     }
 
-    protected boolean isSearchableProperty(MetaProperty property) {
-        return !metadataTools.isSystem(property);
+    protected boolean isPersistentPropertyPath(MetaPropertyPath propertyPath) {
+        return Arrays.stream(propertyPath.getMetaProperties()).allMatch(this::isPersistentProperty);
     }
 
-    protected boolean isReferenceProperty(MetaProperty metaProperty) {
-        return metaProperty.getRange().isClass();
+    protected boolean isPersistentProperty(MetaProperty property) {
+        return !property.getAnnotatedElement().isAnnotationPresent(Transient.class);
+    }
+
+    protected boolean isPropertySuitableToWildcardDeclaration(MetaProperty property) {
+        return isPersistentProperty(property) && !isSystemProperty(property);
+    }
+
+
+    protected boolean isPropertyPathSuitableToDirectDeclaration(MetaPropertyPath propertyPath) {
+        return isPersistentPropertyPath(propertyPath);
+    }
+
+    protected boolean isPropertySuitableToDirectDeclaration(MetaProperty property) {
+        return isPersistentProperty(property);
+    }
+
+    protected boolean isReferenceProperty(MetaProperty property) {
+        return property.getRange().isClass();
+    }
+
+    protected boolean isSystemProperty(MetaProperty property) {
+        return metadataTools.isSystem(property);
     }
 
     protected boolean hasWildcard(String path) {
@@ -153,7 +175,7 @@ public class PropertyTools {
     }
 
     protected boolean isInverseProperty(MetaProperty propertyToCheck, MetaPropertyPath parentPath) {
-        if(parentPath.length() > 0) {
+        if (parentPath.length() > 0) {
             MetaProperty parentProperty = parentPath.getMetaProperty();
             MetaProperty inverseProperty = propertyToCheck.getInverse();
             return parentProperty.equals(inverseProperty);

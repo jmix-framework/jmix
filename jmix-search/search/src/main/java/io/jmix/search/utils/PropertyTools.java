@@ -73,8 +73,11 @@ public class PropertyTools {
         return findPropertiesByPathItems(metaClass, pathItems, new MetaPropertyPath(metaClass));
     }
 
-    protected Map<String, MetaPropertyPath> findPropertiesByPathItems(MetaClass metaClass, String[] pathItems, MetaPropertyPath parentPath) {
-        log.debug("Find properties by path items: entity={}, PathItems={}, parentPath={}", metaClass, Arrays.deepToString(pathItems), parentPath);
+    protected Map<String, MetaPropertyPath> findPropertiesByPathItems(MetaClass metaClass,
+                                                                      String[] pathItems,
+                                                                      MetaPropertyPath parentPath) {
+        log.debug("Find properties by path items: entity={}, PathItems={}, parentPath={}",
+                metaClass, Arrays.deepToString(pathItems), parentPath);
         if (pathItems.length == 0) {
             return Collections.emptyMap();
         }
@@ -109,19 +112,32 @@ public class PropertyTools {
                 List<MetaProperty> localPropertiesByPattern = findLocalPropertiesByPattern(metaClass, pattern);
                 result = new HashMap<>();
                 for (MetaProperty property : localPropertiesByPattern) {
-                    if (isPropertySuitableToWildcardDeclaration(property) && isReferenceProperty(property) && !isInverseProperty(property, parentPath)) {
+                    if (isPropertySuitableToWildcardDeclaration(property)
+                            && isReferenceProperty(property)
+                            && !isInverseProperty(property, parentPath)) {
                         MetaClass nextMetaClass = property.getRange().asClass();
                         MetaPropertyPath nextPath = createPropertyPath(parentPath, property);
-                        result.putAll(findPropertiesByPathItems(nextMetaClass, Arrays.copyOfRange(pathItems, 1, pathItems.length), nextPath));
+                        result.putAll(
+                                findPropertiesByPathItems(
+                                        nextMetaClass,
+                                        Arrays.copyOfRange(pathItems, 1, pathItems.length),
+                                        nextPath)
+                        );
                     }
                 }
 
             } else {
                 MetaProperty property = metaClass.findProperty(pathItem);
-                if (property != null && isPropertySuitableToDirectDeclaration(property) && isReferenceProperty(property)) {
+                if (property != null
+                        && isPropertySuitableToDirectDeclaration(property)
+                        && isReferenceProperty(property)) {
                     MetaClass nextMetaClass = property.getRange().asClass();
                     MetaPropertyPath nextPath = createPropertyPath(parentPath, property);
-                    result = findPropertiesByPathItems(nextMetaClass, Arrays.copyOfRange(pathItems, 1, pathItems.length), nextPath);
+                    result = findPropertiesByPathItems(
+                            nextMetaClass,
+                            Arrays.copyOfRange(pathItems, 1, pathItems.length),
+                            nextPath
+                    );
                 } else {
                     result = Collections.emptyMap();
                 }

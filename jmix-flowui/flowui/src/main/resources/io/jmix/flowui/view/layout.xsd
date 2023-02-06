@@ -1762,6 +1762,9 @@
         <xs:attributeGroup ref="hasId"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="colspan" type="xs:integer"/>
+
+        <!-- enable XSD extension here -->
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
     </xs:complexType>
 
     <xs:complexType name="baseAction">

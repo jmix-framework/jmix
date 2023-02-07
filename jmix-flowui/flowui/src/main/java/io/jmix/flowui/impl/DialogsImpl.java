@@ -16,35 +16,44 @@
 
 package io.jmix.flowui.impl;
 
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.FlowuiViewProperties;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.inputdialog.InputDialogAction;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.backgroundtask.*;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -56,11 +65,19 @@ public class DialogsImpl implements Dialogs {
     protected Messages messages;
     protected FlowuiViewProperties flowUiViewProperties;
     protected DialogWindows dialogWindows;
+    protected UiComponents uiComponents;
+    protected BackgroundWorker backgroundWorker;
+    protected ApplicationContext applicationContext;
 
-    public DialogsImpl(Messages messages, FlowuiViewProperties flowUiViewProperties, DialogWindows dialogWindows) {
+    public DialogsImpl(ApplicationContext applicationContext, Messages messages,
+                       FlowuiViewProperties flowUiViewProperties,
+                       DialogWindows dialogWindows, UiComponents uiComponents, BackgroundWorker backgroundWorker) {
         this.messages = messages;
         this.flowUiViewProperties = flowUiViewProperties;
         this.dialogWindows = dialogWindows;
+        this.uiComponents = uiComponents;
+        this.backgroundWorker = backgroundWorker;
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -76,6 +93,12 @@ public class DialogsImpl implements Dialogs {
     @Override
     public InputDialogBuilder createInputDialog(View<?> origin) {
         return new InputDialogBuilderImpl(origin);
+    }
+
+    @Override
+    public <T extends Number, V> BackgroundTaskDialogBuilder<T, V> createBackgroundTaskDialog(
+            BackgroundTask<T, V> backgroundTask) {
+        return new BackgroundTaskDialogBuilderImpl<>(backgroundTask);
     }
 
     protected Button createButton(Action action, Dialog dialog) {
@@ -728,6 +751,286 @@ public class DialogsImpl implements Dialogs {
         @Override
         public DialogWindow<InputDialog> build() {
             return dialogBuild;
+        }
+    }
+
+    public class BackgroundTaskDialogBuilderImpl<T extends Number, V> implements BackgroundTaskDialogBuilder<T, V> {
+
+        protected Dialog dialog;
+
+        protected Span messageSpan;
+        protected Span progressTextSpan;
+        protected ProgressBar progressBar;
+        protected Button cancelButton;
+
+        protected BackgroundTask<T, V> backgroundTask;
+        protected String messageText;
+        protected Number total;
+        protected boolean showProgressInPercentage;
+        protected boolean cancelAllowed = false;
+
+        protected BackgroundTaskHandler<V> taskHandler;
+
+        public BackgroundTaskDialogBuilderImpl(BackgroundTask<T, V> backgroundTask) {
+            this.backgroundTask = backgroundTask;
+
+            dialog = createDialog();
+            initDialog(dialog);
+            initDialogContent(dialog);
+        }
+
+        protected Dialog createDialog() {
+            return new Dialog();
+        }
+
+        protected void initDialog(Dialog dialog) {
+            dialog.setHeaderTitle(messages.getMessage("backgroundWorkProgressDialog.headerTitle"));
+            dialog.setDraggable(true);
+            dialog.setCloseOnOutsideClick(false);
+            dialog.setCloseOnEsc(false);
+            dialog.setWidth(WIDTH);
+        }
+
+        protected void initDialogContent(Dialog dialog) {
+            VerticalLayout content = new VerticalLayout();
+            content.setPadding(false);
+
+            messageSpan = uiComponents.create(Span.class);
+            messageSpan.setText(messages.getMessage("backgroundWorkProgressDialog.messageSpan.text"));
+            content.add(messageSpan);
+
+            progressTextSpan = uiComponents.create(Span.class);
+            content.add(progressTextSpan);
+
+            progressBar = uiComponents.create(ProgressBar.class);
+            content.add(progressBar);
+
+            dialog.add(content);
+
+            cancelButton = uiComponents.create(Button.class);
+            cancelButton.setText(messages.getMessage("actions.Cancel"));
+            cancelButton.setIcon(new Icon(VaadinIcon.BAN));
+            cancelButton.addClickListener(this::onCancelButtonClick);
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withCancelAllowed(boolean cancelAllowed) {
+            if (this.cancelAllowed != cancelAllowed) {
+                this.cancelAllowed = cancelAllowed;
+                if (cancelAllowed) {
+                    dialog.getFooter().add(cancelButton);
+                } else {
+                    dialog.getFooter().remove(cancelButton);
+                }
+            }
+            return this;
+        }
+
+        @Override
+        public boolean isCancelAllowed() {
+            return cancelAllowed;
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withTotal(Number total) {
+            this.total = total;
+            return this;
+        }
+
+        @Override
+        public Number getTotal() {
+            return total;
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withShowProgressInPercentage(boolean percentProgress) {
+            this.showProgressInPercentage = percentProgress;
+            return this;
+        }
+
+        @Override
+        public boolean isShowProgressInPercentage() {
+            return showProgressInPercentage;
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withHeader(String header) {
+            dialog.setHeaderTitle(header);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getHeader() {
+            return dialog.getHeaderTitle();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withText(String text) {
+            this.messageText = text;
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getText() {
+            return messageText;
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withThemeName(String themeName) {
+            dialog.setThemeName(themeName);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getThemeName() {
+            return dialog.getThemeName();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withClassName(@Nullable String className) {
+            dialog.setClassName(className);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getClassName() {
+            return dialog.getClassName();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withDraggable(boolean draggable) {
+            dialog.setDraggable(draggable);
+            return this;
+        }
+
+        @Override
+        public boolean isDraggable() {
+            return dialog.isDraggable();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withResizable(boolean resizable) {
+            dialog.setResizable(resizable);
+            return this;
+        }
+
+        @Override
+        public boolean isResizable() {
+            return dialog.isResizable();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withMinWidth(String minWidth) {
+            dialog.setMinWidth(minWidth);
+            return this;
+        }
+
+        @Override
+        public String getMinWidth() {
+            return dialog.getMinWidth();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withMinHeight(String minHeight) {
+            dialog.setMinHeight(minHeight);
+            return this;
+        }
+
+        @Override
+        public String getMinHeight() {
+            return dialog.getMinHeight();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withMaxWidth(String maxWidth) {
+            dialog.setMaxWidth(maxWidth);
+            return this;
+        }
+
+        @Override
+        public String getMaxWidth() {
+            return dialog.getMaxWidth();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withMaxHeight(String maxHeight) {
+            dialog.setMaxHeight(maxHeight);
+            return this;
+        }
+
+        @Override
+        public String getMaxHeight() {
+            return dialog.getMaxHeight();
+        }
+
+        @Override
+        public void open() {
+            if (messageText != null) {
+                messageSpan.setText(messageText);
+            }
+            if (isIndeterminateMode()) {
+                progressTextSpan.setVisible(false);
+                progressBar.setIndeterminate(true);
+            } else {
+                progressTextSpan.setVisible(true);
+            }
+            updateProgress(0);
+
+            dialog.open();
+
+            startExecution();
+        }
+
+        protected boolean isIndeterminateMode() {
+            return total == null;
+        }
+
+        @SuppressWarnings("unchecked")
+        protected void startExecution() {
+            LocalizedTaskWrapper<T, V> taskWrapper = applicationContext.getBean(LocalizedTaskWrapper.class, backgroundTask);
+            taskWrapper.setCloseViewHandler(this::handleTaskWrapperCloseView);
+            taskWrapper.addProgressListener(new BackgroundTask.ProgressListenerAdapter<>() {
+                @Override
+                public void onProgress(List<T> changes) {
+                    if (!changes.isEmpty()) {
+                        Number lastProcessedValue = changes.get(changes.size() - 1);
+                        updateProgress(lastProcessedValue);
+                    }
+                }
+            });
+
+            taskHandler = backgroundWorker.handle(taskWrapper);
+            taskHandler.execute();
+        }
+
+        protected void updateProgress(Number processedValue) {
+            if (isIndeterminateMode()) {
+                return;
+            }
+
+            double currentProgressValue = processedValue.doubleValue() / total.doubleValue();
+            progressBar.setValue(currentProgressValue);
+            if (!showProgressInPercentage) {
+                progressTextSpan.setText(messages.formatMessage(StringUtils.EMPTY,
+                        "backgroundWorkProgressDialog.progressTextSpan.textFormat", processedValue, total));
+            } else {
+                int percentValue = (int) Math.ceil(currentProgressValue * 100);
+                progressTextSpan.setText(messages.formatMessage(StringUtils.EMPTY,
+                        "backgroundWorkProgressDialog.progressTextSpan.percentFormat", percentValue));
+            }
+        }
+
+        protected void onCancelButtonClick(ClickEvent<Button> event) {
+            taskHandler.cancel();
+            dialog.close();
+        }
+
+        protected void handleTaskWrapperCloseView(LocalizedTaskWrapper.CloseViewContext event) {
+            dialog.close();
         }
     }
 }

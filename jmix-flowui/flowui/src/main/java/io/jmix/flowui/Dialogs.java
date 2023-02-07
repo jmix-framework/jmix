@@ -24,12 +24,12 @@ import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 
 import javax.annotation.Nullable;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -96,6 +96,25 @@ public interface Dialogs {
      * @return builder
      */
     InputDialogBuilder createInputDialog(View<?> origin);
+
+    /**
+     * Creates background task dialog builder.
+     * <br>
+     * Example of showing a background task dialog:
+     * <pre>
+     * dialogs.createBackgroundTaskDialog(backgroundTask)
+     *         .withHeader("Task")
+     *         .withText("My Task is Running")
+     *         .withTotal(10)
+     *         .withShowProgressInPercentage(true)
+     *         .withCancelAllowed(true)
+     *         .open();
+     * </pre>
+     *
+     * @param backgroundTask background task to run
+     * @return builder
+     */
+    <T extends Number, V> BackgroundTaskDialogBuilder<T, V> createBackgroundTaskDialog(BackgroundTask<T, V> backgroundTask);
 
     interface OptionDialogBuilder extends DialogBuilder<OptionDialogBuilder>,
             HasText<OptionDialogBuilder>,
@@ -324,6 +343,67 @@ public interface Dialogs {
              */
             TOP
         }
+    }
+
+    /**
+     * Builder of background task dialog.
+     */
+    interface BackgroundTaskDialogBuilder<T extends Number, V> extends
+            HasHeader<BackgroundTaskDialogBuilder<T, V>>,
+            HasText<BackgroundTaskDialogBuilder<T, V>>,
+            HasTheme<BackgroundTaskDialogBuilder<T, V>>,
+            HasStyle<BackgroundTaskDialogBuilder<T, V>>,
+            Draggable<BackgroundTaskDialogBuilder<T, V>>,
+            Resizable<BackgroundTaskDialogBuilder<T, V>> {
+
+        /**
+         * Determines whether the dialog can be closed.
+         * <p>
+         * The default value is {@code false}.
+         *
+         * @param cancelAllowed {@code true} if dialog is closeable
+         * @return builder
+         */
+        BackgroundTaskDialogBuilder<T, V> withCancelAllowed(boolean cancelAllowed);
+
+        /**
+         * @return {@code true} if the dialog can be closed
+         */
+        boolean isCancelAllowed();
+
+        /**
+         * Sets amount of items to be processed by background task.
+         * <br>
+         * Use {@link io.jmix.flowui.backgroundtask.TaskLifeCycle#publish(Object[])} to notify the dialog about progress
+         * completion.
+         *
+         * @param total amount of items to be processed by background task,
+         * @return builder
+         */
+        BackgroundTaskDialogBuilder<T, V> withTotal(Number total);
+
+        /**
+         * @return amount of items to be processed by background task
+         */
+        Number getTotal();
+
+        /**
+         * Sets whether progress should be represented as percentage (rather than as raw number).
+         *
+         * @param percentProgress {@code true} to show progress in percents
+         * @return builder
+         */
+        BackgroundTaskDialogBuilder<T, V> withShowProgressInPercentage(boolean percentProgress);
+
+        /**
+         * @return {@code true} if progress should is shown in percents
+         */
+        boolean isShowProgressInPercentage();
+
+        /**
+         * Opens the dialog.
+         */
+        void open();
     }
 
     /**

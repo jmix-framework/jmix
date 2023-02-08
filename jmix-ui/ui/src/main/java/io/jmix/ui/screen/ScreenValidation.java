@@ -31,11 +31,11 @@ import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.list.AddAction;
 import io.jmix.ui.action.list.CreateAction;
+import io.jmix.ui.action.list.ExcludeAction;
+import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.data.DataGridItems;
-import io.jmix.ui.component.data.TableItems;
-import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
-import io.jmix.ui.component.data.table.ContainerTableItems;
+import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.UiScreenProperties;
@@ -54,6 +54,7 @@ import javax.validation.ElementKind;
 import javax.validation.Path;
 import javax.validation.Validator;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -113,10 +114,13 @@ public class ScreenValidation {
     public ValidationErrors validateUiListComponents(ComponentContainer container) {
         ValidationErrors errors = new ValidationErrors();
 
-        ComponentsHelper.traverseListComponents(container,
-                v -> validateListComponent(v, errors)
+        ComponentsHelper.traverseComponents(container,
+                c -> {
+                    if (c instanceof ListComponent) {
+                        validateListComponent((ListComponent<?>) c, errors);
+                    }
+                }
         );
-
         return errors;
     }
 
@@ -137,51 +141,65 @@ public class ScreenValidation {
     }
 
     protected void validateListComponent(ListComponent<?> listComponent, ValidationErrors errors) {
-        if (!listComponent.isVisibleRecursive() || !listComponent.isEnabledRecursive() || !hasListModificationActions(listComponent)) {
+        if (!listComponent.isVisibleRecursive()
+                || !listComponent.isEnabledRecursive()) {
             return;
         }
 
-        CollectionContainer<?> collectionContainer = null;
+        DataUnit items = listComponent.getItems();
+        if (items instanceof ContainerDataUnit) {
+            CollectionContainer<?> itemsContainer = ((ContainerDataUnit<?>) items).getContainer();
+            if (itemsContainer instanceof CollectionPropertyContainer) {
+                if (!hasListModificationActions(listComponent, itemsContainer.getItems())) {
+                    return;
+                }
 
-        if (listComponent instanceof Table) {
-            Table<?> table = (Table<?>) listComponent;
-            TableItems<?> tableItems = table.getItems();
-            if (tableItems instanceof ContainerTableItems) {
-                collectionContainer = ((ContainerTableItems<?>) tableItems).getContainer();
-            }
-        } else if (listComponent instanceof DataGrid) {
-            DataGrid<?> dataGrid = (DataGrid<?>) listComponent;
-            DataGridItems<?> dataGridItems = dataGrid.getItems();
-            if(dataGridItems instanceof ContainerDataGridItems) {
-                collectionContainer = ((ContainerDataGridItems<?>) dataGridItems).getContainer();
-            }
-        }
-
-        if(collectionContainer == null) {
-            return;
-        }
-
-        if (collectionContainer instanceof CollectionPropertyContainer) {
-            InstanceContainer<?> instanceContainer = ((CollectionPropertyContainer<?>) collectionContainer).getMaster();
-            String collectionPropertyName = ((CollectionPropertyContainer<?>) collectionContainer).getProperty();
-            MetaClass metaClass = instanceContainer.getEntityMetaClass();
-            Class<?> javaClass = metaClass.getJavaClass();
-            Object instance = instanceContainer.getItem();
-            if (javaClass != KeyValueEntity.class) {
-                Set<ConstraintViolation<Object>> constraintViolations = validator.validateProperty(instance, collectionPropertyName);
-                constraintViolations.forEach(violation -> errors.add(listComponent, violation.getMessage()));
+                InstanceContainer<?> masterContainer = ((CollectionPropertyContainer<?>) itemsContainer).getMaster();
+                String property = ((CollectionPropertyContainer<?>) itemsContainer).getProperty();
+                MetaClass metaClass = masterContainer.getEntityMetaClass();
+                Class<?> javaClass = metaClass.getJavaClass();
+                Object instance = masterContainer.getItem();
+                if (javaClass != KeyValueEntity.class) {
+                    Set<ConstraintViolation<Object>> violations = validator.validateProperty(instance, property);
+                    violations.forEach(violation -> errors.add(listComponent, violation.getMessage()));
+                }
             }
         }
     }
 
-    protected boolean hasListModificationActions(ListComponent<?> listComponent) {
+    protected boolean hasListModificationActions(ListComponent<?> listComponent,
+                                                 List<?> content) {
         Collection<Action> actions = listComponent.getActions();
-        return actions.stream().anyMatch(action -> {
-            if (!action.isEnabled() || !action.isVisible()) {
-                return false;
+
+        boolean hasAvailableExtendingAction = false;
+        boolean hasAvailableReducingAction = false;
+        for (Action action : actions) {
+            if (!action.isVisible()) {
+                continue;
             }
-            return action instanceof AddAction || action instanceof CreateAction;
-        });
+            if (!hasAvailableExtendingAction
+                    && isExtendingAction(action)) {
+                hasAvailableExtendingAction = action.isEnabled();
+            } else if (!hasAvailableReducingAction
+                    && isReducingAction(action)) {
+                hasAvailableReducingAction = true;
+            }
+        }
+
+        boolean unableToExtendEmptyContent = !hasAvailableExtendingAction && content.isEmpty();
+        boolean noModificationActions = !hasAvailableExtendingAction && !hasAvailableReducingAction;
+        boolean ignoreValidation = unableToExtendEmptyContent || noModificationActions;
+        return !ignoreValidation;
+    }
+
+    protected boolean isExtendingAction(Action action) {
+        return action instanceof AddAction
+                || action instanceof CreateAction;
+    }
+
+    protected boolean isReducingAction(Action action) {
+        return action instanceof ExcludeAction
+                || action instanceof RemoveAction;
     }
 
     /**
@@ -256,7 +274,7 @@ public class ScreenValidation {
     /**
      * Shows standard unsaved changes dialog with Discard and Cancel actions.
      *
-     * @param origin screen controller
+     * @param origin      screen controller
      * @param closeAction close action
      * @return result
      */
@@ -290,7 +308,7 @@ public class ScreenValidation {
     /**
      * Shows standard save confirmation dialog with Save, Discard and Cancel actions.
      *
-     * @param origin screen controller
+     * @param origin      screen controller
      * @param closeAction close action
      * @return result
      */

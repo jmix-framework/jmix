@@ -54,7 +54,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     protected static final String UPLOAD = "Upload";
     protected static final String CLEAR_COMPONENT_ARIA_LABEL = "Remove file";
 
-    protected JmixUpload upload;
+    protected JmixUploadButton uploadButton;
     protected HasComponents content;
 
     protected Component fileNameComponent;
@@ -74,8 +74,8 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         content = createContentComponent();
         initContentComponent(content);
 
-        upload = createUploadComponent();
-        initUploadComponent(upload);
+        uploadButton = createUploadComponent();
+        initUploadComponent(uploadButton);
 
         fileNameComponent = createFileNameComponent();
         initFileNameComponent(fileNameComponent);
@@ -88,8 +88,8 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         attachContent(content);
     }
 
-    protected JmixUpload createUploadComponent() {
-        return new JmixUpload();
+    protected JmixUploadButton createUploadComponent() {
+        return new JmixUploadButton();
     }
 
     protected HasComponents createContentComponent() {
@@ -129,18 +129,18 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         if (!isEnabled() || isReadOnly()) {
             return;
         }
-        upload.clearFileList();
+        uploadButton.clearFileList();
         setInternalValue(getEmptyValue());
     }
 
     protected void attachContent(HasComponents content) {
-        content.add(upload, fileNameComponent);
+        content.add(uploadButton, fileNameComponent);
 
         content.getElement().setAttribute("slot", "input");
         getElement().appendChild(content.getElement());
     }
 
-    protected void initUploadComponent(JmixUpload upload) {
+    protected void initUploadComponent(JmixUploadButton upload) {
         upload.setReceiver(createUploadReceiver());
 
         Component uploadButtonComponent = createUploadButtonComponent();
@@ -156,7 +156,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         setComponentText(component, UPLOAD);
     }
 
-    protected void attachUploadEvents(JmixUpload upload) {
+    protected void attachUploadEvents(JmixUploadButton upload) {
         upload.addStartedListener(this::onStartedEvent);
         upload.addProgressListener(this::onProgressEvent);
         upload.addFinishedListener(this::onFinishedEvent);
@@ -203,7 +203,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
 
-        upload.setReadOnly(isReadOnly());
+        uploadButton.setReadOnly(isReadOnly());
 
         updateComponentsVisibility();
     }
@@ -212,7 +212,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
 
-        upload.setEnabled(enabled);
+        uploadButton.setEnabled(enabled);
     }
 
     /**
@@ -311,25 +311,25 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected void onSucceededEvent(SucceededEvent event) {
         getEventBus().fireEvent(new FileUploadSucceededEvent<>(this, event.getFileName(), event.getMIMEType(),
-                event.getContentLength(), upload.getReceiver()));
+                event.getContentLength(), uploadButton.getReceiver()));
     }
 
     /**
      * @return the maximum allowed file size in the client-side, in bytes
      */
     public int getMaxFileSize() {
-        return upload.getMaxFileSize();
+        return uploadButton.getMaxFileSize();
     }
 
     public void setMaxFileSize(int maxFileSize) {
-        upload.setMaxFileSize(maxFileSize);
+        uploadButton.setMaxFileSize(maxFileSize);
     }
 
     /**
      * @return the list of accepted file types for upload
      */
     public List<String> getAcceptedFileTypes() {
-        return upload.getAcceptedFileTypes();
+        return uploadButton.getAcceptedFileTypes();
     }
 
     /**
@@ -343,7 +343,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @see Upload#setAcceptedFileTypes(String...)
      */
     public void setAcceptedFileTypes(String... acceptedFileTypes) {
-        upload.setAcceptedFileTypes(acceptedFileTypes);
+        uploadButton.setAcceptedFileTypes(acceptedFileTypes);
     }
 
     /**
@@ -351,7 +351,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      */
     @Nullable
     public JmixUploadI18N getI18n() {
-        return (JmixUploadI18N) upload.getI18n();
+        return (JmixUploadI18N) uploadButton.getI18n();
     }
 
     /**
@@ -362,7 +362,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     public void setI18n(JmixUploadI18N i18n) {
         Preconditions.checkNotNull(i18n);
 
-        upload.setI18n(i18n);
+        uploadButton.setI18n(i18n);
     }
 
     /**
@@ -370,7 +370,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      */
     @Nullable
     public Component getUploadIcon() {
-        Component uploadButton = upload.getUploadButton();
+        Component uploadButton = this.uploadButton.getUploadButton();
         if (uploadButton instanceof Button) {
             return ((Button) uploadButton).getIcon();
         }
@@ -383,7 +383,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @param icon component to set as icon
      */
     public void setUploadIcon(@Nullable Component icon) {
-        Component uploadButton = upload.getUploadButton();
+        Component uploadButton = this.uploadButton.getUploadButton();
         if (uploadButton instanceof Button) {
             ((Button) uploadButton).setIcon(icon);
         }
@@ -394,7 +394,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @see Upload#isDropAllowed()
      */
     public boolean isDropAllowed() {
-        return upload.isDropAllowed();
+        return uploadButton.isDropAllowed();
     }
 
     /**
@@ -405,7 +405,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @param allowed {@code true} to enable dropping
      */
     public void setDropAllowed(boolean allowed) {
-        upload.setDropAllowed(allowed);
+        uploadButton.setDropAllowed(allowed);
     }
 
     /**
@@ -424,7 +424,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     public void setUploadText(@Nullable String uploadText) {
         this.uploadText = uploadText;
 
-        setComponentText(upload.getUploadButton(),
+        setComponentText(uploadButton.getUploadButton(),
                 Strings.isNullOrEmpty(uploadText)
                         ? getDefaultUploadText()
                         : uploadText);
@@ -497,7 +497,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      */
     @Nullable
     public String getClearButtonAriaLabel() {
-        Element element = upload.getUploadButton().getElement();
+        Element element = uploadButton.getUploadButton().getElement();
         return element.getAttribute(ElementConstants.ARIA_LABEL_PROPERTY_NAME);
     }
 
@@ -507,7 +507,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @param ariaLabel aria-label to set
      */
     public void setClearButtonAriaLabel(@Nullable String ariaLabel) {
-        setComponentAriaLabel(upload.getUploadButton(), ariaLabel);
+        setComponentAriaLabel(uploadButton.getUploadButton(), ariaLabel);
     }
 
     @Override
@@ -564,7 +564,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected abstract String getDefaultUploadText();
 
-    protected void onJmixUploadInternalError(JmixUpload.JmixUploadInternalErrorEvent event) {
+    protected void onJmixUploadInternalError(JmixUploadButton.JmixUploadInternalErrorEvent event) {
         handleJmixUploadInternalError(event.getFileName());
     }
 
@@ -611,7 +611,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     }
 
     protected void updateComponentsVisibility() {
-        upload.setVisible(!isReadOnly());
+        uploadButton.setVisible(!isReadOnly());
         fileNameComponent.setVisible(fileNameVisible);
         clearComponent.setVisible(clearButtonVisible && !isReadOnly() && fileNameVisible);
     }

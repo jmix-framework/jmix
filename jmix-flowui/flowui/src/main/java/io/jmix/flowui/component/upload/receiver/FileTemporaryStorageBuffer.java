@@ -30,50 +30,32 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-@Component("flowui_TemporaryStorageReceiver")
+@Component("flowui_FileTemporaryStorageBuffer")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class TemporaryStorageReceiver implements Receiver {
-    private static final Logger log = LoggerFactory.getLogger(TemporaryStorageReceiver.class);
+public class FileTemporaryStorageBuffer implements Receiver {
+    private static final Logger log = LoggerFactory.getLogger(FileTemporaryStorageBuffer.class);
 
     protected TemporaryStorage temporaryStorage;
 
-    protected TemporaryStorage.FileInfo fileInfo;
-    protected String fileName;
-    protected String mimeType;
+    protected TemporaryStorageFileData fileData;
 
-    public TemporaryStorageReceiver(TemporaryStorage temporaryStorage) {
+    public FileTemporaryStorageBuffer(TemporaryStorage temporaryStorage) {
         this.temporaryStorage = temporaryStorage;
     }
 
     @Nullable
     @Override
     public OutputStream receiveUpload(String fileName, String mimeType) {
-        fileInfo = temporaryStorage.createFile();
-        this.fileName = fileName;
-        this.mimeType = mimeType;
+        TemporaryStorage.FileInfo fileInfo = temporaryStorage.createFile();
 
-        return createFileOutputStream(fileInfo.getFile());
+        OutputStream outputBuffer = createFileOutputStream(fileInfo.getFile());
+        fileData = new TemporaryStorageFileData(fileName, mimeType, fileInfo);
+
+        return outputBuffer;
     }
 
-    /**
-     * @return the file info from temporary storage
-     */
-    public TemporaryStorage.FileInfo getFileInfo() {
-        return fileInfo;
-    }
-
-    /**
-     * @return name of uploaded file
-     */
-    public String getFileName() {
-        return fileName;
-    }
-
-    /**
-     * @return MIME type of uploaded file
-     */
-    public String getMimeType() {
-        return mimeType;
+    public TemporaryStorageFileData getFileData() {
+        return fileData;
     }
 
     @Nullable

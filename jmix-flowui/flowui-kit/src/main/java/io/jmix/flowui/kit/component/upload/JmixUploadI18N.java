@@ -21,7 +21,7 @@ import com.vaadin.flow.component.upload.UploadI18N;
 import javax.annotation.Nullable;
 
 /**
- * Contains i18n properties for {@link JmixUpload}, {@link JmixFileStorageUploadField}
+ * Contains i18n properties for {@link JmixUploadButton}, {@link JmixFileStorageUploadField}
  * {@link JmixFileUploadField}.
  */
 public class JmixUploadI18N extends UploadI18N {

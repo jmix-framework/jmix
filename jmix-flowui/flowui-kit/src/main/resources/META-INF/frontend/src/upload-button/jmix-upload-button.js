@@ -18,10 +18,10 @@ import '@vaadin/dialog/src/vaadin-dialog.js';
 
 import {Upload} from '@vaadin/upload/src/vaadin-upload.js';
 
-class JmixUpload extends Upload {
+class JmixUploadButton extends Upload {
 
     static get is() {
-        return 'jmix-upload';
+        return 'jmix-upload-button';
     }
 
     static get properties() {
@@ -243,6 +243,6 @@ class JmixUpload extends Upload {
     }
 }
 
-customElements.define(JmixUpload.is, JmixUpload);
+customElements.define(JmixUploadButton.is, JmixUploadButton);
 
-export {JmixUpload};
+export {JmixUploadButton};

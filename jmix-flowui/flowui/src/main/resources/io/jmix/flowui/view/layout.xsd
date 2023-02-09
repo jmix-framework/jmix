@@ -1028,6 +1028,15 @@
             <xs:enumeration value="EVENLY"/>
         </xs:restriction>
     </xs:simpleType>
+    
+    <xs:simpleType name="uploadReceiverEnum">
+        <xs:restriction>
+            <xs:enumeration value="MEMORY_BUFFER"/>
+            <xs:enumeration value="MULTI_FILE_MEMORY_BUFFER"/>
+            <xs:enumeration value="FILE_TEMPORARY_STORAGE_BUFFER"/>
+            <xs:enumeration value="MULTI_FILE_TEMPORARY_STORAGE_BUFFER"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:simpleType name="formLabelsPosition">
         <xs:restriction>
@@ -3027,6 +3036,33 @@
         <xs:attribute name="description" type="resourceString"/>
     </xs:complexType>
 
+    <!-- Upload -->
+    <xs:complexType name="uploadComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <!-- DropLabel attributes-->
+                <xs:attribute name="dropLabel" type="resourceString"/>
+                <xs:attribute name="dropLabelIcon" type="vaadinIconEnum"/>
+
+                <!-- UploadButton attributes-->
+                <xs:attribute name="uploadText" type="resourceString"/>
+                <xs:attribute name="uploadIcon" type="vaadinIconEnum"/>
+
+                <xs:attribute name="acceptedFileTypes" type="xs:string"/>
+                <xs:attribute name="autoUpload" type="xs:boolean"/>
+                <xs:attribute name="dropAllowed" type="xs:boolean"/>
+                <xs:attribute name="maxFiles" type="xs:int"/>
+                <xs:attribute name="maxFileSize" type="xs:int"/>
+
+                <xs:attribute name="receiverType" type="uploadReceiverEnum"/>
+                <xs:attribute name="receiverFqn" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasSize"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- FileUploadField -->
 
     <xs:complexType name="fileUploadFieldComponent">
@@ -3356,6 +3392,7 @@
                 <xs:element name="tabSheet" type="tabSheetComponent"/>
                 <xs:element name="fileUploadField" type="fileUploadFieldComponent"/>
                 <xs:element name="fileStorageUploadField" type="fileStorageUploadFieldComponent"/>
+                <xs:element name="upload" type="uploadComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

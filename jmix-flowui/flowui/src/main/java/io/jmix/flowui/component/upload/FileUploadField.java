@@ -84,7 +84,7 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
 
         setComponentClickListener(fileNameComponent, this::onFileNameClick);
         setComponentText(fileNameComponent, generateFileName());
-        setComponentText(upload.getUploadButton(), getDefaultUploadText());
+        setComponentText(uploadButton.getUploadButton(), getDefaultUploadText());
 
         multipartPropertiesProvider.ifAvailable(properties ->
                 setMaxFileSize((int) properties.getMaxFileSize().toBytes()));
@@ -93,7 +93,7 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
 
         attachValueChangeListener(this::onValueChange);
 
-        attachUploadEvents(upload);
+        attachUploadEvents(uploadButton);
     }
 
     protected FieldDelegate<FileUploadField, byte[], byte[]> createFieldDelegate() {

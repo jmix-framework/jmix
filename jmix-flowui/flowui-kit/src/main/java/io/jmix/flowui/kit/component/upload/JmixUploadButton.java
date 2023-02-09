@@ -23,16 +23,16 @@ import com.vaadin.flow.component.upload.UploadI18N;
 import com.vaadin.flow.internal.JsonSerializer;
 import com.vaadin.flow.shared.Registration;
 
-@Tag("jmix-upload")
-@JsModule("./src/upload/jmix-upload.js")
-public class JmixUpload extends Upload {
+@Tag("jmix-upload-button")
+@JsModule("./src/upload-button/jmix-upload-button.js")
+public class JmixUploadButton extends Upload {
 
     protected JmixUploadI18N i18n = new JmixUploadI18N();
 
-    protected static final String JMIX_UPLOAD_CLASS_NAME = "jmix-upload";
+    protected static final String JMIX_UPLOAD_BUTTON_CLASS_NAME = "jmix-upload-button";
 
-    public JmixUpload() {
-        addClassName(JMIX_UPLOAD_CLASS_NAME);
+    public JmixUploadButton() {
+        addClassName(JMIX_UPLOAD_BUTTON_CLASS_NAME);
     }
 
     public void setReadOnly(boolean readOnly) {
@@ -65,14 +65,14 @@ public class JmixUpload extends Upload {
     }
 
     protected Registration addUploadInternalError(ComponentEventListener<JmixUploadInternalErrorEvent> listener) {
-        return addListener( JmixUploadInternalErrorEvent.class, listener);
+        return addListener(JmixUploadInternalErrorEvent.class, listener);
     }
 
     @DomEvent("jmix-upload-internal-error")
-    protected static class JmixUploadInternalErrorEvent extends ComponentEvent<JmixUpload> {
+    protected static class JmixUploadInternalErrorEvent extends ComponentEvent<JmixUploadButton> {
         protected String fileName;
 
-        public JmixUploadInternalErrorEvent(JmixUpload source, boolean fromClient, @EventData("event.detail.file.name") String fileName) {
+        public JmixUploadInternalErrorEvent(JmixUploadButton source, boolean fromClient, @EventData("event.detail.file.name") String fileName) {
             super(source, fromClient);
             this.fileName = fileName;
         }

@@ -888,5 +888,28 @@
                      position="BOTTOM"
             />
         </comboButton>
+
+        <upload id="uploadId"
+                acceptedFileTypes=".jpg"
+                autoUpload="true"
+                classNames="cssClassName1, cssClassName2"
+                dropAllowed="true"
+                dropLabel="dropLabelString"
+                dropLabelIcon="UPLOAD"
+                height="50px"
+                maxFiles="5"
+                maxFileSize="10480000"
+                maxHeight="55px"
+                maxWidth="120px"
+                minHeight="40px"
+                minWidth="80px"
+                receiverType="MULTI_FILE_MEMORY_BUFFER"
+                uploadIcon="UPLOAD_ALT"
+                uploadText="uploadTextString"
+                visible="false"
+                width="100px"/>
+
+        <upload id="uploadWithReceiverFqn"
+                receiverFqn="io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer"/>
     </layout>
 </view>

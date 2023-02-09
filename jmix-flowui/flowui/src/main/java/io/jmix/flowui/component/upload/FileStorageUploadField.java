@@ -28,7 +28,8 @@ import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.FieldDelegate;
-import io.jmix.flowui.component.upload.receiver.TemporaryStorageReceiver;
+import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer;
+import io.jmix.flowui.component.upload.receiver.TemporaryStorageFileData;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -95,11 +96,11 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
 
-        upload.setReceiver(applicationContext.getBean(TemporaryStorageReceiver.class));
+        uploadButton.setReceiver(applicationContext.getBean(FileTemporaryStorageBuffer.class));
 
         setComponentClickListener(fileNameComponent, this::onFileNameClick);
         setComponentText(fileNameComponent, generateFileName());
-        setComponentText(upload.getUploadButton(), getDefaultUploadText());
+        setComponentText(uploadButton.getUploadButton(), getDefaultUploadText());
 
         multipartPropertiesProvider.ifAvailable(properties ->
                 setMaxFileSize((int) properties.getMaxFileSize().toBytes()));
@@ -108,7 +109,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
         attachValueChangeListener(this::onValueChange);
 
-        attachUploadEvents(upload);
+        attachUploadEvents(uploadButton);
     }
 
     protected FieldDelegate<FileStorageUploadField, FileRef, FileRef> createFieldDelegate() {
@@ -198,14 +199,14 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
      * we can handle the uploading, like the following:
      * <pre>
      *     manuallyControlledField.addFileUploadSucceededListener(event -&gt; {
-     *          TemporaryStorageReceiver receiver = event.getReceiver();
-     *          File file = temporaryStorage.getFile(receiver.getFileInfo().getId());
+     *          FileTemporaryStorageBuffer receiver = event.getReceiver();
+     *          File file = temporaryStorage.getFile(receiver.getFileData().getFileInfo().getId());
      *          if (file != null) {
      *              notifications.create("File is uploaded to temporary storage at " + file.getAbsolutePath())
      *                      .show();
      *          }
      *
-     *          FileRef fileRef = temporaryStorage.putFileIntoStorage(receiver.getFileInfo().getId(), event.getFileName());
+     *          FileRef fileRef = temporaryStorage.putFileIntoStorage(receiver.getFileData().getFileInfo().getId(), event.getFileName());
      *          manuallyControlledField.setValue(fileRef);
      *
      *          notifications.create("Uploaded file: " + event.getFileName())
@@ -215,7 +216,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
      *
      * @param listener listener to add
      * @return registration for removal of listener
-     * @see TemporaryStorageReceiver
+     * @see FileTemporaryStorageBuffer
      */
     @Override
     public Registration addFileUploadSucceededListener(
@@ -233,15 +234,17 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     protected void saveFile(SucceededEvent event) {
         Receiver receiver = event.getUpload().getReceiver();
 
-        if (receiver instanceof TemporaryStorageReceiver) {
-            TemporaryStorageReceiver storageReceiver = (TemporaryStorageReceiver) receiver;
+        if (receiver instanceof FileTemporaryStorageBuffer) {
+            FileTemporaryStorageBuffer storageReceiver = (FileTemporaryStorageBuffer) receiver;
 
             if (getFileStoragePutMode() == FileStoragePutMode.IMMEDIATE) {
                 checkFileStorageInitialized();
 
+                TemporaryStorageFileData fileData = storageReceiver.getFileData();
+
                 FileRef fileRef = temporaryStorage.putFileIntoStorage(
-                        storageReceiver.getFileInfo().getId(),
-                        storageReceiver.getFileName(),
+                        fileData.getFileInfo().getId(),
+                        fileData.getFileName(),
                         fileStorage);
 
                 setInternalValue(fileRef, true);
@@ -342,9 +345,9 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     }
 
     protected void deleteTempFile() {
-        Receiver receiver = upload.getReceiver();
-        if (receiver instanceof TemporaryStorageReceiver) {
-            UUID tempFileId = ((TemporaryStorageReceiver) receiver).getFileInfo().getId();
+        Receiver receiver = uploadButton.getReceiver();
+        if (receiver instanceof FileTemporaryStorageBuffer) {
+            UUID tempFileId = ((FileTemporaryStorageBuffer) receiver).getFileData().getFileInfo().getId();
             try {
                 temporaryStorage.deleteFile(tempFileId);
             } catch (Exception e) {

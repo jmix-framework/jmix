@@ -18,12 +18,16 @@ package component_xml_load
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasText
+import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.progressbar.ProgressBarVariant
 import com.vaadin.flow.component.shared.Tooltip
+import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer
 import com.vaadin.flow.dom.ElementConstants
 import component_xml_load.screen.ComponentView
+import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer
 import io.jmix.flowui.kit.component.dropdownbutton.ActionItem
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant
@@ -269,6 +273,55 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             tooltip.manual
             tooltip.opened
             tooltip.position == Tooltip.TooltipPosition.BOTTOM
+        }
+    }
+
+    def "Load upload component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = openScreen(ComponentView.class)
+
+        then: "Upload attributes will be loaded"
+        verifyAll(componentView.uploadId) {
+            id.get() == "uploadId"
+            acceptedFileTypes.containsAll([".jpg"])
+
+            // CAUTION
+            // Vaadin Bug
+            // See com.vaadin.flow.component.upload.Upload.isAutoUpload
+            //     com.vaadin.flow.component.upload.Upload#setAutoUpload
+            // fixed in https://github.com/vaadin/flow/issues/15847
+            // waiting for Vaadin 24.0
+            !autoUpload
+
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            dropAllowed
+            (dropLabel as Label).getText() == "dropLabelString"
+            dropLabelIcon.element.getAttribute("icon") ==
+                    VaadinIcon.UPLOAD.create().element.getAttribute("icon")
+            height == "50px"
+            maxFiles == 5
+            maxFileSize == 10480000
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            receiver instanceof MultiFileMemoryBuffer
+            (uploadButton as Button).getIcon().element.getAttribute("icon") ==
+                    VaadinIcon.UPLOAD_ALT.create().element.getAttribute("icon")
+            (uploadButton as Button).getText() == "uploadTextString"
+            !visible
+            width == "100px"
+        }
+    }
+
+    def "Load upload component with receiver fqn from XML"() {
+        when: "Open the ComponentView"
+        def componentView = openScreen(ComponentView.class)
+
+        then: "Upload with receiver fqn will be loaded"
+        verifyAll(componentView.uploadWithReceiverFqn) {
+            id.get() == "uploadWithReceiverFqn"
+            receiver instanceof FileTemporaryStorageBuffer
         }
     }
 }

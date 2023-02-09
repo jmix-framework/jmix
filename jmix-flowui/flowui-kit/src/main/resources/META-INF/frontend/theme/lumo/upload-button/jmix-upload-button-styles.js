@@ -16,7 +16,7 @@
 
 import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-const upload = css`
+const uploadButton = css`
   :host(:not([nodrop])) {
     border: 0;
     overflow: initial;
@@ -28,6 +28,6 @@ const upload = css`
   }
 `;
 
-registerStyles('jmix-upload', upload, {
-    moduleId: 'lumo-jmix-upload-styles'
+registerStyles('jmix-upload-button', uploadButton, {
+    moduleId: 'lumo-jmix-upload-button-styles'
 });

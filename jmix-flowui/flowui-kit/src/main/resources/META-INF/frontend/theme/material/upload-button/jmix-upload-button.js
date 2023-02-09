@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-import '../../../src/upload/jmix-upload.js';
+import '../../../src/upload-button/jmix-upload-button.js';

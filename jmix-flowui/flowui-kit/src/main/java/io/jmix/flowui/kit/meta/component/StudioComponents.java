@@ -32,6 +32,7 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
+import com.vaadin.flow.component.upload.Upload;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
@@ -1765,4 +1766,40 @@ public interface StudioComponents {
             }
     )
     JmixSimplePagination simplePagination();
+
+    @StudioComponent(
+            name = "Upload",
+            classFqn = "com.vaadin.flow.component.upload.Upload",
+            category = "Components",
+            xmlElement = "upload",
+            icon = "io/jmix/flowui/kit/meta/icon/component/upload.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "acceptedFileTypes", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "autoUpload", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "dropAllowed", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "dropLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "dropLabelIcon", type = StudioPropertyType.ICON),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxFiles", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "maxFileSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "receiverFqn", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "receiverType", type = StudioPropertyType.ENUMERATION,
+                            options = {"MEMORY_BUFFER", "MULTI_FILE_MEMORY_BUFFER", "FILE_TEMPORARY_STORAGE_BUFFER",
+                                    "MULTI_FILE_TEMPORARY_STORAGE_BUFFER"}, defaultValue = "MEMORY_BUFFER"),
+                    @StudioProperty(xmlAttribute = "uploadText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "uploadIcon", type = StudioPropertyType.ICON),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    Upload upload();
 }

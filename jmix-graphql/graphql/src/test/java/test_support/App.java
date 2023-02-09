@@ -24,6 +24,7 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.security.StandardSecurityConfiguration;
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -72,6 +73,14 @@ public class App {
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
                 .build();
+    }
+
+    @Bean("jmix_Liquibase")
+    SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog("io/jmix/graphql/liquibase/changelog.xml");
+        return liquibase;
     }
 
     @Bean

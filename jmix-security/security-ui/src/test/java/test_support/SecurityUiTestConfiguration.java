@@ -25,8 +25,6 @@ import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
-import io.jmix.data.impl.liquibase.JmixLiquibase;
-import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.security.StandardSecurityConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
@@ -92,10 +90,10 @@ public class SecurityUiTestConfiguration {
     }
 
     @Bean
-    public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
-        JmixLiquibase liquibase = new JmixLiquibase();
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLogContent(processor.createMasterChangeLog(Stores.MAIN));
+        liquibase.setChangeLog("test_support/liquibase/test-changelog.xml");
         return liquibase;
     }
 

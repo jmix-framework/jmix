@@ -37,13 +37,13 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
     }
 
     @SuppressWarnings('GrUnresolvedAccess')
     def "Load #container container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "#container attributes will be loaded"
         verifyAll(containerView."${container}Id") {
@@ -72,7 +72,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load accordion container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "Accordion attributes will be loaded"
         verifyAll(containerView.accordionId) {
@@ -90,7 +90,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load #accordionPanel container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "AccordionPanel attributes will be loaded"
         def panel = containerView.accordionId.children.find { it.id.get() == "${accordionPanel}Id" }
@@ -115,7 +115,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load accordionPanel tooltip from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "AccordionPanel tooltip will be loaded"
         def panel = containerView.accordionId.children.find {it.id.get() == "accordionPanelId"}
@@ -132,7 +132,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load scroller container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "Scroller attributes will be loaded"
         verifyAll(containerView.scrollerId) {
@@ -152,7 +152,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load tabs container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "Tabs attributes will be loaded"
         def tabs = containerView.tabsId
@@ -204,7 +204,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load tabSheet component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ContainerView.class)
+        def componentView = navigateToView(ContainerView.class)
 
         then: "TabSheet attributes will be loaded"
         def tabSheet = componentView.tabSheetId

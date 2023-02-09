@@ -37,13 +37,13 @@ class PageTitleTest extends FlowuiTestSpecification {
     Messages messages
 
     void setup() {
-        registerScreenBasePackages("page_title.view")
+        registerViewBasePackages("page_title.view")
     }
 
     def "load page title from view descriptor"() {
         when: "Open view with title defined as message key in the descriptor"
 
-        def view = openScreen(DeclarativePageTitleView)
+        def view = navigateToView(DeclarativePageTitleView)
 
         then: "View should use loaded page title"
 
@@ -52,7 +52,7 @@ class PageTitleTest extends FlowuiTestSpecification {
 
         when: "Open view with hardcoded title defined in the descriptor"
 
-        view = openScreen(DeclarativePageTitleHardcodedView)
+        view = navigateToView(DeclarativePageTitleHardcodedView)
 
         then: "View should use loaded page title"
 
@@ -62,7 +62,7 @@ class PageTitleTest extends FlowuiTestSpecification {
     def "load page title from annotation"() {
         when: "Open view that has @PageTitle with message key"
 
-        def view = openScreen(AnnotatedPageTitleView)
+        def view = navigateToView(AnnotatedPageTitleView)
 
         then: "View should use loaded page title from @PageTitle"
 
@@ -71,7 +71,7 @@ class PageTitleTest extends FlowuiTestSpecification {
 
         when: "Open view that has @PageTitle with hardcoded value"
 
-        view = openScreen(AnnotatedPageTitleHardcodedView)
+        view = navigateToView(AnnotatedPageTitleHardcodedView)
 
         then: "View should use loaded page title from @PageTitle"
 
@@ -81,7 +81,7 @@ class PageTitleTest extends FlowuiTestSpecification {
     def "annotated page title should override declarative definition"() {
         when: "Open view that has @PageTitle and 'title' attribute in the descriptor"
 
-        def view = openScreen(BothPageTitleView)
+        def view = navigateToView(BothPageTitleView)
 
         then: "View should use page title from @PageTitle"
 

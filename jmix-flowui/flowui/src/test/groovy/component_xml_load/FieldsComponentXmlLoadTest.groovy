@@ -47,7 +47,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
         def user = dataManager.create(User)
@@ -72,7 +72,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load checkBox component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "CheckBox attributes will be loaded"
         verifyAll(componentView.checkBoxId) {
@@ -110,7 +110,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "CheckBox will be will be loaded with the value of the property"
@@ -125,7 +125,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "ComboBox will be loaded with the value of the property"
@@ -176,7 +176,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "DatePicker will be loaded with the value of the property"
@@ -225,7 +225,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "TimePicker will be loaded with the value of the property"
@@ -271,7 +271,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "DateTimePicker will be loaded with the value of the property"
@@ -318,7 +318,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "RadioButtonGroup will be loaded with the value of the property"
@@ -350,7 +350,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "Select will be loaded with the value of the property"

@@ -25,12 +25,12 @@ class JmixImageTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component.image")
+        registerViewBasePackages("component.image")
     }
 
     def "Load JmixImage with dataContainer"() {
         when: "Open screen with Image that is bound with data container"
-        def screen = openScreen(JmixImageTestView)
+        def screen = navigateToView(JmixImageTestView)
 
         then:
 

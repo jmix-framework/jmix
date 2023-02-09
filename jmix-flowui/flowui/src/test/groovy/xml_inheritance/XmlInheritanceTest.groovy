@@ -26,12 +26,12 @@ class XmlInheritanceTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("xml_inheritance.view")
+        registerViewBasePackages("xml_inheritance.view")
     }
 
     def "ext:index in extended view"() {
         when: "Create view that extends another one"
-        def view = (XmlInheritanceExtBaseTestView) openScreen(XmlInheritanceExtBaseTestView)
+        def view = (XmlInheritanceExtBaseTestView) navigateToView(XmlInheritanceExtBaseTestView)
 
         then: "Components that use ext:index should change their position"
 
@@ -47,7 +47,7 @@ class XmlInheritanceTest extends FlowuiTestSpecification {
 
     def "title from extended view is used"() {
         when: "Create view that extends another one"
-        def view = (XmlInheritanceExtBaseTestView) openScreen(XmlInheritanceExtBaseTestView)
+        def view = (XmlInheritanceExtBaseTestView) navigateToView(XmlInheritanceExtBaseTestView)
 
         then: "Title from extended view is used"
         view.pageTitle == "Extended title"
@@ -55,7 +55,7 @@ class XmlInheritanceTest extends FlowuiTestSpecification {
 
     def "fetchPlan property from extended view used"() {
         when: "Create view that extends another one"
-        def view = (XmlInheritanceExtBaseTestView) openScreen(XmlInheritanceExtBaseTestView)
+        def view = (XmlInheritanceExtBaseTestView) navigateToView(XmlInheritanceExtBaseTestView)
 
         then: "FetchPlan from extended view is used"
         view.lineDc.fetchPlan.getProperty("params").fetchPlan.name == "_instance_name"

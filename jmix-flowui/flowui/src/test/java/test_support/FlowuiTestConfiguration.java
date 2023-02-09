@@ -27,6 +27,7 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.testassist.vaadin.TestServletContext;
 import io.jmix.flowui.view.ViewAttributes;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.config.BeanDefinition;

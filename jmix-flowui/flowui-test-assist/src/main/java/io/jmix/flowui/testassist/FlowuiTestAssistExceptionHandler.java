@@ -14,29 +14,17 @@
  * limitations under the License.
  */
 
-package test_support;
+package io.jmix.flowui.testassist;
 
-import com.vaadin.flow.server.VaadinService;
-import com.vaadin.flow.spring.SpringVaadinSession;
+import io.jmix.flowui.exception.UiExceptionHandler;
 
-public class TestVaadinSession extends SpringVaadinSession {
-
-    public TestVaadinSession(VaadinService service) {
-        super(service);
-    }
+public class FlowuiTestAssistExceptionHandler implements UiExceptionHandler {
 
     @Override
-    public boolean hasLock() {
-        return true;
-    }
-
-    @Override
-    public void lock() {
-        // do nothing
-    }
-
-    @Override
-    public void unlock() {
-        // do nothing
+    public boolean handle(Throwable exception) {
+        // Exception can be thrown while navigation is performing. However,
+        // this exception is not propagated and test considered as passed.
+        // So we should propagate the exception to fail the test.
+        throw (RuntimeException) exception;
     }
 }

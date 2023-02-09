@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,29 @@
  * limitations under the License.
  */
 
-package test_support;
+package io.jmix.flowui.testassist.vaadin;
 
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinServletRequest;
-import com.vaadin.flow.server.VaadinServletService;
-import org.springframework.mock.web.MockHttpServletRequest;
+import com.vaadin.flow.server.VaadinService;
+import com.vaadin.flow.spring.SpringVaadinSession;
 
-public class TestVaadinRequest extends VaadinServletRequest implements VaadinRequest {
+public class TestVaadinSession extends SpringVaadinSession {
 
-    public TestVaadinRequest(VaadinServletService vaadinService) {
-        super(new MockHttpServletRequest(), vaadinService);
+    public TestVaadinSession(VaadinService service) {
+        super(service);
+    }
+
+    @Override
+    public boolean hasLock() {
+        return true;
+    }
+
+    @Override
+    public void lock() {
+        // do nothing
+    }
+
+    @Override
+    public void unlock() {
+        // do nothing
     }
 }

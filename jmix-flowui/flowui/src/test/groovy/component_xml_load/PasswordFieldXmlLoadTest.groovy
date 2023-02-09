@@ -41,7 +41,7 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
         def order = dataManager.create(Order)
@@ -62,7 +62,7 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load passwordField component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "PasswordField attributes will be loaded"
         verifyAll(componentView.passwordFieldId) {
@@ -115,7 +115,7 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "PasswordField will be loaded with the value of the property"

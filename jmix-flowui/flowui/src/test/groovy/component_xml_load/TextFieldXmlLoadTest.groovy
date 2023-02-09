@@ -41,7 +41,7 @@ class TextFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def order = dataManager.create(Order)
         order.number = "textFieldValue"
@@ -56,7 +56,7 @@ class TextFieldXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load textField component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "TextField attributes will be loaded"
         verifyAll(componentView.textFieldId) {
@@ -111,7 +111,7 @@ class TextFieldXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "TextField will be loaded with the value of the property"

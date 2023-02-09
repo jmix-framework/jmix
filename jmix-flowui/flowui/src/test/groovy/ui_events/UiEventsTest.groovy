@@ -29,11 +29,11 @@ class UiEventsTest extends FlowuiTestSpecification {
     UiEventPublisher uiEventPublisher
 
     void setup() {
-        registerScreenBasePackages("ui_events.screen")
+        registerViewBasePackages("ui_events.screen")
     }
 
     def "screen receives an event"() {
-        def screen = openScreen(UiEventsTestScreen)
+        def screen = navigateToView(UiEventsTestScreen)
 
         when: "Fire application event"
         def event = new TestUiEvent(this, "eventMessage")

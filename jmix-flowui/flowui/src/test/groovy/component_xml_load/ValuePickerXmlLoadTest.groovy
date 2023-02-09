@@ -72,7 +72,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
 
@@ -98,7 +98,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load #picker component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "#picker component will be loaded"
         verifyAll(componentView."${picker}Id" as ValuePickerBase) {
@@ -142,7 +142,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "ValuePicker component will be loaded with the value of the property"
@@ -162,7 +162,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "ValuesPicker component will be loaded with the value of the property"
@@ -183,7 +183,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
         def customer = dataManager.load(Order).all().one().customer
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "EntityPicker component will be loaded with the value of the property"
@@ -206,7 +206,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load comboBoxPicker component"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "ComboBoxPicker component will be loaded"
         verifyAll(componentView.comboBoxPickerId) {
@@ -257,7 +257,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
         def customer = dataManager.load(Order).all().one().customer
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "EntityComboBox component will be loaded with the value of the property"

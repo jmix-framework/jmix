@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test_support;
+package io.jmix.flowui.testassist.vaadin;
 
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.ServiceException;

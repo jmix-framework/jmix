@@ -39,7 +39,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def customer = dataManager.create(Customer)
         customer.email = "example@email.com"
@@ -54,7 +54,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load emailField component from XML"() {
         when: "Open the ComponentView"
-        def emailFieldView = openScreen(EmailFieldView)
+        def emailFieldView = navigateToView(EmailFieldView)
 
         then: "EmailField attributes will be loaded"
         verifyAll(emailFieldView.emailFieldId) {
@@ -109,7 +109,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
         def customer = dataManager.load(Customer).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(EmailFieldView)
+        def componentView = navigateToView(EmailFieldView)
 
         then: "EmailField will be loaded with the value of the property"
         verifyAll(componentView.emailFieldWithValueId) {

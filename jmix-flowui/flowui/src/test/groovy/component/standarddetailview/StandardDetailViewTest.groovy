@@ -49,7 +49,7 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component.standarddetailview.view")
+        registerViewBasePackages("component.standarddetailview.view")
 
         orderToEdit = dataManager.create(Order)
         dataManager.save(orderToEdit)
@@ -94,7 +94,7 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
     def "Edit DTO entity in standard detail view with dialog mode"() {
         when: "Edit DTO entity in standard detail view with dialog mode"
 
-        def origin = openScreen(BlankTestView)
+        def origin = navigateToView(BlankTestView)
 
         dialogWindows.detail(origin, TestCopyingSystemStateEntity)
                 .withViewClass(TestCopyingSystemStateDetailTestView)

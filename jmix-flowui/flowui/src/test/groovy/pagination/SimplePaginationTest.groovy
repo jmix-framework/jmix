@@ -38,7 +38,7 @@ class SimplePaginationTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("pagination")
+        registerViewBasePackages("pagination")
 
         customers = new ArrayList<>(customerItems);
         customerItems.times { customers.add(dataManager.create(Customer)) }
@@ -54,7 +54,7 @@ class SimplePaginationTest extends FlowuiTestSpecification {
     def "SimplePagination clicks on last, previous, first, next"() {
         given: "We have 5 pages"
 
-        def view = (SimplePaginationTestView) openScreen(SimplePaginationTestView)
+        def view = (SimplePaginationTestView) navigateToView(SimplePaginationTestView)
 
         def firstBtn = view.simplePagination.firstButton
         def previousBtn = view.simplePagination.previousButton
@@ -92,7 +92,7 @@ class SimplePaginationTest extends FlowuiTestSpecification {
 
     def "SimplePagination with custom ItemsPerPage items"() {
         when: "Load items with the order: 12, 9, 23, 41, 1, -10, 99999"
-        def view = (SimplePaginationTestView) openScreen(SimplePaginationTestView)
+        def view = (SimplePaginationTestView) navigateToView(SimplePaginationTestView)
 
         def itemsPerPage = (ItemsPerPage) view.simplePaginationCustomItems.jmixRowsPerPage
 
@@ -108,7 +108,7 @@ class SimplePaginationTest extends FlowuiTestSpecification {
 
     def "SimplePagination initial ItemsPerPage value"() {
         when: "Show view"
-        def view = (SimplePaginationDefaultValueTestView) openScreen(SimplePaginationDefaultValueTestView)
+        def view = (SimplePaginationDefaultValueTestView) navigateToView(SimplePaginationDefaultValueTestView)
 
         then: """
               SimplePagination should have fetch size equal to computed value based on default value, items and
@@ -143,7 +143,7 @@ class SimplePaginationTest extends FlowuiTestSpecification {
     def "SimplePagination without loader"() {
         when: "Show View"
 
-        def view = (SimplePaginationTestView) openScreen(SimplePaginationTestView)
+        def view = (SimplePaginationTestView) navigateToView(SimplePaginationTestView)
 
         then: "SimplePagination should have disabled change buttons and ItemsPerPage Select"
 
@@ -158,7 +158,7 @@ class SimplePaginationTest extends FlowuiTestSpecification {
     }
 
     def "SimplePagination changes affect another SimplePagination with the same loader"() {
-        def view = (SimplePaginationConsistenceTestView) openScreen(SimplePaginationConsistenceTestView)
+        def view = (SimplePaginationConsistenceTestView) navigateToView(SimplePaginationConsistenceTestView)
 
         when: "Change page from first SimplePagination"
         view.simplePagination1.nextButton.click()
@@ -196,7 +196,7 @@ class SimplePaginationTest extends FlowuiTestSpecification {
     def "SimplePagination with tooltip"() {
         when: "Show View"
 
-        def view = (SimplePaginationDefaultValueTestView) openScreen(SimplePaginationDefaultValueTestView)
+        def view = (SimplePaginationDefaultValueTestView) navigateToView(SimplePaginationDefaultValueTestView)
 
         then: "Tooltip should be loaded"
 

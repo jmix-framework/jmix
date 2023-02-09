@@ -38,7 +38,7 @@ class DataGridTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component.grid")
+        registerViewBasePackages("component.grid")
     }
 
     def "Add actions without text"() {
@@ -61,7 +61,7 @@ class DataGridTest extends FlowuiTestSpecification {
 
     def "Load DataGrid without columns in XML"() {
         when: "Open View with DatGrid without columns"
-        def screen = openScreen(DataGridTestView)
+        def screen = navigateToView(DataGridTestView)
 
         then: "DataGrid should be loaded without columns"
 
@@ -76,7 +76,7 @@ class DataGridTest extends FlowuiTestSpecification {
               
               Change "number" position to 3. 
               """
-        def screen = openScreen(DataGridTestView)
+        def screen = navigateToView(DataGridTestView)
 
         def numberColumn = screen.dataGridMoveColumns.getColumnByKey("number")
         screen.dataGridMoveColumns.setColumnPosition(numberColumn, 3)

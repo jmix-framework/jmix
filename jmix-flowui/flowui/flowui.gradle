@@ -29,11 +29,11 @@ dependencies {
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
+    testImplementation 'org.springframework.boot:spring-boot-test'
+
+    testImplementation project(':flowui-test-assist')
     testImplementation project(':eclipselink')
     testImplementation 'org.apache.commons:commons-dbcp2'
 

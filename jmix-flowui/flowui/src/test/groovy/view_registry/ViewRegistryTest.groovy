@@ -39,7 +39,7 @@ class ViewRegistryTest extends FlowuiTestSpecification {
     ViewRegistry viewRegistry;
 
     void setup() {
-        registerScreenBasePackages("view_registry.view")
+        registerViewBasePackages("view_registry.view")
     }
 
     /* List view */

@@ -165,6 +165,7 @@ dependencies {
         api "io.jmix.flowui:jmix-flowui-data:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-data-starter:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-devserver:$freeVersion"
+        api "io.jmix.flowui:jmix-flowui-test-assist:$freeVersion"
 
         api "io.jmix.grapesjs:jmix-grapesjs:$freeVersion"
         api "io.jmix.grapesjs:jmix-grapesjs-starter:$freeVersion"

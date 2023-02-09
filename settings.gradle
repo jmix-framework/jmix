@@ -79,6 +79,7 @@ includeProject('flowui-themes', 'jmix-flowui/flowui-themes')
 includeProject("flowui-data", 'jmix-flowui/flowui-data')
 includeProject("flowui-data-starter", 'jmix-flowui/flowui-data-starter')
 includeProject("flowui-devserver", 'jmix-flowui/flowui-devserver')
+includeProject('flowui-test-assist', 'jmix-flowui/flowui-test-assist')
 
 includeProject('grapesjs', 'jmix-grapesjs/grapesjs')
 includeProject('grapesjs-starter', 'jmix-grapesjs/grapesjs-starter')

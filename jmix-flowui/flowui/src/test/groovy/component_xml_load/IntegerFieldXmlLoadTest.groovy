@@ -71,7 +71,7 @@ class IntegerFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def order = dataManager.create(OrderLine)
         order.quantity = 39
@@ -86,7 +86,7 @@ class IntegerFieldXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load integerField component with from XML"() {
         when: "Open the ComponentView"
-        def view = openScreen(IntegerFieldView)
+        def view = navigateToView(IntegerFieldView)
 
         then: "IntegerField attributes will be loaded"
         verifyAll(view.integerFieldId) {
@@ -141,7 +141,7 @@ class IntegerFieldXmlLoadTest extends FlowuiTestSpecification {
         def orderLine = dataManager.load(OrderLine).all().one()
 
         when: "Open the ComponentView and load data"
-        def view = openScreen(IntegerFieldView)
+        def view = navigateToView(IntegerFieldView)
 
         then: "IntegerField will be loaded with the value of the property"
         verifyAll(view.integerFieldWithValueId) {

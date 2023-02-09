@@ -38,7 +38,7 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
         def order = dataManager.create(Order)
@@ -55,7 +55,7 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load radioButtonGroup component from XML"() {
         when: "Open the ComponentView"
-        def rbgView = openScreen(RadioButtonGroupView)
+        def rbgView = navigateToView(RadioButtonGroupView)
 
         then: "RadioButtonGroup attributes will be loaded"
         verifyAll(rbgView.radioButtonGroup) {

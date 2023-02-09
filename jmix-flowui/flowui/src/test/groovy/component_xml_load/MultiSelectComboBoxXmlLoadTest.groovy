@@ -37,7 +37,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def customer = dataManager.create(Customer.class)
 
@@ -51,7 +51,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load multiSelectComboBox component from XML"() {
         when: "Open the MultiSelectComboBoxView"
-        def multiSelectComboBoxView = openScreen(MultiSelectComboBoxView)
+        def multiSelectComboBoxView = navigateToView(MultiSelectComboBoxView)
         def multiSelectComboBox = multiSelectComboBoxView.multiSelectComboBoxId
         multiSelectComboBox.setValue(Status.NOT_OK, Status.OK)
 

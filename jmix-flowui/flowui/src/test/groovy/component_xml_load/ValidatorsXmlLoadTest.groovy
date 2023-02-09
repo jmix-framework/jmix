@@ -30,12 +30,12 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
     }
 
     def "Load decimalValidators from XML"() {
         given: "A component with decimalValidators"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
         def decimalMaxField = validatorView.decimalField
 
         when: "Set invalid value for max"
@@ -67,7 +67,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load digitsValidator from XML"() {
         given: "A component with digitsValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def digitsField = validatorView.digitsField
 
@@ -93,7 +93,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load doubleValidator from XML"() {
         given: "A component with a doubleValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def doubleField = validatorView.doubleField
 
@@ -128,7 +128,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load emailValidator from XML"() {
         given: "A component with a emailValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def emailField = validatorView.emailField
 
@@ -156,7 +156,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load futureOrPresentValidator from XML"() {
         given: "A component with a futureOrPresentValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def futureOrPresentField = validatorView.futureOrPresentField
 
@@ -191,7 +191,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load futureValidator from XML"() {
         given: "A component with a futureValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def futureField = validatorView.futureField
 
@@ -226,7 +226,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load integerValidator from XML"() {
         given: "A component with a integerValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def integerField = validatorView.integerField
 
@@ -259,7 +259,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load negativeOrZeroValidator from XML"() {
         given: "A component with a negativeOrZeroValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def negativeOrZeroField = validatorView.negativeOrZeroField
 
@@ -285,7 +285,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load negativeValidator from XML"() {
         given: "A component with a negativeValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def negativeField = validatorView.negativeField
 
@@ -311,7 +311,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load notBlankValidator from XML"() {
         given: "A component with a notBlankValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def notBlankField = validatorView.notBlankField
 
@@ -340,7 +340,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load notEmptyValidator from XML"() {
         given: "A component with a notEmpty"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def notEmptyField = validatorView.notEmptyField
 
@@ -366,7 +366,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load notNullValidator from XML"() {
         given: "A component with a notNullValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def notNullField = validatorView.notNullField
 
@@ -386,7 +386,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load pastOrPresentValidator from XML"() {
         given: "A component with a pastOrPresentValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def pastOrPresentField = validatorView.pastOrPresentField
 
@@ -421,7 +421,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load pastValidator from XML"() {
         given: "A component with a pastValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def pastField = validatorView.pastField
 
@@ -456,7 +456,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load positiveOrZeroValidator from XML"() {
         given: "A component with a positiveOrZeroValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def positiveOrZeroField = validatorView.positiveOrZeroField
 
@@ -482,7 +482,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load positiveValidator from XML"() {
         given: "A component with a positiveValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def positiveField = validatorView.positiveField
 
@@ -508,7 +508,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load regexpValidator from XML"() {
         given: "A component with a regexpValidator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def regexpField = validatorView.regexpField
 
@@ -534,7 +534,7 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
     def "Size validator string test"() {
         given: "A component with a validator"
-        def validatorView = openScreen(ValidatorView.class)
+        def validatorView = navigateToView(ValidatorView.class)
 
         def sizeField = validatorView.sizeField
 

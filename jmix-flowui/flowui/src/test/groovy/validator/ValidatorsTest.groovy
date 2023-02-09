@@ -83,12 +83,12 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("validator")
+        registerViewBasePackages("validator")
     }
 
     def "Load validators from screen"() {
         when: "Open the screen"
-        openScreen(ValidatorTestView.class)
+        navigateToView(ValidatorTestView.class)
 
         then: "The screen will be open without exceptions"
         noExceptionThrown()
@@ -96,7 +96,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "DateTimeRange validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def dateTimeRangeValidator = dateTimeRangeValidatorObjectProvider.getObject()
         dateTimeRangeValidator.message = "errorMessage"
@@ -140,7 +140,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Size validator string test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def sizeValidator = sizeValidatorObjectProvider.getObject()
         sizeValidator.setSize(2, 4)
@@ -209,7 +209,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 //
     def "Regexp validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         RegexpValidator regexpValidator = regexpValidatorObjectProvider.getObject('^\\w*$')
 
@@ -237,7 +237,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Positive validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def validValue = 10
         def invalidValue = 0 // and less
@@ -269,7 +269,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "PositiveOrZero validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def validValue = BigDecimal.valueOf(0)
         def invalidValue = BigDecimal.valueOf(-1)
@@ -300,7 +300,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Past validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def pastValidator = pastValidatorObjectProvider.getObject()
         pastValidator.message = "errorMessage"
@@ -342,7 +342,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "PastOrPresent validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def pastOrPresentValidator = pastOrPresentValidatorObjectProvider.getObject()
         pastOrPresentValidator.checkSeconds = true
@@ -378,7 +378,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "NotNull validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def notNullValidator = notNullValidatorObjectProvider.getObject()
         def dateField = validatorTestView.datePicker
@@ -400,7 +400,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "NotEmpty validator string test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def notEmptyValidator = notEmptyValidatorObjectProvider.getObject()
         def textField = validatorTestView.stringField
@@ -460,7 +460,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "NotBlank validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def notBlankValidator = notBlankValidatorObjectProvider.getObject()
         def textField = validatorTestView.stringField
@@ -490,7 +490,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Negative validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def negativeValidator = negativeValidatorObjectProvider.getObject()
         def textField = validatorTestView.numberField
@@ -521,7 +521,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "NegativeOrZero validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def negativeOrZeroValidator = negativeOrZeroValidatorObjectProvider.getObject()
         def textField = validatorTestView.numberField
@@ -552,7 +552,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Min validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def minValidator = minValidatorObjectProvider.getObject(100)
         def textField = validatorTestView.numberField
@@ -583,7 +583,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Max validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def maxValidator = maxValidatorObjectProvider.getObject(100)
         def textField = validatorTestView.numberField
@@ -614,7 +614,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Future validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def futureValidator = futureValidatorObjectProvider.getObject()
         futureValidator.message = "errorMessage"
@@ -656,7 +656,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "FutureOrPresent validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def futureOrPresentValidator = futureOrPresentValidatorObjectProvider.getObject()
         futureOrPresentValidator.checkSeconds = true
@@ -692,7 +692,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Digits validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def digitsValidator = digitsValidatorObjectProvider.getObject(2, 2)
 
@@ -735,7 +735,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Decimal min validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def decimalMinValidator = decimalMinValidatorObjectProvider.getObject(new BigDecimal(10))
         def textField = validatorTestView.numberField
@@ -784,7 +784,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Decimal max validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def decimalMaxValidator = decimalMaxValidatorObjectProvider.getObject(new BigDecimal(10))
         def textField = validatorTestView.numberField
@@ -833,7 +833,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Double min validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def doubleMinValidator = doubleMinValidatorObjectProvider.getObject(Double.valueOf(10.2))
         def textField = validatorTestView.numberField
@@ -881,7 +881,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Double max validator test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def doubleMaxValidator = doubleMaxValidatorObjectProvider.getObject(Double.valueOf(10.2))
         def textField = validatorTestView.numberField
@@ -930,7 +930,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
 
     def "Email validator string test"() {
         given: "A component with a validator"
-        def validatorTestView = openScreen(ValidatorTestView.class)
+        def validatorTestView = navigateToView(ValidatorTestView.class)
 
         def emailValidator = emailValidatorObjectProvider.getObject()
         emailValidator.message = "errorMessage"

@@ -37,7 +37,7 @@ class ListBoxXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
         def order = dataManager.create(Order)
@@ -54,7 +54,7 @@ class ListBoxXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load ListBox component from XML"() {
         when: "Open the ComponentView"
-        def listBoxView = openScreen(ListBoxView)
+        def listBoxView = navigateToView(ListBoxView)
 
         then: "ListBox attributes will be loaded"
         verifyAll(listBoxView.listBox) {
@@ -82,7 +82,7 @@ class ListBoxXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load MultiSelectListBox component from XML"() {
         when: "Open the ComponentView"
-        def listBoxView = openScreen(ListBoxView)
+        def listBoxView = navigateToView(ListBoxView)
 
         then: "MultiSelectListBox attributes will be loaded"
         verifyAll(listBoxView.multiSelectListBox) {

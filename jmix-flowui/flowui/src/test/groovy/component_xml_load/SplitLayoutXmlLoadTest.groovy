@@ -37,12 +37,12 @@ class SplitLayoutXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
     }
 
     def "Load splitLayout container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "SplitLayout attributes will be loaded"
         verifyAll(containerView.splitLayoutId) {

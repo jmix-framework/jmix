@@ -40,12 +40,12 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
     }
 
     def "Load avatar component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "Avatar attributes will be loaded"
         verifyAll(componentView.avatarId) {
@@ -68,7 +68,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load icon component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "Icon component will be loaded"
         verifyAll(componentView.iconId) {
@@ -84,7 +84,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load button component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "Button attributes will be loaded"
         verifyAll(componentView.buttonId) {
@@ -122,7 +122,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load button component with Action from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "Button attributes will be loaded"
         verifyAll(componentView.buttonWithActionId) {
@@ -140,7 +140,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load details component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "Details attributes will be loaded"
         verifyAll(componentView.detailsId) {
@@ -170,7 +170,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load progressBar component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "ProgressBar attributes will be loaded"
         verifyAll(componentView.progressBarId) {
@@ -193,7 +193,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load dropdownButton component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "DropdownButton attributes will be loaded"
         verifyAll(componentView.dropdownButtonId) {
@@ -235,7 +235,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load comboButton component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "ComboButton attributes will be loaded"
         verifyAll(componentView.comboButtonId) {
@@ -278,7 +278,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load upload component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "Upload attributes will be loaded"
         verifyAll(componentView.uploadId) {
@@ -316,7 +316,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load upload component with receiver fqn from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "Upload with receiver fqn will be loaded"
         verifyAll(componentView.uploadWithReceiverFqn) {

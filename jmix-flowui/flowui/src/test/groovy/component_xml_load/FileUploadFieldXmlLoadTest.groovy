@@ -33,14 +33,14 @@ class FileUploadFieldXmlLoadTest extends FlowuiTestSpecification {
     private DataManager dataManager
 
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         dataManager.save(createAttachment())
     }
 
     def "Load FileUploadField component with datasource from XML"() {
         when: "Open view with FileUploadField"
-        def view = openScreen(FileUploadFieldView)
+        def view = navigateToView(FileUploadFieldView)
 
 
         then: "Field should be bound with data container"
@@ -52,7 +52,7 @@ class FileUploadFieldXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load FileUploadField component from XML"() {
         when: "Open view with FileUploadFields"
-        def view = openScreen(FileUploadFieldView)
+        def view = navigateToView(FileUploadFieldView)
 
         then: "FileUploadField attributes should be loaded"
         def field = view.xmlFileUploadField

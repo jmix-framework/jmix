@@ -34,11 +34,11 @@ class ViewAttributesTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("view_attributes.view", "io.jmix.flowui.app")
+        registerViewBasePackages("view_attributes.view", "io.jmix.flowui.app")
     }
 
     def "Check saving and removing attributes after View opened and closed"() {
-        def view = openScreen(ViewAttributesView)
+        def view = navigateToView(ViewAttributesView)
         def attributes = view.getAttributes()
 
         when: "Open View and set attribute"
@@ -60,7 +60,7 @@ class ViewAttributesTest extends FlowuiTestSpecification {
     }
 
     def "Check removing attribute"() {
-        def view = openScreen(ViewAttributesView)
+        def view = navigateToView(ViewAttributesView)
         def attributes = view.getAttributes()
 
         when: "Add two attributes"

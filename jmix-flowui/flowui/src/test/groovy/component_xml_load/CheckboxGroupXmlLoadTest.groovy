@@ -38,7 +38,7 @@ class CheckboxGroupXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
         def order = dataManager.create(Order)
@@ -55,7 +55,7 @@ class CheckboxGroupXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load checkboxGroup component from XML"() {
         when: "Open the ComponentView"
-        def rbgView = openScreen(CheckboxGroupView)
+        def rbgView = navigateToView(CheckboxGroupView)
 
         then: "CheckboxGroup attributes will be loaded"
         verifyAll(rbgView.checkboxGroup) {

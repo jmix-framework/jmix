@@ -850,6 +850,11 @@ public class DataContextImpl implements DataContextInternal {
         return modifiedInstances;
     }
 
+    @Override
+    public Set<Object> getRemovedInstances() {
+        return removedInstances;
+    }
+
     protected MetaClass getEntityMetaClass(Object entity) {
         return metadata.getClass(entity);
     }

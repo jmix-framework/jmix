@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.model.impl;
+package io.jmix.flowui.model;
 
-import io.jmix.ui.model.DataContext;
-import io.jmix.ui.model.DataContextChanges;
+import java.util.Set;
 
 /**
- * Marker interface of {@link DataContext} implementations that can form hierarchies
- * using {@link DataContext#setParent(DataContext)}.
+ * Gives direct access to collections of modified and removed instances in {@link DataContext}.
  */
-public interface DataContextInternal extends DataContext, DataContextChanges {
+public interface DataContextChanges {
+
+    /**
+     * @return mutable set of entities registered as modified
+     */
+    Set<Object> getModifiedInstances();
+
+    /**
+     * @return mutable set of entities registered as removed
+     */
+    Set<Object> getRemovedInstances();
 }

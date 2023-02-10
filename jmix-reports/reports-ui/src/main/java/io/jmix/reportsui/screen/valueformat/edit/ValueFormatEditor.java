@@ -50,6 +50,7 @@ public class ValueFormatEditor extends StandardEditor<ReportValueFormat> {
             "##,##0",
             "#,##0.###",
             "#,##0.##",
+            "#,##0.00",
             "dd/MM/yyyy HH:mm",
             "${image:WxH}",
             "${bitmap:WxH}",

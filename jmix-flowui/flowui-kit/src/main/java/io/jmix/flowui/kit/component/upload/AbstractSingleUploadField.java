@@ -203,8 +203,6 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
 
-        uploadButton.setReadOnly(isReadOnly());
-
         updateComponentsVisibility();
     }
 
@@ -275,6 +273,12 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     }
 
     protected void onStartedEvent(StartedEvent event) {
+        // Do not upload file if field is read only or disabled
+        if (isReadOnly() || !isEnabled()) {
+            event.getUpload().interruptUpload();
+            return;
+        }
+
         getEventBus().fireEvent(new FileUploadStartedEvent<>(this, event.getFileName(), event.getMIMEType(),
                 event.getContentLength()));
     }

@@ -35,16 +35,8 @@ public class JmixUploadButton extends Upload {
         addClassName(JMIX_UPLOAD_BUTTON_CLASS_NAME);
     }
 
-    public void setReadOnly(boolean readOnly) {
-        getElement().setProperty("readOnly", readOnly);
-    }
-
-    public boolean isReadOnly() {
-        return getElement().getProperty("readOnly", false);
-    }
-
-    public void setEnabled(boolean readOnly) {
-        getElement().setProperty("enabled", readOnly);
+    public void setEnabled(boolean enabled) {
+        getElement().setProperty("enabled", enabled);
     }
 
     public boolean isEnabled() {

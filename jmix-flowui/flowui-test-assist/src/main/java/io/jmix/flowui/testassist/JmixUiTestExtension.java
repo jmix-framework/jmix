@@ -82,7 +82,7 @@ import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APP
  *         CollectionContainer<User> usersDc = ViewControllerUtils.getViewData(view)
  *                 .getContainer("usersDc");
  *
- *         Assertions.assertTrue(usersDc.getItems().size() > 0);
+ *         Assertions.assertTrue(usersDc.getItems().size() &gt; 0);
  *     }
  * }
  * </pre>

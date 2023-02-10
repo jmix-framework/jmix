@@ -26,10 +26,6 @@ class JmixUploadButton extends Upload {
 
     static get properties() {
         return {
-            readOnly: {
-                type: Boolean,
-                value: false,
-            },
             enabled: {
                 type: Boolean,
                 value: true,
@@ -80,8 +76,8 @@ class JmixUploadButton extends Upload {
      * @override
      */
     _onAddFilesTouchEnd(e) {
-        // Don't open "add file" dialog if component is readOnly or disabled
-        if (this.readOnly || !this.enabled) {
+        // Don't open "add file" dialog if component is disabled
+        if (!this.enabled) {
             e.stopPropagation();
             e.preventDefault();
             return
@@ -95,8 +91,8 @@ class JmixUploadButton extends Upload {
      * @override
      */
     _onAddFilesClick(e) {
-        // Don't open "add file" dialog if component is readOnly or disabled
-        if (this.readOnly || !this.enabled) {
+        // Don't open "add file" dialog if component is disabled
+        if (!this.enabled) {
             e.stopPropagation();
             e.preventDefault();
             return

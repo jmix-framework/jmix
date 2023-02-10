@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '1.4.2'
+    id 'io.jmix' version '1.4.3'
     id 'java'
 }
 
@@ -40,6 +40,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+    testImplementation 'io.jmix.ui:jmix-ui-test-assist'
 }
 
 test {

@@ -21,6 +21,7 @@ import io.jmix.core.SaveContext
 import io.jmix.core.UnconstrainedDataManager
 import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.data.PersistenceHints
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.multitenancy.MultitenancyConfiguration
 import io.jmix.multitenancy.core.TenantEntityOperation
@@ -127,17 +128,19 @@ class TenantTest extends Specification {
     }
 
     void cleanup() {
-        unconstrainedDataManager.remove(admin,
-                tenantUserA,
-                tenantUserB,
-                tenantAdminA,
-                tenantAdminB,
-                tenantA,
-                tenantB,
-                testTenantEntity,
-                testTenantEntityA,
-                testTenantEntityB
-        )
+        def saveContext = new SaveContext()
+                .removing(tenantUserA,
+                        tenantUserB,
+                        tenantAdminA,
+                        tenantAdminB,
+                        tenantA,
+                        tenantB,
+                        testTenantEntity,
+                        testTenantEntityA,
+                        testTenantEntityB)
+                .setHint(PersistenceHints.SOFT_DELETION, false)
+
+        unconstrainedDataManager.save(saveContext)
     }
 
     def "test user login without tenant"() {

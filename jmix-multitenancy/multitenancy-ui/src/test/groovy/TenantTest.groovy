@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import io.jmix.core.AccessConstraintsRegistry
-import io.jmix.core.DataManager
-import io.jmix.core.Metadata
-import io.jmix.core.UnconstrainedDataManager
+
+import io.jmix.core.*
 import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.data.PersistenceHints
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.multitenancy.MultitenancyConfiguration
 import io.jmix.multitenancy.core.TenantEntityOperation
@@ -130,17 +129,19 @@ class TenantTest extends Specification {
     }
 
     void cleanup() {
-        unconstrainedDataManager.remove(admin,
-                tenantUserA,
-                tenantUserB,
-                tenantAdminA,
-                tenantAdminB,
-                tenantA,
-                tenantB,
-                testTenantEntity,
-                testTenantEntityA,
-                testTenantEntityB
-        )
+        def saveContext = new SaveContext()
+                .removing(tenantUserA,
+                        tenantUserB,
+                        tenantAdminA,
+                        tenantAdminB,
+                        tenantA,
+                        tenantB,
+                        testTenantEntity,
+                        testTenantEntityA,
+                        testTenantEntityB)
+                .setHint(PersistenceHints.SOFT_DELETION, false)
+
+        unconstrainedDataManager.save(saveContext)
     }
 
     def "test user login without tenant"() {
@@ -192,6 +193,5 @@ class TenantTest extends Specification {
         then:
         TenantProvider.NO_TENANT == tenantUserB.getTenantId()
     }
-
 
 }

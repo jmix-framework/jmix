@@ -41,5 +41,10 @@ class ControllerUtilsTest extends Specification {
         URI encodedUrl = new URI("http://localhost:8080/#login?redirectTo=employees%2Fview")
         then:
         ControllerUtils.getLocationWithoutParams(encodedUrl) == "http://localhost:8080/"
+
+        when:
+        URI encodedUrlFromOidcFlow = new URI("http://localhost:8080/?iss=https%3A%2F%2Ftenant.oidcprovider.com")
+        then:
+        ControllerUtils.getLocationWithoutParams(encodedUrlFromOidcFlow) == "http://localhost:8080/"
     }
 }

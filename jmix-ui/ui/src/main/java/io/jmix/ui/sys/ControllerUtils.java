@@ -47,7 +47,7 @@ public final class ControllerUtils {
         try {
             StringBuilder baseUrl = new StringBuilder(location.toURL().toExternalForm());
             if (location.getQuery() != null) {
-                baseUrl.delete(baseUrl.indexOf("?" + location.getQuery()), baseUrl.length());
+                baseUrl.delete(baseUrl.indexOf("?" + location.getRawQuery()), baseUrl.length());
             } else if (location.getFragment() != null) {
                 baseUrl.delete(baseUrl.indexOf("#" + location.getRawFragment()), baseUrl.length());
             }

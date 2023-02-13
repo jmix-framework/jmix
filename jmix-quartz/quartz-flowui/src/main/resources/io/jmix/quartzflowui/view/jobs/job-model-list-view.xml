@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://jobModelListView.title"
+      focusComponent="jobModelsTable">
+    <data readOnly="true">
+        <collection id="jobModelsDc" class="io.jmix.quartz.model.JobModel"/>
+    </data>
+    <actions>
+        <action id="lookupSelectAction"
+                type="lookup_select"/>
+        <action id="lookupCancelAction"
+                type="lookup_discard"/>
+    </actions>
+    <layout expand="jobModelsTable">
+        <details id="filterDetails"
+                 summaryText="msg://filter"
+                 opened="true"
+                 width="100%">
+            <formLayout>
+                <responsiveSteps>
+                    <responsiveStep minWidth="0" columns="1"/>
+                    <responsiveStep minWidth="40em" columns="2"/>
+                    <responsiveStep minWidth="60em" columns="4"/>
+                </responsiveSteps>
+
+                <textField id="nameFilter" label="msg://nameContains"/>
+                <textField id="groupFilter" label="msg://groupContains"/>
+                <textField id="classFilter" label="msg://classContains"/>
+                <select id="jobStateFilter" label="msg://jobState"
+                        itemsEnum="io.jmix.quartz.model.JobState"
+                        emptySelectionAllowed="true"/>
+            </formLayout>
+        </details>
+
+        <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
+            <button id="createBtn" action="jobModelsTable.create"/>
+            <button id="editBtn" action="jobModelsTable.edit"/>
+            <button id="removeBtn" action="jobModelsTable.remove"/>
+            <button id="executeNowBtn" action="jobModelsTable.executeNow"/>
+            <button id="activateBtn" action="jobModelsTable.activate"/>
+            <button id="deactivateBtn" action="jobModelsTable.deactivate"/>
+        </hbox>
+        <dataGrid id="jobModelsTable"
+                  dataContainer="jobModelsDc"
+                  width="100%"
+                  minHeight="20em">
+            <actions>
+                <action id="create" type="create">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="edit" type="edit">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="remove" type="remove"/>
+                <action id="refresh" type="refresh"/>
+                <action id="executeNow" type="itemTracking" text="msg://triggerJob" icon="PLAY_CIRCLE"/>
+                <action id="activate" type="itemTracking" text="msg://resumeJob" icon="PLAY"/>
+                <action id="deactivate" type="itemTracking" text="msg://pauseJob" icon="PAUSE"/>
+            </actions>
+            <columns>
+                <column property="jobName" resizable="true"/>
+                <column property="jobGroup" resizable="true"/>
+                <column property="jobClass" resizable="true"/>
+                <column property="jobState" resizable="true"/>
+                <column property="jobSource" resizable="true"/>
+                <column property="triggerDescription" resizable="true"/>
+                <column property="description" resizable="true"/>
+            </columns>
+        </dataGrid>
+
+        <hbox id="lookupActions" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</view>

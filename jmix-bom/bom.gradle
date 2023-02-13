@@ -211,6 +211,8 @@ dependencies {
         api "io.jmix.quartz:jmix-quartz-starter:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-ui:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-ui-starter:$freeVersion"
+        api "io.jmix.quartz:jmix-quartz-flowui:$freeVersion"
+        api "io.jmix.quartz:jmix-quartz-flowui-starter:$freeVersion"
 
         api "io.jmix.reports:jmix-reports:$freeVersion"
         api "io.jmix.reports:jmix-reports-ui:$freeVersion"

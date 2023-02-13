@@ -1,0 +1,99 @@
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://jobModelDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="jobModelDc" class="io.jmix.quartz.model.JobModel">
+            <collection id="triggerModelDc" property="triggers"/>
+            <collection id="jobDataParamsDc" property="jobDataParameters"/>
+            <loader id="jobModelDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="viewSaveAndClose" type="detail_saveClose"/>
+        <action id="viewClose" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="jobModelDc">
+            <textField id="jobNameField" property="jobName"/>
+            <comboBox id="jobClassField" property="jobClass"/>
+            <comboBox id="jobGroupField" property="jobGroup" allowCustomValue="true"/>
+            <select id="jobSourceField" property="jobSource" readOnly="true"/>
+            <textArea id="jobDescriptionField" property="description" height="9.5em" colspan="2"/>
+        </formLayout>
+
+        <tabSheet id="jobDetailsTabSheet" width="100%">
+            <tab id="triggers" label="msg://triggersTabCaption">
+                <vbox id="triggersTabContent"
+                      padding="false"
+                      width="100%">
+                    <hbox classNames="buttons-panel">
+                        <button action="triggerModelTable.create"/>
+                        <button action="triggerModelTable.edit"/>
+                        <button action="triggerModelTable.read"/>
+                        <button action="triggerModelTable.remove"/>
+                    </hbox>
+                    <dataGrid id="triggerModelTable"
+                              dataContainer="triggerModelDc"
+                              width="100%" minHeight="20em">
+                        <actions>
+                            <action id="create" type="create"/>
+                            <action id="edit" type="edit"/>
+                            <action id="read" type="read"/>
+                            <action id="remove" type="remove"/>
+                        </actions>
+                        <columns>
+                            <column property="triggerName"/>
+                            <column property="triggerGroup"/>
+                            <column property="scheduleType"/>
+                            <column property="scheduleDescription"/>
+                            <column property="startDate"/>
+                            <column property="lastFireDate"/>
+                            <column property="nextFireDate"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+            <tab id="jobs" label="msg://jobDataParamsTabCaption">
+                <vbox id="jobsTabContent"
+                      padding="false"
+                      width="100%">
+                    <hbox classNames="buttons-panel">
+                        <button id="addDataParamButton" themeNames="primary"
+                                action="jobDataParamsTable.addNewDataParam"/>
+                        <button action="jobDataParamsTable.remove"/>
+                    </hbox>
+                    <dataGrid id="jobDataParamsTable"
+                              dataContainer="jobDataParamsDc"
+                              width="100%" minHeight="20em"
+                              editorBuffered="true">
+                        <actions>
+                            <action id="addNewDataParam"
+                                    text="msg://addNewDataParamCaption"
+                                    icon="PLUS"/>
+                            <action id="remove" type="remove"/>
+                        </actions>
+                        <columns>
+                            <column property="key" editable="true"/>
+                            <column property="value" editable="true"/>
+
+                            <editorActionsColumn width="8em" flexGrow="0">
+                                <editButton icon="PENCIL"/>
+
+                                <saveButton icon="CHECK" themeNames="success"/>
+                                <cancelButton icon="CLOSE" themeNames="error"/>
+                            </editorActionsColumn>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+        </tabSheet>
+
+        <hbox id="detailActions" spacing="true">
+            <button id="commitAndCloseBtn" action="viewSaveAndClose"/>
+            <button id="closeBtn" action="viewClose"/>
+        </hbox>
+    </layout>
+</view>

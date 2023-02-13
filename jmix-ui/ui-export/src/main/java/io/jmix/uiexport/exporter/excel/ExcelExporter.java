@@ -31,6 +31,7 @@ import io.jmix.ui.component.data.meta.EntityDataGridItems;
 import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.model.InstanceContainer;
+import io.jmix.uiexport.ExportActionProperties;
 import io.jmix.uiexport.action.ExportAction;
 import io.jmix.uiexport.exporter.AbstractTableExporter;
 import io.jmix.uiexport.exporter.ExportMode;
@@ -39,9 +40,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -99,13 +102,28 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
     protected boolean isRowNumberExceeded = false;
 
+    protected ExportActionProperties exportActionProperties;
+
+    protected AllRecordsExporter allRecordsExporter;
+
+    @Autowired
+    public ExcelExporter(ExportActionProperties exportActionProperties,
+                         AllRecordsExporter allRecordsExporter) {
+        this.exportActionProperties = exportActionProperties;
+        this.allRecordsExporter = allRecordsExporter;
+    }
+
     protected void createWorkbookWithSheet() {
         switch (exportFormat) {
             case XLS:
                 wb = new HSSFWorkbook();
                 break;
             case XLSX:
-                wb = new XSSFWorkbook();
+                if (exportActionProperties.getExcel().isUseSxssf()) {
+                    wb = new SXSSFWorkbook();
+                } else {
+                    wb = new XSSFWorkbook();
+                }
                 break;
             default:
                 throw new IllegalStateException("Unknown export format " + exportFormat);
@@ -140,139 +158,149 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 .collect(Collectors.toList());
 
         createWorkbookWithSheet();
-        createFonts();
-        createFormats();
+        try {
+            createFonts();
+            createFormats();
 
-        int r = 0;
+            int r = 0;
 
-        Row row = sheet.createRow(r);
-        createAutoColumnSizers(columns.size());
+            Row row = sheet.createRow(r);
+            createAutoColumnSizers(columns.size());
 
-        float maxHeight = sheet.getDefaultRowHeightInPoints();
+            float maxHeight = sheet.getDefaultRowHeightInPoints();
 
-        CellStyle headerCellStyle = wb.createCellStyle();
-        headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        for (Table.Column<Object> column : columns) {
-            String caption = column.getCaption();
+            CellStyle headerCellStyle = wb.createCellStyle();
+            headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            for (Table.Column<Object> column : columns) {
+                String caption = column.getCaption();
 
-            int countOfReturnSymbols = StringUtils.countMatches(caption, "\n");
-            if (countOfReturnSymbols > 0) {
-                maxHeight = Math.max(maxHeight, (countOfReturnSymbols + 1) * sheet.getDefaultRowHeightInPoints());
-                headerCellStyle.setWrapText(true);
-            }
-        }
-        row.setHeightInPoints(maxHeight);
-
-        for (int c = 0; c < columns.size(); c++) {
-            Table.Column<Object> column = columns.get(c);
-            String caption = column.getCaption();
-
-            Cell cell = row.createCell(c);
-            RichTextString richTextString = createStringCellValue(caption);
-            richTextString.applyFont(boldFont);
-            cell.setCellValue(richTextString);
-
-            ExcelAutoColumnSizer sizer = new ExcelAutoColumnSizer();
-            sizer.notifyCellValue(caption, boldFont);
-            sizers[c] = sizer;
-
-            cell.setCellStyle(headerCellStyle);
-        }
-
-        TableItems<Object> tableItems = table.getItems();
-
-        if (exportMode == ExportMode.SELECTED && table.getSelected().size() > 0) {
-            Set<Object> selected = table.getSelected();
-
-            List<Object> ordered = tableItems.getItemIds().stream()
-                    .map(tableItems::getItem)
-                    .filter(selected::contains)
-                    .collect(Collectors.toList());
-            for (Object item : ordered) {
-                if (checkIsRowNumberExceed(r)) {
-                    break;
-                }
-
-                createRow(table, columns, 0, ++r, Id.of(item).getValue());
-            }
-        } else {
-            if (table.isAggregatable() && exportAggregation
-                    && hasAggregatableColumn(table)) {
-                if (table.getAggregationStyle() == Table.AggregationStyle.TOP) {
-                    r = createAggregatableRow(table, columns, ++r, 1);
+                int countOfReturnSymbols = StringUtils.countMatches(caption, "\n");
+                if (countOfReturnSymbols > 0) {
+                    maxHeight = Math.max(maxHeight, (countOfReturnSymbols + 1) * sheet.getDefaultRowHeightInPoints());
+                    headerCellStyle.setWrapText(true);
                 }
             }
-            if (table instanceof TreeTable) {
-                TreeTable<Object> treeTable = (TreeTable<Object>) table;
-                TreeTableItems<Object> treeTableSource = (TreeTableItems<Object>) treeTable.getItems();
-                if (treeTableSource != null) {
-                    for (Object itemId : treeTableSource.getRootItemIds()) {
-                        if (checkIsRowNumberExceed(r)) {
-                            break;
-                        }
+            row.setHeightInPoints(maxHeight);
 
-                        r = createHierarchicalRow(treeTable, columns, exportExpanded, r, itemId);
-                    }
-                }
-            } else if (table instanceof GroupTable && tableItems instanceof GroupTableItems
-                    && ((GroupTableItems<Object>) tableItems).hasGroups()) {
-                GroupTableItems<Object> groupTableSource = (GroupTableItems<Object>) tableItems;
+            for (int c = 0; c < columns.size(); c++) {
+                Table.Column<Object> column = columns.get(c);
+                String caption = column.getCaption();
 
-                for (Object item : groupTableSource.rootGroups()) {
+                Cell cell = row.createCell(c);
+                RichTextString richTextString = createStringCellValue(caption);
+                richTextString.applyFont(boldFont);
+                cell.setCellValue(richTextString);
+
+                ExcelAutoColumnSizer sizer = new ExcelAutoColumnSizer();
+                sizer.notifyCellValue(caption, boldFont);
+                sizers[c] = sizer;
+
+                cell.setCellStyle(headerCellStyle);
+            }
+
+            TableItems<Object> tableItems = table.getItems();
+
+            if (exportMode == ExportMode.SELECTED_ROWS && table.getSelected().size() > 0) {
+                Set<Object> selected = table.getSelected();
+
+                List<Object> ordered = tableItems.getItemIds().stream()
+                        .map(tableItems::getItem)
+                        .filter(selected::contains)
+                        .collect(Collectors.toList());
+                for (Object item : ordered) {
                     if (checkIsRowNumberExceed(r)) {
                         break;
                     }
 
-                    r = createGroupRow((GroupTable<Object>) table, columns, ++r, (GroupInfo<?>) item, 0);
+                    createRow(table, columns, 0, ++r, Id.of(item).getValue());
                 }
-            } else {
-                if (tableItems != null) {
-                    for (Object itemId : tableItems.getItemIds()) {
+            } else if (exportMode == ExportMode.CURRENT_PAGE) {
+                if (table.isAggregatable() && exportAggregation
+                        && hasAggregatableColumn(table)) {
+                    if (table.getAggregationStyle() == Table.AggregationStyle.TOP) {
+                        r = createAggregatableRow(table, columns, ++r, 1);
+                    }
+                }
+                if (table instanceof TreeTable) {
+                    TreeTable<Object> treeTable = (TreeTable<Object>) table;
+                    TreeTableItems<Object> treeTableSource = (TreeTableItems<Object>) treeTable.getItems();
+                    if (treeTableSource != null) {
+                        for (Object itemId : treeTableSource.getRootItemIds()) {
+                            if (checkIsRowNumberExceed(r)) {
+                                break;
+                            }
+
+                            r = createHierarchicalRow(treeTable, columns, exportExpanded, r, itemId);
+                        }
+                    }
+                } else if (table instanceof GroupTable && tableItems instanceof GroupTableItems
+                        && ((GroupTableItems<Object>) tableItems).hasGroups()) {
+                    GroupTableItems<Object> groupTableSource = (GroupTableItems<Object>) tableItems;
+
+                    for (Object item : groupTableSource.rootGroups()) {
                         if (checkIsRowNumberExceed(r)) {
                             break;
                         }
 
-                        createRow(table, columns, 0, ++r, itemId);
+                        r = createGroupRow((GroupTable<Object>) table, columns, ++r, (GroupInfo<?>) item, 0);
+                    }
+                } else {
+                    if (tableItems != null) {
+                        for (Object itemId : tableItems.getItemIds()) {
+                            if (checkIsRowNumberExceed(r)) {
+                                break;
+                            }
+
+                            createRow(table, columns, 0, ++r, itemId);
+                        }
                     }
                 }
-            }
-            if (table.isAggregatable() && exportAggregation
-                    && hasAggregatableColumn(table)) {
-                if (table.getAggregationStyle() == Table.AggregationStyle.BOTTOM) {
-                    r = createAggregatableRow(table, columns, ++r, 1);
+                if (table.isAggregatable() && exportAggregation
+                        && hasAggregatableColumn(table)) {
+                    if (table.getAggregationStyle() == Table.AggregationStyle.BOTTOM) {
+                        r = createAggregatableRow(table, columns, ++r, 1);
+                    }
                 }
+            } else if (exportMode == ExportMode.ALL_ROWS) {
+                boolean addLevelPadding = !(table instanceof TreeTable);
+                allRecordsExporter.exportAll(tableItems, (context) -> {
+                    createRowForEntityInstance(table, columns, 0, context.getRowNumber(), context.getEntity(),
+                            addLevelPadding);
+                });
             }
-        }
 
-        for (int c = 0; c < columns.size(); c++) {
-            sheet.setColumnWidth(c, sizers[c].getWidth() * COL_WIDTH_MAGIC);
-        }
+            for (int c = 0; c < columns.size(); c++) {
+                sheet.setColumnWidth(c, sizers[c].getWidth() * COL_WIDTH_MAGIC);
+            }
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            wb.write(out);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to write document", e);
-        }
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try {
+                wb.write(out);
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to write document", e);
+            }
 
-        if (isXlsMaxRowNumberExceeded()) {
-            Notifications notifications = ComponentsHelper.getScreenContext(table).getNotifications();
+            if (isXlsMaxRowNumberExceeded()) {
+                Notifications notifications = ComponentsHelper.getScreenContext(table).getNotifications();
 
-            notifications.create(Notifications.NotificationType.WARNING)
-                    .withCaption(messages.getMessage("actions.warningExport.title"))
-                    .withDescription(messages.getMessage("actions.warningExport.message"))
-                    .show();
-        }
+                notifications.create(Notifications.NotificationType.WARNING)
+                        .withCaption(messages.getMessage("actions.warningExport.title"))
+                        .withDescription(messages.getMessage("actions.warningExport.message"))
+                        .show();
+            }
 
-        ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(out.toByteArray(),
-                uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
-        switch (exportFormat) {
-            case XLSX:
-                downloader.download(dataProvider, getFileName(table) + ".xlsx", XLSX);
-                break;
-            case XLS:
-                downloader.download(dataProvider, getFileName(table) + ".xls", XLS);
-                break;
+            ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(out.toByteArray(),
+                    uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
+            switch (exportFormat) {
+                case XLSX:
+                    downloader.download(dataProvider, getFileName(table) + ".xlsx", XLSX);
+                    break;
+                case XLS:
+                    downloader.download(dataProvider, getFileName(table) + ".xls", XLS);
+                    break;
+            }
+        } finally {
+            disposeWorkBook();
         }
     }
 
@@ -283,107 +311,117 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         }
 
         createWorkbookWithSheet();
-        createFonts();
-        createFormats();
-
-        List<DataGrid.Column<Object>> columns = dataGrid.getVisibleColumns().stream()
-                .filter(col -> !col.isCollapsed())
-                .collect(Collectors.toList());
-
-        int r = 0;
-
-        Row row = sheet.createRow(r);
-        createAutoColumnSizers(columns.size());
-
-        float maxHeight = sheet.getDefaultRowHeightInPoints();
-
-        CellStyle headerCellStyle = wb.createCellStyle();
-        headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        for (DataGrid.Column column : columns) {
-            String caption = column.getCaption();
-
-            int countOfReturnSymbols = StringUtils.countMatches(caption, "\n");
-            if (countOfReturnSymbols > 0) {
-                maxHeight = Math.max(maxHeight, (countOfReturnSymbols + 1) * sheet.getDefaultRowHeightInPoints());
-                headerCellStyle.setWrapText(true);
-            }
-        }
-        row.setHeightInPoints(maxHeight);
-
-        for (int c = 0; c < columns.size(); c++) {
-            DataGrid.Column column = columns.get(c);
-            String caption = column.getCaption();
-
-            Cell cell = row.createCell(c);
-            RichTextString richTextString = createStringCellValue(caption);
-            richTextString.applyFont(boldFont);
-            cell.setCellValue(richTextString);
-
-            ExcelAutoColumnSizer sizer = new ExcelAutoColumnSizer();
-            sizer.notifyCellValue(caption, boldFont);
-            sizers[c] = sizer;
-
-            cell.setCellStyle(headerCellStyle);
-        }
-
-        EntityDataGridItems<Object> dataGridSource = (EntityDataGridItems) dataGrid.getItems();
-        if (dataGridSource == null) {
-            throw new IllegalStateException("DataGrid is not bound to data");
-        }
-        if (exportMode == ExportMode.SELECTED && dataGrid.getSelected().size() > 0) {
-            Set<Object> selected = dataGrid.getSelected();
-            List<Object> ordered = dataGridSource.getItems()
-                    .filter(selected::contains)
-                    .collect(Collectors.toList());
-            for (Object item : ordered) {
-                if (checkIsRowNumberExceed(r)) {
-                    break;
-                }
-
-                createDataGridRow(dataGrid, columns, 0, ++r, Id.of(item).getValue());
-            }
-        } else {
-            if (dataGrid instanceof TreeDataGrid) {
-                TreeDataGrid treeDataGrid = (TreeDataGrid) dataGrid;
-                TreeDataGridItems<Object> treeDataGridItems = (TreeDataGridItems) dataGridSource;
-                List<Object> items = treeDataGridItems.getChildren(null).collect(Collectors.toList());
-                for (Object item : items) {
-                    if (checkIsRowNumberExceed(r)) {
-                        break;
-                    }
-
-                    r = createDataGridHierarchicalRow(treeDataGrid, treeDataGridItems, columns, 0, r, item);
-                }
-            } else {
-                for (Object itemId : dataGridSource.getItems().map(entity -> Id.of(entity).getValue()).collect(Collectors.toList())) {
-                    if (checkIsRowNumberExceed(r)) {
-                        break;
-                    }
-
-                    createDataGridRow(dataGrid, columns, 0, ++r, itemId);
-                }
-            }
-        }
-
-        for (int c = 0; c < columns.size(); c++) {
-            sheet.setColumnWidth(c, sizers[c].getWidth() * COL_WIDTH_MAGIC);
-        }
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            wb.write(out);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to write document", e);
-        }
-        ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(out.toByteArray(),
-                uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
-        switch (exportFormat) {
-            case XLSX:
-                downloader.download(dataProvider, getFileName(dataGrid) + "." + XLSX.getFileExt(), XLSX);
-                break;
-            case XLS:
-                downloader.download(dataProvider, getFileName(dataGrid) + "." + XLS.getFileExt(), XLS);
-                break;
+            createFonts();
+            createFormats();
+
+            List<DataGrid.Column<Object>> columns = dataGrid.getVisibleColumns().stream()
+                    .filter(col -> !col.isCollapsed())
+                    .collect(Collectors.toList());
+
+            int r = 0;
+
+            Row row = sheet.createRow(r);
+            createAutoColumnSizers(columns.size());
+
+            float maxHeight = sheet.getDefaultRowHeightInPoints();
+
+            CellStyle headerCellStyle = wb.createCellStyle();
+            headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            for (DataGrid.Column column : columns) {
+                String caption = column.getCaption();
+
+                int countOfReturnSymbols = StringUtils.countMatches(caption, "\n");
+                if (countOfReturnSymbols > 0) {
+                    maxHeight = Math.max(maxHeight, (countOfReturnSymbols + 1) * sheet.getDefaultRowHeightInPoints());
+                    headerCellStyle.setWrapText(true);
+                }
+            }
+            row.setHeightInPoints(maxHeight);
+
+            for (int c = 0; c < columns.size(); c++) {
+                DataGrid.Column column = columns.get(c);
+                String caption = column.getCaption();
+
+                Cell cell = row.createCell(c);
+                RichTextString richTextString = createStringCellValue(caption);
+                richTextString.applyFont(boldFont);
+                cell.setCellValue(richTextString);
+
+                ExcelAutoColumnSizer sizer = new ExcelAutoColumnSizer();
+                sizer.notifyCellValue(caption, boldFont);
+                sizers[c] = sizer;
+
+                cell.setCellStyle(headerCellStyle);
+            }
+
+            EntityDataGridItems<Object> dataGridSource = (EntityDataGridItems) dataGrid.getItems();
+            if (dataGridSource == null) {
+                throw new IllegalStateException("DataGrid is not bound to data");
+            }
+            if (exportMode == ExportMode.SELECTED_ROWS && dataGrid.getSelected().size() > 0) {
+                Set<Object> selected = dataGrid.getSelected();
+                List<Object> ordered = dataGridSource.getItems()
+                        .filter(selected::contains)
+                        .collect(Collectors.toList());
+                for (Object item : ordered) {
+                    if (checkIsRowNumberExceed(r)) {
+                        break;
+                    }
+
+                    createDataGridRow(dataGrid, columns, 0, ++r, Id.of(item).getValue());
+                }
+            } else if (exportMode == ExportMode.CURRENT_PAGE) {
+                if (dataGrid instanceof TreeDataGrid) {
+                    TreeDataGrid treeDataGrid = (TreeDataGrid) dataGrid;
+                    TreeDataGridItems<Object> treeDataGridItems = (TreeDataGridItems) dataGridSource;
+                    List<Object> items = treeDataGridItems.getChildren(null).collect(Collectors.toList());
+                    for (Object item : items) {
+                        if (checkIsRowNumberExceed(r)) {
+                            break;
+                        }
+
+                        r = createDataGridHierarchicalRow(treeDataGrid, treeDataGridItems, columns, 0, r, item);
+                    }
+                } else {
+                    for (Object itemId : dataGridSource.getItems().map(entity -> Id.of(entity).getValue()).collect(Collectors.toList())) {
+                        if (checkIsRowNumberExceed(r)) {
+                            break;
+                        }
+
+                        createDataGridRow(dataGrid, columns, 0, ++r, itemId);
+                    }
+                }
+            } else if (exportMode == ExportMode.ALL_ROWS) {
+                boolean addLevelPadding = !(dataGrid instanceof TreeDataGrid);
+                allRecordsExporter.exportAll(dataGrid.getItems(), (context) -> {
+                    createDataGridRowForEntityInstance(dataGrid, columns, 0, context.getRowNumber(),
+                            context.getEntity(), addLevelPadding);
+                });
+            }
+
+            for (int c = 0; c < columns.size(); c++) {
+                sheet.setColumnWidth(c, sizers[c].getWidth() * COL_WIDTH_MAGIC);
+            }
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try {
+                wb.write(out);
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to write document", e);
+            }
+            ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(out.toByteArray(),
+                    uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
+            switch (exportFormat) {
+                case XLSX:
+                    downloader.download(dataProvider, getFileName(dataGrid) + "." + XLSX.getFileExt(), XLSX);
+                    break;
+                case XLS:
+                    downloader.download(dataProvider, getFileName(dataGrid) + "." + XLS.getFileExt(), XLS);
+                    break;
+            }
+        } finally {
+            disposeWorkBook();
         }
     }
 
@@ -404,15 +442,20 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
     protected void createDataGridRow(DataGrid dataGrid, List<DataGrid.Column<Object>> columns,
                                      int startColumn, int rowNumber, Object itemId) {
+        Object entityInstance = dataGrid.getItems().getItem(itemId);
+        createDataGridRowForEntityInstance(dataGrid, columns, startColumn, rowNumber, entityInstance, true);
+    }
+
+    protected void createDataGridRowForEntityInstance(DataGrid dataGrid, List<DataGrid.Column<Object>> columns,
+                                                      int startColumn, int rowNumber, Object entityInstance, boolean addLevelPadding) {
         if (startColumn >= columns.size()) {
             return;
         }
         Row row = sheet.createRow(rowNumber);
-        Object item = dataGrid.getItems().getItem(itemId);
 
         int level = 0;
-        if (dataGrid instanceof TreeDataGrid) {
-            level = ((TreeDataGrid<Object>) dataGrid).getLevel(item);
+        if (addLevelPadding && dataGrid instanceof TreeDataGrid) {
+            level = ((TreeDataGrid<Object>) dataGrid).getLevel(entityInstance);
         }
         for (int c = startColumn; c < columns.size(); c++) {
             Cell cell = row.createCell(c);
@@ -423,7 +466,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 propertyPath = column.getPropertyPath();
             }
 
-            Object cellValue = getColumnValue(dataGrid, columns.get(c), item);
+            Object cellValue = getColumnValue(dataGrid, columns.get(c), entityInstance);
 
             formatValueCell(cell, cellValue, propertyPath, c, rowNumber, level, null);
         }
@@ -606,7 +649,16 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         return rowNumber;
     }
 
-    protected void createRow(Table<Object> table, List<Table.Column<Object>> columns, int startColumn, int rowNumber, Object itemId) {
+    protected void createRow(Table<Object> table, List<Table.Column<Object>> columns, int startColumn, int rowNumber,
+                             Object itemId) {
+        if (table.getItems() != null) {
+            Object entityInstance = table.getItems().getItem(itemId);
+            createRowForEntityInstance(table, columns, startColumn, rowNumber, entityInstance, true);
+        }
+    }
+
+    protected void createRowForEntityInstance(Table<Object> table, List<Table.Column<Object>> columns, int startColumn,
+                                              int rowNumber, Object entityInstance, boolean addLevelPadding) {
         if (startColumn >= columns.size()) {
             return;
         }
@@ -617,11 +669,10 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
         Row row = sheet.createRow(rowNumber);
         if (table.getItems() != null) {
-            Object instance = table.getItems().getItem(itemId);
 
             int level = 0;
-            if (table instanceof TreeTable) {
-                level = ((TreeTable<Object>) table).getLevel(itemId);
+            if (addLevelPadding && table instanceof TreeTable) {
+                level = ((TreeTable<Object>) table).getLevel(EntityValues.getId(entityInstance));
             }
 
             for (int c = startColumn; c < columns.size(); c++) {
@@ -633,7 +684,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                     propertyPath = (MetaPropertyPath) column.getId();
                 }
 
-                Object cellValue = getColumnValue(table, column, instance);
+                Object cellValue = getColumnValue(table, column, entityInstance);
 
                 formatValueCell(cell, cellValue, propertyPath, c, rowNumber, level, null);
             }
@@ -878,5 +929,11 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
     @Override
     public String getCaption() {
         return getMessage("excelExporter.caption");
+    }
+
+    protected void disposeWorkBook() {
+        if (wb instanceof SXSSFWorkbook) {
+            ((SXSSFWorkbook) wb).dispose();
+        }
     }
 }

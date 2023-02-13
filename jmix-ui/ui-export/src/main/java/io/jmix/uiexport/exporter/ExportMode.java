@@ -18,7 +18,19 @@ package io.jmix.uiexport.exporter;
 
 public enum ExportMode {
 
-    ALL,
-    SELECTED
+    /**
+     * Export all records in the database
+     */
+    ALL_ROWS,
+
+    /**
+     * Export only records loaded to the current page of a table or a data grid
+     */
+    CURRENT_PAGE,
+
+    /**
+     * Export only records selected in a table or a data grid
+     */
+    SELECTED_ROWS
 
 }

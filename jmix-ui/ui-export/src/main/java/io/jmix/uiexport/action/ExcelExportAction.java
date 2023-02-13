@@ -44,4 +44,9 @@ public class ExcelExportAction extends ExportAction {
     public String getIcon() {
         return icons.get(JmixIcon.EXCEL_ACTION);
     }
+
+    @Override
+    protected boolean isExportAllEnabled() {
+        return true;
+    }
 }

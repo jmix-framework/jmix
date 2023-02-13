@@ -23,9 +23,7 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.download.Downloader;
-import io.jmix.ui.model.CollectionContainer;
 import io.jmix.uiexport.exporter.ExportMode;
 import io.jmix.uiexport.exporter.TableExporter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -92,7 +92,7 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
     /**
      * Adds a function to get value from the column.
      *
-     * @param columnId       column id
+     * @param columnId            column id
      * @param columnValueProvider column value provider function
      */
     public void addColumnValueProvider(String columnId,
@@ -138,40 +138,55 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
         if (tableExporter == null) {
             throw new IllegalStateException("Table exporter is not defined");
         }
-        if (needExportAll()) {
-            doExport(ExportMode.ALL);
 
-        } else {
-            AbstractAction exportSelectedAction = new AbstractAction("actions.export.SELECTED_ROWS", Status.PRIMARY) {
-                @Override
-                public void actionPerform(Component component) {
-                    doExport(ExportMode.SELECTED);
-                }
-            };
-            exportSelectedAction.setCaption(getMessage(exportSelectedAction.getId()));
+        AbstractAction exportAllAction = new AbstractAction("ExportMode.ALL_ROWS") {
+            @Override
+            public void actionPerform(Component component) {
+                doExport(ExportMode.ALL_ROWS);
+            }
+        };
+        exportAllAction.setCaption(messages.getMessage(ExportMode.ALL_ROWS));
 
-            AbstractAction exportAllAction = new AbstractAction("actions.export.ALL_ROWS") {
-                @Override
-                public void actionPerform(Component component) {
-                    doExport(ExportMode.ALL);
-                }
-            };
-            exportAllAction.setCaption(getMessage(exportAllAction.getId()));
+        AbstractAction exportSelectedAction = new AbstractAction("ExportMode.SELECTED_ROWS") {
+            @Override
+            public void actionPerform(Component component) {
+                doExport(ExportMode.SELECTED_ROWS);
+            }
+        };
+        exportSelectedAction.setCaption(messages.getMessage(ExportMode.SELECTED_ROWS));
 
-            Action[] actions = new Action[]{
-                    exportSelectedAction,
-                    exportAllAction,
-                    new DialogAction(DialogAction.Type.CANCEL)
-            };
+        AbstractAction exportCurrentPageAction = new AbstractAction("ExportMode.CURRENT_PAGE") {
+            @Override
+            public void actionPerform(Component component) {
+                doExport(ExportMode.CURRENT_PAGE);
+            }
+        };
+        exportCurrentPageAction.setCaption(messages.getMessage(ExportMode.CURRENT_PAGE));
 
-            Dialogs dialogs = ComponentsHelper.getScreenContext(target).getDialogs();
-
-            dialogs.createOptionDialog()
-                    .withCaption(getMessage("actions.exportSelectedTitle"))
-                    .withMessage(getMessage("actions.exportSelectedCaption"))
-                    .withActions(actions)
-                    .show();
+        List<AbstractAction> actions = new ArrayList<>();
+        if (isExportAllEnabled()) {
+            actions.add(exportAllAction);
         }
+        actions.add(exportCurrentPageAction);
+        if (!target.getSelected().isEmpty()) {
+            actions.add(exportSelectedAction);
+        }
+        actions.add(new DialogAction(DialogAction.Type.CANCEL));
+
+        if (actions.contains(exportAllAction)) {
+            exportAllAction.setPrimary(true);
+        } else {
+            exportCurrentPageAction.setPrimary(true);
+        }
+
+        Dialogs dialogs = ComponentsHelper.getScreenContext(target).getDialogs();
+
+        dialogs.createOptionDialog()
+                .withCaption(getMessage("exportConfirmationDialog.caption"))
+                .withMessage(getMessage("exportConfirmationDialog.message"))
+                .withActions(actions.toArray(new Action[0]))
+                .withWidth("530px")
+                .show();
     }
 
     protected void doExport(ExportMode exportMode) {
@@ -185,15 +200,10 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
     }
 
     protected String getMessage(String id) {
-        return messages.getMessage(id);
+        return messages.getMessage(getClass(), id);
     }
 
-    protected boolean needExportAll() {
-        if (target.getSelected().isEmpty()
-                || !(target.getItems() instanceof ContainerDataUnit)) {
-            return true;
-        }
-        CollectionContainer container = ((ContainerDataUnit) target.getItems()).getContainer();
-        return container != null && container.getItems().size() <= 1;
+    protected boolean isExportAllEnabled() {
+        return false;
     }
 }

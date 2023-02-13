@@ -22,6 +22,7 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.search.searching.*;
 import io.jmix.searchui.component.FullTextFilter;
+import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.impl.AbstractSingleFilterComponent;
 import io.jmix.ui.component.jpqlfilter.JpqlFilterSupport;
 import io.jmix.ui.model.CollectionLoader;
@@ -39,6 +40,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class FullTextFilterImpl extends AbstractSingleFilterComponent<String> implements FullTextFilter {
+
+    protected static final String FULL_TEXT_FILTER_STYLENAME = "jmix-full-text-filter";
 
     protected JpqlFilterSupport jpqlFilterSupport;
 
@@ -73,6 +76,14 @@ public class FullTextFilterImpl extends AbstractSingleFilterComponent<String> im
     @Autowired
     public void setSearchStrategyManager(SearchStrategyManager searchStrategyManager) {
         this.searchStrategyManager = searchStrategyManager;
+    }
+
+    @Override
+    protected void initRootComponent(HBoxLayout root) {
+        super.initRootComponent(root);
+
+        root.unwrap(com.vaadin.ui.Component.class)
+                .setPrimaryStyleName(FULL_TEXT_FILTER_STYLENAME);
     }
 
     @Override

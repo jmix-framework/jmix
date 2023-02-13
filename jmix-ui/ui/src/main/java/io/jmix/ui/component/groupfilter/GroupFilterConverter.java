@@ -23,6 +23,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.GroupFilter;
+import io.jmix.ui.component.SizeWithUnit;
 import io.jmix.ui.component.filter.converter.AbstractFilterComponentConverter;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.component.filter.registration.FilterComponents;
@@ -63,6 +64,8 @@ public class GroupFilterConverter extends AbstractFilterComponentConverter<Group
         groupFilter.setOperation(model.getOperation());
         groupFilter.setCaption(model.getCaption());
         groupFilter.setOperationCaptionVisible(model.getOperationCaptionVisible());
+        groupFilter.setCaptionWidth(new SizeWithUnit(filter.getCaptionWidth(), filter.getCaptionWidthSizeUnit())
+                .stringValue());
 
         if (model.getOwnFilterConditions() != null) {
             for (FilterCondition ownFilterCondition : model.getOwnFilterConditions()) {

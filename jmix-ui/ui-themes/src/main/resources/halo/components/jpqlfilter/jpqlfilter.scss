@@ -22,4 +22,10 @@
   .#{$primary-stylename} .unary-field {
     width: ceil($v-unit-size * 2.5);
   }
+
+  .#{$primary-stylename} .truncated-caption {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }

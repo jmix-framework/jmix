@@ -56,6 +56,9 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
     protected String caption;
     protected boolean operationCaptionVisible = true;
 
+    protected float captionWidth = AUTO_SIZE_PX;
+    protected SizeUnit captionWidthUnit = SizeUnit.PIXELS;
+
     protected Operation operation = Operation.AND;
     protected LogicalCondition queryCondition = LogicalCondition.and();
 
@@ -216,6 +219,23 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
     }
 
     @Override
+    public float getCaptionWidth() {
+        return captionWidth;
+    }
+
+    @Override
+    public SizeUnit getCaptionWidthSizeUnit() {
+        return captionWidthUnit;
+    }
+
+    @Override
+    public void setCaptionWidth(String width) {
+        SizeWithUnit sizeWithUnit = SizeWithUnit.parseStringSize(width);
+        captionWidth = sizeWithUnit.getSize();
+        captionWidthUnit = sizeWithUnit.getUnit();
+    }
+
+    @Override
     public void add(FilterComponent filterComponent) {
         if (dataLoader != filterComponent.getDataLoader()) {
             throw new IllegalArgumentException("The data loader of child component must be the same as the owner " +
@@ -230,6 +250,10 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
 
         if (filterComponent instanceof PropertyFilter) {
             ((PropertyFilter<?>) filterComponent).addOperationChangeListener(operationChangeEvent -> apply());
+        }
+        if (filterComponent instanceof SingleFilterComponent) {
+            ((SingleFilterComponent<?>) filterComponent)
+                    .setCaptionWidth(new SizeWithUnit(captionWidth, captionWidthUnit).stringValue());
         }
 
         if (!isConditionModificationDelegated()) {

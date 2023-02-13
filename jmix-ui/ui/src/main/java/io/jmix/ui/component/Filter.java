@@ -164,6 +164,23 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
     void setCaptionPosition(CaptionPosition position);
 
     /**
+     * @return caption width of filter child components
+     */
+    float getCaptionWidth();
+
+    /**
+     * @return caption width size unit of filter child components
+     */
+    SizeUnit getCaptionWidthSizeUnit();
+
+    /**
+     * Sets caption width of filter child components.
+     *
+     * @param width caption width of filter child components
+     */
+    void setCaptionWidth(String width);
+
+    /**
      * Adds design-time configuration with given id and name. A configuration is a set
      * of {@link FilterComponent}s. The configuration does not store a reference to all
      * components, but stores a reference only to the root element {@link LogicalFilterComponent}

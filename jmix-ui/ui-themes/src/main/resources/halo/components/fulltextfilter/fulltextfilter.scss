@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-@mixin halo-property-filter($primary-stylename: jmix-property-filter) {
-  .#{$primary-stylename} {
-    outline: 0;
-  }
-
-  .#{$primary-stylename} .unary-field {
-    width: ceil($v-unit-size * 2.5);
-  }
-
+@mixin halo-full-text-filter($primary-stylename: jmix-full-text-filter) {
   .#{$primary-stylename} .truncated-caption {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
   }
 }
+

@@ -39,6 +39,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public abstract class AbstractSingleFilterComponent<V> extends CompositeComponent<HBoxLayout>
         implements SingleFilterComponent<V>, CompositeWithHtmlCaption, CompositeWithHtmlDescription {
 
+    protected static final String TRUNCATED_CAPTION_STYLENAME = "truncated-caption";
+
     protected UiComponents uiComponents;
 
     protected Label<String> captionLabel;
@@ -183,6 +185,7 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
             root.setIcon(null);
 
             captionLabel = createCaptionLabel();
+            updateCaptionLabelTruncation(caption);
             root.add(captionLabel, 0);
         } else {
             root.remove(captionLabel);
@@ -224,6 +227,7 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
         } else {
             captionLabel.setValue(captionVisible ? caption : null);
             captionLabel.setVisible(captionVisible || !Strings.isNullOrEmpty(icon));
+            updateCaptionLabelTruncation(captionVisible ? caption : null);
         }
     }
 
@@ -253,6 +257,8 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
         if (captionLabel != null) {
             captionLabel.setWidth(captionWidth);
         }
+
+        updateCaptionLabelTruncation(caption);
     }
 
     @Override
@@ -508,6 +514,20 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
     protected void setupLoaderFirstResult() {
         if (dataLoader instanceof BaseCollectionLoader) {
             ((BaseCollectionLoader) dataLoader).setFirstResult(0);
+        }
+    }
+
+    protected void updateCaptionLabelTruncation(@Nullable String caption) {
+        if (captionLabel == null) {
+            return;
+        }
+
+        if (SizeWithUnit.parseStringSize(captionWidth).getSize() == -1) {
+            captionLabel.removeStyleName(TRUNCATED_CAPTION_STYLENAME);
+            captionLabel.setDescription(null);
+        } else {
+            captionLabel.addStyleName(TRUNCATED_CAPTION_STYLENAME);
+            captionLabel.setDescription(Strings.isNullOrEmpty(caption) ? captionLabel.getValue() : caption);
         }
     }
 }

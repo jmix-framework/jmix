@@ -95,6 +95,7 @@
 @import "components/taglabel/taglabel";
 @import "components/tagcontainer/tagcontainer";
 @import "components/tagfield/tagfield";
+@import "components/fulltextfilter/fulltextfilter";
 
 // Application specific
 @import "app/log-control";
@@ -192,6 +193,7 @@
   @include halo-taglabel;
   @include halo-tagcontainer;
   @include halo-tagfield;
+  @include halo-full-text-filter;
 
   @include halo-jmix-groupbox;
   @include halo-jmix-tokenlist;

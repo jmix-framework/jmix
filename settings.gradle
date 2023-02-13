@@ -14,6 +14,8 @@ includeProject('appsettings', 'jmix-appsettings/appsettings')
 includeProject('appsettings-starter', 'jmix-appsettings/appsettings-starter')
 includeProject('appsettings-ui', 'jmix-appsettings/appsettings-ui')
 includeProject('appsettings-ui-starter', 'jmix-appsettings/appsettings-ui-starter')
+includeProject('appsettings-flowui', 'jmix-appsettings/appsettings-flowui')
+includeProject('appsettings-flowui-starter', 'jmix-appsettings/appsettings-flowui-starter')
 
 includeProject('audit', 'jmix-audit/audit')
 includeProject('audit-starter', 'jmix-audit/audit-starter')

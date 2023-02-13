@@ -88,6 +88,8 @@ dependencies {
         api "io.jmix.appsettings:jmix-appsettings-starter:$freeVersion"
         api "io.jmix.appsettings:jmix-appsettings-ui:$freeVersion"
         api "io.jmix.appsettings:jmix-appsettings-ui-starter:$freeVersion"
+        api "io.jmix.appsettings:jmix-appsettings-flowui:$freeVersion"
+        api "io.jmix.appsettings:jmix-appsettings-flowui-starter:$freeVersion"
 
         api "io.jmix.audit:jmix-audit:$freeVersion"
         api "io.jmix.audit:jmix-audit-ui:$freeVersion"

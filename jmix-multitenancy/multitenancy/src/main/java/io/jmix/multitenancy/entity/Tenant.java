@@ -31,8 +31,8 @@ import java.util.UUID;
 
 @JmixEntity
 @Table(name = "MTEN_TENANT", indexes = {
-        @Index(name = "IDX_MTEN_TENANT_UNIQ_TENANT_ID", columnList = "USERNAME", unique = true),
-        @Index(name = "IDX_MTEN_TENANT_UNIQ_NAME", columnList = "USERNAME", unique = true)
+        @Index(name = "IDX_MTEN_TENANT_UNIQ_TENANT_ID", columnList = "TENANT_ID", unique = true),
+        @Index(name = "IDX_MTEN_TENANT_UNIQ_NAME", columnList = "NAME", unique = true)
 })
 @Entity(name = "mten_Tenant")
 public class Tenant {

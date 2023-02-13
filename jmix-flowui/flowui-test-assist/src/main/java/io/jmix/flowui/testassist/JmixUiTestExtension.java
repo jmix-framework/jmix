@@ -79,7 +79,7 @@ import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APP
  *
  *         UserListView view = ViewsHelper.getCurrentView();
  *
- *         CollectionContainer<User> usersDc = ViewControllerUtils.getViewData(view)
+ *         CollectionContainer&lt;User&gt; usersDc = ViewControllerUtils.getViewData(view)
  *                 .getContainer("usersDc");
  *
  *         Assertions.assertTrue(usersDc.getItems().size() &gt; 0);

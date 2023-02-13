@@ -40,10 +40,10 @@ import java.lang.annotation.*;
  *
  *         UserListView view = UiTestUtils.getCurrentView();
  *
- *         CollectionContainer<User> usersDc = ViewControllerUtils.getViewData(view)
+ *         CollectionContainer&lt;User&gt; usersDc = ViewControllerUtils.getViewData(view)
  *                 .getContainer("usersDc");
  *
- *         Assertions.assertTrue(usersDc.getItems().size() > 0);
+ *         Assertions.assertTrue(usersDc.getItems().size() &gt; 0);
  *     }
  * }
  * </pre>

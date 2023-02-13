@@ -33,7 +33,6 @@ public final class UiTestUtils {
 
     /**
      * Returns instance of currently navigated view. Usage example:
-     * <p>
      * <pre>
      * &#64;Test
      * public void navigateToUserListView() {
@@ -43,15 +42,16 @@ public final class UiTestUtils {
      *     UserListView view = UiTestUtils.getCurrentView();
      * }
      * </pre>
-     * @return instance of currently navigated view
+     *
      * @param <T> type of navigated view
+     * @return instance of currently navigated view
      */
     public static <T extends View<?>> T getCurrentView() {
         List<HasElement> targetsChain = UI.getCurrent().getInternals().getActiveRouterTargetsChain();
         if (CollectionUtils.isEmpty(targetsChain)) {
-            throw new IllegalStateException("No active router targets. Check that "+ View.class.getSimpleName() +
+            throw new IllegalStateException("No active router targets. Check that " + View.class.getSimpleName() +
                     " navigation was performed before getting current view");
         }
         return (T) targetsChain.get(0);
     }
- }
+}

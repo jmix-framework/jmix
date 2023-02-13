@@ -29,6 +29,9 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -56,6 +59,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     protected List<MenuItem> rootMenuItems = new ArrayList<>();
 
     protected Map<String, Pair<MenuItem, ListItem>> registrations = new HashMap<>();
+
+    protected PropertyChangeListener menuItemPropertyChangeListener = this::onMenuItemPropertyChange;
 
     @Override
     protected UnorderedList initContent() {
@@ -259,6 +264,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
     protected void unregisterMenuItemRecursively(MenuItem menuItem) {
         registrations.remove(menuItem.getId());
+        menuItem.removePropertyChangeListener(menuItemPropertyChangeListener);
 
         if (menuItem.isMenu()) {
             for (MenuItem item : ((MenuBarItem) menuItem).getChildren()) {
@@ -269,6 +275,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
     protected void registerMenuItem(MenuItem menuItem, ListItem menuItemComponent) {
         registrations.put(menuItem.getId(), Pair.of(menuItem, menuItemComponent));
+        menuItem.addPropertyChangeListener(menuItemPropertyChangeListener);
     }
 
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
@@ -356,12 +363,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     }
 
     protected UnorderedList getMenuBarContent(MenuItem menuItem) {
-        Pair<MenuItem, ListItem> item = registrations.get(menuItem.getId());
-
-        Details menuBarComponent = item.getValue().getChildren()
-                .findFirst()
-                .map(details -> (Details) details)
-                .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
+        Details menuBarComponent = getMenuBarComponent(menuItem);
 
         return getMenuBarContent(menuBarComponent);
     }
@@ -376,6 +378,15 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                                 + UnorderedList.class.getName()));
     }
 
+    protected Details getMenuBarComponent(MenuItem menuItem) {
+        Pair<MenuItem, ListItem> item = registrations.get(menuItem.getId());
+
+        return item.getValue().getChildren()
+                .findFirst()
+                .map(details -> (Details) details)
+                .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
+    }
+
     protected String getTitle(MenuItem menuItem) {
         return Strings.isNullOrEmpty(menuItem.getTitle())
                 ? menuItem.getId()
@@ -385,6 +396,13 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     protected void checkItemIdDuplicate(String id) {
         if (registrations.containsKey(id)) {
             throw new IllegalArgumentException(String.format("Menu item with id \"%s\" already exists", id));
+        }
+    }
+
+    protected void onMenuItemPropertyChange(PropertyChangeEvent event) {
+        if (MenuBarItem.MENU_ITEM_OPENED.equals(event.getPropertyName())) {
+            Details menuBarComponent = getMenuBarComponent((MenuItem) event.getSource());
+            menuBarComponent.setOpened((Boolean) event.getNewValue());
         }
     }
 
@@ -401,6 +419,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         protected KeyCombination shortcutCombination;
 
         protected ListMenu menuComponent;
+
+        protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
         public MenuItem(String id) {
             this.id = id;
@@ -586,6 +606,14 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             return id.equals(((MenuItem) obj).getId());
         }
 
+        protected void addPropertyChangeListener(PropertyChangeListener listener) {
+            propertyChangeSupport.addPropertyChangeListener(listener);
+        }
+
+        protected void removePropertyChangeListener(PropertyChangeListener listener) {
+            propertyChangeSupport.removePropertyChangeListener(listener);
+        }
+
         @Override
         public int hashCode() {
             return id.hashCode();
@@ -601,6 +629,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      * Describes menu item that can contain other menu items.
      */
     public static class MenuBarItem extends MenuItem {
+
+        protected static final String MENU_ITEM_OPENED = "isOpened";
 
         protected List<MenuItem> children;
         protected boolean isOpened;
@@ -644,6 +674,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          */
         public void setOpened(boolean opened) {
             isOpened = opened;
+            propertyChangeSupport.firePropertyChange(
+                    new PropertyChangeEvent(this, MENU_ITEM_OPENED, !isOpened, isOpened));
         }
 
         /**
@@ -653,7 +685,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @return current menu bar item instance
          */
         public MenuBarItem withOpened(boolean opened) {
-            isOpened = opened;
+            setOpened(opened);
             return this;
         }
 

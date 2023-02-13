@@ -17,7 +17,6 @@
 package io.jmix.uiexport.exporter.json;
 
 import com.google.gson.*;
-import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.DataGrid;
@@ -128,11 +127,11 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
     }
 
     protected Collection<Object> getItems(Table<Object> table, ExportMode exportMode) {
-        return ExportMode.ALL == exportMode ? table.getItems().getItems() : table.getSelected();
+        return ExportMode.ALL_ROWS == exportMode ? table.getItems().getItems() : table.getSelected();
     }
 
     protected Collection<Object> getItems(DataGrid<Object> dataGrid, ExportMode exportMode) {
-        return ExportMode.ALL == exportMode ? dataGrid.getItems().getItems().collect(Collectors.toList()) : dataGrid.getSelected();
+        return ExportMode.ALL_ROWS == exportMode ? dataGrid.getItems().getItems().collect(Collectors.toList()) : dataGrid.getSelected();
     }
 
     @Override

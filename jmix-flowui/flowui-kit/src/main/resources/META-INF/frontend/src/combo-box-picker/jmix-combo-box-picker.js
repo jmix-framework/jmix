@@ -76,19 +76,17 @@ export class JmixComboBoxPicker extends ComboBox {
                 </div>
             </div>
 
-            <vaadin-combo-box-dropdown
-                    id="dropdown"
-                    opened="[[opened]]"
-                    renderer="[[renderer]]"
+            <vaadin-combo-box-overlay
+                    id="overlay"
+                    opened="[[_overlayOpened]]"
+                    loading$="[[loading]]"
+                    theme$="[[_theme]]"
                     position-target="[[_positionTarget]]"
-                    restore-focus-on-close="[[__restoreFocusOnClose]]"
+                    no-vertical-overlap
                     restore-focus-node="[[inputElement]]"
-                    _focused-index="[[_focusedIndex]]"
-                    _item-id-path="[[itemIdPath]]"
-                    _item-label-path="[[itemLabelPath]]"
-                    loading="[[loading]]"
-                    theme="[[_theme]]"
-            ></vaadin-combo-box-dropdown>
+            ></vaadin-combo-box-overlay>
+
+            <slot name="tooltip"></slot>
         `;
     }
 
@@ -100,27 +98,6 @@ export class JmixComboBoxPicker extends ComboBox {
     get clearElement() {
         // return 'null' to disable clean button
         return null;
-    }
-
-    /** @protected */
-    ready() {
-        super.ready();
-
-        this._actionsBox = this.shadowRoot.querySelector('[part="action-part"]');
-    }
-
-    /**
-     * @param {Event} event
-     * @protected
-     * @override
-     */
-    _onHostClick(event) {
-        const path = event.composedPath();
-
-        // Do not open dropdown when clicking on the picker actions
-        if (!path.includes(this._actionsBox)) {
-            super._onHostClick(event);
-        }
     }
 }
 

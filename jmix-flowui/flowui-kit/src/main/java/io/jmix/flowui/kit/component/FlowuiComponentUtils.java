@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.component;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -104,5 +105,20 @@ public final class FlowuiComponentUtils {
 
     private static <T> ItemLabelGenerator<T> createItemLabelGenerator(Map<T, String> items) {
         return item -> items.getOrDefault(item, String.valueOf(item));
+    }
+
+    public static boolean isAutoSize(@Nullable String size) {
+        // TODO: gg, implement
+        return false;
+    }
+
+    public static boolean isVisible(Object component) {
+        Preconditions.checkArgument(component != null, "Passed object is null");
+
+        if (component instanceof Component) {
+            return ((Component) component).isVisible();
+        } else {
+            throw new IllegalArgumentException("Passed object is not a component: " + component.getClass().getName());
+        }
     }
 }

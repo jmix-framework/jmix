@@ -1,0 +1,3 @@
+:host([theme~='no-header']) thead#header {
+  display: none;
+}

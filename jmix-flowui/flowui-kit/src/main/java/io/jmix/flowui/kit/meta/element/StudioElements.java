@@ -292,6 +292,8 @@ public interface StudioElements {
                     "io.jmix.flowui.component.valuepicker.JmixValuePicker",
                     "io.jmix.flowui.component.accordion.JmixAccordionPanel",
                     "io.jmix.flowui.component.details.JmixDetails",
+                    "io.jmix.flowui.component.genericfilter.GenericFilter",
+                    "io.jmix.flowui.component.propertyfilter.PropertyFilter",
                     "com.vaadin.flow.component.tabs.Tab"},
             properties = {
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.STRING, required = true),

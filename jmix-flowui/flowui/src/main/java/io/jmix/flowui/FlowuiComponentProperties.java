@@ -17,6 +17,8 @@
 package io.jmix.flowui;
 
 import com.vaadin.flow.component.notification.Notification;
+import io.jmix.flowui.app.filter.condition.AddConditionView;
+import io.jmix.flowui.component.genericfilter.GenericFilter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -45,6 +47,17 @@ public class FlowuiComponentProperties {
      */
     List<Integer> paginationItemsPerPageItems;
 
+    /**
+     * Default value for the autoApply attribute of the {@link GenericFilter} component
+     */
+    boolean filterAutoApply;
+
+    /**
+     * Number of nested properties in the {@link AddConditionView}. I.e. if the depth is 2, then you'll be able to
+     * select a property "contractor.city.country", if the value is 3, then "contractor.city.country.name", etc.
+     */
+    int filterPropertiesHierarchyDepth;
+
     public FlowuiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -56,7 +69,9 @@ public class FlowuiComponentProperties {
             String pickerLookupShortcut,
             String pickerOpenShortcut,
             String pickerClearShortcut,
-            @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageItems) {
+            @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageItems,
+            @DefaultValue("true") boolean filterAutoApply,
+            @DefaultValue("2") int filterPropertiesHierarchyDepth) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -70,6 +85,9 @@ public class FlowuiComponentProperties {
         this.pickerClearShortcut = pickerClearShortcut;
 
         this.paginationItemsPerPageItems = paginationItemsPerPageItems;
+
+        this.filterAutoApply = filterAutoApply;
+        this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
     }
 
     public String getGridCreateShortcut() {
@@ -117,5 +135,19 @@ public class FlowuiComponentProperties {
      */
     public List<Integer> getPaginationItemsPerPageItems() {
         return paginationItemsPerPageItems;
+    }
+
+    /**
+     * @see #filterAutoApply
+     */
+    public boolean isFilterAutoApply() {
+        return filterAutoApply;
+    }
+
+    /**
+     * @see #filterPropertiesHierarchyDepth
+     */
+    public int getFilterPropertiesHierarchyDepth() {
+        return filterPropertiesHierarchyDepth;
     }
 }

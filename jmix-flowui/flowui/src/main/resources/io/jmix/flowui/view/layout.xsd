@@ -1028,13 +1028,20 @@
             <xs:enumeration value="EVENLY"/>
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="uploadReceiverEnum">
         <xs:restriction>
             <xs:enumeration value="MEMORY_BUFFER"/>
             <xs:enumeration value="MULTI_FILE_MEMORY_BUFFER"/>
             <xs:enumeration value="FILE_TEMPORARY_STORAGE_BUFFER"/>
             <xs:enumeration value="MULTI_FILE_TEMPORARY_STORAGE_BUFFER"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="labelPositionType">
+        <xs:restriction>
+            <xs:enumeration value="ASIDE"/>
+            <xs:enumeration value="TOP"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -1300,6 +1307,25 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="DATE"/>
             <xs:enumeration value="DATETIME"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="propertyFilterOperation">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EQUAL"/>
+            <xs:enumeration value="NOT_EQUAL"/>
+            <xs:enumeration value="GREATER"/>
+            <xs:enumeration value="GREATER_OR_EQUAL"/>
+            <xs:enumeration value="LESS"/>
+            <xs:enumeration value="LESS_OR_EQUAL"/>
+            <xs:enumeration value="CONTAINS"/>
+            <xs:enumeration value="NOT_CONTAINS"/>
+            <xs:enumeration value="STARTS_WITH"/>
+            <xs:enumeration value="ENDS_WITH"/>
+            <xs:enumeration value="IS_SET"/>
+            <xs:enumeration value="IN_LIST"/>
+            <xs:enumeration value="NOT_IN_LIST"/>
+            <xs:enumeration value="DATE_INTERVAL"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -2243,7 +2269,7 @@
                         <xs:complexType>
                             <xs:sequence>
                                 <xs:element name="column" maxOccurs="unbounded" type="dataGridColumnComponent"/>
-                                <xs:element name="editorActionsColumn" type="dataGridEditorActionsColumn"/>
+                                <xs:element name="editorActionsColumn" type="dataGridEditorActionsColumn" minOccurs="0"/>
                             </xs:sequence>
                             <xs:attributeGroup ref="columnsLoadType"/>
                         </xs:complexType>
@@ -2932,25 +2958,25 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="responsiveStepsType">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="responsiveStep">
+                <xs:complexType>
+                    <xs:attribute name="minWidth" type="xs:string" use="required"/>
+                    <xs:attribute name="columns" type="xs:integer" use="required"/>
+                    <xs:attribute name="labelsPosition" type="formLabelsPosition"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
     <!-- Form-->
     <xs:complexType name="formLayoutComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
 
                 <xs:sequence>
-                    <xs:element name="responsiveSteps" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence maxOccurs="unbounded">
-                                <xs:element name="responsiveStep">
-                                    <xs:complexType>
-                                        <xs:attribute name="minWidth" type="xs:string" use="required"/>
-                                        <xs:attribute name="columns" type="xs:integer" use="required"/>
-                                        <xs:attribute name="labelsPosition" type="formLabelsPosition"/>
-                                    </xs:complexType>
-                                </xs:element>
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
+                    <xs:element name="responsiveSteps" type="responsiveStepsType" minOccurs="0"/>
                     <xs:group ref="standardComponent"/>
                 </xs:sequence>
 
@@ -3222,6 +3248,71 @@
     </xs:complexType>
 
 
+    <!-- Filters -->
+
+    <!-- GenericFilter -->
+    <xs:complexType name="genericFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="responsiveSteps" type="responsiveStepsType" minOccurs="0"/>
+                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
+                </xs:sequence>
+
+                <xs:attribute name="dataLoader" type="xs:string" use="required"/>
+                <xs:attribute name="autoApply" type="xs:boolean"/>
+                <xs:attribute name="summaryText" type="resourceString"/>
+                <xs:attribute name="themeNames" type="detailsThemeNames"/>
+                <xs:attribute name="opened" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- PropertyFilter -->
+    <xs:complexType name="propertyFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:group ref="layoutOrComponent"/>
+                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasValidation"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasTabIndex"/>
+
+                <xs:attribute name="property" type="xs:string" use="required"/>
+                <xs:attribute name="parameterName" type="xs:string"/>
+
+                <xs:attribute name="operation" type="propertyFilterOperation" use="required"/>
+                <xs:attribute name="operationEditable" type="xs:boolean"/>
+                <xs:attribute name="operationTextVisible" type="xs:boolean"/>
+
+                <xs:attribute name="labelVisible" type="xs:boolean"/>
+                <xs:attribute name="labelPosition" type="labelPositionType"/>
+                <xs:attribute name="labelWidth" type="xs:string"/>
+
+                <xs:attribute name="themeNames" type="xs:string"/>
+
+                <xs:attribute name="defaultValue" type="xs:string"/>
+
+                <xs:attribute name="dataLoader" type="xs:string" use="required"/>
+                <xs:attribute name="autoApply" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
     <!-- Facets -->
 
     <xs:complexType name="facets">
@@ -3248,8 +3339,6 @@
     </xs:complexType>
 
     <xs:complexType name="dataLoadCoordinatorTriggerType">
-        <xs:attribute name="loader" type="xs:string" use="required"/>
-
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="onViewEvent" type="onViewEventType"/>
@@ -3257,6 +3346,8 @@
                 <xs:element name="onComponentValueChanged" type="onComponentValueChangedType"/>
             </xs:choice>
         </xs:sequence>
+
+        <xs:attribute name="loader" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="onViewEventType">
@@ -3393,6 +3484,8 @@
                 <xs:element name="fileUploadField" type="fileUploadFieldComponent"/>
                 <xs:element name="fileStorageUploadField" type="fileStorageUploadFieldComponent"/>
                 <xs:element name="upload" type="uploadComponent"/>
+                <xs:element name="propertyFilter" type="propertyFilterComponent"/>
+                <xs:element name="genericFilter" type="genericFilterComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

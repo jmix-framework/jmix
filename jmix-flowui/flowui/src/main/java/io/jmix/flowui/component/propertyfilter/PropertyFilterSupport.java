@@ -237,12 +237,12 @@ public class PropertyFilterSupport {
                 return PropertyCondition.Operation.ENDS_WITH;
             case IS_SET:
                 return PropertyCondition.Operation.IS_SET;
-            case IN_LIST:
+            /*case IN_LIST:
                 return PropertyCondition.Operation.IN_LIST;
             case NOT_IN_LIST:
                 return PropertyCondition.Operation.NOT_IN_LIST;
             case DATE_INTERVAL:
-                return PropertyCondition.Operation.IN_INTERVAL;
+                return PropertyCondition.Operation.IN_INTERVAL;*/
             default:
                 throw new IllegalArgumentException("Unknown operation: " + operation);
         }

@@ -802,12 +802,15 @@
                     <xs:enumeration value="localDateTime"/>
                     <xs:enumeration value="string"/>
                     <xs:enumeration value="offsetTime"/>
+                    <xs:enumeration value="float"/>
                     <xs:enumeration value="double"/>
                     <xs:enumeration value="byteArray"/>
                     <xs:enumeration value="uuid"/>
                     <xs:enumeration value="uri"/>
+                    <xs:enumeration value="bigInteger"/>
                     <xs:enumeration value="long"/>
                     <xs:enumeration value="int"/>
+                    <xs:enumeration value="short"/>
                     <xs:enumeration value="localTime"/>
                     <xs:enumeration value="boolean"/>
                     <xs:enumeration value="char"/>

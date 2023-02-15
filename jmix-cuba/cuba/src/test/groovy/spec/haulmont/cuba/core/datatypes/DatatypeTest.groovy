@@ -77,7 +77,7 @@ class DatatypeTest extends CoreTestSpecification {
 
         expect:
 
-        datatypes.find(Float.class) == null
+        datatypes.find(Byte.class) == null
     }
 
     def "adaptive BigDecimal datatype"() {

@@ -63,12 +63,14 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
+                    <xs:enumeration value="bigInteger"/>
                     <xs:enumeration value="boolean"/>
                     <xs:enumeration value="byteArray"/>
                     <xs:enumeration value="date"/>
                     <xs:enumeration value="dateTime"/>
                     <xs:enumeration value="decimal"/>
                     <xs:enumeration value="double"/>
+                    <xs:enumeration value="float"/>
                     <xs:enumeration value="int"/>
                     <xs:enumeration value="localDate"/>
                     <xs:enumeration value="localDateTime"/>
@@ -76,6 +78,7 @@
                     <xs:enumeration value="long"/>
                     <xs:enumeration value="offsetDateTime"/>
                     <xs:enumeration value="offsetTime"/>
+                    <xs:enumeration value="short"/>
                     <xs:enumeration value="string"/>
                     <xs:enumeration value="time"/>
                     <xs:enumeration value="uuid"/>

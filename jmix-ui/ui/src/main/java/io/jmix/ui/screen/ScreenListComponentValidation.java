@@ -47,7 +47,8 @@ public class ScreenListComponentValidation {
 
     /**
      * Validate UI List component by performing validation of underlying entity instance
-     * and its collection property if it can be affected by source screen.
+     * and its collection property if this component is able to modify collection within source screen
+     * (due to visibility, standard actions etc).
      *
      * @param listComponent List component to validate
      * @param errors        Validation errors container to fill

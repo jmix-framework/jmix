@@ -102,7 +102,8 @@ public class ScreenValidation {
 
     /**
      * Validate UI List components by performing validation of underlying entity instances
-     * and its collection properties that can be affected by this screen.
+     * and its collection properties if those components are able to modify their collections within source screen
+     * (due to visibility, standard actions etc).
      *
      * @param container components container
      * @return validation errors

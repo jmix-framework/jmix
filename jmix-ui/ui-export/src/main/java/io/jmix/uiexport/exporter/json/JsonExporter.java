@@ -127,11 +127,11 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
     }
 
     protected Collection<Object> getItems(Table<Object> table, ExportMode exportMode) {
-        return ExportMode.ALL_ROWS == exportMode ? table.getItems().getItems() : table.getSelected();
+        return ExportMode.CURRENT_PAGE == exportMode ? table.getItems().getItems() : table.getSelected();
     }
 
     protected Collection<Object> getItems(DataGrid<Object> dataGrid, ExportMode exportMode) {
-        return ExportMode.ALL_ROWS == exportMode ? dataGrid.getItems().getItems().collect(Collectors.toList()) : dataGrid.getSelected();
+        return ExportMode.CURRENT_PAGE == exportMode ? dataGrid.getItems().getItems().collect(Collectors.toList()) : dataGrid.getSelected();
     }
 
     @Override

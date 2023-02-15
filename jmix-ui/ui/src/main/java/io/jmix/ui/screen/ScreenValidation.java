@@ -20,33 +20,21 @@ import com.google.common.collect.Iterables;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.KeyValueEntity;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
-import io.jmix.ui.action.list.AddAction;
-import io.jmix.ui.action.list.CreateAction;
-import io.jmix.ui.action.list.ExcludeAction;
-import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.data.DataUnit;
-import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.UiScreenProperties;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionPropertyContainer;
-import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.icon.JmixIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
@@ -54,7 +42,6 @@ import javax.validation.ElementKind;
 import javax.validation.Path;
 import javax.validation.Validator;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -75,6 +62,8 @@ public class ScreenValidation {
     protected Metadata metadata;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected ScreenListComponentValidation screenListComponentValidation;
 
     /**
      * Validates UI components by invoking their {@link Validatable#validate()}.
@@ -111,13 +100,20 @@ public class ScreenValidation {
         return errors;
     }
 
+    /**
+     * Validate UI List components by performing validation of underlying entity instances
+     * and its collection properties that can be affected by this screen.
+     *
+     * @param container components container
+     * @return validation errors
+     */
     public ValidationErrors validateUiListComponents(ComponentContainer container) {
         ValidationErrors errors = new ValidationErrors();
 
         ComponentsHelper.traverseComponents(container,
                 c -> {
                     if (c instanceof ListComponent) {
-                        validateListComponent((ListComponent<?>) c, errors);
+                        screenListComponentValidation.validateListComponent((ListComponent<?>) c, errors);
                     }
                 }
         );
@@ -138,68 +134,6 @@ public class ScreenValidation {
 
             ComponentsHelper.fillErrorMessages(validatable, e, errors);
         }
-    }
-
-    protected void validateListComponent(ListComponent<?> listComponent, ValidationErrors errors) {
-        if (!listComponent.isVisibleRecursive()
-                || !listComponent.isEnabledRecursive()) {
-            return;
-        }
-
-        DataUnit items = listComponent.getItems();
-        if (items instanceof ContainerDataUnit) {
-            CollectionContainer<?> itemsContainer = ((ContainerDataUnit<?>) items).getContainer();
-            if (itemsContainer instanceof CollectionPropertyContainer) {
-                if (!hasListModificationActions(listComponent, itemsContainer.getItems())) {
-                    return;
-                }
-
-                InstanceContainer<?> masterContainer = ((CollectionPropertyContainer<?>) itemsContainer).getMaster();
-                String property = ((CollectionPropertyContainer<?>) itemsContainer).getProperty();
-                MetaClass metaClass = masterContainer.getEntityMetaClass();
-                Class<?> javaClass = metaClass.getJavaClass();
-                Object instance = masterContainer.getItem();
-                if (javaClass != KeyValueEntity.class) {
-                    Set<ConstraintViolation<Object>> violations = validator.validateProperty(instance, property);
-                    violations.forEach(violation -> errors.add(listComponent, violation.getMessage()));
-                }
-            }
-        }
-    }
-
-    protected boolean hasListModificationActions(ListComponent<?> listComponent,
-                                                 List<?> content) {
-        Collection<Action> actions = listComponent.getActions();
-
-        boolean hasAvailableExtendingAction = false;
-        boolean hasAvailableReducingAction = false;
-        for (Action action : actions) {
-            if (!action.isVisible()) {
-                continue;
-            }
-            if (!hasAvailableExtendingAction
-                    && isExtendingAction(action)) {
-                hasAvailableExtendingAction = action.isEnabled();
-            } else if (!hasAvailableReducingAction
-                    && isReducingAction(action)) {
-                hasAvailableReducingAction = true;
-            }
-        }
-
-        boolean unableToExtendEmptyContent = !hasAvailableExtendingAction && content.isEmpty();
-        boolean noModificationActions = !hasAvailableExtendingAction && !hasAvailableReducingAction;
-        boolean ignoreValidation = unableToExtendEmptyContent || noModificationActions;
-        return !ignoreValidation;
-    }
-
-    protected boolean isExtendingAction(Action action) {
-        return action instanceof AddAction
-                || action instanceof CreateAction;
-    }
-
-    protected boolean isReducingAction(Action action) {
-        return action instanceof ExcludeAction
-                || action instanceof RemoveAction;
     }
 
     /**

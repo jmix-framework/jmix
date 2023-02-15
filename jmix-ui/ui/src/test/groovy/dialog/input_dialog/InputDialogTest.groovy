@@ -31,7 +31,7 @@ import io.jmix.ui.component.*
 import io.jmix.ui.component.inputdialog.InputDialogAction
 import io.jmix.ui.screen.FrameOwner
 import io.jmix.ui.screen.Screen
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.model_objects.GoodInfoObject

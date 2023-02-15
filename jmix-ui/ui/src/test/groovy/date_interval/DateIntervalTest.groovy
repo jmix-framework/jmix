@@ -26,7 +26,7 @@ import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.app.propertyfilter.dateinterval.model.DateInterval
 import io.jmix.ui.app.propertyfilter.dateinterval.model.predefined.TodayPredefinedDateInterval
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate

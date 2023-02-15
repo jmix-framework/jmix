@@ -260,6 +260,7 @@ dependencies {
         api "io.jmix.ui:jmix-ui-export:$freeVersion"
         api "io.jmix.ui:jmix-ui-export-starter:$freeVersion"
         api "io.jmix.ui:jmix-ui-test-assist:$freeVersion"
+        api "io.jmix.ui:jmix-ui-test-assist-spock:$freeVersion"
         api "io.jmix.ui:jmix-ui-themes:$freeVersion"
         api "io.jmix.ui:jmix-ui-themes-compiled:$freeVersion"
         api "io.jmix.ui:jmix-ui-widgets:$freeVersion"

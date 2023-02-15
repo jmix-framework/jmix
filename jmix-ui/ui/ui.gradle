@@ -49,7 +49,7 @@ dependencies {
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation project(':ui-test-assist')
+    testImplementation project(':ui-test-assist-spock')
     testImplementation project(':eclipselink')
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

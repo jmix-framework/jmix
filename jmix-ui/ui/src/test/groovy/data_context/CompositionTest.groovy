@@ -24,7 +24,7 @@ import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.DataContext
 import io.jmix.ui.model.InstanceContainer
 import io.jmix.ui.model.InstanceLoader
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration

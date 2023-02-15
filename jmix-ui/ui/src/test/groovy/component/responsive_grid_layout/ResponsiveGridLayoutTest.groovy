@@ -26,7 +26,7 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.TextField
 import io.jmix.ui.component.impl.ResponsiveGridLayoutImpl
 import io.jmix.ui.sys.UiComponentsImpl
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration

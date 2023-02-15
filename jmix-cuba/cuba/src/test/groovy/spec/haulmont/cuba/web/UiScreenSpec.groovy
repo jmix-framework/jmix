@@ -24,7 +24,7 @@ import com.haulmont.cuba.web.testsupport.WebTest
 import io.jmix.core.security.SystemAuthenticator
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.screen.Screen
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])

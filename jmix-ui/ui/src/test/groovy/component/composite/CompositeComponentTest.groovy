@@ -35,7 +35,7 @@ import io.jmix.ui.component.impl.WindowTestHelper
 import io.jmix.ui.model.InstanceContainer
 import io.jmix.ui.screen.StandardOutcome
 import io.jmix.ui.screen.UiControllerUtils
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration

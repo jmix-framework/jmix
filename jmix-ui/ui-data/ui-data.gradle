@@ -29,6 +29,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
 
+    testImplementation project(':ui-test-assist-spock')
     testImplementation project(':ui-test-assist')
     testImplementation project(':eclipselink')
     testRuntimeOnly 'org.slf4j:slf4j-simple'

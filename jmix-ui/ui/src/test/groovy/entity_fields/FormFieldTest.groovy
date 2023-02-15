@@ -28,7 +28,7 @@ import io.jmix.ui.component.EntityComboBox
 import io.jmix.ui.component.EntityPicker
 import io.jmix.ui.UiComponentProperties
 import io.jmix.ui.screen.OpenMode
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration

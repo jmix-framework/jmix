@@ -26,7 +26,7 @@ import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.screen.UiControllerUtils
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import io.jmix.ui.widget.JmixPagination
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration

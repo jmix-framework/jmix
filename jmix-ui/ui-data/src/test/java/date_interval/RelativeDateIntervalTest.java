@@ -41,7 +41,7 @@ import java.util.Date;
 import static io.jmix.ui.app.propertyfilter.dateinterval.model.RelativeDateInterval.Operation.GREATER_OR_EQUAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@UiTest(screenBasePackages = {"date_interval.screen", "io.jmix.ui.testassist.app.main"}, mainScreenId = "testMainScreen")
+@UiTest(screenBasePackages = {"date_interval.screen", "io.jmix.ui.testassistspock.app.main"}, mainScreenId = "testMainScreen")
 @ContextConfiguration(classes = {CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class,
         UiConfiguration.class, UiDataConfiguration.class, UiDataTestConfiguration.class})
 public class RelativeDateIntervalTest {

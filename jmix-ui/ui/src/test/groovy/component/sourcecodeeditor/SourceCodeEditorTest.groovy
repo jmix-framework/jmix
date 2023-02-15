@@ -22,7 +22,7 @@ import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.impl.SourceCodeEditorImpl
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import io.jmix.ui.widget.addon.aceeditor.Suggester
 import io.jmix.ui.widget.addon.aceeditor.Suggestion
 import org.springframework.test.context.ContextConfiguration

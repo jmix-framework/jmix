@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-
 group = 'io.jmix.ui'
 archivesBaseName = 'jmix-ui-test-assist'
 
@@ -26,6 +24,4 @@ dependencies {
     api 'org.junit.jupiter:junit-jupiter-engine'
     api 'org.junit.vintage:junit-vintage-engine'
     api 'org.springframework:spring-test'
-    api 'org.spockframework:spock-core'
-    api 'org.spockframework:spock-spring'
 }

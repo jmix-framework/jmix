@@ -23,7 +23,7 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.WindowInfo
 import io.jmix.ui.navigation.EditorTypeExtractor
 import io.jmix.ui.screen.FrameOwner
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import navigation.screen.no_type.by_class.ExtBaseStdEditorNT
 import navigation.screen.no_type.by_class.ScreenExtStdEditorNT
 import navigation.screen.no_type.by_interface.ExtBaseEditorScreenNT

@@ -26,7 +26,7 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Window
 import io.jmix.ui.component.impl.TabWindowImpl
 import io.jmix.ui.icon.JmixIcon
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 

@@ -49,7 +49,7 @@ dependencies {
 
     compileOnly project(':rest')
 
-    testImplementation project(':ui-test-assist')
+    testImplementation project(':ui-test-assist-spock')
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

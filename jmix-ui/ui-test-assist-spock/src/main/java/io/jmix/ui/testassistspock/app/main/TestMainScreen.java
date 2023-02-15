@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.testassist.app.main;
+package io.jmix.ui.testassistspock.app.main;
 
 import io.jmix.ui.component.AppWorkArea;
 import io.jmix.ui.component.Window;

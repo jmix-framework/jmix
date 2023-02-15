@@ -26,7 +26,7 @@ import io.jmix.ui.component.ContentMode
 import io.jmix.ui.component.WindowMode
 import io.jmix.ui.component.impl.ButtonImpl
 import io.jmix.ui.component.impl.OptionDialogFacetImpl
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 

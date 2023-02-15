@@ -26,7 +26,7 @@ import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.*
 import io.jmix.ui.component.validation.*
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration

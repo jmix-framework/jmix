@@ -43,7 +43,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
-    testImplementation project(':ui-test-assist')
+    testImplementation project(':ui-test-assist-spock')
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

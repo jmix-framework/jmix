@@ -1919,7 +1919,7 @@
                             </xs:complexType>
                         </xs:element>
 
-                        <xs:element name="tooltip" type="tooltipElement"/>
+                        <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                     </xs:sequence>
 
                     <xs:attribute name="opened" type="xs:boolean"/>
@@ -1961,7 +1961,7 @@
                         </xs:complexType>
                     </xs:element>
 
-                    <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="openOnHover" type="xs:boolean"/>
@@ -2514,7 +2514,7 @@
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
                 <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
@@ -2538,7 +2538,7 @@
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
                 <xs:attribute name="name" type="xs:string"/>
@@ -2744,7 +2744,7 @@
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="formatter" minOccurs="0" type="formatterType"/>
-                    <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                 </xs:sequence>
                 <xs:attribute name="invalid" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="xs:string"/>

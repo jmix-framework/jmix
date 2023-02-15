@@ -17,6 +17,7 @@
 import '@vaadin/input-container/src/vaadin-input-container.js';
 import {html, PolymerElement} from '@polymer/polymer';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import { TooltipController } from '@vaadin/component-base/src/tooltip-controller.js';
 import { DelegateFocusMixin } from '@vaadin/field-base/src/delegate-focus-mixin.js';
 import { FieldMixin } from '@vaadin/field-base/src/field-mixin.js';
 import { InputConstraintsMixin } from '@vaadin/field-base/src/input-constraints-mixin.js';
@@ -90,6 +91,8 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
                     <slot name="error-message"></slot>
                 </div>
             </div>
+            
+            <slot name="tooltip"></slot>
         `;
     }
 
@@ -100,6 +103,16 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
     /** @protected */
     get slotStyles() {
         return [];
+    }
+
+    /** @protected */
+    ready() {
+        super.ready();
+
+        this._tooltipController = new TooltipController(this);
+        this.addController(this._tooltipController);
+        this._tooltipController.setPosition('top');
+        this._tooltipController.setShouldShow((target) => !target.opened);
     }
 }
 

@@ -37,8 +37,7 @@ import io.jmix.uiexport.exporter.AbstractTableExporter;
 import io.jmix.uiexport.exporter.ExportMode;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -57,7 +56,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static io.jmix.ui.download.DownloadFormat.XLS;
 import static io.jmix.ui.download.DownloadFormat.XLSX;
 
 /**
@@ -69,16 +67,11 @@ import static io.jmix.ui.download.DownloadFormat.XLSX;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
-    public static enum ExportFormat {
-        XLS,
-        XLSX
-    }
-
     protected static final int COL_WIDTH_MAGIC = 48;
 
     private static final int SPACE_COUNT = 10;
 
-    public static final int MAX_ROW_COUNT = 65535;
+    public static final int MAX_ROW_COUNT = SpreadsheetVersion.EXCEL2007.getMaxRows();
 
     protected Workbook wb;
 
@@ -98,8 +91,6 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
     protected Boolean exportExpanded = true;
 
-    protected ExportFormat exportFormat = ExportFormat.XLSX;
-
     protected boolean isRowNumberExceeded = false;
 
     protected ExportActionProperties exportActionProperties;
@@ -114,21 +105,11 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
     }
 
     protected void createWorkbookWithSheet() {
-        switch (exportFormat) {
-            case XLS:
-                wb = new HSSFWorkbook();
-                break;
-            case XLSX:
-                if (exportActionProperties.getExcel().isUseSxssf()) {
-                    wb = new SXSSFWorkbook();
-                } else {
-                    wb = new XSSFWorkbook();
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unknown export format " + exportFormat);
+        if (exportActionProperties.getExcel().isUseSxssf()) {
+            wb = new SXSSFWorkbook();
+        } else {
+            wb = new XSSFWorkbook();
         }
-
         sheet = wb.createSheet("Export");
     }
 
@@ -280,7 +261,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 throw new RuntimeException("Unable to write document", e);
             }
 
-            if (isXlsMaxRowNumberExceeded()) {
+            if (isXlsxMaxRowNumberExceeded()) {
                 Notifications notifications = ComponentsHelper.getScreenContext(table).getNotifications();
 
                 notifications.create(Notifications.NotificationType.WARNING)
@@ -291,14 +272,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
             ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(out.toByteArray(),
                     uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
-            switch (exportFormat) {
-                case XLSX:
-                    downloader.download(dataProvider, getFileName(table) + ".xlsx", XLSX);
-                    break;
-                case XLS:
-                    downloader.download(dataProvider, getFileName(table) + ".xls", XLS);
-                    break;
-            }
+            downloader.download(dataProvider, getFileName(table) + ".xlsx", XLSX);
         } finally {
             disposeWorkBook();
         }
@@ -412,14 +386,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             }
             ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(out.toByteArray(),
                     uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
-            switch (exportFormat) {
-                case XLSX:
-                    downloader.download(dataProvider, getFileName(dataGrid) + "." + XLSX.getFileExt(), XLSX);
-                    break;
-                case XLS:
-                    downloader.download(dataProvider, getFileName(dataGrid) + "." + XLS.getFileExt(), XLS);
-                    break;
-            }
+            downloader.download(dataProvider, getFileName(dataGrid) + "." + XLSX.getFileExt(), XLSX);
         } finally {
             disposeWorkBook();
         }
@@ -835,24 +802,17 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
     }
 
     private RichTextString createStringCellValue(String str) {
-        switch (exportFormat) {
-            case XLSX:
-                return new XSSFRichTextString(str);
-            case XLS:
-                return new HSSFRichTextString(str);
-        }
-        throw new IllegalStateException("Unknown export format " + exportFormat);
-
+        return new XSSFRichTextString(str);
     }
 
     protected boolean checkIsRowNumberExceed(int r) {
-        return isRowNumberExceeded = exportFormat == ExportFormat.XLS && r >= MAX_ROW_COUNT;
+        return isRowNumberExceeded = r >= MAX_ROW_COUNT;
     }
 
     /**
      * @return true if exported table contains more than 65536 records
      */
-    protected boolean isXlsMaxRowNumberExceeded() {
+    protected boolean isXlsxMaxRowNumberExceeded() {
         return isRowNumberExceeded;
     }
 

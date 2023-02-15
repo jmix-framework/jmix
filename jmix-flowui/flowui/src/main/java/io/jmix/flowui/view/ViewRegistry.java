@@ -57,7 +57,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
  * @see #getViewInfo(String)
  */
 @Component("flowui_ViewRegistry")
-public class ViewRegistry implements ApplicationContextAware {//todo replaced WindowConfig?
+public class ViewRegistry implements ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(ViewRegistry.class);
 

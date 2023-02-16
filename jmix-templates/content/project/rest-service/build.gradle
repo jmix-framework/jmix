@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '1.4.2'
+    id 'io.jmix' version '1.5.0-RC1'
     id 'java'
 }
 

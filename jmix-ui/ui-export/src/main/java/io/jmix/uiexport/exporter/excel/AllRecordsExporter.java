@@ -103,13 +103,16 @@ public class AllRecordsExporter {
 
         Condition condition = loadContext.getQuery().getCondition();
 
-        String lastLoadedPkConditionParameterName = "lastLoadedPkValue";
-        if (condition instanceof LogicalCondition) {
-            PropertyCondition lastPkCondition = PropertyCondition.createWithParameterName(primaryKeyName, PropertyCondition.Operation.GREATER, lastLoadedPkConditionParameterName);
-            ((LogicalCondition) condition).add(lastPkCondition);
-        } else {
-            throw new RuntimeException("Cannot add a primary key condition to a query");
+        LogicalCondition wrappingCondition = new LogicalCondition(LogicalCondition.Type.AND);
+        if (condition != null) {
+            //in case there is no filter on the screen a condition in the query may be null
+            wrappingCondition.add(condition);
         }
+        String lastLoadedPkConditionParameterName = "lastLoadedPkValue";
+        PropertyCondition lastPkCondition = PropertyCondition.createWithParameterName(primaryKeyName,
+                PropertyCondition.Operation.GREATER, lastLoadedPkConditionParameterName);
+        wrappingCondition.add(lastPkCondition);
+        loadContext.getQuery().setCondition(wrappingCondition);
 
         int loadBatchSize = exportActionProperties.getExportAllBatchSize();
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);

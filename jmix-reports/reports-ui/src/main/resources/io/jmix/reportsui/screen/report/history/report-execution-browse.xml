@@ -44,12 +44,12 @@
             <columns>
                 <column id="startTime">
                     <formatter>
-                        <date format="msg://dateTimeWithSeconds"/>
+                        <date format="msg:///dateTimeWithSeconds"/>
                     </formatter>
                 </column>
                 <column id="finishTime">
                     <formatter>
-                        <date format="msg://dateTimeWithSeconds"/>
+                        <date format="msg:///dateTimeWithSeconds"/>
                     </formatter>
                 </column>
                 <column id="executionTimeSec"/>

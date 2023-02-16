@@ -33,7 +33,6 @@ import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.SupportsStatusChangeHandler.StatusContext;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.*;
@@ -269,8 +268,8 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
     }
 
     @Override
-    public DataGrid<T> getGrid() {
-        return ((DataGrid<T>) super.getGrid());
+    public Grid<T> getGrid() {
+        return super.getGrid();
     }
 
     @Override
@@ -389,12 +388,18 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
     }
 
     protected MetaClass getEntityMetaClass() {
-        DataUnit items = getGrid().getItems();
+        Grid<T> grid = getGrid();
+        if (!(grid instanceof ListDataComponent)) {
+            throw new IllegalStateException(grid.getClass().getSimpleName() +
+                    " doesn't implement " + ListDataComponent.class.getSimpleName());
+        }
+
+        DataUnit items = ((ListDataComponent<?>) grid).getItems();
         if (items instanceof EntityDataUnit) {
             return ((EntityDataUnit) items).getEntityMetaClass();
         }
 
-        throw new IllegalStateException(getGrid().getClass().getSimpleName() +
+        throw new IllegalStateException(grid.getClass().getSimpleName() +
                 " items is null or does not implement " + EntityDataUnit.class.getSimpleName());
     }
 

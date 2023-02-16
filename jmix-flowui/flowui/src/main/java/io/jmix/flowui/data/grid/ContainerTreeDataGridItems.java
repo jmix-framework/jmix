@@ -18,6 +18,7 @@ package io.jmix.flowui.data.grid;
 
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.model.CollectionContainer;
@@ -66,7 +67,7 @@ public class ContainerTreeDataGridItems<E> extends ContainerDataGridItems<E>
                 .limit(query.getLimit());
     }
 
-    protected Stream<E> getChildren(@Nullable E item) {
+    public Stream<E> getChildren(@Nullable E item) {
         if (item == null) {
             // root items
             return container.getItems().stream()
@@ -91,5 +92,25 @@ public class ContainerTreeDataGridItems<E> extends ContainerDataGridItems<E>
                     E parentItem = EntityValues.getValue(it, hierarchyProperty);
                     return parentItem != null && parentItem.equals(item);
                 });
+    }
+
+    public int getLevel(E item) {
+        if (!containsItem(item)) {
+            throw new IllegalArgumentException("Data provider doesn't contain the item passed to the method");
+        }
+
+        int level = 0;
+        E currentItem = item;
+        while ((currentItem = getParent(currentItem)) != null) {
+            ++level;
+        }
+
+        return level;
+    }
+
+    @Nullable
+    protected E getParent(E item) {
+        Preconditions.checkNotNullArgument(item);
+        return EntityValues.getValue(item, hierarchyProperty);
     }
 }

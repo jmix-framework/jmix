@@ -19,9 +19,13 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public interface EnhancedDataGrid<T> {
+
+    @Nullable
+    MetaPropertyPath getColumnMetaPropertyPath(Grid.Column<T> column);
 
     Grid.Column<T> addColumn(MetaPropertyPath metaPropertyPath);
 

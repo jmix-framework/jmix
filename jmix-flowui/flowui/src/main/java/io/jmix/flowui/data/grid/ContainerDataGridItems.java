@@ -193,6 +193,10 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
         return container.getItems().stream();
     }
 
+    public T getItem(Object entityId) {
+        return container.getItem(entityId);
+    }
+
     @Override
     public CollectionContainer<T> getContainer() {
         return container;

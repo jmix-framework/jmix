@@ -166,6 +166,8 @@ dependencies {
         api "io.jmix.flowui:jmix-flowui-themes:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-data:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-data-starter:$freeVersion"
+        api "io.jmix.flowui:jmix-flowui-export:$freeVersion"
+        api "io.jmix.flowui:jmix-flowui-export-starter:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-devserver:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-test-assist:$freeVersion"
 

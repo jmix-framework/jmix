@@ -273,6 +273,11 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         };
     }
 
+    @Nullable
+    public MetaPropertyPath getColumnMetaPropertyPath(Grid.Column<E> column) {
+        return propertyColumns.get(column);
+    }
+
     public Grid.Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         Grid.Column<E> column = addColumnInternal(key, metaPropertyPath);
         propertyColumns.put(column, metaPropertyPath);

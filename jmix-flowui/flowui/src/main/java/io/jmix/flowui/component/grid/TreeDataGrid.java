@@ -150,6 +150,12 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         return selectionModel;
     }
 
+    @Nullable
+    @Override
+    public MetaPropertyPath getColumnMetaPropertyPath(Column<E> column) {
+        return gridDelegate.getColumnMetaPropertyPath(column);
+    }
+
     /**
      * Adds column by the meta property path.
      *

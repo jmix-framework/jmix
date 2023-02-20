@@ -17,10 +17,7 @@
 package io.jmix.flowui.kit.meta.component;
 
 import com.vaadin.flow.component.html.*;
-import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioUiKit;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
+import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
 public interface StudioHTMLComponents {
@@ -576,15 +573,17 @@ public interface StudioHTMLComponents {
 
     @StudioComponent(
             name = "Image",
-            classFqn = "com.vaadin.flow.component.html.Image",
+            classFqn = "io.jmix.flowui.component.image.JmixImage",
             category = "HTML",
             xmlElement = "image",
             icon = "io/jmix/flowui/kit/meta/icon/html/image.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "alternativeText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "alternateText", type = StudioPropertyType.LOCALIZED_STRING,
+                            setMethod = "setAlt"),
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -593,10 +592,13 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "resource", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF,
+                            typeParameter = "V"),
+                    @StudioProperty(xmlAttribute = "resource", type = StudioPropertyType.STRING,
+                            setMethod = "setSrc"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
-                            options = {"normal", "success", "error", "contrast", "primary", "small", "pill"}),
+                            options = {"fill", "contain", "cover", "scale-down"}),
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -605,6 +607,12 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     Image image();

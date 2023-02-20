@@ -80,7 +80,7 @@ public interface StudioElements {
     @StudioElement(
             name = "Tab",
             classFqn = "com.vaadin.flow.component.tabs.Tab",
-            target = {"com.vaadin.flow.component.tabs.Tabs", "com.vaadin.flow.component.tabs.TabSheet"},
+            target = {"com.vaadin.flow.component.tabs.Tabs", "io.jmix.flowui.component.tabsheet.JmixTabSheet"},
             xmlElement = "tab",
             visible = true,
             properties = {

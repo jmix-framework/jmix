@@ -53,7 +53,7 @@
         </modifySql>
     </changeSet>
 
-    <changeSet author="multitenancy" id="2-mysql" context="!cuba" dbms="oracle, mysql, mariadb">
+    <changeSet author="multitenancy" id="2-mysql" context="!cuba" dbms="mysql, mariadb">
         <addColumn tableName="MTEN_TENANT">
             <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
                 <constraints nullable="false"/>
@@ -83,7 +83,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet author="multitenancy" id="2-another-db" context="!cuba" dbms="mssql, hsqldb">
+    <changeSet author="multitenancy" id="2-another-db" context="!cuba" dbms="mssql, hsqldb, oracle">
         <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_TENANT_ID" unique="true">
             <column name="TENANT_ID"/>
             <column name="DELETE_TS"/>
@@ -99,14 +99,14 @@
         </modifySql>
     </changeSet>
 
-    <changeSet author="multitenancy" id="4-mysql" context="!cuba" dbms="oracle, mysql, mariadb">
+    <changeSet author="multitenancy" id="4-mysql" context="!cuba" dbms="mysql, mariadb">
         <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_NAME" unique="true">
             <column name="NAME"/>
             <column name="DELETE_TS_NN"/>
         </createIndex>
     </changeSet>
 
-    <changeSet author="multitenancy" id="4-another-db" context="!cuba" dbms="mssql, hsqldb">
+    <changeSet author="multitenancy" id="4-another-db" context="!cuba" dbms="mssql, hsqldb, oracle">
         <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_NAME" unique="true">
             <column name="NAME"/>
             <column name="DELETE_TS"/>

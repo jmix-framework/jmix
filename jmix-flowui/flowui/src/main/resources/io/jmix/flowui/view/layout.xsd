@@ -1326,9 +1326,6 @@
             <xs:enumeration value="STARTS_WITH"/>
             <xs:enumeration value="ENDS_WITH"/>
             <xs:enumeration value="IS_SET"/>
-            <xs:enumeration value="IN_LIST"/>
-            <xs:enumeration value="NOT_IN_LIST"/>
-            <xs:enumeration value="DATE_INTERVAL"/>
         </xs:restriction>
     </xs:simpleType>
 

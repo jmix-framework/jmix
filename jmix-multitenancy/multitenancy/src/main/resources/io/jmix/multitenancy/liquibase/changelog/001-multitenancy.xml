@@ -53,7 +53,7 @@
         </modifySql>
     </changeSet>
 
-    <changeSet author="multitenancy" id="2-mysql" context="!cuba" dbms="mysql, mariadb">
+    <changeSet author="multitenancy" id="2-mysql" context="!cuba" dbms="oracle, mysql, mariadb">
         <addColumn tableName="MTEN_TENANT">
             <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
                 <constraints nullable="false"/>
@@ -99,7 +99,7 @@
         </modifySql>
     </changeSet>
 
-    <changeSet author="multitenancy" id="4-mysql" context="!cuba" dbms="mysql, mariadb">
+    <changeSet author="multitenancy" id="4-mysql" context="!cuba" dbms="oracle, mysql, mariadb">
         <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_NAME" unique="true">
             <column name="NAME"/>
             <column name="DELETE_TS_NN"/>

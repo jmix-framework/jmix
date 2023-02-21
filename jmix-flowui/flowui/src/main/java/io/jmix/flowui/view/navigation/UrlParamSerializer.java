@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.view.navigation;
 
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.URLEncodeUtils;
@@ -26,6 +27,11 @@ import io.jmix.flowui.FlowuiNavigationProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Time;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,6 +39,27 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component("flowui_UrlParamSerializer")
 public class UrlParamSerializer {
+
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DEFAULT_TIME_FORMAT = "HH-mm-ss";
+    public static final String DEFAULT_OFFSET_FORMAT = "Z";
+    public static final String DEFAULT_DATE_TIME_FORMAT =
+            DEFAULT_DATE_FORMAT + "'T'" + DEFAULT_TIME_FORMAT;
+    public static final String DEFAULT_OFFSET_DATE_TIME_FORMAT =
+            DEFAULT_DATE_FORMAT + "'T'" + DEFAULT_TIME_FORMAT + DEFAULT_OFFSET_FORMAT;
+    public static final String DEFAULT_OFFSET_TIME_FORMAT =
+            DEFAULT_TIME_FORMAT + DEFAULT_OFFSET_FORMAT;
+
+    protected static final DateTimeFormatter TEMPORAL_DATE_FORMATTER
+            = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+    protected static final DateTimeFormatter TEMPORAL_TIME_FORMATTER
+            = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
+    protected static final DateTimeFormatter TEMPORAL_DATE_TIME_FORMATTER
+            = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
+    protected static final DateTimeFormatter TEMPORAL_OFFSET_DATE_TIME_FORMATTER
+            = DateTimeFormatter.ofPattern(DEFAULT_OFFSET_DATE_TIME_FORMAT);
+    protected static final DateTimeFormatter TEMPORAL_OFFSET_TIME_FORMATTER
+            = DateTimeFormatter.ofPattern(DEFAULT_OFFSET_TIME_FORMAT);
 
     protected FlowuiNavigationProperties navigationProperties;
     protected MetadataTools metadataTools;
@@ -58,25 +85,120 @@ public class UrlParamSerializer {
     public String serialize(Object value) {
         checkNotNullArgument(value, "Unable to serialize null value");
 
-        String serialized;
         Class<?> type = value.getClass();
 
-        if (String.class == type
-                || Integer.class == type
-                || Long.class == type
-                || Boolean.class == type) {
-            serialized = serializePrimitive(value);
+        if (BigDecimal.class == type) {
+            return serializePrimitive(value);
 
-        } else if (UUID.class == type) {
-            serialized = serializeUuid((UUID) value);
-        } else if (metadataTools.isJpaEmbeddable(type)) {
-            serialized = serializeComposite(value);
-        } else {
-            throw new IllegalArgumentException(
-                    String.format("Unable to serialize value '%s' of type '%s'", value, type));
+        } else if (BigInteger.class == type) {
+            return serializePrimitive(value);
+
+        } else if (Boolean.class == type) {
+            return serializePrimitive(value);
+
+        } else if (Character.class == type) {
+            return serializePrimitive(value);
+
+        } else if (Double.class == type) {
+            return serializePrimitive(value);
+
+        } else if (Float.class == type) {
+            return serializePrimitive(value);
+
+        } else if (Integer.class == type) {
+            return serializePrimitive(value);
+
+        } else if (Long.class == type) {
+            return serializePrimitive(value);
+
+        } else if (Short.class == type) {
+            return serializePrimitive(value);
+
+        } else if (String.class == type) {
+            return serializePrimitive(value);
+
+        } else if (java.sql.Date.class == type) {
+            return serializeDate(((java.sql.Date) value));
+
+        } else if (Date.class == type) {
+            return serializeDateTime(((Date) value));
+
+        } else if (LocalDate.class == type) {
+            return serializeLocalDate(((LocalDate) value));
+
+        } else if (LocalDateTime.class == type) {
+            return serializeLocalDateTime(((LocalDateTime) value));
+
+        } else if (OffsetDateTime.class == type) {
+            return serializeOffsetDateTime(((OffsetDateTime) value));
+
+        } else if (LocalTime.class == type) {
+            return serializeLocalTime(((LocalTime) value));
+
+        } else if (OffsetTime.class == type) {
+            return serializeOffsetTime(((OffsetTime) value));
+
+        } else if (Time.class == type) {
+            return serializeTime(((Time) value));
+
+        } if (UUID.class.equals(type)) {
+            return serializeUuid((UUID) value);
+
+        } else if (Enum.class.isAssignableFrom(type)) {
+            return serializeEnum(((Enum<?>) value));
+
+        } else if (EntityValues.isEntity(value)
+                && metadataTools.isJpaEmbeddable(type)) {
+            return serializeComposite(value);
+
         }
 
-        return serialized;
+        throw new IllegalArgumentException(
+                String.format("Unable to serialize value '%s' of type '%s'", value, type));
+    }
+
+    protected String serializeDateTime(Date value) {
+        String stringValue = String.valueOf(value.getTime());
+        return URLEncodeUtils.encodeUtf8(stringValue);
+    }
+
+    protected String serializeLocalDate(LocalDate value) {
+        String stringValue = TEMPORAL_DATE_FORMATTER.format(value);
+        return URLEncodeUtils.encodeUtf8(stringValue);
+    }
+
+    protected String serializeLocalDateTime(LocalDateTime value) {
+        String stringValue = TEMPORAL_DATE_TIME_FORMATTER.format(value);
+        return URLEncodeUtils.encodeUtf8(stringValue);
+    }
+
+    protected String serializeDate(java.sql.Date value) {
+        String stringValue = String.valueOf(value.getTime());
+        return URLEncodeUtils.encodeUtf8(stringValue);
+    }
+
+    protected String serializeOffsetDateTime(OffsetDateTime value) {
+        String stringValue = TEMPORAL_OFFSET_DATE_TIME_FORMATTER.format(value);
+        return URLEncodeUtils.encodeUtf8(stringValue);
+    }
+
+    protected String serializeLocalTime(LocalTime value) {
+        String stringValue = TEMPORAL_TIME_FORMATTER.format(value);
+        return URLEncodeUtils.encodeUtf8(stringValue);
+    }
+
+    protected String serializeOffsetTime(OffsetTime value) {
+        String stringValue = TEMPORAL_OFFSET_TIME_FORMATTER.format(value);
+        return URLEncodeUtils.encodeUtf8(stringValue);
+    }
+
+    protected String serializeTime(Time value) {
+        String stringValue = String.valueOf(value.getTime());
+        return URLEncodeUtils.encodeUtf8(stringValue);
+    }
+
+    protected String serializeEnum(Enum<?> value) {
+        return value.name();
     }
 
     protected String serializePrimitive(Object value) {
@@ -127,24 +249,69 @@ public class UrlParamSerializer {
         String decoded = URLEncodeUtils.decodeUtf8(serializedValue);
 
         try {
-            if (Boolean.class == type) {
+            if (String.class == type) {
+                return ((T) parseString(decoded));
+
+            } else if (BigDecimal.class == type) {
+                return ((T) parseBigDecimal(decoded));
+
+            } else if (BigInteger.class == type) {
+                return ((T) parseBigInteger(decoded));
+
+            } else if (Boolean.class == type) {
                 return ((T) parseBoolean(decoded));
 
-            } else if (String.class == type) {
-                return ((T) parseString(decoded));
+            } else if (Character.class == type) {
+                return ((T) parseCharacter(decoded));
+
+            } else if (java.sql.Date.class == type) {
+                return ((T) parseDate(decoded));
+
+            } else if (Date.class == type) {
+                return ((T) parseDateTime(decoded));
+
+            } else if (Double.class == type) {
+                return ((T) parseDouble(decoded));
+
+            } else if (Float.class == type) {
+                return ((T) parseFloat(decoded));
 
             } else if (Integer.class == type) {
                 return ((T) parseInteger(decoded));
 
+            } else if (LocalDate.class == type) {
+                return ((T) parseLocalDate(decoded));
+
+            } else if (LocalDateTime.class == type) {
+                return ((T) parseLocalDateTime(decoded));
+
+            } else if (LocalTime.class == type) {
+                return ((T) parseLocalTime(decoded));
+
             } else if (Long.class == type) {
                 return ((T) parseLong(decoded));
+
+            } else if (OffsetDateTime.class == type) {
+                return ((T) parseOffsetDateTime(decoded));
+
+            } else if (OffsetTime.class == type) {
+                return ((T) parseOffsetTime(decoded));
+
+            } else if (Short.class == type) {
+                return ((T) parseShort(decoded));
+
+            } else if (Time.class == type) {
+                return ((T) parseTime(decoded));
 
             } else if (UUID.class == type) {
                 return ((T) parseUuid(serializedValue));
 
-            } else if (metadataTools.isJpaEmbeddable(type)) {
-                return parseComposite(type, serializedValue);
+            } else if (Enum.class.isAssignableFrom(type)) {
+                return parseEnum(type, decoded);
 
+            } else if (Entity.class.isAssignableFrom(type)
+                    && metadataTools.isJpaEmbeddable(type)) {
+                return parseComposite(type, serializedValue);
             } else {
                 throw new IllegalArgumentException(
                         String.format("Unable to deserialize id '%s' of type '%s'", serializedValue, type));
@@ -156,20 +323,88 @@ public class UrlParamSerializer {
         }
     }
 
-    protected Boolean parseBoolean(String decoded) {
-        return Boolean.valueOf(decoded);
+    protected OffsetDateTime parseOffsetDateTime(String stringValue) {
+        return OffsetDateTime.parse(stringValue, TEMPORAL_OFFSET_DATE_TIME_FORMATTER);
     }
 
-    protected String parseString(String decoded) {
-        return decoded;
+    protected OffsetTime parseOffsetTime(String stringValue) {
+        return OffsetTime.parse(stringValue, TEMPORAL_OFFSET_TIME_FORMATTER);
     }
 
-    protected Integer parseInteger(String decoded) {
-        return Integer.valueOf(decoded);
+    protected BigDecimal parseBigDecimal(String stringValue) {
+        return new BigDecimal(stringValue);
     }
 
-    protected Long parseLong(String decoded) {
-        return Long.valueOf(decoded);
+    protected BigInteger parseBigInteger(String stringValue) {
+        return new BigInteger(stringValue);
+    }
+
+    protected Character parseCharacter(String stringValue) {
+        return stringValue.charAt(0);
+    }
+
+    protected java.sql.Date parseDate(String stringValue) {
+        return new java.sql.Date(Long.parseLong(stringValue));
+    }
+
+    protected Date parseDateTime(String stringValue) {
+        return new Date(Long.parseLong(stringValue));
+    }
+
+    protected Double parseDouble(String stringValue) {
+        return Double.valueOf(stringValue);
+    }
+
+    protected <T> T parseEnum(Class<T> type, String stringValue) {
+        T[] enumConstants = type.getEnumConstants();
+        for (T enumConst : enumConstants) {
+            if (StringUtils.equalsIgnoreCase(((Enum<?>) enumConst).name(), stringValue)) {
+                return enumConst;
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "No enum constant " + type.getCanonicalName() + "." + stringValue);
+    }
+
+    protected Float parseFloat(String stringValue) {
+        return Float.valueOf(stringValue);
+    }
+
+    protected LocalDate parseLocalDate(String stringValue) {
+        return LocalDate.parse(stringValue, TEMPORAL_DATE_FORMATTER);
+    }
+
+    protected LocalDateTime parseLocalDateTime(String stringValue) {
+        return LocalDateTime.parse(stringValue, TEMPORAL_DATE_TIME_FORMATTER);
+    }
+
+    protected LocalTime parseLocalTime(String stringValue) {
+        return LocalTime.parse(stringValue, TEMPORAL_TIME_FORMATTER);
+    }
+
+    protected Short parseShort(String stringValue) {
+        return Short.valueOf(stringValue);
+    }
+
+    protected Time parseTime(String stringValue) {
+        return new Time(Long.parseLong(stringValue));
+    }
+
+    protected Boolean parseBoolean(String stringValue) {
+        return Boolean.valueOf(stringValue);
+    }
+
+    protected String parseString(String stringValue) {
+        return stringValue;
+    }
+
+    protected Integer parseInteger(String stringValue) {
+        return Integer.valueOf(stringValue);
+    }
+
+    protected Long parseLong(String stringValue) {
+        return Long.valueOf(stringValue);
     }
 
     protected UUID parseUuid(String serializedValue) {

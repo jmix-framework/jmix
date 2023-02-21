@@ -23,6 +23,10 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.gridexportui.GridExportProperties;
+import io.jmix.gridexportui.action.ExportAction;
+import io.jmix.gridexportui.exporter.AbstractTableExporter;
+import io.jmix.gridexportui.exporter.ExportMode;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.*;
@@ -31,10 +35,6 @@ import io.jmix.ui.component.data.meta.EntityDataGridItems;
 import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.gridexportui.GridExportProperties;
-import io.jmix.gridexportui.action.ExportAction;
-import io.jmix.gridexportui.exporter.AbstractTableExporter;
-import io.jmix.gridexportui.exporter.ExportMode;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -749,6 +749,36 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             }
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
                 String str = datatypeRegistry.get(Date.class).format(date);
+                sizers[sizersIndex].notifyCellValue(str, stdFont);
+            }
+        } else if (cellValue instanceof java.time.LocalTime) {
+            java.time.LocalTime time = (java.time.LocalTime) cellValue;
+
+            cell.setCellValue(java.sql.Time.valueOf(time));
+            cell.setCellStyle(timeFormatCellStyle);
+
+            if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
+                String str = datatypeRegistry.get(java.time.LocalTime.class).format(time);
+                sizers[sizersIndex].notifyCellValue(str, stdFont);
+            }
+        } else if (cellValue instanceof java.time.LocalDate) {
+            java.time.LocalDate date = (java.time.LocalDate) cellValue;
+
+            cell.setCellValue(date);
+            cell.setCellStyle(dateFormatCellStyle);
+
+            if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
+                String str = datatypeRegistry.get(java.time.LocalDate.class).format(date);
+                sizers[sizersIndex].notifyCellValue(str, stdFont);
+            }
+        } else if (cellValue instanceof java.time.LocalDateTime) {
+            java.time.LocalDateTime dateTime = (java.time.LocalDateTime) cellValue;
+
+            cell.setCellValue(dateTime);
+            cell.setCellStyle(dateTimeFormatCellStyle);
+
+            if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
+                String str = datatypeRegistry.get(java.time.LocalDateTime.class).format(dateTime);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
         } else if (cellValue instanceof Boolean) {

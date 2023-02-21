@@ -181,7 +181,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
         if (this.valueComponent != null) {
             if (this.operation == null || this.operation.getType() != operation.getType()) {
-                this.valueComponent.setValue(null);
+                this.valueComponent.clear();
             }
 
             if (!isConditionModificationDelegated()) {
@@ -193,6 +193,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
                 || this.operation.getType() != operation.getType()) {
             if (dataLoader != null && getProperty() != null) {
                 MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
+                //noinspection unchecked
                 HasValueAndElement<?, V> newValueComponent = singleFilterSupport.generateValueComponent(metaClass,
                         getProperty(), operation);
                 setValueComponent(newValueComponent);

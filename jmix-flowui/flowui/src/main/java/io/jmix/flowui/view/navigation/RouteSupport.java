@@ -162,7 +162,7 @@ public class RouteSupport {
      * Creates {@link RouteParameters} object which stores a single route parameter with given name and value.
      *
      * @param param the route parameter name
-     * @param value the route parameter name
+     * @param value the route parameter value
      * @return an object which stores the route parameters
      */
     public RouteParameters createRouteParameters(String param, Object value) {

@@ -50,7 +50,8 @@ public interface StudioElementsGroups {
             name = "ResponsiveSteps",
             elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveSteps",
-            target = {"com.vaadin.flow.component.formlayout.FormLayout"}
+            target = {"com.vaadin.flow.component.formlayout.FormLayout",
+                    "io.jmix.flowui.component.genericfilter.GenericFilter"}
     )
     void responsiveSteps();
 

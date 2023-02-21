@@ -3300,7 +3300,7 @@
 
                 <xs:attribute name="labelVisible" type="xs:boolean"/>
                 <xs:attribute name="labelPosition" type="labelPositionType"/>
-                <xs:attribute name="labelWidth" type="xs:string"/>
+                <xs:attribute name="labelWidth" type="componentSize"/>
 
                 <xs:attribute name="themeNames" type="xs:string"/>
 

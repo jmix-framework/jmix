@@ -426,6 +426,36 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
                 String str = datatypeRegistry.get(Date.class).format(date);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
+        } else if (cellValue instanceof java.time.LocalTime) {
+            java.time.LocalTime time = (java.time.LocalTime) cellValue;
+
+            cell.setCellValue(java.sql.Time.valueOf(time));
+            cell.setCellStyle(timeFormatCellStyle);
+
+            if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
+                String str = datatypeRegistry.get(java.time.LocalTime.class).format(time);
+                sizers[sizersIndex].notifyCellValue(str, stdFont);
+            }
+        } else if (cellValue instanceof java.time.LocalDate) {
+            java.time.LocalDate date = (java.time.LocalDate) cellValue;
+
+            cell.setCellValue(date);
+            cell.setCellStyle(dateFormatCellStyle);
+
+            if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
+                String str = datatypeRegistry.get(java.time.LocalDate.class).format(date);
+                sizers[sizersIndex].notifyCellValue(str, stdFont);
+            }
+        } else if (cellValue instanceof java.time.LocalDateTime) {
+            java.time.LocalDateTime dateTime = (java.time.LocalDateTime) cellValue;
+
+            cell.setCellValue(dateTime);
+            cell.setCellStyle(dateTimeFormatCellStyle);
+
+            if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
+                String str = datatypeRegistry.get(java.time.LocalDateTime.class).format(dateTime);
+                sizers[sizersIndex].notifyCellValue(str, stdFont);
+            }
         } else if (cellValue instanceof Boolean) {
             String str = "";
             if (sizersIndex == 0) {

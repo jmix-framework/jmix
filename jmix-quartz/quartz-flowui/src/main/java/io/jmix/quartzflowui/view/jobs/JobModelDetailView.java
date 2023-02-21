@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 @ViewController("quartz_JobModel.detail")
 @ViewDescriptor("job-model-detail-view.xml")
 @EditedEntityContainer("jobModelDc")
-@DialogMode(width = "80em", minHeight = "64em", resizable = true)
+@DialogMode(width = "80em", height = "60em", resizable = true)
 public class JobModelDetailView extends StandardDetailView<JobModel> {
 
     @ViewComponent

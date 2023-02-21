@@ -20,11 +20,11 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.reports.ReportsConfiguration;
 import io.jmix.reportsui.ReportsUiConfiguration;
-import io.jmix.uiexport.UiExportConfiguration;
+import io.jmix.gridexportui.GridExportUiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, DataConfiguration.class, ReportsConfiguration.class, ReportsUiConfiguration.class, UiExportConfiguration.class})
+@Import({CoreConfiguration.class, DataConfiguration.class, ReportsConfiguration.class, ReportsUiConfiguration.class, GridExportUiConfiguration.class})
 public class ReportsUiAutoConfiguration {
 }

@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  * Use this class to export {@link DataGrid} into JSON format.
  * <br>Just create an instance of {@link ExportAction} with <code>withExporter</code> method.
  */
-@Component("flowui_JsonExporter")
+@Component("grdexp_JsonExporter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 

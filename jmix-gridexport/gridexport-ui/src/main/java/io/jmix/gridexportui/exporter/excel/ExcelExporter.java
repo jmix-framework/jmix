@@ -63,7 +63,7 @@ import static io.jmix.ui.download.DownloadFormat.XLSX;
  * <br>Just create an instance of {@link ExportAction} with <code>withExporter</code> method.
  */
 @SuppressWarnings("rawtypes")
-@Component("ui_ExcelExporter")
+@Component("grdexp_ExcelExporter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 

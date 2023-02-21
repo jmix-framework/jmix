@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
 
 import static io.jmix.flowui.download.DownloadFormat.XLSX;
 
-@Component("flowui_ExcelExporter")
+@Component("grdexp_ExcelExporter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 

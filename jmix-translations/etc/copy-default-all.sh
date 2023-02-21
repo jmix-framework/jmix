@@ -45,6 +45,9 @@
 ./copy-default-file.sh jmix-flowui/flowui io/jmix/flowui
 ./copy-default-file.sh jmix-flowui/flowui-data io/jmix/flowuidata
 
+./copy-default-file.sh jmix-gridexport/gridexport-ui io/jmix/gridexportui
+./copy-default-file.sh jmix-gridexport/gridexport-flowui io/jmix/gridexportflowui
+
 ./copy-default-file.sh jmix-emailtemplates/emailtemplates io/jmix/emailtemplates
 ./copy-default-file.sh jmix-emailtemplates/emailtemplates-ui io/jmix/emailtemplatesui
 
@@ -66,4 +69,3 @@
 ./copy-default-file.sh jmix-ui/pivot-table io/jmix/pivottable
 ./copy-default-file.sh jmix-ui/ui io/jmix/ui
 ./copy-default-file.sh jmix-ui/ui-data io/jmix/uidata
-./copy-default-file.sh jmix-ui/ui-export io/jmix/uiexport

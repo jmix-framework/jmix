@@ -32,7 +32,7 @@ import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.DownloadFormat;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.screen.ScreenContext;
-import io.jmix.uiexport.exporter.excel.ExcelAutoColumnSizer;
+import io.jmix.gridexportui.exporter.excel.ExcelAutoColumnSizer;
 import io.jmix.pivottable.component.PivotTable;
 import io.jmix.pivottable.model.extension.PivotData;
 import io.jmix.pivottable.model.extension.PivotDataCell;

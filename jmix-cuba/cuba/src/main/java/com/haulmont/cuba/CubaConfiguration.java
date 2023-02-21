@@ -79,7 +79,7 @@ import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.sys.*;
 import io.jmix.uidata.UiDataConfiguration;
-import io.jmix.uiexport.UiExportConfiguration;
+import io.jmix.gridexportui.GridExportUiConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -100,7 +100,7 @@ import java.util.Collections;
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, LocalFileStorageConfiguration.class,
         SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
         DatatoolsConfiguration.class, DatatoolsUiConfiguration.class, AuditConfiguration.class, AuditUiConfiguration.class,
-        UiExportConfiguration.class, EmailConfiguration.class, EmailUiConfiguration.class
+        GridExportUiConfiguration.class, EmailConfiguration.class, EmailUiConfiguration.class
 })
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
 @EnableScheduling

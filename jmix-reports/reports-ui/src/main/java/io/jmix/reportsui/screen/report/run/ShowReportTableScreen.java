@@ -42,7 +42,7 @@ import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.model.KeyValueCollectionContainer;
 import io.jmix.ui.screen.*;
-import io.jmix.uiexport.action.ExcelExportAction;
+import io.jmix.gridexportui.action.ExcelExportAction;
 import org.apache.commons.collections.CollectionUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;

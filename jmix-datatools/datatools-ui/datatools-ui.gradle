@@ -25,7 +25,7 @@ dependencies {
 
     api project(':core')
     api project(':data')
-    api project(':ui-export')
+    api project(':gridexport-ui')
     api project(':ui')
 
     api 'com.google.code.gson:gson'

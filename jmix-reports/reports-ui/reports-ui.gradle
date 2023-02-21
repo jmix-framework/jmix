@@ -26,7 +26,7 @@ dependencies {
     api project(':data')
     api project(':ui')
     api project(':ui-data')
-    api project(':ui-export')
+    api project(':gridexport-ui')
     api project(':security')
     api project(':security-ui')
     compileOnly project(':dynattr')

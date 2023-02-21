@@ -69,7 +69,7 @@ import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
-import io.jmix.flowuiexport.action.ExcelExportAction;
+import io.jmix.gridexportflowui.action.ExcelExportAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

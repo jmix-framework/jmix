@@ -25,7 +25,7 @@ dependencies {
 
     api project(':core')
     api project(':data')
-    api project(':flowui-export')
+    api project(':gridexport-flowui')
     api project(':flowui')
 
     api 'com.google.code.gson:gson'

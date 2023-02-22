@@ -1496,7 +1496,7 @@ public interface StudioComponents {
                                     "hide-scroll-buttons", "equal-width-tabs", "bordered", "fixed"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100%")
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
             }
     )
     TabSheet tabSheet();

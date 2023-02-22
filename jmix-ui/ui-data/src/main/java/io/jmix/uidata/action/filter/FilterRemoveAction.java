@@ -16,18 +16,24 @@
 
 package io.jmix.uidata.action.filter;
 
+import com.google.common.base.Strings;
+import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.filter.FilterAction;
 import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.filter.FilterSupport;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.screen.ScreenContext;
+import io.jmix.uidata.accesscontext.UiFilterModifyGlobalConfigurationContext;
+import io.jmix.uidata.entity.FilterConfiguration;
+import io.jmix.uidata.filter.UiDataFilterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @StudioAction(target = "io.jmix.ui.component.Filter", description = "Removes current run-time filter configuration")
@@ -38,6 +44,8 @@ public class FilterRemoveAction extends FilterAction {
 
     protected FilterSupport filterSupport;
     protected Messages messages;
+
+    protected boolean globalConfigurationModificationPermitted;
 
     public FilterRemoveAction() {
         this(ID);
@@ -63,11 +71,19 @@ public class FilterRemoveAction extends FilterAction {
         this.filterSupport = filterSupport;
     }
 
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        UiFilterModifyGlobalConfigurationContext globalFilterContext = new UiFilterModifyGlobalConfigurationContext();
+        accessManager.applyRegisteredConstraints(globalFilterContext);
+        globalConfigurationModificationPermitted = globalFilterContext.isPermitted();
+    }
+
     @Override
     protected boolean isApplicable() {
         return super.isApplicable()
                 && filter.getCurrentConfiguration() != filter.getEmptyConfiguration()
-                && !(filter.getCurrentConfiguration() instanceof DesignTimeConfiguration);
+                && !(filter.getCurrentConfiguration() instanceof DesignTimeConfiguration)
+                && (globalConfigurationModificationPermitted || !isCurrentConfigurationAvailableForAll());
     }
 
     @Override
@@ -82,5 +98,12 @@ public class FilterRemoveAction extends FilterAction {
                                         filterSupport.removeCurrentFilterConfiguration(filter)),
                         new DialogAction(DialogAction.Type.NO))
                 .show();
+    }
+
+    protected boolean isCurrentConfigurationAvailableForAll() {
+        Filter.Configuration currentConfiguration = filter.getCurrentConfiguration();
+        FilterConfiguration model = ((UiDataFilterSupport) filterSupport)
+                .loadFilterConfigurationModel(filter, currentConfiguration.getId());
+        return model != null && Strings.isNullOrEmpty(model.getUsername());
     }
 }

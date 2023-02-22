@@ -16,17 +16,18 @@
 
 package io.jmix.uidata.action.filter;
 
+import com.google.common.base.Strings;
+import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Filter;
-import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.meta.StudioAction;
+import io.jmix.uidata.accesscontext.UiFilterModifyGlobalConfigurationContext;
 import io.jmix.uidata.entity.FilterConfiguration;
 import io.jmix.uidata.filter.UiDataFilterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.Map;
 
 @StudioAction(target = "io.jmix.ui.component.Filter", description = "Saves changes to current filter configuration")
@@ -35,7 +36,7 @@ public class FilterSaveAction extends FilterSaveAsAction {
 
     public static final String ID = "filter_save";
 
-    protected Map<FilterComponent, Object> valuesMap = new HashMap<>();
+    protected boolean globalConfigurationModificationPermitted;
 
     public FilterSaveAction() {
         this(ID);
@@ -51,10 +52,18 @@ public class FilterSaveAction extends FilterSaveAsAction {
         this.messages = messages;
     }
 
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        UiFilterModifyGlobalConfigurationContext globalFilterContext = new UiFilterModifyGlobalConfigurationContext();
+        accessManager.applyRegisteredConstraints(globalFilterContext);
+        globalConfigurationModificationPermitted = globalFilterContext.isPermitted();
+    }
+
     @Override
     protected boolean isApplicable() {
         return super.isApplicable()
-                && filter.getCurrentConfiguration().isModified();
+                && filter.getCurrentConfiguration().isModified()
+                && (globalConfigurationModificationPermitted || !isCurrentConfigurationAvailableForAll());
     }
 
     @Override
@@ -79,5 +88,12 @@ public class FilterSaveAction extends FilterSaveAsAction {
         ((UiDataFilterSupport) filterSupport).saveConfigurationModel(configuration, existedConfigurationModel);
         filterSupport.resetConfigurationValuesMap(configuration, valuesMap);
         setCurrentFilterConfiguration(configuration);
+    }
+
+    protected boolean isCurrentConfigurationAvailableForAll() {
+        Filter.Configuration currentConfiguration = filter.getCurrentConfiguration();
+        FilterConfiguration model = ((UiDataFilterSupport) filterSupport)
+                .loadFilterConfigurationModel(filter, currentConfiguration.getId());
+        return model != null && Strings.isNullOrEmpty(model.getUsername());
     }
 }

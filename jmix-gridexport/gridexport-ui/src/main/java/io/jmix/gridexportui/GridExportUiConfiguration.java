@@ -38,7 +38,7 @@ public class GridExportUiConfiguration {
     public ActionsConfiguration actions(ApplicationContext applicationContext,
                                         AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
-        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.gridexportflowui.action"));
+        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.gridexportui.action"));
         return actionsConfiguration;
     }
 

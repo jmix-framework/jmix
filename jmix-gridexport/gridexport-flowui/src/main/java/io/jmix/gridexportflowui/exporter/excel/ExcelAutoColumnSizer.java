@@ -30,23 +30,23 @@ import java.util.Map;
  */
 public class ExcelAutoColumnSizer {
 
-    protected static final short WIDTH_MIN = 40;
-    protected static final short WIDTH_MAX = 250;
+    private static final short WIDTH_MIN = 40;
+    private static final short WIDTH_MAX = 250;
 
-    protected static final short WIDTH_PADDING = 5;
+    private static final short WIDTH_PADDING = 5;
 
-    protected static final int[] ROW_BAND = {1, 100, 1000, 10000, 65536};
-    protected static final int[] ROW_BAND_SAMPLE_FREQUENCY = {1, 10, 100, 1000};
+    private static final int[] ROW_BAND = {1, 100, 1000, 10000, 65536};
+    private static final int[] ROW_BAND_SAMPLE_FREQUENCY = {1, 10, 100, 1000};
 
     /** Graphics context used for obtaining FontMetrics objects */
-    protected Graphics2D graphics = null;
+    private Graphics2D graphics = null;
 
     /** Maps a Short (HSSF font index) to a FontMetrics object */
-    protected Map<Short, FontMetrics> fontMetrics = new HashMap<>();
+    private Map<Short, FontMetrics> fontMetrics = new HashMap<>();
 
-    protected short currentWidth = WIDTH_MIN;
+    private short currentWidth = WIDTH_MIN;
 
-    protected FontMetrics getFontMetrics(Font hf){
+    private FontMetrics getFontMetrics(Font hf){
         FontMetrics fm;
         Short pFont = hf.getIndex();
 

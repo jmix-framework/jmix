@@ -19,7 +19,6 @@ package io.jmix.gridexportflowui.action;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.Actions;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
@@ -55,7 +54,6 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     protected Messages messages;
     protected Downloader downloader;
     protected Dialogs dialogs;
-    protected Actions actions;
 
     protected DataGridExporter dataGridExporter;
 
@@ -85,11 +83,6 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     @Autowired
     public void setDialogs(Dialogs dialogs) {
         this.dialogs = dialogs;
-    }
-
-    @Autowired
-    public void setActions(Actions actions) {
-        this.actions = actions;
     }
 
     /**
@@ -147,7 +140,7 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     @Override
     public void execute() {
         Preconditions.checkNotNullArgument(dataGridExporter,
-                Grid.class.getSimpleName() +" exporter is not defined");
+                Grid.class.getSimpleName() + " exporter is not defined");
 
         Action exportAllAction = createExportAllAction();
         Action exportSelectedAction = createExportSelectedAction();

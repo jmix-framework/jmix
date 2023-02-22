@@ -40,7 +40,7 @@ public class PropertyFilterQueryParametersBinder extends AbstractQueryParameters
 
     protected PropertyFilter<?> filter;
 
-    protected String filterParam;
+    protected String parameter;
 
     protected ApplicationContext applicationContext;
     protected UrlParamSerializer urlParamSerializer;
@@ -83,7 +83,7 @@ public class PropertyFilterQueryParametersBinder extends AbstractQueryParameters
 
         String paramValue = serializedOperation + SETTINGS_SEPARATOR + serializedValue;
         QueryParameters queryParameters = QueryParameters
-                .simple(ImmutableMap.of(getFilterParam(), paramValue));
+                .simple(ImmutableMap.of(getParameter(), paramValue));
 
         fireQueryParametersChanged(new QueryParametersChangeEvent(this, queryParameters));
     }
@@ -91,8 +91,8 @@ public class PropertyFilterQueryParametersBinder extends AbstractQueryParameters
     @Override
     public void updateState(QueryParameters queryParameters) {
         Map<String, List<String>> parameters = queryParameters.getParameters();
-        if (parameters.containsKey(getFilterParam())) {
-            String serializedSettings = parameters.get(getFilterParam()).get(0);
+        if (parameters.containsKey(getParameter())) {
+            String serializedSettings = parameters.get(getParameter()).get(0);
             String[] values = serializedSettings.split(SETTINGS_SEPARATOR);
             if (values.length < 1) {
                 throw new IllegalStateException("Can't parse property filter settings: " + serializedSettings);
@@ -113,14 +113,14 @@ public class PropertyFilterQueryParametersBinder extends AbstractQueryParameters
         }
     }
 
-    public String getFilterParam() {
-        return Strings.isNullOrEmpty(filterParam)
+    public String getParameter() {
+        return Strings.isNullOrEmpty(parameter)
                 ? filter.getId().orElseThrow(() ->
                 new IllegalStateException("Component has neither id nor explicit url query param"))
-                : filterParam;
+                : parameter;
     }
 
-    public void setFilterParam(@Nullable String filterParam) {
-        this.filterParam = filterParam;
+    public void setParameter(@Nullable String parameter) {
+        this.parameter = parameter;
     }
 }

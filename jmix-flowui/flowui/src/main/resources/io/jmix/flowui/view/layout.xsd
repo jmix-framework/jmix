@@ -3411,7 +3411,7 @@
     <xs:complexType name="propertyFilterQueryParametersType">
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="component" type="xs:string" use="required"/>
-        <xs:attribute name="filterParam" type="xs:string"/>
+        <xs:attribute name="param" type="xs:string"/>
     </xs:complexType>
 
     <!--  -->

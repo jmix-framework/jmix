@@ -111,10 +111,10 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
                                                            Element element, ComponentContext context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
-        String filterParam = loadAttribute(element, "filterParam");
+        String param = loadAttribute(element, "param");
 
         context.addPreInitTask(new PropertyFilterQueryParametersBinderInitTask(
-                facet, componentId, filterParam, binderId, urlParamSerializer, applicationContext
+                facet, componentId, param, binderId, urlParamSerializer, applicationContext
         ));
     }
 
@@ -201,20 +201,20 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
         protected final QueryParametersFacet facet;
         protected final String binderId;
         protected final String componentId;
-        protected final String filterParam;
+        protected final String parameter;
         protected final UrlParamSerializer urlParamSerializer;
         protected final ApplicationContext applicationContext;
 
         public PropertyFilterQueryParametersBinderInitTask(QueryParametersFacet facet,
                                                            String componentId,
-                                                           @Nullable String filterParam,
+                                                           @Nullable String parameter,
                                                            @Nullable String binderId,
                                                            UrlParamSerializer urlParamSerializer,
                                                            ApplicationContext applicationContext) {
             this.facet = facet;
             this.binderId = binderId;
             this.componentId = componentId;
-            this.filterParam = filterParam;
+            this.parameter = parameter;
             this.urlParamSerializer = urlParamSerializer;
             this.applicationContext = applicationContext;
         }
@@ -233,7 +233,7 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
                             urlParamSerializer, applicationContext);
 
             binder.setId(binderId);
-            binder.setFilterParam(filterParam);
+            binder.setParameter(parameter);
 
             facet.registerBinder(binder);
         }

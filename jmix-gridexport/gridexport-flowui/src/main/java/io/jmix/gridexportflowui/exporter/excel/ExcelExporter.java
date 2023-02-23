@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
@@ -92,10 +93,14 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     protected AllRecordsExporter allRecordsExporter;
 
+    protected Notifications notifications;
+
     public ExcelExporter(GridExportProperties gridExportProperties,
-                         AllRecordsExporter allRecordsExporter) {
+                         AllRecordsExporter allRecordsExporter,
+                         Notifications notifications) {
         this.gridExportProperties = gridExportProperties;
         this.allRecordsExporter = allRecordsExporter;
+        this.notifications = notifications;
     }
 
     protected void createWorkbookWithSheet() {
@@ -223,7 +228,8 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
                                 context.getRowNumber(),
                                 context.getEntity(),
                                 addLevelPadding
-                        )
+                        ),
+                        this::checkIsRowNumberExceed
                 );
             }
 
@@ -236,6 +242,10 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
                 wb.write(out);
             } catch (IOException e) {
                 throw new RuntimeException("Unable to write document", e);
+            }
+
+            if (isXlsxMaxRowNumberExceeded()) {
+                showWarnNotification();
             }
 
             ByteArrayDownloadDataProvider dataProvider = new ByteArrayDownloadDataProvider(out.toByteArray(),
@@ -512,6 +522,23 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     protected boolean checkIsRowNumberExceed(int r) {
         return isRowNumberExceeded = r >= MAX_ROW_COUNT;
+    }
+
+    /**
+     * @return true if exported table contains more than {@link ExcelExporter#MAX_ROW_COUNT} records
+     */
+    protected boolean isXlsxMaxRowNumberExceeded() {
+        return isRowNumberExceeded;
+    }
+
+    protected void showWarnNotification() {
+        notifications.create(
+                        messages.getMessage(getClass(), "maximumRowsNumberExceededWarning.title"),
+                        messages.formatMessage(getClass(),
+                                "maximumRowsNumberExceededWarning.message",
+                                MAX_ROW_COUNT))
+                .withType(Notifications.Type.WARNING)
+                .show();
     }
 
     /**

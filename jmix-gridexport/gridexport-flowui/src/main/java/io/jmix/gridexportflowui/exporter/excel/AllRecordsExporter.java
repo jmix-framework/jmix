@@ -34,6 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Class is used by {@link io.jmix.gridexportflowui.action.ExportAction} for exporting all records from the database.
@@ -67,9 +68,11 @@ public class AllRecordsExporter {
      *
      * @param dataUnit        data unit linked with the data
      * @param excelRowCreator function that is being applied to each loaded instance
+     * @param excelRowChecker function that checks for exceeding the maximum number of rows in XLSX format
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void exportAll(DataUnit dataUnit, Consumer<RowCreationContext> excelRowCreator) {
+    protected void exportAll(DataUnit dataUnit, Consumer<RowCreationContext> excelRowCreator,
+                             Predicate<Integer> excelRowChecker) {
         if (!(dataUnit instanceof ContainerDataUnit)) {
             throw new RuntimeException("Cannot export all rows. DataUnit must be an instance of ContainerDataUnit.");
         }
@@ -122,7 +125,7 @@ public class AllRecordsExporter {
             int rowNumber = 0;
             boolean initialLoading = true;
             Object lastLoadedPkValue = null;
-            for (int firstResult = 0; firstResult < count; firstResult += loadBatchSize) {
+            for (int firstResult = 0; firstResult < count && !excelRowChecker.test(rowNumber); firstResult += loadBatchSize) {
                 if (initialLoading) {
                     initialLoading = false;
                 } else {
@@ -132,7 +135,11 @@ public class AllRecordsExporter {
 
                 List entities = dataManager.loadList(loadContext);
                 for (Object entity : entities) {
-                    excelRowCreator.accept(new RowCreationContext(entity, ++rowNumber));
+                    if (excelRowChecker.test(++rowNumber)) {
+                        break;
+                    }
+
+                    excelRowCreator.accept(new RowCreationContext(entity, rowNumber));
                 }
                 Object lastEntity = entities.get(entities.size() - 1);
                 lastLoadedPkValue = Id.of(lastEntity).getValue();

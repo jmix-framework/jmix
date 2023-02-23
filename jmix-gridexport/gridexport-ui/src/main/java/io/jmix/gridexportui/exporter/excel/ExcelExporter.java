@@ -247,7 +247,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 allRecordsExporter.exportAll(tableItems, (context) -> {
                     createRowForEntityInstance(table, columns, 0, context.getRowNumber(), context.getEntity(),
                             addLevelPadding);
-                });
+                }, this::checkIsRowNumberExceed);
             }
 
             for (int c = 0; c < columns.size(); c++) {
@@ -262,12 +262,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             }
 
             if (isXlsxMaxRowNumberExceeded()) {
-                Notifications notifications = ComponentsHelper.getScreenContext(table).getNotifications();
-
-                notifications.create(Notifications.NotificationType.WARNING)
-                        .withCaption(messages.getMessage("actions.warningExport.title"))
-                        .withDescription(messages.getMessage("actions.warningExport.message"))
-                        .show();
+                showWarnNotification(table);
             }
 
             ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(out.toByteArray(),
@@ -371,7 +366,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 allRecordsExporter.exportAll(dataGrid.getItems(), (context) -> {
                     createDataGridRowForEntityInstance(dataGrid, columns, 0, context.getRowNumber(),
                             context.getEntity(), addLevelPadding);
-                });
+                }, this::checkIsRowNumberExceed);
             }
 
             for (int c = 0; c < columns.size(); c++) {
@@ -384,6 +379,11 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             } catch (IOException e) {
                 throw new RuntimeException("Unable to write document", e);
             }
+
+            if (isXlsxMaxRowNumberExceeded()) {
+                showWarnNotification(dataGrid);
+            }
+
             ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(out.toByteArray(),
                     uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
             downloader.download(dataProvider, getFileName(dataGrid) + "." + XLSX.getFileExt(), XLSX);
@@ -840,10 +840,21 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
     }
 
     /**
-     * @return true if exported table contains more than 65536 records
+     * @return true if exported table contains more than {@link ExcelExporter#MAX_ROW_COUNT} records
      */
     protected boolean isXlsxMaxRowNumberExceeded() {
         return isRowNumberExceeded;
+    }
+
+    protected void showWarnNotification(io.jmix.ui.component.Component.BelongToFrame belongToFrame) {
+        Notifications notifications = ComponentsHelper.getScreenContext(belongToFrame).getNotifications();
+
+        notifications.create(Notifications.NotificationType.WARNING)
+                .withCaption(messages.getMessage(getClass(), "maximumRowsNumberExceededWarning.caption"))
+                .withDescription(messages.formatMessage(getClass(),
+                        "maximumRowsNumberExceededWarning.message",
+                        MAX_ROW_COUNT))
+                .show();
     }
 
     /**

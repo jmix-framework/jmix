@@ -24,6 +24,11 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.gridexportui.exporter.excel.ExcelAutoColumnSizer;
+import io.jmix.pivottable.component.PivotTable;
+import io.jmix.pivottable.model.extension.PivotData;
+import io.jmix.pivottable.model.extension.PivotDataCell;
+import io.jmix.pivottable.model.extension.PivotDataSeparatedCell;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ComponentsHelper;
@@ -32,12 +37,8 @@ import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.DownloadFormat;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.screen.ScreenContext;
-import io.jmix.gridexportui.exporter.excel.ExcelAutoColumnSizer;
-import io.jmix.pivottable.component.PivotTable;
-import io.jmix.pivottable.model.extension.PivotData;
-import io.jmix.pivottable.model.extension.PivotDataCell;
-import io.jmix.pivottable.model.extension.PivotDataSeparatedCell;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -410,8 +411,10 @@ public class PivotExcelExporter {
 
     protected void showWarnNotification() {
         notifications.create(Notifications.NotificationType.WARNING)
-                .withCaption(messages.getMessage("actions.warningExport.title"))
-                .withDescription(messages.getMessage("actions.warningExport.message"))
+                .withCaption(messages.getMessage(getClass(), "maximumRowsNumberExceededWarning.caption"))
+                .withDescription(messages.formatMessage(getClass(),
+                        "maximumRowsNumberExceededWarning.message",
+                        MAX_ROW_INDEX))
                 .withPosition(Notifications.Position.MIDDLE_CENTER)
                 .show();
     }

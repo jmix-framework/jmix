@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="700">
+<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="2000">
     <menu id="multitenancy">
         <item view="mten_Tenant.list" title="msg://io.jmix.multitenancyflowui.view.tenant/listTitle"/>
     </menu>

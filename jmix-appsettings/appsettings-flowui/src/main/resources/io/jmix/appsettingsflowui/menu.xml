@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="300">
+<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="2300">
     <menu id="appsettings">
         <item view="appSettings.view" title="msg://io.jmix.appsettingsflowui.view.appsettings/appSettingsEntityView.menu"/>
     </menu>

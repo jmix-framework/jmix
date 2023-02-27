@@ -575,7 +575,7 @@ $jmix-sidemenu-submenu-background-color: $jmix-sidemenu-background-color !defaul
     }
 
     .jmix-sidemenu-submenu.jmix-sidemenu-submenu-open {
-      max-height: 2000px;
+      max-height: inherit;
       opacity: 1;
 
       @if $v-animations-enabled {

@@ -32,7 +32,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
@@ -1471,35 +1470,10 @@ public interface StudioComponents {
                                     "hide-scroll-buttons", "equal-width-tabs", "fixed"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100%")
-            }
-    )
-    Tabs tabs();
-
-    @StudioComponent(
-            name = "TabSheet",
-            classFqn = "io.jmix.flowui.component.tabsheet.JmixTabSheet",
-            category = "Components",
-            xmlElement = "tabSheet",
-            icon = "io/jmix/flowui/kit/meta/icon/component/tabSheet.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
-                            options = {"icon-on-top", "centered", "small", "minimal",
-                                    "hide-scroll-buttons", "equal-width-tabs", "bordered", "fixed"}),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
             }
     )
-    TabSheet tabSheet();
+    Tabs tabs();
 
     @StudioComponent(
             name = "ListBox",

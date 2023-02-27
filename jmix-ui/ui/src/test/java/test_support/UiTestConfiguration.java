@@ -31,9 +31,14 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.security.CoreSecurityConfiguration;
+import io.jmix.core.security.InMemoryUserRepository;
+import io.jmix.core.security.UserRepository;
+import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.menu.MenuBuilder;
 import io.jmix.ui.menu.MenuConfig;
 import io.jmix.ui.menu.SideMenuBuilder;
@@ -49,19 +54,29 @@ import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import test_support.bean.TestAppMenuBuilder;
 import test_support.bean.TestMenuConfig;
 import test_support.bean.TestSideMenuBuilder;
+import test_support.entity.sec.User;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @ComponentScan
 @PropertySource("classpath:/test_support/test-ui-app.properties")
+@Import({
+        UiConfiguration.class,
+        EclipselinkConfiguration.class,
+        DataConfiguration.class,
+        CoreConfiguration.class
+})
 @JmixModule(dependsOn = CoreConfiguration.class)
 public class UiTestConfiguration {
 
@@ -166,4 +181,17 @@ public class UiTestConfiguration {
                 .withComponentLoaderClass(TestEventPanelLoader.class)
                 .build();
     }
+
+
+    @EnableWebSecurity
+    static class SecurityConfiguration extends CoreSecurityConfiguration {
+        public UserRepository userRepository() {
+            InMemoryUserRepository repository = new InMemoryUserRepository();
+            User user = new User();
+            user.setLogin("admin");
+            repository.addUser(user);
+  	        return repository;
+         }
+    }
+
 }

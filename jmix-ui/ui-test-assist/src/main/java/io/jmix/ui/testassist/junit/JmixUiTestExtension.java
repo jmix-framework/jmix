@@ -340,19 +340,19 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
     private void initAuthenticatedUser(ExtensionContext context) {
         if (Strings.isNullOrEmpty(this.authenticatedUser)) {
             uiTestAnnotation(context)
-                    .ifPresent(uiTestWithNestedSupport -> this.authenticatedUser = uiTestWithNestedSupport.authenticatedUser());
+                    .ifPresent(uiTest -> this.authenticatedUser = uiTest.authenticatedUser());
         }
     }
 
     private void initScreenBasePackages(ExtensionContext context) {
         if (ArrayUtils.isNotEmpty(this.screenBasePackages)) {
-            uiTestAnnotation(context).ifPresent(uiTestWithNestedSupport -> this.screenBasePackages = uiTestWithNestedSupport.screenBasePackages());
+            uiTestAnnotation(context).ifPresent(uiTest -> this.screenBasePackages = uiTest.screenBasePackages());
         }
     }
 
     private void initMainScreenId(ExtensionContext context) {
         if (Strings.isNullOrEmpty(this.mainScreenId)) {
-            uiTestAnnotation(context).ifPresent(uiTestWithNestedSupport -> this.mainScreenId = uiTestWithNestedSupport.mainScreenId());
+            uiTestAnnotation(context).ifPresent(uiTest -> this.mainScreenId = uiTest.mainScreenId());
         }
     }
 

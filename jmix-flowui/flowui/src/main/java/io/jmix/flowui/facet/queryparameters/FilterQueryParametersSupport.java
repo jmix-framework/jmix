@@ -24,29 +24,32 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.flowui.component.propertyfilter.PropertyFilter;
+import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-@Component("flowui_QueryParametersSupport")
-public class QueryParametersSupport {
+@Component("flowui_FilterQueryParametersSupport")
+public class FilterQueryParametersSupport {
+
+    public static final String SEPARATOR = "_";
 
     protected DataManager dataManager;
     protected MetadataTools metadataTools;
     protected UrlParamSerializer urlParamSerializer;
 
-    public QueryParametersSupport(DataManager dataManager,
-                                  MetadataTools metadataTools,
-                                  UrlParamSerializer urlParamSerializer) {
+    public FilterQueryParametersSupport(DataManager dataManager,
+                                        MetadataTools metadataTools,
+                                        UrlParamSerializer urlParamSerializer) {
         this.dataManager = dataManager;
         this.metadataTools = metadataTools;
         this.urlParamSerializer = urlParamSerializer;
     }
 
-    public Object parseValue(MetaClass metaClass, String property, PropertyFilter.Operation.Type operationType, String valueString) {
+    public Object parseValue(MetaClass metaClass, String property,
+                             Operation.Type operationType, String valueString) {
         MetaPropertyPath mpp = metadataTools.resolveMetaPropertyPath(metaClass, property);
 
         switch (operationType) {
@@ -70,7 +73,7 @@ public class QueryParametersSupport {
 
         } else if (mppRange.isEnum()) {
             Class<?> type = mppRange.asEnumeration().getJavaClass();
-            String enumString = convertToEnumName(valueString);
+            String enumString = restoreSeparatorValue(valueString);
             return urlParamSerializer.deserialize(type, enumString);
 
         } else if (mppRange.isClass()) {
@@ -95,17 +98,17 @@ public class QueryParametersSupport {
             Object id = EntityValues.getId(value);
             return id != null ? id : "";
         } else if (value instanceof Enum) {
-            return convertFromEnumName(((Enum<?>) value).name());
+            return replaceSeparatorValue(((Enum<?>) value).name());
         } else {
             return value;
         }
     }
 
-    public String convertToEnumName(String value) {
-        return value.replace("-", "_");
+    public String replaceSeparatorValue(String value) {
+        return value.replace(SEPARATOR, "-");
     }
 
-    public String convertFromEnumName(String value) {
-        return value.replace("_", "-");
+    public String restoreSeparatorValue(String value) {
+        return value.replace("-", "_");
     }
 }

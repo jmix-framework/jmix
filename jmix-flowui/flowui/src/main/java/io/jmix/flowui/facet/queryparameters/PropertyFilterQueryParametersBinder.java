@@ -32,11 +32,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static io.jmix.flowui.facet.queryparameters.FilterQueryParametersSupport.SEPARATOR;
+
 public class PropertyFilterQueryParametersBinder extends AbstractQueryParametersBinder {
 
     public static final String NAME = "propertyFilter";
-
-    public static final String SETTINGS_SEPARATOR = "_";
 
     protected PropertyFilter<?> filter;
 
@@ -44,7 +44,7 @@ public class PropertyFilterQueryParametersBinder extends AbstractQueryParameters
 
     protected ApplicationContext applicationContext;
     protected UrlParamSerializer urlParamSerializer;
-    protected QueryParametersSupport queryParametersSupport;
+    protected FilterQueryParametersSupport filterQueryParametersSupport;
 
     public PropertyFilterQueryParametersBinder(PropertyFilter<?> filter,
                                                UrlParamSerializer urlParamSerializer,
@@ -58,7 +58,7 @@ public class PropertyFilterQueryParametersBinder extends AbstractQueryParameters
     }
 
     protected void autowireDependencies() {
-        queryParametersSupport = applicationContext.getBean(QueryParametersSupport.class);
+        filterQueryParametersSupport = applicationContext.getBean(FilterQueryParametersSupport.class);
     }
 
     protected void initComponent(PropertyFilter<?> filter) {
@@ -77,11 +77,12 @@ public class PropertyFilterQueryParametersBinder extends AbstractQueryParameters
 
     protected void updateQueryParameters() {
         String serializedOperation = urlParamSerializer
-                .serialize(queryParametersSupport.convertFromEnumName(filter.getOperation().name().toLowerCase()));
+                .serialize(filterQueryParametersSupport.replaceSeparatorValue(
+                        filter.getOperation().name().toLowerCase()));
         String serializedValue = urlParamSerializer
-                .serialize(queryParametersSupport.getSerializableValue(filter.getValue()));
+                .serialize(filterQueryParametersSupport.getSerializableValue(filter.getValue()));
 
-        String paramValue = serializedOperation + SETTINGS_SEPARATOR + serializedValue;
+        String paramValue = serializedOperation + SEPARATOR + serializedValue;
         QueryParameters queryParameters = QueryParameters
                 .simple(ImmutableMap.of(getParameter(), paramValue));
 
@@ -93,20 +94,28 @@ public class PropertyFilterQueryParametersBinder extends AbstractQueryParameters
         Map<String, List<String>> parameters = queryParameters.getParameters();
         if (parameters.containsKey(getParameter())) {
             String serializedSettings = parameters.get(getParameter()).get(0);
-            String[] values = serializedSettings.split(SETTINGS_SEPARATOR);
-            if (values.length < 1) {
+
+            int separatorIndex = serializedSettings.indexOf(SEPARATOR);
+            if (separatorIndex == -1) {
                 throw new IllegalStateException("Can't parse property filter settings: " + serializedSettings);
             }
 
+            String operationString = serializedSettings.substring(0, separatorIndex);
             Operation operation = urlParamSerializer.deserialize(Operation.class,
-                    queryParametersSupport.convertToEnumName(values[0]));
-            filter.setOperation(operation);
+                    filterQueryParametersSupport.restoreSeparatorValue(operationString));
 
-            if (values.length == 2
-                    && !Strings.isNullOrEmpty(values[1])) {
+            if (filter.isOperationEditable()) {
+                filter.setOperation(operation);
+            } else if (filter.getOperation() != operation) {
+                // ignore the value if operations are not equal
+                return;
+            }
+
+            String valueString = serializedSettings.substring(separatorIndex + 1);
+            if (!Strings.isNullOrEmpty(valueString)) {
                 MetaClass entityMetaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
-                Object parsedValue = queryParametersSupport.parseValue(entityMetaClass,
-                        Objects.requireNonNull(filter.getProperty()), operation.getType(), values[1]);
+                Object parsedValue = filterQueryParametersSupport.parseValue(entityMetaClass,
+                        Objects.requireNonNull(filter.getProperty()), operation.getType(), valueString);
                 //noinspection unchecked,rawtypes
                 ((PropertyFilter) filter).setValue(parsedValue);
             }

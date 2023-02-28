@@ -16,7 +16,6 @@
 
 package navigation
 
-
 import io.jmix.flowui.view.navigation.UrlParamSerializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -24,15 +23,7 @@ import test_support.entity.sec.RoleType
 import test_support.spec.FlowuiTestSpecification
 
 import java.sql.Time
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.Month
-import java.time.OffsetDateTime
-import java.time.OffsetTime
-import java.time.ZoneOffset
-
-import static io.jmix.core.common.util.URLEncodeUtils.encodeUtf8
+import java.time.*
 
 @SpringBootTest
 class UrlParamSerializerTest extends FlowuiTestSpecification {
@@ -88,26 +79,26 @@ class UrlParamSerializerTest extends FlowuiTestSpecification {
 
         then: "ok"
 
-        bigDecimalSerialized == encodeUtf8('10.5')
-        bigIntegerSerialized == encodeUtf8('1234567890')
-        boolSerialized == encodeUtf8('true')
-        charSerialized == encodeUtf8('j')
-        dateSerialized == encodeUtf8('1672516800000')
-        dateTimeSerialized == encodeUtf8('1672516800000')
-        doubleSerialized == encodeUtf8('3.14159265358979')
-        enumSerialized == encodeUtf8('READONLY')
-        floatSerialized == encodeUtf8('3.14')
-        intSerialized == encodeUtf8('42')
-        localDateSerialized == encodeUtf8('2023-01-01')
-        localDateTimeSerialized == encodeUtf8('2023-01-01T12-15-17')
-        localTimeSerialized == encodeUtf8('12-15-17')
-        longSerialized == encodeUtf8('12041961')
-        offsetDateTimeSerialized == encodeUtf8('2023-01-01T12-15-17+0100')
-        offsetTimeSerialized == encodeUtf8('12-15-17+0100')
-        shortSerialized == encodeUtf8('42')
-        stringSerialized == encodeUtf8(stringValue)
-        timeSerialized == encodeUtf8('29717000')
-        uuidSerialized == encodeUtf8('79c08841-8063-4f85-86d0-25b3410a857c')
+        bigDecimalSerialized == '10.5'
+        bigIntegerSerialized == '1234567890'
+        boolSerialized == 'true'
+        charSerialized == 'j'
+        dateSerialized == '1672516800000'
+        dateTimeSerialized == '1672516800000'
+        doubleSerialized == '3.14159265358979'
+        enumSerialized == 'READONLY'
+        floatSerialized == '3.14'
+        intSerialized == '42'
+        localDateSerialized == '2023-01-01'
+        localDateTimeSerialized == '2023-01-01T12-15-17'
+        localTimeSerialized == '12-15-17'
+        longSerialized == '12041961'
+        offsetDateTimeSerialized == '2023-01-01T12-15-17+0100'
+        offsetTimeSerialized == '12-15-17+0100'
+        shortSerialized == '42'
+        stringSerialized == stringValue
+        timeSerialized == '29717000'
+        uuidSerialized == '79c08841-8063-4f85-86d0-25b3410a857c'
     }
 
     def "Negative serialization cases"() {

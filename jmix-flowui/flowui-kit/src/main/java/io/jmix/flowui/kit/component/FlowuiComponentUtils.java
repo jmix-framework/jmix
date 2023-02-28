@@ -104,7 +104,7 @@ public final class FlowuiComponentUtils {
     }
 
     private static <T> ItemLabelGenerator<T> createItemLabelGenerator(Map<T, String> items) {
-        return item -> items.getOrDefault(item, String.valueOf(item));
+        return item -> items.getOrDefault(item, item != null ? String.valueOf(item) : "");
     }
 
     public static boolean isAutoSize(@Nullable String size) {

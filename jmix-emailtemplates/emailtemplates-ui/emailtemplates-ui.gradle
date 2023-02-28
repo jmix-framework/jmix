@@ -24,7 +24,7 @@ dependencies {
     api project(':emailtemplates')
 
     api project(':ui')
-    api project(':grapesjs')
+    api project(':grapesjs-ui')
     api project(':reports-ui')
 
     compileOnly project(':security-ui')

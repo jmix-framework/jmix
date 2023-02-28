@@ -18,7 +18,7 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.grapesjs'
-archivesBaseName = 'jmix-grapesjs'
+archivesBaseName = 'jmix-grapesjs-ui'
 
 dependencies {
     api project(':ui')

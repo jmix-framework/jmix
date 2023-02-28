@@ -18,10 +18,10 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.grapesjs'
-archivesBaseName = 'jmix-grapesjs-starter'
+archivesBaseName = 'jmix-grapesjs-ui-starter'
 
 dependencies {
-    api project(':grapesjs')
+    api project(':grapesjs-ui')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

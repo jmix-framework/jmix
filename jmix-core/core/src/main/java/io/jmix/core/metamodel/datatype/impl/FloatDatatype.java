@@ -17,7 +17,6 @@
 package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.metamodel.annotation.DatatypeDef;
-import io.jmix.core.metamodel.annotation.Ddl;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -37,7 +36,6 @@ import java.util.Locale;
         decimalSeparator = ".",
         groupingSeparator = ""
 )
-@Ddl("FLOAT")
 public class FloatDatatype extends NumberDatatype implements Datatype<Float> {
 
     @Autowired

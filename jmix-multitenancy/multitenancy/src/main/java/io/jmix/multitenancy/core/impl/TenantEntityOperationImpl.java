@@ -16,6 +16,9 @@
 
 package io.jmix.multitenancy.core.impl;
 
+import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlans;
+import io.jmix.core.Id;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.EntityValues;
@@ -40,9 +43,11 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
     private static final Logger log = LoggerFactory.getLogger(TenantEntityOperationImpl.class);
 
     private final Metadata metadata;
+    private final DataManager dataManager;
 
-    public TenantEntityOperationImpl(Metadata metadata) {
+    public TenantEntityOperationImpl(Metadata metadata, DataManager dataManager, FetchPlans fetchPlans) {
         this.metadata = metadata;
+        this.dataManager = dataManager;
     }
 
     /**
@@ -79,9 +84,11 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
     public void setTenant(Object entity, String tenantId) {
         MetaProperty property = findTenantProperty(entity.getClass());
         if (property != null) {
-            EntityValues.setValue(entity, property.getName(), tenantId);
+            Object reloadedEntity = dataManager.load(Id.of(entity))
+                    .fetchPlanProperties(property.getName())
+                    .one();
+
+            EntityValues.setValue(reloadedEntity, property.getName(), tenantId);
         }
     }
-
-
 }

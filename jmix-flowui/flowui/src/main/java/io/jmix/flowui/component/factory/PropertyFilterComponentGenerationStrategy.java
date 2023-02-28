@@ -146,7 +146,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
     @SuppressWarnings("unchecked")
     protected Component createUnaryField(ComponentGenerationContext context) {
         JmixSelect<Boolean> component = uiComponents.create(JmixSelect.class);
-        // TODO: gg, style or theme?
+        component.setEmptySelectionAllowed(true);
         component.addClassName(UNARY_FIELD_CLASS_NAME);
 
         FlowuiComponentUtils.setItemsMap(component, ImmutableMap.of(

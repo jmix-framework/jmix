@@ -19,7 +19,6 @@ package io.jmix.flowui.view.navigation;
 import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.common.util.URLEncodeUtils;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -158,43 +157,35 @@ public class UrlParamSerializer {
     }
 
     protected String serializeDateTime(Date value) {
-        String stringValue = String.valueOf(value.getTime());
-        return URLEncodeUtils.encodeUtf8(stringValue);
+        return String.valueOf(value.getTime());
     }
 
     protected String serializeLocalDate(LocalDate value) {
-        String stringValue = TEMPORAL_DATE_FORMATTER.format(value);
-        return URLEncodeUtils.encodeUtf8(stringValue);
+        return TEMPORAL_DATE_FORMATTER.format(value);
     }
 
     protected String serializeLocalDateTime(LocalDateTime value) {
-        String stringValue = TEMPORAL_DATE_TIME_FORMATTER.format(value);
-        return URLEncodeUtils.encodeUtf8(stringValue);
+        return TEMPORAL_DATE_TIME_FORMATTER.format(value);
     }
 
     protected String serializeDate(java.sql.Date value) {
-        String stringValue = String.valueOf(value.getTime());
-        return URLEncodeUtils.encodeUtf8(stringValue);
+        return String.valueOf(value.getTime());
     }
 
     protected String serializeOffsetDateTime(OffsetDateTime value) {
-        String stringValue = TEMPORAL_OFFSET_DATE_TIME_FORMATTER.format(value);
-        return URLEncodeUtils.encodeUtf8(stringValue);
+        return TEMPORAL_OFFSET_DATE_TIME_FORMATTER.format(value);
     }
 
     protected String serializeLocalTime(LocalTime value) {
-        String stringValue = TEMPORAL_TIME_FORMATTER.format(value);
-        return URLEncodeUtils.encodeUtf8(stringValue);
+        return TEMPORAL_TIME_FORMATTER.format(value);
     }
 
     protected String serializeOffsetTime(OffsetTime value) {
-        String stringValue = TEMPORAL_OFFSET_TIME_FORMATTER.format(value);
-        return URLEncodeUtils.encodeUtf8(stringValue);
+        return TEMPORAL_OFFSET_TIME_FORMATTER.format(value);
     }
 
     protected String serializeTime(Time value) {
-        String stringValue = String.valueOf(value.getTime());
-        return URLEncodeUtils.encodeUtf8(stringValue);
+        return String.valueOf(value.getTime());
     }
 
     protected String serializeEnum(Enum<?> value) {
@@ -202,13 +193,13 @@ public class UrlParamSerializer {
     }
 
     protected String serializePrimitive(Object value) {
-        return URLEncodeUtils.encodeUtf8(value.toString());
+        return value.toString();
     }
 
     protected String serializeUuid(UUID value) {
         return navigationProperties.isUseCrockfordUuidEncoder()
                 ? CrockfordUuidEncoder.encode(value)
-                : URLEncodeUtils.encodeUtf8(value.toString());
+                : value.toString();
     }
 
     protected String serializeComposite(Object value) {
@@ -246,68 +237,66 @@ public class UrlParamSerializer {
         checkNotNullArgument(type, "Unable to deserialize value without its type");
         checkNotNullArgument(serializedValue, "Unable to deserialize null value");
 
-        String decoded = URLEncodeUtils.decodeUtf8(serializedValue);
-
         try {
             if (String.class == type) {
-                return ((T) parseString(decoded));
+                return ((T) parseString(serializedValue));
 
             } else if (BigDecimal.class == type) {
-                return ((T) parseBigDecimal(decoded));
+                return ((T) parseBigDecimal(serializedValue));
 
             } else if (BigInteger.class == type) {
-                return ((T) parseBigInteger(decoded));
+                return ((T) parseBigInteger(serializedValue));
 
             } else if (Boolean.class == type) {
-                return ((T) parseBoolean(decoded));
+                return ((T) parseBoolean(serializedValue));
 
             } else if (Character.class == type) {
-                return ((T) parseCharacter(decoded));
+                return ((T) parseCharacter(serializedValue));
 
             } else if (java.sql.Date.class == type) {
-                return ((T) parseDate(decoded));
+                return ((T) parseDate(serializedValue));
 
             } else if (Date.class == type) {
-                return ((T) parseDateTime(decoded));
+                return ((T) parseDateTime(serializedValue));
 
             } else if (Double.class == type) {
-                return ((T) parseDouble(decoded));
+                return ((T) parseDouble(serializedValue));
 
             } else if (Float.class == type) {
-                return ((T) parseFloat(decoded));
+                return ((T) parseFloat(serializedValue));
 
             } else if (Integer.class == type) {
-                return ((T) parseInteger(decoded));
+                return ((T) parseInteger(serializedValue));
 
             } else if (LocalDate.class == type) {
-                return ((T) parseLocalDate(decoded));
+                return ((T) parseLocalDate(serializedValue));
 
             } else if (LocalDateTime.class == type) {
-                return ((T) parseLocalDateTime(decoded));
+                return ((T) parseLocalDateTime(serializedValue));
 
             } else if (LocalTime.class == type) {
-                return ((T) parseLocalTime(decoded));
+                return ((T) parseLocalTime(serializedValue));
 
             } else if (Long.class == type) {
-                return ((T) parseLong(decoded));
+                return ((T) parseLong(serializedValue));
 
             } else if (OffsetDateTime.class == type) {
-                return ((T) parseOffsetDateTime(decoded));
+                return ((T) parseOffsetDateTime(serializedValue));
 
             } else if (OffsetTime.class == type) {
-                return ((T) parseOffsetTime(decoded));
+                return ((T) parseOffsetTime(serializedValue));
 
             } else if (Short.class == type) {
-                return ((T) parseShort(decoded));
+                return ((T) parseShort(serializedValue));
 
             } else if (Time.class == type) {
-                return ((T) parseTime(decoded));
+                return ((T) parseTime(serializedValue));
 
             } else if (UUID.class == type) {
                 return ((T) parseUuid(serializedValue));
 
             } else if (Enum.class.isAssignableFrom(type)) {
-                return parseEnum(type, decoded);
+                return parseEnum(type, serializedValue);
 
             } else if (Entity.class.isAssignableFrom(type)
                     && metadataTools.isJpaEmbeddable(type)) {
@@ -407,22 +396,21 @@ public class UrlParamSerializer {
         return Long.valueOf(stringValue);
     }
 
-    protected UUID parseUuid(String serializedValue) {
+    protected UUID parseUuid(String stringValue) {
         if (navigationProperties.isUseCrockfordUuidEncoder()) {
-            return CrockfordUuidEncoder.decode(serializedValue);
+            return CrockfordUuidEncoder.decode(stringValue);
         } else {
-            String decoded = URLEncodeUtils.decodeUtf8(serializedValue);
-            return UUID.fromString(decoded);
+            return UUID.fromString(stringValue);
         }
     }
 
-    protected <T> T parseComposite(Class<T> type, String serializedValue) {
+    protected <T> T parseComposite(Class<T> type, String stringValue) {
         T composite = metadata.create(type);
 
         MetaClass metaClass = metadata.getClass(composite);
         Collection<MetaProperty> properties = metaClass.getProperties();
 
-        Map<String, String> propertyNameValueMap = Arrays.stream(serializedValue.split("&"))
+        Map<String, String> propertyNameValueMap = Arrays.stream(stringValue.split("&"))
                 .collect(Collectors.toMap(this::propertyNameMapper, this::propertyValueMapper));
 
         for (MetaProperty property : properties) {

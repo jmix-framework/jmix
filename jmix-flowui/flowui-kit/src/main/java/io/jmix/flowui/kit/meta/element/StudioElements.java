@@ -257,6 +257,7 @@ public interface StudioElements {
     @StudioElement(
             name = "Tooltip",
             classFqn = "com.vaadin.flow.component.shared.Tooltip",
+            icon = "io/jmix/flowui/kit/meta/icon/element/tooltip.svg",
             xmlElement = "tooltip",
             target = {"io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.kit.component.button.JmixButton",

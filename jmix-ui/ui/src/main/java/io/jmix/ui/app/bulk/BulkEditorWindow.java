@@ -414,7 +414,7 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
 
             if (!managedFields.containsKey(fqn)
                     && !managedEmbeddedProperties.contains(fqn)
-                    && isNotTenantMetaProperty(metaProperty)) {
+                    && !isTenantMetaProperty(metaProperty)) {
                 continue;
             }
 
@@ -779,8 +779,8 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
         }
     }
 
-    public boolean isNotTenantMetaProperty(MetaProperty metaProperty) {
-        return metaProperty.getAnnotatedElement().getAnnotation(TenantId.class) == null;
+    protected boolean isTenantMetaProperty(MetaProperty metaProperty) {
+        return metaProperty.getAnnotatedElement().getAnnotation(TenantId.class) != null;
     }
 
     protected static class ManagedField {

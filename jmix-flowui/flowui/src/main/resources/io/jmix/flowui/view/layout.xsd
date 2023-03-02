@@ -2498,6 +2498,7 @@
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="tooltipText" type="resourceString"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
                 <xs:attribute name="allowedCharPattern" type="xs:string"/>

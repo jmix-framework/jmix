@@ -18,11 +18,12 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
-import test_support.entity.sales.Status;
+import test_support.entity.sales.ProductTag;
 
 @Route("multi-select-combo-box-view")
 @ViewController("MultiSelectComboBoxView")
@@ -30,6 +31,9 @@ import test_support.entity.sales.Status;
 public class MultiSelectComboBoxView extends StandardView {
 
     @ViewComponent
-    public JmixMultiSelectComboBox<Status> multiSelectComboBoxId;
+    public JmixMultiSelectComboBox<ProductTag> multiSelectComboBoxId;
+
+    @ViewComponent
+    public CollectionContainer<ProductTag> productTagsDc;
 
 }

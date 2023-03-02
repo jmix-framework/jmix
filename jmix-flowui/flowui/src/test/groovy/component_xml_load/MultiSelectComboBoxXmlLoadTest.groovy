@@ -22,8 +22,8 @@ import io.jmix.core.DataManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
-import test_support.entity.sales.Customer
-import test_support.entity.sales.Status
+import test_support.entity.sales.Product
+import test_support.entity.sales.ProductTag
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -39,21 +39,36 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
     void setup() {
         registerViewBasePackages("component_xml_load.screen")
 
-        def customer = dataManager.create(Customer.class)
+        ProductTag productTag1 = dataManager.create(ProductTag.class)
+                .with(true) { it.name = "Product tag 1" } as ProductTag
+        ProductTag productTag2 = dataManager.create(ProductTag.class)
+                .with(true) { it.name = "Product tag 2" } as ProductTag
+        ProductTag productTag3 = dataManager.create(ProductTag.class)
+                .with(true) { it.name = "Product tag 3" } as ProductTag
+        ProductTag productTag4 = dataManager.create(ProductTag.class)
+                .with(true) { it.name = "Product tag 4" } as ProductTag
 
-        dataManager.save(customer)
+        Product product = dataManager.create(Product.class)
+                .with(true) {
+                    it.setName("Product")
+                    it.setTags(List.of(productTag1, productTag2))
+                }
+
+        dataManager.save(productTag1, productTag2, productTag3, productTag4, product)
     }
 
     @Override
     void cleanup() {
-        jdbcTemplate.execute("delete from TEST_CUSTOMER")
+        jdbcTemplate.execute("delete from TEST_PRODUCT_TAG_LINK")
+        jdbcTemplate.execute("delete from TEST_PRODUCT_TAG")
+        jdbcTemplate.execute("delete from TEST_PRODUCT")
     }
 
     def "Load multiSelectComboBox component from XML"() {
         when: "Open the MultiSelectComboBoxView"
         def multiSelectComboBoxView = navigateToView(MultiSelectComboBoxView)
+        def productTagsDc = multiSelectComboBoxView.productTagsDc
         def multiSelectComboBox = multiSelectComboBoxView.multiSelectComboBoxId
-        multiSelectComboBox.setValue(Status.NOT_OK, Status.OK)
 
         then: "MultiSelectComboBox attributes will be loaded"
         verifyAll(multiSelectComboBox) {
@@ -83,10 +98,11 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             getTitle() == "titleString"
-            getTypedValue().containsAll([Status.OK, Status.NOT_OK])
-            getValue().containsAll([Status.OK, Status.NOT_OK])
             visible
             width == "100px"
+
+            getSelectedItems().size() == getValue().size()
+            productTagsDc.getItems().containsAll(multiSelectComboBox.getGenericDataView().getItems().toArray())
 
             tooltip.text == "tooltipText"
             tooltip.focusDelay == 1

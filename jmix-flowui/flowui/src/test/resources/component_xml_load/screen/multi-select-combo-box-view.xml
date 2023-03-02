@@ -17,12 +17,17 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view">
     <data readOnly="true">
-        <collection id="customerDc"
-                    class="test_support.entity.sales.Customer">
+        <instance id="productDc"
+                  class="test_support.entity.sales.Product">
             <fetchPlan extends="_base"/>
-            <loader id="customerDl">
+            <loader/>
+        </instance>
+        <collection id="productTagsDc"
+                    class="test_support.entity.sales.ProductTag">
+            <fetchPlan extends="_base"/>
+            <loader id="productTagsDl">
                 <query>
-                    <![CDATA[select e from test_Customer e]]>
+                    <![CDATA[select e from test_ProductTag e]]>
                 </query>
             </loader>
         </collection>
@@ -43,8 +48,9 @@
                              height="50px"
                              helperText="helperTextString"
                              invalid="false"
-                             dataContainer="customerDc"
-                             property="status"
+                             dataContainer="productDc"
+                             property="tags"
+                             itemsContainer="productTagsDc"
                              label="labelString"
                              maxHeight="55px"
                              maxWidth="120px"

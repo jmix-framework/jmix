@@ -19,9 +19,11 @@ package io.jmix.flowui.component.multiselectcombobox;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.function.SerializableBiPredicate;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
@@ -32,8 +34,10 @@ import io.jmix.flowui.component.delegate.CollectionFieldDelegate;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
+import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.HasTitle;
+import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -45,7 +49,7 @@ import java.util.*;
 public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
         implements SupportsValueSource<Collection<V>>, SupportsValidation<Collection<V>>,
         SupportsTypedValue<JmixMultiSelectComboBox<V>, ComponentValueChangeEvent<MultiSelectComboBox<V>, Set<V>>, Collection<V>, Set<V>>,
-        SupportsDataProvider<V>, SupportsItemsEnum<V>, HasRequired, HasTitle,
+        SupportsDataProvider<V>, SupportsItemsEnum<V>, SupportsFilterableItemsContainer<V>, HasRequired, HasTitle,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -119,6 +123,23 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
     @Override
     public void setItems(Class<V> itemsEnum) {
         dataViewDelegate.setItems(itemsEnum);
+    }
+
+    @Override
+    public void setItems(CollectionContainer<V> container) {
+        ComboBox.ItemFilter<V> itemFilter = (item, filterText) ->
+                generateLabel(item).toLowerCase(getLocale())
+                        .contains(filterText.toLowerCase(getLocale()));
+
+        setItems(container, itemFilter);
+    }
+
+    @Override
+    public void setItems(CollectionContainer<V> container,
+                         SerializableBiPredicate<V, String> itemFilter) {
+        ContainerDataProvider<V> dataProvider = new ContainerDataProvider<>(container);
+        setDataProvider(dataProvider, filterText ->
+                item -> itemFilter.test(item, filterText));
     }
 
     @Override

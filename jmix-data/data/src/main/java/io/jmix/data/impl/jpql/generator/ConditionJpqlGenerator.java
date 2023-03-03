@@ -18,6 +18,7 @@ package io.jmix.data.impl.jpql.generator;
 
 import com.google.common.base.Strings;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
@@ -74,6 +75,12 @@ public class ConditionJpqlGenerator {
             childContext.setEntityAlias(generationContext.getEntityAlias());
             childContext.setEntityName(generationContext.getEntityName());
             childContext.setValueProperties(generationContext.getValueProperties());
+
+            Condition condition = childContext.getCondition();
+            if (condition instanceof PropertyCondition && ((PropertyCondition) condition).isKeyValueProperty()){
+                childContext.setSelectedExpressions(generationContext.getSelectedExpressions());
+            }
+
             copyGenerationContext(childContext);
         }
     }

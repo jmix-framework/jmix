@@ -42,4 +42,25 @@ public interface AppSettingsTools {
      * @return non-system properties' names for given {@code clazz}
      */
     <T extends AppSettingsEntity> List<String> getPropertyNames(Class<T> clazz);
+
+
+    /**
+     * Returns property describe for provided {@code propertyName} and {@code clazz} based on value of one of the AppSettingsDefault annotation.
+     *
+     * @param clazz        class that extends {@link AppSettingsEntity}
+     * @param propertyName property name for which default value should be calculated
+     * @return value by describe of provided {@code propertyName}
+     */
+    @Nullable
+    String getPropertyDescribe(Class<? extends AppSettingsEntity> clazz, String propertyName);
+
+    /**
+     * Returns property order for provided {@code propertyName} and {@code clazz} based on value of one of the AppSettingsDefault annotation.
+     *
+     * @param clazz        class that extends {@link AppSettingsEntity}
+     * @param propertyName property name for which default value should be calculated
+     * @return value by order of provided {@code propertyName}
+     */
+    int getPropertyOrder(Class<? extends AppSettingsEntity> clazz, String propertyName);
+
 }

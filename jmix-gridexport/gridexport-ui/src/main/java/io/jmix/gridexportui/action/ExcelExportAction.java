@@ -1,10 +1,10 @@
 package io.jmix.gridexportui.action;
 
+import io.jmix.gridexportui.exporter.excel.ExcelExporter;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
-import io.jmix.gridexportui.exporter.excel.ExcelExporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -43,10 +43,5 @@ public class ExcelExportAction extends ExportAction {
     @Override
     public String getIcon() {
         return icons.get(JmixIcon.EXCEL_ACTION);
-    }
-
-    @Override
-    protected boolean isExportAllEnabled() {
-        return true;
     }
 }

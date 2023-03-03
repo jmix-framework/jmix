@@ -143,28 +143,20 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
                 Grid.class.getSimpleName() + " exporter is not defined");
 
         Action exportAllAction = createExportAllAction();
-        Action exportSelectedAction = createExportSelectedAction();
         Action exportCurrentPageAction = createCurrentPageAction();
+        Action exportSelectedAction = createExportSelectedAction();
 
         List<Action> actions = new ArrayList<>();
 
-        if (isExportAllEnabled()) {
-            actions.add(exportAllAction);
-        }
-
+        actions.add(exportAllAction);
         actions.add(exportCurrentPageAction);
-
         if (!target.getSelectedItems().isEmpty()) {
             actions.add(exportSelectedAction);
         }
 
         actions.add(new DialogAction(DialogAction.Type.CANCEL));
 
-        if (actions.contains(exportAllAction)) {
-            exportAllAction.setVariant(ActionVariant.PRIMARY);
-        } else {
-            exportCurrentPageAction.setVariant(ActionVariant.PRIMARY);
-        }
+        exportAllAction.setVariant(ActionVariant.PRIMARY);
 
         dialogs.createOptionDialog()
                 .withHeader(getMessage("exportConfirmationDialog.header"))
@@ -185,10 +177,6 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
 
     protected String getMessage(String id) {
         return messages.getMessage(getClass(), id);
-    }
-
-    protected boolean isExportAllEnabled() {
-        return false;
     }
 
     protected Action createExportSelectedAction() {

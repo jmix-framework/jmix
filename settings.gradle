@@ -68,6 +68,8 @@ includeProject('email', 'jmix-email/email')
 includeProject('email-starter', 'jmix-email/email-starter')
 includeProject('email-ui', 'jmix-email/email-ui')
 includeProject('email-ui-starter', 'jmix-email/email-ui-starter')
+includeProject('email-flowui', 'jmix-email/email-flowui')
+includeProject('email-flowui-starter', 'jmix-email/email-flowui-starter')
 
 includeProject('emailtemplates', 'jmix-emailtemplates/emailtemplates')
 includeProject('emailtemplates-starter', 'jmix-emailtemplates/emailtemplates-starter')

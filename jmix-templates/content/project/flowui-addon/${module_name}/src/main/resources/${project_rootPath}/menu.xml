@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <menu-config xmlns="http://jmix.io/schema/flowui/menu">
 
-    <menu id="sample" title="msg://${project_rootPackage}/menu.addon"/>
+    <menu id="${project_id}" title="msg://${project_rootPackage}/menu.addon"/>
 
 </menu-config>

@@ -82,6 +82,4 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
             EntityValues.setValue(entity, property.getName(), tenantId);
         }
     }
-
-
 }

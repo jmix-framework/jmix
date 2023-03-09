@@ -31,6 +31,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.*;
@@ -648,13 +649,16 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected void entityChangeListener(
             AbstractField.ComponentValueChangeEvent<ComboBox<MetaClass>, MetaClass> valueChangeEvent) {
         getUI().ifPresent(ui -> {
-            String queryParamValue = valueChangeEvent.getValue().getName();
+            MetaClass metaClass = valueChangeEvent.getValue();
 
-            routeSupport.setQueryParameter(
-                    ui,
-                    QUERY_PARAM_ENTITY,
-                    queryParamValue
-            );
+            if (metaClass == null) {
+                getContent().remove(entitiesDataGrid);
+
+                //to remove the current entityName param and restore showMode param
+                routeSupport.setQueryParameters(ui, QueryParameters.of(QUERY_PARAM_MODE, showMode.getValue().getId()));
+            } else {
+                routeSupport.setQueryParameter(ui, QUERY_PARAM_ENTITY, metaClass.getName());
+            }
         });
     }
 

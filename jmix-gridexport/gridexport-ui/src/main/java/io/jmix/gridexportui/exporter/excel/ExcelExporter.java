@@ -43,7 +43,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -95,13 +94,12 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
     protected GridExportProperties gridExportProperties;
 
-    protected AllRecordsExporter allRecordsExporter;
+    protected ExcelAllRecordsExporter excelAllRecordsExporter;
 
-    @Autowired
     public ExcelExporter(GridExportProperties gridExportProperties,
-                         AllRecordsExporter allRecordsExporter) {
+                         ExcelAllRecordsExporter excelAllRecordsExporter) {
         this.gridExportProperties = gridExportProperties;
-        this.allRecordsExporter = allRecordsExporter;
+        this.excelAllRecordsExporter = excelAllRecordsExporter;
     }
 
     protected void createWorkbookWithSheet() {
@@ -244,7 +242,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 }
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(table instanceof TreeTable);
-                allRecordsExporter.exportAll(tableItems, (context) -> {
+                excelAllRecordsExporter.exportAll(tableItems, (context) -> {
                     createRowForEntityInstance(table, columns, 0, context.getRowNumber(), context.getEntity(),
                             addLevelPadding);
                 }, this::checkIsRowNumberExceed);
@@ -363,7 +361,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 }
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(dataGrid instanceof TreeDataGrid);
-                allRecordsExporter.exportAll(dataGrid.getItems(), (context) -> {
+                excelAllRecordsExporter.exportAll(dataGrid.getItems(), (context) -> {
                     createDataGridRowForEntityInstance(dataGrid, columns, 0, context.getRowNumber(),
                             context.getEntity(), addLevelPadding);
                 }, this::checkIsRowNumberExceed);

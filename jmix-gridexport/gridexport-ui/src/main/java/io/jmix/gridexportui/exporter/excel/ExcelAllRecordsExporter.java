@@ -16,18 +16,14 @@
 
 package io.jmix.gridexportui.exporter.excel;
 
-import io.jmix.core.*;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.querycondition.Condition;
-import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.core.DataManager;
+import io.jmix.core.Id;
+import io.jmix.core.LoadContext;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.gridexportui.GridExportProperties;
+import io.jmix.gridexportui.exporter.AbstractAllRecordsExporter;
 import io.jmix.ui.component.data.DataUnit;
-import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.HasLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -37,24 +33,20 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Class is used by {@link io.jmix.gridexportui.action.ExportAction} for exporting all records from the database.
+ * Class is used by {@link io.jmix.gridexportui.action.ExportAction} for exporting all records from the database to XLSX format.
  */
-@Component("grdexp_AllRecordsExporter")
-public class AllRecordsExporter {
+@Component("grdexp_ExcelAllRecordsExporter")
+public class ExcelAllRecordsExporter extends AbstractAllRecordsExporter {
 
-    private MetadataTools metadataTools;
+    protected DataManager dataManager;
+    protected PlatformTransactionManager platformTransactionManager;
+    protected GridExportProperties gridExportProperties;
 
-    private DataManager dataManager;
-
-    private PlatformTransactionManager platformTransactionManager;
-
-    private GridExportProperties gridExportProperties;
-
-    public AllRecordsExporter(MetadataTools metadataTools,
-                              DataManager dataManager,
-                              PlatformTransactionManager platformTransactionManager,
-                              GridExportProperties gridExportProperties) {
-        this.metadataTools = metadataTools;
+    public ExcelAllRecordsExporter(MetadataTools metadataTools,
+                                   DataManager dataManager,
+                                   PlatformTransactionManager platformTransactionManager,
+                                   GridExportProperties gridExportProperties) {
+        super(metadataTools);
         this.dataManager = dataManager;
         this.platformTransactionManager = platformTransactionManager;
         this.gridExportProperties = gridExportProperties;
@@ -70,65 +62,32 @@ public class AllRecordsExporter {
      * @param excelRowCreator function that is being applied to each loaded instance
      * @param excelRowChecker function that checks for exceeding the maximum number of rows in XLSX format
      */
+    @SuppressWarnings("rawtypes")
     protected void exportAll(DataUnit dataUnit, Consumer<RowCreationContext> excelRowCreator,
                              Predicate<Integer> excelRowChecker) {
-        if (!(dataUnit instanceof ContainerDataUnit)) {
-            throw new RuntimeException("Cannot export all rows. DataUnit must be an instance of ContainerDataUnit.");
-        }
-        CollectionContainer collectionContainer = ((ContainerDataUnit) dataUnit).getContainer();
-        if (!(collectionContainer instanceof HasLoader)) {
-            throw new RuntimeException("Cannot export all rows. Collection container must be an instance of HasLoader.");
-        }
+        Preconditions.checkNotNullArgument(excelRowCreator, "Cannot export all rows. ExcelRowCreator can't be null");
+        Preconditions.checkNotNullArgument(excelRowChecker, "Cannot export all rows. ExcelRowChecker can't be null");
 
-        DataLoader dataLoader = ((HasLoader) collectionContainer).getLoader();
-        if (!(dataLoader instanceof CollectionLoader)) {
-            throw new RuntimeException("Cannot export all rows. Data loader must be an instance of CollectionLoader.");
-        }
-
-        LoadContext loadContext = ((CollectionLoader) dataLoader).createLoadContext();
+        LoadContext loadContext = generateLoadContext(dataUnit);
         LoadContext.Query query = loadContext.getQuery();
-        if (query == null) {
-            throw new RuntimeException("Cannot export all rows. Query in LoadContext is null.");
-        }
 
-        MetaClass entityMetaClass = loadContext.getEntityMetaClass();
-        if (metadataTools.hasCompositePrimaryKey(entityMetaClass)) {
-            throw new RuntimeException("Cannot export all rows. Exporting of entities with composite key is not supported.");
-        }
-
-        //sort data by primary key. Next batch is loaded using the condition that compares the last primary key value
-        //from the previous batch.
-        String primaryKeyName = metadataTools.getPrimaryKeyName(entityMetaClass);
-        if (primaryKeyName == null) {
-            throw new RuntimeException("Cannot find a primary key for a meta class " + entityMetaClass.getName());
-        }
-        query.setSort(Sort.by(primaryKeyName));
-
-        Condition condition = loadContext.getQuery().getCondition();
-
-        LogicalCondition wrappingCondition = new LogicalCondition(LogicalCondition.Type.AND);
-        if (condition != null) {
-            //in case there is no filter on the screen a condition in the query may be null
-            wrappingCondition.add(condition);
-        }
-        String lastLoadedPkConditionParameterName = "lastLoadedPkValue";
-        PropertyCondition lastPkCondition = PropertyCondition.createWithParameterName(primaryKeyName,
-                PropertyCondition.Operation.GREATER, lastLoadedPkConditionParameterName);
-        wrappingCondition.add(lastPkCondition);
-        loadContext.getQuery().setCondition(wrappingCondition);
+        Preconditions.checkNotNullArgument(query, "Cannot export all rows. %s can't be null",
+                LoadContext.Query.class.getSimpleName());
 
         int loadBatchSize = gridExportProperties.getExportAllBatchSize();
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+
         transactionTemplate.executeWithoutResult(transactionStatus -> {
             long count = dataManager.getCount(loadContext);
             int rowNumber = 0;
             boolean initialLoading = true;
             Object lastLoadedPkValue = null;
+
             for (int firstResult = 0; firstResult < count && !excelRowChecker.test(rowNumber); firstResult += loadBatchSize) {
                 if (initialLoading) {
                     initialLoading = false;
                 } else {
-                    query.setParameter(lastLoadedPkConditionParameterName, lastLoadedPkValue);
+                    query.setParameter(LAST_LOADED_PK_CONDITION_PARAMETER_NAME, lastLoadedPkValue);
                 }
                 query.setMaxResults(loadBatchSize);
 
@@ -140,6 +99,7 @@ public class AllRecordsExporter {
 
                     excelRowCreator.accept(new RowCreationContext(entity, rowNumber));
                 }
+
                 Object lastEntity = entities.get(entities.size() - 1);
                 lastLoadedPkValue = Id.of(lastEntity).getValue();
             }

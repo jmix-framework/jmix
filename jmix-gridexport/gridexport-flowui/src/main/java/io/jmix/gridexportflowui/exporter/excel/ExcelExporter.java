@@ -37,6 +37,7 @@ import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.gridexportflowui.GridExportProperties;
+import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,10 @@ import java.util.stream.Collectors;
 
 import static io.jmix.flowui.download.DownloadFormat.XLSX;
 
+/**
+ * Use this class to export {@link DataGrid} into Excel format.
+ * <br>Just create an instance of {@link ExportAction} with <code>withExporter</code> method.
+ */
 @Component("grdexp_ExcelExporter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
@@ -91,15 +96,15 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     protected GridExportProperties gridExportProperties;
 
-    protected AllRecordsExporter allRecordsExporter;
+    protected ExcelAllRecordsExporter excelAllRecordsExporter;
 
     protected Notifications notifications;
 
     public ExcelExporter(GridExportProperties gridExportProperties,
-                         AllRecordsExporter allRecordsExporter,
+                         ExcelAllRecordsExporter excelAllRecordsExporter,
                          Notifications notifications) {
         this.gridExportProperties = gridExportProperties;
-        this.allRecordsExporter = allRecordsExporter;
+        this.excelAllRecordsExporter = excelAllRecordsExporter;
         this.notifications = notifications;
     }
 
@@ -219,7 +224,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(dataGrid instanceof TreeDataGrid);
 
-                allRecordsExporter.exportAll(
+                excelAllRecordsExporter.exportAll(
                         ((ListDataComponent<?>) dataGrid).getItems(),
                         (context) -> createDataGridRowForEntityInstance(
                                 dataGrid,

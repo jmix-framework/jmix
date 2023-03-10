@@ -17,15 +17,18 @@
 package io.jmix.gridexportui.action;
 
 import io.jmix.core.Messages;
+import io.jmix.gridexportui.exporter.ExportMode;
+import io.jmix.gridexportui.exporter.TableExporter;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.ListAction;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.DataGrid;
+import io.jmix.ui.component.Table;
 import io.jmix.ui.download.Downloader;
-import io.jmix.gridexportui.exporter.ExportMode;
-import io.jmix.gridexportui.exporter.TableExporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -41,7 +44,6 @@ import java.util.function.Function;
  * <p>
  * Should be defined for a list component ({@code Table}, {@code DataGrid}, etc.) in a screen XML descriptor.
  */
-@SuppressWarnings("rawtypes")
 public class ExportAction extends ListAction implements ApplicationContextAware {
 
     public static final String ID = "export";
@@ -164,20 +166,14 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
         exportCurrentPageAction.setCaption(messages.getMessage(ExportMode.CURRENT_PAGE));
 
         List<AbstractAction> actions = new ArrayList<>();
-        if (isExportAllEnabled()) {
-            actions.add(exportAllAction);
-        }
+        actions.add(exportAllAction);
         actions.add(exportCurrentPageAction);
         if (!target.getSelected().isEmpty()) {
             actions.add(exportSelectedAction);
         }
         actions.add(new DialogAction(DialogAction.Type.CANCEL));
 
-        if (actions.contains(exportAllAction)) {
-            exportAllAction.setPrimary(true);
-        } else {
-            exportCurrentPageAction.setPrimary(true);
-        }
+        exportAllAction.setPrimary(true);
 
         Dialogs dialogs = ComponentsHelper.getScreenContext(target).getDialogs();
 
@@ -201,9 +197,5 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
 
     protected String getMessage(String id) {
         return messages.getMessage(getClass(), id);
-    }
-
-    protected boolean isExportAllEnabled() {
-        return false;
     }
 }

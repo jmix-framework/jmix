@@ -18,6 +18,7 @@ package io.jmix.ui.app.bulk;
 
 import com.google.common.base.Strings;
 import io.jmix.core.*;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -412,7 +413,8 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
             String fqn = generateFqn(metaProperty, null);
 
             if (!managedFields.containsKey(fqn)
-                    && !managedEmbeddedProperties.contains(fqn)) {
+                    && !managedEmbeddedProperties.contains(fqn)
+                    && !isTenantMetaProperty(metaProperty)) {
                 continue;
             }
 
@@ -775,6 +777,10 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
                 errors.add(e.getDetailsMessage());
             }
         }
+    }
+
+    protected boolean isTenantMetaProperty(MetaProperty metaProperty) {
+        return metaProperty.getAnnotatedElement().getAnnotation(TenantId.class) != null;
     }
 
     protected static class ManagedField {

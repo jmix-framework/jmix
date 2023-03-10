@@ -19,15 +19,14 @@ package io.jmix.gridexportui.exporter.json;
 import com.google.gson.*;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.gridexportui.action.ExportAction;
+import io.jmix.gridexportui.exporter.AbstractTableExporter;
+import io.jmix.gridexportui.exporter.ExportMode;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.DownloadFormat;
 import io.jmix.ui.download.Downloader;
-import io.jmix.gridexportui.action.ExportAction;
-import io.jmix.gridexportui.exporter.AbstractTableExporter;
-import io.jmix.gridexportui.exporter.ExportMode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -45,10 +44,15 @@ import java.util.stream.Collectors;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JsonExporter extends AbstractTableExporter<JsonExporter> {
 
-    @Autowired
     protected Metadata metadata;
+    protected JsonAllRecordsExporter jsonAllRecordsExporter;
 
     protected Function<GsonBuilder, GsonBuilder> gsonConfigurer;
+
+    public JsonExporter(Metadata metadata, JsonAllRecordsExporter jsonAllRecordsExporter) {
+        this.metadata = metadata;
+        this.jsonAllRecordsExporter = jsonAllRecordsExporter;
+    }
 
     /**
      * Configure Gson builder for export
@@ -63,31 +67,24 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
 
     @Override
     public void exportTable(Downloader downloader, Table<Object> table, ExportMode exportMode) {
-        Collection<Object> items = getItems(table, exportMode);
         Gson gson = createGsonForSerialization();
         JsonArray jsonElements = new JsonArray();
-        for (Object entity : items) {
-            JsonObject jsonObject = new JsonObject();
-            for (Table.Column<Object> column : table.getColumns()) {
-                if (column.getId() instanceof MetaPropertyPath) {
-                    MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();
-                    Object columnValue = getColumnValue(table, column, entity);
-                    if (columnValue != null) {
-                        jsonObject.add(propertyPath.getMetaProperty().getName(),
-                                new JsonPrimitive(formatValue(columnValue, (MetaPropertyPath) column.getId())));
-                    } else {
-                        jsonObject.add(propertyPath.getMetaProperty().getName(),
-                                JsonNull.INSTANCE);
-                    }
-                } else {
-                    Object columnValue = getColumnValue(table, column, entity);
-                    if (columnValue != null) {
-                        jsonObject.add(column.getStringId(), new JsonPrimitive(formatValue(columnValue)));
-                    }
-                }
+
+        if (exportMode == ExportMode.ALL_ROWS) {
+            jsonAllRecordsExporter.exportAll(table.getItems(),
+                    entity -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(table, entity);
+                        jsonElements.add(jsonObject);
+                    });
+        } else {
+            Collection<Object> items = getItems(table, exportMode);
+
+            for (Object entity : items) {
+                JsonObject jsonObject = createJsonObjectFromEntity(table, entity);
+                jsonElements.add(jsonObject);
             }
-            jsonElements.add(jsonObject);
         }
+
         downloader.download(new ByteArrayDataProvider(gson.toJson(jsonElements).getBytes(StandardCharsets.UTF_8),
                         uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir()),
                 getFileName(table) + ".json", DownloadFormat.JSON);
@@ -95,27 +92,72 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
 
     @Override
     public void exportDataGrid(Downloader downloader, DataGrid<Object> dataGrid, ExportMode exportMode) {
-        Collection<Object> items = getItems(dataGrid, exportMode);
         Gson gson = createGsonForSerialization();
         JsonArray jsonElements = new JsonArray();
-        for (Object entity : items) {
-            JsonObject jsonObject = new JsonObject();
-            for (DataGrid.Column<Object> column : dataGrid.getColumns()) {
-                Object columnValue = getColumnValue(dataGrid, column, entity);
-                MetaPropertyPath metaPropertyPath = metadata.getClass(entity).getPropertyPath(column.getId());
-                if (columnValue != null) {
-                    jsonObject.add(column.getId(),
-                            new JsonPrimitive(formatValue(columnValue, metaPropertyPath)));
-                } else {
-                    jsonObject.add(column.getId(),
-                            JsonNull.INSTANCE);
-                }
+
+        if (exportMode == ExportMode.ALL_ROWS) {
+            jsonAllRecordsExporter.exportAll(dataGrid.getItems(),
+                    entity -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                        jsonElements.add(jsonObject);
+                    });
+        } else {
+            Collection<Object> items = getItems(dataGrid, exportMode);
+
+            for (Object entity : items) {
+                JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                jsonElements.add(jsonObject);
             }
-            jsonElements.add(jsonObject);
         }
+
         downloader.download(new ByteArrayDataProvider(gson.toJson(jsonElements).getBytes(StandardCharsets.UTF_8),
                         uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir()),
                 getFileName(dataGrid) + ".json", DownloadFormat.JSON);
+    }
+
+    protected JsonObject createJsonObjectFromEntity(DataGrid<Object> dataGrid, Object entity) {
+        JsonObject jsonObject = new JsonObject();
+
+        for (DataGrid.Column<Object> column : dataGrid.getColumns()) {
+            Object columnValue = getColumnValue(dataGrid, column, entity);
+            MetaPropertyPath metaPropertyPath = metadata.getClass(entity).getPropertyPath(column.getId());
+
+            if (columnValue != null) {
+                jsonObject.add(column.getId(),
+                        new JsonPrimitive(formatValue(columnValue, metaPropertyPath)));
+            } else {
+                jsonObject.add(column.getId(),
+                        JsonNull.INSTANCE);
+            }
+        }
+
+        return jsonObject;
+    }
+
+    protected JsonObject createJsonObjectFromEntity(Table<Object> table, Object entity) {
+        JsonObject jsonObject = new JsonObject();
+
+        for (Table.Column<Object> column : table.getColumns()) {
+            if (column.getId() instanceof MetaPropertyPath) {
+                MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();
+                Object columnValue = getColumnValue(table, column, entity);
+
+                if (columnValue != null) {
+                    jsonObject.add(propertyPath.getMetaProperty().getName(),
+                            new JsonPrimitive(formatValue(columnValue, (MetaPropertyPath) column.getId())));
+                } else {
+                    jsonObject.add(propertyPath.getMetaProperty().getName(),
+                            JsonNull.INSTANCE);
+                }
+            } else {
+                Object columnValue = getColumnValue(table, column, entity);
+                if (columnValue != null) {
+                    jsonObject.add(column.getStringId(), new JsonPrimitive(formatValue(columnValue)));
+                }
+            }
+        }
+
+        return jsonObject;
     }
 
     protected Gson createGsonForSerialization() {
@@ -127,11 +169,15 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
     }
 
     protected Collection<Object> getItems(Table<Object> table, ExportMode exportMode) {
-        return ExportMode.CURRENT_PAGE == exportMode ? table.getItems().getItems() : table.getSelected();
+        return ExportMode.CURRENT_PAGE == exportMode
+                ? table.getItems().getItems()
+                : table.getSelected();
     }
 
     protected Collection<Object> getItems(DataGrid<Object> dataGrid, ExportMode exportMode) {
-        return ExportMode.CURRENT_PAGE == exportMode ? dataGrid.getItems().getItems().collect(Collectors.toList()) : dataGrid.getSelected();
+        return ExportMode.CURRENT_PAGE == exportMode
+                ? dataGrid.getItems().getItems().collect(Collectors.toList())
+                : dataGrid.getSelected();
     }
 
     @Override

@@ -50,9 +50,4 @@ public class ExcelExportAction extends ExportAction {
         super.setApplicationContext(applicationContext);
         withExporter(ExcelExporter.class);
     }
-
-    @Override
-    protected boolean isExportAllEnabled() {
-        return true;
-    }
 }

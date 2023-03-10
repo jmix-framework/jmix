@@ -20,6 +20,7 @@ import com.google.gson.*;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
@@ -29,7 +30,6 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -48,10 +48,15 @@ import java.util.stream.Collectors;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 
-    @Autowired
     protected Metadata metadata;
+    protected JsonAllRecordsExporter jsonAllRecordsExporter;
 
     protected Function<GsonBuilder, GsonBuilder> gsonConfigurer;
+
+    public JsonExporter(Metadata metadata, JsonAllRecordsExporter jsonAllRecordsExporter) {
+        this.metadata = metadata;
+        this.jsonAllRecordsExporter = jsonAllRecordsExporter;
+    }
 
     /**
      * Configure Gson builder for export
@@ -66,26 +71,22 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 
     @Override
     public void exportDataGrid(Downloader downloader, Grid<Object> dataGrid, ExportMode exportMode) {
-        Collection<Object> items = getItems(dataGrid, exportMode);
         Gson gson = createGsonForSerialization();
         JsonArray jsonElements = new JsonArray();
 
-        for (Object entity : items) {
-            JsonObject jsonObject = new JsonObject();
+        if (exportMode == ExportMode.ALL_ROWS) {
+            jsonAllRecordsExporter.exportAll(((ListDataComponent<?>) dataGrid).getItems(),
+                    entity -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                        jsonElements.add(jsonObject);
+                    });
+        } else {
+            Collection<Object> items = getItems(dataGrid, exportMode);
 
-            for (Grid.Column<Object> column : dataGrid.getColumns()) {
-                Object columnValue = getColumnValue(dataGrid, column, entity);
-                MetaPropertyPath metaPropertyPath = metadata.getClass(entity).getPropertyPath(column.getKey());
-
-                if (columnValue != null) {
-                    jsonObject.add(column.getKey(),
-                            new JsonPrimitive(formatValue(columnValue, metaPropertyPath)));
-                } else {
-                    jsonObject.add(column.getKey(), JsonNull.INSTANCE);
-                }
+            for (Object entity : items) {
+                JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                jsonElements.add(jsonObject);
             }
-
-            jsonElements.add(jsonObject);
         }
 
         ByteArrayDownloadDataProvider downloadDataProvider = new ByteArrayDownloadDataProvider(
@@ -95,6 +96,24 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
         );
 
         downloader.download(downloadDataProvider, getFileName(dataGrid) + ".json", DownloadFormat.JSON);
+    }
+
+    protected JsonObject createJsonObjectFromEntity(Grid<Object> dataGrid, Object entity) {
+        JsonObject jsonObject = new JsonObject();
+
+        for (Grid.Column<Object> column : dataGrid.getColumns()) {
+            Object columnValue = getColumnValue(dataGrid, column, entity);
+            MetaPropertyPath metaPropertyPath = metadata.getClass(entity).getPropertyPath(column.getKey());
+
+            if (columnValue != null) {
+                jsonObject.add(column.getKey(),
+                        new JsonPrimitive(formatValue(columnValue, metaPropertyPath)));
+            } else {
+                jsonObject.add(column.getKey(), JsonNull.INSTANCE);
+            }
+        }
+
+        return jsonObject;
     }
 
     protected Gson createGsonForSerialization() {

@@ -76,12 +76,16 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 
         if (exportMode == ExportMode.ALL_ROWS) {
             jsonAllRecordsExporter.exportAll(((ListDataComponent<?>) dataGrid).getItems(),
-                    entity -> addJsonObjectFromDataGrid(dataGrid, entity, jsonElements));
+                    entity -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                        jsonElements.add(jsonObject);
+                    });
         } else {
             Collection<Object> items = getItems(dataGrid, exportMode);
 
             for (Object entity : items) {
-                addJsonObjectFromDataGrid(dataGrid, entity, jsonElements);
+                JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                jsonElements.add(jsonObject);
             }
         }
 
@@ -94,7 +98,7 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
         downloader.download(downloadDataProvider, getFileName(dataGrid) + ".json", DownloadFormat.JSON);
     }
 
-    protected void addJsonObjectFromDataGrid(Grid<Object> dataGrid, Object entity, JsonArray jsonElements) {
+    protected JsonObject createJsonObjectFromEntity(Grid<Object> dataGrid, Object entity) {
         JsonObject jsonObject = new JsonObject();
 
         for (Grid.Column<Object> column : dataGrid.getColumns()) {
@@ -109,7 +113,7 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
             }
         }
 
-        jsonElements.add(jsonObject);
+        return jsonObject;
     }
 
     protected Gson createGsonForSerialization() {

@@ -72,12 +72,16 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
 
         if (exportMode == ExportMode.ALL_ROWS) {
             jsonAllRecordsExporter.exportAll(table.getItems(),
-                    entity -> addJsonObjectFromTable(table, entity, jsonElements));
+                    entity -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(table, entity);
+                        jsonElements.add(jsonObject);
+                    });
         } else {
             Collection<Object> items = getItems(table, exportMode);
 
             for (Object entity : items) {
-                addJsonObjectFromTable(table, entity, jsonElements);
+                JsonObject jsonObject = createJsonObjectFromEntity(table, entity);
+                jsonElements.add(jsonObject);
             }
         }
 
@@ -93,12 +97,16 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
 
         if (exportMode == ExportMode.ALL_ROWS) {
             jsonAllRecordsExporter.exportAll(dataGrid.getItems(),
-                    entity -> addJsonObjectFromDataGrid(dataGrid, entity, jsonElements));
+                    entity -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                        jsonElements.add(jsonObject);
+                    });
         } else {
             Collection<Object> items = getItems(dataGrid, exportMode);
 
             for (Object entity : items) {
-                addJsonObjectFromDataGrid(dataGrid, entity, jsonElements);
+                JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                jsonElements.add(jsonObject);
             }
         }
 
@@ -107,7 +115,7 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
                 getFileName(dataGrid) + ".json", DownloadFormat.JSON);
     }
 
-    protected void addJsonObjectFromDataGrid(DataGrid<Object> dataGrid, Object entity, JsonArray jsonElements) {
+    protected JsonObject createJsonObjectFromEntity(DataGrid<Object> dataGrid, Object entity) {
         JsonObject jsonObject = new JsonObject();
 
         for (DataGrid.Column<Object> column : dataGrid.getColumns()) {
@@ -123,10 +131,10 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
             }
         }
 
-        jsonElements.add(jsonObject);
+        return jsonObject;
     }
 
-    protected void addJsonObjectFromTable(Table<Object> table, Object entity, JsonArray jsonElements) {
+    protected JsonObject createJsonObjectFromEntity(Table<Object> table, Object entity) {
         JsonObject jsonObject = new JsonObject();
 
         for (Table.Column<Object> column : table.getColumns()) {
@@ -149,7 +157,7 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
             }
         }
 
-        jsonElements.add(jsonObject);
+        return jsonObject;
     }
 
     protected Gson createGsonForSerialization() {

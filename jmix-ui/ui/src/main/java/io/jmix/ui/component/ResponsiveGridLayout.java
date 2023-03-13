@@ -48,7 +48,7 @@ import java.util.Objects;
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px")
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%")
         }
 )
 public interface ResponsiveGridLayout extends Component, Component.BelongToFrame, HasComponents,

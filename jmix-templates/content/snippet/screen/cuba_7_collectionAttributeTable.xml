@@ -37,7 +37,7 @@ def oneToOneAnn = attribute.getAnnotation('OneToOne')
 def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim()) || attribute.hasAnnotation('JoinTable')
 %>
 <%if (createGroupBox) {%><groupBox id="${nestedCollectionDatasourceProperty}Box" caption="msg://${ownerEntity.packageName}/${ownerEntity.className}.${nestedCollectionDatasourceProperty}"><%}%>
-<table id="${nestedCollectionDatasourceProperty}Table" dataContainer="${nestedCollectionDatasourceProperty}Dc" width="100%" height="200px">
+<table id="${nestedCollectionDatasourceProperty}Table" dataContainer="${nestedCollectionDatasourceProperty}Dc" width="100%" height="100%">
     <% if (!isManyToMany || isOwnerAttr) {%>
     <actions>
         <action id="${addActionName}" type="${addActionName}"/>

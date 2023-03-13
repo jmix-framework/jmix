@@ -246,13 +246,39 @@ public interface StudioElements {
             xmlElement = "pagination",
             target = {"io.jmix.flowui.facet.QueryParametersFacet"},
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "firstResultParam", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "maxResultsParam", type = StudioPropertyType.STRING)
             }
     )
     void pagination();
+
+    @StudioElement(
+            name = "GenericFilter",
+            classFqn = "io.jmix.flowui.facet.queryparameters.GenericFilterQueryParametersBinder",
+            xmlElement = "genericFilter",
+            target = {"io.jmix.flowui.facet.QueryParametersFacet"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "conditionParam", type = StudioPropertyType.STRING)
+            }
+    )
+    void genericFilter();
+
+    @StudioElement(
+            name = "PropertyFilter",
+            classFqn = "io.jmix.flowui.facet.queryparameters.PropertyFilterQueryParametersBinder",
+            xmlElement = "propertyFilter",
+            target = {"io.jmix.flowui.facet.QueryParametersFacet"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
+            }
+    )
+    void propertyFilter();
 
     @StudioElement(
             name = "Tooltip",

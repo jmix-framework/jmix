@@ -152,8 +152,10 @@ dependencies {
 
         api "io.jmix.email:jmix-email:$freeVersion"
         api "io.jmix.email:jmix-email-ui:$freeVersion"
+        api "io.jmix.email:jmix-email-flowui:$freeVersion"
         api "io.jmix.email:jmix-email-starter:$freeVersion"
         api "io.jmix.email:jmix-email-ui-starter:$freeVersion"
+        api "io.jmix.email:jmix-email-flowui-starter:$freeVersion"
 
         api "io.jmix.emailtemplates:jmix-emailtemplates:$freeVersion"
         api "io.jmix.emailtemplates:jmix-emailtemplates-ui:$freeVersion"

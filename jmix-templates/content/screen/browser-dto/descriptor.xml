@@ -29,14 +29,8 @@ def tableXml = api.processSnippet('dto_table.xml',
         <%if(presentation) {%><presentations auto="true"/><%}%>
     </facets>
     <actions>
-        <action id="lookupSelectAction"
-                caption="msg:///actions.Select"
-                icon="LOOKUP_OK"
-                primary="true"
-                shortcut="\${COMMIT_SHORTCUT}"/>
-        <action id="lookupCancelAction"
-                caption="msg:///actions.Cancel"
-                icon="LOOKUP_CANCEL"/>
+        <action id="lookupSelectAction" type="lookupSelect"/>
+        <action id="lookupCancelAction" type="lookupDiscard"/>
     </actions>
     <dialogMode height="600"
                 width="800"/>

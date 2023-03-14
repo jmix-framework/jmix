@@ -60,17 +60,10 @@ if (createModalVbox) {
         <%if(jmixUiDataStarter) {%><screenSettings id="settingsFacet" auto="true"/><%}%>
     </facets>
     <actions>
-        <action id="windowCommitAndClose"<%if(extendedWindowActions) {%>
-                caption="msg:///actions.SaveClose"<%} else {%>caption="msg:///actions.Ok"<%}%>
-                icon="EDITOR_OK"
-                primary="true"
-                shortcut="\${COMMIT_SHORTCUT}"/><%if(extendedWindowActions) {%>
-        <action id="windowCommit"
-                caption="msg:///actions.Save"
-                icon="SAVE"/><%}%>
-        <action id="windowClose"
-                caption="msg:///actions.Close"
-                icon="EDITOR_CANCEL"/>
+        <action id="windowCommitAndClose" type="editorCommitAndClose"/><%if(extendedWindowActions) {%>
+                caption="msg:///actions.SaveClose"/>
+        <action id="windowCommit" type="editorCommit"/><%}%>
+        <action id="windowClose" type="editorClose"/>
     </actions>
     <%if (modalDialog) {%>
     <dialogMode height="AUTO"

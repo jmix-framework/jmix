@@ -16,6 +16,8 @@
 
 package io.jmix.ui.screen;
 
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.BaseAction;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -382,6 +384,14 @@ public abstract class Screen implements FrameOwner {
     protected boolean isSameScreen(Screen openedScreen) {
         return this.getClass() == openedScreen.getClass()
                 && this.getId().equals(openedScreen.getId());
+    }
+
+    /**
+     * @param action target action
+     * @return true if action is {@link io.jmix.ui.action.Action.ScreenAction}
+     */
+    protected boolean isScreenAction(BaseAction action) {
+        return Action.ScreenAction.class.isAssignableFrom(action.getClass());
     }
 
     /**

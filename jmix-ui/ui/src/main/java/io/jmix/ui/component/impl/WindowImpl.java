@@ -24,8 +24,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.FrameContext;
-import io.jmix.ui.component.WindowContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.screen.Screen;
@@ -37,10 +35,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -343,7 +341,7 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
     @Override
     public String getMaxWidth() {
         return HtmlAttributesExtension.get(component)
-                        .getCssProperty(CSS.MAX_WIDTH);
+                .getCssProperty(CSS.MAX_WIDTH);
     }
 
     @Override
@@ -356,7 +354,7 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
     @Override
     public String getMinHeight() {
         return HtmlAttributesExtension.get(component)
-                        .getCssProperty(CSS.MIN_HEIGHT);
+                .getCssProperty(CSS.MIN_HEIGHT);
     }
 
     @Override
@@ -376,17 +374,10 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
 
     @Override
     public void addAction(Action action) {
-        checkNotNullArgument(action, "action must be non null");
-
-        actionsHolder.addAction(action);
-        actionsPermissions.apply(action);
-
-        // force update of actions on client side
-        if (action.getShortcutCombination() != null) {
-            component.markAsDirty();
-        }
+        addAction(action, getActions().size());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void addAction(Action action, int index) {
         checkNotNullArgument(action, "action must be non null");
@@ -397,6 +388,10 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
         // force update of actions on client side
         if (action.getShortcutCombination() != null) {
             component.markAsDirty();
+        }
+
+        if (Action.ScreenAction.class.isAssignableFrom(action.getClass())) {
+            ((Action.ScreenAction<Screen>) action).setTarget(getFrameOwner());
         }
     }
 
@@ -644,7 +639,7 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
 
         if (ownComponents.contains(childComponent)) {
             com.vaadin.ui.Component composition = childComponent.unwrapComposition(com.vaadin.ui.Component.class);
-            int existingIndex = ((AbstractOrderedLayout)getContainer()).getComponentIndex(composition);
+            int existingIndex = ((AbstractOrderedLayout) getContainer()).getComponentIndex(composition);
             if (index > existingIndex) {
                 index--;
             }
@@ -654,7 +649,7 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
 
         com.vaadin.ui.ComponentContainer container = getContainer();
         com.vaadin.ui.Component vComponent = childComponent.unwrapComposition(com.vaadin.ui.Component.class);
-        ((AbstractOrderedLayout)container).addComponent(vComponent, index);
+        ((AbstractOrderedLayout) container).addComponent(vComponent, index);
 
         com.vaadin.ui.Alignment alignment = WrapperUtils.toVaadinAlignment(childComponent.getAlignment());
         ((AbstractOrderedLayout) container).setComponentAlignment(vComponent, alignment);

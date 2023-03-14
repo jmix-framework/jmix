@@ -185,7 +185,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     }
 
     @Override
-    protected LookupComponent<Object> getLookupComponent() {
+    public LookupComponent<Object> getLookupComponent() {
         return entitiesTable;
     }
 

@@ -23,6 +23,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.pessimisticlocking.LockManager;
 import io.jmix.ui.accesscontext.UiEntityContext;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.action.list.EditAction;
@@ -199,8 +200,15 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
      * Initializes OK/Cancel editor buttons.
      */
     protected void initOkCancelActions() {
-        ((BaseAction) getWindow().getActionNN("save")).withHandler(actionPerformedEvent -> saveChanges());
-        ((BaseAction) getWindow().getActionNN("cancel")).withHandler(actionPerformedEvent -> discardChanges());
+        BaseAction saveAction = ((BaseAction) getWindow().getActionNN("save"));
+        if (!isScreenAction(saveAction)) {
+            saveAction.addActionPerformedListener(this::saveChanges);
+        }
+
+        BaseAction cancelAction = ((BaseAction) getWindow().getActionNN("cancel"));
+        if (!isScreenAction(saveAction)) {
+            cancelAction.addActionPerformedListener(this::discardChanges);
+        }
     }
 
     /**
@@ -273,7 +281,7 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
         if (editBox instanceof ShortcutNotifier) {
             ((ShortcutNotifier) editBox).addShortcutAction(
                     new ShortcutAction(new KeyCombination(KeyCombination.Key.ESCAPE),
-                            shortcutTriggeredEvent -> discardChanges()));
+                            shortcutTriggeredEvent -> discardChanges(null)));
         }
     }
 
@@ -384,13 +392,15 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
 
     /**
      * Method invoked when clicking on the Ok button after editing an existing or creating a new record.
+     *
+     * @return Result of the operation
      */
-    protected void saveChanges() {
+    public OperationResult saveChanges(@SuppressWarnings("unused") @Nullable Action.ActionPerformedEvent event) {
         if (!editing) {
-            return;
+            return OperationResult.fail();
         }
 
-        commitEditorChanges()
+        return commitEditorChanges()
                 .then(() -> {
                     T editedItem = getEditContainer().getItem();
                     if (creating) {
@@ -441,13 +451,16 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
 
     /**
      * Method invoked when clicking the Cancel button, discards changes and disables controls for editing.
+     *
+     * @return Result of the operation
      */
-    protected void discardChanges() {
+    public OperationResult discardChanges(@SuppressWarnings("unused") @Nullable Action.ActionPerformedEvent event) {
         releaseLock();
         getScreenData().getDataContext().evictModified();
         getEditContainer().setItem(null);
 
         T selectedItem = getBrowseContainer().getItemOrNull();
+        OperationResult result = OperationResult.fail();
         if (selectedItem != null) {
             FetchPlan fetchPlan = getEditContainer().getFetchPlan();
 
@@ -457,9 +470,11 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
                     .hints(getEditLoader().getHints())
                     .one();
             getBrowseContainer().replaceItem(reloadedItem);
+            result = OperationResult.success();
         }
 
         disableEditControls();
+        return result;
     }
 
     /**

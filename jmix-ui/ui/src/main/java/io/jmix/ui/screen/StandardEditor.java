@@ -79,22 +79,30 @@ public abstract class StandardEditor<T> extends Screen
         BaseAction commitAndCloseAction = (BaseAction) getWindowActionOptional(WINDOW_COMMIT_AND_CLOSE)
                 .orElseGet(() ->
                         addDefaultCommitAndCloseAction(messages, icons));
-        commitAndCloseAction.addActionPerformedListener(this::commitAndClose);
+        if (!isScreenAction(commitAndCloseAction)) {
+            commitAndCloseAction.addActionPerformedListener(this::commitAndClose);
+        }
 
         BaseAction commitAction = (BaseAction) getWindowActionOptional(WINDOW_COMMIT)
                 .orElseGet(() ->
                         addDefaultCommitAction(messages, icons));
-        commitAction.addActionPerformedListener(this::commit);
+        if (!isScreenAction(commitAction)) {
+            commitAction.addActionPerformedListener(this::commit);
+        }
 
         BaseAction closeAction = (BaseAction) getWindowActionOptional(WINDOW_CLOSE)
                 .orElseGet(() ->
                         addDefaultCloseAction(messages, icons));
-        closeAction.addActionPerformedListener(this::cancel);
+        if (!isScreenAction(closeAction)) {
+            closeAction.addActionPerformedListener(this::cancel);
+        }
 
         BaseAction enableEditingAction = (BaseAction) getWindowActionOptional(ENABLE_EDITING)
                 .orElseGet(() ->
                         addDefaultEnableEditingAction(messages, icons));
-        enableEditingAction.addActionPerformedListener(this::enableEditing);
+        if (!isScreenAction(enableEditingAction)) {
+            enableEditingAction.addActionPerformedListener(this::enableEditing);
+        }
     }
 
     protected Optional<Action> getWindowActionOptional(String id) {
@@ -477,7 +485,7 @@ public abstract class StandardEditor<T> extends Screen
     /**
      * @return true if the editor switched to read-only mode because the entity is locked by another user
      */
-    protected boolean isReadOnlyDueToLock() {
+    public boolean isReadOnlyDueToLock() {
         return readOnlyDueToLock;
     }
 
@@ -551,7 +559,7 @@ public abstract class StandardEditor<T> extends Screen
         ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
         ValidationErrors validationErrors = screenValidation.validateUiComponents(getWindow());
 
-        if(isUiListComponentsValidationEnabled()) {
+        if (isUiListComponentsValidationEnabled()) {
             validationErrors.addAll(screenValidation.validateUiListComponents(getWindow()));
         }
         return validationErrors;
@@ -576,12 +584,12 @@ public abstract class StandardEditor<T> extends Screen
         return getApplicationContext().getBean(EntityStates.class);
     }
 
-    protected void commitAndClose(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {
-        closeWithCommit();
+    public OperationResult commitAndClose(@SuppressWarnings("unused") @Nullable Action.ActionPerformedEvent event) {
+        return closeWithCommit();
     }
 
-    protected void commit(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {
-        commitChanges()
+    public OperationResult commit(@SuppressWarnings("unused") @Nullable Action.ActionPerformedEvent event) {
+        return commitChanges()
                 .then(() -> {
                     commitActionPerformed = true;
                     if (showSaveNotification) {
@@ -610,8 +618,8 @@ public abstract class StandardEditor<T> extends Screen
     }
 
 
-    protected void cancel(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {
-        close(commitActionPerformed ?
+    public OperationResult cancel(@SuppressWarnings("unused") @Nullable Action.ActionPerformedEvent event) {
+        return close(commitActionPerformed ?
                 WINDOW_COMMIT_AND_CLOSE_ACTION : WINDOW_CLOSE_ACTION);
     }
 
@@ -742,7 +750,7 @@ public abstract class StandardEditor<T> extends Screen
      *         }
      *     }
      * </pre>
-     *
+     * <p>
      * Show dialog and resume commit after:
      * <pre>
      *     &#64;Subscribe

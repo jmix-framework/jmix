@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component;
+@NonNullApi
+package io.jmix.flowui.component.multiselectcomboboxpicker;
 
-
-public interface EntityPickerComponent<E> extends PickerComponent<E>, SupportsMetaClass {
-
-    default boolean isMultiValuePicker() {
-        return false;
-    }
-}
+import org.springframework.lang.NonNullApi;

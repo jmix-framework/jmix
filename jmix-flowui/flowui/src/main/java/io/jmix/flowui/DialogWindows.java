@@ -29,6 +29,8 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.builder.*;
 
+import java.util.Collection;
+
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -66,7 +68,7 @@ public class DialogWindows {
      *         })
      *         .open();
      * }</pre>
-     *
+     * <p>
      * Example of opening a view for creating a new entity instance:
      * <pre>{@code
      * DialogWindow<CustomerDetailView> dialogWindow = dialogWindows.detail(this, Customer.class)
@@ -81,7 +83,7 @@ public class DialogWindows {
      *         .open();
      * }</pre>
      *
-     * @param origin calling view
+     * @param origin      calling view
      * @param entityClass edited entity class
      */
     public <E, V extends View<?>> DetailWindowBuilder<E, V> detail(View<?> origin, Class<E> entityClass) {
@@ -95,7 +97,6 @@ public class DialogWindows {
      * Creates a detail view builder to edit an entity selected in the list component.
      *
      * @param listDataComponent the component which provides a selected entity to edit
-     *
      * @see #detail(View, Class)
      */
     public <E, V extends View<?>> DetailWindowBuilder<E, V> detail(ListDataComponent<E> listDataComponent) {
@@ -121,7 +122,6 @@ public class DialogWindows {
      * Creates a detail view builder to edit an entity selected in the picker component.
      *
      * @param picker the component which provides an entity to edit
-     *
      * @see #detail(View, Class)
      */
     @SuppressWarnings("unchecked")
@@ -159,7 +159,7 @@ public class DialogWindows {
      *         .open();
      * }</pre>
      *
-     * @param origin calling view
+     * @param origin      calling view
      * @param entityClass entity class
      */
     public <E, V extends View<?>> LookupWindowBuilder<E, V> lookup(View<?> origin, Class<E> entityClass) {
@@ -173,7 +173,6 @@ public class DialogWindows {
      * Creates a lookup view builder to select entities and add them to the data container of the list component.
      *
      * @param listDataComponent the list component
-     *
      * @see #detail(View, Class)
      */
     public <E, V extends View<?>> LookupWindowBuilder<E, V> lookup(ListDataComponent<E> listDataComponent) {
@@ -194,7 +193,6 @@ public class DialogWindows {
      * Creates a lookup view builder to select an entity and set it to the picker component.
      *
      * @param picker the picker component
-     *
      * @see #detail(View, Class)
      */
     @SuppressWarnings("unchecked")
@@ -209,8 +207,11 @@ public class DialogWindows {
         LookupWindowBuilder<E, V> builder =
                 new LookupWindowBuilder<>(origin, beanType, lookupBuilderProcessor::build);
 
-
-        builder.withField(((HasValue<?, E>) picker));
+        if (picker.isMultiValuePicker()) {
+            builder.withMultiValueField(((HasValue<?, Collection<E>>) picker));
+        } else {
+            builder.withField(((HasValue<?, E>) picker));
+        }
 
         return builder;
     }
@@ -218,7 +219,7 @@ public class DialogWindows {
     /**
      * Creates a view builder.
      *
-     * @param origin calling view
+     * @param origin    calling view
      * @param viewClass opened view class
      */
     public <V extends View<?>> WindowBuilder<V> view(View<?> origin, Class<V> viewClass) {

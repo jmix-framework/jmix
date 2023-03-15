@@ -77,5 +77,51 @@
                      position="BOTTOM"
             />
         </multiSelectComboBox>
+
+        <multiSelectComboBoxPicker id="multiSelectComboBoxPickerId"
+                             allowCustomValue="true"
+                             allowedCharPattern="testPattern"
+                             autofocus="true"
+                             autoOpen="true"
+                             classNames="cssClassName1, cssClassName2"
+                             clearButtonVisible="true"
+                             enabled="true"
+                             errorMessage="errorMessageString"
+                             height="50px"
+                             helperText="helperTextString"
+                             invalid="false"
+                             dataContainer="productDc"
+                             property="tags"
+                             itemsContainer="productTagsDc"
+                             label="labelString"
+                             maxHeight="55px"
+                             maxWidth="120px"
+                             minHeight="40px"
+                             minWidth="80px"
+                             opened="true"
+                             pageSize="20"
+                             placeholder="placeholderString"
+                             readOnly="true"
+                             required="true"
+                             requiredIndicatorVisible="true"
+                             tabIndex="3"
+                             themeNames="small, align-center"
+                             title="titleString"
+                             tooltipText="tooltipTextString"
+                             visible="true"
+                             width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+            <actions>
+                <action id="lookup" type="entity_lookup"/>
+                <action id="clear" type="entity_clear"/>
+            </actions>
+        </multiSelectComboBoxPicker>
     </layout>
 </view>

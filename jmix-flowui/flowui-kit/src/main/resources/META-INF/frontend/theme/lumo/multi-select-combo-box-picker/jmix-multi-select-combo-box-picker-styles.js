@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component;
+import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
 
-public interface EntityPickerComponent<E> extends PickerComponent<E>, SupportsMetaClass {
+const multiSelectComboBoxPicker = css`
+  [part="action-part"] ::slotted(*) {
+    gap: var(--lumo-space-xs);
+    margin-left: var(--lumo-space-xs);
+  }
+  
+  :host([has-actions]) [part="input-field"] {
+    padding-right: var(--lumo-space-xs);
+  }
+`;
 
-    default boolean isMultiValuePicker() {
-        return false;
-    }
-}
+registerStyles('jmix-multi-select-combo-box-picker', multiSelectComboBoxPicker,{
+    moduleId: 'lumo-multi-select-combo-box-picker-styles'
+});

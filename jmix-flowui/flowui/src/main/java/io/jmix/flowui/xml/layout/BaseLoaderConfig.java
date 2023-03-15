@@ -64,6 +64,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("checkbox", CheckboxLoader.class);
         loaders.put("comboBox", ComboBoxLoader.class);
         loaders.put("multiSelectComboBox", MultiSelectComboBoxLoader.class);
+        loaders.put("multiSelectComboBoxPicker", MultiSelectComboBoxPickerLoader.class);
         loaders.put("dropdownButton", DropdownButtonLoader.class);
         loaders.put("comboButton", ComboButtonLoader.class);
         loaders.put("timePicker", TimePickerLoader.class);

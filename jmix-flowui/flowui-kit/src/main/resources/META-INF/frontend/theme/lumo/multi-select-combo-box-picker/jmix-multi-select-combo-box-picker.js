@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,5 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component;
-
-
-public interface EntityPickerComponent<E> extends PickerComponent<E>, SupportsMetaClass {
-
-    default boolean isMultiValuePicker() {
-        return false;
-    }
-}
+import './jmix-multi-select-combo-box-picker-styles.js';
+import '../../../src/multi-select-combo-box-picker/jmix-multi-select-combo-box-picker.js';

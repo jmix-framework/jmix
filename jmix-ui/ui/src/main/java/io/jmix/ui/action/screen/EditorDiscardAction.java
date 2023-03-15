@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(EditorDiscardAction.ID)
 public class EditorDiscardAction<T> extends OperationResultScreenAction<EditorDiscardAction<T>, StandardEditor<T>> {
 
-    public static final String ID = "editorDiscard";
+    public static final String ID = "editor_discard";
 
     public EditorDiscardAction() {
         this(ID);

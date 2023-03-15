@@ -41,7 +41,7 @@ public class LookupSelectAction<T> extends OperationResultScreenAction<LookupSel
 
     private static final Logger log = LoggerFactory.getLogger(LookupSelectAction.class);
 
-    public static final String ID = "lookupSelect";
+    public static final String ID = "lookup_select";
 
     protected Subscription selectionListenerSubscription;
 

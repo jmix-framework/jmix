@@ -88,8 +88,8 @@ def tableXml = api.processSnippet('cuba_7_table.xml',
         <%if(presentation) {%><presentations auto="true"/><%}%>
     </facets>
     <actions>
-        <action id="save" type="masterDetailSave"/>
-        <action id="cancel" type="masterDetailCancel"/>
+        <action id="save" type="masterDetail_commit"/>
+        <action id="cancel" type="masterDetail_cancel"/>
     </actions>
     <dialogMode height="600" width="800"/>
     <layout>

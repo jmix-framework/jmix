@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MasterDetailCancelAction<T>
         extends OperationResultScreenAction<MasterDetailCancelAction<T>, MasterDetailScreen<T>> {
 
-    public static final String ID = "masterDetailCancel";
+    public static final String ID = "masterDetail_cancel";
 
     public MasterDetailCancelAction() {
         this(ID);

@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(LookupDiscardAction.ID)
 public class LookupDiscardAction<T> extends OperationResultScreenAction<LookupDiscardAction<T>, StandardLookup<T>> {
 
-    public static final String ID = "lookupDiscard";
+    public static final String ID = "lookup_discard";
 
     public LookupDiscardAction() {
         this(ID);

@@ -390,7 +390,7 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
             component.markAsDirty();
         }
 
-        if (Action.ScreenAction.class.isAssignableFrom(action.getClass())) {
+        if (action instanceof Action.ScreenAction) {
             ((Action.ScreenAction<Screen>) action).setTarget(getFrameOwner());
         }
     }

@@ -30,18 +30,18 @@ import org.springframework.beans.factory.annotation.Autowired;
         target = "io.jmix.ui.screen.Screen",
         description = "Commits changes in the master detail screen"
 )
-@ActionType(MasterDetailSaveAction.ID)
-public class MasterDetailSaveAction<T>
-        extends OperationResultScreenAction<MasterDetailSaveAction<T>, MasterDetailScreen<T>>
+@ActionType(MasterDetailCommitAction.ID)
+public class MasterDetailCommitAction<T>
+        extends OperationResultScreenAction<MasterDetailCommitAction<T>, MasterDetailScreen<T>>
         implements Action.AdjustWhenScreenReadOnly {
 
-    public static final String ID = "masterDetailSave";
+    public static final String ID = "masterDetail_commit";
 
-    public MasterDetailSaveAction() {
+    public MasterDetailCommitAction() {
         this(ID);
     }
 
-    public MasterDetailSaveAction(String id) {
+    public MasterDetailCommitAction(String id) {
         super(id);
     }
 

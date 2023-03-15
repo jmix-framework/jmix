@@ -14,8 +14,8 @@
         </collection>
     </data>
     <actions>
-        <action id="lookupSelectAction" type="lookupSelect"/>
-        <action id="lookupCancelAction" type="lookupDiscard"/>
+        <action id="lookupSelectAction" type="lookup_select"/>
+        <action id="lookupCancelAction" type="lookup_discard"/>
     </actions>
     <facets>
         <dataLoadCoordinator auto="true"/>

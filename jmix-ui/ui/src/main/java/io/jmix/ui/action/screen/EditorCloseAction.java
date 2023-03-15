@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(EditorCloseAction.ID)
 public class EditorCloseAction<T> extends OperationResultScreenAction<EditorCloseAction<T>, StandardEditor<T>> {
 
-    public static final String ID = "editorClose";
+    public static final String ID = "editor_close";
 
     public EditorCloseAction() {
         this(ID);

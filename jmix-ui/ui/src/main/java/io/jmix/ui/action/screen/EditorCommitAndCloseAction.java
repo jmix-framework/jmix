@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EditorCommitAndCloseAction<T> extends OperationResultScreenAction<EditorCommitAndCloseAction<T>, StandardEditor<T>>
         implements Action.AdjustWhenScreenReadOnly {
 
-    public static final String ID = "editorCommitAndClose";
+    public static final String ID = "editor_commitClose";
 
     public EditorCommitAndCloseAction() {
         this(ID);

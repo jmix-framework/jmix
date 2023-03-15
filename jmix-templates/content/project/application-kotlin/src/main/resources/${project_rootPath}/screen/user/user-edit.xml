@@ -10,8 +10,8 @@
         </instance>
     </data>
     <actions>
-        <action id="windowCommitAndClose" type="editorCommitAndClose"/>
-        <action id="windowClose" type="editorClose"/>
+        <action id="windowCommitAndClose" type="editor_commitClose"/>
+        <action id="windowClose" type="editor_close"/>
     </actions>
     <facets>
         <dataLoadCoordinator auto="true"/>

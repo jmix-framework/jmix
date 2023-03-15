@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EditorCommitAction<T> extends OperationResultScreenAction<EditorCommitAction<T>, StandardEditor<T>>
         implements Action.AdjustWhenScreenReadOnly {
 
-    public static final String ID = "editorCommit";
+    public static final String ID = "editor_commit";
 
     public EditorCommitAction() {
         this(ID);

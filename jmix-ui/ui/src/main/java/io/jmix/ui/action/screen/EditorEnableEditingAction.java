@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(EditorEnableEditingAction.ID)
 public class EditorEnableEditingAction<T> extends OperationResultScreenAction<EditorEnableEditingAction<T>, StandardEditor<T>> {
 
-    public static final String ID = "editorEnableEditing";
+    public static final String ID = "editor_enableEditing";
 
     public EditorEnableEditingAction() {
         this(ID);

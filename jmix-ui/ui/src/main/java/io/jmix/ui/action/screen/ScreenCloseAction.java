@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(ScreenCloseAction.ID)
 public class ScreenCloseAction extends OperationResultScreenAction<ScreenCloseAction, Screen> {
 
-    public static final String ID = "screenClose";
+    public static final String ID = "screen_close";
 
     protected StandardOutcome outcome = StandardOutcome.CLOSE;
 

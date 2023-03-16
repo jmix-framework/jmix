@@ -68,28 +68,6 @@ public class EntityCollectionFieldDelegate<C extends AbstractField<?, Set<T>> & 
         this.metaClass = metaClass;
     }
 
-    public void checkValueType(@Nullable T value) {
-        if (value == null) {
-            return;
-        }
-
-        MetaClass metaClass = getMetaClass();
-        if (metaClass == null) {
-            throw new IllegalStateException("Neither metaClass nor valueSource is set for " +
-                    component.getClass().getSimpleName());
-        }
-
-        Class<?> fieldClass = metaClass.getJavaClass();
-        Class<?> valueClass = value.getClass();
-        if (!fieldClass.isAssignableFrom(valueClass)) {
-            throw new IllegalArgumentException(
-                    String.format("Could not set value with class %s to field with class %s",
-                            fieldClass.getCanonicalName(),
-                            valueClass.getCanonicalName())
-            );
-        }
-    }
-
     @Nullable
     public Collection<V> convertToModel(Set<V> presentationValue, @Nullable Stream<V> options) throws ConversionException {
         Stream<V> items = options == null ? Stream.empty()

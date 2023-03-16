@@ -16,9 +16,12 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.combobox.MultiSelectComboBox
 import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.MultiSelectComboBoxView
 import io.jmix.core.DataManager
+import io.jmix.flowui.component.SupportsMetaClass
+import io.jmix.flowui.kit.component.HasTitle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -68,11 +71,11 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
         when: "Open the MultiSelectComboBoxView"
         def multiSelectComboBoxView = navigateToView(MultiSelectComboBoxView)
         def productTagsDc = multiSelectComboBoxView.productTagsDc
-        def multiSelectComboBox = multiSelectComboBoxView.multiSelectComboBoxId
+        def multiSelectComboBox = multiSelectComboBoxView."${multiSelectComboBoxComponent}Id" as MultiSelectComboBox
 
         then: "MultiSelectComboBox attributes will be loaded"
         verifyAll(multiSelectComboBox) {
-            id.get() == "multiSelectComboBoxId"
+            id.get() == "${multiSelectComboBoxComponent}Id"
             allowCustomValue
             allowedCharPattern == "testPattern"
             autofocus
@@ -97,7 +100,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             requiredIndicatorVisible
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
-            getTitle() == "titleString"
+            (it as HasTitle).getTitle() == "titleString"
             visible
             width == "100px"
 
@@ -112,17 +115,35 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             tooltip.opened
             tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
+
+        where:
+        multiSelectComboBoxComponent << ["multiSelectComboBox", "multiSelectComboBoxPicker"]
+    }
+
+    def "Load multiSelectComboBoxPicker actions from XML"() {
+        when: "Open the MultiSelectComboBoxView"
+        def multiSelectComboBoxView = navigateToView(MultiSelectComboBoxView)
+        def multiSelectComboBoxPicker = multiSelectComboBoxView.multiSelectComboBoxPickerId
+
+        then: "MultiSelectComboBoxPicker actions will be loaded"
+        verifyAll(multiSelectComboBoxPicker) {
+            multiSelectComboBoxPicker.getAction("lookup") != null
+            multiSelectComboBoxPicker.getAction("clear") != null
+        }
     }
 
     def "Load multiSelectComboBox component with metaClass attribute from XML"() {
         when: "Open the MultiSelectComboBoxView"
         def multiSelectComboBoxView = navigateToView(MultiSelectComboBoxView)
-        def multiSelectComboBox = multiSelectComboBoxView.multiSelectComboBoxMetaClassId
+        def multiSelectComboBoxComponent = multiSelectComboBoxView."${multiSelectComboBox}MetaClassId" as MultiSelectComboBox
 
         then: "MultiSelectComboBox attributes will be loaded"
-        verifyAll(multiSelectComboBox) {
-            id.get() == "multiSelectComboBoxMetaClassId"
-            it.metaClass.getJavaClass() == ProductTag.class
+        verifyAll(multiSelectComboBoxComponent) {
+            id.get() == "${multiSelectComboBox}MetaClassId"
+            (it as SupportsMetaClass).metaClass.getJavaClass() == ProductTag.class
         }
+
+        where:
+        multiSelectComboBox << ["multiSelectComboBox", "multiSelectComboBoxPicker"]
     }
 }

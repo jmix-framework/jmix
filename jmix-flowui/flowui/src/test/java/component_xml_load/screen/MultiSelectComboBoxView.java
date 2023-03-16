@@ -34,6 +34,9 @@ public class MultiSelectComboBoxView extends StandardView {
     public JmixMultiSelectComboBox<ProductTag> multiSelectComboBoxId;
 
     @ViewComponent
+    public JmixMultiSelectComboBox<ProductTag> multiSelectComboBoxMetaClassId;
+
+    @ViewComponent
     public CollectionContainer<ProductTag> productTagsDc;
 
 }

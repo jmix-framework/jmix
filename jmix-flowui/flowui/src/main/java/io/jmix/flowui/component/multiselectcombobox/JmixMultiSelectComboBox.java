@@ -27,11 +27,13 @@ import com.vaadin.flow.function.SerializableBiPredicate;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.HasRequired;
+import io.jmix.flowui.component.SupportsMetaClass;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.delegate.CollectionFieldDelegate;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
+import io.jmix.flowui.component.delegate.EntityCollectionFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.data.items.ContainerDataProvider;
@@ -47,14 +49,14 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
-        implements SupportsValueSource<Collection<V>>, SupportsValidation<Collection<V>>,
+        implements SupportsValueSource<Collection<V>>, SupportsMetaClass, SupportsValidation<Collection<V>>,
         SupportsTypedValue<JmixMultiSelectComboBox<V>, ComponentValueChangeEvent<MultiSelectComboBox<V>, Set<V>>, Collection<V>, Set<V>>,
         SupportsDataProvider<V>, SupportsItemsEnum<V>, SupportsFilterableItemsContainer<V>, HasRequired, HasTitle,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
-    protected CollectionFieldDelegate<JmixMultiSelectComboBox<V>, V, V> fieldDelegate;
+    protected EntityCollectionFieldDelegate<JmixMultiSelectComboBox<V>, V, V> fieldDelegate;
     protected DataViewDelegate<JmixMultiSelectComboBox<V>, V> dataViewDelegate;
 
     protected Collection<V> internalValue;
@@ -165,6 +167,17 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
 
     @Nullable
     @Override
+    public MetaClass getMetaClass() {
+        return fieldDelegate.getMetaClass();
+    }
+
+    @Override
+    public void setMetaClass(@Nullable MetaClass metaClass) {
+        fieldDelegate.setMetaClass(metaClass);
+    }
+
+    @Nullable
+    @Override
     public Collection<V> getTypedValue() {
         return internalValue;
     }
@@ -177,6 +190,11 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
     @Override
     public void setValue(@Nullable Set<V> value) {
         setValueInternal(null, value, false);
+    }
+
+    @Override
+    public void setValue(Collection<V> vs) {
+        setTypedValue(vs);
     }
 
     protected void setValueInternal(@Nullable Collection<V> modelValue, @Nullable Set<V> presentationValue,
@@ -337,8 +355,8 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
     }
 
     @SuppressWarnings("unchecked")
-    protected CollectionFieldDelegate<JmixMultiSelectComboBox<V>, V, V> createFieldDelegate() {
-        return applicationContext.getBean(CollectionFieldDelegate.class, this);
+    protected EntityCollectionFieldDelegate<JmixMultiSelectComboBox<V>, V, V> createFieldDelegate() {
+        return applicationContext.getBean(EntityCollectionFieldDelegate.class, this);
     }
 
     @SuppressWarnings("unchecked")

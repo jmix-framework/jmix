@@ -16,7 +16,9 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import io.jmix.core.Metadata;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
@@ -62,6 +64,26 @@ public class MultiSelectComboBoxLoader extends AbstractComponentLoader<JmixMulti
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+
+        if (resultComponent.getValueSource() == null) {
+            loadMetaClass();
+
+            if (resultComponent.getMetaClass() == null) {
+                String message = String.format(
+                        "%s doesn't have data binding. Set either dataContainer and property or metaClass attribute.",
+                        resultComponent.getClass().getSimpleName()
+                );
+
+                throw new GuiDevelopmentException(message,
+                        context, "Component ID", resultComponent.getId().orElse("null"));
+            }
+        }
+    }
+
+    protected void loadMetaClass() {
+        loadString(element, "metaClass")
+                .ifPresent(metaClass ->
+                        resultComponent.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

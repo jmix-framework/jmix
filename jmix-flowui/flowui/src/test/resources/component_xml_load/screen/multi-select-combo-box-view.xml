@@ -77,5 +77,8 @@
                      position="BOTTOM"
             />
         </multiSelectComboBox>
+
+        <multiSelectComboBox id="multiSelectComboBoxMetaClassId"
+                             metaClass="test_ProductTag"/>
     </layout>
 </view>

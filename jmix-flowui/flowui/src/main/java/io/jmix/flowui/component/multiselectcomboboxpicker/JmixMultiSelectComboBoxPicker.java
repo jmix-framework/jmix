@@ -198,6 +198,11 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
         setValueInternal(null, value, false);
     }
 
+    @Override
+    public void setValue(Collection<V> vs) {
+        setTypedValue(vs);
+    }
+
     protected void setValueInternal(@Nullable Collection<V> modelValue, @Nullable Set<V> presentationValue,
                                     boolean fromClient) {
         try {

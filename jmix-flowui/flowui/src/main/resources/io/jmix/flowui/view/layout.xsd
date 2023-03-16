@@ -2504,6 +2504,7 @@
                 <xs:attribute name="allowedCharPattern" type="xs:string"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
+                <xs:attribute name="metaClass" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasRequired"/>

@@ -113,4 +113,16 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
+
+    def "Load multiSelectComboBox component with metaClass attribute from XML"() {
+        when: "Open the MultiSelectComboBoxView"
+        def multiSelectComboBoxView = navigateToView(MultiSelectComboBoxView)
+        def multiSelectComboBox = multiSelectComboBoxView.multiSelectComboBoxMetaClassId
+
+        then: "MultiSelectComboBox attributes will be loaded"
+        verifyAll(multiSelectComboBox) {
+            id.get() == "multiSelectComboBoxMetaClassId"
+            it.metaClass.getJavaClass() == ProductTag.class
+        }
+    }
 }

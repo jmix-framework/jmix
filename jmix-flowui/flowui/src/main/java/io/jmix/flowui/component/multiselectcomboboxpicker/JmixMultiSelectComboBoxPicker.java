@@ -28,10 +28,7 @@ import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.component.EntityPickerComponent;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsTypedValue;
-import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.EntityCollectionFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -51,7 +48,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<V>
-        implements EntityPickerComponent<Collection<V>>, SupportsValueSource<Collection<V>>, SupportsValidation<Collection<V>>,
+        implements EntityMultiPickerComponent<V>, SupportsValueSource<Collection<V>>, SupportsValidation<Collection<V>>,
         SupportsTypedValue<JmixMultiSelectComboBoxPicker<V>, AbstractField.ComponentValueChangeEvent<MultiSelectComboBox<V>, Set<V>>, Collection<V>, Set<V>>,
         SupportsDataProvider<V>, SupportsItemsEnum<V>, SupportsFilterableItemsContainer<V>, HasRequired,
         ApplicationContextAware, InitializingBean {
@@ -276,11 +273,6 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
                 super.getSelectedItems(),
                 getDataProvider().fetch(new Query<>())
         );
-    }
-
-    @Override
-    public boolean isMultiValuePicker() {
-        return true;
     }
 
     @Override

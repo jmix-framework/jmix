@@ -20,6 +20,7 @@ package io.jmix.flowui;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.component.EntityMultiPickerComponent;
 import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -207,7 +208,7 @@ public class DialogWindows {
         LookupWindowBuilder<E, V> builder =
                 new LookupWindowBuilder<>(origin, beanType, lookupBuilderProcessor::build);
 
-        if (picker.isMultiValuePicker()) {
+        if (picker instanceof EntityMultiPickerComponent) {
             builder.withMultiValueField(((HasValue<?, Collection<E>>) picker));
         } else {
             builder.withField(((HasValue<?, E>) picker));

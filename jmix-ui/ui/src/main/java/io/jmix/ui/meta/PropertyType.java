@@ -233,5 +233,10 @@ public enum PropertyType {
     /**
      * Path to file.
      */
-    FILE_REF
+    FILE_REF,
+
+    /**
+     * JavaScript Function.
+     */
+    JS_FUNCTION
 }

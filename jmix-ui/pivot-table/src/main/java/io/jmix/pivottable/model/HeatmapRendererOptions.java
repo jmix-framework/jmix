@@ -16,6 +16,17 @@
 
 package io.jmix.pivottable.model;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+@StudioElement(
+        caption = "Heatmap",
+        xmlElement = "heatmap",
+        icon = "io/jmix/pivottable/icon/component.svg",
+        xmlns = "http://jmix.io/schema/ui/pivot-table",
+        xmlnsAlias = "pivot"
+)
 public class HeatmapRendererOptions extends AbstractPivotObject {
 
     private static final long serialVersionUID = 4082501420650191687L;
@@ -35,6 +46,7 @@ public class HeatmapRendererOptions extends AbstractPivotObject {
      * @param colorScaleGeneratorFunction a function that is used in color scale generator of heatmap renderer
      * @return a refrence to this object
      */
+    @StudioProperty(type = PropertyType.JS_FUNCTION)
     public HeatmapRendererOptions setColorScaleGeneratorFunction(JsFunction colorScaleGeneratorFunction) {
         this.colorScaleGeneratorFunction = colorScaleGeneratorFunction;
         return this;

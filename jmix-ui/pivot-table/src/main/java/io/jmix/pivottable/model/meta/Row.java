@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,39 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.pivottable.model;
+package io.jmix.pivottable.model.meta;
 
+import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+/**
+ * Meta interface for support in Screen Designer only.
+ */
 @StudioElement(
-        caption = "C3",
-        xmlElement = "c3",
-        icon = "io/jmix/pivottable/icon/component.svg",
+        caption = "Row",
+        xmlElement = "row",
+        icon = "io/jmix/pivottable/icon/row.svg",
         xmlns = "http://jmix.io/schema/ui/pivot-table",
         xmlnsAlias = "pivot"
 )
-public class C3RendererOptions extends AbstractPivotObject {
+public interface Row {
 
-    private static final long serialVersionUID = -5273273454206199279L;
-
-    private Size size;
-
-    /**
-     * @return size of chart renderer
-     */
-    public Size getSize() {
-        return size;
-    }
-
-    /**
-     * Sets size of chart renderer.
-     *
-     * @param size size of chart renderer
-     * @return a reference to this object
-     */
-    @StudioElement
-    public C3RendererOptions setSize(Size size) {
-        this.size = size;
-        return this;
-    }
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
+    void setValue();
 }

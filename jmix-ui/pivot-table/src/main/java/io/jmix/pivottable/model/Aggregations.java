@@ -16,6 +16,9 @@
 
 package io.jmix.pivottable.model;
 
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +26,13 @@ import java.util.List;
 /**
  * Configuration of aggregations. Use when {@link PivotTableModel#editable} is set to {@code true}.
  */
+@StudioElement(
+        caption = "Aggregations",
+        xmlElement = "aggregations",
+        icon = "io/jmix/pivottable/icon/component.svg",
+        xmlns = "http://jmix.io/schema/ui/pivot-table",
+        xmlnsAlias = "pivot"
+)
 public class Aggregations extends AbstractPivotObject {
     private static final long serialVersionUID = 5569146922427717821L;
 
@@ -84,8 +94,25 @@ public class Aggregations extends AbstractPivotObject {
      * @param selectedAggregation an aggregation to set as a selected
      * @return a reference to this object
      */
+    @StudioProperty(name = "selected")
     public Aggregations setSelectedAggregation(AggregationMode selectedAggregation) {
         this.selectedAggregation = selectedAggregation;
         return this;
+    }
+
+    /**
+     * Meta method for support in Screen Designer only.
+     */
+    @StudioProperty(name = "default")
+    private void setDefault(AggregationMode defaultAggregation) {
+
+    }
+
+    /**
+     * Meta method for support in Screen Designer only.
+     */
+    @StudioElement
+    private void setAggregation(Aggregation aggregation) {
+
     }
 }

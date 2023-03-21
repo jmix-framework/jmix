@@ -16,6 +16,10 @@
 
 package io.jmix.pivottable.model;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +29,13 @@ import java.util.UUID;
  * Constructor for an object which will aggregate results per cell
  * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Aggregators">documentation</a>).
  */
+@StudioElement(
+        caption = "Aggregation",
+        xmlElement = "aggregation",
+        icon = "io/jmix/pivottable/icon/component.svg",
+        xmlns = "http://jmix.io/schema/ui/pivot-table",
+        xmlnsAlias = "pivot"
+)
 public class Aggregation extends AbstractPivotObject {
     private static final long serialVersionUID = 8131812058171838527L;
 
@@ -67,6 +78,7 @@ public class Aggregation extends AbstractPivotObject {
      * @return a reference to this object
      * @see #setCustom(Boolean)
      */
+    @StudioProperty
     public Aggregation setMode(AggregationMode mode) {
         this.mode = mode;
         return this;
@@ -91,6 +103,7 @@ public class Aggregation extends AbstractPivotObject {
      * @param caption a caption of aggregation
      * @return a reference to this object
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     public Aggregation setCaption(String caption) {
         this.caption = caption;
         return this;
@@ -112,6 +125,7 @@ public class Aggregation extends AbstractPivotObject {
      * @return a reference to this object
      * @see #setFunction(JsFunction)
      */
+    @StudioProperty
     public Aggregation setCustom(Boolean custom) {
         this.custom = custom;
         return this;
@@ -134,6 +148,7 @@ public class Aggregation extends AbstractPivotObject {
      * @return a reference to this object
      * @see #setCustom(Boolean)
      */
+    @StudioProperty(type = PropertyType.JS_FUNCTION)
     public Aggregation setFunction(JsFunction function) {
         this.function = function;
         return this;

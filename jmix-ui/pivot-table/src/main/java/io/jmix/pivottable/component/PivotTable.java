@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,17 @@ package io.jmix.pivottable.component;
 
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.pivottable.model.*;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.data.DataItem;
 import io.jmix.ui.data.DataProvider;
-import io.jmix.pivottable.model.*;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -30,6 +37,26 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@StudioComponent(
+        caption = "PivotTable",
+        category = "Components",
+        xmlElement = "pivotTable",
+        xmlns = "http://jmix.io/schema/ui/pivot-table",
+        xmlnsAlias = "pivot",
+        icon = "io/jmix/pivottable/icon/table.svg",
+        canvasIcon = "io/jmix/pivottable/icon/table.svg",
+        canvasIconSize = CanvasIconSize.LARGE,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/pivot-table/index.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF),
+                @StudioProperty(name = "rowSpan", type = PropertyType.INTEGER),
+                @StudioProperty(name = "colSpan", type = PropertyType.INTEGER),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%")
+        }
+)
 public interface PivotTable extends Component, Component.BelongToFrame, Component.Editable, Component.HasCaption {
 
     String NAME = "pivotTable";
@@ -53,6 +80,12 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param properties a map of properties names with localized values
      */
+    @StudioElementsGroup(
+            xmlElement = "properties",
+            caption = "Properties",
+            icon = "io/jmix/pivottable/icon/properties.svg",
+            elementClass = "io.jmix.pivottable.model.meta.Property"
+    )
     void setProperties(Map<String, String> properties);
 
     /**
@@ -64,7 +97,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
     void addProperties(Map<String, String> properties);
 
     /**
-     * Add a property eith its localized value
+     * Add a property with its localized value
      *
      * @param property property name
      * @param value    localized value
@@ -81,6 +114,12 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param rows a list of properties names
      */
+    @StudioElementsGroup(
+            xmlElement = "rows",
+            caption = "Rows",
+            icon = "io/jmix/pivottable/icon/row.svg",
+            elementClass = "io.jmix.pivottable.model.meta.Row"
+    )
     void setRows(List<String> rows);
 
     /**
@@ -100,6 +139,12 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param cols a list of properties names
      */
+    @StudioElementsGroup(
+            xmlElement = "columns",
+            caption = "Columns",
+            icon = "io/jmix/pivottable/icon/columns.svg",
+            elementClass = "io.jmix.pivottable.model.meta.Column"
+    )
     void setColumns(List<String> cols);
 
     /**
@@ -125,6 +170,22 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
     void setAggregation(Aggregation aggregation);
 
     /**
+     * Meta method for support in Screen Designer only.
+     */
+    @StudioElement
+    private void setAggregation(io.jmix.pivottable.model.meta.Aggregation aggregation) {
+
+    }
+
+    /**
+     * Meta method for support in Screen Designer only.
+     */
+    @StudioProperty
+    private void setAggregationMode(AggregationMode aggregationMode) {
+
+    }
+
+    /**
      * @return the renderer object which generates output from pivot data structure
      */
     Renderer getRenderer();
@@ -136,6 +197,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param renderer a renderer object
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     void setRenderer(Renderer renderer);
 
     /**
@@ -152,6 +214,12 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param aggregationProperties a list of properties names
      */
+    @StudioElementsGroup(
+            xmlElement = "aggregationProperties",
+            caption = "Aggregation Properties",
+            icon = "io/jmix/pivottable/icon/properties.svg",
+            elementClass = "io.jmix.pivottable.model.meta.NamedProperty"
+    )
     void setAggregationProperties(List<String> aggregationProperties);
 
     /**
@@ -178,6 +246,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param aggregations an aggregations object
      */
+    @StudioElement
     void setAggregations(Aggregations aggregations);
 
     /**
@@ -194,6 +263,12 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param renderers a renderers object
      */
+    @StudioElementsGroup(
+            caption = "Renderers",
+            xmlElement = "renderers",
+            icon = "io/jmix/pivottable/icon/component.svg",
+            elementClass = "io.jmix.pivottable.model.meta.Renderer"
+    )
     void setRenderers(Renderers renderers);
 
     /**
@@ -208,6 +283,12 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param hiddenProperties a list of properties names
      */
+    @StudioElementsGroup(
+            caption = "Hidden Properties",
+            xmlElement = "hiddenProperties",
+            icon = "io/jmix/pivottable/icon/properties.svg",
+            elementClass = "io.jmix.pivottable.model.meta.NamedProperty"
+    )
     void setHiddenProperties(List<String> hiddenProperties);
 
     /**
@@ -231,6 +312,12 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param hiddenFromAggregations a list of properties names
      */
+    @StudioElementsGroup(
+            caption = "Hidden from Aggregations",
+            xmlElement = "hiddenFromAggregations",
+            icon = "io/jmix/pivottable/icon/properties.svg",
+            elementClass = "io.jmix.pivottable.model.meta.NamedProperty"
+    )
     void setHiddenFromAggregations(List<String> hiddenFromAggregations);
 
     /**
@@ -254,6 +341,12 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param hiddenFromDragDrop a list of properties names
      */
+    @StudioElementsGroup(
+            caption = "Hidden from Drag&Drop",
+            xmlElement = "hiddenFromDragDrop",
+            icon = "io/jmix/pivottable/icon/properties.svg",
+            elementClass = "io.jmix.pivottable.model.meta.NamedProperty"
+    )
     void setHiddenFromDragDrop(List<String> hiddenFromDragDrop);
 
     /**
@@ -277,6 +370,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param columnOrder the order in which column data is provided to the renderer
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     void setColumnOrder(ColumnOrder columnOrder);
 
     /**
@@ -291,6 +385,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param rowOrder the order in which row data is provided to the renderer
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     void setRowOrder(RowOrder rowOrder);
 
     /**
@@ -305,6 +400,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param menuLimit maximum number of values to list in the double-click menu
      */
+    @StudioProperty
     void setMenuLimit(Integer menuLimit);
 
     /**
@@ -320,6 +416,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      * @param autoSortUnusedProperties {@code true} if unused properties are
      *                                 kept sorted in the UI and {@code false} otherwise
      */
+    @StudioProperty
     void setAutoSortUnusedProperties(Boolean autoSortUnusedProperties);
 
     /**
@@ -338,8 +435,10 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      * length in characters exceeds the number then the properties will be shown vertically.
      * <p>
      * Applies only when {@code editable=true}.
+     *
      * @param unusedPropertiesVertical properties
      */
+    @StudioProperty(type = PropertyType.STRING)
     void setUnusedPropertiesVertical(UnusedPropertiesVertical unusedPropertiesVertical);
 
     /**
@@ -375,6 +474,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param filter a {@link JsFunction} to use as a filter
      */
+    @StudioProperty(type = PropertyType.JS_FUNCTION)
     void setFilterFunction(JsFunction filter);
 
     /**
@@ -395,6 +495,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param sorters a {@link JsFunction} to use as a sorters
      */
+    @StudioProperty(type = PropertyType.JS_FUNCTION)
     void setSortersFunction(JsFunction sorters);
 
     /**
@@ -407,6 +508,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param rendererOptions object defines renderer options
      */
+    @StudioElement
     void setRendererOptions(RendererOptions rendererOptions);
 
     /**
@@ -423,13 +525,19 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      * <p>
      * Applies only when {@code editable=true}.
      *
+     * @param inclusions map with properties and values included in rendering
      * @see #setInclusions(String, List)
      * @see #addInclusions(String, String...)
      * @see #setExclusions(Map)
      * @see #setExclusions(String, List)
      * @see #addExclusions(String, String...)
-     * @param inclusions map with properties and values included in rendering
      */
+    @StudioElementsGroup(
+            xmlElement = "inclusions",
+            caption = "Inclusions",
+            icon = "io/jmix/pivottable/icon/component.svg",
+            elementClass = "io.jmix.pivottable.model.meta.NamedPropertyWithValues"
+    )
     void setInclusions(Map<String, List<String>> inclusions);
 
     /**
@@ -472,13 +580,19 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      * <p>
      * Applies only when {@code editable=true}.
      *
+     * @param exclusions map with properties and values excluded from rendering
      * @see #setExclusions(String, List)
      * @see #addExclusions(String, String...)
      * @see #setInclusions(Map)
      * @see #setInclusions(String, List)
      * @see #addInclusions(String, String...)
-     * @param  exclusions map with properties and values excluded from rendering
      */
+    @StudioElementsGroup(
+            xmlElement = "exclusions",
+            caption = "Exclusions",
+            icon = "io/jmix/pivottable/icon/component.svg",
+            elementClass = "io.jmix.pivottable.model.meta.NamedPropertyWithValues"
+    )
     void setExclusions(Map<String, List<String>> exclusions);
 
     /**
@@ -517,11 +631,18 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param derivedProperties object to define derived properties
      */
+    @StudioElementsGroup(
+            caption = "Derived Properties",
+            xmlElement = "derivedProperties",
+            icon = "io/jmix/pivottable/icon/properties.svg",
+            elementClass = "io.jmix.pivottable.model.meta.DerivedProperty"
+    )
     void setDerivedProperties(DerivedProperties derivedProperties);
 
     /**
      * Set additional JSON configuration as a string.
      * This JSON can override configuration loaded from XML and from Component API.
+     *
      * @param json additional JSON configuration
      */
     void setNativeJson(String json);
@@ -543,6 +664,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param showUI {@code true} if UI elements should be shown and {@code false} otherwise
      */
+    @StudioProperty
     void setShowUI(Boolean showUI);
 
     /**
@@ -556,6 +678,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param showRowTotals {@code false} if row totals shouldn't be shown and {@code true} otherwise
      */
+    @StudioProperty
     void setShowRowTotals(Boolean showRowTotals);
 
     /**
@@ -569,6 +692,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param showColTotals {@code false} if col totals shouldn't be shown and {@code true} otherwise
      */
+    @StudioProperty
     void setShowColTotals(Boolean showColTotals);
 
     /**
@@ -581,10 +705,12 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      *
      * @param emptyDataMessage the message that will be displayed in case of empty data
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setEmptyDataMessage(String emptyDataMessage);
 
     /**
      * Adds a listener to the pivot table refresh events. Fired only for editable PivotTable.
+     *
      * @param refreshListener a listener to add
      * @return subscription
      */

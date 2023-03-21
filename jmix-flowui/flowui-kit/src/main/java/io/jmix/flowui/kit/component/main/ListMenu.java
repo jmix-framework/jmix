@@ -387,6 +387,15 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
     }
 
+    protected RouterLink getMenuItemComponent(MenuItem menuItem) {
+        Pair<MenuItem, ListItem> item = registrations.get(menuItem.getId());
+
+        return item.getValue().getChildren()
+                .findFirst()
+                .map(routerLink -> (RouterLink) routerLink)
+                .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
+    }
+
     protected String getTitle(MenuItem menuItem) {
         return Strings.isNullOrEmpty(menuItem.getTitle())
                 ? menuItem.getId()
@@ -404,12 +413,26 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             Details menuBarComponent = getMenuBarComponent((MenuItem) event.getSource());
             menuBarComponent.setOpened((Boolean) event.getNewValue());
         }
+        if (MenuItem.MENU_ITEM_CLASS_NAME.equals(event.getPropertyName())) {
+            MenuItem menuItem = (MenuItem) event.getSource();
+            if (menuItem.isMenu()) {
+                Details menuBarComponent = getMenuBarComponent((MenuItem) event.getSource());
+                menuBarComponent.setClassName(JMIX_MENUBAR_ITEM_CLASS_NAME);
+                menuBarComponent.addClassNames(menuItem.getClassNames().toArray(new String[0]));
+            } else if (!menuItem.isSeparator()) {
+                RouterLink menuItemComponent = getMenuItemComponent(menuItem);
+                menuItemComponent.setClassName(JMIX_MENUBAR_ITEM_CLASS_NAME);
+                menuItemComponent.addClassNames(menuItem.getClassNames().toArray(new String[0]));
+            }
+        }
     }
 
     /**
      * Describes menu item.
      */
     public static class MenuItem {
+        protected static final String MENU_ITEM_CLASS_NAME = "className";
+
         protected String id;
         protected String title;
         protected String description;
@@ -524,7 +547,16 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          */
         public MenuItem withClassNames(List<String> classNames) {
             Preconditions.checkNotNull(classNames, "List of class names cannot be null");
-            this.classNames = classNames;
+
+            List<String> oldClassNames = this.classNames == null
+                    ? Collections.emptyList()
+                    : List.copyOf(this.classNames);
+
+            this.classNames = new ArrayList<>(classNames);
+
+            propertyChangeSupport.firePropertyChange(MENU_ITEM_CLASS_NAME, oldClassNames,
+                    Collections.unmodifiableList(this.classNames));
+
             return this;
         }
 
@@ -540,7 +572,12 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 this.classNames = new ArrayList<>();
             }
 
+            List<String> oldClassNames = List.copyOf(this.classNames);
+
             this.classNames.addAll(Arrays.asList(classNames));
+
+            propertyChangeSupport.firePropertyChange(MENU_ITEM_CLASS_NAME, oldClassNames,
+                    Collections.unmodifiableList(this.classNames));
         }
 
         @Nullable

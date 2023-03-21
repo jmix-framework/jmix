@@ -61,6 +61,8 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
     public LocalizedTaskWrapper(BackgroundTask<T, V> wrappedTask) {
         super(wrappedTask.getTimeoutSeconds());
         this.wrappedTask = wrappedTask;
+
+        wrappedTask.getProgressListeners().forEach(this::addProgressListener);
     }
 
     @Autowired

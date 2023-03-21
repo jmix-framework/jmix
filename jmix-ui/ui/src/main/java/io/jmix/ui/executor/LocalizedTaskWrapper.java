@@ -42,6 +42,8 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
         this.wrappedTask = wrappedTask;
         this.screen = screen;
         this.messages = messages;
+
+        wrappedTask.getProgressListeners().forEach(this::addProgressListener);
     }
 
     @Override

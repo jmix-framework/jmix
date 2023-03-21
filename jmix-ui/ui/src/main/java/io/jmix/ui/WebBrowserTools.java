@@ -42,4 +42,14 @@ public interface WebBrowserTools {
      *               Desktop client doesn't support any parameters and just ignores them.
      */
     void showWebPage(String url, @Nullable Map<String, Object> params);
+
+    /**
+     * Adds 'onbeforeunload' listener that prevents browser tab from closing.
+     */
+    void preventBrowserTabClosing();
+
+    /**
+     * Removes 'onbeforeunload' listener.
+     */
+    void allowBrowserTabClosing();
 }

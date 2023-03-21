@@ -329,7 +329,7 @@ dependencies {
         api 'org.webjars.bower:keymaster:1.6.3'
         api 'org.webjars.npm:babel__runtime:7.9.2'
         api 'org.webjars.npm:github-com-kenwheeler-cash:2.3.9'
-        api 'org.webjars.npm:grapesjs-plugin-ckeditor:0.0.9'
+        api 'org.webjars.npm:grapesjs-plugin-ckeditor:0.0.10'
         api 'org.webjars.npm:grapesjs-custom-code:0.1.1'
         api 'org.webjars.npm:grapesjs-tabs:0.1.2'
         api 'org.webjars.npm:grapesjs-touch:0.1.1'
@@ -345,7 +345,6 @@ dependencies {
         api 'org.webjars.npm:mime-db:1.51.0'
 
         api 'org.webjars.bowergithub.mootools:slick:1.1.7'
-        api 'org.webjars:ckeditor:4.14.0'
 
         api 'org.spockframework:spock-core:2.0-groovy-3.0'
         api 'org.spockframework:spock-spring:2.0-groovy-3.0'

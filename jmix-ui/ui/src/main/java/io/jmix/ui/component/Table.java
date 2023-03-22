@@ -931,7 +931,7 @@ public interface Table<E>
          *
          * @param width default column width
          */
-        @StudioProperty(defaultValue = "0")
+        @StudioProperty(defaultValue = "0", type = PropertyType.SIZE)
         @PositiveOrZero
         void setWidth(@Nullable Integer width);
 

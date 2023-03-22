@@ -25,15 +25,6 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 public interface StudioElementsGroups {
 
     @StudioElementsGroup(
-            name = "Formatter",
-            elementClassFqn = "io.jmix.flowui.kit.component.formatter.Formatter",
-            xmlElement = "formatter",
-            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/formatters.svg",
-            target = {"io.jmix.flowui.kit.component.SupportsFormatter"}
-    )
-    void formatter();
-
-    @StudioElementsGroup(
             name = "Columns",
             elementClassFqn = "com.vaadin.flow.component.grid.Grid.Column",
             xmlElement = "columns",
@@ -47,13 +38,13 @@ public interface StudioElementsGroups {
     void columns();
 
     @StudioElementsGroup(
-            name = "ResponsiveSteps",
-            elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
-            xmlElement = "responsiveSteps",
-            target = {"com.vaadin.flow.component.formlayout.FormLayout",
-                    "io.jmix.flowui.component.genericfilter.GenericFilter"}
+            name = "Formatter",
+            elementClassFqn = "io.jmix.flowui.kit.component.formatter.Formatter",
+            xmlElement = "formatter",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/formatters.svg",
+            target = {"io.jmix.flowui.kit.component.SupportsFormatter"}
     )
-    void responsiveSteps();
+    void formatter();
 
     @StudioElementsGroup(
             name = "Items",
@@ -63,4 +54,30 @@ public interface StudioElementsGroups {
                     "io.jmix.flowui.kit.component.combobutton.ComboButton"}
     )
     void items();
+
+    @StudioElementsGroup(
+            name = "ResponsiveSteps",
+            elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
+            xmlElement = "responsiveSteps",
+            target = {"com.vaadin.flow.component.formlayout.FormLayout",
+                    "io.jmix.flowui.component.genericfilter.GenericFilter"}
+    )
+    void responsiveSteps();
+
+    @StudioElementsGroup(
+            name = "Validators",
+            elementClassFqn = "io.jmix.flowui.component.validation.Validator",
+            xmlElement = "validators",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/validators.svg",
+            target = {"io.jmix.flowui.component.SupportsValidation"},
+            unsupportedTarget = {
+                    "io.jmix.flowui.kit.component.combobox.ComboBoxPicker",
+                    "io.jmix.flowui.kit.component.upload.AbstractSingleUploadField",
+                    "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
+                    "io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup",
+                    "io.jmix.flowui.component.select.JmixSelect",
+                    "io.jmix.flowui.component.textarea.JmixTextArea"
+            }
+    )
+    void validator();
 }

@@ -17,8 +17,6 @@
 package io.jmix.flowui.component.delegate;
 
 import com.vaadin.flow.component.AbstractField;
-import io.jmix.flowui.data.ConversionException;
-import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
 import io.jmix.flowui.data.binding.impl.FieldValueBinding;
@@ -50,7 +48,7 @@ public class CollectionFieldDelegate<C extends AbstractField<?, Set<P>>, P, V>
     }
 
     @Nullable
-    public Collection<V> convertToModel(Set<V> presentationValue, @Nullable Stream<V> options) throws ConversionException {
+    public Collection<V> convertToModel(Set<V> presentationValue, @Nullable Stream<V> options) {
         Stream<V> items = options == null ? Stream.empty()
                 : options.filter(presentationValue::contains);
 

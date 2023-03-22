@@ -17,6 +17,7 @@
 package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.metamodel.annotation.DatatypeDef;
+import io.jmix.core.metamodel.annotation.NumberFormat;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -24,21 +25,31 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
 @DatatypeDef(id = "bigInteger", javaClass = BigInteger.class, defaultForClass = true, value = "core_BigIntegerDatatype")
-@io.jmix.core.metamodel.annotation.NumberFormat(
+@NumberFormat(
         pattern = "0"
 )
 public class BigIntegerDatatype extends NumberDatatype implements Datatype<BigInteger> {
 
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
+
+    @Override
+    protected java.text.NumberFormat createFormat() {
+        java.text.NumberFormat format = super.createFormat();
+        format.setParseIntegerOnly(true);
+        if (format instanceof DecimalFormat) {
+            ((DecimalFormat) format).setParseBigDecimal(true);
+        }
+        return format;
+    }
 
     @Override
     public String format(@Nullable Object value) {
@@ -57,7 +68,7 @@ public class BigIntegerDatatype extends NumberDatatype implements Datatype<BigIn
         }
 
         DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
-        NumberFormat format = new DecimalFormat(formatStrings.getIntegerFormat(), formatSymbols);
+        java.text.NumberFormat format = new DecimalFormat(formatStrings.getIntegerFormat(), formatSymbols);
         return format.format(value);
     }
 
@@ -67,7 +78,7 @@ public class BigIntegerDatatype extends NumberDatatype implements Datatype<BigIn
             return null;
         }
 
-        return BigInteger.valueOf(parse(value, createFormat()).longValue());
+        return ((BigDecimal) parse(value, createFormat())).toBigInteger();
     }
 
     @Override
@@ -82,15 +93,12 @@ public class BigIntegerDatatype extends NumberDatatype implements Datatype<BigIn
         }
 
         DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
-        NumberFormat format = new DecimalFormat(formatStrings.getIntegerFormat(), formatSymbols);
-        return BigInteger.valueOf(parse(value, format).longValue());
-    }
+        DecimalFormat format = new DecimalFormat(formatStrings.getIntegerFormat(), formatSymbols);
 
-    @Override
-    protected Number parse(String value, NumberFormat format) throws ParseException {
         format.setParseIntegerOnly(true);
+        format.setParseBigDecimal(true);
 
-        return super.parse(value, format);
+        return ((BigDecimal) parse(value, format)).toBigInteger();
     }
 
     @Override

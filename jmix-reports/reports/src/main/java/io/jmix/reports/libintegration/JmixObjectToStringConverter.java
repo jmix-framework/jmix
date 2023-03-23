@@ -93,7 +93,7 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
                 }
             } else if (idProperty.getRange().isClass()) {
                 throw new ReportingException(
-                        String.format("Unsupported composite id from [%s] with value [%s]",
+                        String.format("Unsupported composite primary key in [%s] with value [%s]",
                                 parameterClass.getSimpleName(), paramValueStr));
             }
 

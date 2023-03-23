@@ -16,8 +16,7 @@
 
 package io.jmix.securityui.authentication;
 
-import com.vaadin.server.VaadinServletRequest;
-import com.vaadin.server.VaadinServletResponse;
+import com.vaadin.server.*;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
@@ -48,6 +47,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -169,9 +169,28 @@ public class LoginScreenSupport {
                         authDetails.getTimeZone())
         );
 
+        preventSessionFixation(authenticationToken);
+
         onSuccessfulAuthentication(authenticationToken, authDetails, frameOwner);
 
         return authenticationToken;
+    }
+
+    protected void preventSessionFixation(Authentication authentication) {
+        if (authentication.isAuthenticated()
+                && VaadinRequest.getCurrent() != null
+                && uiProperties.isUseSessionFixationProtection()) {
+            VaadinService.reinitializeSession(VaadinRequest.getCurrent());
+
+            WrappedSession session = VaadinSession.getCurrent().getSession();
+            int timeout = uiProperties.getHttpSessionExpirationTimeoutSec();
+            session.setMaxInactiveInterval(timeout);
+
+            HttpSession httpSession = session instanceof WrappedHttpSession ?
+                    ((WrappedHttpSession) session).getHttpSession() : null;
+            log.info("Session reinitialized: HttpSession={}, timeout={}sec",
+                    httpSession, timeout);
+        }
     }
 
     protected void onSuccessfulAuthentication(Authentication authentication,

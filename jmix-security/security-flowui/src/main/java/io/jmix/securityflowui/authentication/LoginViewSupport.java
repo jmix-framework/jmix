@@ -20,8 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.router.Location;
-import com.vaadin.flow.server.VaadinServletRequest;
-import com.vaadin.flow.server.VaadinServletResponse;
+import com.vaadin.flow.server.*;
 import com.vaadin.flow.server.auth.ViewAccessChecker;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
@@ -176,9 +175,19 @@ public class LoginViewSupport {
                         authDetails.getTimeZone())
         );
 
+        preventSessionFixation(authenticationToken);
+
         onSuccessfulAuthentication(authenticationToken, authDetails);
 
         return authenticationToken;
+    }
+
+    protected void preventSessionFixation(Authentication authentication) {
+        if (authentication.isAuthenticated()
+                && VaadinRequest.getCurrent() != null
+                && flowuiProperties.isUseSessionFixationProtection()) {
+            VaadinService.reinitializeSession(VaadinRequest.getCurrent());
+        }
     }
 
     protected void onSuccessfulAuthentication(Authentication authentication,

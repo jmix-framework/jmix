@@ -69,9 +69,13 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
             return paramValueStr;
         } else if (Entity.class.isAssignableFrom(parameterClass)) {
             MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(parameterClass);
-            Object idValue = null;
+            if (idProperty == null) {
+                return null;
+            }
 
-            if (idProperty != null && idProperty.getRange().isDatatype()) {
+            Object idValue;
+
+            if (idProperty.getRange().isDatatype()) {
                 try {
                     idValue = idProperty.getRange().asDatatype().parse(paramValueStr);
                 } catch (ParseException e) {
@@ -79,14 +83,18 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
                             String.format("Couldn't read id from [%s] with value [%s] and datatype [%s].",
                                     parameterClass.getSimpleName(), paramValueStr, idProperty.getRange().asDatatype()));
                 }
-            }
 
-            if (idValue != null) {
-                return dataManager.load(parameterClass)
-                        .id(Id.of(idValue, parameterClass))
-                        .fetchPlan(FetchPlan.BASE)
-                        .optional()
-                        .orElse(null);
+                if (idValue != null) {
+                    return dataManager.load(parameterClass)
+                            .id(Id.of(idValue, parameterClass))
+                            .fetchPlan(FetchPlan.BASE)
+                            .optional()
+                            .orElse(null);
+                }
+            } else if (idProperty.getRange().isClass()) {
+                throw new ReportingException(
+                        String.format("Unsupported composite id from [%s] with value [%s]",
+                                parameterClass.getSimpleName(), paramValueStr));
             }
 
             return null;

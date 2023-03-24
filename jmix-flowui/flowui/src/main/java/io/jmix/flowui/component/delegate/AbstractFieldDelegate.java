@@ -74,6 +74,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
     protected String requiredMessage;
     protected boolean explicitlyInvalid = false;
+    protected boolean conversionInvalid = false;
 
     public AbstractFieldDelegate(C component) {
         super(component);
@@ -224,8 +225,14 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         updateInvalidState();
     }
 
+    public void setConversionInvalid(boolean conversionInvalid) {
+        this.conversionInvalid = conversionInvalid;
+
+        updateInvalidState();
+    }
+
     protected void updateInvalidState() {
-        boolean invalid = explicitlyInvalid || !validatorsPassed();
+        boolean invalid = explicitlyInvalid || conversionInvalid || !validatorsPassed();
 
         setInvalidInternal(invalid);
     }

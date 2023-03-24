@@ -20,7 +20,6 @@ import com.vaadin.flow.component.AbstractField;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.component.SupportsMetaClass;
-import io.jmix.flowui.data.ConversionException;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
@@ -69,7 +68,7 @@ public class EntityCollectionFieldDelegate<C extends AbstractField<?, Set<T>> & 
     }
 
     @Nullable
-    public Collection<V> convertToModel(Set<V> presentationValue, @Nullable Stream<V> options) throws ConversionException {
+    public Collection<V> convertToModel(Set<V> presentationValue, @Nullable Stream<V> options) {
         Stream<V> items = options == null ? Stream.empty()
                 : options.filter(presentationValue::contains);
 

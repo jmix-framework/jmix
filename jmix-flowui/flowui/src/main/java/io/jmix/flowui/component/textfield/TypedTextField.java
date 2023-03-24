@@ -272,6 +272,8 @@ public class TypedTextField<V> extends TextField
 
     protected void onValueChange(ComponentValueChangeEvent<TypedTextField<V>, String> event) {
         if (event.isFromClient()) {
+            fieldDelegate.setConversionInvalid(false);
+
             String presValue = event.getValue();
 
             V value;
@@ -281,7 +283,7 @@ public class TypedTextField<V> extends TextField
                 setValueInternal(value, convertToPresentation(value), true);
             } catch (ConversionException e) {
                 setErrorMessage(e.getLocalizedMessage());
-                setInvalid(true);
+                fieldDelegate.setConversionInvalid(true);
             }
         }
     }

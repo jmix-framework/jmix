@@ -311,20 +311,12 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
         if (event.isFromClient()) {
             Set<V> presValue = event.getValue();
 
-            Collection<V> value;
-            try {
-                value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
-
-                setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
-            } catch (ConversionException e) {
-                setErrorMessage(e.getLocalizedMessage());
-                setInvalid(true);
-                return;
-            }
+            Collection<V> value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
+            setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
         }
 
         // update invalid state
-        isInvalid();
+        validate();
     }
 
     protected void fireMultiSelectComboBoxValueChangeEvent(@Nullable Collection<V> oldValue, boolean isFromClient) {

@@ -22,7 +22,7 @@ import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
-@StudioUiKit(dependsOn = "io.jmix.gridexportflowui.GridExportFlowuiConfiguration")
+@StudioUiKit(requiredDependencies = "io.jmix.gridexport:jmix-gridexport-flowui-starter")
 public interface StudioGridExportActions {
 
     @StudioAction(

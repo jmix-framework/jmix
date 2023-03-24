@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.meta;
+package io.jmix.flowui.kit.meta.action;
 
 import io.jmix.flowui.kit.meta.StudioAction;
 import io.jmix.flowui.kit.meta.StudioPropertiesItem;
@@ -22,13 +22,14 @@ import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
-@StudioUiKit
-public interface StudioListDataComponentActions {
+@StudioUiKit(dependsOn = "io.jmix.gridexportflowui.GridExportFlowuiConfiguration")
+public interface StudioGridExportActions {
+
     @StudioAction(
             type = "excelExport",
             description = "Action for export table content in XLSX format",
             classFqn = "io.jmix.gridexportflowui.action.ExcelExportAction",
-            icon = "io/jmix/gridexportflowui/meta/icon/action/action.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             target = {"io.jmix.flowui.component.ListDataComponent"},
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
@@ -57,7 +58,7 @@ public interface StudioListDataComponentActions {
             type = "jsonExport",
             description = "Action for export table content as JSON",
             classFqn = "io.jmix.gridexportflowui.action.JsonExportAction",
-            icon = "io/jmix/gridexportflowui/meta/icon/action/action.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             target = {"io.jmix.flowui.component.ListDataComponent"},
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,

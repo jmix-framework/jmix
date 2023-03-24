@@ -28,7 +28,18 @@ import java.lang.annotation.Target;
 public @interface StudioUiKit {
 
     /**
-     * Describes required configuration classes qualified names.
+     * Describes the required dependencies.
+     * Optional. If empty the ui kit will be used in Studio.
+     * The dependency should look like {@code group:name}
      */
-    String[] dependsOn() default {};
+    String[] requiredDependencies() default {};
+
+    /**
+     * Describes the required dependencies strategy.
+     * <p></p>
+     * If strategy is {@link RequiredDependenciesStrategy#AND} (default value)
+     * then all dependencies are required to use the ui kit in the Studio,
+     * otherwise any of the dependencies is enough.
+     */
+    RequiredDependenciesStrategy requiredDependenciesStrategy() default RequiredDependenciesStrategy.AND;
 }

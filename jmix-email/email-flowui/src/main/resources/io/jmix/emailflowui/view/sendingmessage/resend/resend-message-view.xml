@@ -16,10 +16,15 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://resendMessageView.title">
     <layout>
-        <textField id="emailTextField" label="msg://resendMessageView.emailTextField.label" width="100%"/>
-        <textField id="ccTextField" label="msg://resendMessageView.ccTextField.label" width="100%"/>
-        <textField id="bccTextField" label="msg://resendMessageView.bccTextField.label" width="100%"/>
-        <checkbox id="importanceField" label="msg://resendMessageView.importanceField.label" width="100%"/>
+        <formLayout>
+            <textField id="emailTextField" label="msg://resendMessageView.emailTextField.label" width="100%"/>
+            <textField id="ccTextField" label="msg://resendMessageView.ccTextField.label" width="100%"/>
+            <textField id="bccTextField" label="msg://resendMessageView.bccTextField.label" width="100%"/>
+            <checkbox id="importanceField" label="msg://resendMessageView.importanceField.label" width="100%"/>
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+            </responsiveSteps>
+        </formLayout>
         <hbox classNames="buttons-panel">
             <button id="resendEmailBtn" text="msg://resendMessageView.resendEmailBtn.text" icon="ENVELOPE"
                     themeNames="primary"/>

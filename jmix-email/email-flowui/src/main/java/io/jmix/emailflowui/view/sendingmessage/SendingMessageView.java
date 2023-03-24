@@ -24,7 +24,7 @@ import io.jmix.email.EmailDataProvider;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
-import io.jmix.emailflowui.view.sendingmessage.attachments.SendingMessageAttachmentsLookupView;
+import io.jmix.emailflowui.view.sendingmessage.attachments.SendingMessageAttachmentsListView;
 import io.jmix.emailflowui.view.sendingmessage.resend.ResendMessageView;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.FlowuiProperties;
@@ -146,9 +146,9 @@ public class SendingMessageView extends StandardView {
     }
 
     protected void openAttachmentLookupDialog(SendingMessage message) {
-        DialogWindow<SendingMessageAttachmentsLookupView> messageAttachmentsLookupViewDialogWindow = dialogWindows
+        DialogWindow<SendingMessageAttachmentsListView> messageAttachmentsLookupViewDialogWindow = dialogWindows
                 .lookup(this, SendingAttachment.class)
-                .withViewClass(SendingMessageAttachmentsLookupView.class)
+                .withViewClass(SendingMessageAttachmentsListView.class)
                 .withSelectHandler(attachments -> {
                     if (attachments.size() == 1) {
                         downloadFile(IterableUtils.get(attachments, 0));

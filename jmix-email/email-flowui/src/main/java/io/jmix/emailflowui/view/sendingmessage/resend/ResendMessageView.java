@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 
 @ViewController("email_resendMessageView")
 @ViewDescriptor("resend-message-view.xml")
-@DialogMode(width = "50em", height = "30em")
+@DialogMode(width = "50em", height = "AUTO")
 public class ResendMessageView extends StandardView {
 
     protected SendingMessage sendingMessage;
@@ -65,35 +65,37 @@ public class ResendMessageView extends StandardView {
 
     @Subscribe("resendEmailBtn")
     public void onResendEmailBtnClick(ClickEvent<JmixButton> event) {
-        if (sendingMessage != null) {
-            EmailInfo emailInfo = EmailInfoBuilder.create()
-                    .setAddresses(emailTextField.getValue())
-                    .setSubject(sendingMessage.getSubject())
-                    .setBody(getEmailBody(sendingMessage))
-                    .setFrom(sendingMessage.getFrom())
-                    .setBodyContentType(sendingMessage.getBodyContentType())
-                    .setAttachments(getEmailAttachments(sendingMessage.getAttachments()))
-                    .setBcc(bccTextField.getValue())
-                    .setCc(ccTextField.getValue())
-                    .setHeaders(parseHeadersString(sendingMessage.getHeaders()))
-                    .setImportant(importanceField.getValue())
-                    .build();
-
-            try {
-                emailer.sendEmail(emailInfo);
-            } catch (EmailException e) {
-                throw new RuntimeException("Something went wrong during email resending", e);
-            }
-
-            notifications.create(
-                            messageBundle.getMessage("resendMessageView.resendingSuccessNotification.header"),
-                            messageBundle.getMessage("resendMessageView.resendingSuccessNotification.message")
-                    )
-                    .withType(Notifications.Type.SUCCESS)
-                    .show();
-
-            this.closeWithDefaultAction();
+        if (sendingMessage == null) {
+            return;
         }
+
+        EmailInfo emailInfo = EmailInfoBuilder.create()
+                .setAddresses(emailTextField.getValue())
+                .setSubject(sendingMessage.getSubject())
+                .setBody(getEmailBody(sendingMessage))
+                .setFrom(sendingMessage.getFrom())
+                .setBodyContentType(sendingMessage.getBodyContentType())
+                .setAttachments(getEmailAttachments(sendingMessage.getAttachments()))
+                .setBcc(bccTextField.getValue())
+                .setCc(ccTextField.getValue())
+                .setHeaders(parseHeadersString(sendingMessage.getHeaders()))
+                .setImportant(importanceField.getValue())
+                .build();
+
+        try {
+            emailer.sendEmail(emailInfo);
+        } catch (EmailException e) {
+            throw new RuntimeException("Something went wrong during email resending", e);
+        }
+
+        notifications.create(
+                        messageBundle.getMessage("resendMessageView.resendingSuccessNotification.header"),
+                        messageBundle.getMessage("resendMessageView.resendingSuccessNotification.message")
+                )
+                .withType(Notifications.Type.SUCCESS)
+                .show();
+
+        this.closeWithDefaultAction();
     }
 
     public void setMessage(SendingMessage sendingMessage) {

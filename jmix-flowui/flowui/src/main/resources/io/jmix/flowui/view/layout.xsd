@@ -1577,6 +1577,7 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
+                    <xs:enumeration value="splitter-spacing"/>
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="minimal"/>
                 </xs:restriction>

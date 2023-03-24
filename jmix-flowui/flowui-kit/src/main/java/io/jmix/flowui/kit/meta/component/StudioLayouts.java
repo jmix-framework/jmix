@@ -190,7 +190,7 @@ public interface StudioLayouts {
                             options = {"VERTICAL", "HORIZONTAL"}),
                     @StudioProperty(xmlAttribute = "splitterPosition", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
-                            options = {"small", "minimal"}),
+                            options = {"small", "minimal", "splitter-spacing"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100%")

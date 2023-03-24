@@ -83,6 +83,10 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
 
     private Integer trendLineThickness;
 
+    private Integer bezierX;
+
+    private Integer bezierY;
+
     public StockPanel() {
         super(null);
         this.id = UUID.randomUUID().toString();
@@ -446,6 +450,48 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
     @StudioProperty(defaultValue = "2")
     public StockPanel setTrendLineThickness(Integer trendLineThickness) {
         this.trendLineThickness = trendLineThickness;
+        return this;
+    }
+
+    /**
+     * @return horizontal tension of bezier
+     */
+    public Integer getBezierX() {
+        return bezierX;
+    }
+
+    /**
+     * Sets horizontal tension of bezier (used by smoothed line). If not set, chart adjust tension by itself,
+     * taking into account if chart is rotated or not. Allowed values 1 - Infinity.
+     *
+     * @param bezierX horizontal tension
+     * @return stock panel
+     */
+    @StudioProperty
+    @Min(1)
+    public StockPanel setBezierX(Integer bezierX) {
+        this.bezierX = bezierX;
+        return this;
+    }
+
+    /**
+     * @return vertical tension of bezier
+     */
+    public Integer getBezierY() {
+        return bezierY;
+    }
+
+    /**
+     * Sets vertical tension of bezier (used by smoothed line). If not set, chart adjust tension by itself,
+     * taking into account if chart is rotated or not. Allowed values 1 - Infinity.
+     *
+     * @param bezierY vertical tension
+     * @return stock panel
+     */
+    @StudioProperty
+    @Min(1)
+    public StockPanel setBezierY(Integer bezierY) {
+        this.bezierY = bezierY;
         return this;
     }
 

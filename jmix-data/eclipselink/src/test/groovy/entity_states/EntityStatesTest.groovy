@@ -21,6 +21,7 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
+import test_support.entity.entity_extension.Client
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLineA
 import test_support.entity.sales.OrderLineB
@@ -182,5 +183,33 @@ class EntityStatesTest extends DataSpec {
         cleanup:
         dataManager.remove(Id.of(user))
         dataManager.remove(Id.of(group))
+    }
+
+    def "method-based attribute loaded state determined correctly"() {
+        setup:
+        var client = dataManager.create(Client);
+        client.name = "Diego"
+        client.address.city = "Khorinis"
+        client.address.street = "Square"
+        dataManager.save(client)
+
+        when:
+        var loadedClient = dataManager.load(Client)
+                .id(client.id)
+                .fetchPlan { fp ->
+                    fp.addAll('name', 'address', "address.street").partial()
+                }
+                .one();
+        then:
+        !entityStates.isLoaded(loadedClient, "label1")
+        !entityStates.isLoaded(loadedClient, "label2")
+        !entityStates.isLoaded(loadedClient, "addressCity")
+
+        entityStates.isLoaded(loadedClient, "htmlName")
+        entityStates.isLoaded(loadedClient, "label3")
+        entityStates.isLoaded(loadedClient, "addressStreet")
+
+        cleanup:
+        dataManager.remove(client)
     }
 }

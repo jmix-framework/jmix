@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,17 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.core.Metadata;
-import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
+import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 
-public class MultiSelectComboBoxLoader extends AbstractMultiSelectComboBoxLoader<JmixMultiSelectComboBox<?>> {
+public class MultiSelectComboBoxPickerLoader extends AbstractMultiSelectComboBoxLoader<JmixMultiSelectComboBoxPicker<?>> {
+
+    protected ActionLoaderSupport actionLoaderSupport;
 
     @Override
-    protected JmixMultiSelectComboBox<?> createComponent() {
-        return factory.create(JmixMultiSelectComboBox.class);
+    protected JmixMultiSelectComboBoxPicker<?> createComponent() {
+        return factory.create(JmixMultiSelectComboBoxPicker.class);
     }
 
     @Override
@@ -35,6 +38,8 @@ public class MultiSelectComboBoxLoader extends AbstractMultiSelectComboBoxLoader
         componentLoader().loadRequired(resultComponent, element, context);
 
         super.loadComponent();
+
+        getActionLoaderSupport().loadActions(resultComponent, element);
 
         if (resultComponent.getValueSource() == null) {
             loadMetaClass();
@@ -55,5 +60,12 @@ public class MultiSelectComboBoxLoader extends AbstractMultiSelectComboBoxLoader
         loadString(element, "metaClass")
                 .ifPresent(metaClass ->
                         resultComponent.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
+    }
+
+    protected ActionLoaderSupport getActionLoaderSupport() {
+        if (actionLoaderSupport == null) {
+            actionLoaderSupport = applicationContext.getBean(ActionLoaderSupport.class, context);
+        }
+        return actionLoaderSupport;
     }
 }

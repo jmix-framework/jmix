@@ -63,7 +63,7 @@ public class FlowuiProperties {
     int saveExportedByteArrayDataThresholdBytes;
 
     /**
-     * Reinitialize session after login to protect from Session Fixation attacks.
+     * Whether to reinitialize a session after login to protect from session fixation attacks.
      */
     boolean useSessionFixationProtection;
 

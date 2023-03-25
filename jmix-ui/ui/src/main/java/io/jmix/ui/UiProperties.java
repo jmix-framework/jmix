@@ -136,7 +136,7 @@ public class UiProperties {
     int mainTabCaptionLength;
 
     /**
-     * Reinitialize session after login to protect from Session Fixation attacks.
+     * Whether to reinitialize a session after login to protect from session fixation attacks.
      */
     boolean useSessionFixationProtection;
 

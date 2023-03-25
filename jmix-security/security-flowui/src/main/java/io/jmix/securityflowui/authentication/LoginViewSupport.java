@@ -187,6 +187,11 @@ public class LoginViewSupport {
                 && VaadinRequest.getCurrent() != null
                 && flowuiProperties.isUseSessionFixationProtection()) {
             VaadinService.reinitializeSession(VaadinRequest.getCurrent());
+
+            WrappedSession session = VaadinSession.getCurrent().getSession();
+            HttpSession httpSession = session instanceof WrappedHttpSession ?
+                    ((WrappedHttpSession) session).getHttpSession() : null;
+            log.debug("Session reinitialized: HttpSession={}", httpSession);
         }
     }
 

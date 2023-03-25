@@ -188,7 +188,7 @@ public class LoginScreenSupport {
 
             HttpSession httpSession = session instanceof WrappedHttpSession ?
                     ((WrappedHttpSession) session).getHttpSession() : null;
-            log.info("Session reinitialized: HttpSession={}, timeout={}sec",
+            log.debug("Session reinitialized: HttpSession={}, timeout={}sec",
                     httpSession, timeout);
         }
     }

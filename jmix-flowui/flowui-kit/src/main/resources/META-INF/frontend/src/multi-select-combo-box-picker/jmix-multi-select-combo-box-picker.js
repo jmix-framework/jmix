@@ -16,7 +16,7 @@
 
 import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-chip.js';
 import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-container.js';
-import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-internal.js';
+import './jmix-multi-select-combo-box-internal.js';
 import { html } from '@polymer/polymer';
 import { MultiSelectComboBox } from '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box.js';
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
@@ -49,7 +49,7 @@ export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
                     <span part="required-indicator" aria-hidden="true" on-click="focus"></span>
                 </div>
 
-                <vaadin-multi-select-combo-box-internal
+                <jmix-multi-select-combo-box-internal
                         id="comboBox"
                         items="[[__effectiveItems]]"
                         item-id-path="[[itemIdPath]]"
@@ -101,7 +101,7 @@ export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
                             <slot name="actions"></slot>
                         </div>
                     </vaadin-multi-select-combo-box-container>
-                </vaadin-multi-select-combo-box-internal>
+                </jmix-multi-select-combo-box-internal>
 
                 <div part="helper-text">
                     <slot name="helper"></slot>

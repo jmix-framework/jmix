@@ -377,7 +377,7 @@ dependencies {
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        def yargVersion = '2.2.20'
+        def yargVersion = '2.2.21'
         api "com.haulmont.yarg:yarg-api:$yargVersion"
         api "com.haulmont.yarg:yarg:$yargVersion"
 

@@ -82,6 +82,9 @@ dependencies {
 
         // community add-ons
 
+        api 'io.github.it-syn:jmix-menu-editor:0.8.6'
+        api 'io.github.it-syn:jmix-menu-editor-starter:0.8.6'
+
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

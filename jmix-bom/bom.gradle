@@ -417,7 +417,7 @@ dependencies {
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
 
-        runtime 'org.hsqldb:hsqldb:2.4.1'
+        runtime 'org.hsqldb:hsqldb:2.7.1'
     }
 }
 

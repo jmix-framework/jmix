@@ -37,11 +37,6 @@ public class RestProperties {
     private final String[] allowedOrigins;
 
     /**
-     * Maximum size of the file that may be uploaded with REST API in bytes.
-     */
-    private final int maxUploadSize;
-
-    /**
      * Whether the passed entities versions should be validated before entities are persisted.
      */
     private final boolean optimisticLockingEnabled;
@@ -55,14 +50,11 @@ public class RestProperties {
 
     public RestProperties(
             @DefaultValue("*") String[] allowedOrigins,
-            //todo DataSize type
-            @DefaultValue("20971520") int maxUploadSize,
             @DefaultValue("false") boolean optimisticLockingEnabled,
             @DefaultValue("true") boolean responseFetchPlanEnabled,
             @DefaultValue("10000") int defaultMaxFetchSize,
             @Nullable Map<String, Integer> entityMaxFetchSize) {
         this.allowedOrigins = allowedOrigins;
-        this.maxUploadSize = maxUploadSize;
         this.optimisticLockingEnabled = optimisticLockingEnabled;
         this.responseFetchPlanEnabled = responseFetchPlanEnabled;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
@@ -91,13 +83,6 @@ public class RestProperties {
     @Deprecated
     public String[] getAllowedOrigins() {
         return allowedOrigins;
-    }
-
-    /**
-     * @see #maxUploadSize
-     */
-    public int getMaxUploadSize() {
-        return maxUploadSize;
     }
 
     public int getEntityMaxFetchSize(String entityName) {

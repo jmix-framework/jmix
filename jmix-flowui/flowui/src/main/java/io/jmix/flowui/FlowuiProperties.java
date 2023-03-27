@@ -62,6 +62,11 @@ public class FlowuiProperties {
      */
     int saveExportedByteArrayDataThresholdBytes;
 
+    /**
+     * Whether to reinitialize a session after login to protect from session fixation attacks.
+     */
+    boolean useSessionFixationProtection;
+
     public FlowuiProperties(@DefaultValue("login") String loginViewId,
                             @DefaultValue("main") String mainViewId,
                             @DefaultValue("true") boolean compositeMenu,
@@ -70,7 +75,9 @@ public class FlowuiProperties {
                             @DefaultValue("50") Integer defaultPageSize,
                             @Nullable Map<String, Integer> entityPageSize,
                             @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
-                            @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes) {
+                            @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
+                            @DefaultValue("true") boolean useSessionFixationProtection
+    ) {
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
         this.compositeMenu = compositeMenu;
@@ -80,6 +87,7 @@ public class FlowuiProperties {
         this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
         this.viewFileExtensions = viewFileExtensions;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
+        this.useSessionFixationProtection = useSessionFixationProtection;
     }
 
     /**
@@ -137,5 +145,12 @@ public class FlowuiProperties {
      */
     public int getSaveExportedByteArrayDataThresholdBytes() {
         return saveExportedByteArrayDataThresholdBytes;
+    }
+
+    /**
+     * @see #useSessionFixationProtection
+     */
+    public boolean isUseSessionFixationProtection() {
+        return useSessionFixationProtection;
     }
 }

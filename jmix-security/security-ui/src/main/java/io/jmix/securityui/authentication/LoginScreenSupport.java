@@ -16,8 +16,7 @@
 
 package io.jmix.securityui.authentication;
 
-import com.vaadin.server.VaadinServletRequest;
-import com.vaadin.server.VaadinServletResponse;
+import com.vaadin.server.*;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
@@ -169,9 +168,23 @@ public class LoginScreenSupport {
                         authDetails.getTimeZone())
         );
 
+        preventSessionFixation(authenticationToken);
+
         onSuccessfulAuthentication(authenticationToken, authDetails, frameOwner);
 
         return authenticationToken;
+    }
+
+    protected void preventSessionFixation(Authentication authentication) {
+        if (authentication.isAuthenticated()
+                && VaadinRequest.getCurrent() != null
+                && uiProperties.isUseSessionFixationProtection()) {
+            VaadinService.reinitializeSession(VaadinRequest.getCurrent());
+
+            WrappedSession session = VaadinSession.getCurrent().getSession();
+            int timeout = uiProperties.getHttpSessionExpirationTimeoutSec();
+            session.setMaxInactiveInterval(timeout);
+        }
     }
 
     protected void onSuccessfulAuthentication(Authentication authentication,

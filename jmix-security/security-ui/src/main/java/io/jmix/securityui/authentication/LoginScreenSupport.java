@@ -47,7 +47,6 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -185,11 +184,6 @@ public class LoginScreenSupport {
             WrappedSession session = VaadinSession.getCurrent().getSession();
             int timeout = uiProperties.getHttpSessionExpirationTimeoutSec();
             session.setMaxInactiveInterval(timeout);
-
-            HttpSession httpSession = session instanceof WrappedHttpSession ?
-                    ((WrappedHttpSession) session).getHttpSession() : null;
-            log.debug("Session reinitialized: HttpSession={}, timeout={}sec",
-                    httpSession, timeout);
         }
     }
 

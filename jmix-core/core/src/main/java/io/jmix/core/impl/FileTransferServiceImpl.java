@@ -152,7 +152,7 @@ public class FileTransferServiceImpl implements FileTransferService {
     }
 
     private ResponseEntity<FileInfoResponse> createFileInfoResponseEntity(HttpServletRequest request,
-                                                                            FileRef fileRef, String filename, long size) {
+                                                                          FileRef fileRef, String filename, long size) {
         FileInfoResponse fileInfo = new FileInfoResponse(fileRef.toString(), filename, size);
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
@@ -177,10 +177,11 @@ public class FileTransferServiceImpl implements FileTransferService {
 
             long size = file.getSize();
 
-            InputStream is = file.getInputStream();
             FileStorage fileStorage = getFileStorageByNameOrDefault(fileStorageName);
-            FileRef fileRef = uploadToFileStorage(fileStorage, is, name);
-
+            FileRef fileRef;
+            try (InputStream is = file.getInputStream()) {
+                fileRef = uploadToFileStorage(fileStorage, is, name);
+            }
             return createFileInfoResponseEntity(request, fileRef, name, size);
         } catch (Exception e) {
             log.error("File upload failed", e);

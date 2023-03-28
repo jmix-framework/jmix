@@ -24,13 +24,13 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.gridexportui.action.ExportAction;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.data.meta.EntityDataGridItems;
 import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.gridexportui.action.ExportAction;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -179,10 +179,6 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
             MetaPropertyPath propertyPath = column.getPropertyPath();
 
             cellValue = EntityValues.getValueEx(instance, propertyPath.getPath());
-
-            if (column.getPresentationProvider() != null) {
-                cellValue = column.getPresentationProvider().apply(cellValue);
-            }
         } else if ((generator = dataGrid.getColumnGenerator(column.getId())) != null) {
             DataGrid.ColumnGeneratorEvent event = new DataGrid.ColumnGeneratorEvent(dataGrid, instance,
                     column.getId(), createInstanceContainerProvider(dataGrid, instance));

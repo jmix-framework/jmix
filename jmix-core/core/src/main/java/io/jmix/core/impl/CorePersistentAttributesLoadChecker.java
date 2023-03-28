@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Component("core_PersistentAttributesLoadChecker")
 public class CorePersistentAttributesLoadChecker implements PersistentAttributesLoadChecker {
@@ -66,11 +65,17 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
             if (dependsOnProperties.isEmpty()) {
                 return true;
             } else {
-                for (String relatedProperty : dependsOnProperties) {
-                    if (!isLoaded(entity, relatedProperty))
+                boolean fullFetchingOfAllPropertiesGuaranteed = true;
+                for (String relatedPropertyName : dependsOnProperties) {
+                    MetaProperty relatedProperty = metaClass.getProperty(relatedPropertyName);
+                    if (relatedProperty.getRange().isClass()) {
+                        fullFetchingOfAllPropertiesGuaranteed = false;
+                    }
+                    if (!isLoaded(entity, relatedPropertyName))
                         return false;
                 }
-                return true;
+
+                return fullFetchingOfAllPropertiesGuaranteed || checkIsLoadedWithGetter(entity, property);
             }
         }
 

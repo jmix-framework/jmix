@@ -1233,10 +1233,19 @@ public class FrontendUtils {
      * @param format  Format of the line to send to console, it must contain a `%s`
      *                outlet for the message
      * @param message the string to show
+     *
+     * @see FrontendUtils#console(String, Object, boolean)
      */
     @SuppressWarnings("squid:S106")
     public static void console(String format, Object message) {
         console(format, message, true);
+    }
+
+    /**
+     * @see FrontendUtils#console(String, Object)
+     */
+    public static void console(Object message) {
+        console(FrontendUtils.RED, message, true);
     }
 
     public static void console(String format, Object message, boolean logInFile) {

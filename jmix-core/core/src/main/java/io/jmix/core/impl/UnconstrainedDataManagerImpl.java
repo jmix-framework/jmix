@@ -318,8 +318,7 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
 
     @Override
     public <T> T getReference(Class<T> entityClass, Object id) {
-        T entity = metadata.create(entityClass);
-        EntityValues.setId(entity, id);
+        T entity = metadata.create(entityClass, id);
         entityStates.makePatch(entity);
         return entity;
     }

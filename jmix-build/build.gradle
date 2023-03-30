@@ -28,7 +28,7 @@ repositories {
 
 dependencies {
     implementation localGroovy()
-    implementation 'com.github.spotbugs.snom:spotbugs-gradle-plugin:5.0.9'
+    implementation 'com.github.spotbugs.snom:spotbugs-gradle-plugin:5.0.14'
 }
 
 task sourcesJar(type: Jar) {

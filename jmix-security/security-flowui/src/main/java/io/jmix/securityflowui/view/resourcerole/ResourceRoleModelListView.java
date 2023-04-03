@@ -206,6 +206,8 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
             log.warn("Unable to export resource roles", e);
 
             String title = messages.getMessage(ResourceRoleModelListView.class, "error.exportFailed");
+
+            // todo message too long and screen space is overflowed, so notification cannot be closed
             String description = e.getMessage();
             notifications.create(title, description)
                     .withType(Notifications.Type.ERROR)

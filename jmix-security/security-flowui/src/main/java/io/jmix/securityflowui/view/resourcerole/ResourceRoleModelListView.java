@@ -188,9 +188,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
         List<Object> dbResourceRoles = getExportEntityList();
 
         if (dbResourceRoles.isEmpty()) {
-
-            String description = messages.getMessage(ResourceRoleModelListView.class, "nothingToExport");
-            notifications.create(description)
+            notifications.create(messages.getMessage(ResourceRoleModelListView.class, "nothingToExport"))
                     .withType(Notifications.Type.WARNING)
                     .show();
             return;
@@ -204,12 +202,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
 
         } catch (Exception e) {
             log.warn("Unable to export resource roles", e);
-
-            String title = messages.getMessage(ResourceRoleModelListView.class, "error.exportFailed");
-
-            // todo message too long and screen space is overflowed, so notification cannot be closed
-            String description = e.getMessage();
-            notifications.create(title, description)
+            notifications.create(messages.getMessage(ResourceRoleModelListView.class, "error.exportFailed"))
                     .withType(Notifications.Type.ERROR)
                     .show();
         }
@@ -247,18 +240,13 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
 
             if (importedEntities.size() > 0) {
                 loadRoles(null);
-
-                String description = messages.getMessage(ResourceRoleModelListView.class, "importSuccessful");
-                notifications.create(description)
+                notifications.create(messages.getMessage(ResourceRoleModelListView.class, "importSuccessful"))
                         .withType(Notifications.Type.SUCCESS)
                         .show();
             }
         } catch (Exception e) {
             log.warn("Unable to import resource roles", e);
-
-            String title = messages.getMessage(ResourceRoleModelListView.class, "error.importFailed");
-            String description = e.getMessage();
-            notifications.create(title, description)
+            notifications.create(messages.getMessage(ResourceRoleModelListView.class, "error.importFailed"))
                     .withType(Notifications.Type.ERROR)
                     .show();
         }

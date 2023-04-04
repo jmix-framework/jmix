@@ -190,9 +190,7 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
         List<Object> dbRowLevelRoles = getExportEntityList();
 
         if (dbRowLevelRoles.isEmpty()) {
-
-            String description = messages.getMessage(RowLevelRoleModelListView.class, "nothingToExport");
-            notifications.create(description)
+            notifications.create(messages.getMessage(RowLevelRoleModelListView.class, "nothingToExport"))
                     .withType(Notifications.Type.WARNING)
                     .show();
             return;
@@ -206,10 +204,7 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
 
         } catch (Exception e) {
             log.warn("Unable to export row-level roles", e);
-
-            String title = messages.getMessage(RowLevelRoleModelListView.class, "error.exportFailed");
-            String description = e.getMessage();
-            notifications.create(title, description)
+            notifications.create(messages.getMessage(RowLevelRoleModelListView.class, "error.exportFailed"))
                     .withType(Notifications.Type.ERROR)
                     .show();
         }
@@ -247,18 +242,13 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
 
             if (importedEntities.size() > 0) {
                 loadRoles(null);
-
-                String description = messages.getMessage(RowLevelRoleModelListView.class, "importSuccessful");
-                notifications.create(description)
+                notifications.create(messages.getMessage(RowLevelRoleModelListView.class, "importSuccessful"))
                         .withType(Notifications.Type.SUCCESS)
                         .show();
             }
         } catch (Exception e) {
             log.warn("Unable to import row-level roles", e);
-
-            String title = messages.getMessage(RowLevelRoleModelListView.class, "error.importFailed");
-            String description = e.getMessage();
-            notifications.create(title, description)
+            notifications.create(messages.getMessage(RowLevelRoleModelListView.class, "error.importFailed"))
                     .withType(Notifications.Type.ERROR)
                     .show();
         }

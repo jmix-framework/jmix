@@ -16,6 +16,7 @@
 
 package io.jmix.auditflowui.view.entitylog;
 
+import com.google.common.io.Files;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
@@ -34,13 +35,7 @@ import io.jmix.audit.entity.EntityLogAttr;
 import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
-import io.jmix.core.ExtendedEntities;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.ReferenceToEntitySupport;
-import io.jmix.core.TimeSource;
+import io.jmix.core.*;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -57,47 +52,39 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.download.DownloadFormat;
+import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.LookupComponent;
-import io.jmix.flowui.view.StandardListView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.view.*;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static io.jmix.flowui.download.DownloadFormat.JSON;
+import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
 @Route(value = "audit/entitylog", layout = DefaultMainViewParent.class)
 @ViewController("entityLog.view")
@@ -105,29 +92,7 @@ import java.util.stream.Collectors;
 @LookupComponent("entityLogTable")
 @DialogMode(width = "50em", height = "37.5em")
 public class EntityLogView extends StandardListView<EntityLogItem> {
-
-    @Autowired
-    protected Messages messages;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected TimeSource timeSource;
-    @Autowired
-    protected ReferenceToEntitySupport referenceToEntitySupport;
-    @Autowired
-    protected ExtendedEntities extendedEntities;
-    @Autowired
-    protected EntityLog entityLog;
-    @Autowired
-    protected UiComponents uiComponents;
-    @Autowired
-    protected MetadataTools metadataTools;
-    @Autowired
-    protected Dialogs dialogs;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected PolicyStore policyStore;
+    private static final Logger log = LoggerFactory.getLogger(EntityLogView.class);
 
     @ViewComponent
     protected CollectionContainer<LoggedEntity> loggedEntityDc;
@@ -166,17 +131,13 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected Button cancelBtn;
     @ViewComponent
+    private FileUploadField importField;
+    @ViewComponent
     protected Checkbox selectAllCheckBox;
     @ViewComponent
     protected CollectionContainer<EntityLogAttr> entityLogAttrDc;
     @ViewComponent
     protected VerticalLayout loggedEntityTableBox;
-    @Autowired
-    protected UserRepository userRepository;
-    @Autowired
-    protected MessageTools messageTools;
-    @Autowired
-    protected DialogWindows dialogBuilders;
     @ViewComponent
     protected Tabs tabsheet;
     @ViewComponent
@@ -187,12 +148,51 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     protected VerticalLayout loggedEntityMiscBox;
     @ViewComponent
     protected CheckboxGroup<String> attributesCheckboxGroup;
+
+    @Autowired
+    protected UserRepository userRepository;
+    @Autowired
+    protected MessageTools messageTools;
+    @Autowired
+    protected DialogWindows dialogBuilders;
+    @Autowired
+    private EntityImportExport entityImportExport;
+    @Autowired
+    private EntityImportPlans entityImportPlans;
+    @Autowired
+    private Downloader downloader;
+    @Autowired
+    private FetchPlans fetchPlans;
+    @Autowired
+    protected SecureOperations secureOperations;
+    @Autowired
+    protected Messages messages;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected TimeSource timeSource;
+    @Autowired
+    protected ReferenceToEntitySupport referenceToEntitySupport;
+    @Autowired
+    protected ExtendedEntities extendedEntities;
+    @Autowired
+    protected EntityLog entityLog;
+    @Autowired
+    protected UiComponents uiComponents;
+    @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected Dialogs dialogs;
+    @Autowired
+    protected Notifications notifications;
+    @Autowired
+    protected PolicyStore policyStore;
+
+
     protected Object selectedEntity;
 
     // allow or not selectAllCheckBox to change values of other checkboxes
     protected boolean canSelectAllCheckboxGenerateEvents = true;
-    @Autowired
-    protected SecureOperations secureOperations;
 
     protected void onSelectedTabChange(Tabs.SelectedChangeEvent event) {
         String tabId = event.getSelectedTab().getId()
@@ -790,9 +790,8 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                                 DataContext dataContext = getDataContext();
                                 for (LoggedEntity item : selectedItems) {
                                     if (item.getAttributes() != null) {
-                                        Set<LoggedAttribute> attributes = new HashSet<>(item.getAttributes());
-                                        for (LoggedAttribute attribute : attributes) {
-                                            dataContext.remove(attribute);
+                                        for (LoggedAttribute loggedAttribute : new HashSet<>(item.getAttributes())) {
+                                            dataContext.remove(loggedAttribute);
                                         }
                                         dataContext.save();
                                     }
@@ -813,5 +812,100 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         disableControls();
         loggedEntityTable.setEnabled(true);
         loggedEntityTable.focus();
+    }
+
+    @Subscribe("loggedEntityTable.exportJSON")
+    public void onRoleModelsTableExportJSON(ActionPerformedEvent event) {
+        export(JSON);
+    }
+
+    @Subscribe("loggedEntityTable.exportZIP")
+    public void onRoleModelsTableExportZIP(ActionPerformedEvent event) {
+        export(ZIP);
+    }
+
+    protected void export(DownloadFormat downloadFormat) {
+        List<Object> dbRowLevelRoles = getExportEntityList();
+
+        if (dbRowLevelRoles.isEmpty()) {
+            notifications.create(messages.getMessage(EntityLogView.class, "nothingToExport"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
+        }
+
+        try {
+            byte[] data = downloadFormat == JSON ?
+                    entityImportExport.exportEntitiesToJSON(dbRowLevelRoles, buildExportFetchPlan()).getBytes(StandardCharsets.UTF_8) :
+                    entityImportExport.exportEntitiesToZIP(dbRowLevelRoles, buildExportFetchPlan());
+            downloader.download(data, String.format("LoggedEntity.%s", downloadFormat.getFileExt()), downloadFormat);
+
+        } catch (Exception e) {
+            log.warn("Unable to export loggedEntity", e);
+            notifications.create(messages.getMessage(EntityLogView.class, "error.exportFailed"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
+    }
+
+    protected List<Object> getExportEntityList() {
+        Collection<LoggedEntity> selected = loggedEntityTable.getSelectedItems();
+        if (selected.isEmpty() && loggedEntityTable.getItems() != null) {
+            selected = loggedEntityDc.getItems();
+        }
+
+        return new ArrayList<>(selected);
+    }
+
+    protected FetchPlan buildExportFetchPlan() {
+        return fetchPlans.builder(LoggedEntity.class)
+                .addFetchPlan(FetchPlan.BASE)
+                .add("attributes", FetchPlan.BASE)
+                .build();
+    }
+
+    @Subscribe("importField")
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
+        try {
+            byte[] bytes = importField.getValue();
+            Assert.notNull(bytes, "Uploaded file does not contains data");
+
+            List<Object> importedEntities = getImportedEntityList(event.getFileName(), bytes);
+
+            if (importedEntities.size() > 0) {
+                loggedEntityDl.load();
+                loggedAttrDl.load();
+
+                notifications.create(messages.getMessage(EntityLogView.class, "importSuccessful"))
+                        .withType(Notifications.Type.SUCCESS)
+                        .show();
+            }
+        } catch (Exception e) {
+            log.warn("Unable to import logged entity", e);
+            notifications.create(messages.getMessage(EntityLogView.class, "error.importFailed"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
+    }
+
+    protected List<Object> getImportedEntityList(String fileName, byte[] fileContent) {
+        Collection<Object> importedEntities;
+        if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
+            importedEntities = entityImportExport.importEntitiesFromJson(new String(fileContent, StandardCharsets.UTF_8), createEntityImportPlan());
+        } else {
+            importedEntities = entityImportExport.importEntitiesFromZIP(fileContent, createEntityImportPlan());
+        }
+        return new ArrayList<>(importedEntities);
+    }
+
+    protected EntityImportPlan createEntityImportPlan() {
+        return entityImportPlans.builder(LoggedEntity.class)
+                .addLocalProperties()
+                .addProperty(new EntityImportPlanProperty(
+                        "attributes",
+                        entityImportPlans.builder(LoggedAttribute.class).addLocalProperties().build(),
+                        CollectionImportPolicy.KEEP_ABSENT_ITEMS)
+                )
+                .build();
     }
 }

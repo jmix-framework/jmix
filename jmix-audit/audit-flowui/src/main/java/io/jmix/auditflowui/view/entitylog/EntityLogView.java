@@ -131,7 +131,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected Button cancelBtn;
     @ViewComponent
-    private FileUploadField importField;
+    protected FileUploadField importField;
     @ViewComponent
     protected Checkbox selectAllCheckBox;
     @ViewComponent
@@ -156,13 +156,13 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @Autowired
     protected DialogWindows dialogBuilders;
     @Autowired
-    private EntityImportExport entityImportExport;
+    protected EntityImportExport entityImportExport;
     @Autowired
-    private EntityImportPlans entityImportPlans;
+    protected EntityImportPlans entityImportPlans;
     @Autowired
-    private Downloader downloader;
+    protected Downloader downloader;
     @Autowired
-    private FetchPlans fetchPlans;
+    protected FetchPlans fetchPlans;
     @Autowired
     protected SecureOperations secureOperations;
     @Autowired

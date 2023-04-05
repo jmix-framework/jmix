@@ -16,40 +16,45 @@
 
 package io.jmix.securityflowui.view.resourcerole;
 
-import com.vaadin.flow.component.contextmenu.MenuItem;
-import com.vaadin.flow.component.contextmenu.SubMenu;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.menubar.MenuBar;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.google.common.io.Files;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
-import io.jmix.core.DataManager;
-import io.jmix.core.Messages;
+import io.jmix.core.*;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.download.DownloadFormat;
+import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.securitydata.entity.ResourcePolicyEntity;
+import io.jmix.securitydata.entity.ResourceRoleEntity;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
 import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
 import io.jmix.securityflowui.model.BaseRoleModel;
 import io.jmix.securityflowui.model.ResourceRoleModel;
 import io.jmix.securityflowui.model.RoleModelConverter;
-import io.jmix.securityflowui.model.RoleSource;
 import io.jmix.securityflowui.util.RemoveRoleConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static io.jmix.flowui.download.DownloadFormat.JSON;
+import static io.jmix.flowui.download.DownloadFormat.ZIP;
+import static io.jmix.securityflowui.model.RoleSource.DATABASE;
 
 @Route(value = "sec/resourcerolemodels", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.list")
@@ -57,24 +62,17 @@ import java.util.stream.Collectors;
 @LookupComponent("roleModelsTable")
 @DialogMode(width = "50em", height = "37.5em")
 public class ResourceRoleModelListView extends StandardListView<ResourceRoleModel> {
+    private static final Logger log = LoggerFactory.getLogger(ResourceRoleModelListView.class);
 
     @ViewComponent
     private DataGrid<ResourceRoleModel> roleModelsTable;
     @ViewComponent
-    private HorizontalLayout buttonsPanel;
-
-    @ViewComponent("roleModelsTable.exportJSON")
-    private Action exportJSON;
-    @ViewComponent("roleModelsTable.exportZIP")
-    private Action exportZIP;
-
+    private FileUploadField importField;
     @ViewComponent
     private CollectionContainer<ResourceRoleModel> roleModelsDc;
 
     @Autowired
     private Messages messages;
-    @Autowired
-    private MessageBundle messageBundle;
     @Autowired
     private DataManager dataManager;
     @Autowired
@@ -89,11 +87,18 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     private ResourceRoleRepository roleRepository;
     @Autowired
     private UrlParamSerializer urlParamSerializer;
+    @Autowired
+    private EntityImportExport entityImportExport;
+    @Autowired
+    private EntityImportPlans entityImportPlans;
+    @Autowired
+    private Downloader downloader;
+    @Autowired
+    private FetchPlans fetchPlans;
 
     @Subscribe
     public void onInit(InitEvent event) {
         initFilter();
-//        initExportMenu();
     }
 
     private void initFilter() {
@@ -105,18 +110,6 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
 
     private void onRoleFilterChange(RoleFilterChangeEvent event) {
         loadRoles(event);
-    }
-
-    private void initExportMenu() {
-        MenuBar exportMenuBar = new MenuBar();
-        buttonsPanel.add(exportMenuBar);
-
-        MenuItem rootItem = exportMenuBar.addItem(VaadinIcon.DOWNLOAD.create());
-        rootItem.add(messageBundle.getMessage("exportMenu.text"));
-
-        SubMenu exportItems = rootItem.getSubMenu();
-        exportItems.addItem(exportJSON.getText(), event -> exportJSON.actionPerform(null));
-        exportItems.addItem(exportZIP.getText(), event -> exportZIP.actionPerform(null));
     }
 
     @Subscribe
@@ -167,7 +160,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     }
 
     @Install(to = "roleModelsTable.remove", subject = "enabledRule")
-    private boolean roleModelsTableRemoveEnabledRule() {
+    public boolean roleModelsTableRemoveEnabledRule() {
         return isDatabaseRoleSelected();
     }
 
@@ -175,7 +168,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
         Set<ResourceRoleModel> selected = roleModelsTable.getSelectedItems();
         if (selected.size() == 1) {
             ResourceRoleModel roleModel = selected.iterator().next();
-            return RoleSource.DATABASE.equals(roleModel.getSource());
+            return DATABASE.equals(roleModel.getSource());
         }
 
         return false;
@@ -183,11 +176,100 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
 
     @Subscribe("roleModelsTable.exportJSON")
     public void onRoleModelsTableExportJSON(ActionPerformedEvent event) {
-//        export(JSON);
+        export(JSON);
     }
 
     @Subscribe("roleModelsTable.exportZIP")
     public void onRoleModelsTableExportZIP(ActionPerformedEvent event) {
-//        export(ZIP);
+        export(ZIP);
+    }
+
+    protected void export(DownloadFormat downloadFormat) {
+        List<Object> dbResourceRoles = getExportEntityList();
+
+        if (dbResourceRoles.isEmpty()) {
+            notifications.create(messages.getMessage(ResourceRoleModelListView.class, "nothingToExport"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
+        }
+
+        try {
+            byte[] data = downloadFormat == JSON ?
+                    entityImportExport.exportEntitiesToJSON(dbResourceRoles, buildExportFetchPlan()).getBytes(StandardCharsets.UTF_8) :
+                    entityImportExport.exportEntitiesToZIP(dbResourceRoles, buildExportFetchPlan());
+            downloader.download(data, String.format("ResourceRoles.%s", downloadFormat.getFileExt()), downloadFormat);
+
+        } catch (Exception e) {
+            log.warn("Unable to export resource roles", e);
+            notifications.create(messages.getMessage(ResourceRoleModelListView.class, "error.exportFailed"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
+    }
+
+    protected List<Object> getExportEntityList() {
+        Collection<ResourceRoleModel> selected = roleModelsTable.getSelectedItems();
+        if (selected.isEmpty() && roleModelsTable.getItems() != null) {
+            selected = roleModelsDc.getItems();
+        }
+
+        return selected.stream()
+                .filter(resourceRoleModel -> DATABASE.equals(resourceRoleModel.getSource()))
+                .peek(resourceRoleModel -> {
+                    String databaseId = resourceRoleModel.getCustomProperties().get("databaseId");
+                    resourceRoleModel.setId(UUID.fromString(databaseId));
+                })
+                .collect(Collectors.toList());
+    }
+
+    protected FetchPlan buildExportFetchPlan() {
+        return fetchPlans.builder(ResourceRoleEntity.class)
+                .addFetchPlan(FetchPlan.BASE)
+                .add("resourcePolicies", FetchPlan.BASE)
+                .build();
+    }
+
+    @Subscribe("importField")
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
+        try {
+            byte[] bytes = importField.getValue();
+            Assert.notNull(bytes, "Uploaded file does not contains data");
+
+            List<Object> importedEntities = getImportedEntityList(event.getFileName(), bytes);
+
+            if (importedEntities.size() > 0) {
+                loadRoles(null);
+                notifications.create(messages.getMessage(ResourceRoleModelListView.class, "importSuccessful"))
+                        .withType(Notifications.Type.SUCCESS)
+                        .show();
+            }
+        } catch (Exception e) {
+            log.warn("Unable to import resource roles", e);
+            notifications.create(messages.getMessage(ResourceRoleModelListView.class, "error.importFailed"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
+    }
+
+    protected List<Object> getImportedEntityList(String fileName, byte[] fileContent) {
+        Collection<Object> importedEntities;
+        if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
+            importedEntities = entityImportExport.importEntitiesFromJson(new String(fileContent, StandardCharsets.UTF_8), createEntityImportPlan());
+        } else {
+            importedEntities = entityImportExport.importEntitiesFromZIP(fileContent, createEntityImportPlan());
+        }
+        return new ArrayList<>(importedEntities);
+    }
+
+    protected EntityImportPlan createEntityImportPlan() {
+        return entityImportPlans.builder(ResourceRoleEntity.class)
+                .addLocalProperties()
+                .addProperty(new EntityImportPlanProperty(
+                        "resourcePolicies",
+                        entityImportPlans.builder(ResourcePolicyEntity.class).addLocalProperties().build(),
+                        CollectionImportPolicy.KEEP_ABSENT_ITEMS)
+                )
+                .build();
     }
 }

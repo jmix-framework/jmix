@@ -16,31 +16,46 @@
 
 package io.jmix.securityflowui.view.rowlevelrole;
 
+import com.google.common.io.Files;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
-import io.jmix.core.DataManager;
-import io.jmix.core.Messages;
+import io.jmix.core.*;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.download.DownloadFormat;
+import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import io.jmix.securitydata.entity.RowLevelPolicyEntity;
+import io.jmix.securitydata.entity.RowLevelRoleEntity;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
 import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
-import io.jmix.securityflowui.model.*;
+import io.jmix.securityflowui.model.BaseRoleModel;
+import io.jmix.securityflowui.model.RoleModelConverter;
+import io.jmix.securityflowui.model.RoleSource;
+import io.jmix.securityflowui.model.RowLevelRoleModel;
 import io.jmix.securityflowui.util.RemoveRoleConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static io.jmix.flowui.download.DownloadFormat.JSON;
+import static io.jmix.flowui.download.DownloadFormat.ZIP;
+import static io.jmix.securityflowui.model.RoleSource.DATABASE;
 
 @Route(value = "sec/rowlevelrolemodels", layout = DefaultMainViewParent.class)
 @ViewController("sec_RowLevelRoleModel.list")
@@ -49,11 +64,14 @@ import java.util.stream.Collectors;
 @DialogMode(width = "50em", height = "37.5em")
 public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleModel> {
 
-    @ViewComponent
-    private DataGrid<RowLevelRoleModel> roleModelsTable;
+    private static final Logger log = LoggerFactory.getLogger(RowLevelRoleModelListView.class);
 
     @ViewComponent
+    private DataGrid<RowLevelRoleModel> roleModelsTable;
+    @ViewComponent
     private CollectionContainer<RowLevelRoleModel> roleModelsDc;
+    @ViewComponent
+    private FileUploadField importField;
 
     @Autowired
     private Messages messages;
@@ -71,6 +89,14 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
     private RowLevelRoleRepository roleRepository;
     @Autowired
     private UrlParamSerializer urlParamSerializer;
+    @Autowired
+    private EntityImportExport entityImportExport;
+    @Autowired
+    private EntityImportPlans entityImportPlans;
+    @Autowired
+    private Downloader downloader;
+    @Autowired
+    private FetchPlans fetchPlans;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -148,5 +174,104 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
         }
 
         return false;
+    }
+
+    @Subscribe("roleModelsTable.exportJSON")
+    public void onRoleModelsTableExportJSON(ActionPerformedEvent event) {
+        export(JSON);
+    }
+
+    @Subscribe("roleModelsTable.exportZIP")
+    public void onRoleModelsTableExportZIP(ActionPerformedEvent event) {
+        export(ZIP);
+    }
+
+    protected void export(DownloadFormat downloadFormat) {
+        List<Object> dbRowLevelRoles = getExportEntityList();
+
+        if (dbRowLevelRoles.isEmpty()) {
+            notifications.create(messages.getMessage(RowLevelRoleModelListView.class, "nothingToExport"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
+        }
+
+        try {
+            byte[] data = downloadFormat == JSON ?
+                    entityImportExport.exportEntitiesToJSON(dbRowLevelRoles, buildExportFetchPlan()).getBytes(StandardCharsets.UTF_8) :
+                    entityImportExport.exportEntitiesToZIP(dbRowLevelRoles, buildExportFetchPlan());
+            downloader.download(data, String.format("RowLevelRoles.%s", downloadFormat.getFileExt()), downloadFormat);
+
+        } catch (Exception e) {
+            log.warn("Unable to export row-level roles", e);
+            notifications.create(messages.getMessage(RowLevelRoleModelListView.class, "error.exportFailed"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
+    }
+
+    protected List<Object> getExportEntityList() {
+        Collection<RowLevelRoleModel> selected = roleModelsTable.getSelectedItems();
+        if (selected.isEmpty() && roleModelsTable.getItems() != null) {
+            selected = roleModelsDc.getItems();
+        }
+
+        return selected.stream()
+                .filter(rowLevelRoleModel -> DATABASE.equals(rowLevelRoleModel.getSource()))
+                .peek(rowLevelRoleModel -> {
+                    String databaseId = rowLevelRoleModel.getCustomProperties().get("databaseId");
+                    rowLevelRoleModel.setId(UUID.fromString(databaseId));
+                })
+                .collect(Collectors.toList());
+    }
+
+    protected FetchPlan buildExportFetchPlan() {
+        return fetchPlans.builder(RowLevelRoleEntity.class)
+                .addFetchPlan(FetchPlan.BASE)
+                .add("rowLevelPolicies", FetchPlan.BASE)
+                .build();
+    }
+
+    @Subscribe("importField")
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
+        try {
+            byte[] bytes = importField.getValue();
+            Assert.notNull(bytes, "Uploaded file does not contains data");
+
+            List<Object> importedEntities = getImportedEntityList(event.getFileName(), bytes);
+
+            if (importedEntities.size() > 0) {
+                loadRoles(null);
+                notifications.create(messages.getMessage(RowLevelRoleModelListView.class, "importSuccessful"))
+                        .withType(Notifications.Type.SUCCESS)
+                        .show();
+            }
+        } catch (Exception e) {
+            log.warn("Unable to import row-level roles", e);
+            notifications.create(messages.getMessage(RowLevelRoleModelListView.class, "error.importFailed"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
+    }
+
+    protected List<Object> getImportedEntityList(String fileName, byte[] fileContent) {
+        Collection<Object> importedEntities;
+        if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
+            importedEntities = entityImportExport.importEntitiesFromJson(new String(fileContent, StandardCharsets.UTF_8), createEntityImportPlan());
+        } else {
+            importedEntities = entityImportExport.importEntitiesFromZIP(fileContent, createEntityImportPlan());
+        }
+        return new ArrayList<>(importedEntities);
+    }
+
+    protected EntityImportPlan createEntityImportPlan() {
+        return entityImportPlans.builder(RowLevelRoleEntity.class)
+                .addLocalProperties()
+                .addProperty(new EntityImportPlanProperty(
+                        "rowLevelPolicies",
+                        entityImportPlans.builder(RowLevelPolicyEntity.class).addLocalProperties().build(),
+                        CollectionImportPolicy.KEEP_ABSENT_ITEMS)
+                )
+                .build();
     }
 }

@@ -33,6 +33,16 @@
             <button id="editBtn" action="roleModelsTable.edit"/>
             <button id="removeBtn" action="roleModelsTable.remove"/>
             <button id="assignToUsersBtn" action="roleModelsTable.assignToUsers"/>
+            <dropdownButton id="exportBtn" text="msg://exportMenu.text" icon="DOWNLOAD">
+                <items>
+                    <actionItem id="exportJSONItem" ref="roleModelsTable.exportJSON"/>
+                    <actionItem id="exportZIPItem" ref="roleModelsTable.exportZIP"/>
+                </items>
+            </dropdownButton>
+            <fileUploadField id="importField"
+                    uploadIcon="UPLOAD"
+                    uploadText="msg://importMenu.text"
+                    acceptedFileTypes=".json,.zip"/>
         </hbox>
         <dataGrid id="roleModelsTable"
                   dataContainer="roleModelsDc"

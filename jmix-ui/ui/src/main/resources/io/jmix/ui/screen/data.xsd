@@ -73,7 +73,6 @@
             <xs:element name="query" type="queryType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>
-        <xs:attribute name="dynamicAttributes" type="xs:boolean"/>
         <xs:attribute name="entityId" type="xs:string"/>
         <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
@@ -83,7 +82,6 @@
             <xs:element name="query" type="queryType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>
-        <xs:attribute name="dynamicAttributes" type="xs:boolean"/>
         <xs:attribute name="firstResult" type="xs:integer"/>
         <xs:attribute name="maxResults" type="xs:integer"/>
         <xs:attribute name="cacheable" type="xs:boolean"/>

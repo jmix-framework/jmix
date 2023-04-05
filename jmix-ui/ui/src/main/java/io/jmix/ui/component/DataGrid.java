@@ -65,8 +65,8 @@ import static io.jmix.ui.component.MouseEventDetails.MouseButton;
                 @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF,
                         typeParameter = "E"),
                 @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME, typeParameter = "E"),
-                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
-                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px")
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%")
         }
 )
 public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Component.HasCaption,

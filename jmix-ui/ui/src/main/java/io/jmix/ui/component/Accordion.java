@@ -48,8 +48,7 @@ import java.util.function.Consumer;
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px",
-                        initialValue = "100px"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%"),
                 @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "100%")
         }
 )

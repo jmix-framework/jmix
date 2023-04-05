@@ -27,6 +27,7 @@ import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
+import io.jmix.ui.util.OperationResult;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
@@ -173,6 +174,24 @@ public interface Action {
      * @see #addPropertyChangeListener
      */
     void removePropertyChangeListener(Consumer<PropertyChangeEvent> listener);
+
+    interface ScreenAction<S extends Screen> extends Action {
+        @Nullable
+        S getTarget();
+
+        void setTarget(@Nullable S target);
+    }
+
+    interface OperationResultAction extends Action {
+
+        OperationResult getOperationResult();
+
+        void setNextStepSupplier(@Nullable Supplier<OperationResult> nextStepSupplier);
+
+        void setSuccessHandler(@Nullable Runnable successHandler);
+
+        void setFailHandler(@Nullable Runnable failHandler);
+    }
 
     /**
      * Indicates that the action can be affected by UI permissions.

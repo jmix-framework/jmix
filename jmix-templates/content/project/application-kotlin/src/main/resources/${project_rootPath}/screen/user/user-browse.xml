@@ -14,14 +14,8 @@
         </collection>
     </data>
     <actions>
-        <action id="lookupSelectAction"
-                caption="msg:///actions.Select"
-                icon="LOOKUP_OK"
-                primary="true"
-                shortcut="\${COMMIT_SHORTCUT}"/>
-        <action id="lookupCancelAction"
-                caption="msg:///actions.Cancel"
-                icon="LOOKUP_CANCEL"/>
+        <action id="lookupSelectAction" type="lookup_select"/>
+        <action id="lookupCancelAction" type="lookup_discard"/>
     </actions>
     <facets>
         <dataLoadCoordinator auto="true"/>

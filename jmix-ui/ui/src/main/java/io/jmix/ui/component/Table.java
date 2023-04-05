@@ -59,8 +59,8 @@ import java.util.function.Function;
                 @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF,
                         typeParameter = "E"),
                 @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME, typeParameter = "E"),
-                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
-                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px"),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%"),
                 @StudioProperty(name = "editable", type = PropertyType.BOOLEAN, defaultValue = "false")
         }
 )
@@ -931,7 +931,7 @@ public interface Table<E>
          *
          * @param width default column width
          */
-        @StudioProperty(defaultValue = "0")
+        @StudioProperty(defaultValue = "0", type = PropertyType.SIZE)
         @PositiveOrZero
         void setWidth(@Nullable Integer width);
 

@@ -20,6 +20,11 @@ archivesBaseName = 'jmix-charts-widgets'
 dependencies {
     api project(':charts')
     api project(':ui-widgets')
+    api('javax.validation:validation-api') {
+        version {
+            strictly '1.0.0.GA'
+        }
+    }
 
     implementation 'com.google.code.gson:gson'
 }

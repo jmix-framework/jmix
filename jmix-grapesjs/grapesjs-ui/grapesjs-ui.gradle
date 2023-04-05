@@ -48,7 +48,6 @@ dependencies {
     api 'org.webjars.npm:grapesjs-tooltip'
 
     api 'org.webjars.bowergithub.mootools:slick'
-    api 'org.webjars:ckeditor'
 }
 
 jar.manifest {

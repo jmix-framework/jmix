@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -226,9 +227,10 @@ public class UrlTools {
             return Collections.emptyMap();
         }
 
-        String decoded = URLEncodeUtils.decodeUtf8(paramsString);
+        String[] paramPairs = Arrays.stream(paramsString.split("&"))
+                .map(URLEncodeUtils::decodeUtf8)
+                .toArray(String[]::new);
 
-        String[] paramPairs = decoded.split("&");
         Map<String, String> paramsMap = new LinkedHashMap<>(paramPairs.length);
 
         for (String paramPair : paramPairs) {

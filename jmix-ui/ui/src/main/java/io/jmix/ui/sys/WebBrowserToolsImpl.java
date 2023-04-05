@@ -30,6 +30,8 @@ import java.util.Map;
 @Component("ui_WebBrowserTools")
 public class WebBrowserToolsImpl implements WebBrowserTools {
 
+    public static final String BEFORE_UNLOAD_LISTENER = "jmixBeforeUnloadListener";
+
     protected AppUI ui;
 
     @Autowired
@@ -61,5 +63,19 @@ public class WebBrowserToolsImpl implements WebBrowserTools {
         } else {
             ui.getPage().open(url, target, false);
         }
+    }
+
+    @Override
+    public void preventBrowserTabClosing() {
+        ui.getPage().getJavaScript().execute(
+                "window.addEventListener('beforeunload', " + BEFORE_UNLOAD_LISTENER + ", {capture: true})"
+        );
+    }
+
+    @Override
+    public void allowBrowserTabClosing() {
+        ui.getPage().getJavaScript().execute(
+                "window.removeEventListener('beforeunload', " + BEFORE_UNLOAD_LISTENER + ", {capture: true})"
+        );
     }
 }

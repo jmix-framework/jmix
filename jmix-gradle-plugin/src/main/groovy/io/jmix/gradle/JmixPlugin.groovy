@@ -132,16 +132,16 @@ class JmixPlugin implements Plugin<Project> {
             int minorVersion = kotlinPluginVersionNumbers[1]
             project.tasks.getByName('compileKotlin', {task ->
                 if (majorVersion == 1 && minorVersion < 7) {
-                    task.destinationDir = project.sourceSets.main.java.outputDir
+                    task.destinationDir = project.sourceSets.main.java.destinationDirectory.get()
                 } else {
-                    task.destinationDirectory = project.sourceSets.main.java.outputDir
+                    task.destinationDirectory = project.sourceSets.main.java.destinationDirectory
                 }
             })
             project.tasks.getByName('compileTestKotlin', {task ->
                 if (majorVersion == 1 && minorVersion < 7) {
-                    task.destinationDir = project.sourceSets.test.java.outputDir
+                    task.destinationDir = project.sourceSets.test.java.destinationDirectory.get()
                 } else {
-                    task.destinationDirectory = project.sourceSets.test.java.outputDir
+                    task.destinationDirectory = project.sourceSets.test.java.destinationDirectory
                 }
             })
         } catch (UnknownTaskException ignored) {

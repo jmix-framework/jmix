@@ -1691,6 +1691,16 @@ public class StockChartLoader extends ChartModelLoader<StockChart> {
         if (StringUtils.isNotEmpty(trendLineThickness)) {
             chart.setTrendLineThickness(Integer.valueOf(trendLineThickness));
         }
+
+        String bezierX = element.attributeValue("bezierX");
+        if (StringUtils.isNotEmpty(bezierX)) {
+            chart.setBezierX(Integer.valueOf(bezierX));
+        }
+
+        String bezierY = element.attributeValue("bezierY");
+        if (StringUtils.isNotEmpty(bezierY)) {
+            chart.setBezierY(Integer.valueOf(bezierY));
+        }
     }
 
     protected void loadStockLegend(StockPanel chart, Element element) {

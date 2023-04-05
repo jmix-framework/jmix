@@ -36,8 +36,8 @@ import java.util.function.Consumer;
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "reversePosition", type = PropertyType.BOOLEAN, defaultValue = "false"),
-                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
-                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px")
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100%")
         }
 )
 public interface SplitPanel extends ComponentContainer, Component.BelongToFrame, Component.HasIcon,

@@ -218,7 +218,7 @@ class EnhancingAction implements Action<Task> {
         if (!classesInfo.getAllEntities().isEmpty()) {
             project.logger.lifecycle "Running Jmix enhancer in $project for $sourceSet"
 
-            String javaOutputDir = sourceSet.java.outputDir.absolutePath
+            String javaOutputDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
 
             for (EnhancingStep step : enhancingSteps()) {
 
@@ -249,7 +249,7 @@ class EnhancingAction implements Action<Task> {
             classPool.insertClassPath(file.getAbsolutePath())
         }
 
-        classPool.insertClassPath(sourceSet.java.outputDir.absolutePath)
+        classPool.insertClassPath(sourceSet.java.destinationDirectory.get().getAsFile().absolutePath)
 
         project.configurations.enhancing.files.each { File dep ->
             classPool.insertClassPath(dep.absolutePath)

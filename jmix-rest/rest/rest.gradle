@@ -33,8 +33,6 @@ dependencies {
     api 'org.springframework:spring-webmvc'
     api 'org.springframework:spring-context'
 
-    implementation 'commons-fileupload:commons-fileupload'
-
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'

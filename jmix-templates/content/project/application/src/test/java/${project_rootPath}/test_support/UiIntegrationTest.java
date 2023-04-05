@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Base class for UI integration tests.
  */
 @SpringBootTest
-@UiTest(authenticatedUser = "admin", mainScreenId = "MainScreen", screenBasePackages = "${project_rootPackage}.screen")
+@UiTest(authenticatedUser = "admin", mainScreenId = "${normalizedPrefix_underscore}MainScreen", screenBasePackages = "${project_rootPackage}.screen")
 @ContextConfiguration(classes = {${project_classPrefix}Application.class, UiTestAssistConfiguration.class})
 @SuppressWarnings({"unchecked"})
 public abstract class UiIntegrationTest {

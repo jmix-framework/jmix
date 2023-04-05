@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Component("flowui_ListMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -121,7 +122,7 @@ public class ListMenuBuilder {
                 .withOpened(menuItem.isOpened())
                 .withTitle(menuConfig.getItemTitle(menuItem))
                 .withDescription(getDescription(menuItem))
-                .withClassNames(Arrays.asList(getClassNames(menuItem)));
+                .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()));
 
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
             menuBarItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
@@ -151,7 +152,7 @@ public class ListMenuBuilder {
                 .withControllerClass(getControllerClass(menuItem))
                 .withTitle(menuConfig.getItemTitle(menuItem))
                 .withDescription(getDescription(menuItem))
-                .withClassNames(Arrays.asList(getClassNames(menuItem)))
+                .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
                 .withQueryParameters(menuItem.getQueryParameters())
                 .withRouteParameters(menuItem.getRouteParameters())
                 .withShortcutCombination(menuItem.getShortcutCombination());
@@ -167,7 +168,7 @@ public class ListMenuBuilder {
         JmixListMenu.BeanMenuItem beanMenuItem = new JmixListMenu.BeanMenuItem(menuItem.getId())
                 .withTitle(menuConfig.getItemTitle(menuItem))
                 .withDescription(getDescription(menuItem))
-                .withClassNames(Arrays.asList(getClassNames(menuItem)))
+                .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
                 .withShortcutCombination(menuItem.getShortcutCombination());
 
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {

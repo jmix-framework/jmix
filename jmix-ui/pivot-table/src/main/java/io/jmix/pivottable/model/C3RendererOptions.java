@@ -16,6 +16,15 @@
 
 package io.jmix.pivottable.model;
 
+import io.jmix.ui.meta.StudioElement;
+
+@StudioElement(
+        caption = "C3",
+        xmlElement = "c3",
+        icon = "io/jmix/pivottable/icon/component.svg",
+        xmlns = "http://jmix.io/schema/ui/pivot-table",
+        xmlnsAlias = "pivot"
+)
 public class C3RendererOptions extends AbstractPivotObject {
 
     private static final long serialVersionUID = -5273273454206199279L;
@@ -35,6 +44,7 @@ public class C3RendererOptions extends AbstractPivotObject {
      * @param size size of chart renderer
      * @return a reference to this object
      */
+    @StudioElement
     public C3RendererOptions setSize(Size size) {
         this.size = size;
         return this;

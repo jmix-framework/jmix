@@ -26,8 +26,10 @@ dependencies {
         exclude(group: 'org.hibernate.validator', module: 'hibernate-validator')
         exclude(group: 'javax.validation', module: 'validation-api')
     }
-    api('javax.validation:validation-api:1.0.0.GA') {
-        force = true
+    api('javax.validation:validation-api') {
+        version {
+            strictly '1.0.0.GA'
+        }
     }
     api 'com.vaadin:vaadin-client'
     api('com.vaadin:vaadin-client-compiler') {

@@ -65,8 +65,6 @@ public interface StudioDataElements {
                     "io.jmix.flowui.model.CollectionContainer"},
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "dynamicAttributes", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
@@ -88,8 +86,6 @@ public interface StudioDataElements {
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "dynamicAttributes", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,

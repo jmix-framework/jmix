@@ -1218,6 +1218,20 @@ public class QueryCacheTestClass {
         }
     }
 
+    @Test
+    public void testRepeatedParameterReplacedWithoutProblems() {
+        assertEquals(0, queryCache.size());
+
+        DataManager dataManager = AppBeans.get(DataManager.NAME);
+        LoadContext<User> loadContext = new LoadContext<>(User.class).setFetchPlan("user.browse");
+        loadContext.setQueryString("select u from test$User u where u.login like :str or u.name like :str")
+                .setParameter("str", "%2%")
+                .setCacheable(true);
+        dataManager.loadList(loadContext);//no exception must occur
+
+        assertEquals(1, queryCache.size());
+    }
+
 
     protected User getResultListUserByLoginNamed(User loadedUser, boolean checkView, Consumer<EntityManager> emBuilder, Consumer<Query> queryBuilder) throws Exception {
         User user;

@@ -15,10 +15,8 @@
  */
 
 plugins {
-    id 'java-gradle-plugin'
     id 'groovy'
-    id 'maven-publish'
-    id 'com.gradle.plugin-publish' version '1.0.0'
+    id 'com.gradle.plugin-publish' version '1.1.0'
 }
 
 group = 'io.jmix.gradle'
@@ -69,20 +67,17 @@ task sourcesJar(type: Jar) {
 }
 
 gradlePlugin {
+    website = 'http://jmix.io'
+    vcsUrl = 'https://github.com/jmix-framework/jmix'
     plugins {
         jmixPlugin {
             id = 'io.jmix'
-            implementationClass = 'io.jmix.gradle.JmixPlugin'
             displayName = 'Jmix Framework Gradle Plugin'
+            description = 'Jmix Framework Gradle Plugin'
+            tags.set(['jmix', 'spring'])
+            implementationClass = 'io.jmix.gradle.JmixPlugin'
         }
     }
-}
-
-pluginBundle {
-    website = 'http://jmix.io'
-    vcsUrl = 'https://github.com/jmix-framework/jmix'
-    description = 'Jmix Framework Gradle Plugin'
-    tags = ['jmix', 'spring']
 }
 
 publishing {

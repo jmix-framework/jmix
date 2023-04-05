@@ -18,17 +18,14 @@ package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.exception.ReportingException;
 import com.haulmont.yarg.util.converter.AbstractObjectToStringConverter;
-import io.jmix.core.DataManager;
-import io.jmix.core.Entity;
-import io.jmix.core.FetchPlan;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.text.ParseException;
-import java.util.Optional;
-import java.util.UUID;
 
 public class JmixObjectToStringConverter extends AbstractObjectToStringConverter {
 
@@ -38,6 +35,10 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
+    @Autowired
+    protected MetadataTools metadataTools;
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     @Nullable
     public String convertToString(Class parameterClass, @Nullable Object paramValue) {
@@ -58,6 +59,7 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
         }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     @Nullable
     public Object convertFromString(Class parameterClass, @Nullable String paramValueStr) {
@@ -66,12 +68,36 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
         } else if (String.class.isAssignableFrom(parameterClass)) {
             return paramValueStr;
         } else if (Entity.class.isAssignableFrom(parameterClass)) {
-            UUID id = UUID.fromString(paramValueStr);
-            Optional entityOpt = dataManager.load(parameterClass)
-                    .id(id)
-                    .fetchPlan(FetchPlan.BASE)
-                    .optional();
-            return entityOpt.isPresent() ? entityOpt.get() : null;
+            MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(parameterClass);
+            if (idProperty == null) {
+                return null;
+            }
+
+            Object idValue;
+
+            if (idProperty.getRange().isDatatype()) {
+                try {
+                    idValue = idProperty.getRange().asDatatype().parse(paramValueStr);
+                } catch (ParseException e) {
+                    throw new ReportingException(
+                            String.format("Couldn't read id from [%s] with value [%s] and datatype [%s].",
+                                    parameterClass.getSimpleName(), paramValueStr, idProperty.getRange().asDatatype()));
+                }
+
+                if (idValue != null) {
+                    return dataManager.load(parameterClass)
+                            .id(Id.of(idValue, parameterClass))
+                            .fetchPlan(FetchPlan.BASE)
+                            .optional()
+                            .orElse(null);
+                }
+            } else if (idProperty.getRange().isClass()) {
+                throw new ReportingException(
+                        String.format("Unsupported composite primary key in [%s] with value [%s]",
+                                parameterClass.getSimpleName(), paramValueStr));
+            }
+
+            return null;
         } else {
             Datatype datatype = datatypeRegistry.find(parameterClass);
             if (datatype != null) {

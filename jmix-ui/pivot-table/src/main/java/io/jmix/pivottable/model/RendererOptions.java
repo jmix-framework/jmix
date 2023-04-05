@@ -16,6 +16,15 @@
 
 package io.jmix.pivottable.model;
 
+import io.jmix.ui.meta.StudioElement;
+
+@StudioElement(
+        caption = "RendererOptions",
+        xmlElement = "rendererOptions",
+        icon = "io/jmix/pivottable/icon/component.svg",
+        xmlns = "http://jmix.io/schema/ui/pivot-table",
+        xmlnsAlias = "pivot"
+)
 public class RendererOptions extends AbstractPivotObject {
 
     private static final long serialVersionUID = -1633377582757582532L;
@@ -42,6 +51,7 @@ public class RendererOptions extends AbstractPivotObject {
      * @param heatmap options which will be applied to heatmap renderers
      * @return a reference to this object
      */
+    @StudioElement
     public RendererOptions setHeatmap(HeatmapRendererOptions heatmap) {
         this.heatmap = heatmap;
         return this;
@@ -67,6 +77,7 @@ public class RendererOptions extends AbstractPivotObject {
      * @param c3 options which will be applied to chart renderers
      * @return a reference to this object
      */
+    @StudioElement
     public RendererOptions setC3(C3RendererOptions c3) {
         this.c3 = c3;
         return this;

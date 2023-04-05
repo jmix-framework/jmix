@@ -17,12 +17,7 @@
 package io.jmix.ui.widget.client.table;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.EventTarget;
-import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.TableCellElement;
+import com.google.gwt.dom.client.*;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -505,6 +500,10 @@ public class JmixScrollTableWidget extends VScrollTable implements TableWidget {
             DOM.sinkEvents(iconElement, Event.ONCLICK);
         }
 
+        protected Element getColumnSelector() {
+            return columnSelector;
+        }
+
         @Override
         public Action[] getActions() {
             Action[] tableActions = super.getActions();
@@ -824,7 +823,18 @@ public class JmixScrollTableWidget extends VScrollTable implements TableWidget {
         @Override
         protected boolean leaveRoomForSortIndicator() {
             HeaderCell lastCell = tHead.getHeaderCell(tHead.getVisibleCellCount() - 1);
-            return this.equals(lastCell);
+            return this.equals(lastCell)
+                    && (columnSelectorVisible() || presentationsEditIconVisible());
+        }
+
+        protected boolean presentationsEditIconVisible() {
+            Style style = ((JmixScrollTableHead) tHead).presentationsEditIcon.getElement().getStyle();
+            return !Style.Display.NONE.getCssName().equals(style.getDisplay());
+        }
+
+        protected boolean columnSelectorVisible() {
+            Style style = ((JmixScrollTableHead) tHead).getColumnSelector().getStyle();
+            return !Style.Display.NONE.getCssName().equals(style.getDisplay());
         }
     }
 

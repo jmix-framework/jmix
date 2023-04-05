@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
 
 @SpringBootTest
-@UiTest(authenticatedUser = "admin", mainScreenId = "MainScreen", screenBasePackages = ["${project_rootPackage}.screen"])
+@UiTest(authenticatedUser = "admin", mainScreenId = "${normalizedPrefix_underscore}MainScreen", screenBasePackages = ["${project_rootPackage}.screen"])
 @ContextConfiguration(classes = [${project_classPrefix}Application::class, UiTestAssistConfiguration::class])
 @Suppress("UNCHECKED_CAST")
 abstract class UiIntegrationTest {

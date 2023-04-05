@@ -16,9 +16,20 @@
 
 package io.jmix.pivottable.model;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * An object that describes the size.
  */
+@StudioElement(
+        caption = "Size",
+        xmlElement = "size",
+        icon = "io/jmix/pivottable/icon/component.svg",
+        xmlns = "http://jmix.io/schema/ui/pivot-table",
+        xmlnsAlias = "pivot"
+)
 public class Size extends AbstractPivotObject {
 
     private static final long serialVersionUID = -7892174283356404245L;
@@ -40,6 +51,7 @@ public class Size extends AbstractPivotObject {
      * @param width the width value
      * @return a reference to this object
      */
+    @StudioProperty(type = PropertyType.DOUBLE)
     public Size setWidth(Double width) {
         this.width = width;
         return this;
@@ -58,6 +70,7 @@ public class Size extends AbstractPivotObject {
      * @param height the height value
      * @return a reference to this object
      */
+    @StudioProperty(type = PropertyType.DOUBLE)
     public Size setHeight(Double height) {
         this.height = height;
         return this;

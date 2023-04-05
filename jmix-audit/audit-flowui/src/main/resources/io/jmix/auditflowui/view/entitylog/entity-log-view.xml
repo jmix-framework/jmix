@@ -24,7 +24,7 @@
                 <query>select e from audit_LoggedEntity e order by e.name</query>
             </loader>
             <fetchPlan>
-                <property name="attributes" fetchPlan="_local"/>
+                <property name="attributes" fetchPlan="_base"/>
                 <property name="auto"/>
                 <property name="manual"/>
                 <property name="name"/>
@@ -168,6 +168,16 @@
                     <button id="createBtn" action="loggedEntityTable.create"/>
                     <button id="editBtn" action="loggedEntityTable.edit"/>
                     <button id="removeBtn" action="loggedEntityTable.remove"/>
+                    <dropdownButton id="exportBtn" text="msg://exportMenu.text" icon="DOWNLOAD">
+                        <items>
+                            <actionItem id="exportJSONItem" ref="loggedEntityTable.exportJSON"/>
+                            <actionItem id="exportZIPItem" ref="loggedEntityTable.exportZIP"/>
+                        </items>
+                    </dropdownButton>
+                    <fileUploadField id="importField"
+                                     uploadIcon="UPLOAD"
+                                     uploadText="msg://importMenu.text"
+                                     acceptedFileTypes=".json,.zip"/>
                     <simplePagination id="paginationLoggedEntity" dataLoader="loggedEntityDl"/>
                 </hbox>
                 <dataGrid id="loggedEntityTable" minHeight="20em" dataContainer="loggedEntityDc">
@@ -175,6 +185,8 @@
                         <action id="create" type="create" icon="FILE_O"/>
                         <action id="edit" type="edit" icon="PENCIL"/>
                         <action id="remove" type="remove" icon="CLOSE"/>
+                        <action id="exportJSON" text="msg://actions.exportJSON"/>
+                        <action id="exportZIP" text="msg://actions.exportZIP"/>
                     </actions>
                     <columns>
                         <column property="name"/>

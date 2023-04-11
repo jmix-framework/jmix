@@ -58,4 +58,13 @@ public interface StudioActionsGroups {
             target = {"io.jmix.flowui.component.ListDataComponent"}
     )
     void listDataComponentActions();
+
+    @StudioActionsGroup(
+            name = "Actions",
+            actionClassFqn = "io.jmix.flowui.action.genericfilter.GenericFilterAction",
+            xmlElement = "actions",
+            icon = "io/jmix/flowui/kit/meta/icon/actionsgroup/actions.svg",
+            target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}
+    )
+    void genericFilterActions();
 }

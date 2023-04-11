@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://groupFilterConditionDetailView.title">
+    <data>
+        <instance id="filterConditionDc"
+                  class="io.jmix.flowui.entity.filter.GroupFilterCondition">
+            <fetchPlan extends="_local"/>
+        </instance>
+        <collection id="filterConditionsDc"
+                    class="io.jmix.flowui.entity.filter.FilterCondition">
+            <fetchPlan extends="_local">
+                <property name="parent" fetchPlan="_local"/>
+            </fetchPlan>
+        </collection>
+    </data>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <hbox padding="false" width="100%">
+            <vbox classNames="border, border-contrast-20, rounded-l">
+                <h4 id="groupConditionTitle" text="msg://groupFilterConditionDetailView.groupConditionTitle"/>
+                <formLayout id="form" dataContainer="filterConditionDc">
+                    <select id="operationField" property="operation" required="true"/>
+                    <textField id="labelField" property="label"/>
+                    <checkbox id="operationTextVisibleField" property="operationTextVisible"/>
+                    <checkbox id="visibleField" property="visible"/>
+                </formLayout>
+            </vbox>
+            <vbox classNames="border, border-contrast-20, rounded-l">
+                <h4 id="conditionsTitle" text="msg://groupFilterConditionDetailView.conditionsTitle"/>
+                <hbox id="buttonsPanel" classNames="buttons-panel">
+                    <button id="addCondition" action="conditionsTreeDataGrid.addCondition"/>
+                    <button id="editBtn" action="conditionsTreeDataGrid.edit"/>
+                    <button id="removeBtn" action="conditionsTreeDataGrid.remove"/>
+                    <button id="moveUpBtn" action="conditionsTreeDataGrid.moveUp"/>
+                    <button id="moveDownBtn" action="conditionsTreeDataGrid.moveDown"/>
+                </hbox>
+                <treeDataGrid id="conditionsTreeDataGrid"
+                              dataContainer="filterConditionsDc"
+                              hierarchyProperty="parent"
+                              themeNames="no-row-borders no-header"
+                              selectionMode="MULTI"
+                              width="100%">
+                    <actions>
+                        <action id="addCondition" type="filter_addCondition" actionVariant="PRIMARY"/>
+                        <action id="edit" type="logicalFilter_edit"/>
+                        <action id="remove" type="remove"/>
+                        <action id="moveUp" icon="ARROW_UP"/>
+                        <action id="moveDown" icon="ARROW_DOWN"/>
+                    </actions>
+                    <columns>
+                        <column property="localizedLabel"/>
+                    </columns>
+                </treeDataGrid>
+            </vbox>
+        </hbox>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

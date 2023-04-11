@@ -29,6 +29,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
@@ -2210,8 +2211,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "operationEditable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "operationTextVisible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "parameterName", type = StudioPropertyType.LOCALIZED_STRING),
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "parameterName", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF,
                             typeParameter = "V", required = true),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
@@ -2229,4 +2230,87 @@ public interface StudioComponents {
             }
     )
     HorizontalLayout propertyFilter();
+
+    @StudioComponent(
+            name = "JpqlFilter",
+            classFqn = "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
+            category = "Components",
+            xmlElement = "jpqlFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "autoApply", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "dataLoader", type = StudioPropertyType.DATA_LOADER_REF,
+                            required = true),
+                    @StudioProperty(xmlAttribute = "defaultValue", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "hasInExpression", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "labelPosition", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.SupportsLabelPosition$LabelPosition",
+                            options = {"ASIDE", "TOP"}, defaultValue = "ASIDE"),
+                    @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "labelWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "parameterClass", type = StudioPropertyType.STRING,
+                            typeParameter = "V", required = true),
+                    @StudioProperty(xmlAttribute = "parameterName", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    HorizontalLayout jpqlFilter();
+
+    @StudioComponent(
+            name = "GroupFilter",
+            classFqn = "io.jmix.flowui.component.logicalfilter.GroupFilter",
+            category = "Components",
+            xmlElement = "groupFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "autoApply", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "dataLoader", type = StudioPropertyType.DATA_LOADER_REF,
+                            required = true),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "operation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.logicalfilter.LogicalFilterComponent$Operation",
+                            options = {"AND", "OR"}, required = true),
+                    @StudioProperty(xmlAttribute = "operationTextVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "summaryText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+            }
+
+    )
+    VerticalLayout groupFilter();
+
+    //TODO: kremnevda, write annotations for filter components 05.04.2023
 }

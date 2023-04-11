@@ -59,8 +59,15 @@ public interface StudioElementsGroups {
             name = "ResponsiveSteps",
             elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveSteps",
-            target = {"com.vaadin.flow.component.formlayout.FormLayout",
-                    "io.jmix.flowui.component.genericfilter.GenericFilter"}
+            target = {"com.vaadin.flow.component.formlayout.FormLayout"}
+    )
+    void formLayoutResponsiveSteps();
+
+    @StudioElementsGroup(
+            name = "ResponsiveSteps",
+            elementClassFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
+            xmlElement = "responsiveSteps",
+            target = {"io.jmix.flowui.component.SupportsResponsiveSteps"}
     )
     void responsiveSteps();
 
@@ -80,4 +87,20 @@ public interface StudioElementsGroups {
             }
     )
     void validator();
+
+    @StudioElementsGroup(
+            name = "Configurations",
+            elementClassFqn = "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration",
+            xmlElement = "configurations",
+            target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}
+    )
+    void configurations();
+
+    @StudioElementsGroup(
+            name = "Conditions",
+            elementClassFqn = "io.jmix.flowui.component.filer.FilterComponent",
+            xmlElement = "conditions",
+            target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}
+    )
+    void conditions();
 }

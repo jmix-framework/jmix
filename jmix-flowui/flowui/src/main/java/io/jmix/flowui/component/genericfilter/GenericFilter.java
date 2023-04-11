@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -50,13 +51,16 @@ import io.jmix.flowui.component.filer.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.logicalfilter.GroupFilter;
+import io.jmix.flowui.component.logicalfilter.GroupFilterSupport;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.kit.component.combobutton.ComboButtonVariant;
+import io.jmix.flowui.kit.component.dropdownbutton.ActionItem;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.model.BaseCollectionLoader;
@@ -67,11 +71,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -82,7 +84,7 @@ import static com.google.common.base.Preconditions.checkState;
  * for repeated use.
  */
 public class GenericFilter extends Composite<JmixDetails>
-        implements SupportsResponsiveSteps, HasEnabled, HasSize, HasStyle, HasTheme, HasTooltip,
+        implements SupportsResponsiveSteps, HasActions, HasEnabled, HasSize, HasStyle, HasTheme, HasTooltip,
         ApplicationContextAware, InitializingBean {
 
     protected static final String CONDITION_REMOVE_BUTTON_ID_SUFFIX = "conditionRemoveButton";
@@ -99,6 +101,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected Metadata metadata;
     protected DialogWindows dialogWindows;
     protected GenericFilterSupport genericFilterSupport;
+    protected GroupFilterSupport groupFilterSupport;
 
     protected boolean autoApply;
     protected DataLoader dataLoader;
@@ -141,6 +144,7 @@ public class GenericFilter extends Composite<JmixDetails>
         metadata = applicationContext.getBean(Metadata.class);
         dialogWindows = applicationContext.getBean(DialogWindows.class);
         genericFilterSupport = applicationContext.getBean(GenericFilterSupport.class);
+        groupFilterSupport = applicationContext.getBean(GroupFilterSupport.class);
     }
 
     protected void initComponent() {
@@ -420,10 +424,6 @@ public class GenericFilter extends Composite<JmixDetails>
      */
     public void setSummaryText(String summary) {
         getContent().setSummaryText(summary);
-
-        if (emptyConfiguration != null) {
-            emptyConfiguration.setName(summary);
-        }
     }
 
     /**
@@ -468,6 +468,48 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void onOpenedChanged(Details.OpenedChangeEvent openedChangeEvent) {
         OpenedChangeEvent event = new OpenedChangeEvent(this, openedChangeEvent.isFromClient());
         getEventBus().fireEvent(event);
+    }
+
+    @Override
+    public void addAction(Action action, int index) {
+        if (action instanceof GenericFilterAction) {
+            ((GenericFilterAction<?>) action).setTarget(this);
+        }
+
+        settingsButton.addItem(action.getId(), action, index);
+    }
+
+    @Override
+    public void removeAction(Action action) {
+        removeAction(action.getId());
+    }
+
+    @Override
+    public void removeAction(String id) {
+        settingsButton.remove(id);
+    }
+
+    @Override
+    public void removeAllActions() {
+        settingsButton.removeAll();
+    }
+
+    @Override
+    public Collection<Action> getActions() {
+        return settingsButton.getItems().stream()
+                .filter(item -> item instanceof ActionItem)
+                .map(item -> ((ActionItem) item).getAction())
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Nullable
+    @Override
+    public Action getAction(String id) {
+        ActionItem item = (ActionItem) settingsButton.getItem(id);
+
+        return item != null
+                ? item.getAction()
+                : null;
     }
 
     /**
@@ -561,6 +603,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
         updateDataLoaderCondition();
         updateRootLayoutSummaryText();
+        updateActionState();
     }
 
     protected void updateRootLogicalFilterComponent(LogicalFilterComponent<?> logicalFilterComponent) {
@@ -576,13 +619,15 @@ public class GenericFilter extends Composite<JmixDetails>
         if (!(getCurrentConfiguration() instanceof DesignTimeConfiguration)) {
             for (FilterComponent filterComponent : rootLogicalFilterComponent.getFilterComponents()) {
                 if (filterComponent instanceof SingleFilterComponentBase) {
-                    updateConditionRemoveButton((SingleFilterComponentBase<?>) filterComponent);
+                    updateSingleConditionRemoveButton((SingleFilterComponentBase<?>) filterComponent);
+                } else if (filterComponent instanceof GroupFilter) {
+                    updateGroupConditionButtons(((GroupFilter) filterComponent));
                 }
 
                 if (filterComponent instanceof PropertyFilter) {
                     PropertyFilter<?> propertyFilter = (PropertyFilter<?>) filterComponent;
                     propertyFilter.addOperationChangeListener(operationChangeEvent -> {
-                        updateConditionRemoveButton(propertyFilter);
+                        updateSingleConditionRemoveButton(propertyFilter);
                         resetFilterComponentDefaultValue(propertyFilter);
                     });
                 }
@@ -594,7 +639,7 @@ public class GenericFilter extends Composite<JmixDetails>
         getCurrentConfiguration().resetFilterComponentDefaultValue(propertyFilter.getParameterName());
     }
 
-    protected void updateConditionRemoveButton(SingleFilterComponentBase<?> singleFilter) {
+    protected void updateSingleConditionRemoveButton(SingleFilterComponentBase<?> singleFilter) {
         String removeButtonPrefix = singleFilter.getInnerComponentPrefix();
         String removeButtonId = removeButtonPrefix + CONDITION_REMOVE_BUTTON_ID_SUFFIX;
 
@@ -621,14 +666,32 @@ public class GenericFilter extends Composite<JmixDetails>
         }
     }
 
-    protected Component createConditionRemoveButton(SingleFilterComponent<?> singleFilter, String removeButtonId) {
+    protected void updateGroupConditionButtons(GroupFilter groupFilter) {
+        Label summaryComponent = groupFilterSupport.getGroupFilterSummaryComponent(groupFilter);
+
+        if (summaryComponent != null) {
+            String removeButtonId = CONDITION_REMOVE_BUTTON_ID_SUFFIX;
+            Optional<Component> existingRemoveButton = UiComponentUtils.findComponent(summaryComponent, removeButtonId);
+
+            if (getCurrentConfiguration().isFilterComponentModified(groupFilter)) {
+
+                if (existingRemoveButton.isEmpty()) {
+                    summaryComponent.add(createConditionRemoveButton(groupFilter, removeButtonId));
+                }
+            } else {
+                existingRemoveButton.ifPresent(summaryComponent::remove);
+            }
+        }
+    }
+
+    protected Component createConditionRemoveButton(FilterComponent filterComponent, String removeButtonId) {
         JmixButton conditionRemoveButton = uiComponents.create(JmixButton.class);
         conditionRemoveButton.setId(removeButtonId);
         conditionRemoveButton.setIcon(VaadinIcon.TRASH.create());
         conditionRemoveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
 
         conditionRemoveButton.addClickListener(clickEvent -> {
-            removeFilterComponent(singleFilter);
+            removeFilterComponent(filterComponent);
             refreshCurrentConfigurationLayout();
             apply();
         });
@@ -686,6 +749,18 @@ public class GenericFilter extends Composite<JmixDetails>
             }
 
             dataLoader.setCondition(resultCondition);
+        }
+    }
+
+    protected void updateActionState() {
+        if (settingsButton != null) {
+            settingsButton.getItems().stream()
+                    .filter(item -> item instanceof ActionItem)
+                    .forEach(item -> ((ActionItem) item).getAction().refreshState());
+        }
+
+        if (addConditionButton != null) {
+            Objects.requireNonNull(addConditionButton.getAction()).refreshState();
         }
     }
 
@@ -868,6 +943,20 @@ public class GenericFilter extends Composite<JmixDetails>
 
     public Registration addConfigurationChangeListener(ComponentEventListener<ConfigurationChangeEvent> listener) {
         return getEventBus().addListener(ConfigurationChangeEvent.class, listener);
+    }
+
+    public void loadConfigurationsAndApplyDefault() {
+        Map<Configuration, Boolean> configurationsMap = genericFilterSupport.getConfigurationsMap(this);
+        boolean defaultForAllConfigurationApplied = false;
+
+        for (Map.Entry<Configuration, Boolean> entry : configurationsMap.entrySet()) {
+            addConfiguration(entry.getKey());
+
+            if (!defaultForAllConfigurationApplied && entry.getValue()) {
+                setCurrentConfiguration(entry.getKey());
+                defaultForAllConfigurationApplied = true;
+            }
+        }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

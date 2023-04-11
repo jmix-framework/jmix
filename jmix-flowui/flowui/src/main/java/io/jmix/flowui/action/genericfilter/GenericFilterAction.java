@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,12 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.view.View;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -169,5 +171,10 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
         if (target == null) {
             throw new IllegalStateException(String.format("%s target is not set", getClass().getSimpleName()));
         }
+    }
+
+    @Nullable
+    protected View<?> findParent() {
+        return UiComponentUtils.findView(target);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent.Operation;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @JmixEntity(name = "flowui_LogicalFilterCondition")
 @SystemLevel
@@ -37,8 +36,9 @@ public abstract class LogicalFilterCondition extends FilterCondition {
 
     protected List<FilterCondition> ownFilterConditions = new ArrayList<>();
 
+    @Nullable
     public Operation getOperation() {
-        return operationFromId(operation);
+        return Operation.fromId(operation);
     }
 
     public void setOperation(Operation operation) {
@@ -59,15 +59,5 @@ public abstract class LogicalFilterCondition extends FilterCondition {
 
     public void setOwnFilterConditions(List<FilterCondition> ownFilterConditions) {
         this.ownFilterConditions = ownFilterConditions;
-    }
-
-    @Nullable
-    public static Operation operationFromId(String id) {
-        for (Operation operation : Operation.values()) {
-            if (Objects.equals(id, operation.name())) {
-                return operation;
-            }
-        }
-        return null;
     }
 }

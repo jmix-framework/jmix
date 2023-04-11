@@ -19,7 +19,6 @@ package io.jmix.flowui.devserver.servlet;
 import com.vaadin.flow.component.PushConfiguration;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.internal.ReflectTools;
 import com.vaadin.flow.server.AppShellRegistry;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
@@ -27,7 +26,6 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.communication.JavaScriptBootstrapHandler;
 import com.vaadin.flow.shared.communication.PushMode;
 import elemental.json.JsonObject;
-import io.jmix.flowui.devserver.servlet.JmixJavaScriptBootstrapUI;
 
 import java.util.Optional;
 
@@ -42,7 +40,7 @@ public class JmixJavaScriptBootstrapHandler extends JavaScriptBootstrapHandler {
                                                VaadinRequest request,
                                                VaadinResponse response,
                                                VaadinSession session) {
-        UI ui = ReflectTools.createInstance(JmixJavaScriptBootstrapUI.class);
+        UI ui = new JmixJavaScriptBootstrapUI();
         ui.getInternals().setContextRoot(request.getService().getContextRootRelativePath(request));
 
         PushConfiguration pushConfiguration = ui.getPushConfiguration();

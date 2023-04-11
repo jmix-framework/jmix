@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'maven-publish'
+}
+
 apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
@@ -22,22 +27,44 @@ group = 'io.jmix.flowui'
 archivesBaseName = 'jmix-flowui-devserver'
 
 configurations {
-    extraLibs
+    compileOnly.setCanBeResolved(true)
 }
 
 dependencies {
-    //extraLibs(project(':flowui-kit'))
+    compileOnly(project(":flowui-kit"))
+    compileOnly("com.vaadin:vaadin-core:$vaadinFlowVersion") {
+        exclude module: "vaadin-dev-server"
+    }
 
-    extraLibs("com.vaadin:flow-server:$vaadinFlowVersion")
-    extraLibs("javax.servlet:javax.servlet-api:4.0.1")
+    compileOnly("org.eclipse.jetty:jetty-continuation:$jettyVersion")
+    compileOnly("org.eclipse.jetty:jetty-webapp:$jettyVersion")
+    compileOnly("org.eclipse.jetty.websocket:websocket-server:$jettyVersion")
+    compileOnly("org.eclipse.jetty.websocket:javax-websocket-server-impl:$jettyVersion")
 
-    implementation("com.vaadin:flow-server:$vaadinFlowVersion")
-    implementation("javax.servlet:javax.servlet-api:4.0.1")
+    compileOnly('org.slf4j:slf4j-nop:2.0.7')
+    compileOnly("javax.servlet:javax.servlet-api:4.0.1")
+}
+
+shadowJar {
+    from {
+        project.configurations.compileOnly.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    mergeServiceFiles()
+    archiveClassifier.set("")
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+        }
+    }
 }
 
 jar {
-    duplicatesStrategy = DuplicatesStrategy.WARN
-    from {
-        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveClassifier.set("simple-jar")
 }

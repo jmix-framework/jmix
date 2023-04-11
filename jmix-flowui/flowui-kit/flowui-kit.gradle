@@ -20,14 +20,10 @@ apply plugin: 'io.jmix'
 group = 'io.jmix.flowui'
 archivesBaseName = 'jmix-flowui-kit'
 
-configurations {
-    api.setCanBeResolved(true)
-}
-
 dependencies {
     compileOnlyApi("com.vaadin:flow-server:$vaadinFlowVersion")
     api 'com.google.guava:guava'
-    api ("com.vaadin:vaadin-core") {
+    api("com.vaadin:vaadin-core:$vaadinFlowVersion") {
         exclude module: "atmosphere-runtime"
         exclude module: "byte-buddy"
         exclude module: "commons-codec"
@@ -53,12 +49,5 @@ dependencies {
         exclude module: "ph-commons"
         exclude module: "ph-css"
         exclude module: "vaadin-dev-server"
-    }
-}
-
-jar {
-    duplicatesStrategy = DuplicatesStrategy.WARN
-    from {
-        configurations.api.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }

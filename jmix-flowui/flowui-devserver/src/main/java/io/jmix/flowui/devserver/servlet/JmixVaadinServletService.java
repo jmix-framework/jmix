@@ -25,12 +25,15 @@ import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.flow.server.communication.IndexHtmlRequestHandler;
 import com.vaadin.flow.server.communication.JavaScriptBootstrapHandler;
-import io.jmix.flowui.devserver.frontend.FrontendUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class JmixVaadinServletService extends VaadinServletService {
+
+    private static final Logger log = LoggerFactory.getLogger(JmixVaadinServletService.class);
 
     public JmixVaadinServletService(VaadinServlet servlet, DeploymentConfiguration deploymentConfiguration) {
         super(servlet, deploymentConfiguration);
@@ -46,7 +49,6 @@ public class JmixVaadinServletService extends VaadinServletService {
                 ).collect(Collectors.toList());
 
         handlers.add(new JmixJavaScriptBootstrapHandler());
-        // handlers.add(JmixPushRequestHandler(this));
         return handlers;
     }
 
@@ -55,7 +57,8 @@ public class JmixVaadinServletService extends VaadinServletService {
         try {
             super.handleRequest(request, response);
         } catch (Exception e) {
-            FrontendUtils.console("Exception when handler request:\n" + e);
+            log.debug("Exception when handle request", e);
+            // FrontendUtils.console("Exception when handle request:\n" + e);
         }
     }
 }

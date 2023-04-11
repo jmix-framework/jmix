@@ -19,7 +19,9 @@ package io.jmix.flowui.devserver.servlet;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.internal.JavaScriptBootstrapUI;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinServlet;
@@ -41,9 +43,6 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
 
     private static final String LOCATION_REQUEST_PARAM = "location";
 
-    private static final String VERTICAL_LAYOUT = "com.vaadin.flow.component.orderedlayout.VerticalLayout";
-    private static final String LABEL = "com.vaadin.flow.component.html.Label";
-
     @Override
     public void init(VaadinRequest request) {
         ServletContext servletContext = VaadinServlet.getCurrent().getServletContext();
@@ -52,7 +51,7 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
         final String designerId = (String) servletContext.getAttribute(DESIGNER_ID_ATTRIBUTE);
 
         ClassLoader classLoader = servletContext.getClassLoader();
-        HasComponents mainContent = createVerticalLayout(classLoader);
+        HasComponents mainContent = createVerticalLayout();
 
         if (mainContent instanceof Component) {
             add((Component) mainContent);
@@ -61,7 +60,7 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
         String location = request.getParameter(LOCATION_REQUEST_PARAM);
         if (location == null || location.isBlank()) {
             if (mainContent != null) {
-                mainContent.add(createLabel(classLoader, "location parameter is empty"));
+                mainContent.add(new Label("location parameter is empty"));
             }
             return;
         }
@@ -69,7 +68,7 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
         String[] locationSplit = location.split("-");
         if (locationSplit.length != 2) {
             if (mainContent != null) {
-                mainContent.add(createLabel(classLoader, "location " + location + " is incorrect format"));
+                mainContent.add(new Label("location " + location + " is incorrect format"));
             }
             return;
         }
@@ -77,7 +76,7 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
         String designerType = locationSplit[0];
         if (!designerId.equals(designerType)) {
             if (mainContent != null) {
-                mainContent.add(createLabel(classLoader, "Designer with " + designerType + " not found"));
+                mainContent.add(new Label("Designer with " + designerType + " not found"));
             }
             return;
         }
@@ -89,13 +88,13 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
             }
         } catch (Throwable e) {
             if (mainContent != null) {
-                mainContent.add(createLabel(classLoader, e.getMessage()));
+                mainContent.add(new Label(e.getMessage()));
             }
         }
     }
 
     private Component createAndRegisterDesigner(String id, ClassLoader classLoader) {
-        HasComponents editorPanel = createVerticalLayout(classLoader);
+        HasComponents editorPanel = createVerticalLayout();
 
         if (editorPanel != null && editorPanelStorage != null) {
             Class<?> editorPanelStorageClass = editorPanelStorage.getClass();
@@ -105,15 +104,17 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
                     .orElse(null);
             if (registerMethod != null) {
                 try {
+                    registerMethod.trySetAccessible();
                     registerMethod.invoke(editorPanelStorage, id, editorPanel);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    FrontendUtils.console("Error when register panel:\n" + e);
+                    FrontendUtils.console("\nError when register panel. Stacktrace:\n"
+                            + Arrays.toString(e.getStackTrace()) + "\n");
                 }
             } else {
-                FrontendUtils.console("Method with name 'register' not found in " + editorPanelStorageClass);
+                FrontendUtils.console("\nMethod with name 'register' not found in " + editorPanelStorageClass);
             }
         } else {
-            FrontendUtils.console("EditorPanel or EditorPanelStorage is null");
+            FrontendUtils.console("\nEditorPanel or EditorPanelStorage is null\n");
         }
 
         return (Component) editorPanel;
@@ -128,25 +129,13 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
         // do nothing
     }
 
-    private HasComponents createVerticalLayout(ClassLoader classLoader) {
+    private HasComponents createVerticalLayout() {
         try {
-            Class<?> componentClass = classLoader.loadClass(VERTICAL_LAYOUT);
-            HasComponents component = (HasComponents) componentClass.getConstructor().newInstance();
+            HasComponents component = new VerticalLayout();
             component.getElement().getThemeList().set("padding", false);
-            if (component instanceof HasSize) {
-                ((HasSize) component).setSizeFull();
-            }
+            ((HasSize) component).setSizeFull();
 
             return component;
-        } catch (Throwable e) {
-            return null;
-        }
-    }
-
-    private Component createLabel(ClassLoader classLoader, String text) {
-        try {
-            Class<?> componentClass = classLoader.loadClass(LABEL);
-            return (Component) componentClass.getConstructor(String.class).newInstance(text);
         } catch (Throwable e) {
             return null;
         }

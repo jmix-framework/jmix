@@ -32,9 +32,6 @@ configurations {
 
 dependencies {
     compileOnly(project(":flowui-kit"))
-    compileOnly("com.vaadin:vaadin-core:$vaadinFlowVersion") {
-        exclude module: "vaadin-dev-server"
-    }
 
     compileOnly("org.eclipse.jetty:jetty-continuation:$jettyVersion")
     compileOnly("org.eclipse.jetty:jetty-webapp:$jettyVersion")

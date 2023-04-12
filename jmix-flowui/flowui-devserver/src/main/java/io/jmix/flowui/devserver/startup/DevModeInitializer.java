@@ -32,8 +32,8 @@ import com.vaadin.flow.server.startup.ApplicationConfiguration;
 import com.vaadin.flow.server.startup.VaadinInitializerException;
 import elemental.json.Json;
 import elemental.json.JsonObject;
-import io.jmix.flowui.devserver.ViteHandler;
 import io.jmix.flowui.devserver.BrowserLiveReloadAccessorImpl;
+import io.jmix.flowui.devserver.ViteHandler;
 import io.jmix.flowui.devserver.WebpackHandler;
 import io.jmix.flowui.devserver.frontend.EndpointGeneratorTaskFactory;
 import io.jmix.flowui.devserver.frontend.FrontendUtils;
@@ -370,7 +370,7 @@ public class DevModeInitializer implements Serializable {
                                 service,
                                 (Class<T>) serviceInterface
                         )
-        ));
+                ));
 
         return resultLookup[0];
     }
@@ -449,14 +449,7 @@ public class DevModeInitializer implements Serializable {
         frontendFiles.addAll(getFrontendLocationsFromClassloader(classLoader,
                 Constants.RESOURCES_THEME_JAR_DEFAULT));
 
-        return frontendFiles
-                .stream()
-                .filter(file -> {
-                    String filePath = file.getPath();
-                    return !filePath.contains("jmix-studio-bootstrap")
-                            || filePath.contains("jmix-flowui-kit");
-                })
-                .collect(Collectors.toSet());
+        return frontendFiles;
     }
 
     private static void runNodeTasks(VaadinContext vaadinContext,

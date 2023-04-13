@@ -23,6 +23,7 @@ import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -682,6 +683,15 @@ public class DialogsImpl implements Dialogs {
 
         public Collection<InputParameter> getParameters() {
             return inputDialog.getParameters();
+        }
+
+        public InputDialogBuilder withResponsiveSteps(List<ResponsiveStep> responsiveSteps) {
+            inputDialog.setResponsiveSteps(responsiveSteps);
+            return this;
+        }
+
+        public List<ResponsiveStep> getResponsiveSteps() {
+            return inputDialog.getResponsiveSteps();
         }
 
         public InputDialogBuilder withLabelsPosition(LabelsPosition labelsPosition) {

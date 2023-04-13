@@ -40,6 +40,11 @@ public class InputDialogAction extends ViewAction<InputDialogAction, InputDialog
         super(id);
     }
 
+    @SuppressWarnings("unused")
+    public InputDialog getInputDialog() {
+        return inputDialog;
+    }
+
     @Override
     public void actionPerform(Component component) {
         this.component = component;

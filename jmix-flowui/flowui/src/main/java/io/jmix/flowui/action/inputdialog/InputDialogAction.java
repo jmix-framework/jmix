@@ -24,6 +24,8 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.View;
 
+import javax.annotation.Nullable;
+
 /**
  * Action can be used in {@link InputDialog}.
  *
@@ -38,6 +40,12 @@ public class InputDialogAction extends ViewAction<InputDialogAction, InputDialog
 
     public InputDialogAction(String id) {
         super(id);
+    }
+
+    @SuppressWarnings("unused")
+    @Nullable
+    public InputDialog getInputDialog() {
+        return inputDialog;
     }
 
     @Override

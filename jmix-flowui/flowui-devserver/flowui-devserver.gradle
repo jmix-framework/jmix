@@ -15,40 +15,31 @@
  */
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
-
+apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'io.jmix'
+apply plugin: 'maven-publish'
 
 
 group = 'io.jmix.flowui'
 archivesBaseName = 'jmix-flowui-devserver'
 
-configurations {
-    compileOnly.setCanBeResolved(true)
-}
-
 dependencies {
-    compileOnly(project(":flowui-kit"))
+    api(project(":flowui-kit"))
 
-    compileOnly("org.eclipse.jetty:jetty-continuation:$jettyVersion")
-    compileOnly("org.eclipse.jetty:jetty-webapp:$jettyVersion")
-    compileOnly("org.eclipse.jetty.websocket:websocket-server:$jettyVersion")
-    compileOnly("org.eclipse.jetty.websocket:javax-websocket-server-impl:$jettyVersion")
+    api("org.eclipse.jetty:jetty-continuation:$jettyVersion")
+    api("org.eclipse.jetty:jetty-webapp:$jettyVersion")
+    api("org.eclipse.jetty.websocket:websocket-server:$jettyVersion")
+    api("org.eclipse.jetty.websocket:javax-websocket-server-impl:$jettyVersion")
 
-    compileOnly('org.slf4j:slf4j-nop:2.0.7')
-    compileOnly("javax.servlet:javax.servlet-api:4.0.1")
+    api('org.slf4j:slf4j-nop:2.0.7')
+    api("javax.servlet:javax.servlet-api:4.0.1")
 }
 
 shadowJar {
-    from {
-        project.configurations.compileOnly.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-
+    dependsOn(jar)
     mergeServiceFiles()
     archiveClassifier.set("")
 }
@@ -59,9 +50,4 @@ publishing {
             project.shadow.component(publication)
         }
     }
-}
-
-jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveClassifier.set("simple-jar")
 }

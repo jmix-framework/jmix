@@ -17,11 +17,11 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
+
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 apply plugin: 'maven-publish'
-
 
 group = 'io.jmix.flowui'
 archivesBaseName = 'jmix-flowui-devserver'
@@ -39,7 +39,6 @@ dependencies {
 }
 
 shadowJar {
-    dependsOn(jar)
     mergeServiceFiles()
     archiveClassifier.set("")
 }
@@ -50,4 +49,12 @@ publishing {
             project.shadow.component(publication)
         }
     }
+}
+
+publish {
+    dependsOn(shadowJar)
+}
+
+jar {
+    enabled = false
 }

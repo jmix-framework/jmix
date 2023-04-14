@@ -289,6 +289,13 @@ public class FrontendUtils {
     public static final String PARAM_THEME_CLASS = "vaadin.frontend.theme.class";
     public static final String PARAM_STUDIO_DIR = "vaadin.frontend.studio.folder";
 
+    public static final String VIEW_DESIGNER_FOLDER = "/.jmix/screen-designer";
+    public static final String FRONTEND_FOLDER = VIEW_DESIGNER_FOLDER + "/frontend";
+    public static final String BUILD_FOLDER = VIEW_DESIGNER_FOLDER + "/build";
+    public static final String BUILD_FRONTEND_FOLDER = BUILD_FOLDER + "/frontend";
+    public static final String FLOW_FRONTEND_FOLDER = BUILD_FOLDER + "/flow-frontend";
+    public static final String GENERATED_FRONTEND_FOLDER = FRONTEND_FOLDER + "/generated";
+
     /**
      * Set to {@code true} to ignore node/npm tool version checks.
      */
@@ -1233,10 +1240,19 @@ public class FrontendUtils {
      * @param format  Format of the line to send to console, it must contain a `%s`
      *                outlet for the message
      * @param message the string to show
+     *
+     * @see FrontendUtils#console(String, Object, boolean)
      */
     @SuppressWarnings("squid:S106")
     public static void console(String format, Object message) {
         console(format, message, true);
+    }
+
+    /**
+     * @see FrontendUtils#console(String, Object)
+     */
+    public static void console(Object message) {
+        console(FrontendUtils.RED, message, true);
     }
 
     public static void console(String format, Object message, boolean logInFile) {

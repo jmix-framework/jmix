@@ -29,11 +29,18 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.component.textfield.*;
+import com.vaadin.flow.component.textfield.BigDecimalField;
+import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.upload.Upload;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -49,7 +56,11 @@ import io.jmix.flowui.kit.component.upload.JmixFileStorageUploadField;
 import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
-import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.StudioComponent;
+import io.jmix.flowui.kit.meta.StudioPropertiesBinding;
+import io.jmix.flowui.kit.meta.StudioProperty;
+import io.jmix.flowui.kit.meta.StudioPropertyType;
+import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
 public interface StudioComponents {
@@ -2229,4 +2240,33 @@ public interface StudioComponents {
             }
     )
     HorizontalLayout propertyFilter();
+
+
+    @StudioComponent(
+            name = "Layout",
+            xmlElement = "layout",
+            icon = "io/jmix/flowui/kit/meta/icon/view/layout.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "margin", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "spacing", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "expand", type = StudioPropertyType.COMPONENT_REF),
+                    @StudioProperty(xmlAttribute = "alignItems", type = StudioPropertyType.ENUMERATION,
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "boxSizing", type = StudioPropertyType.ENUMERATION,
+                            options = {"CONTENT_BOX", "BORDER_BOX", "UNDEFINED"}),
+                    @StudioProperty(xmlAttribute = "justifyContent", type = StudioPropertyType.ENUMERATION,
+                            options = {"START", "END", "CENTER", "BETWEEN", "AROUND", "EVENLY"}),
+
+            }
+    )
+    VerticalLayout layout();
 }

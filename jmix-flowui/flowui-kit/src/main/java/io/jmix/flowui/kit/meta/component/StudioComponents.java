@@ -2311,6 +2311,4 @@ public interface StudioComponents {
 
     )
     VerticalLayout groupFilter();
-
-    //TODO: kremnevda, write annotations for filter components 05.04.2023
 }

@@ -22,20 +22,4 @@
   text-overflow: ellipsis;
 }
 
-:host([class*='jmix-menubar-item']) [part='toggle'] {
-  display: none;
-}
-
-:host([class*='jmix-menubar-item']) [part='summary'] {
-  padding: 0;
-}
-
-:host([class*='jmix-menubar-item'][opened]) [part='summary'] {
-  padding-bottom: var(--lumo-space-s);
-}
-
-:host([class*='jmix-menubar-item']) [part='content'] {
-  padding: 0;
-}
-
 /* <list menubar styles/> */

@@ -85,7 +85,16 @@ task contentJarCkb(type: Jar) {
     }
 }
 
-assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarNl, contentJarZhCn, contentJarRo, contentJarEl, contentJarCkb)
+task contentJarIt(type: Jar) {
+    archiveBaseName = 'jmix-translations-it'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_it.properties")
+    }
+}
+
+assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarNl, contentJarZhCn, contentJarRo, contentJarEl, contentJarCkb,
+        contentJarIt)
 
 publishing {
     publications {
@@ -120,6 +129,10 @@ publishing {
         Ckb(MavenPublication) {
             artifactId = 'jmix-translations-ckb'
             artifact(contentJarCkb)
+        }
+        It(MavenPublication) {
+            artifactId = 'jmix-translations-it'
+            artifact(contentJarIt)
         }
     }
     if (rootProject.hasProperty('jmixUploadUrl')) {

@@ -44,6 +44,4 @@ public class SimplePaginationDefaultValueTestView extends StandardView {
     public SimplePagination simplePagination7;
     @ViewComponent
     public SimplePagination simplePagination8;
-    @ViewComponent
-    public SimplePagination simplePagination9;
 }

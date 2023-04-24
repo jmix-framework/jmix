@@ -51,7 +51,7 @@ import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
-import io.jmix.uiexport.action.ExcelExportAction;
+import io.jmix.gridexportui.action.ExcelExportAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -185,7 +185,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     }
 
     @Override
-    protected LookupComponent<Object> getLookupComponent() {
+    public LookupComponent<Object> getLookupComponent() {
         return entitiesTable;
     }
 
@@ -514,8 +514,10 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     protected EntityImportPlan createEntityImportPlan(String content, MetaClass metaClass) {
         JsonElement rootElement = JsonParser.parseString(content);
-        EntityImportPlan entityImportPlan = importPlanJsonBuilder.buildFromJson(
-                rootElement.isJsonArray() ? rootElement.getAsJsonArray().get(0).toString() : rootElement.toString(), metaClass);
+        EntityImportPlan entityImportPlan = rootElement.isJsonArray()
+                ? importPlanJsonBuilder.buildFromJsonArray(rootElement.getAsJsonArray(), metaClass)
+                : importPlanJsonBuilder.buildFromJson(rootElement.toString(), metaClass);
+
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (!metadataTools.isJpa(metaProperty)) {
                 continue;

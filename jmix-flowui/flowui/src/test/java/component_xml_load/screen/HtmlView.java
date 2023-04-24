@@ -110,6 +110,9 @@ public class HtmlView extends StandardView {
     @ViewComponent
     public OrderedList orderedListId;
 
+    @ViewComponent
+    public Label labelId;
+
     //Components
     @ViewComponent
     public Hr hrId;

@@ -45,6 +45,9 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
@@ -564,6 +567,11 @@ public class UiControllerDependencyInjector {
             }
             // Injecting a parameter
             return null;
+
+        } else if (annotationClass == Value.class) {
+            AutowireCapableBeanFactory autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();
+            return ((AbstractBeanFactory) autowireCapableBeanFactory)
+                    .resolveEmbeddedValue(element.getAnnotation(Value.class).value());
 
         } else if (ScreenFragment.class.isAssignableFrom(type)) {
             // Injecting inner fragment controller

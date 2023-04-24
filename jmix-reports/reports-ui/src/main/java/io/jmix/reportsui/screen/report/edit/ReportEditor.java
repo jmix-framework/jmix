@@ -163,13 +163,6 @@ public class ReportEditor extends StandardEditor<Report> {
 
             report.getBands().add(rootDefinition);
         }
-
-        groupsDl.load();
-        Collection<ReportGroup> reportGroups = groupsDc.getItems();
-        if (!reportGroups.isEmpty()) {
-            ReportGroup reportGroup = reportGroups.iterator().next();
-            report.setGroup(groupsDc.getItem(reportGroup.getId()));
-        }
     }
 
     protected BandDefinition createRootBandDefinition(Report report) {

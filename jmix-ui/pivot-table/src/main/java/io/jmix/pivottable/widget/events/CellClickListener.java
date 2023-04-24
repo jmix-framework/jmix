@@ -16,6 +16,8 @@
 
 package io.jmix.pivottable.widget.events;
 
-public interface CellClickListener {
+import com.vaadin.event.SerializableEventListener;
+
+public interface CellClickListener extends SerializableEventListener {
     void onCellClick(CellClickEvent event);
 }

@@ -1,7 +1,7 @@
 package io.jmix.securityflowui.view.resourcepolicy;
 
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.combobox.GeneratedVaadinComboBox.CustomValueSetEvent;
+import com.vaadin.flow.component.combobox.ComboBoxBase.CustomValueSetEvent;
 import io.jmix.core.security.SpecificPolicyInfoRegistry;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.view.*;

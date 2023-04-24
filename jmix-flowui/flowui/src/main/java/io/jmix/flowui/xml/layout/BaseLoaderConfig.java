@@ -41,8 +41,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("accordion", AccordionLoader.class);
         loaders.put("accordionPanel", AccordionPanelLoader.class);
         loaders.put("scroller", ScrollerLoader.class);
+        loaders.put("tabSheet", TabSheetLoader.class);
         loaders.put("tabs", TabsLoader.class);
-        loaders.put("tab", TabsLoader.TabLoader.class);
         loaders.put("details", DetailsLoader.class);
         loaders.put("split", SplitLayoutLoader.class);
         loaders.put("formLayout", FormLayoutLoader.class);
@@ -63,12 +63,15 @@ public abstract class BaseLoaderConfig {
         loaders.put("textArea", TextAreaLoader.class);
         loaders.put("checkbox", CheckboxLoader.class);
         loaders.put("comboBox", ComboBoxLoader.class);
+        loaders.put("multiSelectComboBox", MultiSelectComboBoxLoader.class);
+        loaders.put("multiSelectComboBoxPicker", MultiSelectComboBoxPickerLoader.class);
         loaders.put("dropdownButton", DropdownButtonLoader.class);
         loaders.put("comboButton", ComboButtonLoader.class);
         loaders.put("timePicker", TimePickerLoader.class);
         loaders.put("dateTimePicker", DateTimePickerLoader.class);
         loaders.put("datePicker", DatePickerLoader.class);
         loaders.put("avatar", AvatarLoader.class);
+        loaders.put("icon", IconLoader.class);
         loaders.put("select", SelectLoader.class);
         loaders.put("valuePicker", ValuePickerLoader.class);
         loaders.put("multiValuePicker", MultiValuePickerLoader.class);
@@ -83,6 +86,11 @@ public abstract class BaseLoaderConfig {
         loaders.put("loginForm", LoginFormLoader.class);
         loaders.put("loginOverlay", LoginOverlayLoader.class);
         loaders.put("simplePagination", SimplePaginationLoader.class);
+        loaders.put("fileUploadField", FileUploadFieldLoader.class);
+        loaders.put("fileStorageUploadField", FileStorageUploadFieldLoader.class);
+        loaders.put("upload", UploadLoader.class);
+        loaders.put("propertyFilter", PropertyFilterLoader.class);
+        loaders.put("genericFilter", GenericFilterLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);
@@ -121,5 +129,6 @@ public abstract class BaseLoaderConfig {
         loaders.put("p", ParagraphLoader.class);
         loaders.put("htmlObject", HtmlObjectLoader.class);
         loaders.put("anchor", AnchorLoader.class);
+        loaders.put("label", LabelLoader.class);
     }
 }

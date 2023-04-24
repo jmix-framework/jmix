@@ -19,6 +19,7 @@ package io.jmix.flowui.view;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -36,11 +37,14 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
+import io.jmix.flowui.util.WebBrowserTools;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
@@ -82,6 +86,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private boolean showSaveNotification = true;
     private boolean saveActionPerformed = false;
+    private boolean preventBrowserTabClosing = true;
 
     /**
      * Create views using {@link io.jmix.flowui.ViewNavigators} or {@link io.jmix.flowui.DialogWindows}.
@@ -100,6 +105,17 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private void onReady(ReadyEvent event) {
         setupModifiedTracking();
+        if (preventBrowserTabClosing) {
+            WebBrowserTools.preventBrowserTabClosing(this);
+        }
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        super.onDetach(detachEvent);
+        if (preventBrowserTabClosing) {
+            WebBrowserTools.allowBrowserTabClosing(this);
+        }
     }
 
     private void onBeforeClose(BeforeCloseEvent event) {
@@ -303,6 +319,24 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      */
     public void setShowSaveNotification(boolean showSaveNotification) {
         this.showSaveNotification = showSaveNotification;
+    }
+
+    /**
+     * @return whether this details view prevents browser tab from accidentally closing
+     */
+    public boolean isPreventBrowserTabClosing() {
+        return preventBrowserTabClosing;
+    }
+
+    /**
+     * Sets whether this details view must prevent browser
+     * tab from accidentally closing. Enabled by default.
+     *
+     * @param preventBrowserTabClosing whether this details view must prevent
+     *                                 browser tab from accidentally closing
+     */
+    public void setPreventBrowserTabClosing(boolean preventBrowserTabClosing) {
+        this.preventBrowserTabClosing = preventBrowserTabClosing;
     }
 
     /**
@@ -527,8 +561,25 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     protected void initExistingEntity(String serializedEntityId) {
+        if (!entityCanBeLoaded()) {
+            throw new GuiDevelopmentException(String.format(
+                    "Entity '%s' cannot be loaded by id '%s' " +
+                            "due to it is non-JPA entity or load delegate is not set. To correctly handle editing non-" +
+                            "JPA entities open editor in DIALOG mode. Another way is using 'routeParametersProvider'" +
+                            " in %s and installing load delegate in editor or overriding 'initExistingEntity' method",
+                    getEditedEntityContainer().getEntityMetaClass().getJavaClass().getSimpleName(),
+                    serializedEntityId, EditAction.class.getSimpleName()
+            ), getId().orElse(null));
+        }
+
         Object entityId = getUrlParamSerializer().deserialize(getSerializedIdType(), serializedEntityId);
         getEditedEntityLoader().setEntityId(entityId);
+    }
+
+    @SuppressWarnings("ConstantValue")
+    protected boolean entityCanBeLoaded() {
+        return getMetadataTools().isJpaEntity(getEditedEntityContainer().getEntityMetaClass())
+                || getEditedEntityLoader().getLoadDelegate() != null;
     }
 
     private Class<?> getSerializedIdType() {

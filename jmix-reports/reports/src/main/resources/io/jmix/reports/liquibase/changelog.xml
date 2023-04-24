@@ -34,6 +34,7 @@
     <include file="io/jmix/reports/liquibase/changelog/001-reports.xml"/>
     <include file="io/jmix/reports/liquibase/changelog/002-reports.xml"/>
     <include file="io/jmix/reports/liquibase/changelog/003-reports.xml"/>
+    <include file="io/jmix/reports/liquibase/changelog/004-reports.xml"/>
 
 
 </databaseChangeLog>

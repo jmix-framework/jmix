@@ -156,16 +156,8 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
         return importPlanBuilder.build();
     }
 
-    /**
-     * Builds an EntityImportPlan that contains properties from all collection members. If the first member contains the
-     * property A, and the second one contains a property B then a result import plan will contain both properties A and B.
-     * Plans for nested collections (2nd level compositions) are also merged.
-     *
-     * @param jsonArray a JsonArray
-     * @param metaClass a metaClass of entities that are in the jsonArray
-     * @return an EntityImportPlan
-     */
-    protected EntityImportPlan buildFromJsonArray(JsonArray jsonArray, MetaClass metaClass) {
+    @Override
+    public EntityImportPlan buildFromJsonArray(JsonArray jsonArray, MetaClass metaClass) {
         List<EntityImportPlan> plansArrayElements = new ArrayList<>();
         for (JsonElement arrayElement : jsonArray.getAsJsonArray()) {
             EntityImportPlan planForArrayElement = buildFromJsonObject(arrayElement.getAsJsonObject(), metaClass);

@@ -41,11 +41,12 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
 import java.time.*;
+import java.util.function.Consumer;
 
 public class TypedTimePicker<V extends Comparable> extends TimePicker implements SupportsValueSource<V>,
         SupportsTypedValue<TypedTimePicker<V>, ComponentValueChangeEvent<TimePicker, LocalTime>, V, LocalTime>,
-        SupportsDatatype<V>, SupportsValidation<V>, HasRequired, HasZoneId, ApplicationContextAware,
-        InitializingBean {
+        SupportsDatatype<V>, SupportsValidation<V>, SupportsStatusChangeHandler<TypedTimePicker<V>>, HasRequired,
+        HasZoneId, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
     protected DateTimeTransformations dateTimeTransformations;
@@ -137,6 +138,22 @@ public class TypedTimePicker<V extends Comparable> extends TimePicker implements
     @Override
     public void executeValidators() throws ValidationException {
         fieldDelegate.executeValidators();
+    }
+
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<TypedTimePicker<V>>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
     }
 
     @Nullable
@@ -287,6 +304,7 @@ public class TypedTimePicker<V extends Comparable> extends TimePicker implements
             ZonedDateTime userZonedDateTime = convertTimeToZDT(presentationValue, getZoneIdInternal());
             return convertTimeFromZDT(userZonedDateTime, modelType);
         } else {
+            //noinspection unchecked
             return (V) dateTimeTransformations.transformFromLocalTime(presentationValue, modelType);
         }
     }

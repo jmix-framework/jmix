@@ -23,6 +23,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.tabs.TabSheet;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioProperty;
@@ -33,12 +34,13 @@ public interface StudioLayouts {
 
     @StudioComponent(
             name = "Details",
-            classFqn = "com.vaadin.flow.component.details.Details",
+            classFqn = "io.jmix.flowui.component.details.JmixDetails",
             category = "Layouts",
             xmlElement = "details",
             icon = "io/jmix/flowui/kit/meta/icon/layout/details.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -72,6 +74,7 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.BoxSizing", defaultValue = "UNDEFINED",
                             options = {"UNDEFINED", "CONTENT_BOX", "BORDER_BOX"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "expand", type = StudioPropertyType.STRING),
@@ -113,6 +116,7 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.BoxSizing", defaultValue = "UNDEFINED",
                             options = {"UNDEFINED", "CONTENT_BOX", "BORDER_BOX"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "expand", type = StudioPropertyType.STRING),
@@ -186,7 +190,7 @@ public interface StudioLayouts {
                             options = {"VERTICAL", "HORIZONTAL"}),
                     @StudioProperty(xmlAttribute = "splitterPosition", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
-                            options = {"small", "minimal"}),
+                            options = {"small", "minimal", "splitter-spacing"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100%")
@@ -196,7 +200,7 @@ public interface StudioLayouts {
 
     @StudioComponent(
             name = "Accordion",
-            classFqn = "com.vaadin.flow.component.accordion.Accordion",
+            classFqn = "io.jmix.flowui.component.accordion.JmixAccordion",
             category = "Layouts",
             xmlElement = "accordion",
             icon = "io/jmix/flowui/kit/meta/icon/layout/accordion.svg",
@@ -225,7 +229,7 @@ public interface StudioLayouts {
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -243,4 +247,29 @@ public interface StudioLayouts {
             }
     )
     FormLayout formLayout();
+
+    @StudioComponent(
+            name = "TabSheet",
+            classFqn = "io.jmix.flowui.component.tabsheet.JmixTabSheet",
+            category = "Layouts",
+            xmlElement = "tabSheet",
+            icon = "io/jmix/flowui/kit/meta/icon/component/tabSheet.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"icon-on-top", "centered", "small", "minimal",
+                                    "hide-scroll-buttons", "equal-width-tabs", "bordered", "fixed"}),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    TabSheet tabSheet();
 }

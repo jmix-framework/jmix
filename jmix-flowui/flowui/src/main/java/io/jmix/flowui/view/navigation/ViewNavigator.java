@@ -96,9 +96,9 @@ public class ViewNavigator {
     }
 
     /**
-     * Sets whether the current url should be navigated to when the opened view is closed.
+     * Sets whether the current URL should be navigated to when the opened view is closed.
      *
-     * @param backwardNavigation whether the current url should be registered for backward navigation
+     * @param backwardNavigation whether the current URL should be registered for backward navigation
      * @return this instance for chaining
      */
     public ViewNavigator withBackwardNavigation(boolean backwardNavigation) {
@@ -135,7 +135,7 @@ public class ViewNavigator {
     }
 
     /**
-     * @return whether the current url should be navigated to when the opened view is closed
+     * @return whether the current URL should be navigated to when the opened view is closed
      */
     public boolean isBackwardNavigation() {
         return backwardNavigation;

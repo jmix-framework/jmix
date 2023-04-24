@@ -39,6 +39,8 @@ import java.text.ParseException;
 @Component("ui_ScreenDataXmlLoader")
 public class ScreenDataXmlLoader {
 
+    public static final String GENERATED_PREFIX = "generated_";
+
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
@@ -499,6 +501,6 @@ public class ScreenDataXmlLoader {
     }
 
     protected String generateId() {
-        return RandomStringUtils.randomAlphanumeric(8);
+        return GENERATED_PREFIX + RandomStringUtils.randomAlphanumeric(8);
     }
 }

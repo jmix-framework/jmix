@@ -19,11 +19,8 @@ package test_support;
 import io.jmix.core.DataManager;
 import io.jmix.core.IdSerialization;
 import io.jmix.core.Metadata;
-import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.security.CoreSecurityConfiguration;
-import io.jmix.data.impl.liquibase.JmixLiquibase;
-import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +46,10 @@ public class AsyncEnqueueingTestConfiguration extends CoreSecurityConfiguration 
     }
 
     @Bean
-    public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
-        JmixLiquibase liquibase = new JmixLiquibase();
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLogContent(processor.createMasterChangeLog(Stores.MAIN));
+        liquibase.setChangeLog("test_support/liquibase/changelog.xml");
         return liquibase;
     }
 

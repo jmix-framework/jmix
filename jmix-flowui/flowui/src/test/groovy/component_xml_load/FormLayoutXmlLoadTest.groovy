@@ -38,7 +38,7 @@ class FormLayoutXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def order = dataManager.create(Order)
 
@@ -58,7 +58,7 @@ class FormLayoutXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ContainerView and load data"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
         containerView.loadData()
 
         then: "FormLayout attributes will be loaded with the value of the properties"

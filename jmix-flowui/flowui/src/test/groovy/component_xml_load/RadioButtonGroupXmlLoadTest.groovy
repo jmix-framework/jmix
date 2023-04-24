@@ -17,6 +17,7 @@
 package component_xml_load
 
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.RadioButtonGroupView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
@@ -37,7 +38,7 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
         def order = dataManager.create(Order)
@@ -54,7 +55,7 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load radioButtonGroup component from XML"() {
         when: "Open the ComponentView"
-        def rbgView = openScreen(RadioButtonGroupView)
+        def rbgView = navigateToView(RadioButtonGroupView)
 
         then: "RadioButtonGroup attributes will be loaded"
         verifyAll(rbgView.radioButtonGroup) {
@@ -78,6 +79,14 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
                                     RadioGroupVariant.LUMO_VERTICAL.getVariantName()])
             visible
             width == "100%"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 }

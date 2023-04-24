@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+          icon="resource://template/template_blank.svg"
+          name="Override an existing view">
+    <tags>
+        <tag>OVERRIDE</tag>
+    </tags>
+    <description>
+        <![CDATA[<html>Create new view which will be used in the application instead of the existing one. New view optionally can be based on the previous view.</html>]]>
+    </description>
+    <property caption="Override view"
+              code="overrideView"
+              propertyType="SCREEN"
+              required="true"/>
+
+    <property caption="Init view layout with"
+              code="overrideAction"
+              propertyType="OVERRIDE_PROPERTY"
+              required="true"/>
+
+    <property caption="Descriptor name"
+              code="descriptorName"
+              propertyType="DESCRIPTOR_NAME"
+              sourceName="descriptor"
+              required="true"
+              dynamic="true"
+              defaultValue="override"
+              valueTemplate="${project_id.isEmpty()?'ext-':project_id.replace('_','-')}${overrideView.descriptorName}">
+        <dependency code="overrideView"/>
+        <dependency code="overrideAction"/>
+    </property>
+
+    <property caption="Controller name"
+              code="controllerName"
+              propertyType="CLASS_NAME"
+              sourceName="controller"
+              dynamic="true"
+              valueTemplate="${project_id.isEmpty()?'Ext':project_id.capitalize().replace('_','')}${overrideView.controllerClassName}">
+        <dependency code="overrideView"/>
+    </property>
+
+    <property caption="View id"
+              code="viewId"
+              propertyType="SCREEN_ID"
+              dynamic="true"
+              advanced="true"
+              required="true"
+              valueTemplate="${overrideView.id}">
+        <dependency code="overrideView"/>
+        <dependency code="overrideAction"/>
+    </property>
+
+    <property caption="View route"
+              code="viewRoute"
+              propertyType="STRING"
+              advanced="true"
+              dynamic="true"
+              required="true"
+              valueTemplate="${overrideView.routeValue}">
+        <dependency code="overrideView"/>
+    </property>
+
+    <source fileExt="xml"
+            name="descriptor"/>
+    <source fileExt="java"
+            name="controller"/>
+    <source fileExt="kt"
+            name="controller"/>
+</template>

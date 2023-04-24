@@ -67,14 +67,10 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     }
 
     protected void containerCollectionChanged(@SuppressWarnings("unused") CollectionContainer.CollectionChangeEvent<T> event) {
-        refreshAll();
-
         getEventBus().fireEvent(new ItemSetChangeEvent<>(this));
     }
 
     protected void containerItemPropertyChanged(CollectionContainer.ItemPropertyChangeEvent<T> event) {
-        refreshItem(event.getItem());
-
         getEventBus().fireEvent(new ValueChangeEvent<>(this, event.getItem(),
                 event.getProperty(), event.getPrevValue(), event.getValue()));
     }
@@ -195,6 +191,10 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     protected Stream<T> getItems() {
         return container.getItems().stream();
+    }
+
+    public T getItem(Object entityId) {
+        return container.getItem(entityId);
     }
 
     @Override

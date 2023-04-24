@@ -58,6 +58,7 @@
                 required="true"
                 requiredIndicatorVisible="true"
                 requiredMessage="requiredMessageString"
+                tabIndex="3"
                 themeNames="small, align-right"
                 title="titleString"
                 step="10"
@@ -65,7 +66,16 @@
                 valueChangeMode="ON_CHANGE"
                 valueChangeTimeout="50"
                 visible="true"
-                width="100px"/>
+                width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </integerField>
         <integerField id="integerFieldWithValueId" dataContainer="orderLineDc" property="quantity"/>
     </layout>
 </view>

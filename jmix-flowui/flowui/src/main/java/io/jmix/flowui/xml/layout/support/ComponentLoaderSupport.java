@@ -22,6 +22,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
+import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -130,6 +132,25 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loadBoxSizing(layout, element);
     }
 
+    public void loadTooltip(HasTooltip component, Element element) {
+        Element tooltipElement = element.element("tooltip");
+
+        if (tooltipElement != null) {
+            String text = loaderSupport.loadResourceString(tooltipElement, "text", context.getMessageGroup())
+                    .orElse(null);
+
+            Tooltip tooltip = component.setTooltipText(text);
+
+            loaderSupport.loadInteger(tooltipElement, "focusDelay", tooltip::setFocusDelay);
+            loaderSupport.loadInteger(tooltipElement, "hideDelay", tooltip::setHideDelay);
+            loaderSupport.loadInteger(tooltipElement, "hoverDelay", tooltip::setHoverDelay);
+            loaderSupport.loadBoolean(tooltipElement, "manual", tooltip::setManual);
+            loaderSupport.loadBoolean(tooltipElement, "opened", tooltip::setOpened);
+            loaderSupport.loadEnum(tooltipElement, Tooltip.TooltipPosition.class, "position",
+                    tooltip::setPosition);
+        }
+    }
+
     public void loadAlignItems(FlexComponent component, Element element) {
         loaderSupport.loadEnum(element, FlexComponent.Alignment.class, "alignItems", component::setAlignItems);
     }
@@ -170,6 +191,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     public void loadValueChangeMode(HasValueChangeMode component, Element element) {
         loaderSupport.loadEnum(element, ValueChangeMode.class, "valueChangeMode", component::setValueChangeMode);
         loaderSupport.loadInteger(element, "valueChangeTimeout", component::setValueChangeTimeout);
+    }
+
+    public void loadTabIndex(Focusable<?> component, Element element) {
+        loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
     }
 
     public void loadThemeNames(HasTheme component, Element element) {

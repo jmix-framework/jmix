@@ -16,12 +16,13 @@
 
 package io.jmix.charts.widget.amcharts.events.cursor.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.cursor.CursorPeriodSelectEvent;
 
 /**
  * Note: set selectWithoutZooming for Cursor to true.
  *
  */
-public interface CursorPeriodSelectListener {
+public interface CursorPeriodSelectListener extends SerializableEventListener {
     void onSelect(CursorPeriodSelectEvent event);
 }

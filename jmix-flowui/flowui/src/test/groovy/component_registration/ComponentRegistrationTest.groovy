@@ -35,7 +35,7 @@ class ComponentRegistrationTest extends FlowuiTestSpecification {
     ViewNavigators screenNavigators
 
     void setup() {
-        registerScreenBasePackages("component_registration.screen")
+        registerViewBasePackages("component_registration.screen")
     }
 
     def "Check component replacement"() {

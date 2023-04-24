@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://schemas.haulmont.com/studio/template-settings.xsd"
+           xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+    <xs:element name="template">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="tags" type="tagsType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="description" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="locMessages" type="locMessagesType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="steps" type="stepsType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="property" type="propertyType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="source" type="sourceType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="resource" type="resourceType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="order" type="xs:integer"/>
+            <xs:attribute name="enabled" type="xs:boolean"/>
+            <xs:attribute name="icon" type="xs:string"/>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="platformVersionRange" type="xs:string"/>
+            <xs:attribute name="polymerVersion" type="xs:string"/>
+            <xs:attribute name="targetComponents" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="locMessagesType">
+        <xs:sequence>
+            <xs:element name="message" type="messageType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="key" type="xs:string" use="required"/>
+        <xs:attribute name="expressionKey" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="messageType" mixed="true">
+        <xs:sequence>
+            <xs:element name="message" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="lang" type="langString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="propertyType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="option" type="optionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="dependency" type="dependencyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="caption" type="xs:string" use="required"/>
+        <xs:attribute name="step" type="xs:string"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="propertyType" type="propertyTypeEnum" use="required"/>
+        <xs:attribute name="dynamic" type="xs:boolean"/>
+        <xs:attribute name="sourceName" type="xs:string"/>
+        <xs:attribute name="group" type="xs:string"/>
+        <xs:attribute name="valueTemplate" type="xs:string"/>
+        <xs:attribute name="applyPreviousValue" type="xs:boolean"/>
+        <xs:attribute name="preferences" type="xs:boolean"/>
+        <xs:attribute name="required" type="xs:boolean"/>
+        <xs:attribute name="relatedProperty" type="xs:string"/>
+        <xs:attribute name="filterScript" type="xs:string"/>
+        <xs:attribute name="advanced" type="xs:boolean"/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+        <xs:attribute name="hide" type="xs:boolean"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="optionsString" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="stepsType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="step" type="stepType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="optionType">
+        <xs:attribute name="id" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="stepType">
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="order" type="xs:int"/>
+    </xs:complexType>
+
+    <xs:complexType name="dependencyType">
+        <xs:attribute name="code" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="sourceType">
+        <xs:attribute name="fileExt" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="templateFileName" type="xs:string"/>
+        <xs:attribute name="group" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="resourceType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="directory" type="xs:string"/>
+            <xs:element name="copyTo" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="computable" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:simpleType name="langString">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="default"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+    <xs:simpleType name="propertyTypeEnum">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="ENTITY"/>
+                    <xs:enumeration value="VIEW"/>
+                    <xs:enumeration value="VIEW_EXT"/>
+                    <xs:enumeration value="STRING"/>
+                    <xs:enumeration value="STRING"/>
+                    <xs:enumeration value="FILE_NAME"/>
+                    <xs:enumeration value="BOOLEAN"/>
+                    <xs:enumeration value="INTEGER"/>
+                    <xs:enumeration value="OPTION"/>
+                    <xs:enumeration value="MULTI_OPTION"/>
+                    <xs:enumeration value="PX_SIZE"/>
+                    <xs:enumeration value="TABLE_TYPE"/>
+                    <xs:enumeration value="SCREEN"/>
+                    <xs:enumeration value="SCREEN_ID"/>
+                    <xs:enumeration value="AGENT_TYPE"/>
+                    <xs:enumeration value="MENU_ITEM"/>
+                    <xs:enumeration value="POLYMER_COMPONENT_NAME"/>
+                    <xs:enumeration value="REST_QUERY"/>
+                    <xs:enumeration value="REST_SERVICE_METHOD"/>
+                    <xs:enumeration value="VIEW_COMPONENT"/>
+                    <xs:enumeration value="OVERRIDE_PROPERTY"/>
+                    <xs:enumeration value="FLOW_TABLE_TYPE"/>
+                    <xs:enumeration value="FLOW_MENU_ITEM"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:complexType name="tagsType">
+        <xs:sequence>
+            <xs:element name="tag" type="tagType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="tagType">
+        <xs:restriction>
+            <xs:enumeration value="ENTITY"/>
+            <xs:enumeration value="JPA"/>
+            <xs:enumeration value="DTO"/>
+            <xs:enumeration value="BLANK"/>
+            <xs:enumeration value="LOGIN"/>
+            <xs:enumeration value="MAIN"/>
+            <xs:enumeration value="FRAGMENT"/>
+            <xs:enumeration value="EXTEND"/>
+            <xs:enumeration value="OVERRIDE"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

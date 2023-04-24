@@ -17,17 +17,11 @@
 package io.jmix.flowui.model.impl;
 
 import io.jmix.flowui.model.DataContext;
-
-import java.util.Set;
+import io.jmix.flowui.model.DataContextChanges;
 
 /**
- * Non-public interface of {@link DataContext} implementations that can form hierarchies
+ * Marker interface of {@link DataContext} implementations that can form hierarchies
  * using {@link DataContext#setParent(DataContext)}.
  */
-public interface DataContextInternal extends DataContext {
-
-    /**
-     * Returns a mutable set of entities registered as modified.
-     */
-    Set<Object> getModifiedInstances();
+public interface DataContextInternal extends DataContext, DataContextChanges {
 }

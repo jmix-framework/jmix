@@ -54,6 +54,7 @@ import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -428,6 +429,14 @@ public class MetadataTools {
     public boolean isJpa(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
         return metaProperty.getStore().getDescriptor().isJpa();
+    }
+
+    /**
+     * Determine whether the given property is a method-based attribute of a JPA entity or embeddable.
+     */
+    public boolean isMethodBased(MetaProperty metaProperty) {
+        Objects.requireNonNull(metaProperty, "metaProperty is null");
+        return metaProperty.getAnnotatedElement() instanceof Method;
     }
 
     /**

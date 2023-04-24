@@ -2268,6 +2268,8 @@
                 <xs:attribute name="trendLineColor" type="color"/>
                 <xs:attribute name="trendLineDashLength" type="xs:integer"/>
                 <xs:attribute name="trendLineThickness" type="xs:integer"/>
+                <xs:attribute name="bezierX" type="xs:integer"/>
+                <xs:attribute name="bezierY" type="xs:integer"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

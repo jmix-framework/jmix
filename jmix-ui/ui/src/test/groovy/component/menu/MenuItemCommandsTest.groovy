@@ -20,7 +20,6 @@ import component.menu.screen.MenuPropertiesInjectionTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.DataManager
 import io.jmix.core.Id
-import io.jmix.core.LoadContext
 import io.jmix.core.common.util.Dom4j
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
@@ -28,7 +27,7 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.menu.MenuConfig
 import io.jmix.ui.menu.MenuItem
 import io.jmix.ui.menu.MenuItemCommands
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration

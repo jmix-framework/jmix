@@ -177,9 +177,9 @@ public class JmixTableFormatter extends AbstractFormatter {
     }
 
     protected JmixTableData getTableData(TemplateTableDescription templateTableDescription,
-                                             Map<String, List<KeyValueEntity>> transformedData,
-                                             Map<String, Set<JmixTableData.ColumnInfo>> headerMap,
-                                             Map<String, List<BandData>> childrenBands) {
+                                         Map<String, List<KeyValueEntity>> transformedData,
+                                         Map<String, Set<JmixTableData.ColumnInfo>> headerMap,
+                                         Map<String, List<BandData>> childrenBands) {
         for (TemplateTableBand band : templateTableDescription.getTemplateTableBands()) {
             String bandName = band.getBandName();
 

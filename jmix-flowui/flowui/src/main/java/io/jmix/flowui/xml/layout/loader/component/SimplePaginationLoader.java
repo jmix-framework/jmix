@@ -41,6 +41,7 @@ public class SimplePaginationLoader extends AbstractComponentLoader<SimplePagina
     @Override
     public void loadComponent() {
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadTooltip(resultComponent, element);
 
         loadBoolean(element, "itemsPerPageUnlimitedItemVisible",
                 resultComponent::setItemsPerPageUnlimitedItemVisible);

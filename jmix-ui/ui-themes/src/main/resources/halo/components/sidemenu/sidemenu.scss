@@ -423,7 +423,7 @@ $jmix-sidemenu-item-selected-color: valo-font-color($jmix-sidemenu-item-selected
   }
 
   .#{$primary-stylename}-submenu-open {
-    max-height: 2000px;
+    max-height: inherit;
     opacity: 1;
 
     @if $v-animations-enabled {

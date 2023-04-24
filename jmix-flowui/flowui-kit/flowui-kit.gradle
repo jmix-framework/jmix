@@ -22,7 +22,7 @@ archivesBaseName = 'jmix-flowui-kit'
 
 dependencies {
     api 'com.google.guava:guava'
-    api ("com.vaadin:vaadin-core") {
-        exclude module: 'fusion-endpoint'
+    api("com.vaadin:vaadin-core:$vaadinFlowVersion") {
+        exclude module: "vaadin-dev-server"
     }
 }

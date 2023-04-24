@@ -18,6 +18,7 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -25,8 +26,6 @@ import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
-import io.jmix.flowui.kit.component.combobutton.ComboButton;
-import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
@@ -35,15 +34,18 @@ import io.jmix.flowui.component.textfield.JmixNumberField;
 import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.component.upload.JmixUpload;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
-import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
+import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
+import io.jmix.flowui.kit.component.combobutton.ComboButton;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.sales.Order;
@@ -70,6 +72,9 @@ public class ComponentView extends StandardView {
 
     @ViewComponent
     public Avatar avatarId;
+
+    @ViewComponent
+    public Icon iconId;
 
     @ViewComponent
     public JmixBigDecimalField bigDecimalFieldId;
@@ -163,4 +168,10 @@ public class ComponentView extends StandardView {
 
     @ViewComponent
     public ComboButton comboButtonId;
+
+    @ViewComponent
+    public JmixUpload uploadId;
+
+    @ViewComponent
+    public JmixUpload uploadWithReceiverFqn;
 }

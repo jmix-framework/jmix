@@ -16,7 +16,7 @@
 
 package component.grid
 
-
+import component.grid.view.DataGridTestView
 import io.jmix.flowui.Actions
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.action.list.CreateAction
@@ -36,6 +36,11 @@ class DataGridTest extends FlowuiTestSpecification {
     @Autowired
     Actions actions
 
+    @Override
+    void setup() {
+        registerViewBasePackages("component.grid")
+    }
+
     def "Add actions without text"() {
         def dataGrid = uiComponents.create(DataGrid)
 
@@ -52,5 +57,51 @@ class DataGridTest extends FlowuiTestSpecification {
 
         then:
         noExceptionThrown()
+    }
+
+    def "Load DataGrid without columns in XML"() {
+        when: "Open View with DatGrid without columns"
+        def screen = navigateToView(DataGridTestView)
+
+        then: "DataGrid should be loaded without columns"
+
+        screen.dataGridWithoutColumns.columns.isEmpty()
+    }
+
+    def "Move columns in DataGrid"() {
+        when: """
+              Columns in DataGrid has the following order:
+              |number|date|dateTime|time|amount|
+              |  0   | 1  |   2    | 3  |  4   |
+              
+              Change "number" position to 3. 
+              """
+        def screen = navigateToView(DataGridTestView)
+
+        def numberColumn = screen.dataGridMoveColumns.getColumnByKey("number")
+        screen.dataGridMoveColumns.setColumnPosition(numberColumn, 3)
+
+        then: """
+              Columns should be in the following order:
+              |date|dateTime|time|number|amount|
+              | 0  |   1    | 2  |  3   |  4   |
+              """
+
+        screen.dataGridMoveColumns.allColumns.get(0).key == "date"
+        screen.dataGridMoveColumns.allColumns.get(1).key == "dateTime"
+        screen.dataGridMoveColumns.allColumns.get(2).key == "time"
+        screen.dataGridMoveColumns.allColumns.get(3).key == "number"
+        screen.dataGridMoveColumns.allColumns.get(4).key == "amount"
+
+        when: """
+             Index to move is equal to columns size
+             """
+        screen.dataGridMoveColumns.setColumnPosition(numberColumn, 5)
+
+        then: """
+              Exception should be thrown.
+              """
+
+        thrown(IndexOutOfBoundsException)
     }
 }

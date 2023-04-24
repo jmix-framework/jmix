@@ -8,8 +8,6 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
-import io.jmix.data.impl.liquibase.JmixLiquibase;
-import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import liquibase.integration.spring.SpringLiquibase;
@@ -43,10 +41,9 @@ public class AppSettingsTestConfiguration {
     }
 
     @Bean
-    SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
-        JmixLiquibase liquibase = new JmixLiquibase();
-        liquibase.setDataSource(dataSource);
-        liquibase.setChangeLogContent(processor.createMasterChangeLog(Stores.MAIN));
+    SpringLiquibase liquibase() {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setShouldRun(false);
         return liquibase;
     }
 

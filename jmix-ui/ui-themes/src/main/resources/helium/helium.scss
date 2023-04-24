@@ -627,8 +627,8 @@
 
   --grid-focused-cell-border-color: var(--primary-color);
 
-  --grid-aggregation-background-color: he-rgba($color: --primary-color_rgb, $alpha: .5);
-  --grid-aggregation-border-color: he-rgba($color: --primary-color_rgb, $alpha: .4);
+  --grid-aggregation-background-color: #B5AFDE;
+  --grid-aggregation-border-color: #968FD0;
   --grid-aggregation-text-color: var(--text-secondary-color);
 
   --grid-drop-marker-color: var(--primary-color);
@@ -1031,6 +1031,9 @@
 
   --grid-row-stripe-color: #323F4E;
   --grid-hovered-row-background-color: #393D66;
+
+  --grid-aggregation-background-color: #48487D;
+  --grid-aggregation-border-color: #555196;
 
   /* SideMenu */
 

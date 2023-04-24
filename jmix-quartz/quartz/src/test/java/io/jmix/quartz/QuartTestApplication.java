@@ -6,8 +6,6 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
-import io.jmix.data.impl.liquibase.JmixLiquibase;
-import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import liquibase.integration.spring.SpringLiquibase;
 import org.quartz.*;
@@ -61,10 +59,10 @@ public class QuartTestApplication {
 
     @Bean
     @Primary
-    public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
-        JmixLiquibase liquibase = new JmixLiquibase();
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLogContent(processor.createMasterChangeLog(Stores.MAIN));
+        liquibase.setChangeLog("test_support/liquibase/test-changelog.xml");
         return liquibase;
     }
 

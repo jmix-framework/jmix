@@ -29,7 +29,7 @@ import io.jmix.ui.component.ComponentsHelper
 import io.jmix.ui.component.Table
 import io.jmix.ui.component.TextField
 import io.jmix.ui.component.data.table.EmptyTableItems
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.petclinic.Country

@@ -85,6 +85,9 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     protected CaptionPosition captionPosition = CaptionPosition.LEFT;
     protected Predicate<MetaPropertyPath> propertiesFilterPredicate;
 
+    protected float captionWidth = AUTO_SIZE_PX;
+    protected SizeUnit captionWidthUnit = SizeUnit.PIXELS;
+
     protected Configuration emptyConfiguration;
     protected Configuration currentConfiguration;
     protected List<Configuration> configurations = new ArrayList<>();
@@ -228,6 +231,23 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                 ((SupportsCaptionPosition) rootComponent).setCaptionPosition(position);
             }
         }
+    }
+
+    @Override
+    public float getCaptionWidth() {
+        return captionWidth;
+    }
+
+    @Override
+    public SizeUnit getCaptionWidthSizeUnit() {
+        return captionWidthUnit;
+    }
+
+    @Override
+    public void setCaptionWidth(String width) {
+        SizeWithUnit sizeWithUnit = SizeWithUnit.parseStringSize(width);
+        captionWidth = sizeWithUnit.getSize();
+        captionWidthUnit = sizeWithUnit.getUnit();
     }
 
     @Override
@@ -579,6 +599,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         rootGroupFilter.setConditionModificationDelegated(true);
         rootGroupFilter.setOperation(rootOperation);
         rootGroupFilter.setOperationCaptionVisible(false);
+        rootGroupFilter.setCaptionWidth(new SizeWithUnit(captionWidth, captionWidthUnit).stringValue());
 
         if (dataLoader != null) {
             rootGroupFilter.setDataLoader(dataLoader);

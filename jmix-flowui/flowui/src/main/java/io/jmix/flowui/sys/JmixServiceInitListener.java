@@ -27,6 +27,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.LocaleResolver;
 import io.jmix.flowui.component.error.JmixInternalServerError;
 import io.jmix.flowui.exception.UiExceptionHandlers;
+import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
 import io.jmix.flowui.view.ViewRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,7 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     @Override
     public void serviceInit(ServiceInitEvent event) {
         event.getSource().addSessionInitListener(this::onSessionInitEvent);
+        event.getSource().addSessionDestroyListener(this::onSessionDestroyEvent);
         event.getSource().addUIInitListener(this::onUIInitEvent);
 
         // Vaadin scans only application packages by default. To enable scanning
@@ -88,8 +90,21 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         });
     }
 
+    protected void onSessionDestroyEvent(SessionDestroyEvent event) {
+        // VaadinSessionScope is not active here
+        if (log.isTraceEnabled()) {
+            log.trace("VaadinSession {} is destroyed", event.getSession());
+        }
+        VaadinSession session = event.getSession();
+        session.getAttribute(BackgroundTaskManager.class).cleanupTasks();
+    }
+
     protected void onSessionInitEvent(SessionInitEvent event) {
+        if (log.isTraceEnabled()) {
+            log.trace("VaadinSession {} is initialized", event.getSession());
+        }
         event.getSession().setErrorHandler(uiExceptionHandlers);
+        event.getSession().setAttribute(BackgroundTaskManager.class, new BackgroundTaskManager());
 
         initCookieLocale(event.getSession());
     }

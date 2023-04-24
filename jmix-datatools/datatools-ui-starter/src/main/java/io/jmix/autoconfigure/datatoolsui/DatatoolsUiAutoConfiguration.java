@@ -20,12 +20,12 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsui.DatatoolsUiConfiguration;
 import io.jmix.ui.UiConfiguration;
-import io.jmix.uiexport.UiExportConfiguration;
+import io.jmix.gridexportui.GridExportUiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, UiConfiguration.class, UiExportConfiguration.class, DatatoolsConfiguration.class,
+@Import({CoreConfiguration.class, UiConfiguration.class, GridExportUiConfiguration.class, DatatoolsConfiguration.class,
         DatatoolsUiConfiguration.class})
 public class DatatoolsUiAutoConfiguration {
 }

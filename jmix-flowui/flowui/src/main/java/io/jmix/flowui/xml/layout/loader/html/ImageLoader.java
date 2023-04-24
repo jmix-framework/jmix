@@ -16,13 +16,17 @@
 
 package io.jmix.flowui.xml.layout.loader.html;
 
-import com.vaadin.flow.component.html.Image;
+import com.google.common.base.Splitter;
+import io.jmix.flowui.component.image.JmixImage;
+import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-public class ImageLoader extends AbstractHtmlContainerLoader<Image> {
+public class ImageLoader extends AbstractHtmlContainerLoader<JmixImage<?>> {
+
+    protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected Image createComponent() {
-        return factory.create(Image.class);
+    protected JmixImage<?> createComponent() {
+        return factory.create(JmixImage.class);
     }
 
     @Override
@@ -33,5 +37,25 @@ public class ImageLoader extends AbstractHtmlContainerLoader<Image> {
         loadResourceString(element, "alternateText", context.getMessageGroup(), resultComponent::setAlt);
 
         componentLoader().loadAriaLabel(resultComponent, element);
+
+        getLoaderSupport().loadString(element, "themeNames",
+                names -> resultComponent.getElement().getThemeList().addAll(Splitter.on(",")
+                        .omitEmptyStrings()
+                        .trimResults()
+                        .splitToList(names)));
+
+        getDataLoaderSupport().loadData(resultComponent, element);
+    }
+
+    @Override
+    protected void loadBadge() {
+        // No badges for Image
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

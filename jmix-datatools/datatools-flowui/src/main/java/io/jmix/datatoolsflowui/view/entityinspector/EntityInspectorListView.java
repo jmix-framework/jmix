@@ -17,6 +17,9 @@
 package io.jmix.datatoolsflowui.view.entityinspector;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -28,54 +31,58 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.data.PersistenceHints;
 import io.jmix.datatools.EntityRestore;
 import io.jmix.datatoolsflowui.action.ShowEntityInfoAction;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorDataGridBuilder;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorFetchPlanBuilder;
-import io.jmix.flowui.Actions;
-import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.*;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.DialogAction;
-import io.jmix.flowui.action.list.CreateAction;
-import io.jmix.flowui.action.list.EditAction;
-import io.jmix.flowui.action.list.ItemTrackingAction;
-import io.jmix.flowui.action.list.RefreshAction;
-import io.jmix.flowui.action.list.RemoveAction;
+import io.jmix.flowui.action.list.*;
 import io.jmix.flowui.action.view.LookupSelectAction;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.data.grid.ContainerDataGridItems;
+import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
+import io.jmix.flowui.download.DownloadFormat;
+import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import io.jmix.gridexportflowui.action.ExcelExportAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.function.Consumer;
+
+import static com.google.common.base.Strings.nullToEmpty;
+import static io.jmix.flowui.download.DownloadFormat.JSON;
+import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Route(value = "datatl/entityinspector", layout = DefaultMainViewParent.class)
@@ -84,6 +91,8 @@ import java.util.function.Consumer;
 @LookupComponent("entitiesDataGrid")
 @DialogMode(width = "50em", height = "37.5em")
 public class EntityInspectorListView extends StandardListView<Object> {
+
+    private static final Logger log = LoggerFactory.getLogger(EntityInspectorListView.class);
 
     protected static final String BASE_SELECT_QUERY = "select e from %s e";
     protected static final String DELETED_ONLY_SELECT_QUERY = "select e from %s e where e.%s is not null";
@@ -121,7 +130,19 @@ public class EntityInspectorListView extends StandardListView<Object> {
     @Autowired
     protected FetchPlans fetchPlans;
     @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+    @Autowired
     protected UiComponents uiComponents;
+    @Autowired
+    protected FlowuiProperties flowuiProperties;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected EntityImportExport entityImportExport;
+    @Autowired
+    protected EntityImportPlanJsonBuilder importPlanJsonBuilder;
+    @Autowired
+    protected EntityImportPlans entityImportPlans;
     @Autowired
     protected Actions actions;
     @Autowired
@@ -136,6 +157,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected UrlParamSerializer urlParamSerializer;
     @Autowired
     protected RouteSupport routeSupport;
+    @Autowired
+    protected Downloader downloader;
 
     protected DataGrid<Object> entitiesDataGrid;
     protected MetaClass selectedMeta;
@@ -353,10 +376,76 @@ public class EntityInspectorListView extends StandardListView<Object> {
         dataGrid.addAction(refreshAction);
         refreshButton.setAction(refreshAction);
 
+        JmixButton excelExportButton = uiComponents.create(JmixButton.class);
+        ExcelExportAction excelExportAction = createExcelExportAction(dataGrid);
+        excelExportButton.setAction(excelExportAction);
+
+        DropdownButton exportDropdownButton = uiComponents.create(DropdownButton.class);
+        exportDropdownButton.setText(messages.getMessage(EntityInspectorListView.class, "export"));
+        exportDropdownButton.setIcon(VaadinIcon.DOWNLOAD.create());
+
+        ExportAction exportJsonAction = new ExportAction("exportJSON");
+        exportJsonAction.setFormat(JSON);
+        exportJsonAction.setDataGrid(dataGrid);
+        exportJsonAction.setMetaClass(selectedMeta);
+        exportJsonAction.setIcon(VaadinIcon.FILE_CODE.create());
+        exportDropdownButton.addItem("exportJson", exportJsonAction);
+
+        ExportAction exportZipAction = new ExportAction("exportZIP");
+        exportZipAction.setFormat(ZIP);
+        exportZipAction.setDataGrid(dataGrid);
+        exportZipAction.setMetaClass(selectedMeta);
+        exportZipAction.setIcon(VaadinIcon.FILE_ZIP.create());
+        exportDropdownButton.addItem("exportZip", exportZipAction);
+
+        FileUploadField importUpload = uiComponents.create(FileUploadField.class);
+        importUpload.setAcceptedFileTypes(".json", ".zip");
+        importUpload.setUploadIcon(VaadinIcon.UPLOAD.create());
+        importUpload.setUploadText(messages.getMessage(EntityInspectorListView.class, "import"));
+
+        importUpload.addFileUploadSucceededListener(event -> {
+            byte[] fileBytes = importUpload.getValue();
+            String fileName = event.getFileName();
+
+            try {
+                Collection<Object> importedEntities;
+
+                if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
+                    String content = new String(Objects.requireNonNull(fileBytes), StandardCharsets.UTF_8);
+                    importedEntities = entityImportExport.importEntitiesFromJson(content,
+                            createEntityImportPlan(content, selectedMeta));
+                } else {
+                    importedEntities = entityImportExport.importEntitiesFromZIP(Objects.requireNonNull(fileBytes),
+                            createEntityImportPlan(selectedMeta));
+                }
+
+                String importSuccessfulMessage = messages.formatMessage(EntityInspectorListView.class,
+                        "importSuccessful", importedEntities.size());
+
+                notifications.create(importSuccessfulMessage)
+                        .withType(Notifications.Type.SUCCESS)
+                        .show();
+
+            } catch (Exception e) {
+                String importFailedHeader = messages.getMessage(EntityInspectorListView.class, "importFailedHeader");
+                String importFailedMessage = messages.formatMessage(EntityInspectorListView.class, "importFailedMessage",
+                        fileName, nullToEmpty(e.getMessage()));
+
+                notifications.create(importFailedHeader, importFailedMessage)
+                        .withType(Notifications.Type.ERROR)
+                        .show();
+
+                log.error("Entities import error", e);
+            }
+
+            entitiesDl.load();
+        });
+
         Action showEntityInfoAction = createShowEntityInfoAction(dataGrid);
         dataGrid.addAction(showEntityInfoAction);
 
-        buttonsPanel.add(createButton, editButton, removeButton, refreshButton);
+        buttonsPanel.add(createButton, editButton, removeButton, refreshButton, excelExportButton,
+                exportDropdownButton, importUpload);
 
         if (metadataTools.isSoftDeletable(selectedMeta.getJavaClass())) {
             JmixButton restoreButton = createRestoreButton(dataGrid);
@@ -375,6 +464,13 @@ public class EntityInspectorListView extends StandardListView<Object> {
         LookupSelectAction lookupSelectAction = actions.create(LookupSelectAction.class);
         lookupSelectAction.setTarget(this);
         return lookupSelectAction;
+    }
+
+    protected ExcelExportAction createExcelExportAction(DataGrid<Object> dataGrid) {
+        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.class);
+        excelExportAction.setTarget(dataGrid);
+
+        return excelExportAction;
     }
 
     protected ShowEntityInfoAction createShowEntityInfoAction(DataGrid<Object> dataGrid) {
@@ -553,13 +649,16 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected void entityChangeListener(
             AbstractField.ComponentValueChangeEvent<ComboBox<MetaClass>, MetaClass> valueChangeEvent) {
         getUI().ifPresent(ui -> {
-            String queryParamValue = valueChangeEvent.getValue().getName();
+            MetaClass metaClass = valueChangeEvent.getValue();
 
-            routeSupport.setQueryParameter(
-                    ui,
-                    QUERY_PARAM_ENTITY,
-                    queryParamValue
-            );
+            if (metaClass == null) {
+                getContent().remove(entitiesDataGrid);
+
+                //to remove the current entityName param and restore showMode param
+                routeSupport.setQueryParameters(ui, QueryParameters.of(QUERY_PARAM_MODE, showMode.getValue().getId()));
+            } else {
+                routeSupport.setQueryParameter(ui, QUERY_PARAM_ENTITY, metaClass.getName());
+            }
         });
     }
 
@@ -607,8 +706,166 @@ public class EntityInspectorListView extends StandardListView<Object> {
         }
     }
 
+    protected FetchPlan createEntityExportPlan(MetaClass metaClass) {
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
+
+        for (MetaProperty metaProperty : metaClass.getProperties()) {
+            switch (metaProperty.getType()) {
+                case DATATYPE:
+                case ENUM:
+                    fetchPlanBuilder.add(metaProperty.getName());
+                    break;
+                case ASSOCIATION:
+                case COMPOSITION:
+                case EMBEDDED:
+                    FetchPlan local = fetchPlanRepository.getFetchPlan(metaProperty.getRange().asClass(),
+                            FetchPlan.LOCAL);
+                    fetchPlanBuilder.add(metaProperty.getName(), local.getName());
+                    break;
+                default:
+                    throw new IllegalStateException("unknown property type");
+            }
+        }
+
+        return fetchPlanBuilder.build();
+    }
+
+    protected EntityImportPlan createEntityImportPlan(String content, MetaClass metaClass) {
+        JsonElement rootElement = JsonParser.parseString(content);
+        EntityImportPlan entityImportPlan = rootElement.isJsonArray()
+                ? importPlanJsonBuilder.buildFromJsonArray(rootElement.getAsJsonArray(), metaClass)
+                : importPlanJsonBuilder.buildFromJson(rootElement.toString(), metaClass);
+
+        for (MetaProperty metaProperty : metaClass.getProperties()) {
+            if (!metadataTools.isJpa(metaProperty)) {
+                continue;
+            }
+
+            switch (metaProperty.getType()) {
+                case ASSOCIATION:
+                case EMBEDDED:
+                case COMPOSITION:
+                    EntityImportPlanProperty property = entityImportPlan.getProperty(metaProperty.getName());
+
+                    if (property != null) {
+                        property.setReferenceImportBehaviour(ReferenceImportBehaviour.IGNORE_MISSING);
+                    }
+                    break;
+                default:
+            }
+        }
+
+        return entityImportPlan;
+    }
+
+    protected EntityImportPlan createEntityImportPlan(MetaClass metaClass) {
+        EntityImportPlanBuilder planBuilder = entityImportPlans.builder(metaClass.getJavaClass());
+
+        for (MetaProperty metaProperty : metaClass.getProperties()) {
+            if (!metadataTools.isJpa(metaProperty)) {
+                continue;
+            }
+
+            switch (metaProperty.getType()) {
+                case DATATYPE:
+                case ENUM:
+                    planBuilder.addLocalProperty(metaProperty.getName());
+                    break;
+                case EMBEDDED:
+                case ASSOCIATION:
+                case COMPOSITION:
+                    Range.Cardinality cardinality = metaProperty.getRange().getCardinality();
+
+                    if (cardinality == Range.Cardinality.MANY_TO_ONE) {
+                        planBuilder.addManyToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                    } else if (cardinality == Range.Cardinality.ONE_TO_ONE) {
+                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                    } else if (cardinality == Range.Cardinality.ONE_TO_MANY) {
+                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                    } else if (cardinality == Range.Cardinality.NONE) {
+                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                    }
+
+                    break;
+                default:
+                    throw new IllegalStateException("unknown property type");
+            }
+        }
+
+        return planBuilder.build();
+    }
+
     public void setEntityName(String entityName) {
         this.entityName = entityName;
+    }
+
+    protected class ExportAction extends ItemTrackingAction {
+
+        protected DownloadFormat format;
+        protected MetaClass metaClass;
+        protected DataGrid<Object> dataGrid;
+
+        public ExportAction(String id) {
+            super(id);
+        }
+
+        @Override
+        protected void initAction() {
+            super.initAction();
+
+            text = messages.getMessage(EntityInspectorListView.class, id);
+        }
+
+        public void setFormat(DownloadFormat format) {
+            this.format = format;
+        }
+
+        public void setMetaClass(MetaClass metaClass) {
+            this.metaClass = metaClass;
+        }
+
+        public void setDataGrid(DataGrid<Object> dataGrid) {
+            this.dataGrid = dataGrid;
+        }
+
+        @Override
+        public void execute() {
+            Collection<Object> selected = dataGrid.getSelectedItems();
+            if (selected.isEmpty()
+                    && dataGrid.getItems() != null
+                    && dataGrid.getItems() instanceof ContainerDataGridItems) {
+                selected = ((ContainerDataGridItems<Object>) dataGrid.getItems()).getContainer().getItems();
+            }
+
+            int saveExportedByteArrayDataThresholdBytes = flowuiProperties.getSaveExportedByteArrayDataThresholdBytes();
+            String tempDir = coreProperties.getTempDir();
+
+            try {
+                if (format == ZIP) {
+                    byte[] data = entityImportExport.exportEntitiesToZIP(selected, createEntityExportPlan(selectedMeta));
+                    String resourceName = metaClass.getJavaClass().getSimpleName() + ".zip";
+                    ByteArrayDownloadDataProvider dataProvider =
+                            new ByteArrayDownloadDataProvider(data, saveExportedByteArrayDataThresholdBytes, tempDir);
+
+                    downloader.download(dataProvider, resourceName, ZIP);
+
+                } else if (format == JSON) {
+                    byte[] data = entityImportExport.exportEntitiesToJSON(selected, createEntityExportPlan(selectedMeta))
+                            .getBytes(StandardCharsets.UTF_8);
+                    String resourceName = metaClass.getJavaClass().getSimpleName() + ".json";
+                    ByteArrayDownloadDataProvider dataProvider =
+                            new ByteArrayDownloadDataProvider(data, saveExportedByteArrayDataThresholdBytes, tempDir);
+
+                    downloader.download(dataProvider, resourceName, JSON);
+                }
+            } catch (Exception e) {
+                notifications.create(messages.getMessage(EntityInspectorListView.class, "exportFailed"), e.getMessage())
+                        .withType(Notifications.Type.ERROR)
+                        .show();
+
+                log.error("Entities export failed", e);
+            }
+        }
     }
 
     protected interface DialogConsumer<T, U> {

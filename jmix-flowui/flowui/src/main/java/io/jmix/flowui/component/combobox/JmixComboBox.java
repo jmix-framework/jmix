@@ -22,7 +22,7 @@ import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.delegate.AbstractFieldDelegate;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -37,15 +37,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 public class JmixComboBox<V> extends ComboBox<V>
-        implements SupportsValueSource<V>, SupportsValidation<V>, SupportsDataProvider<V>,
-        SupportsItemsEnum<V>, HasRequired, HasTitle,
+        implements SupportsValueSource<V>, SupportsValidation<V>, SupportsStatusChangeHandler<JmixComboBox<V>>,
+        SupportsDataProvider<V>, SupportsItemsEnum<V>, HasRequired, HasTitle,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
-    protected AbstractFieldDelegate<? extends JmixComboBox<V>, V, V> fieldDelegate;
+    protected FieldDelegate<JmixComboBox<V>, V, V> fieldDelegate;
     protected DataViewDelegate<JmixComboBox<V>, V> dataViewDelegate;
 
     @Override
@@ -125,8 +126,24 @@ public class JmixComboBox<V> extends ComboBox<V>
         fieldDelegate.setInvalid(invalid);
     }
 
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<JmixComboBox<V>>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
+    }
+
     @SuppressWarnings("unchecked")
-    protected AbstractFieldDelegate<? extends JmixComboBox<V>, V, V> createFieldDelegate() {
+    protected FieldDelegate<JmixComboBox<V>, V, V> createFieldDelegate() {
         return applicationContext.getBean(FieldDelegate.class, this);
     }
 

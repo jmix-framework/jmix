@@ -40,9 +40,12 @@ class DatatypeRegistryTest extends Specification {
         when:
 
         context.getBean('core_BooleanDatatype', BooleanDatatype)
+        context.getBean('core_ShortDatatype', ShortDatatype)
         context.getBean('core_IntegerDatatype', IntegerDatatype)
         context.getBean('core_LongDatatype', LongDatatype)
+        context.getBean('core_BigIntegerDatatype', BigIntegerDatatype)
         context.getBean('core_BigDecimalDatatype', BigDecimalDatatype)
+        context.getBean('core_FloatDatatype', FloatDatatype)
         context.getBean('core_DoubleDatatype', DoubleDatatype)
         context.getBean('core_StringDatatype', StringDatatype)
         context.getBean('core_CharacterDatatype', CharacterDatatype)
@@ -65,9 +68,12 @@ class DatatypeRegistryTest extends Specification {
     def "test"() {
 
         def booleanDatatype = context.getBean('core_BooleanDatatype', BooleanDatatype)
+        def shortDatatype = context.getBean('core_ShortDatatype', ShortDatatype)
         def integerDatatype = context.getBean('core_IntegerDatatype', IntegerDatatype)
         def longDatatype = context.getBean('core_LongDatatype', LongDatatype)
+        def bigIntegerDatatype = context.getBean('core_BigIntegerDatatype', BigIntegerDatatype)
         def bigDecimalDatatype = context.getBean('core_BigDecimalDatatype', BigDecimalDatatype)
+        def floatDatatype = context.getBean('core_FloatDatatype', FloatDatatype)
         def doubleDatatype = context.getBean('core_DoubleDatatype', DoubleDatatype)
         def stringDatatype = context.getBean('core_StringDatatype', StringDatatype)
         def dateTimeDatatype = context.getBean('core_DateTimeDatatype', DateTimeDatatype)
@@ -84,9 +90,12 @@ class DatatypeRegistryTest extends Specification {
         expect:
 
         registry.get('boolean') == booleanDatatype
+        registry.get('short') == shortDatatype
         registry.get('int') == integerDatatype
         registry.get('long') == longDatatype
+        registry.get('bigInteger') == bigIntegerDatatype
         registry.get('decimal') == bigDecimalDatatype
+        registry.get('float') == floatDatatype
         registry.get('double') == doubleDatatype
         registry.get('string') == stringDatatype
         registry.get('dateTime') == dateTimeDatatype
@@ -101,8 +110,11 @@ class DatatypeRegistryTest extends Specification {
         registry.get('byteArray') == byteArrayDatatype
 
         registry.find(Boolean) == booleanDatatype
+        registry.find(Short) == shortDatatype
         registry.find(Long) == longDatatype
+        registry.find(BigInteger) == bigIntegerDatatype
         registry.find(BigDecimal) == bigDecimalDatatype
+        registry.find(Float) == floatDatatype
         registry.find(Double) == doubleDatatype
         registry.find(String) == stringDatatype
         registry.find(Date) == dateTimeDatatype

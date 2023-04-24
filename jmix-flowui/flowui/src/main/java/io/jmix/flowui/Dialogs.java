@@ -17,10 +17,24 @@
 package io.jmix.flowui;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Paragraph;
+import io.jmix.flowui.action.inputdialog.InputDialogAction;
+import io.jmix.flowui.app.inputdialog.DialogActions;
+import io.jmix.flowui.app.inputdialog.InputDialog;
+import io.jmix.flowui.app.inputdialog.InputParameter;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.view.DialogWindow;
+import io.jmix.flowui.view.View;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Provides fluent interface for configuring and displaying dialogs.
@@ -63,6 +77,48 @@ public interface Dialogs {
      */
     MessageDialogBuilder createMessageDialog();
 
+    /**
+     * Creates input dialog builder.
+     * <br>
+     * Example of showing an input dialog:
+     * <pre>{@code
+     * dialogs.createInputDialog(this)
+     *         .withParameters(
+     *                 stringParameter("name").withLabel("Name"),
+     *                 intParameter("count").withLabel("Count"))
+     *         .withActions(DialogActions.OK_CANCEL)
+     *         .withCloseListener(closeEvent ->
+     *                 notifications.create("Dialog is closed")
+     *                      .show()
+     *                 )
+     *         .withHeader("Goods")
+     *         .open();
+     * }</pre>
+     *
+     * @param origin origin view from input dialog is invoked
+     * @return builder
+     */
+    InputDialogBuilder createInputDialog(View<?> origin);
+
+    /**
+     * Creates background task dialog builder.
+     * <br>
+     * Example of showing a background task dialog:
+     * <pre>
+     * dialogs.createBackgroundTaskDialog(backgroundTask)
+     *         .withHeader("Task")
+     *         .withText("My Task is Running")
+     *         .withTotal(10)
+     *         .withShowProgressInPercentage(true)
+     *         .withCancelAllowed(true)
+     *         .open();
+     * </pre>
+     *
+     * @param backgroundTask background task to run
+     * @return builder
+     */
+    <T extends Number, V> BackgroundTaskDialogBuilder<T, V> createBackgroundTaskDialog(BackgroundTask<T, V> backgroundTask);
+
     interface OptionDialogBuilder extends DialogBuilder<OptionDialogBuilder>,
             HasText<OptionDialogBuilder>,
             HasContent<OptionDialogBuilder>,
@@ -99,6 +155,269 @@ public interface Dialogs {
             Closeable<MessageDialogBuilder>,
             Draggable<MessageDialogBuilder>,
             Resizable<MessageDialogBuilder> {
+
+        /**
+         * Opens the dialog.
+         */
+        void open();
+    }
+
+    interface InputDialogBuilder extends DialogBuilder<InputDialogBuilder> {
+
+        /**
+         * Adds input parameter to the dialog. InputParameter describes field which will be used in the input dialog.
+         * <br>
+         * Example:
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *         .withParameter(
+         *                 entityParameter("userField", User.class)
+         *                         .withLabel("User field")
+         *                         .withRequired(true)
+         *         )
+         *         .open();
+         * } </pre>
+         *
+         * @param parameter input parameter that will be added to the dialog
+         * @return builder
+         * @see InputParameter#entityParameter(String, Class)
+         */
+        InputDialogBuilder withParameter(InputParameter parameter);
+
+        /**
+         * Sets input parameters. InputParameter describes field which will be used in the input dialog.
+         * <br>
+         * Example:
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *          .withParameters(
+         *                  stringParameter("nameField")
+         *                          .withLabel("Name field label")
+         *                          .withDefaultValue("Default value"),
+         *                  intParameter("countField")
+         *                          .withLabel("Count field label")
+         *                          .withRequired(true))
+         *          .open();
+         *  } </pre>
+         *
+         * @param parameters input parameters
+         * @return builder
+         * @see InputParameter#stringParameter(String)
+         * @see InputParameter#intParameter(String)
+         */
+        InputDialogBuilder withParameters(InputParameter... parameters);
+
+        /**
+         * Sets responsive steps. Responsive steps used in describing the responsive layouting behavior of a
+         * {@link FormLayout}.
+         *
+         * @param responsiveSteps responsive steps
+         * @return builder
+         */
+        InputDialogBuilder withResponsiveSteps(List<ResponsiveStep> responsiveSteps);
+
+        /**
+         * Sets labels position for default responsive steps.
+         *
+         * @param labelsPosition position of labels
+         * @return builder
+         * @see #withResponsiveSteps(List)
+         */
+        InputDialogBuilder withLabelsPosition(LabelsPosition labelsPosition);
+
+        /**
+         * Add close listener to the dialog. See close actions for {@link DialogActions} in {@link InputDialog}.
+         *
+         * @param listener close listener to add
+         * @return builder
+         */
+        InputDialogBuilder withCloseListener(ComponentEventListener<InputDialog.InputDialogCloseEvent> listener);
+
+        /**
+         * Sets dialog actions.
+         * <p>
+         * Note, if there is no actions are set input dialog will use {@link DialogActions#OK_CANCEL} by default.
+         * </p>
+         * Example:
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *         .withHeader("Dialog header")
+         *         .withParameter(parameter("nameField").withLabel("Name"))
+         *         .withActions(
+         *                 action("okAction")
+         *                         .withText("OK")
+         *                         .withIcon(VaadinIcon.CHECK.create())
+         *                         .withHandler(event -> {
+         *                             InputDialog inputDialog = event.getInputDialog();
+         *                             // do logic
+         *                             inputDialog.close(InputDialog.INPUT_DIALOG_OK_ACTION);
+         *                         }),
+         *                 action("cancelAction")
+         *                         .withText("Cancel")
+         *                         .withIcon(VaadinIcon.CANCEL.create())
+         *                         .withValidationRequired(false)
+         *                         .withHandler(event -> {
+         *                             // do logic
+         *                         }))
+         *         .open();
+         * }
+         * </pre>
+         *
+         * @param actions actions
+         * @return builder
+         * @see InputDialogAction#action(String)
+         */
+        InputDialogBuilder withActions(InputDialogAction... actions);
+
+        /**
+         * Sets predefined dialog actions. "OK" and "YES" actions always check fields validation before close the dialog.
+         * By default, if there is no actions are set input dialog will use {@link DialogActions#OK_CANCEL}.
+         *
+         * @param actions actions
+         * @return builder
+         */
+        InputDialogBuilder withActions(DialogActions actions);
+
+        /**
+         * Sets dialog actions and result handler. "OK" and "YES" actions always check fields validation before close
+         * the dialog. Handler is invoked after close event and can be used instead of
+         * {@link #withCloseListener(ComponentEventListener)}.
+         * Example
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *         .withHeader("Dialog header")
+         *         .withParameter(parameter("nameField").withLabel("Name"))
+         *         .withActions(DialogActions.OK_CANCEL, result -> {
+         *             switch (result.getCloseActionType()) {
+         *                 case OK:
+         *                     // do logic
+         *                     break;
+         *                 case CANCEL:
+         *                     // do logic
+         *                     break;
+         *             }
+         *         })
+         *         .open();
+         * } </pre>
+         *
+         * @param actions       dialog actions
+         * @param resultHandler result handler
+         * @return builder
+         */
+        InputDialogBuilder withActions(DialogActions actions, Consumer<InputDialog.InputDialogResult> resultHandler);
+
+        /**
+         * Sets additional handler for field validation. It receives input dialog context and must return {@link ValidationErrors}
+         * instance. Returned validation errors will be shown with another errors from fields.
+         * Example
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *         .withParameters(
+         *                 stringParameter("phoneField").withLabel("Phone"),
+         *                 stringParameter("addressField").withLabel("Address"))
+         *         .withValidator(context -> {
+         *             String phone = context.getValue("phoneField");
+         *             String address = context.getValue("addressField");
+         *             if (Strings.isNullOrEmpty(phone) && Strings.isNullOrEmpty(address)) {
+         *                 return ValidationErrors.of("Phone or Address should be filled");
+         *             }
+         *             return ValidationErrors.none();
+         *         })
+         *         .open();
+         *  }</pre>
+         *
+         * @param validator validator
+         * @return builder
+         */
+        InputDialogBuilder withValidator(Function<InputDialog.ValidationContext, ValidationErrors> validator);
+
+        /**
+         * Opens the dialog.
+         *
+         * @return opened input dialog
+         */
+        InputDialog open();
+
+        /**
+         * Builds the input dialog.
+         *
+         * @return input dialog
+         */
+        DialogWindow<InputDialog> build();
+
+        /**
+         * Enum for describing the position of label components in a
+         * {@link InputDialog}.
+         */
+        enum LabelsPosition {
+
+            /**
+             * Labels are displayed on the left hand side of the wrapped
+             * component.
+             */
+            ASIDE,
+
+            /**
+             * Labels are displayed atop the wrapped component.
+             */
+            TOP
+        }
+    }
+
+    /**
+     * Builder of background task dialog.
+     */
+    interface BackgroundTaskDialogBuilder<T extends Number, V> extends
+            HasHeader<BackgroundTaskDialogBuilder<T, V>>,
+            HasText<BackgroundTaskDialogBuilder<T, V>>,
+            HasTheme<BackgroundTaskDialogBuilder<T, V>>,
+            HasStyle<BackgroundTaskDialogBuilder<T, V>>,
+            Draggable<BackgroundTaskDialogBuilder<T, V>>,
+            Resizable<BackgroundTaskDialogBuilder<T, V>> {
+
+        /**
+         * Determines whether the dialog can be closed.
+         * <p>
+         * The default value is {@code false}.
+         *
+         * @param cancelAllowed {@code true} if dialog is closeable
+         * @return builder
+         */
+        BackgroundTaskDialogBuilder<T, V> withCancelAllowed(boolean cancelAllowed);
+
+        /**
+         * @return {@code true} if the dialog can be closed
+         */
+        boolean isCancelAllowed();
+
+        /**
+         * Sets amount of items to be processed by background task.
+         * <br>
+         * Use {@link io.jmix.flowui.backgroundtask.TaskLifeCycle#publish(Object[])} to notify the dialog about progress
+         * completion.
+         *
+         * @param total amount of items to be processed by background task,
+         * @return builder
+         */
+        BackgroundTaskDialogBuilder<T, V> withTotal(Number total);
+
+        /**
+         * @return amount of items to be processed by background task
+         */
+        Number getTotal();
+
+        /**
+         * Sets whether progress should be represented as percentage (rather than as raw number).
+         *
+         * @param percentProgress {@code true} to show progress in percents
+         * @return builder
+         */
+        BackgroundTaskDialogBuilder<T, V> withShowProgressInPercentage(boolean percentProgress);
+
+        /**
+         * @return {@code true} if progress should is shown in percents
+         */
+        boolean isShowProgressInPercentage();
 
         /**
          * Opens the dialog.

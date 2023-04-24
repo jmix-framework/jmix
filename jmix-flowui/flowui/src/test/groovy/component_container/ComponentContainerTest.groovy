@@ -25,12 +25,12 @@ class ComponentContainerTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_container.view")
+        registerViewBasePackages("component_container.view")
     }
 
     def "VerticalLayout.getChildren() returns own components"() {
         when: "Open the view"
-        def view = openScreen(ComponentContainerView.class)
+        def view = navigateToView(ComponentContainerView.class)
 
         then:
         noExceptionThrown()
@@ -41,7 +41,7 @@ class ComponentContainerTest extends FlowuiTestSpecification {
 
     def "Details implements ComponentContainer"() {
         when: "Open the view"
-        def view = openScreen(ComponentContainerView.class)
+        def view = navigateToView(ComponentContainerView.class)
         def details = view.details
 
         then:
@@ -57,7 +57,7 @@ class ComponentContainerTest extends FlowuiTestSpecification {
 
     def "Accordion implements ComponentContainer"() {
         when: "Open the view"
-        def view = openScreen(ComponentContainerView.class)
+        def view = navigateToView(ComponentContainerView.class)
         def details = view.accordion
 
         then:

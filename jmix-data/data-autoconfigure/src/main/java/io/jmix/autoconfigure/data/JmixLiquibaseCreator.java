@@ -16,30 +16,35 @@
 
 package io.jmix.autoconfigure.data;
 
-import io.jmix.data.impl.liquibase.JmixLiquibase;
-import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 
 import javax.sql.DataSource;
 
+/**
+ * Helper class for building an instance of {@link SpringLiquibase} using the {@link LiquibaseProperties}.
+ */
 public class JmixLiquibaseCreator {
 
     public static SpringLiquibase create(DataSource dataSource,
-                                         LiquibaseProperties properties,
-                                         LiquibaseChangeLogProcessor processor,
-                                         String storeName) {
-
-        JmixLiquibase liquibase = new JmixLiquibase();
+                                         LiquibaseProperties properties) {
+        SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLogContent(processor.createMasterChangeLog(storeName));
+        liquibase.setChangeLog(properties.getChangeLog());
+        liquibase.setClearCheckSums(properties.isClearChecksums());
         liquibase.setContexts(properties.getContexts());
         liquibase.setDefaultSchema(properties.getDefaultSchema());
+        liquibase.setLiquibaseSchema(properties.getLiquibaseSchema());
+        liquibase.setLiquibaseTablespace(properties.getLiquibaseTablespace());
+        liquibase.setDatabaseChangeLogTable(properties.getDatabaseChangeLogTable());
+        liquibase.setDatabaseChangeLogLockTable(properties.getDatabaseChangeLogLockTable());
         liquibase.setDropFirst(properties.isDropFirst());
         liquibase.setShouldRun(properties.isEnabled());
         liquibase.setLabels(properties.getLabels());
         liquibase.setChangeLogParameters(properties.getParameters());
         liquibase.setRollbackFile(properties.getRollbackFile());
+        liquibase.setTestRollbackOnUpdate(properties.isTestRollbackOnUpdate());
+        liquibase.setTag(properties.getTag());
         return liquibase;
     }
 }

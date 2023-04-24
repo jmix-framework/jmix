@@ -17,8 +17,8 @@
 
 package io.jmix.rest.impl.service;
 
-import io.jmix.rest.impl.controller.VersionController;
 import io.jmix.rest.exception.RestAPIException;
+import io.jmix.rest.impl.controller.VersionController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpStatus;
@@ -47,19 +47,20 @@ public class VersionControllerManager {
     }
 
     private void determineApiVersion() {
-
-        if (buildProperties.getName().equals("restapi") && buildProperties.getArtifact().equals("io.jmix.rest")) {
-            // Standalone REST API
-            apiVersion = buildProperties.getVersion();
-        } else {
-            // REST API as part of a Jmix application
-            //TODO app components
+        if (buildProperties != null) {
+            if (buildProperties.getName().equals("restapi") && buildProperties.getArtifact().equals("io.jmix.rest")) {
+                // Standalone REST API
+                apiVersion = buildProperties.getVersion();
+            } else {
+                // REST API as part of a Jmix application
+                //TODO app components
 //            for (String component : buildProperties.getAppComponents()) {
 //                if (component.trim().startsWith("io.jmix.rest:")) {
 //                    apiVersion = component.split(":")[1];
 //                    break;
 //                }
 //            }
+            }
         }
     }
 }

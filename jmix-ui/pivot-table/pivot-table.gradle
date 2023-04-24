@@ -21,7 +21,7 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-pivot-table'
 
 dependencies {
-    api project(':ui-export')
+    api project(':gridexport-ui')
 
     implementation 'org.apache.poi:poi'
     implementation 'org.apache.poi:poi-ooxml'

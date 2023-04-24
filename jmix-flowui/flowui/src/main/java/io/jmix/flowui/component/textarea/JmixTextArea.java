@@ -21,6 +21,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
@@ -32,9 +33,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 public class JmixTextArea extends TextArea implements SupportsValueSource<String>, SupportsValidation<String>,
-        HasRequired, ApplicationContextAware, InitializingBean {
+        SupportsStatusChangeHandler<JmixTextArea>, HasRequired, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -54,6 +56,7 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
         fieldDelegate = createFieldDelegate();
     }
 
+    @SuppressWarnings("unchecked")
     protected FieldDelegate<JmixTextArea, String, String> createFieldDelegate() {
         return applicationContext.getBean(FieldDelegate.class, this);
     }
@@ -86,6 +89,22 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
         } else {
             super.setInvalid(invalid);
         }
+    }
+
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<JmixTextArea>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
     }
 
     @Nullable

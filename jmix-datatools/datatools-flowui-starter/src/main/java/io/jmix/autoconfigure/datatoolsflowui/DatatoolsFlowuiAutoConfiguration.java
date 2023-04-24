@@ -20,11 +20,12 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsflowui.DatatoolsFlowuiConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, FlowuiConfiguration.class, DatatoolsConfiguration.class,
+@Import({CoreConfiguration.class, FlowuiConfiguration.class, GridExportFlowuiConfiguration.class, DatatoolsConfiguration.class,
         DatatoolsFlowuiConfiguration.class})
 public class DatatoolsFlowuiAutoConfiguration {
 }

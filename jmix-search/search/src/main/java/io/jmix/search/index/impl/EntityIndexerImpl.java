@@ -228,7 +228,11 @@ public class EntityIndexerImpl implements EntityIndexer {
             fetchPlanBuilder.add(field.getEntityPropertyFullName());
             field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
                 log.trace("Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
-                fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
+                if (instanceNameRelatedProperty.getRange().isClass()) {
+                    fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString(), FetchPlan.INSTANCE_NAME);
+                } else {
+                    fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
+                }
             });
         });
 
@@ -237,7 +241,11 @@ public class EntityIndexerImpl implements EntityIndexer {
                 .getInstanceNameRelatedProperties()
                 .forEach(instanceNameRelatedProperty -> {
                     log.trace("Add instance name related property (displayed name) to fetch plan: {}", instanceNameRelatedProperty.toPathString());
-                    fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
+                    if (instanceNameRelatedProperty.getRange().isClass()) {
+                        fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString(), FetchPlan.INSTANCE_NAME);
+                    } else {
+                        fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
+                    }
                 });
 
         return fetchPlanBuilder.build();

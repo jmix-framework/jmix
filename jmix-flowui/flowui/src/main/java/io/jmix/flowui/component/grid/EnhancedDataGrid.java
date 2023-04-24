@@ -19,9 +19,24 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 public interface EnhancedDataGrid<T> {
+
+    @Nullable
+    MetaPropertyPath getColumnMetaPropertyPath(Grid.Column<T> column);
 
     Grid.Column<T> addColumn(MetaPropertyPath metaPropertyPath);
 
     Grid.Column<T> addColumn(String key, MetaPropertyPath metaPropertyPath);
+
+    boolean isEditorCreated();
+
+    /**
+     * @return a copy of columns that are visible and not hidden by security
+     * @deprecated use {@link Grid#getColumns()} and filter returned list by visibility property
+     */
+    @Deprecated
+    List<Grid.Column<T>> getVisibleColumns();
 }

@@ -8,6 +8,8 @@
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
+    <include file="io/jmix/securitydata/liquibase/changelog.xml"/>
+
     <changeSet author="test" id="1.0">
 
         <createTable tableName="TEST_ORDER">

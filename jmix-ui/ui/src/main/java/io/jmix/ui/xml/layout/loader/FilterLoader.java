@@ -45,6 +45,7 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
 
         loadHtmlSanitizerEnabled(resultComponent, element);
 
+        loadString(element, "captionWidth", resultComponent::setCaptionWidth);
         loadCaption(resultComponent, element);
         loadDescription(resultComponent, element);
         loadContextHelp(resultComponent, element);

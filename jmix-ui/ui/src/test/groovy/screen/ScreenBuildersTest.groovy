@@ -26,7 +26,7 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.HasValue
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.screen.LookupScreen
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import io.jmix.ui.util.OperationResult
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration

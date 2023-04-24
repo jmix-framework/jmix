@@ -26,6 +26,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.CollectionFieldDelegate;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -39,12 +40,13 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 
-public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
-        SupportsTypedValue<JmixCheckboxGroup<V>, ComponentValueChangeEvent<CheckboxGroup<V>, Set<V>>, Collection<V>, Set<V>>,
-        SupportsValueSource<Collection<V>>, SupportsDataProvider<V>,
-        SupportsItemsContainer<V>, SupportsItemsEnum<V>, SupportsValidation<Collection<V>>,
-        HasRequired, ApplicationContextAware, InitializingBean {
+public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
+        implements SupportsTypedValue<JmixCheckboxGroup<V>,
+        ComponentValueChangeEvent<CheckboxGroup<V>, Set<V>>, Collection<V>, Set<V>>, SupportsValueSource<Collection<V>>,
+        SupportsDataProvider<V>, SupportsItemsContainer<V>, SupportsItemsEnum<V>, SupportsValidation<Collection<V>>,
+        SupportsStatusChangeHandler<JmixCheckboxGroup<V>>, HasRequired, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -55,7 +57,7 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
 
     /**
      * Component manually handles Vaadin value change event: when programmatically sets value
-     * (see {@link #setValueInternal(Collection, Set)}) and client-side sets value
+     * (see {@link #setValueInternal(Collection, Set, boolean)}) and client-side sets value
      * (see {@link #onValueChange(ComponentValueChangeEvent)}). Therefore, any Vaadin value change listener has a
      * wrapper and disabled for handling event.
      */
@@ -119,6 +121,22 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
         fieldDelegate.setInvalid(invalid);
     }
 
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<JmixCheckboxGroup<V>>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
+    }
+
     @Override
     public void setItems(CollectionContainer<V> container) {
         dataViewDelegate.setItems(container);
@@ -157,15 +175,15 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
 
     @Override
     public void setTypedValue(@Nullable Collection<V> value) {
-        setValueInternal(value, fieldDelegate.convertToPresentation(value));
+        setValueInternal(value, fieldDelegate.convertToPresentation(value), false);
     }
 
     @Override
     public void setValue(Set<V> value) {
-        setValueInternal(null, value);
+        setValueInternal(null, value, false);
     }
 
-    protected void setValueInternal(@Nullable Collection<V> modelValue, Set<V> presentationValue) {
+    protected void setValueInternal(@Nullable Collection<V> modelValue, Set<V> presentationValue, boolean fromClient) {
         try {
             if (modelValue == null) {
                 modelValue = fieldDelegate.convertToModel(presentationValue, getDataProvider().fetch(new Query<>()));
@@ -174,10 +192,10 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
             super.setValue(presentationValue);
 
             Collection<V> oldValue = internalValue;
-            this.internalValue = modelValue;
+            internalValue = modelValue;
 
             if (!fieldValueEquals(modelValue, oldValue)) {
-                fireAllValueChangeEvents(modelValue, oldValue, false);
+                fireAllValueChangeEvents(modelValue, oldValue, fromClient);
             }
         } catch (ConversionException e) {
             throw new IllegalArgumentException("Cannot convert value to a model type");
@@ -212,23 +230,8 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
         if (event.isFromClient()) {
             Set<V> presValue = event.getValue();
 
-            Collection<V> value;
-            try {
-                value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
-
-                setValue(fieldDelegate.convertToPresentation(value));
-            } catch (ConversionException e) {
-                setErrorMessage(e.getLocalizedMessage());
-                setInvalid(true);
-                return;
-            }
-
-            Collection<V> oldValue = internalValue;
-            internalValue = value;
-
-            if (!fieldValueEquals(value, oldValue)) {
-                fireAllValueChangeEvents(value, oldValue, true);
-            }
+            Collection<V> value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
+            setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
         }
 
         // update invalid state
@@ -260,10 +263,12 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
         return fieldDelegate.equalCollections(value, oldValue);
     }
 
+    @SuppressWarnings("unchecked")
     protected CollectionFieldDelegate<JmixCheckboxGroup<V>, V, V> createFieldDelegate() {
         return applicationContext.getBean(CollectionFieldDelegate.class, this);
     }
 
+    @SuppressWarnings("unchecked")
     protected DataViewDelegate<JmixCheckboxGroup<V>, V> createDataViewDelegate() {
         return applicationContext.getBean(DataViewDelegate.class, this);
     }

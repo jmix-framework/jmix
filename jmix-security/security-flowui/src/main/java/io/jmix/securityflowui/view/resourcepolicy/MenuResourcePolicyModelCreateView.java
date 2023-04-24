@@ -63,6 +63,8 @@ public class MenuResourcePolicyModelCreateView extends MultipleResourcePolicyMod
 
     private String viewId;
 
+    private boolean hasChanges = false;
+
     @Subscribe
     public void onInit(InitEvent event) {
         FlowuiComponentUtils.setItemsMap(menuItemField, resourcePolicyEditorUtils.getMenuItemOptionsMap());
@@ -95,6 +97,23 @@ public class MenuResourcePolicyModelCreateView extends MultipleResourcePolicyMod
             viewField.setValue(resourcePolicyEditorUtils.getViewTitle(viewId));
             viewAccessField.setReadOnly(false);
         }
+
+        hasChanges = true;
+    }
+
+    @Subscribe("policyGroupField")
+    protected void onPolicyGroupFieldValueChange(ComponentValueChangeEvent<TypedTextField<String>, String> event) {
+        hasChanges = true;
+    }
+
+    @Subscribe("viewField")
+    protected void onViewFieldValueChange(ComponentValueChangeEvent<TypedTextField<String>, String> event) {
+        hasChanges = true;
+    }
+
+    @Subscribe("viewAccessField")
+    protected void onViewAccessFieldValueChange(ComponentValueChangeEvent<JmixCheckbox, Boolean> event) {
+        hasChanges = true;
     }
 
     @Override
@@ -132,5 +151,10 @@ public class MenuResourcePolicyModelCreateView extends MultipleResourcePolicyMod
         }
 
         return policies;
+    }
+
+    @Override
+    public boolean hasUnsavedChanges() {
+        return hasChanges;
     }
 }

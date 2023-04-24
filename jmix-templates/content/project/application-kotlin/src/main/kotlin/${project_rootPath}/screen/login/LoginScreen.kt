@@ -10,9 +10,9 @@ import io.jmix.ui.action.Action.ActionPerformedEvent
 import io.jmix.ui.component.*
 import io.jmix.ui.navigation.Route
 import io.jmix.ui.screen.*
-import io.jmix.ui.security.UiLoginProperties
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.DisabledException
 import org.springframework.security.authentication.LockedException
@@ -48,10 +48,13 @@ open class LoginScreen : Screen() {
     private lateinit var loginScreenSupport: LoginScreenSupport
 
     @Autowired
-    private lateinit var loginProperties: UiLoginProperties
-
-    @Autowired
     private lateinit var app: JmixApp
+
+    @Value("\\\${ui.login.defaultUsername:}")
+    private lateinit var defaultUsername: String
+
+    @Value("\\\${ui.login.defaultPassword:}")
+    private lateinit var defaultPassword: String
 
     private val log = LoggerFactory.getLogger(LoginScreen::class.java)
 
@@ -79,14 +82,13 @@ open class LoginScreen : Screen() {
     }
 
     private fun initDefaultCredentials() {
-        val defaultUsername = loginProperties.defaultUsername
-        if (!defaultUsername.isNullOrBlank() && "<disabled>" != defaultUsername) {
+        if (defaultUsername.isNotBlank()) {
             usernameField.setValue(defaultUsername)
         } else {
             usernameField.value = ""
         }
-        val defaultPassword = loginProperties.defaultPassword
-        if (!defaultPassword.isNullOrBlank() && "<disabled>" != defaultPassword) {
+
+        if (defaultPassword.isNotBlank()) {
             passwordField.value = defaultPassword
         } else {
             passwordField.value = ""

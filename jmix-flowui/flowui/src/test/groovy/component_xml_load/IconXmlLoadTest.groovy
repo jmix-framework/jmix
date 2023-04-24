@@ -27,12 +27,12 @@ class IconXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("icon_xml_load.view")
+        registerViewBasePackages("icon_xml_load.view")
     }
 
     def "Load button's icon as VaadinIcon enum"() {
         when: "Open the IconsView"
-        def view = openScreen(IconsView.class)
+        def view = navigateToView(IconsView.class)
 
         then:
         view.buttonEnumIcon.icon.element.getAttribute("icon")
@@ -41,7 +41,7 @@ class IconXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load button's icon as full vaadin-icon definition"() {
         when: "Open the IconsView"
-        def view = openScreen(IconsView.class)
+        def view = navigateToView(IconsView.class)
 
         then:
         view.buttonVaadinIcon.icon.element.getAttribute("icon")
@@ -50,7 +50,7 @@ class IconXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load button's icon as full lumo-icon definition"() {
         when: "Open the IconsView"
-        def view = openScreen(IconsView.class)
+        def view = navigateToView(IconsView.class)
 
         then:
         view.buttonLumoIcon.icon.element.getAttribute("icon")
@@ -59,7 +59,7 @@ class IconXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load action's icon as VaadinIcon enum"() {
         when: "Open the IconsView"
-        def view = openScreen(IconsView.class)
+        def view = navigateToView(IconsView.class)
 
         then:
         view.actionEnumIcon.icon.element.getAttribute("icon")
@@ -68,7 +68,7 @@ class IconXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load action's icon as full vaadin-icon definition"() {
         when: "Open the IconsView"
-        def view = openScreen(IconsView.class)
+        def view = navigateToView(IconsView.class)
 
         then:
         view.actionVaadinIcon.icon.element.getAttribute("icon")
@@ -77,7 +77,7 @@ class IconXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load action's icon as full lumo-icon definition"() {
         when: "Open the IconsView"
-        def view = openScreen(IconsView.class)
+        def view = navigateToView(IconsView.class)
 
         then:
         view.actionLumoIcon.icon.element.getAttribute("icon")

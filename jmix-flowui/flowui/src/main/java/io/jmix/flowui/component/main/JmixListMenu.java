@@ -18,16 +18,20 @@ package io.jmix.flowui.component.main;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.HighlightConditions;
+import com.vaadin.flow.router.QueryParameters;
+import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RouterLink;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.menu.ListMenuBuilder;
 import io.jmix.flowui.menu.MenuConfig;
+import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
+import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.sys.ViewDescriptorUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -35,6 +39,8 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class JmixListMenu extends ListMenu implements ApplicationContextAware, InitializingBean {
 
@@ -74,9 +80,22 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
         RouterLink menuItemComponent = super.createMenuItemComponent(menuItem);
         if (menuItem instanceof ViewMenuItem) {
-            menuItemComponent.setRoute(getControllerClass((ViewMenuItem) menuItem));
+            QueryParameters queryParameters = ((ViewMenuItem) menuItem).getQueryParameters();
+            RouteParameters routeParameters = ((ViewMenuItem) menuItem).getRouteParameters();
+
+            if (queryParameters != null) {
+                menuItemComponent.setQueryParameters(queryParameters);
+            }
+
+            if (routeParameters != null) {
+                menuItemComponent.setRoute(getControllerClass((ViewMenuItem) menuItem), routeParameters);
+            } else {
+                menuItemComponent.setRoute(getControllerClass((ViewMenuItem) menuItem));
+            }
+
             menuItemComponent.setHighlightCondition(HighlightConditions.sameLocation());
         }
+
         return menuItemComponent;
     }
 
@@ -108,6 +127,8 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     public static class ViewMenuItem extends MenuItem {
 
         protected Class<? extends View<?>> controllerClass;
+        protected QueryParameters queryParameters;
+        protected RouteParameters routeParameters;
 
         public ViewMenuItem(String id) {
             super(id);
@@ -152,6 +173,36 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
             return this;
         }
 
+        public ViewMenuItem withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+            return (ViewMenuItem) super.withShortcutCombination(shortcutCombination);
+        }
+
+        @Nullable
+        public QueryParameters getQueryParameters() {
+            return queryParameters;
+        }
+
+        public ViewMenuItem withQueryParameters(List<MenuItemParameter> queryParameters) {
+            Map<String, String> parametersMap = queryParameters.stream()
+                    .collect(Collectors.toMap(MenuItemParameter::getName, MenuItemParameter::getValue));
+
+            this.queryParameters = QueryParameters.simple(parametersMap);
+            return this;
+        }
+
+        @Nullable
+        public RouteParameters getRouteParameters() {
+            return routeParameters;
+        }
+
+        public ViewMenuItem withRouteParameters(List<MenuItemParameter> routeParameters) {
+            Map<String, String> parametersMap = routeParameters.stream()
+                    .collect(Collectors.toMap(MenuItemParameter::getName, MenuItemParameter::getValue));
+
+            this.routeParameters = new RouteParameters(parametersMap);
+            return this;
+        }
+
         /**
          * @return view class or {@code null} if not set
          */
@@ -170,6 +221,45 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         public ViewMenuItem withControllerClass(@Nullable Class<? extends View<?>> controllerClass) {
             this.controllerClass = controllerClass;
             return this;
+        }
+    }
+
+    public static class BeanMenuItem extends MenuItem {
+
+        public BeanMenuItem(String id) {
+            super(id);
+        }
+
+        public static BeanMenuItem create(String id) {
+            return new BeanMenuItem(id);
+        }
+
+        @Override
+        public BeanMenuItem withTitle(@Nullable String title) {
+            super.withTitle(title);
+            return this;
+        }
+
+        @Override
+        public BeanMenuItem withDescription(@Nullable String description) {
+            super.withDescription(description);
+            return this;
+        }
+
+        @Override
+        public BeanMenuItem withIcon(@Nullable VaadinIcon icon) {
+            super.withIcon(icon);
+            return this;
+        }
+
+        @Override
+        public BeanMenuItem withClassNames(List<String> classNames) {
+            super.withClassNames(classNames);
+            return this;
+        }
+
+        public BeanMenuItem withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+            return (BeanMenuItem) super.withShortcutCombination(shortcutCombination);
         }
     }
 }

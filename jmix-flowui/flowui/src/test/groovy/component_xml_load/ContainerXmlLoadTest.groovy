@@ -17,10 +17,14 @@
 package component_xml_load
 
 import com.vaadin.flow.component.accordion.AccordionPanel
+import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.orderedlayout.BoxSizing
 import com.vaadin.flow.component.orderedlayout.FlexComponent
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.Scroller
+import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.tabs.Tab
+import com.vaadin.flow.component.tabs.TabSheetVariant
 import com.vaadin.flow.component.tabs.Tabs
 import component_xml_load.screen.ContainerView
 import io.jmix.flowui.component.textfield.TypedTextField
@@ -33,13 +37,13 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
     }
 
     @SuppressWarnings('GrUnresolvedAccess')
     def "Load #container container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "#container attributes will be loaded"
         verifyAll(containerView."${container}Id") {
@@ -68,7 +72,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load accordion container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "Accordion attributes will be loaded"
         verifyAll(containerView.accordionId) {
@@ -86,7 +90,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load #accordionPanel container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "AccordionPanel attributes will be loaded"
         def panel = containerView.accordionId.children.find { it.id.get() == "${accordionPanel}Id" }
@@ -109,9 +113,26 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         accordionPanel << ["accordionPanel", "anotherAccordionPanel"]
     }
 
+    def "Load accordionPanel tooltip from XML"() {
+        when: "Open the ContainerView"
+        def containerView = navigateToView(ContainerView.class)
+
+        then: "AccordionPanel tooltip will be loaded"
+        def panel = containerView.accordionId.children.find {it.id.get() == "accordionPanelId"}
+        verifyAll (panel as AccordionPanel) {
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
+        }
+    }
+
     def "Load scroller container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "Scroller attributes will be loaded"
         verifyAll(containerView.scrollerId) {
@@ -131,7 +152,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load tabs container from XML"() {
         when: "Open the ContainerView"
-        def containerView = openScreen(ContainerView.class)
+        def containerView = navigateToView(ContainerView.class)
 
         then: "Tabs attributes will be loaded"
         def tabs = containerView.tabsId
@@ -160,6 +181,13 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             label == "labelString"
             themeName == "icon-on-top"
             visible
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
 
         verifyAll(tabsChild[1] as Tab) {
@@ -170,6 +198,48 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             themeName == "icon-on-top"
             visible
             (children.findAny().get() as TypedTextField<?>).id.get() == "tab2Child"
+        }
+    }
+
+
+    def "Load tabSheet component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ContainerView.class)
+
+        then: "TabSheet attributes will be loaded"
+        def tabSheet = componentView.tabSheetId
+        def tabs = tabSheet.getChildren().collect()
+        def childHbox = tabSheet.getOwnComponents()[0] as HorizontalLayout
+
+        verifyAll(tabSheet) {
+            id.get() == "tabSheetId"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            height == "50px"
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            themeNames.containsAll([TabSheetVariant.LUMO_TABS_SMALL.getVariantName(),
+                                    TabSheetVariant.LUMO_BORDERED.getVariantName()])
+            visible
+            width == "100px"
+
+            (tabs[0] as Tab).getId().orElse(null) == "tab1"
+            (tabs[0] as Tab).getLabel() == "tab1Label"
+            (childHbox.getComponentAt(0) as Label).text == "tab1Child1"
+            (childHbox.getComponentAt(1) as Label).text == "tab1Child2"
+
+            (tabs[0] as Tab).tooltip.text == "tooltipText"
+            (tabs[0] as Tab).tooltip.focusDelay == 1
+            (tabs[0] as Tab).tooltip.hideDelay == 2
+            (tabs[0] as Tab).tooltip.hoverDelay == 3
+            (tabs[0] as Tab).tooltip.manual
+            (tabs[0] as Tab).tooltip.opened
+            (tabs[0] as Tab).tooltip.position == Tooltip.TooltipPosition.BOTTOM
+
+            (tabs[1] as Tab).getId().orElse(null) == "tab2"
+            (tabs[1] as Tab).getLabel() == "tab2Label"
+            (tabSheet.getContentByTab(tabs[1] as Tab) as TypedTextField).getValue() == "tab2Child"
         }
     }
 }

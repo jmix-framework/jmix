@@ -44,12 +44,12 @@ class FormattersTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("formatter")
+        registerViewBasePackages("formatter")
     }
 
     def "Formatter from XML is applied for field"() {
         when: "Open the screen"
-        def formatterView = openScreen(FormatterView.class)
+        def formatterView = navigateToView(FormatterView.class)
 
         then: "Formatter is applied for the field"
         noExceptionThrown()
@@ -65,7 +65,7 @@ class FormattersTest extends FlowuiTestSpecification {
 
     def "DateFormatter is applied for field using the XML attribute 'class'"() {
         given: "The screen with a component"
-        def formatterView = openScreen(FormatterView.class)
+        def formatterView = navigateToView(FormatterView.class)
 
         when: "Component is loaded"
         def dateFormatterField = formatterView.dateFormatterField
@@ -78,7 +78,7 @@ class FormattersTest extends FlowuiTestSpecification {
 
     def "DateFormatter is applied for field using the XML attribute 'type'"() {
         given: "The screen with a component"
-        def formatterView = openScreen(FormatterView.class)
+        def formatterView = navigateToView(FormatterView.class)
 
         when: "Component is loaded"
         def dateTimeFormatterField = formatterView.dateTimeFormatterField
@@ -92,7 +92,7 @@ class FormattersTest extends FlowuiTestSpecification {
 
     def "NumberFormatter is applied for field using the XML attribute 'class'"() {
         given: "The screen with a component"
-        def formatterView = openScreen(FormatterView.class)
+        def formatterView = navigateToView(FormatterView.class)
 
         when: "Component is loaded"
         def numberFormatterField = formatterView.numberFormatterField
@@ -107,7 +107,7 @@ class FormattersTest extends FlowuiTestSpecification {
 
     def "NumberFormatter without format attribute is applied for field using beanLocator"() {
         given: "The screen with a component"
-        def formatterView = openScreen(FormatterView.class)
+        def formatterView = navigateToView(FormatterView.class)
 
         when: "Component is loaded"
         def defaultNumberFormatterField = formatterView.defaultNumberFormatterField

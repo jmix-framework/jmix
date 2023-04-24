@@ -9,7 +9,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.flowui.FlowuiLoginProperties;
 import io.jmix.flowui.component.loginform.JmixLoginForm;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
@@ -17,9 +16,11 @@ import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.authentication.AuthDetails;
 import io.jmix.securityflowui.authentication.LoginViewSupport;
 import liquibase.repackaged.org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
@@ -35,9 +36,6 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     private LoginViewSupport loginViewSupport;
 
     @Autowired
-    private FlowuiLoginProperties loginProperties;
-
-    @Autowired
     private MessageBundle messageBundle;
 
     @Autowired
@@ -45,6 +43,12 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
 
     @ViewComponent
     private JmixLoginForm login;
+
+    @Value("\${ui.login.defaultUsername:}")
+    private String defaultUsername;
+
+    @Value("\${ui.login.defaultPassword:}")
+    private String defaultPassword;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -60,10 +64,13 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     }
 
     protected void initDefaultCredentials() {
-        loginProperties.getDefaultUsernameOptional()
-                .ifPresent(login::setUsername);
-        loginProperties.getDefaultPasswordOptional()
-                .ifPresent(login::setPassword);
+        if (StringUtils.isNotBlank(defaultUsername)) {
+            login.setUsername(defaultUsername);
+        }
+
+        if (StringUtils.isNotBlank(defaultPassword)) {
+            login.setPassword(defaultPassword);
+        }
     }
 
     @Subscribe("login")

@@ -136,7 +136,7 @@ public class StandardListView<E> extends StandardView implements LookupView<E>, 
         LookupComponent<E> lookupComponent = getLookupComponent();
 
         if (lookupComponent instanceof MultiSelectLookupComponent) {
-            ((MultiSelectLookupComponent<E>) lookupComponent).enableMultiSelect();
+            ((MultiSelectLookupComponent<E>) lookupComponent).setMultiSelect(multiSelect);
         }
     }
 

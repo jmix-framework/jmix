@@ -40,6 +40,8 @@ import java.text.ParseException;
 @Component("flowui_ViewDataXmlLoader")
 public class ViewDataXmlLoader {
 
+    public static final String GENERATED_PREFIX = "generated_";
+
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
@@ -507,6 +509,6 @@ public class ViewDataXmlLoader {
     }
 
     protected String generateId() {
-        return RandomStringUtils.randomAlphanumeric(8);
+        return GENERATED_PREFIX + RandomStringUtils.randomAlphanumeric(8);
     }
 }

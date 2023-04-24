@@ -111,7 +111,6 @@ public class View<T extends Component> extends Composite<T>
 
                 if (beforeCloseEvent.isClosePrevented()) {
                     closeActionPerformed = false;
-                    event.postpone();
                     return;
                 }
 
@@ -137,7 +136,8 @@ public class View<T extends Component> extends Composite<T>
     }
 
     private void removeApplicationListeners() {
-        getApplicationContext().getBean(UiEventsManager.class).removeApplicationListeners(this);
+        getApplicationContext().getBeanProvider(UiEventsManager.class)
+                .ifAvailable(manager-> manager.removeApplicationListeners(this));
     }
 
     private void removeViewAttributes() {

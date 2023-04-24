@@ -16,6 +16,7 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.textfield.Autocapitalize
 import com.vaadin.flow.component.textfield.Autocomplete
 import com.vaadin.flow.data.value.ValueChangeMode
@@ -38,7 +39,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def order = dataManager.create(Order)
         order.total = 96
@@ -53,7 +54,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load numberField component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "NumberField attributes will be loaded"
         verifyAll(componentView.numberFieldId) {
@@ -84,6 +85,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             step == 5
+            tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
             value == 300
@@ -91,6 +93,14 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
             valueChangeTimeout == 50
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -99,7 +109,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "NumberField will be loaded with the value of the property"

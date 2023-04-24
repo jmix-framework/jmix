@@ -19,6 +19,7 @@ package io.jmix.flowui.component.factory;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import io.jmix.core.FileRef;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -32,10 +33,13 @@ import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.ComponentGenerationStrategy;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.component.upload.FileStorageUploadField;
+import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.data.SupportsValueSource;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -44,16 +48,11 @@ import javax.annotation.Nullable;
 import javax.persistence.Lob;
 import java.lang.annotation.Annotation;
 import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
+import java.time.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
-@SuppressWarnings("rawtypes")
 public abstract class AbstractComponentGenerationStrategy implements ComponentGenerationStrategy {
 
     protected UiComponents uiComponents;
@@ -112,7 +111,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Component createDatatypeField(ComponentGenerationContext context, MetaPropertyPath mpp) {
         Range mppRange = mpp.getRange();
 
-        Class type = mppRange.asDatatype().getJavaClass();
+        Class<?> type = mppRange.asDatatype().getJavaClass();
 
         if (type.equals(String.class)
                 || type.equals(UUID.class)) {
@@ -121,22 +120,27 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
             return createBooleanField(context);
         } else if (type.equals(java.sql.Date.class)
                 || type.equals(Date.class)
-                || type.equals(LocalDate.class)
-                || type.equals(LocalDateTime.class)
-                || type.equals(OffsetDateTime.class)) {
+                || type.equals(LocalDate.class)) {
             return createDatePicker(context);
         } else if (type.equals(Time.class)
                 || type.equals(LocalTime.class)
                 || type.equals(OffsetTime.class)) {
             return createTimePicker(context);
+        } else if (type.equals(LocalDateTime.class)
+                || type.equals(OffsetDateTime.class)) {
+            return createDateTimePicker(context);
         } else if (Number.class.isAssignableFrom(type)) {
             return createNumberField(context);
+        } else if (type.equals(FileRef.class)) {
+            return createFileStorageUploadField(context);
+        } else if (type.equals(byte[].class)) {
+            return createFileUploadField(context);
         }
         return null;
     }
 
     protected Component createEnumField(ComponentGenerationContext context) {
-        JmixSelect enumField = uiComponents.create(JmixSelect.class);
+        JmixSelect<?> enumField = uiComponents.create(JmixSelect.class);
         setValueSource(enumField, context);
         return enumField;
     }
@@ -161,7 +165,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         return booleanField;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     protected Component createDatePicker(ComponentGenerationContext context) {
         TypedDatePicker dateField = uiComponents.create(TypedDatePicker.class);
         setValueSource(dateField, context);
@@ -185,7 +189,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         return dateField;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Component createTimePicker(ComponentGenerationContext context) {
         TypedTimePicker timeField = uiComponents.create(TypedTimePicker.class);
         setValueSource(timeField, context);
@@ -199,8 +203,22 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         return timeField;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Component createDateTimePicker(ComponentGenerationContext context) {
+        TypedDateTimePicker dateTimeField = uiComponents.create(TypedDateTimePicker.class);
+        setValueSource(dateTimeField, context);
+
+        Element xmlDescriptor = context.getXmlDescriptor();
+        String datatype = xmlDescriptor == null ? null : xmlDescriptor.attributeValue("datatype");
+
+        if (StringUtils.isNotEmpty(datatype)) {
+            dateTimeField.setDatatype(datatypeRegistry.get(datatype));
+        }
+        return dateTimeField;
+    }
+
     protected Component createNumberField(ComponentGenerationContext context) {
-        TypedTextField numberField = uiComponents.create(TypedTextField.class);
+        TypedTextField<?> numberField = uiComponents.create(TypedTextField.class);
         setValueSource(numberField, context);
         return numberField;
     }
@@ -215,6 +233,27 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 
         setValueSource((SupportsValueSource<?>) entityComponent, context);
         return entityComponent;
+    }
+
+    protected Component createFileUploadField(ComponentGenerationContext context) {
+        FileUploadField fileUploadField = uiComponents.create(FileUploadField.class);
+
+        fileUploadField.setFileNameVisible(true);
+        fileUploadField.setClearButtonVisible(true);
+
+        setValueSource(fileUploadField, context);
+        return fileUploadField;
+    }
+
+    protected Component createFileStorageUploadField(ComponentGenerationContext context) {
+        FileStorageUploadField fileStorageUploadField = uiComponents.create(FileStorageUploadField.class);
+
+        fileStorageUploadField.setFileNameVisible(true);
+        fileStorageUploadField.setClearButtonVisible(true);
+
+        setValueSource(fileStorageUploadField, context);
+
+        return fileStorageUploadField;
     }
 
     //TODO: kremnevda, implement after https://github.com/jmix-framework/jmix/issues/1044 27.09.2022

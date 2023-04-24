@@ -26,7 +26,7 @@ import io.jmix.ui.component.DataGrid
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems
 import io.jmix.ui.component.impl.DataGridImpl
 import io.jmix.ui.model.CollectionContainer
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.model_objects.GoodStatisticObject

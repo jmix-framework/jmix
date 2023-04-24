@@ -272,6 +272,7 @@ public class DataContextImpl implements DataContextInternal {
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (!property.getRange().isClass()                                   // local
+                    && !(metadataTools.isMethodBased(property) && property.isReadOnly())
                     && (srcNew || entityStates.isLoaded(srcEntity, propertyName))// loaded src
                     && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {// loaded dst - have to check to avoid unfetched for local properties
 
@@ -289,6 +290,7 @@ public class DataContextImpl implements DataContextInternal {
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (property.getRange().isClass()                                               // refs and collections
+                    && !(metadataTools.isMethodBased(property) && property.isReadOnly())
                     && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {        // loaded src
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
@@ -388,11 +390,12 @@ public class DataContextImpl implements DataContextInternal {
         MetaClass metaClass = getEntityMetaClass(srcEntity);
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
-            if (property.getRange().isClass()) {
-                if (!srcNew && !entityStates.isLoaded(srcEntity, propertyName)) {
-                    entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, property,
-                            collection -> wrapLazyValueIntoObservableCollection(collection, dstEntity));
-                }
+            if (property.getRange().isClass() && !metadataTools.isMethodBased(property)
+                    && !srcNew && !entityStates.isLoaded(srcEntity, propertyName)) {
+
+                entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, property,
+                        collection -> wrapLazyValueIntoObservableCollection(collection, dstEntity));
+
             }
         }
     }
@@ -847,6 +850,11 @@ public class DataContextImpl implements DataContextInternal {
     @Override
     public Set<Object> getModifiedInstances() {
         return modifiedInstances;
+    }
+
+    @Override
+    public Set<Object> getRemovedInstances() {
+        return removedInstances;
     }
 
     protected MetaClass getEntityMetaClass(Object entity) {

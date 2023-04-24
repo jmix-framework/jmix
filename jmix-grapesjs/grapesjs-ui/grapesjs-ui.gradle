@@ -1,0 +1,55 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.grapesjs'
+archivesBaseName = 'jmix-grapesjs-ui'
+
+dependencies {
+    api project(':ui')
+
+    api ('org.webjars.npm:grapesjs') {
+        exclude group: 'org.webjars.npm', module: 'keymaster'
+        exclude group: 'org.webjars.npm', module: 'cash-dom'
+        exclude group: 'org.webjars.npm', module: 'babel__runtime'
+    }
+    api 'org.webjars.bower:keymaster'
+    api 'org.webjars.npm:babel__runtime'
+    api 'org.webjars.npm:github-com-kenwheeler-cash'
+    api 'org.webjars.npm:grapesjs-plugin-ckeditor'
+    api 'org.webjars.npm:grapesjs-custom-code'
+    api 'org.webjars.npm:grapesjs-tabs'
+    api 'org.webjars.npm:grapesjs-touch'
+    api 'org.webjars.npm:grapesjs-parser-postcss'
+    api 'org.webjars.npm:grapesjs-preset-webpage'
+    api('org.webjars.npm:github-com-artf-grapesjs-preset-newsletter') {
+        exclude group: 'org.webjars.npm', module: 'slick'
+    }
+    api 'org.webjars.npm:grapesjs-blocks-basic'
+    api 'org.webjars.npm:grapesjs-blocks-flexbox'
+    api 'org.webjars.npm:grapesjs-tui-image-editor'
+    api 'org.webjars.npm:grapesjs-plugin-forms'
+    api 'org.webjars.npm:grapesjs-style-filter'
+    api 'org.webjars.npm:grapesjs-tooltip'
+
+    api 'org.webjars.bowergithub.mootools:slick'
+}
+
+jar.manifest {
+    attributes(['Vaadin-Stylesheets': 'VAADIN/addons/grapesjs/grapesjs.scss'])
+}

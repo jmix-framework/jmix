@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -87,15 +88,15 @@ public class EntityResourcePolicyModelCreate extends MultipleResourcePolicyModel
     }
 
     private Set<String> getPolicyActions() {
-        Set<String> actions = new HashSet<>(actionsCheckBoxGroup.getValue()
-                .stream().map(EntityPolicyAction::getId).collect(Collectors.toList()));
+        Set<String> actions = actionsCheckBoxGroup.getValue() != null ? new HashSet<>(actionsCheckBoxGroup.getValue()
+                .stream().map(EntityPolicyAction::getId).collect(Collectors.toList())) : Collections.emptySet();
         return actions;
     }
 
     @Subscribe("actionsCheckBoxGroup")
     public void onActionsCheckBoxGroupValueChange(HasValue.ValueChangeEvent<Collection<EntityPolicyAction>> event) {
         allCheckBox.setEditable(false);
-        if(event.getValue()!=null && event.getValue().size()==EntityPolicyAction.values().length){
+        if (event.getValue() != null && event.getValue().size() == EntityPolicyAction.values().length) {
             allCheckBox.setValue(true);
         } else {
             allCheckBox.setValue(false);
@@ -108,7 +109,7 @@ public class EntityResourcePolicyModelCreate extends MultipleResourcePolicyModel
     public void onAllActionsCheckBoxValueChange(HasValue.ValueChangeEvent<Boolean> booleanValueChangeEvent) {
 
         Boolean allIsChecked = Boolean.TRUE.equals(booleanValueChangeEvent.getValue());
-        if(booleanValueChangeEvent.isUserOriginated()) {
+        if (booleanValueChangeEvent.isUserOriginated()) {
             if (allIsChecked) {
                 actionsCheckBoxGroup.setValue(Arrays.stream(EntityPolicyAction.values())
                         .collect(Collectors.toList()));

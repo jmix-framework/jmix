@@ -9,5 +9,7 @@
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
+    <include file="/io/jmix/search/liquibase/changelog.xml"/>
+
     <includeAll path="/test_support/liquibase/changelog"/>
 </databaseChangeLog>

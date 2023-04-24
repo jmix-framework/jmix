@@ -17,6 +17,7 @@
 package component_xml_load
 
 import com.vaadin.flow.component.checkbox.CheckboxGroupVariant
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.CheckboxGroupView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
@@ -37,7 +38,7 @@ class CheckboxGroupXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
         def order = dataManager.create(Order)
@@ -54,7 +55,7 @@ class CheckboxGroupXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load checkboxGroup component from XML"() {
         when: "Open the ComponentView"
-        def rbgView = openScreen(CheckboxGroupView)
+        def rbgView = navigateToView(CheckboxGroupView)
 
         then: "CheckboxGroup attributes will be loaded"
         verifyAll(rbgView.checkboxGroup) {
@@ -78,6 +79,14 @@ class CheckboxGroupXmlLoadTest extends FlowuiTestSpecification {
                                     CheckboxGroupVariant.LUMO_VERTICAL.getVariantName()])
             visible
             width == "100%"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 }

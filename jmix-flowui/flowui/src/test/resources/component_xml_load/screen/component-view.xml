@@ -52,6 +52,13 @@
                 visible="true"
                 width="100px"/>
 
+        <icon id="iconId"
+              classNames="cssClassName1, cssClassName2"
+              color="purple"
+              icon="CHECK"
+              size="2em"
+              visible="true"/>
+
         <bigDecimalField
                 id="bigDecimalFieldId"
                 autocapitalize="SENTENCES"
@@ -76,13 +83,23 @@
                 required="true"
                 requiredIndicatorVisible="true"
                 requiredMessage="requiredMessageString"
+                tabIndex="3"
                 themeNames="small, align-right"
                 title="titleString"
                 value="50.5"
                 valueChangeMode="ON_CHANGE"
                 valueChangeTimeout="50"
                 visible="true"
-                width="100px"/>
+                width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </bigDecimalField>
         <bigDecimalField id="bigDecimalFieldWithValueId" dataContainer="orderDc" property="amount"/>
 
         <button id="buttonId"
@@ -98,11 +115,21 @@
                 minHeight="40px"
                 minWidth="80px"
                 text="textString"
+                tabIndex="3"
                 themeNames="large,,,  ,, primary"
                 title="buttonTitle"
                 visible="true"
                 whiteSpace="PRE"
-                width="100px"/>
+                width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </button>
 
         <button id="buttonWithActionId"
                 action="buttonAction"/>
@@ -121,9 +148,19 @@
                   minWidth="80px"
                   readOnly="true"
                   requiredIndicatorVisible="true"
+                  tabIndex="3"
                   value="true"
                   visible="true"
-                  width="100px"/>
+                  width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </checkbox>
         <checkbox id="checkBoxWithDataId" dataContainer="orderDc" property="user.active"/>
 
         <comboBox id="comboBoxId"
@@ -152,9 +189,20 @@
                   required="true"
                   requiredIndicatorVisible="true"
                   requiredMessage="requiredMessageString"
+                  tabIndex="3"
                   themeNames="small, align-center"
+                  title="titleString"
                   visible="true"
-                  width="100px"/>
+                  width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </comboBox>
 
         <datePicker id="datePickerId"
                     autoOpen="true"
@@ -180,10 +228,20 @@
                     required="true"
                     requiredIndicatorVisible="true"
                     requiredMessage="requiredMessageString"
+                    tabIndex="3"
                     themeNames="small, align-center"
                     visible="true"
                     weekNumbersVisible="true"
-                    width="100px"/>
+                    width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </datePicker>
 
         <timePicker id="timePickerId"
                     autoOpen="true"
@@ -207,9 +265,19 @@
                     required="true"
                     requiredIndicatorVisible="true"
                     requiredMessage="requiredMessageString"
+                    tabIndex="3"
                     themeNames="small, align-center"
                     visible="true"
-                    width="100px"/>
+                    width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </timePicker>
 
         <dateTimePicker id="dateTimePickerId"
                         autoOpen="true"
@@ -232,11 +300,21 @@
                         required="true"
                         requiredIndicatorVisible="true"
                         requiredMessage="requiredMessageString"
+                        tabIndex="3"
                         themeNames="small, align-center"
                         timePlaceholder="timePlaceholderString"
                         visible="true"
                         weekNumbersVisible="true"
-                        width="100px"/>
+                        width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </dateTimePicker>
 
         <details id="detailsId"
                  classNames="cssClassName1, cssClassName2"
@@ -251,6 +329,14 @@
                  visible="true"
                  width="100px">
             <details id="detailsChild"/>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </details>
 
         <numberField id="numberFieldId"
@@ -280,13 +366,23 @@
                      requiredIndicatorVisible="true"
                      requiredMessage="requiredMessageString"
                      step="5"
+                     tabIndex="3"
                      themeNames="small, align-right"
                      title="titleString"
                      value="300"
                      valueChangeMode="ON_CHANGE"
                      valueChangeTimeout="50"
                      visible="true"
-                     width="100px"/>
+                     width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </numberField>
         <numberField id="numberFieldWithValueId" dataContainer="orderDc" property="total"/>
 
         <passwordField id="passwordFieldId"
@@ -314,13 +410,23 @@
                        required="true"
                        requiredIndicatorVisible="true"
                        requiredMessage="requiredMessageString"
+                       tabIndex="3"
                        themeNames="small, align-right"
                        title="titleString"
                        value="password"
                        valueChangeMode="ON_CHANGE"
                        valueChangeTimeout="50"
                        visible="true"
-                       width="100px"/>
+                       width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </passwordField>
         <passwordField id="passwordFieldWithValueId" dataContainer="orderDc" property="user.password"/>
 
         <progressBar id="progressBarId"
@@ -355,9 +461,19 @@
                           readOnly="false"
                           required="true"
                           requiredIndicatorVisible="true"
+                          requiredMessage="requiredMessageString"
                           themeNames="LUMO_VERTICAL"
                           visible="true"
-                          width="100px"/>
+                          width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </radioButtonGroup>
 
         <select id="selectId"
                 classNames="cssClassName1, cssClassName2"
@@ -379,10 +495,20 @@
                 required="true"
                 requiredIndicatorVisible="true"
                 requiredMessage="requiredMessageString"
+                tabIndex="3"
                 emptySelectionCaption="emptySelectionString"
                 emptySelectionAllowed="true"
                 dataContainer="orderDc"
-                property="number"/>
+                property="number">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </select>
 
         <textArea id="textAreaId"
                   autocapitalize="SENTENCES"
@@ -408,12 +534,22 @@
                   required="true"
                   requiredIndicatorVisible="true"
                   requiredMessage="requiredMessageString"
+                  tabIndex="3"
                   themeNames="small, always-float-label"
                   value="textAreaValue"
                   valueChangeMode="TIMEOUT"
                   valueChangeTimeout="50"
                   visible="true"
-                  width="100px"/>
+                  width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </textArea>
         <textArea id="textAreaWithValueId" dataContainer="orderDc" property="number"/>
 
         <textField id="textFieldId"
@@ -443,13 +579,23 @@
                    required="true"
                    requiredIndicatorVisible="true"
                    requiredMessage="requiredMessageString"
+                   tabIndex="3"
                    themeNames="small, align-right"
                    title="titleString"
                    value="5050"
                    valueChangeMode="ON_CHANGE"
                    valueChangeTimeout="50"
                    visible="true"
-                   width="100px"/>
+                   width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </textField>
         <textField id="textFieldWithValueId" datatype="string" dataContainer="orderDc" property="number"/>
 
         <valuePicker id="valuePickerId"
@@ -471,6 +617,7 @@
                      required="true"
                      requiredIndicatorVisible="true"
                      requiredMessage="requiredMessageString"
+                     tabIndex="3"
                      themeNames="theme1, theme2"
                      title="titleString"
                      visible="true"
@@ -482,6 +629,14 @@
                 <action id="action1" icon="GAMEPAD"/>
                 <action id="action2" icon="DIPLOMA"/>
             </actions>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </valuePicker>
 
         <multiValuePicker id="valuesPickerId"
@@ -503,6 +658,7 @@
                           required="true"
                           requiredIndicatorVisible="true"
                           requiredMessage="requiredMessageString"
+                          tabIndex="3"
                           themeNames="theme1, theme2"
                           title="titleString"
                           visible="true"
@@ -514,6 +670,14 @@
                 <action id="action1" icon="GAMEPAD"/>
                 <action id="action2" icon="DIPLOMA"/>
             </actions>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </multiValuePicker>
 
         <entityPicker id="entityPickerId"
@@ -535,6 +699,7 @@
                       required="true"
                       requiredIndicatorVisible="true"
                       requiredMessage="requiredMessageString"
+                      tabIndex="3"
                       themeNames="theme1, theme2"
                       title="titleString"
                       visible="true"
@@ -545,6 +710,14 @@
                 <action id="action1" icon="GAMEPAD" type="entity_lookup"/>
                 <action id="action2" icon="DIPLOMA" type="entity_clear"/>
             </actions>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </entityPicker>
 
         <entityPicker id="metaClassEntityPickerId" metaClass="test_Order"/>
@@ -573,6 +746,7 @@
                         readOnly="true"
                         required="true"
                         requiredIndicatorVisible="true"
+                        tabIndex="3"
                         themeNames="small, align-right"
                         title="titleString"
                         visible="true"
@@ -581,6 +755,14 @@
                 <action id="action1" icon="GAMEPAD"/>
                 <action id="action2" icon="DIPLOMA"/>
             </actions>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </comboBoxPicker>
 
         <entityComboBox id="entityComboBoxId"
@@ -588,7 +770,6 @@
                         autofocus="true"
                         autoOpen="true"
                         classNames="cssClassName1, cssClassName2"
-                        clearButtonVisible="true"
                         enabled="true"
                         errorMessage="errorMessageString"
                         height="50px"
@@ -608,17 +789,28 @@
                         required="true"
                         requiredIndicatorVisible="true"
                         requiredMessage="requiredMessageString"
+                        tabIndex="3"
                         themeNames="small, align-right"
                         title="titleString"
                         visible="true"
                         width="100px"
 
-                        dataContainer="orderDc" property="customer"/>
+                        dataContainer="orderDc" property="customer">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </entityComboBox>
 
         <entityComboBox id="metaClassComboBoxId" metaClass="test_Order"/>
 
         <dropdownButton id="dropdownButtonId"
                         classNames="cssClassName1, cssClassName2"
+                        dropdownIndicatorVisible="false"
                         enabled="true"
                         height="50px"
                         icon="GAMEPAD"
@@ -627,6 +819,7 @@
                         minHeight="40px"
                         minWidth="80px"
                         openOnHover="true"
+                        tabIndex="3"
                         text="dropdownButtonText"
                         themeNames="small primary"
                         title="dropdownButtonTitle"
@@ -644,11 +837,21 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
+
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </dropdownButton>
 
         <comboButton id="comboButtonId"
                      action="buttonAction"
                      classNames="cssClassName1, cssClassName2"
+                     dropdownIcon="CHECK"
                      enabled="true"
                      height="50px"
                      icon="GAMEPAD"
@@ -657,6 +860,7 @@
                      minHeight="40px"
                      minWidth="80px"
                      openOnHover="true"
+                     tabIndex="3"
                      text="comboButtonText"
                      themeNames="success small"
                      title="comboButtonTitle"
@@ -674,6 +878,38 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
+
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
         </comboButton>
+
+        <upload id="uploadId"
+                acceptedFileTypes=".jpg"
+                autoUpload="true"
+                classNames="cssClassName1, cssClassName2"
+                dropAllowed="true"
+                dropLabel="dropLabelString"
+                dropLabelIcon="UPLOAD"
+                height="50px"
+                maxFiles="5"
+                maxFileSize="10480000"
+                maxHeight="55px"
+                maxWidth="120px"
+                minHeight="40px"
+                minWidth="80px"
+                receiverType="MULTI_FILE_MEMORY_BUFFER"
+                uploadIcon="UPLOAD_ALT"
+                uploadText="uploadTextString"
+                visible="false"
+                width="100px"/>
+
+        <upload id="uploadWithReceiverFqn"
+                receiverFqn="io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer"/>
     </layout>
 </view>

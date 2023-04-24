@@ -81,7 +81,7 @@ public interface ScreenSettingsFacet extends Facet {
             itemProperties = {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_REF, required = true,
                             options = {"io.jmix.ui.component.Component"}),
-                    @StudioProperty(name = "exclude", type = PropertyType.BOOLEAN, defaultValue = "false")
+                    @StudioProperty(name = "enabled", type = PropertyType.BOOLEAN, defaultValue = "true")
             },
             itemIcon = "io/jmix/ui/icon/element/component.svg"
     )

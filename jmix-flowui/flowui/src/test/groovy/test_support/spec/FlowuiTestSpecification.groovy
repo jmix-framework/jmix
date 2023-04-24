@@ -19,9 +19,11 @@ package test_support.spec
 import com.google.common.base.Strings
 import com.vaadin.flow.component.HasElement
 import com.vaadin.flow.component.UI
+import com.vaadin.flow.internal.CurrentInstance
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouteConfiguration
 import com.vaadin.flow.server.InitParameters
+import com.vaadin.flow.server.VaadinRequest
 import com.vaadin.flow.server.VaadinService
 import com.vaadin.flow.server.VaadinSession
 import com.vaadin.flow.spring.SpringServlet
@@ -29,8 +31,13 @@ import com.vaadin.flow.spring.VaadinServletContextInitializer
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
 import io.jmix.core.security.SystemAuthenticator
 import io.jmix.flowui.ViewNavigators
-import io.jmix.flowui.view.View
 import io.jmix.flowui.sys.ViewControllersConfiguration
+import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration
+import io.jmix.flowui.testassist.vaadin.TestServletContext
+import io.jmix.flowui.testassist.vaadin.TestSpringServlet
+import io.jmix.flowui.testassist.vaadin.TestVaadinRequest
+import io.jmix.flowui.testassist.vaadin.TestVaadinSession
+import io.jmix.flowui.view.View
 import io.jmix.flowui.view.ViewRegistry
 import org.apache.commons.lang3.ArrayUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -47,17 +54,22 @@ import javax.servlet.ServletException
 import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
 import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE
 
-@ContextConfiguration(classes = [FlowuiTestConfiguration])
+@ContextConfiguration(classes = [FlowuiTestConfiguration, FlowuiTestAssistConfiguration])
 class FlowuiTestSpecification extends Specification {
+
+    private static final String APP_ID = "testFlowuiAppId"
 
     @Autowired
     ApplicationContext applicationContext
 
     @Autowired
-    ViewNavigators screenNavigators
+    ViewNavigators viewNavigators
 
     @Autowired
     ViewRegistry viewRegistry
+
+    @Autowired
+    protected SystemAuthenticator systemAuthenticator
 
     // saving session and UI to avoid it be GC'ed
     protected VaadinSession vaadinSession
@@ -66,7 +78,7 @@ class FlowuiTestSpecification extends Specification {
     void setup() {
         setupAuthentication()
         setupVaadinUi()
-        registerScreenBasePackages("test_support.view")
+        registerViewBasePackages("test_support.view")
     }
 
     void cleanup() {
@@ -74,13 +86,19 @@ class FlowuiTestSpecification extends Specification {
         resetViewRegistry()
     }
 
+    /**
+     * Implement to set up authentication before each test.
+     * For example, use {@link io.jmix.core.security.SystemAuthenticator#begin()}.
+     */
     protected void setupAuthentication() {
-        SystemAuthenticator systemAuthenticator = applicationContext.getBean(SystemAuthenticator.class)
         systemAuthenticator.begin()
     }
 
+    /**
+     * Implement to set up authentication before each test.
+     * For example, use {@link io.jmix.core.security.SystemAuthenticator#end()}.
+     */
     protected void removeAuthentication() {
-        SystemAuthenticator systemAuthenticator = applicationContext.getBean(SystemAuthenticator.class)
         systemAuthenticator.end()
     }
 
@@ -112,16 +130,17 @@ class FlowuiTestSpecification extends Specification {
         VaadinSession.setCurrent(vaadinSession)
 
         def request = new TestVaadinRequest(springServlet.getService())
+        CurrentInstance.set(VaadinRequest, request)
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request))
 
         ui = new UI()
         ui.getInternals().setSession(vaadinSession)
-        ui.doInit(request, 1)
+        ui.doInit(request, 1, APP_ID)
         UI.setCurrent(ui)
     }
 
-    protected void registerScreenBasePackages(String[] viewBasePackages) {
+    protected void registerViewBasePackages(String[] viewBasePackages) {
         if (ArrayUtils.isEmpty(viewBasePackages)) {
             return
         }
@@ -149,7 +168,7 @@ class FlowuiTestSpecification extends Specification {
             getDeclaredField(ViewRegistry.class, "initialized", true)
                     .set(viewRegistry, false)
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("Cannot register screen packages", e)
+            throw new RuntimeException("Cannot register view base packages", e)
         }
 
         registerViewRoutes(viewBasePackages)
@@ -183,8 +202,8 @@ class FlowuiTestSpecification extends Specification {
         })
     }
 
-    protected boolean isClassInPackages(String classPackage, String[] screenBasePackages) {
-        return screenBasePackages.findAll {classPackage.startsWith(it)}.size() > 0
+    protected boolean isClassInPackages(String classPackage, String[] viewBasePackages) {
+        return viewBasePackages.findAll {classPackage.startsWith(it)}.size() > 0
     }
 
     protected void resetViewRegistry() {
@@ -192,14 +211,14 @@ class FlowuiTestSpecification extends Specification {
         viewRegistry.initialized = false
     }
 
-    protected <T extends View> T openScreen(Class<T> screen) {
-        def activeRouterTargetsChain = getRouterChain(screen)
+    protected <T extends View> T navigateToView(Class<T> view) {
+        def activeRouterTargetsChain = getRouterChain(view)
 
         activeRouterTargetsChain.get(0) as T
     }
 
-    protected List<HasElement> getRouterChain(Class<View> screenClass) {
-        screenNavigators.view(screenClass)
+    protected List<HasElement> getRouterChain(Class<View> viewClass) {
+        viewNavigators.view(viewClass)
                 .navigate()
 
         UI.getCurrent().getInternals().getActiveRouterTargetsChain()

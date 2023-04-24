@@ -18,12 +18,9 @@ package com.haulmont.cuba.gui.components.formatters;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.DateTimeTransformations;
-import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import org.dom4j.Element;
-
-import java.util.Date;
 
 /**
  * @deprecated Use {@link io.jmix.ui.component.formatter.DateFormatter} instead
@@ -41,7 +38,6 @@ public class DateFormatter<V> extends io.jmix.ui.component.formatter.DateFormatt
 
     @Override
     public String apply(V value) {
-        messages = AppBeans.get(Messages.class);
         currentAuthentication = AppBeans.get(CurrentAuthentication.class);
         formatStringsRegistry = AppBeans.get(FormatStringsRegistry.class);
         dateTimeTransformations = AppBeans.get(DateTimeTransformations.class);

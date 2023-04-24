@@ -47,10 +47,10 @@ public interface SupportsValidation<V> extends HasValidation, HasElement {
     /**
      * Sets invalid state to the field considering result of field validation.
      * <ul>
-     *     <li>Invalid - false and validation passed - false = field is valid</li>
+     *     <li>Invalid - false and validation passed - false = field is invalid</li>
      *     <li>Invalid - false and validation passed - true  = field is valid</li>
      *     <li>Invalid - true  and validation passed - false = field is invalid</li>
-     *     <li>Invalid - true  and validation passed - true  = field is valid</li>
+     *     <li>Invalid - true  and validation passed - true  = field is invalid</li>
      * </ul>
      *
      * @param invalid whether field should be invalid

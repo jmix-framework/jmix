@@ -92,7 +92,7 @@ public class Report implements com.haulmont.yarg.structure.Report {
     @Column(name = "CODE", length = 255)
     protected String code;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_ID")
     protected ReportGroup group;
 
@@ -173,51 +173,6 @@ public class Report implements com.haulmont.yarg.structure.Report {
     @Transient
     @JmixProperty
     protected Boolean validationOn = false;
-
-    @PreUpdate
-    @PrePersist
-    protected void updateIdxFields(){
-        updateInputParamIdx();
-        updateRoleIdx();
-        updateScreenIdx();
-    }
-
-    private void updateInputParamIdx() {
-        if (CollectionUtils.isNotEmpty(inputParameters)) {
-            String paramsIdx = inputParameters
-                    .stream()
-                    .map(ReportInputParameter::getEntityMetaClass)
-                    .filter(StringUtils::isNotBlank)
-                    .collect(Collectors.joining(IDX_SEPARATOR));
-            setInputEntityTypesIdx(String.format(",%s,", paramsIdx));
-        } else {
-            setInputEntityTypesIdx(null);
-        }
-    }
-
-    private void updateRoleIdx() {
-        if (CollectionUtils.isNotEmpty(reportRoles)) {
-            String rolesIdx = reportRoles
-                    .stream()
-                    .map(ReportRole::getRoleCode)
-                    .collect(Collectors.joining(IDX_SEPARATOR));
-            setRolesIdx(String.format(",%s,", rolesIdx));
-        } else {
-           setRolesIdx(null);
-        }
-    }
-
-    private void updateScreenIdx() {
-        if (CollectionUtils.isNotEmpty(reportScreens)) {
-            String screensIdx = reportScreens
-                    .stream()
-                    .map(ReportScreen::getScreenId)
-                    .collect(Collectors.joining(IDX_SEPARATOR));
-            setScreensIdx(String.format(",%s,", screensIdx));
-        } else {
-            setScreensIdx(null);
-        }
-    }
 
     public Boolean getIsTmp() {
         return isTmp;

@@ -18,12 +18,9 @@ package test_support;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
-import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.core.security.CoreSecurityConfiguration;
-import io.jmix.data.impl.liquibase.JmixLiquibase;
-import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import liquibase.integration.spring.SpringLiquibase;
@@ -55,10 +52,10 @@ public class IndexingTestConfiguration extends CoreSecurityConfiguration {
     }
 
     @Bean
-    public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
-        JmixLiquibase liquibase = new JmixLiquibase();
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLogContent(processor.createMasterChangeLog(Stores.MAIN));
+        liquibase.setChangeLog("test_support/liquibase/changelog.xml");
         return liquibase;
     }
 

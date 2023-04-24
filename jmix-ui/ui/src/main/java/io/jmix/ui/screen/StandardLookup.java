@@ -18,14 +18,14 @@ package io.jmix.ui.screen;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.component.*;
 import io.jmix.ui.component.LookupComponent;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
-import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.util.OperationResult;
 
 import javax.annotation.Nullable;
@@ -55,12 +55,16 @@ public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiS
         BaseAction selectAction = (BaseAction) getWindowActionOptional(LOOKUP_SELECT_ACTION_ID)
                 .orElseGet(() ->
                         addDefaultSelectAction(messages, icons));
-        selectAction.addActionPerformedListener(this::select);
+        if (!isScreenAction(selectAction)) {
+            selectAction.addActionPerformedListener(this::select);
+        }
 
         BaseAction cancelAction = (BaseAction) getWindowActionOptional(LOOKUP_CANCEL_ACTION_ID)
                 .orElseGet(() ->
                         addDefaultCancelAction(messages, icons));
-        cancelAction.addActionPerformedListener(this::cancel);
+        if (!isScreenAction(cancelAction)) {
+            cancelAction.addActionPerformedListener(this::cancel);
+        }
     }
 
     protected Optional<Action> getWindowActionOptional(String id) {
@@ -159,7 +163,7 @@ public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiS
     }
 
     @SuppressWarnings("unchecked")
-    protected LookupComponent<T> getLookupComponent() {
+    public LookupComponent<T> getLookupComponent() {
         io.jmix.ui.screen.LookupComponent annotation =
                 getClass().getAnnotation(io.jmix.ui.screen.LookupComponent.class);
         if (annotation == null || Strings.isNullOrEmpty(annotation.value())) {
@@ -170,22 +174,22 @@ public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiS
         return (LookupComponent) getWindow().getComponentNN(annotation.value());
     }
 
-    protected void select(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {
+    public OperationResult select(@SuppressWarnings("unused") @Nullable Action.ActionPerformedEvent event) {
         if (selectHandler == null) {
             // window opened not as Lookup
-            return;
+            return OperationResult.fail();
         }
 
         LookupComponent<T> lookupComponent = getLookupComponent();
         Collection<T> lookupSelectedItems = lookupComponent.getLookupSelectedItems();
-        select(lookupSelectedItems);
+        return select(lookupSelectedItems);
     }
 
-    protected void cancel(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {
-        close(WINDOW_DISCARD_AND_CLOSE_ACTION);
+    public OperationResult cancel(@SuppressWarnings("unused") @Nullable Action.ActionPerformedEvent event) {
+        return close(WINDOW_DISCARD_AND_CLOSE_ACTION);
     }
 
-    protected void select(Collection<T> items) {
+    protected OperationResult select(Collection<T> items) {
         boolean valid = true;
         if (selectValidator != null) {
             valid = selectValidator.test(new ValidationContext<>(this, items));
@@ -196,12 +200,16 @@ public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiS
             if (selectHandler != null) {
                 result.then(() -> selectHandler.accept(items));
             }
+
+            return result;
         }
+
+        return OperationResult.fail();
     }
 
     @Override
     public void setLookupComponentMultiSelect(boolean multiSelect) {
-         LookupComponent<T> lookupComponent = getLookupComponent();
+        LookupComponent<T> lookupComponent = getLookupComponent();
 
         if (lookupComponent instanceof Table) {
             ((Table<T>) lookupComponent).setMultiSelect(multiSelect);

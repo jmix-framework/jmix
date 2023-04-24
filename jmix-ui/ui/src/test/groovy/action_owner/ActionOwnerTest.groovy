@@ -25,7 +25,7 @@ import io.jmix.ui.component.Button
 import io.jmix.ui.component.KeyCombination
 import io.jmix.ui.icon.Icons
 import io.jmix.ui.icon.JmixIcon
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import io.jmix.ui.theme.ThemeClassNames
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration

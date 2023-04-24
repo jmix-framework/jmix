@@ -45,6 +45,14 @@ task contentJarDe(type: Jar) {
     }
 }
 
+task contentJarNl(type: Jar) {
+    archiveBaseName = 'jmix-translations-nl'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_nl.properties")
+    }
+}
+
 task contentJarZhCn(type: Jar) {
     archiveBaseName = 'jmix-translations-zh-cn'
     includeEmptyDirs = false
@@ -68,7 +76,25 @@ task contentJarEl(type: Jar) {
         include("**/messages_el.properties")
     }
 }
-assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarZhCn, contentJarRo, contentJarEl)
+
+task contentJarCkb(type: Jar) {
+    archiveBaseName = 'jmix-translations-ckb'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_ckb.properties")
+    }
+}
+
+task contentJarIt(type: Jar) {
+    archiveBaseName = 'jmix-translations-it'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_it.properties")
+    }
+}
+
+assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarNl, contentJarZhCn, contentJarRo, contentJarEl, contentJarCkb,
+        contentJarIt)
 
 publishing {
     publications {
@@ -84,6 +110,10 @@ publishing {
             artifactId = 'jmix-translations-de'
             artifact(contentJarDe)
         }
+        Nl(MavenPublication) {
+            artifactId = 'jmix-translations-nl'
+            artifact(contentJarNl)
+        }
         ZhCn(MavenPublication) {
             artifactId = 'jmix-translations-zh-cn'
             artifact(contentJarZhCn)
@@ -95,6 +125,14 @@ publishing {
         El(MavenPublication) {
             artifactId = 'jmix-translations-el'
             artifact(contentJarEl)
+        }
+        Ckb(MavenPublication) {
+            artifactId = 'jmix-translations-ckb'
+            artifact(contentJarCkb)
+        }
+        It(MavenPublication) {
+            artifactId = 'jmix-translations-it'
+            artifact(contentJarIt)
         }
     }
     if (rootProject.hasProperty('jmixUploadUrl')) {

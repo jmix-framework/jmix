@@ -16,9 +16,10 @@
 
 package io.jmix.charts.widget.amcharts.events.slice.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.slice.SlicePullOutEvent;
 
-public interface SlicePullOutListener {
+public interface SlicePullOutListener extends SerializableEventListener {
 
     void onClick(SlicePullOutEvent event);
 }

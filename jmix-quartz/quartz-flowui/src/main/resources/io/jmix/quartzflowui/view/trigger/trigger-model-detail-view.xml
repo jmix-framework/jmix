@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://triggerModelDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="triggerModelDc"
+                  class="io.jmix.quartz.model.TriggerModel"/>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="viewSaveAndClose" type="detail_saveClose"/>
+        <action id="viewClose" type="view_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="triggerModelDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+            </responsiveSteps>
+            <select id="scheduleTypeField" property="scheduleType"
+                    required="true"/>
+            <textField id="cronExpressionField" property="cronExpression"
+                           required="true"
+                       visible="false"/>
+            <textField id="repeatCountField" property="repeatCount" visible="false"/>
+            <textField id="repeatIntervalField" property="repeatInterval" required="true" visible="false"/>
+            <dateTimePicker id="startDateTimePicker" property="startDate"/>
+            <dateTimePicker id="endDateTimePicker" property="endDate"/>
+            <textField id="triggerNameField" property="triggerName"/>
+            <comboBox id="triggerGroupField" property="triggerGroup" allowCustomValue="true"/>
+        </formLayout>
+        <hbox id="detailActions" spacing="true">
+            <button id="saveAndCloseBtn" action="viewSaveAndClose"/>
+            <button id="closeBtn" action="viewClose"/>
+        </hbox>
+    </layout>
+</view>

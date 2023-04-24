@@ -23,6 +23,7 @@ import io.jmix.flowui.component.UiComponentsGenerator
 import io.jmix.flowui.component.checkbox.JmixCheckbox
 import io.jmix.flowui.component.combobox.EntityComboBox
 import io.jmix.flowui.component.datepicker.TypedDatePicker
+import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker
 import io.jmix.flowui.component.select.JmixSelect
 import io.jmix.flowui.component.textfield.TypedTextField
 import io.jmix.flowui.component.timepicker.TypedTimePicker
@@ -44,6 +45,7 @@ import test_support.entity.sec.User
 import test_support.spec.FlowuiTestSpecification
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 @SpringBootTest
@@ -94,6 +96,7 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
         order.setCustomer(customer)
         order.setUser(user)
         order.setDate(LocalDate.now())
+        order.setDateTime(LocalDateTime.now().withNano(0))
         order.setNumber("1414")
         order.setTotal(15.32d)
         order.setTime(LocalTime.now().withNano(0))
@@ -229,6 +232,21 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
         then: "TimePicker will be generated"
         component instanceof TypedTimePicker
         (component as TypedTimePicker).value == order.time
+    }
+
+    def "Generate component for dateTime attribute"() {
+        when: "MetaProperty is LocalDateTime"
+
+        ComponentGenerationContext context = new ComponentGenerationContext(orderMetaClass, "dateTime")
+        ValueSource<?> valueSource = new ContainerValueSource<>(orderInstanceContainer, "dateTime")
+
+        context.setValueSource(valueSource)
+
+        def component = uiComponentsGenerator.generate(context)
+
+        then: "DateTimePicker will be generated"
+        component instanceof TypedDateTimePicker
+        (component as TypedDateTimePicker).value == order.dateTime
     }
 
     def "Generate component for number attribute"() {

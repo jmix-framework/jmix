@@ -24,6 +24,10 @@
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
+    <include file="/io/jmix/data/liquibase/changelog.xml"/>
+    <include file="/io/jmix/securitydata/liquibase/changelog.xml"/>
+    <include file="/io/jmix/securityoauth2/liquibase/changelog.xml"/>
+
     <changeSet author="sample-rest" id="1.0">
 
         <createTable tableName="SAMPLE_REST_SEC_GROUP">

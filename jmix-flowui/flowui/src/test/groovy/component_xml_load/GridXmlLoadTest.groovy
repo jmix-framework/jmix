@@ -40,7 +40,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def order = dataManager.create(Order)
         order.number = "number"
@@ -57,7 +57,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load dataGrid component from XML"() {
         given: "Screen with a dataGrid"
-        def gridView = openScreen(GridView.class)
+        def gridView = navigateToView(GridView.class)
         gridView.loadData()
 
         when: "dataGrid is loaded"
@@ -81,6 +81,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             nestedNullBehavior == Grid.NestedNullBehavior.THROW
             pageSize == 20
             rowsDraggable
+            tabIndex == 3
             themeNames.containsAll(["column-borders", "compact"])
             verticalScrollingEnabled
             visible
@@ -118,7 +119,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load treeDataGrid component from XML"() {
         given: "Screen with a treeDataGrid"
-        def gridView = openScreen(GridView.class)
+        def gridView = navigateToView(GridView.class)
         gridView.loadData()
 
         when: "treeDataGrid is loaded"
@@ -142,6 +143,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             nestedNullBehavior == Grid.NestedNullBehavior.THROW
             pageSize == 20
             rowsDraggable
+            tabIndex == 3
             themeNames.containsAll(["column-borders", "compact"])
             verticalScrollingEnabled
             visible

@@ -16,18 +16,16 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.textfield.Autocapitalize
 import com.vaadin.flow.component.textfield.Autocomplete
 import com.vaadin.flow.data.value.ValueChangeMode
-import component_xml_load.screen.ComponentView
 import component_xml_load.screen.EmailFieldView
 import io.jmix.core.DataManager
-import io.jmix.core.SaveContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Customer
-import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -41,7 +39,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def customer = dataManager.create(Customer)
         customer.email = "example@email.com"
@@ -56,7 +54,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load emailField component from XML"() {
         when: "Open the ComponentView"
-        def emailFieldView = openScreen(EmailFieldView)
+        def emailFieldView = navigateToView(EmailFieldView)
 
         then: "EmailField attributes will be loaded"
         verifyAll(emailFieldView.emailFieldId) {
@@ -87,6 +85,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredMessage == "requiredMessage"
             requiredIndicatorVisible
+            tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
             value == "example@email.com"
@@ -94,6 +93,14 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
             valueChangeTimeout == 50
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -102,7 +109,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
         def customer = dataManager.load(Customer).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(EmailFieldView)
+        def componentView = navigateToView(EmailFieldView)
 
         then: "EmailField will be loaded with the value of the property"
         verifyAll(componentView.emailFieldWithValueId) {

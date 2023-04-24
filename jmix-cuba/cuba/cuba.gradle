@@ -26,7 +26,7 @@ dependencies {
     api project(':eclipselink-starter')
     api project(':ui-starter')
     api project(':ui-data-starter')
-    api project(':ui-export-starter')
+    api project(':gridexport-ui-starter')
     api project(':security-starter')
     api project(':security-ui-starter')
     api project(':dynattr-starter')
@@ -49,7 +49,7 @@ dependencies {
 
     compileOnly project(':rest')
 
-    testImplementation project(':ui-test-assist')
+    testImplementation project(':ui-test-assist-spock')
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

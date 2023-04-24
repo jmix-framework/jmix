@@ -62,6 +62,23 @@ public interface GroupFilter extends LogicalFilterComponent, Component.BelongToF
     void setCaptionPosition(CaptionPosition position);
 
     /**
+     * @return caption width of logical filter child components
+     */
+    float getCaptionWidth();
+
+    /**
+     * @return caption width size unit of logical filter child components
+     */
+    SizeUnit getCaptionWidthSizeUnit();
+
+    /**
+     * Sets caption width of logical filter child components.
+     *
+     * @param width caption width of logical filter child components
+     */
+    void setCaptionWidth(String width);
+
+    /**
      * Returns the number of columns to be displayed on one row.
      * The default value is taken from {@link UiComponentProperties#getFilterColumnsCount()}.
      *

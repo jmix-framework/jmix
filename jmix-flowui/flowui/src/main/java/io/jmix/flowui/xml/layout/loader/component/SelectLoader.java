@@ -41,8 +41,10 @@ public class SelectLoader extends AbstractComponentLoader<JmixSelect<?>> {
         loadBoolean(element, "emptySelectionAllowed", resultComponent::setEmptySelectionAllowed);
 
         componentLoader().loadLabel(resultComponent, element);
+        componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
+        componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);

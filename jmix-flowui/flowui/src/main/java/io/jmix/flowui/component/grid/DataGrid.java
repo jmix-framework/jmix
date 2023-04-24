@@ -20,14 +20,19 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
 import com.vaadin.flow.component.grid.dataview.GridDataView;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.selection.SelectionListener;
+import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
+import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.GridDelegate;
+import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
@@ -38,6 +43,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
@@ -46,6 +52,8 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     protected ApplicationContext applicationContext;
 
     protected GridDelegate<E, DataGridItems<E>> gridDelegate;
+
+    protected boolean editorCreated = false;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -59,6 +67,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
 
     protected void initComponent() {
         gridDelegate = createDelegate();
+        gridDelegate.setAfterColumnSecurityApplyHandler(this::onAfterApplyColumnSecurity);
     }
 
     @SuppressWarnings("unchecked")
@@ -129,12 +138,23 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     }
 
     @Override
+    public void setMultiSelect(boolean multiSelect) {
+        gridDelegate.setMultiSelect(multiSelect);
+    }
+
+    @Override
     public GridSelectionModel<E> setSelectionMode(SelectionMode selectionMode) {
         GridSelectionModel<E> selectionModel = super.setSelectionMode(selectionMode);
 
         gridDelegate.onSelectionModelChange(selectionModel);
 
         return selectionModel;
+    }
+
+    @Nullable
+    @Override
+    public MetaPropertyPath getColumnMetaPropertyPath(Column<E> column) {
+        return gridDelegate.getColumnMetaPropertyPath(column);
     }
 
     /**
@@ -167,9 +187,119 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return gridDelegate.addColumn(key, metaPropertyPath);
     }
 
+    @Override
+    public Column<E> addColumn(ValueProvider<E, ?> valueProvider) {
+        Column<E> column = super.addColumn(valueProvider);
+        return gridDelegate.addColumn(column);
+    }
+
+    @Override
+    public Column<E> addColumn(Renderer<E> renderer) {
+        Column<E> column = super.addColumn(renderer);
+        return gridDelegate.addColumn(column);
+    }
+
+    @Override
+    public Column<E> addColumn(Renderer<E> renderer, String... sortingProperties) {
+        Column<E> column = super.addColumn(renderer, sortingProperties);
+        return gridDelegate.addColumn(column);
+    }
+
+    @Override
+    public List<Column<E>> getVisibleColumns() {
+        return gridDelegate.getVisibleColumns();
+    }
+
+    /**
+     * <strong>Note:</strong> If column reordering is enabled with
+     * {@link #setColumnReorderingAllowed(boolean)} and the user has reordered
+     * the columns, the order of the list returned by this method might be
+     * incorrect.
+     *
+     * @return an unmodifiable list of {@link Column}s that are not hidden by security
+     */
+    @Override
+    public List<Column<E>> getColumns() {
+        return super.getColumns();
+    }
+
+    /**
+     * Gets an unmodifiable list of all currently added {@link Column}s.
+     * <p>
+     * If column reordering is enabled with {@link #setColumnReorderingAllowed(boolean)}
+     * and the user has reordered the columns, the order of the returned list will be correct.
+     *
+     * @return a copy of all currently added {@link Column}s including hidden by security
+     */
+    public List<Column<E>> getAllColumns() {
+        return gridDelegate.getColumns();
+    }
+
+    @Nullable
+    @Override
+    public Column<E> getColumnByKey(String columnKey) {
+        return gridDelegate.getColumnByKey(columnKey);
+    }
+
+    @Override
+    public void removeColumn(Column<E> column) {
+        gridDelegate.removeColumn(column);
+
+        // Due to columns hidden by security are not added to Grid, removing
+        // them can lead to an exception. So we check it silently before.
+        if (gridDelegate.isDataGridOwner(column)) {
+            super.removeColumn(column);
+        }
+    }
+
+    /**
+     * Moves column to the provided position in the {@link DataGrid}.
+     *
+     * @param column column to move
+     * @param index  new index of column in {@link #getAllColumns()} list
+     */
+    public void setColumnPosition(Column<E> column, int index) {
+        gridDelegate.setColumnPosition(column, index);
+    }
+
+    @Override
+    public boolean isEditorCreated() {
+        return editorCreated;
+    }
+
+    @Override
+    protected void onDataProviderChange() {
+        super.onDataProviderChange();
+
+        if (isEditorCreated()) {
+            DataGridEditor<E> editor = getEditor();
+            if (editor instanceof DataGridDataProviderChangeObserver) {
+                ((DataGridDataProviderChangeObserver) editor).dataProviderChanged();
+            }
+        }
+    }
+
+    @Override
+    public DataGridEditor<E> getEditor() {
+        return ((DataGridEditor<E>) super.getEditor());
+    }
+
+    @Override
+    protected DataGridEditor<E> createEditor() {
+        editorCreated = true;
+        return new DataGridEditorImpl<>(this, applicationContext);
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected GridActionsSupport<JmixGrid<E>, E> createActionsSupport() {
         return new DataGridActionsSupport(this);
+    }
+
+    protected void onAfterApplyColumnSecurity(AbstractGridDelegate.ColumnSecurityContext<E> context) {
+        if (!context.isPropertyEnabled()) {
+            // Remove column from component while GridDelegate stores this column
+            super.removeColumn(context.getColumn());
+        }
     }
 }

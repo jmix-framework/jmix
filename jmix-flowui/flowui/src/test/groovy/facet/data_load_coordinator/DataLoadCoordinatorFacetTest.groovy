@@ -36,14 +36,14 @@ class DataLoadCoordinatorFacetTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("facet.data_load_coordinator")
+        registerViewBasePackages("facet.data_load_coordinator")
     }
 
     @Unroll
     def "manual configuration"() {
         when: "show screen"
 
-        def screen = openScreen(screenClass)
+        def screen = navigateToView(screenClass)
         def screenFacets = ViewControllerUtils.getViewFacets(screen);
 
         then: "facet is created and injected"
@@ -101,7 +101,7 @@ class DataLoadCoordinatorFacetTest extends FlowuiTestSpecification {
     def "auto configuration"() {
         when: "show screen"
 
-        def screen = openScreen(DlcAutoTestScreen)
+        def screen = navigateToView(DlcAutoTestScreen)
         def screenFacets = ViewControllerUtils.getViewFacets(screen);
 
         then: "facet is created and injected"

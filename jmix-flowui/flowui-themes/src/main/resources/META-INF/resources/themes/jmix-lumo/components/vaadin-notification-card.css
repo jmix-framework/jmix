@@ -27,11 +27,8 @@
   --_lumo-button-primary-color: var(--jmix-lumo-warning-primary-text-color);
 }
 
-[part='content'] {
-  padding: unset;
-}
-
 [part='overlay'] {
   display: flex;
   justify-content: center;
+  position: relative;
 }

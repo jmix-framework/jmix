@@ -15,12 +15,16 @@
  */
 package io.jmix.flowui.menu;
 
-import io.jmix.core.JmixModules;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Resources;
+import com.google.common.base.Strings;
+import io.jmix.core.*;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
+import io.jmix.flowui.menu.MenuItem.MenuItemProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -35,6 +39,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -57,13 +62,16 @@ public class MenuConfig {
     protected Environment environment;
     protected FlowuiProperties flowuiProperties;
     protected JmixModules modules;
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
 
     protected volatile boolean initialized;
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
     public MenuConfig(Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
-                      Environment environment, FlowuiProperties flowuiProperties, JmixModules modules) {
+                      Environment environment, FlowuiProperties flowuiProperties, JmixModules modules,
+                      Metadata metadata, MetadataTools metadataTools) {
         this.resources = resources;
         this.messages = messages;
         this.messageTools = messageTools;
@@ -71,6 +79,8 @@ public class MenuConfig {
         this.environment = environment;
         this.flowuiProperties = flowuiProperties;
         this.modules = modules;
+        this.metadata = metadata;
+        this.metadataTools = metadataTools;
     }
 
     public String getItemTitle(String id) {
@@ -178,7 +188,7 @@ public class MenuConfig {
                 menuItem.setMenu(true);
                 menuItem.setDescriptor(element);
                 loadIcon(element, menuItem);
-//                loadShortcut(menuItem, element);
+                loadShortcutCombination(menuItem, element);
                 loadClassName(element, menuItem);
                 loadOpened(element, menuItem);
                 loadTitle(element, menuItem);
@@ -190,17 +200,19 @@ public class MenuConfig {
                 if (menuItem == null) {
                     continue;
                 }
-                // todo rp menu
-            } /*else if ("separator".equals(element.getName())) {
+            } else if ("separator".equals(element.getName())) {
                 String id = element.attributeValue("id");
-                if (StringUtils.isBlank(id))
+                if (StringUtils.isBlank(id)) {
                     id = "-";
-                menuItem = new MenuItem(currentParentItem, id);
+                }
+
+                menuItem = new MenuItem(parentItem, id);
                 menuItem.setSeparator(true);
-                if (!StringUtils.isBlank(id)) {
+
+                if (StringUtils.isNotBlank(id)) {
                     menuItem.setDescriptor(element);
                 }
-            }*/ else {
+            } else {
                 log.warn(String.format("Unknown tag '%s' in menu-config", element.getName()));
             }
 
@@ -220,23 +232,21 @@ public class MenuConfig {
 
         String view = element.attributeValue("view");
         idFromActions = StringUtils.isNotEmpty(view) ? view : null;
-        // todo rp menu
-        /*String runnableClass = element.attributeValue("class");
-        checkDuplicateAction(idFromActions, runnableClass);
-        idFromActions = StringUtils.isNotEmpty(runnableClass) ? runnableClass : idFromActions;*/
 
-        /*String bean = element.attributeValue("bean");
-        String beanMethod = element.attributeValue("beanMethod");*/
+        String bean = element.attributeValue("bean");
+        String beanMethod = element.attributeValue("beanMethod");
 
-        /*if (StringUtils.isNotEmpty(bean) && StringUtils.isEmpty(beanMethod) ||
+        if (StringUtils.isNotEmpty(bean) && StringUtils.isEmpty(beanMethod) ||
                 StringUtils.isEmpty(bean) && StringUtils.isNotEmpty(beanMethod)) {
             throw new IllegalStateException("Both bean and beanMethod should be defined.");
-        }*/
+        }
 
-//        checkDuplicateAction(idFromActions, bean, beanMethod);
+        checkDuplicateAction(idFromActions, bean, beanMethod);
 
-        /*String fqn = bean + "#" + beanMethod;
-        idFromActions = StringUtils.isNotEmpty(bean) && StringUtils.isNotEmpty(beanMethod) ? fqn : idFromActions;*/
+        String fqn = bean + "#" + beanMethod;
+        idFromActions = StringUtils.isNotEmpty(bean) && StringUtils.isNotEmpty(beanMethod)
+                ? fqn
+                : idFromActions;
 
         if (StringUtils.isEmpty(id) && StringUtils.isEmpty(idFromActions)) {
             throw new IllegalStateException("MenuItem should have at least one action");
@@ -253,23 +263,39 @@ public class MenuConfig {
         MenuItem menuItem = new MenuItem(currentParentItem, id);
 
         menuItem.setView(view);
-        // todo rp menu
-//        menuItem.setRunnableClass(runnableClass);
-//        menuItem.setBean(bean);
-//        menuItem.setBeanMethod(beanMethod);
+
+        menuItem.setBean(bean);
+        menuItem.setBeanMethod(beanMethod);
 
         menuItem.setDescriptor(element);
         loadIcon(element, menuItem);
-//        loadShortcut(menuItem, element);
+        loadShortcutCombination(menuItem, element);
         loadClassName(element, menuItem);
         loadTitle(element, menuItem);
         loadDescription(element, menuItem);
 
+        menuItem.setProperties(loadMenuItemProperties(element));
+        menuItem.setQueryParameters(loadMenuItemParameters(element, "queryParameters"));
+        menuItem.setRouteParameters(loadMenuItemParameters(element, "routeParameters"));
+
         return menuItem;
+    }
+
+    protected void checkValueOrEntityProvided(Element property) {
+        String value = property.attributeValue("value");
+        String entityClass = property.attributeValue("entityClass");
+
+        if (Strings.isNullOrEmpty(value) && Strings.isNullOrEmpty(entityClass)) {
+            String name = property.attributeValue("name");
+            throw new IllegalStateException(
+                    String.format("View property '%s' has neither value nor entity load info", name)
+            );
+        }
     }
 
     protected void checkDuplicateAction(@Nullable String menuItemId, String... actionDefinition) {
         boolean actionDefined = true;
+
         for (String s : actionDefinition) {
             actionDefined &= StringUtils.isNotEmpty(s);
         }
@@ -280,6 +306,7 @@ public class MenuConfig {
 
     protected void loadOpened(Element element, MenuItem menuItem) {
         String opened = element.attributeValue("opened");
+
         if (StringUtils.isNotEmpty(opened)) {
             menuItem.setOpened(Boolean.parseBoolean(opened));
         }
@@ -287,6 +314,7 @@ public class MenuConfig {
 
     protected void loadTitle(Element element, MenuItem menuItem) {
         String title = element.attributeValue("title");
+
         if (StringUtils.isNotEmpty(title)) {
             menuItem.setTitle(title);
         }
@@ -294,20 +322,23 @@ public class MenuConfig {
 
     protected void loadDescription(Element element, MenuItem menuItem) {
         String description = element.attributeValue("description");
+
         if (StringUtils.isNotBlank(description)) {
             menuItem.setDescription(description);
         }
     }
 
     protected void loadClassName(Element element, MenuItem menuItem) {
-        String className = element.attributeValue("className");
+        String className = element.attributeValue("classNames");
+
         if (StringUtils.isNotBlank(className)) {
-            menuItem.setClassName(className);
+            menuItem.setClassNames(className);
         }
     }
 
     protected void loadIcon(Element element, MenuItem menuItem) {
         String icon = element.attributeValue("icon");
+
         if (StringUtils.isNotEmpty(icon)) {
             menuItem.setIcon(icon);
         }
@@ -317,38 +348,205 @@ public class MenuConfig {
         return messageTools.loadString(ref);
     }
 
+    protected List<MenuItemProperty> loadMenuItemProperties(Element menuItem) {
+        Element properties = menuItem.element("properties");
+
+        if (properties == null) {
+            return Collections.emptyList();
+        }
+
+        List<Element> propertyList = properties.elements("property");
+        List<MenuItemProperty> itemProperties = new ArrayList<>(propertyList.size());
+
+        for (Element property : propertyList) {
+            String propertyName = property.attributeValue("name");
+
+            if (Strings.isNullOrEmpty(propertyName)) {
+                throw new IllegalStateException("Property cannot have empty name");
+            }
+
+            checkValueOrEntityProvided(property);
+
+            MenuItemProperty itemProperty = new MenuItemProperty(propertyName);
+
+            Object value = loadMenuItemPropertyValue(property);
+
+            if (value != null) {
+                itemProperty.setValue(value);
+            } else {
+                itemProperty.setEntityClass(loadItemPropertyEntityClass(property));
+                itemProperty.setEntityId(loadItemPropertyEntityId(property, itemProperty.getEntityClass()));
+                itemProperty.setFetchPlanName(loadEntityFetchPlan(property));
+            }
+
+            itemProperties.add(itemProperty);
+        }
+
+        return itemProperties;
+    }
+
+    protected List<MenuItemParameter> loadMenuItemParameters(Element menuItem, String parametersElementName) {
+        Element parameters = menuItem.element(parametersElementName);
+
+        if (parameters == null) {
+            return Collections.emptyList();
+        }
+
+        List<Element> parameterList = parameters.elements("parameter");
+        List<MenuItemParameter> itemParameters = new ArrayList<>(parameterList.size());
+
+        for (Element parameter : parameterList) {
+            String parameterName = parameter.attributeValue("name");
+
+            if (Strings.isNullOrEmpty(parameterName)) {
+                throw new IllegalStateException("Parameter cannot have empty name");
+            }
+
+            String parameterValue = parameter.attributeValue("value");
+
+            if (Strings.isNullOrEmpty(parameterValue)) {
+                String message = String.format("Parameter with name '%s' cannot have empty value", parameterName);
+                throw new IllegalStateException(message);
+            }
+
+            MenuItemParameter itemParameter = new MenuItemParameter(parameterName, parameterValue);
+
+            itemParameters.add(itemParameter);
+        }
+
+        return itemParameters;
+    }
+
+    @Nullable
+    protected Object loadMenuItemPropertyValue(Element property) {
+        String value = property.attributeValue("value");
+        return !Strings.isNullOrEmpty(value)
+                ? getMenuItemPropertyTypedValue(value)
+                : null;
+    }
+
+    protected Object getMenuItemPropertyTypedValue(String value) {
+        if (Boolean.TRUE.toString().equalsIgnoreCase(value)
+                || Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+            return Boolean.valueOf(value);
+        }
+
+        return value;
+    }
+
+    protected MetaClass loadItemPropertyEntityClass(Element property) {
+        String entityClass = property.attributeValue("entityClass");
+
+        if (StringUtils.isEmpty(entityClass)) {
+            String name = property.attributeValue("name");
+            throw new IllegalStateException(
+                    String.format("View property '%s' does not have entity class", name)
+            );
+        }
+
+        return metadata.getClass(ReflectionHelper.getClass(entityClass));
+    }
+
+    protected Object loadItemPropertyEntityId(Element property, MetaClass metaClass) {
+        String entityId = property.attributeValue("entityId");
+
+        if (StringUtils.isEmpty(entityId)) {
+            String name = property.attributeValue("name");
+            throw new IllegalStateException(
+                    String.format("View entity property '%s' doesn't have entity id", name)
+            );
+        }
+
+        Object id = parseEntityId(metaClass, entityId);
+
+        if (id == null) {
+            throw new RuntimeException(
+                    String.format("Unable to parse id value `%s` for entity '%s'",
+                            entityId,
+                            metaClass.getJavaClass()
+                    )
+            );
+        }
+
+        return id;
+    }
+
+    protected String loadEntityFetchPlan(Element propertyElement) {
+        String entityFetchPlan = propertyElement.attributeValue("entityFetchPlan");
+        return StringUtils.isNotEmpty(entityFetchPlan)
+                ? entityFetchPlan
+                : propertyElement.attributeValue("entityView"); // for backward compatibility
+    }
+
+    @Nullable
+    protected Object parseEntityId(MetaClass entityMetaClass, String entityId) {
+        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(entityMetaClass);
+
+        if (primaryKeyProperty == null) {
+            return null;
+        }
+
+        Class<?> primaryKeyType = primaryKeyProperty.getJavaType();
+
+        if (String.class.equals(primaryKeyType)) {
+            return entityId;
+        } else if (UUID.class.equals(primaryKeyType)) {
+            return UUID.fromString(entityId);
+        }
+
+        Object id = null;
+
+        try {
+            if (Long.class.equals(primaryKeyType)) {
+                id = Long.valueOf(entityId);
+            } else if (Integer.class.equals(primaryKeyType)) {
+                id = Integer.valueOf(entityId);
+            }
+        } catch (Exception e) {
+            log.debug("Failed to parse entity id: '{}'", entityId, e);
+        }
+
+        return id;
+    }
+
+    protected void loadShortcutCombination(MenuItem menuItem, Element element) {
+        String shortcutCombination = element.attributeValue("shortcutCombination");
+
+        if (shortcutCombination == null || shortcutCombination.isEmpty()) {
+            return;
+        }
+
+        // If the shortcutCombination string looks like a property, try to get it from the application properties
+        if (shortcutCombination.startsWith("${") && shortcutCombination.endsWith("}")) {
+            String property = environment.getProperty(
+                    shortcutCombination.substring(2, shortcutCombination.length() - 1)
+            );
+            if (StringUtils.isNotEmpty(property))
+                shortcutCombination = property;
+            else
+                return;
+        }
+
+        try {
+            menuItem.setShortcutCombination(KeyCombination.create(shortcutCombination));
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid menu shortcutCombination value: '" + shortcutCombination + "'");
+        }
+    }
+
     @Nullable
     public MenuItem findItem(String id, MenuItem item) {
-        if (id.equals(item.getId()))
+        if (id.equals(item.getId())) {
             return item;
-        else if (!item.getChildren().isEmpty()) {
+        } else if (!item.getChildren().isEmpty()) {
             for (MenuItem child : item.getChildren()) {
                 MenuItem menuItem = findItem(id, child);
-                if (menuItem != null)
+
+                if (menuItem != null) {
                     return menuItem;
+                }
             }
         }
         return null;
     }
-
-    // todo rp menu
-    /*protected void loadShortcut(MenuItem menuItem, Element element) {
-        String shortcut = element.attributeValue("shortcut");
-        if (shortcut == null || shortcut.isEmpty()) {
-            return;
-        }
-        // If the shortcut string looks like a property, try to get it from the application properties
-        if (shortcut.startsWith("${") && shortcut.endsWith("}")) {
-            String property = environment.getProperty(shortcut.substring(2, shortcut.length() - 1));
-            if (!StringUtils.isEmpty(property))
-                shortcut = property;
-            else
-                return;
-        }
-        try {
-            menuItem.setShortcut(KeyCombination.create(shortcut));
-        } catch (IllegalArgumentException e) {
-            log.warn("Invalid menu shortcut value: '" + shortcut + "'");
-        }
-    }*/
 }

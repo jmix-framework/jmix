@@ -24,7 +24,7 @@ import io.jmix.ui.Facets
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.*
 import io.jmix.ui.component.mainwindow.*
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Unroll

@@ -16,11 +16,18 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import com.google.common.base.Strings;
+import com.vaadin.flow.component.grid.Grid;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
+import io.jmix.flowui.data.grid.EmptyTreeDataGridItems;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 
 public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
+
+    protected boolean hierarchyColumnAdded = false;
 
     @Override
     protected TreeDataGrid<?> createComponent() {
@@ -30,9 +37,6 @@ public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected void setupDataProvider(GridDataHolder holder) {
-        Boolean showOrphans = loadBoolean(element, "showOrphans")
-                .orElse(false);
-
         String hierarchyProperty = loadString(element, "hierarchyProperty")
                 .orElseThrow(
                         () -> new GuiDevelopmentException(
@@ -47,12 +51,32 @@ public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
                         )
                 );
 
-        resultComponent.setHierarchyColumn(hierarchyProperty);
-
         if (holder.getContainer() != null) {
+            Boolean showOrphans = loadBoolean(element, "showOrphans").orElse(false);
+
             resultComponent.setDataProvider(
                     new ContainerTreeDataGridItems(holder.getContainer(),
                             hierarchyProperty, showOrphans));
+        } else if (holder.getMetaClass() != null) {
+            resultComponent.setDataProvider(new EmptyTreeDataGridItems<>(holder.getMetaClass()));
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected Grid.Column addColumn(String key, MetaPropertyPath metaPropertyPath) {
+        String hierarchyColumn = loadString(element, "hierarchyColumn").orElse(null);
+        MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
+
+        // Initialize first column as hierarchy or
+        // column that is defined in property
+        if (!hierarchyColumnAdded &&
+                (Strings.isNullOrEmpty(hierarchyColumn)
+                        || hierarchyColumn.equals(metaProperty.getName()))) {
+            hierarchyColumnAdded = true;
+            return resultComponent.addHierarchyColumn(key, metaPropertyPath);
+        }
+
+        return super.addColumn(key, metaPropertyPath);
     }
 }

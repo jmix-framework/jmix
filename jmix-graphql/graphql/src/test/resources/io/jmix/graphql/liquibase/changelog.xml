@@ -26,6 +26,10 @@
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
+    <include file="/io/jmix/data/liquibase/changelog.xml"/>
+    <include file="/io/jmix/securitydata/liquibase/changelog.xml"/>
+    <include file="/io/jmix/securityoauth2/liquibase/changelog.xml"/>
+
     <includeAll path="io/jmix/graphql/liquibase/changelog"/>
 
     <changeSet runOrder="last" id="data" author="scr">

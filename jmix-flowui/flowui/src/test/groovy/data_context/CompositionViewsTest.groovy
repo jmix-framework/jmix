@@ -53,7 +53,7 @@ class CompositionViewsTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages('data_context.view')
+        registerViewBasePackages('data_context.view')
     }
 
     @Override

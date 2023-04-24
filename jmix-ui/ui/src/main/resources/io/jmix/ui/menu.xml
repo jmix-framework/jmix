@@ -19,6 +19,7 @@
 
     <menu id="administration">
         <item screen="ui_JmxConsoleScreen"/>
+        <item screen="sys_LockInfo.browse"/>
     </menu>
 
 </menu-config>

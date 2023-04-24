@@ -1,0 +1,116 @@
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://sendingMessageView.title"
+      focusComponent="sendingMessageDataGrid">
+    <data readOnly="true">
+        <collection
+                id="sendingMessagesDc"
+                class="io.jmix.email.entity.SendingMessage">
+            <fetchPlan extends="_local">
+                <property name="important"/>
+                <property name="address"/>
+                <property name="cc"/>
+                <property name="bcc"/>
+                <property name="attachmentsName"/>
+                <property name="attemptsLimit"/>
+                <property name="attemptsMade"/>
+                <property name="subject"/>
+                <property name="dateSent"/>
+                <property name="deadline"/>
+                <property name="from"/>
+                <property name="status"/>
+                <property name="createTs"/>
+                <property name="updateTs"/>
+                <property name="bodyContentType"/>
+                <property name="contentText"/>
+                <property name="contentTextFile"/>
+                <property name="headers"/>
+                <property name="attachments" fetchPlan="_local"/>
+            </fetchPlan>
+            <loader id="sendingMessagesDl">
+                <query>
+                    <![CDATA[select sm from email_SendingMessage sm order by sm.createTs desc]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <split width="100%" height="100%" splitterPosition="70" themeNames="splitter-spacing">
+            <vbox id="primaryContent" padding="false" expand="sendingMessageDataGrid" height="100%">
+                <genericFilter dataLoader="sendingMessagesDl"/>
+                <hbox id="buttonsPanel" classNames="buttons-panel">
+                    <button id="downloadAttachmentBtn" action="sendingMessageDataGrid.downloadAttachment"/>
+                    <button id="resendEmailBtn" action="sendingMessageDataGrid.resendEmail"/>
+                    <simplePagination id="pagination" dataLoader="sendingMessagesDl"/>
+                </hbox>
+                <dataGrid id="sendingMessageDataGrid" width="100%" dataContainer="sendingMessagesDc">
+                    <actions>
+                        <action id="downloadAttachment" text="msg://sendingMessageView.downloadAttachments.text"
+                                type="itemTracking" icon="lumo:download"/>
+                        <action id="resendEmail" text="msg://sendingMessageView.resendEmail.text" type="itemTracking"
+                                icon="lumo:reload"/>
+                    </actions>
+                    <columns>
+                        <column property="address" sortable="false"/>
+                        <column property="cc"/>
+                        <column property="bcc"/>
+                        <column property="from"/>
+                        <column property="subject"/>
+                        <column property="status"/>
+                        <column property="bodyContentType"/>
+                        <column property="createTs"/>
+                        <column property="dateSent"/>
+                        <column property="updateTs"/>
+                        <column property="attachmentsName" sortable="false"/>
+                        <column property="attemptsLimit"/>
+                        <column property="deadline"/>
+                        <column property="attemptsMade"/>
+                        <column property="important"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+            <scroller id="secondaryContent" width="100%" height="100%">
+                <formLayout id="messageForm" dataContainer="sendingMessagesDc" width="100%">
+                    <textField id="address" property="address" readOnly="true"/>
+                    <textField id="cc" property="cc" readOnly="true"/>
+                    <textField id="bcc" property="bcc" readOnly="true"/>
+                    <textField id="from" property="from" readOnly="true"/>
+                    <textField id="subject" property="subject" readOnly="true"/>
+                    <vbox padding="false">
+                        <textArea id="contentTextArea" property="contentText" width="100%"
+                                  label="msg://io.jmix.email.entity/SendingMessage.contentText" readOnly="true"/>
+                        <button id="showContentBtn" text="msg://sendingMessageView.showContentBtn.text"
+                                icon="ENVELOPE_OPEN" enabled="false"/>
+                    </vbox>
+                    <textField id="bodyContentType" property="bodyContentType" readOnly="true"/>
+                    <textField id="status" property="status" readOnly="true"/>
+                    <textField id="attachmentsName" property="attachmentsName" readOnly="true"/>
+                    <dateTimePicker id="createTs" property="createTs" readOnly="true"/>
+                    <dateTimePicker id="dateSent" property="dateSent" readOnly="true"/>
+                    <dateTimePicker id="updateTs" property="updateTs" readOnly="true"/>
+                    <dateTimePicker id="deadline" property="deadline" readOnly="true"/>
+                    <textField id="attemptsLimit" property="attemptsLimit" readOnly="true"/>
+                    <textField id="attemptsMade" property="attemptsMade" readOnly="true"/>
+                    <checkbox id="important" property="important" readOnly="true"/>
+                </formLayout>
+            </scroller>
+        </split>
+    </layout>
+</view>

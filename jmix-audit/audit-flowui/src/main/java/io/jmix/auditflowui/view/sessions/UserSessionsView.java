@@ -89,7 +89,7 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
                 LocalDate afterDate = lastRequestDateFrom.getTypedValue()!=null ? lastRequestDateFrom.getTypedValue() :
                         LocalDate.now();
                 LocalTime afterTime = lastRequestTimeFrom.getTypedValue()!=null ? lastRequestTimeFrom.getTypedValue() :
-                    LocalTime.ofSecondOfDay(0);
+                    LocalTime.MIN;
                 LocalDateTime afterDateTime = LocalDateTime.of(afterDate, afterTime);
 
                 sessions = sessions.filter(o -> o.getLastRequest().after(Date
@@ -99,7 +99,7 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
                 LocalDate beforeDate = lastRequestDateTo.getTypedValue()!=null ? lastRequestDateTo.getTypedValue() :
                         LocalDate.now();
                 LocalTime beforeTime = lastRequestTimeTo.getTypedValue()!=null ? lastRequestTimeTo.getTypedValue() :
-                        LocalTime.ofSecondOfDay(0);
+                        LocalTime.MAX;
                 LocalDateTime beforeDateTime = LocalDateTime.of(beforeDate, beforeTime);
                 sessions = sessions.filter(o -> o.getLastRequest().before(Date
                         .from(beforeDateTime.atZone(ZoneId.systemDefault()).toInstant())));
@@ -129,7 +129,9 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
     protected void onClearButtonClick(ClickEvent<Button> event) {
         userName.clear();
         lastRequestDateFrom.clear();
+        lastRequestTimeFrom.clear();
         lastRequestDateTo.clear();
+        lastRequestTimeTo.clear();
         refreshDlItems();
     }
 

@@ -26,7 +26,7 @@ dependencies {
     api project(':data')
     api project(':ui')
     api project(':ui-data')
-    api project(':ui-export')
+    api project(':gridexport-ui')
     api project(':security')
     api project(':security-ui')
     compileOnly project(':dynattr')
@@ -44,7 +44,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
-    testImplementation project(':ui-test-assist')
+    testImplementation project(':ui-test-assist-spock')
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

@@ -16,6 +16,7 @@
 
 package io.jmix.core.impl.importexport;
 
+import com.google.gson.JsonArray;
 import io.jmix.core.EntityImportPlan;
 import io.jmix.core.EntityImportPlanProperty;
 import io.jmix.core.ReferenceImportBehaviour;
@@ -42,4 +43,15 @@ public interface EntityImportPlanJsonBuilder {
      * @return an EntityImportPlan
      */
     EntityImportPlan buildFromJson(String json, MetaClass metaClass);
+
+    /**
+     * Builds an {@link EntityImportPlan} that contains properties from all collection members. If the first member contains the
+     * property A, and the second one contains a property B then a result import plan will contain both properties A and B.
+     * Plans for nested collections (2nd level compositions) are also merged.
+     *
+     * @param jsonArray a JsonArray
+     * @param metaClass a metaClass of entities that are in the jsonArray
+     * @return an EntityImportPlan
+     */
+    EntityImportPlan buildFromJsonArray(JsonArray jsonArray, MetaClass metaClass);
 }

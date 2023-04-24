@@ -28,7 +28,7 @@ import io.jmix.ui.component.Button
 import io.jmix.ui.component.formatter.NumberFormatter
 import io.jmix.ui.screen.MapScreenOptions
 import io.jmix.ui.screen.OpenMode
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext

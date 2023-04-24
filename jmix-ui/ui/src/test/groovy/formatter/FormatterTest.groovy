@@ -29,7 +29,7 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Label
 import io.jmix.ui.component.formatter.DateFormatter
 import io.jmix.ui.component.formatter.NumberFormatter
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.junit.jupiter.api.AfterEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate

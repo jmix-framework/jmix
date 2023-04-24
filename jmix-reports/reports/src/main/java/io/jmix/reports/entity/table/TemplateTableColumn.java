@@ -21,7 +21,6 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
-import java.io.Serializable;
 import java.util.UUID;
 
 @JmixEntity(name = "report_TemplateTableColumn")

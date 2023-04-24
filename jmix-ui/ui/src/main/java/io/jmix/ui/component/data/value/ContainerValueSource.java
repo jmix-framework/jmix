@@ -217,6 +217,7 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
         if (this.state != state) {
             this.state = state;
 
+            // BindingState.ACTIVE should always be thrown for bound component listeners
             events.publish(StateChangeEvent.class, new StateChangeEvent(this, BindingState.ACTIVE));
         }
     }

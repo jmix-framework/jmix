@@ -48,6 +48,7 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.ComponentView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
@@ -71,7 +72,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
 
@@ -97,7 +98,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load #picker component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "#picker component will be loaded"
         verifyAll(componentView."${picker}Id" as ValuePickerBase) {
@@ -115,12 +116,21 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             requiredIndicatorVisible
+            tabIndex == 3
             themeNames.containsAll(["theme1", "theme2"])
             title == "titleString"
             visible
             width == "100px"
             getAction("action1") != null
             getAction("action2") != null
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
 
         where:
@@ -132,7 +142,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "ValuePicker component will be loaded with the value of the property"
@@ -152,7 +162,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "ValuesPicker component will be loaded with the value of the property"
@@ -173,7 +183,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
         def customer = dataManager.load(Order).all().one().customer
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "EntityPicker component will be loaded with the value of the property"
@@ -196,7 +206,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load comboBoxPicker component"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "ComboBoxPicker component will be loaded"
         verifyAll(componentView.comboBoxPickerId) {
@@ -224,12 +234,21 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             required
             requiredIndicatorVisible
+            tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
             visible
             width == "100px"
             getAction("action1") != null
             getAction("action2") != null
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -238,7 +257,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
         def customer = dataManager.load(Order).all().one().customer
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "EntityComboBox component will be loaded with the value of the property"
@@ -248,7 +267,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
-            clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
@@ -268,11 +286,20 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
             visible
             width == "100px"
             value == customer
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
 
         when: "metaClassComboBoxId is loaded"

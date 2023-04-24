@@ -16,6 +16,8 @@
 
 package io.jmix.charts.widget.amcharts.events.period;
 
-public interface PeriodSelectorChangeListener {
+import com.vaadin.event.SerializableEventListener;
+
+public interface PeriodSelectorChangeListener extends SerializableEventListener {
     void onChange(PeriodSelectorChangeEvent event);
 }

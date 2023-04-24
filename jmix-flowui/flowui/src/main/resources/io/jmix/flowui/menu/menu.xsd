@@ -38,34 +38,81 @@
     <xs:complexType name="menuOrItem">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element type="itemType" name="item"/>
-                <xs:element type="menuType" name="menu"/>
+                <xs:element name="item" type="itemType"/>
+                <xs:element name="menu" type="menuType"/>
+                <xs:element name="separator"/>
             </xs:choice>
         </xs:sequence>
+
         <xs:attribute name="order" type="xs:integer"/>
     </xs:complexType>
 
     <xs:complexType name="menuType">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element type="itemType" name="item"/>
-                <xs:element type="menuType" name="menu"/>
+                <xs:element name="item" type="itemType"/>
+                <xs:element name="menu" type="menuType"/>
+                <xs:element name="separator"/>
             </xs:choice>
         </xs:sequence>
-        <xs:attribute type="xs:string" name="id"/>
-        <xs:attribute type="resourceString" name="title"/>
-        <xs:attribute type="resourceString" name="description"/>
-        <xs:attribute type="xs:string" name="className"/>
-        <xs:attribute type="xs:string" name="icon"/>
-        <xs:attribute type="xs:boolean" name="opened"/>
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="title" type="resourceString"/>
+        <xs:attribute name="description" type="resourceString"/>
+        <xs:attribute name="classNames" type="xs:string"/>
+        <xs:attribute name="icon" type="xs:string"/>
+        <xs:attribute name="opened" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="itemType">
-        <xs:attribute type="xs:string" name="id"/>
-        <xs:attribute type="xs:string" name="view"/>
-        <xs:attribute type="resourceString" name="title"/>
-        <xs:attribute type="resourceString" name="description"/>
-        <xs:attribute type="xs:string" name="className"/>
-        <xs:attribute type="xs:string" name="icon"/>
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="properties" type="viewProperties" minOccurs="0"/>
+                <xs:element name="queryParameters" type="parameters" minOccurs="0"/>
+                <xs:element name="routeParameters" type="parameters" minOccurs="0"/>
+            </xs:choice>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+
+        <xs:attribute name="view" type="xs:string"/>
+
+        <xs:attribute name="bean" type="xs:string"/>
+        <xs:attribute name="beanMethod" type="xs:string"/>
+
+        <xs:attribute name="shortcutCombination" type="xs:string"/>
+        <xs:attribute name="title" type="resourceString"/>
+        <xs:attribute name="description" type="resourceString"/>
+        <xs:attribute name="className" type="xs:string"/>
+        <xs:attribute name="icon" type="xs:string"/>
     </xs:complexType>
+
+    <xs:complexType name="viewProperties">
+        <xs:sequence>
+            <xs:element name="property" type="viewProperty" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="parameters">
+        <xs:sequence>
+            <xs:element name="parameter" type="parameter" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="viewProperty">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string"/>
+
+        <xs:attributeGroup ref="viewPropertyEntity"/>
+    </xs:complexType>
+
+    <xs:complexType name="parameter">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:attributeGroup name="viewPropertyEntity">
+        <xs:attribute name="entityClass" type="xs:string"/>
+        <xs:attribute name="entityId" type="xs:string"/>
+        <xs:attribute name="entityFetchPlan" type="xs:string"/>
+    </xs:attributeGroup>
 </xs:schema>

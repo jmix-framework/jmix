@@ -33,7 +33,8 @@ public interface SupportsTypedValue<C extends Component, E extends HasValue.Valu
 
     Registration addTypedValueChangeListener(ComponentEventListener<TypedValueChangeEvent<C, V>> listener);
 
-    class TypedValueChangeEvent<C extends Component, V> extends ComponentEvent<C> {
+    class TypedValueChangeEvent<C extends Component, V> extends ComponentEvent<C>
+            implements HasValue.ValueChangeEvent<V> {
 
         protected V value;
         protected V oldValue;
@@ -45,12 +46,21 @@ public interface SupportsTypedValue<C extends Component, E extends HasValue.Valu
             this.oldValue = oldValue;
         }
 
+        @SuppressWarnings("unchecked")
+        @Override
+        public HasValue<?, V> getHasValue() {
+            // It's safe to cast, because SupportsTypedValue extends HasValue
+            return ((HasValue<?, V>) getSource());
+        }
+
         @Nullable
+        @Override
         public V getValue() {
             return value;
         }
 
         @Nullable
+        @Override
         public V getOldValue() {
             return oldValue;
         }

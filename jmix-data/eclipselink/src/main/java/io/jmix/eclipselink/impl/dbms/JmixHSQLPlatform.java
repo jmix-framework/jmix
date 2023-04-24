@@ -18,7 +18,9 @@ package io.jmix.eclipselink.impl.dbms;
 
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.HSQLPlatform;
+import org.eclipse.persistence.queries.Call;
 
+import java.io.Writer;
 import java.sql.Types;
 
 public class JmixHSQLPlatform extends HSQLPlatform implements UuidMappingInfo {
@@ -27,6 +29,11 @@ public class JmixHSQLPlatform extends HSQLPlatform implements UuidMappingInfo {
         //nested joins supports in hsqldb from version 1.9
         //https://sourceforge.net/p/hsqldb/feature-requests/206/
         return true;
+    }
+
+    @Override
+    public int appendParameterInternal(Call call, Writer writer, Object parameter) {
+        return super.appendParameterInternal(call, writer, convertToDataValueIfUUID(parameter));
     }
 
     @Override

@@ -27,18 +27,14 @@ import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.model.InstallSubject;
-import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.ViewData;
-import io.jmix.flowui.view.*;
+import io.jmix.flowui.model.*;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector.AnnotatedMethod;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector.InjectElement;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector.ViewIntrospectionData;
 import io.jmix.flowui.sys.delegate.*;
 import io.jmix.flowui.sys.event.UiEventListenerMethodAdapter;
 import io.jmix.flowui.sys.event.UiEventsManager;
+import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -59,7 +55,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static io.jmix.flowui.sys.ValuePathHelper.pathPrefix;
+import static io.jmix.flowui.sys.ValuePathHelper.*;
 import static java.lang.reflect.Proxy.newProxyInstance;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
@@ -181,7 +177,7 @@ public class ViewControllerDependencyInjector {
 
         } else if (Action.class.isAssignableFrom(type)) {
             // Injecting an action
-            String[] elements = ValuePathHelper.parse(name);
+            String[] elements = parse(name);
             if (elements.length == 1) {
                 ViewActions viewActions = ViewControllerUtils.getViewActions(controller);
                 return viewActions.getAction(name);
@@ -196,7 +192,7 @@ public class ViewControllerDependencyInjector {
                 return hasActions.get().getAction(elements[elements.length - 1]);
             }
         } else if (Facet.class.isAssignableFrom(type)) {
-            String[] elements = ValuePathHelper.parse(name);
+            String[] elements = parse(name);
             if (elements.length != 1) {
                 throw new IllegalStateException(
                         String.format("Can't inject %s. Incorrect path: '%s'", Facet.class.getSimpleName(), name));
@@ -610,7 +606,7 @@ public class ViewControllerDependencyInjector {
 
         ViewFacets viewFacets = ViewControllerUtils.getViewFacets(controller);
 
-        String[] elements = ValuePathHelper.parse(target);
+        String[] elements = parse(target);
         ComponentContainer viewLayout = ((ComponentContainer) controller.getContent());
         if (elements.length == 1) {
             ViewActions viewActions = ViewControllerUtils.getViewActions(controller);
@@ -626,6 +622,10 @@ public class ViewControllerDependencyInjector {
 
             return viewFacets.getFacet(target);
         } else if (elements.length > 1) {
+            if (target.contains(".@")) {
+                return findSubTargetRecursively(viewLayout, elements);
+            }
+
             String id = elements[elements.length - 1];
 
             Optional<Component> componentOpt = viewLayout.findComponent(pathPrefix(elements));
@@ -659,6 +659,48 @@ public class ViewControllerDependencyInjector {
             if (facet instanceof HasSubParts) {
                 return ((HasSubParts) facet).getSubPart(id);
             }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    protected Object findSubTargetRecursively(ComponentContainer viewLayout, String[] elements) {
+        String parentComponentId = pathPrefix(elements, elements.length - 1);
+        String[] subTargets = parse(pathSuffix(elements));
+
+        Optional<Component> component = viewLayout.findComponent(parentComponentId);
+
+        if (component.isPresent()) {
+            Object subTarget = component.get();
+            Class<?> targetClass = subTarget.getClass();
+
+            for (String element : subTargets) {
+                String subTargetGetterMethod = "get" + StringUtils.capitalize(element);
+
+                try {
+                    Method elementGetterMethod = targetClass.getMethod(subTargetGetterMethod);
+
+                    subTarget = elementGetterMethod.invoke(subTarget);
+                    targetClass = subTarget.getClass();
+
+                } catch (NoSuchMethodException e) {
+                    log.trace("Skip @{} method for {} : can't find getter {} for subclass {} ",
+                            Install.class.getSimpleName(),
+                            component.getClass().getSimpleName(),
+                            subTargetGetterMethod,
+                            targetClass.getSimpleName()
+                    );
+
+                } catch (InvocationTargetException | IllegalAccessException e) {
+                    log.trace("Can't invoke getter {} for class {} ",
+                            subTargetGetterMethod,
+                            targetClass.getSimpleName()
+                    );
+                }
+            }
+
+            return subTarget;
         }
 
         return null;

@@ -21,6 +21,8 @@ import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
@@ -33,16 +35,12 @@ import io.jmix.flowui.kit.event.EventBus;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         implements DropdownButtonComponent, AttachNotifier, DetachNotifier,
-        HasTitle, HasSize, HasTheme, HasEnabled, HasStyle, HasText {
+        HasTitle, HasSize, HasTheme, HasEnabled, HasStyle, HasText, Focusable<AbstractDropdownButton>, HasTooltip {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
 
@@ -373,6 +371,41 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     @Override
     public boolean isEnabled() {
         return getContent().isEnabled();
+    }
+
+    @Override
+    public void setTabIndex(int tabIndex) {
+        getContent().setTabIndex(tabIndex);
+    }
+
+    @Override
+    public int getTabIndex() {
+        return getContent().getTabIndex();
+    }
+
+    @Override
+    public void focus() {
+        getContent().focus();
+    }
+
+    @Override
+    public void blur() {
+        getContent().blur();
+    }
+
+    @Override
+    public ShortcutRegistration addFocusShortcut(Key key, KeyModifier... keyModifiers) {
+        return getContent().addFocusShortcut(key, keyModifiers);
+    }
+
+    @Override
+    public Tooltip setTooltipText(String text) {
+        return getContent().setTooltipText(text);
+    }
+
+    @Override
+    public Tooltip getTooltip() {
+        return getContent().getTooltip();
     }
 
     @Override

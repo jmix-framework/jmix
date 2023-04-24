@@ -16,13 +16,14 @@
 
 package io.jmix.auditflowui.view.entitylog;
 
+import com.google.common.io.Files;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -34,13 +35,7 @@ import io.jmix.audit.entity.EntityLogAttr;
 import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
-import io.jmix.core.ExtendedEntities;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.ReferenceToEntitySupport;
-import io.jmix.core.TimeSource;
+import io.jmix.core.*;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -53,46 +48,43 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.download.DownloadFormat;
+import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.LookupComponent;
-import io.jmix.flowui.view.StandardListView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.view.*;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static io.jmix.flowui.download.DownloadFormat.JSON;
+import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
 @Route(value = "audit/entitylog", layout = DefaultMainViewParent.class)
 @ViewController("entityLog.view")
@@ -100,29 +92,7 @@ import java.util.stream.Collectors;
 @LookupComponent("entityLogTable")
 @DialogMode(width = "50em", height = "37.5em")
 public class EntityLogView extends StandardListView<EntityLogItem> {
-
-    @Autowired
-    protected Messages messages;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected TimeSource timeSource;
-    @Autowired
-    protected ReferenceToEntitySupport referenceToEntitySupport;
-    @Autowired
-    protected ExtendedEntities extendedEntities;
-    @Autowired
-    protected EntityLog entityLog;
-    @Autowired
-    protected UiComponents uiComponents;
-    @Autowired
-    protected MetadataTools metadataTools;
-    @Autowired
-    protected Dialogs dialogs;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected PolicyStore policyStore;
+    private static final Logger log = LoggerFactory.getLogger(EntityLogView.class);
 
     @ViewComponent
     protected CollectionContainer<LoggedEntity> loggedEntityDc;
@@ -151,37 +121,78 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected HorizontalLayout actionsPaneLayout;
     @ViewComponent
-    protected DateTimePicker tillDateField;
+    protected TypedDatePicker<LocalDate> tillDateField;
     @ViewComponent
-    protected DateTimePicker fromDateField;
+    protected TypedTimePicker<LocalTime> tillTimeField;
+    @ViewComponent
+    protected TypedDatePicker<LocalDate> fromDateField;
+    @ViewComponent
+    protected TypedTimePicker<LocalTime> fromTimeField;
     @ViewComponent
     protected Button cancelBtn;
+    @ViewComponent
+    protected FileUploadField importField;
     @ViewComponent
     protected Checkbox selectAllCheckBox;
     @ViewComponent
     protected CollectionContainer<EntityLogAttr> entityLogAttrDc;
+    @ViewComponent
+    protected VerticalLayout loggedEntityTableBox;
+    @ViewComponent
+    protected Tabs tabsheet;
+    @ViewComponent
+    protected VerticalLayout viewWrapper;
+    @ViewComponent
+    protected FormLayout setupWrapper;
+    @ViewComponent
+    protected VerticalLayout loggedEntityMiscBox;
+    @ViewComponent
+    protected CheckboxGroup<String> attributesCheckboxGroup;
+
     @Autowired
     protected UserRepository userRepository;
     @Autowired
     protected MessageTools messageTools;
     @Autowired
     protected DialogWindows dialogBuilders;
-    @ViewComponent
-    protected Tabs tabsheet;
-    @ViewComponent
-    protected VerticalLayout viewWrapper;
-    @ViewComponent
-    protected HorizontalLayout setupWrapper;
-    @ViewComponent
-    protected VerticalLayout loggedEntityMiscBox;
-    @ViewComponent
-    protected CheckboxGroup<String> attributesCheckboxGroup;
+    @Autowired
+    protected EntityImportExport entityImportExport;
+    @Autowired
+    protected EntityImportPlans entityImportPlans;
+    @Autowired
+    protected Downloader downloader;
+    @Autowired
+    protected FetchPlans fetchPlans;
+    @Autowired
+    protected SecureOperations secureOperations;
+    @Autowired
+    protected Messages messages;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected TimeSource timeSource;
+    @Autowired
+    protected ReferenceToEntitySupport referenceToEntitySupport;
+    @Autowired
+    protected ExtendedEntities extendedEntities;
+    @Autowired
+    protected EntityLog entityLog;
+    @Autowired
+    protected UiComponents uiComponents;
+    @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected Dialogs dialogs;
+    @Autowired
+    protected Notifications notifications;
+    @Autowired
+    protected PolicyStore policyStore;
+
+
     protected Object selectedEntity;
 
     // allow or not selectAllCheckBox to change values of other checkboxes
     protected boolean canSelectAllCheckboxGenerateEvents = true;
-    @Autowired
-    protected SecureOperations secureOperations;
 
     protected void onSelectedTabChange(Tabs.SelectedChangeEvent event) {
         String tabId = event.getSelectedTab().getId()
@@ -200,6 +211,31 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                 viewWrapper.setVisible(false);
                 setupWrapper.setVisible(false);
         }
+    }
+
+    protected LocalDateTime getTillDateTime() {
+        LocalDateTime tillDateTime = null;
+        if (tillDateField.getTypedValue() != null || tillTimeField.getTypedValue() != null) {
+
+            LocalDate afterDate = tillDateField.getTypedValue() != null ? tillDateField.getTypedValue() :
+                    LocalDate.now();
+            LocalTime afterTime = tillTimeField.getTypedValue() != null ? tillTimeField.getTypedValue() :
+                    LocalTime.MAX;
+            tillDateTime = LocalDateTime.of(afterDate, afterTime);
+        }
+        return tillDateTime;
+    }
+
+    protected LocalDateTime getFromDateTime() {
+        LocalDateTime fromDateTime = null;
+        if (fromDateField.getTypedValue() != null || fromTimeField.getTypedValue() != null) {
+            LocalDate fromDate = fromDateField.getTypedValue() != null ? fromDateField.getTypedValue() :
+                    LocalDate.now();
+            LocalTime fromTime = fromTimeField.getTypedValue() != null ? fromTimeField.getTypedValue() :
+                    LocalTime.MIN;
+            fromDateTime = LocalDateTime.of(fromDate, fromTime);
+        }
+        return fromDateTime;
     }
 
     @Subscribe
@@ -221,39 +257,45 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                 .map(UserDetails::getUsername)
                 .collect(Collectors.toList()));
         filterEntityNameField.setItems(entityMetaClassesMap.values());
-        instancePicker.setFormatter(value -> value!=null ? metadataTools.getInstanceName(value): null);
+        instancePicker.setFormatter(value -> value != null ? metadataTools.getInstanceName(value) : null);
 
         disableControls();
         setDateFieldTime();
 
         entityLogTable.addSelectionListener(this::onEntityLogTableSelect);
         loggedEntityTable.addSelectionListener(this::onLoggedEntityTableSelectEvent);
-
         entityLogTable.addColumn(this::generateEntityInstanceNameColumn
                 ).setHeader(messages.getMessage(this.getClass(), "entity"))
                 .setSortable(true);
 
         entityLogTable.addColumn(this::generateEntityIdColumn)
                 .setHeader(messages.getMessage(this.getClass(), "entityId"))
+                .setResizable(true)
                 .setSortable(true);
 
         entityLogAttrTable.addColumn(entityLogAttr ->
                         evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getOldValue()))
                 .setHeader(messages.getMessage(this.getClass(), "oldValue"))
-                .setKey("oldValue").setSortable(true);
+                .setResizable(true).setKey("oldValue").setSortable(true);
         entityLogAttrTable.addColumn(entityLogAttr ->
                         evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getValue()))
                 .setHeader(messages.getMessage(this.getClass(), "newValue"))
-                .setKey("newValue").setSortable(true);
+                .setResizable(true).setKey("newValue").setSortable(true);
 
         entityLogAttrTable.addColumn(this::generateAttributeColumn)
                 .setHeader(messages.getMessage(this.getClass(), "attribute"))
-                .setKey("attribute").setSortable(true);
-        List<Grid.Column<EntityLogAttr>> columnsOrder = new ArrayList<>();
-        for (int i = entityLogAttrTable.getColumns().size() - 1; i >= 0; i--) {
-            columnsOrder.add(entityLogAttrTable.getColumns().get(i));
-        }
+                .setResizable(true).setKey("attribute").setSortable(true);
+
+        List<Grid.Column<EntityLogAttr>> columnsOrder = new ArrayList<>(Arrays.asList(
+                entityLogAttrTable.getColumnByKey("attribute"),
+                entityLogAttrTable.getColumnByKey("newValue"),
+                entityLogAttrTable.getColumnByKey("valueId"),
+                entityLogAttrTable.getColumnByKey("oldValue"),
+                entityLogAttrTable.getColumnByKey("oldValueId")
+        ));
         entityLogAttrTable.setColumnOrder(columnsOrder);
+
+        setupWrapper.setColspan(loggedEntityTableBox, 2);
     }
 
     protected Object generateAttributeColumn(EntityLogAttr entityLogAttr) {
@@ -340,7 +382,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         return null;
     }
 
-    protected void onLoggedEntityTableSelectEvent(SelectionEvent<Grid<LoggedEntity>, LoggedEntity> event){
+    protected void onLoggedEntityTableSelectEvent(SelectionEvent<Grid<LoggedEntity>, LoggedEntity> event) {
         LoggedEntity entity = event.getFirstSelectedItem().orElse(null);
         if (entity != null) {
             loggedAttrDl.setParameter("entityId", entity.getId());
@@ -365,9 +407,9 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         instancePicker.clear();
     }
 
-    protected void onEntityLogTableSelect (SelectionEvent<Grid<EntityLogItem>, EntityLogItem> event1) {
+    protected void onEntityLogTableSelect(SelectionEvent<Grid<EntityLogItem>, EntityLogItem> event1) {
         EntityLogItem entity = event1.getFirstSelectedItem().orElse(null);
-        if (entity!=null) {
+        if (entity != null) {
             entityLogAttrDc.setItems(entity.getAttributes());
         } else {
             entityLogAttrDc.setItems(null);
@@ -375,7 +417,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     @Subscribe("attributesCheckboxGroup")
-    protected void onAttributesCheckboxGroupValueChange (AbstractField.ComponentValueChangeEvent<CheckboxGroup<String>,
+    protected void onAttributesCheckboxGroupValueChange(AbstractField.ComponentValueChangeEvent<CheckboxGroup<String>,
             Set<String>> event) {
         if (event.getValue().size() == event.getSource()
                 .getListDataView().getItems().toArray().length) {
@@ -391,7 +433,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     @Subscribe("selectAllCheckBox")
-    protected void onSelectAllCheckBoxChange(AbstractField.ComponentValueChangeEvent<Checkbox, Boolean> event){
+    protected void onSelectAllCheckBoxChange(AbstractField.ComponentValueChangeEvent<Checkbox, Boolean> event) {
         if (selectAllCheckBox.getValue()) {
             attributesCheckboxGroup.setValue(new HashSet<>(attributesCheckboxGroup.getListDataView()
                     .getItems().collect(Collectors.toList())));
@@ -463,14 +505,14 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                             if (allowLogProperty(embeddedProperty)) {
                                 String name = String.format("%s.%s", property.getName(), embeddedProperty.getName());
                                 items.add(name);
-                                if (attributeIsSelected(enabledAttr, name, metaClass)){
+                                if (attributeIsSelected(enabledAttr, name, metaClass)) {
                                     selectedItems.add(name);
                                 }
                             }
                         }
                     } else {
                         items.add(property.getName());
-                        if (attributeIsSelected(enabledAttr, property.getName(), metaClass)){
+                        if (attributeIsSelected(enabledAttr, property.getName(), metaClass)) {
                             selectedItems.add(property.getName());
                         }
                     }
@@ -483,7 +525,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                     if (allowLogProperty(property)) {
 
                         items.add(property.getName());
-                        if (attributeIsSelected(enabledAttr, property.getName(), metaClass)){
+                        if (attributeIsSelected(enabledAttr, property.getName(), metaClass)) {
                             selectedItems.add(property.getName());
                         }
                     }
@@ -514,10 +556,14 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
     protected void setDateFieldTime() {
         Date date = timeSource.currentTimestamp();
-        fromDateField.setValue(LocalDateTime.ofInstant(DateUtils.addDays(date, -1).toInstant(),
-                ZoneId.systemDefault()));
-        tillDateField.setValue(LocalDateTime.ofInstant(DateUtils.addDays(date, 1).toInstant(),
-                ZoneId.systemDefault()));
+        LocalDateTime dayAgo = LocalDateTime.ofInstant(DateUtils.addDays(date, -1).toInstant(),
+                ZoneId.systemDefault());
+        fromDateField.setValue(dayAgo.toLocalDate());
+        fromTimeField.setValue(dayAgo.toLocalTime());
+        LocalDateTime nextDay = LocalDateTime.ofInstant(DateUtils.addDays(date, 1).toInstant(),
+                ZoneId.systemDefault());
+        tillDateField.setValue(nextDay.toLocalDate());
+        tillTimeField.setValue(nextDay.toLocalTime());
     }
 
     protected boolean isEntityHaveAttribute(String propertyName, MetaClass metaClass, Set<LoggedAttribute> enabledAttr) {
@@ -546,7 +592,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     @Subscribe("instancePicker.selectAction")
-    protected void onSelectAction(ActionPerformedEvent event){
+    protected void onSelectAction(ActionPerformedEvent event) {
         if (instancePicker.isEnabled()) {
             final MetaClass metaClass = metadata.getSession().getClass(filterEntityNameField.getValue());
             if (metaClass == null) {
@@ -560,7 +606,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
             }
             try {
                 DialogWindow lookup = dialogBuilders.lookup(this, metaClass.getJavaClass())
-                        .withSelectHandler(items->{
+                        .withSelectHandler(items -> {
                             if (!items.isEmpty()) {
                                 Object item = items.iterator().next();
                                 selectedEntity = item;
@@ -639,15 +685,17 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         } else {
             entityLogDl.removeParameter("entityName");
         }
-        if (fromDateField.getValue() != null) {
+        LocalDateTime fromDateTime = getFromDateTime();
+        if (getFromDateTime() != null) {
             entityLogDl.setParameter("fromDate",
-                    Date.from(fromDateField.getValue().atZone(ZoneId.systemDefault()).toInstant()));
+                    Date.from(fromDateTime.atZone(ZoneId.systemDefault()).toInstant()));
         } else {
             entityLogDl.removeParameter("fromDate");
         }
+        LocalDateTime tillDateTime = getTillDateTime();
         if (tillDateField.getValue() != null) {
             entityLogDl.setParameter("tillDate",
-                    Date.from(tillDateField.getValue().atZone(ZoneId.systemDefault()).toInstant()));
+                    Date.from(tillDateTime.atZone(ZoneId.systemDefault()).toInstant()));
         } else {
             entityLogDl.removeParameter("tillDate");
         }
@@ -661,15 +709,9 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         changeTypeField.clear();
         instancePicker.clear();
         fromDateField.clear();
+        fromTimeField.clear();
         tillDateField.clear();
-    }
-
-    @Subscribe("reloadBtn")
-    protected void onReloadBtnClick(ClickEvent<Button> event) {
-        entityLog.invalidateCache();
-        notifications.create(messages.getMessage(EntityLogView.class, "changesApplied"))
-                .withType(Notifications.Type.DEFAULT)
-                .show();
+        tillTimeField.clear();
     }
 
     protected boolean allowLogProperty(MetaProperty metaProperty) {
@@ -696,9 +738,18 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @Subscribe("saveBtn")
     protected void onSaveBtnClick(ClickEvent<Button> event) {
         LoggedEntity selectedEntity = loggedEntityDc.getItem();
+        final LoggedEntity selected = selectedEntity;
+        if (loggedEntityDc.getItems().stream()
+                .anyMatch(e -> !(selected == e) && e.getName().equals(selected.getName()))) {
+            notifications.create(messages.getMessage(EntityLogView.class, "settingAlreadyExist"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+            return;
+        }
+
         DataContext dataContext = loggedEntityDl.getDataContext();
         selectedEntity = dataContext.merge(selectedEntity);
-        Set<LoggedAttribute> enabledAttributes = selectedEntity.getAttributes()!=null ?
+        Set<LoggedAttribute> enabledAttributes = selectedEntity.getAttributes() != null ?
                 selectedEntity.getAttributes() : new HashSet<>();
         Set<String> selectedItems = attributesCheckboxGroup.getSelectedItems();
         for (Object c : attributesCheckboxGroup.getListDataView().getItems().toArray()) {
@@ -739,9 +790,8 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                                 DataContext dataContext = getDataContext();
                                 for (LoggedEntity item : selectedItems) {
                                     if (item.getAttributes() != null) {
-                                        Set<LoggedAttribute> attributes = new HashSet<>(item.getAttributes());
-                                        for (LoggedAttribute attribute : attributes) {
-                                            dataContext.remove(attribute);
+                                        for (LoggedAttribute loggedAttribute : new HashSet<>(item.getAttributes())) {
+                                            dataContext.remove(loggedAttribute);
                                         }
                                         dataContext.save();
                                     }
@@ -762,5 +812,100 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         disableControls();
         loggedEntityTable.setEnabled(true);
         loggedEntityTable.focus();
+    }
+
+    @Subscribe("loggedEntityTable.exportJSON")
+    public void onRoleModelsTableExportJSON(ActionPerformedEvent event) {
+        export(JSON);
+    }
+
+    @Subscribe("loggedEntityTable.exportZIP")
+    public void onRoleModelsTableExportZIP(ActionPerformedEvent event) {
+        export(ZIP);
+    }
+
+    protected void export(DownloadFormat downloadFormat) {
+        List<Object> dbRowLevelRoles = getExportEntityList();
+
+        if (dbRowLevelRoles.isEmpty()) {
+            notifications.create(messages.getMessage(EntityLogView.class, "nothingToExport"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
+        }
+
+        try {
+            byte[] data = downloadFormat == JSON ?
+                    entityImportExport.exportEntitiesToJSON(dbRowLevelRoles, buildExportFetchPlan()).getBytes(StandardCharsets.UTF_8) :
+                    entityImportExport.exportEntitiesToZIP(dbRowLevelRoles, buildExportFetchPlan());
+            downloader.download(data, String.format("LoggedEntity.%s", downloadFormat.getFileExt()), downloadFormat);
+
+        } catch (Exception e) {
+            log.warn("Unable to export loggedEntity", e);
+            notifications.create(messages.getMessage(EntityLogView.class, "error.exportFailed"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
+    }
+
+    protected List<Object> getExportEntityList() {
+        Collection<LoggedEntity> selected = loggedEntityTable.getSelectedItems();
+        if (selected.isEmpty() && loggedEntityTable.getItems() != null) {
+            selected = loggedEntityDc.getItems();
+        }
+
+        return new ArrayList<>(selected);
+    }
+
+    protected FetchPlan buildExportFetchPlan() {
+        return fetchPlans.builder(LoggedEntity.class)
+                .addFetchPlan(FetchPlan.BASE)
+                .add("attributes", FetchPlan.BASE)
+                .build();
+    }
+
+    @Subscribe("importField")
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
+        try {
+            byte[] bytes = importField.getValue();
+            Assert.notNull(bytes, "Uploaded file does not contains data");
+
+            List<Object> importedEntities = getImportedEntityList(event.getFileName(), bytes);
+
+            if (importedEntities.size() > 0) {
+                loggedEntityDl.load();
+                loggedAttrDl.load();
+
+                notifications.create(messages.getMessage(EntityLogView.class, "importSuccessful"))
+                        .withType(Notifications.Type.SUCCESS)
+                        .show();
+            }
+        } catch (Exception e) {
+            log.warn("Unable to import logged entity", e);
+            notifications.create(messages.getMessage(EntityLogView.class, "error.importFailed"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
+    }
+
+    protected List<Object> getImportedEntityList(String fileName, byte[] fileContent) {
+        Collection<Object> importedEntities;
+        if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
+            importedEntities = entityImportExport.importEntitiesFromJson(new String(fileContent, StandardCharsets.UTF_8), createEntityImportPlan());
+        } else {
+            importedEntities = entityImportExport.importEntitiesFromZIP(fileContent, createEntityImportPlan());
+        }
+        return new ArrayList<>(importedEntities);
+    }
+
+    protected EntityImportPlan createEntityImportPlan() {
+        return entityImportPlans.builder(LoggedEntity.class)
+                .addLocalProperties()
+                .addProperty(new EntityImportPlanProperty(
+                        "attributes",
+                        entityImportPlans.builder(LoggedAttribute.class).addLocalProperties().build(),
+                        CollectionImportPolicy.KEEP_ABSENT_ITEMS)
+                )
+                .build();
     }
 }

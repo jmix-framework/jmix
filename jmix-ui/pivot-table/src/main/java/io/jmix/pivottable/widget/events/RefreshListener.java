@@ -16,6 +16,8 @@
 
 package io.jmix.pivottable.widget.events;
 
-public interface RefreshListener {
+import com.vaadin.event.SerializableEventListener;
+
+public interface RefreshListener extends SerializableEventListener {
     void onRefresh(RefreshEvent event);
 }

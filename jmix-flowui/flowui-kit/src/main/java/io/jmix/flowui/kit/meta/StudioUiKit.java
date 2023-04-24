@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,4 +26,20 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface StudioUiKit {
+
+    /**
+     * Describes the required dependencies.
+     * Optional. If empty the ui kit will be used in Studio.
+     * The dependency should look like {@code group:name}
+     */
+    String[] requiredDependencies() default {};
+
+    /**
+     * Describes the required dependencies strategy.
+     * <p></p>
+     * If strategy is {@link RequiredDependenciesStrategy#AND} (default value)
+     * then all dependencies are required to use the ui kit in the Studio,
+     * otherwise any of the dependencies is enough.
+     */
+    RequiredDependenciesStrategy requiredDependenciesStrategy() default RequiredDependenciesStrategy.AND;
 }

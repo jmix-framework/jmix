@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://jobModelBrowse.caption"
+        focusComponent="jobModelsTable">
+    <data readOnly="true">
+        <collection id="jobModelsDc" class="io.jmix.quartz.model.JobModel"/>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="lookupSelectAction"
+                caption="msg:///actions.Select"
+                icon="LOOKUP_OK"
+                primary="true"
+                shortcut="${COMMIT_SHORTCUT}"/>
+        <action id="lookupCancelAction"
+                caption="msg:///actions.Cancel"
+                icon="LOOKUP_CANCEL"/>
+        <action id="applyFilter"
+                caption="msg:///actions.Apply"
+                icon="font-icon:SEARCH"/>
+    </actions>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="jobModelsTable" spacing="true">
+        <groupBox id="filter" spacing="true" caption="msg:///filter.emptyConfiguration.name" orientation="horizontal"
+                  collapsable="true" expand="spring">
+            <gridLayout spacing="true">
+                <columns count="4"/>
+                <rows>
+                    <row>
+                        <label value="msg://nameContains" align="MIDDLE_LEFT"/>
+                        <textField id="nameField"/>
+                        <label value="msg://groupContains" align="MIDDLE_LEFT"/>
+                        <textField id="groupField"/>
+                    </row>
+                    <row>
+                        <label value="msg://classContains" align="MIDDLE_LEFT"/>
+                        <textField id="classField"/>
+                        <label value="msg://jobState" align="MIDDLE_LEFT"/>
+                        <comboBox id="jobStateComboBox"/>
+                    </row>
+                </rows>
+            </gridLayout>
+            <button id="applyFilterBtn" action="applyFilter"/>
+            <label id="spring"/>
+        </groupBox>
+        <groupTable id="jobModelsTable"
+                    width="100%"
+                    dataContainer="jobModelsDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+                <action id="refresh" type="refresh"/>
+                <action id="executeNow" caption="msg://triggerJob" icon="PLAY_CIRCLE"/>
+                <action id="activate" caption="msg://resumeJob" icon="PLAY"/>
+                <action id="deactivate" caption="msg://pauseJob" icon="PAUSE"/>
+            </actions>
+            <columns>
+                <column id="jobName"/>
+                <column id="jobGroup" collapsed="true"/>
+                <column id="jobClass"/>
+                <column id="jobState"/>
+                <column id="jobSource"/>
+                <column id="triggerDescription"/>
+                <column id="lastFireDate">
+                    <formatter>
+                        <date format="msg://dateTimeWithSeconds"/>
+                    </formatter>
+                </column>
+                <column id="nextFireDate">
+                    <formatter>
+                        <date format="msg://dateTimeWithSeconds"/>
+                    </formatter>
+                </column>
+                <column id="description"/>
+            </columns>
+            <simplePagination/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="jobModelsTable.create"/>
+                <button id="editBtn" action="jobModelsTable.edit"/>
+                <button id="removeBtn" action="jobModelsTable.remove"/>
+                <button id="refreshBtn" action="jobModelsTable.refresh"/>
+                <button id="executeNowBtn" action="jobModelsTable.executeNow"/>
+                <button id="activateBtn" action="jobModelsTable.activate"/>
+                <button id="deactivateBtn" action="jobModelsTable.deactivate"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

@@ -36,6 +36,7 @@ public abstract class AbstractDetailsLoader<C extends Details> extends AbstractC
 
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
@@ -56,5 +57,10 @@ public abstract class AbstractDetailsLoader<C extends Details> extends AbstractC
                 resultComponent.addContent(componentLoader.getResultComponent());
             }
         }
+    }
+
+    @Override
+    protected boolean isChildElementIgnored(Element subElement) {
+        return "tooltip".equals(subElement.getName());
     }
 }

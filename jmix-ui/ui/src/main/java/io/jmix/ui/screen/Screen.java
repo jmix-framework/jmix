@@ -16,21 +16,23 @@
 
 package io.jmix.ui.screen;
 
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.TriggerOnce;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowInfo;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.WindowImplementation;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.navigation.UrlParamsChangedEvent;
 import io.jmix.ui.util.OperationResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
@@ -385,6 +387,14 @@ public abstract class Screen implements FrameOwner {
     }
 
     /**
+     * @param action target action
+     * @return true if action is {@link io.jmix.ui.action.Action.ScreenAction}
+     */
+    protected boolean isScreenAction(BaseAction action) {
+        return action instanceof Action.ScreenAction;
+    }
+
+    /**
      * Event sent when the screen controller and all its declaratively defined components are created, and dependency
      * injection is completed. Nested fragments are not initialized yet. Some visual components are not fully
      * initialized, for example buttons are not linked with actions.
@@ -461,7 +471,7 @@ public abstract class Screen implements FrameOwner {
      *         customersDl.load();
      *     }
      * </pre>
-     *
+     * <p>
      * You can abort the process of opening the screen by throwing an exception. Note that if you have created
      * notifications in this listener before the exception, they will still be shown even though the screen will not.
      *

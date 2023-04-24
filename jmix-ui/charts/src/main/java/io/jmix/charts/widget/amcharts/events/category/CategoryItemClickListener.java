@@ -16,7 +16,9 @@
 
 package io.jmix.charts.widget.amcharts.events.category;
 
-public interface CategoryItemClickListener {
+import com.vaadin.event.SerializableEventListener;
+
+public interface CategoryItemClickListener extends SerializableEventListener {
 
     void onClick(CategoryItemClickEvent event);
 }

@@ -21,20 +21,23 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.TextInputFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.kit.component.HasTitle;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 public class JmixEmailField extends EmailField implements SupportsValueSource<String>, SupportsValidation<String>,
-        HasRequired, ApplicationContextAware, InitializingBean {
+        SupportsStatusChangeHandler<JmixEmailField>, HasRequired, HasTitle, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -114,6 +117,22 @@ public class JmixEmailField extends EmailField implements SupportsValueSource<St
         } else {
             super.setInvalid(invalid);
         }
+    }
+
+    @Nullable
+    @Override
+    public String getErrorMessage() {
+        return fieldDelegate.getErrorMessage();
+    }
+
+    @Override
+    public void setErrorMessage(@Nullable String errorMessage) {
+        fieldDelegate.setErrorMessage(errorMessage);
+    }
+
+    @Override
+    public void setStatusChangeHandler(@Nullable Consumer<StatusContext<JmixEmailField>> handler) {
+        fieldDelegate.setStatusChangeHandler(handler);
     }
 
     @Override

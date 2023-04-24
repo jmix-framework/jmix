@@ -24,7 +24,7 @@
                 <query>select e from audit_LoggedEntity e order by e.name</query>
             </loader>
             <fetchPlan>
-                <property name="attributes" fetchPlan="_local"/>
+                <property name="attributes" fetchPlan="_base"/>
                 <property name="auto"/>
                 <property name="manual"/>
                 <property name="name"/>
@@ -84,6 +84,10 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <queryParameters>
+            <pagination component="paginationEntityLog"/>
+            <pagination component="paginationLoggedEntity"/>
+        </queryParameters>
     </facets>
     <layout>
         <tabs id="tabsheet" width="100%">
@@ -102,7 +106,11 @@
                     </responsiveSteps>
                     <comboBox id="userField" label="msg://user" autoOpen="true"/>
                     <select id="changeTypeField" label="msg://changeType"/>
-                    <dateTimePicker id="fromDateField" label="msg://from" datatype="dateTime"/>
+                    <div classNames="datetime-picker-container">
+                        <datePicker id="fromDateField" datatype="localDate"
+                                    label="msg://from"/>
+                        <timePicker id="fromTimeField" datatype="localTime"/>
+                    </div>
 
                     <comboBox label="msg://entity" id="filterEntityNameField"/>
                     <valuePicker id="instancePicker" label="msg://instance" enabled="false">
@@ -111,12 +119,17 @@
                             <action id="valueClearAction" type="value_clear"/>
                         </actions>
                     </valuePicker>
-                    <dateTimePicker id="tillDateField" label="msg://till" datatype="dateTime"/>
+                    <div classNames="datetime-picker-container">
+                        <datePicker id="tillDateField" datatype="localDate"
+                                    label="msg://till"/>
+                        <timePicker id="tillTimeField" datatype="localTime"/>
+                    </div>
 
                 </formLayout>
                 <hbox>
                     <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
                     <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
+                    <simplePagination id="paginationEntityLog" dataLoader="entityLogDl"/>
                 </hbox>
             </details>
             <formLayout>
@@ -126,38 +139,54 @@
                 </responsiveSteps>
                 <dataGrid id="entityLogTable" dataContainer="entityLogDc">
                     <columns>
-                        <column property="eventTs"/>
-                        <column property="username"/>
-                        <column property="type"/>
-                        <column property="entityInstanceName"/>
+                        <column property="eventTs" resizable="true"/>
+                        <column property="username" resizable="true"/>
+                        <column property="type" resizable="true"/>
+                        <column property="entityInstanceName" resizable="true"/>
                     </columns>
                 </dataGrid>
 
                 <dataGrid id="entityLogAttrTable" width="100%" dataContainer="entityLogAttrDc">
                     <columns>
-                        <column property="valueId"/>
-                        <column property="oldValueId"/>
+                        <column property="valueId" resizable="true"/>
+                        <column property="oldValueId" resizable="true"/>
                     </columns>
                 </dataGrid>
 
             </formLayout>
 
         </vbox>
-
-        <hbox id="setupWrapper" visible="false" width="100%">
+        
+        <formLayout id="setupWrapper" visible="false" width="100%">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="32em" columns="3"/>
+            </responsiveSteps>
             <vbox id="loggedEntityTableBox"
                   expand="loggedEntityTable" padding="false">
                 <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
                     <button id="createBtn" action="loggedEntityTable.create"/>
                     <button id="editBtn" action="loggedEntityTable.edit"/>
                     <button id="removeBtn" action="loggedEntityTable.remove"/>
-                    <button id="reloadBtn" icon="CHECK" text="msg://reloadConfiguration"/>
+                    <dropdownButton id="exportBtn" text="msg://exportMenu.text" icon="DOWNLOAD">
+                        <items>
+                            <actionItem id="exportJSONItem" ref="loggedEntityTable.exportJSON"/>
+                            <actionItem id="exportZIPItem" ref="loggedEntityTable.exportZIP"/>
+                        </items>
+                    </dropdownButton>
+                    <fileUploadField id="importField"
+                                     uploadIcon="UPLOAD"
+                                     uploadText="msg://importMenu.text"
+                                     acceptedFileTypes=".json,.zip"/>
+                    <simplePagination id="paginationLoggedEntity" dataLoader="loggedEntityDl"/>
                 </hbox>
                 <dataGrid id="loggedEntityTable" minHeight="20em" dataContainer="loggedEntityDc">
                     <actions>
                         <action id="create" type="create" icon="FILE_O"/>
                         <action id="edit" type="edit" icon="PENCIL"/>
                         <action id="remove" type="remove" icon="CLOSE"/>
+                        <action id="exportJSON" text="msg://actions.exportJSON"/>
+                        <action id="exportZIP" text="msg://actions.exportZIP"/>
                     </actions>
                     <columns>
                         <column property="name"/>
@@ -166,7 +195,7 @@
                     </columns>
                 </dataGrid>
             </vbox>
-            <vbox id="loggedEntityMiscBox" width="32em" padding="false" expand="attributesBox">
+            <vbox id="loggedEntityMiscBox" padding="false" expand="attributesBox">
                 <comboBox id="entityNameField" label="msg://name" width="100%" dataContainer="loggedEntityDc"
                           property="name"/>
                 <hbox id="checkersBox" padding="false" width="100%">
@@ -189,8 +218,7 @@
                     <button id="cancelBtn" text="msg://cancel" icon="BAN"/>
                 </hbox>
             </vbox>
-
-        </hbox>
+        </formLayout>
 
     </layout>
 </view>

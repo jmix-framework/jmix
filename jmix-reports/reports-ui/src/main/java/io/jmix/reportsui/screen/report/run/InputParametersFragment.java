@@ -25,6 +25,7 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reportsui.screen.report.validators.ReportCollectionValidator;
 import io.jmix.reportsui.screen.report.validators.ReportParamFieldValidator;
 import io.jmix.ui.component.*;
@@ -87,6 +88,9 @@ public class InputParametersFragment extends ScreenFragment {
     @Autowired
     protected ParameterFieldCreator parameterFieldCreator;
 
+    @Autowired
+    protected ReportsUtils reportsUtils;
+
     public void setReport(Report report) {
         this.report = report;
     }
@@ -120,15 +124,12 @@ public class InputParametersFragment extends ScreenFragment {
     }
 
     protected void initLayout() {
-        if (report != null && !report.getIsTmp()) {
-            report = dataManager.load(Id.of(report))
-                    .fetchPlan("report.edit")
-                    .one();
-        }
-        if (parameters == null) {
-            parameters = Collections.emptyMap();
-        }
         if (report != null) {
+            report = reportsUtils.reloadReportIfNeeded(report, "report.edit");
+            if (parameters == null) {
+                parameters = Collections.emptyMap();
+            }
+
             if (CollectionUtils.isNotEmpty(report.getInputParameters())) {
                 parametersGrid.setRows(report.getInputParameters().size() + 2);
                 int currentGridRow = 2;

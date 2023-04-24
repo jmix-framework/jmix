@@ -16,9 +16,10 @@
 
 package io.jmix.charts.widget.amcharts.events.dataset.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.dataset.DataSetSelectorCompareEvent;
 
-public interface DataSetSelectorCompareListener {
+public interface DataSetSelectorCompareListener extends SerializableEventListener {
 
     void onCompare(DataSetSelectorCompareEvent event);
 }

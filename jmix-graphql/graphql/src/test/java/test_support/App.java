@@ -24,8 +24,10 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.security.StandardSecurityConfiguration;
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -38,14 +40,29 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import test_support.custom.service.CarEntityDataFetcher;
 import test_support.custom.service.CarModifier;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.TimeZone;
 
 
 @SpringBootApplication(scanBasePackages = "io.jmix.graphql")
 public class App {
 
+    public static String TEST_TIMEZONE = "GMT+4:00";
+
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jacksonObjectMapperCustomization() {
+        return jacksonObjectMapperBuilder ->
+                jacksonObjectMapperBuilder.timeZone(TimeZone.getTimeZone(TEST_TIMEZONE));
+    }
+
+    @PostConstruct
+    public void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone(TEST_TIMEZONE));
     }
 
     @Bean
@@ -56,6 +73,14 @@ public class App {
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
                 .build();
+    }
+
+    @Bean("jmix_Liquibase")
+    SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog("io/jmix/graphql/liquibase/changelog.xml");
+        return liquibase;
     }
 
     @Bean

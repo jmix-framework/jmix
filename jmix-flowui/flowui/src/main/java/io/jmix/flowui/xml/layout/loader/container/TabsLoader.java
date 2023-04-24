@@ -16,10 +16,14 @@
 
 package io.jmix.flowui.xml.layout.loader.container;
 
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.loader.LayoutLoader;
+import org.dom4j.Element;
 
-public class TabsLoader extends AbstractContainerLoader<Tabs> {
+public class TabsLoader extends AbstractTabsLoader<Tabs> {
 
     @Override
     protected Tabs createComponent() {
@@ -37,14 +41,23 @@ public class TabsLoader extends AbstractContainerLoader<Tabs> {
     public void loadComponent() {
         loadEnum(element, Tabs.Orientation.class, "orientation", resultComponent::setOrientation);
 
-        componentLoader().loadClassNames(resultComponent, element);
-        componentLoader().loadThemeNames(resultComponent, element);
-        componentLoader().loadSizeAttributes(resultComponent, element);
-
-        loadSubComponents();
+        super.loadComponent();
     }
 
-    public static class TabLoader extends AbstractContainerLoader<Tab> {
+    @Override
+    protected void createSubComponents(HasComponents container, Element containerElement) {
+        LayoutLoader loader = getLayoutLoader();
+
+        for (Element subElement : containerElement.elements("tab")) {
+            ComponentLoader<?> componentLoader = loader.getLoader(subElement, TabLoader.class);
+            componentLoader.initComponent();
+            pendingLoadComponents.add(componentLoader);
+
+            container.add(componentLoader.getResultComponent());
+        }
+    }
+
+    public static class TabLoader extends AbstractTabLoader {
 
         @Override
         protected Tab createComponent() {
@@ -56,18 +69,6 @@ public class TabsLoader extends AbstractContainerLoader<Tabs> {
             super.initComponent();
 
             createSubComponents(resultComponent, element);
-        }
-
-        @Override
-        public void loadComponent() {
-            loadDouble(element, "flexGrow", resultComponent::setFlexGrow);
-
-            componentLoader().loadLabel(resultComponent, element);
-            componentLoader().loadEnabled(resultComponent, element);
-            componentLoader().loadThemeNames(resultComponent, element);
-            componentLoader().loadClassNames(resultComponent, element);
-
-            loadSubComponents();
         }
     }
 }

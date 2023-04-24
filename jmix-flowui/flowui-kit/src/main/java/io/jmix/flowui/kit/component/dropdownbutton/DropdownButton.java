@@ -31,6 +31,8 @@ public class DropdownButton extends AbstractDropdownButton {
 
     protected Icon dropdownIcon = new Icon("lumo", "dropdown");
 
+    protected boolean dropdownIndicatorVisible = true;
+
     public DropdownButton() {
         dropdownItem = getContent().addItem("");
         dropdownItem.add(dropdownIcon);
@@ -50,7 +52,12 @@ public class DropdownButton extends AbstractDropdownButton {
     }
 
     protected void updateDropdownIconSlot() {
-        getDropdownItem().add(dropdownIcon);
+        dropdownIcon.getParent()
+                .ifPresent(component -> dropdownIcon.getElement().removeFromParent());
+
+        if (dropdownIndicatorVisible) {
+            getDropdownItem().add(dropdownIcon);
+        }
     }
 
     @Override
@@ -92,6 +99,18 @@ public class DropdownButton extends AbstractDropdownButton {
         iconComponent = icon;
 
         updateIconSlot();
+    }
+
+    public boolean isDropdownIndicatorVisible() {
+        return dropdownIndicatorVisible;
+    }
+
+    public void setDropdownIndicatorVisible(boolean dropdownIndicatorVisible) {
+        if (this.dropdownIndicatorVisible != dropdownIndicatorVisible) {
+            this.dropdownIndicatorVisible = dropdownIndicatorVisible;
+
+            updateDropdownIconSlot();
+        }
     }
 
     public void addThemeVariants(DropdownButtonVariant... variants) {

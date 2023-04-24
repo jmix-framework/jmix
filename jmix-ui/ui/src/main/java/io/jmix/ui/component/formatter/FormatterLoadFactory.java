@@ -17,15 +17,16 @@
 package io.jmix.ui.component.formatter;
 
 import com.google.common.collect.ImmutableMap;
-import org.springframework.context.ApplicationContext;
+import io.jmix.core.MessageTools;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * Specific bean for loading formatters.
@@ -34,9 +35,10 @@ import java.util.function.Function;
 public class FormatterLoadFactory {
 
     protected ApplicationContext applicationContext;
+    protected MessageTools messageTools;
 
-    protected final Map<String, Function<Element, ? extends Formatter>> FORMATTERS_MAP =
-            ImmutableMap.<String, Function<Element, ? extends Formatter>>builder()
+    protected final Map<String, BiFunction<Element, Context, ? extends Formatter>> FORMATTERS_MAP =
+            ImmutableMap.<String, BiFunction<Element, Context, ? extends Formatter>>builder()
                     .put("collection", this::loadCollectionFormatter)
                     .put("custom", this::loadCustomFormatter)
                     .put("date", this::loadDateFormatter)
@@ -48,6 +50,11 @@ public class FormatterLoadFactory {
         this.applicationContext = applicationContext;
     }
 
+    @Autowired
+    public void setMessageTools(MessageTools messageTools) {
+        this.messageTools = messageTools;
+    }
+
     /**
      * Creates a formatter from XML element.
      *
@@ -55,10 +62,10 @@ public class FormatterLoadFactory {
      * @return formatter or null if there is no such element
      */
     @Nullable
-    public Formatter<?> createFormatter(Element element) {
-        Function<Element, ? extends Formatter> function = FORMATTERS_MAP.get(element.getName());
+    public Formatter<?> createFormatter(Element element, Context context) {
+        BiFunction<Element, Context, ? extends Formatter> function = FORMATTERS_MAP.get(element.getName());
         if (function != null) {
-            return function.apply(element);
+            return function.apply(element, context);
         }
         return null;
     }
@@ -73,11 +80,11 @@ public class FormatterLoadFactory {
         return FORMATTERS_MAP.get(element.getName()) != null;
     }
 
-    protected CollectionFormatter loadCollectionFormatter(Element element) {
+    protected CollectionFormatter loadCollectionFormatter(Element element, Context context) {
         return applicationContext.getBean(CollectionFormatter.class);
     }
 
-    protected Formatter loadCustomFormatter(Element element) {
+    protected Formatter loadCustomFormatter(Element element, Context context) {
         String bean = element.attributeValue("bean");
         if (StringUtils.isEmpty(bean)) {
             throw new IllegalArgumentException("Bean name is not defined");
@@ -86,12 +93,13 @@ public class FormatterLoadFactory {
         return (Formatter) applicationContext.getBean(bean);
     }
 
-    protected DateFormatter loadDateFormatter(Element element) {
+    protected DateFormatter loadDateFormatter(Element element, Context context) {
         DateFormatter formatter = applicationContext.getBean(DateFormatter.class);
 
         String format = element.attributeValue("format");
         if (StringUtils.isNotEmpty(format)) {
-            formatter.setFormat(format);
+            String loadedFormat = loadFormat(format, context.getMessageGroup());
+            formatter.setFormat(loadedFormat);
         }
 
         String type = element.attributeValue("type");
@@ -107,14 +115,33 @@ public class FormatterLoadFactory {
         return formatter;
     }
 
-    protected NumberFormatter loadNumberFormatter(Element element) {
+    protected NumberFormatter loadNumberFormatter(Element element, Context context) {
         NumberFormatter formatter = applicationContext.getBean(NumberFormatter.class);
 
         String format = element.attributeValue("format");
         if (StringUtils.isNotEmpty(format)) {
-            formatter.setFormat(format);
+            String loadedFormat = loadFormat(format, context.getMessageGroup());
+            formatter.setFormat(loadedFormat);
         }
 
         return formatter;
+    }
+
+    protected String loadFormat(String format, @Nullable String messageGroup) {
+        return messageTools.loadString(messageGroup, format);
+    }
+
+    public static class Context {
+
+        protected String messageGroup;
+
+        @Nullable
+        public String getMessageGroup() {
+            return messageGroup;
+        }
+
+        public void setMessageGroup(@Nullable String messageGroup) {
+            this.messageGroup = messageGroup;
+        }
     }
 }

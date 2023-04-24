@@ -20,17 +20,18 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.details.Details;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
+import io.jmix.flowui.kit.component.KeyCombination;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -58,6 +59,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     protected List<MenuItem> rootMenuItems = new ArrayList<>();
 
     protected Map<String, Pair<MenuItem, ListItem>> registrations = new HashMap<>();
+
+    protected PropertyChangeListener menuItemPropertyChangeListener = this::onMenuItemPropertyChange;
 
     @Override
     protected UnorderedList initContent() {
@@ -94,7 +97,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      */
     public void addMenuItem(MenuItem menuItem) {
         Preconditions.checkNotNull(menuItem, MenuItem.class.getSimpleName() + " cannot be null");
-        checkItemIdDuplicate(menuItem.getId());
 
         // create and register
         ListItem item = createMenuRecursively(menuItem);
@@ -223,6 +225,13 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             registerMenuItem(menuItem, menuBarComponent);
 
             return menuBarComponent;
+        } else if (menuItem.isSeparator()) {
+            Component separator = new Hr();
+            ListItem menuItemComponent = new ListItem(separator);
+
+            registerMenuItem(menuItem, menuItemComponent);
+
+            return menuItemComponent;
         } else {
             Component link = createMenuItemComponent(menuItem);
             ListItem menuItemComponent = new ListItem(link);
@@ -255,6 +264,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
     protected void unregisterMenuItemRecursively(MenuItem menuItem) {
         registrations.remove(menuItem.getId());
+        menuItem.removePropertyChangeListener(menuItemPropertyChangeListener);
 
         if (menuItem.isMenu()) {
             for (MenuItem item : ((MenuBarItem) menuItem).getChildren()) {
@@ -265,6 +275,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
     protected void registerMenuItem(MenuItem menuItem, ListItem menuItemComponent) {
         registrations.put(menuItem.getId(), Pair.of(menuItem, menuItemComponent));
+        menuItem.addPropertyChangeListener(menuItemPropertyChangeListener);
     }
 
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
@@ -284,6 +295,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         text.setTitle(Strings.nullToEmpty(menuItem.getDescription()));
 
         addMenuItemClickListener(routerLink, menuItem);
+        addMenuItemClickShortcutCombination(routerLink, menuItem);
 
         routerLink.add(text);
 
@@ -296,6 +308,22 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 menuItem.getClickHandler().accept(menuItem);
             }
         });
+    }
+
+    protected void addMenuItemClickShortcutCombination(RouterLink routerLink, MenuItem menuItem) {
+        KeyCombination shortcutCombination = menuItem.getShortcutCombination();
+
+        if (shortcutCombination != null) {
+            Key key = shortcutCombination.getKey();
+            KeyModifier[] keyModifiers = shortcutCombination.getKeyModifiers();
+
+            Shortcuts.addShortcutListener(
+                    routerLink,
+                    event -> routerLink.getElement()
+                            .executeJs("this.click()"),
+                    key,
+                    keyModifiers);
+        }
     }
 
     protected Details createMenuBarComponent(MenuBarItem menuBarItem) {
@@ -335,12 +363,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     }
 
     protected UnorderedList getMenuBarContent(MenuItem menuItem) {
-        Pair<MenuItem, ListItem> item = registrations.get(menuItem.getId());
-
-        Details menuBarComponent = item.getValue().getChildren()
-                .findFirst()
-                .map(details -> (Details) details)
-                .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
+        Details menuBarComponent = getMenuBarComponent(menuItem);
 
         return getMenuBarContent(menuBarComponent);
     }
@@ -355,6 +378,24 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                                 + UnorderedList.class.getName()));
     }
 
+    protected Details getMenuBarComponent(MenuItem menuItem) {
+        Pair<MenuItem, ListItem> item = registrations.get(menuItem.getId());
+
+        return item.getValue().getChildren()
+                .findFirst()
+                .map(details -> (Details) details)
+                .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
+    }
+
+    protected RouterLink getMenuItemComponent(MenuItem menuItem) {
+        Pair<MenuItem, ListItem> item = registrations.get(menuItem.getId());
+
+        return item.getValue().getChildren()
+                .findFirst()
+                .map(routerLink -> (RouterLink) routerLink)
+                .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
+    }
+
     protected String getTitle(MenuItem menuItem) {
         return Strings.isNullOrEmpty(menuItem.getTitle())
                 ? menuItem.getId()
@@ -367,18 +408,42 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
     }
 
+    protected void onMenuItemPropertyChange(PropertyChangeEvent event) {
+        if (MenuBarItem.MENU_ITEM_OPENED.equals(event.getPropertyName())) {
+            Details menuBarComponent = getMenuBarComponent((MenuItem) event.getSource());
+            menuBarComponent.setOpened((Boolean) event.getNewValue());
+        }
+        if (MenuItem.MENU_ITEM_CLASS_NAME.equals(event.getPropertyName())) {
+            MenuItem menuItem = (MenuItem) event.getSource();
+            if (menuItem.isMenu()) {
+                Details menuBarComponent = getMenuBarComponent((MenuItem) event.getSource());
+                menuBarComponent.setClassName(JMIX_MENUBAR_ITEM_CLASS_NAME);
+                menuBarComponent.addClassNames(menuItem.getClassNames().toArray(new String[0]));
+            } else if (!menuItem.isSeparator()) {
+                RouterLink menuItemComponent = getMenuItemComponent(menuItem);
+                menuItemComponent.setClassName(JMIX_MENUBAR_ITEM_CLASS_NAME);
+                menuItemComponent.addClassNames(menuItem.getClassNames().toArray(new String[0]));
+            }
+        }
+    }
+
     /**
      * Describes menu item.
      */
     public static class MenuItem {
+        protected static final String MENU_ITEM_CLASS_NAME = "className";
+
         protected String id;
         protected String title;
         protected String description;
         protected VaadinIcon icon;
         protected List<String> classNames;
         protected Consumer<MenuItem> clickHandler;
+        protected KeyCombination shortcutCombination;
 
         protected ListMenu menuComponent;
+
+        protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
         public MenuItem(String id) {
             this.id = id;
@@ -482,7 +547,16 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          */
         public MenuItem withClassNames(List<String> classNames) {
             Preconditions.checkNotNull(classNames, "List of class names cannot be null");
-            this.classNames = classNames;
+
+            List<String> oldClassNames = this.classNames == null
+                    ? Collections.emptyList()
+                    : List.copyOf(this.classNames);
+
+            this.classNames = new ArrayList<>(classNames);
+
+            propertyChangeSupport.firePropertyChange(MENU_ITEM_CLASS_NAME, oldClassNames,
+                    Collections.unmodifiableList(this.classNames));
+
             return this;
         }
 
@@ -498,7 +572,12 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 this.classNames = new ArrayList<>();
             }
 
+            List<String> oldClassNames = List.copyOf(this.classNames);
+
             this.classNames.addAll(Arrays.asList(classNames));
+
+            propertyChangeSupport.firePropertyChange(MENU_ITEM_CLASS_NAME, oldClassNames,
+                    Collections.unmodifiableList(this.classNames));
         }
 
         @Nullable
@@ -511,11 +590,25 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             return this;
         }
 
+        @Nullable
+        public KeyCombination getShortcutCombination() {
+            return shortcutCombination;
+        }
+
+        public MenuItem withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+            this.shortcutCombination = shortcutCombination;
+            return this;
+        }
+
         /**
          * @return {@code true} if menu item is {@link MenuBarItem} that contains other items,
          * {@code false} otherwise
          */
         public boolean isMenu() {
+            return false;
+        }
+
+        public boolean isSeparator() {
             return false;
         }
 
@@ -550,6 +643,14 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             return id.equals(((MenuItem) obj).getId());
         }
 
+        protected void addPropertyChangeListener(PropertyChangeListener listener) {
+            propertyChangeSupport.addPropertyChangeListener(listener);
+        }
+
+        protected void removePropertyChangeListener(PropertyChangeListener listener) {
+            propertyChangeSupport.removePropertyChangeListener(listener);
+        }
+
         @Override
         public int hashCode() {
             return id.hashCode();
@@ -565,6 +666,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      * Describes menu item that can contain other menu items.
      */
     public static class MenuBarItem extends MenuItem {
+
+        protected static final String MENU_ITEM_OPENED = "isOpened";
 
         protected List<MenuItem> children;
         protected boolean isOpened;
@@ -608,6 +711,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          */
         public void setOpened(boolean opened) {
             isOpened = opened;
+            propertyChangeSupport.firePropertyChange(
+                    new PropertyChangeEvent(this, MENU_ITEM_OPENED, !isOpened, isOpened));
         }
 
         /**
@@ -617,7 +722,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @return current menu bar item instance
          */
         public MenuBarItem withOpened(boolean opened) {
-            isOpened = opened;
+            setOpened(opened);
             return this;
         }
 
@@ -752,6 +857,18 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
         @Override
         public boolean isMenu() {
+            return true;
+        }
+    }
+
+    public static class MenuSeparatorItem extends MenuItem {
+
+        public MenuSeparatorItem(String id) {
+            super(id);
+        }
+
+        @Override
+        public boolean isSeparator() {
             return true;
         }
     }

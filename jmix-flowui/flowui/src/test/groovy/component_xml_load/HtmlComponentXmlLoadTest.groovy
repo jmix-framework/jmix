@@ -32,12 +32,12 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
     }
 
     def "Load #container from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "#container attributes will be loaded"
         def htmlContainer = htmlView."${container}Id" as HtmlContainer
@@ -62,38 +62,50 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         where:
         container << ["article", "aside", "descriptionList", "term", "description", "div", "emphasis", "footer", "h1",
                       "h2", "h3", "h4", "h5", "h6", "header", "listItem", "p", "pre", "section", "span",
-                      "unorderedList", "anchor", "htmlObject", "image", "main", "nav", "orderedList"]
+                      "unorderedList", "anchor", "htmlObject", "label", "main", "nav", "orderedList"]
     }
 
     def "Load specific anchor attributes from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "Specific anchor attributes will be loaded"
         def anchor = htmlView.anchorId
 
         verifyAll(anchor) {
             href == "anchorHref"
+            tabIndex == 3
             target.get() == AnchorTarget.PARENT.value
         }
     }
 
     def "Load specific htmlObject attributes from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "Specific htmlObject attributes will be loaded"
         def htmlObject = htmlView.htmlObjectId
 
         verifyAll(htmlObject) {
             data == "data"
+            tabIndex == 3
             type.get() == "type"
         }
     }
 
+    def "Load specific label attributes from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView.class)
+
+        then: "Specific label attributes will be loaded"
+        def label = htmlView.labelId
+
+        label.getFor().orElse("") == "inputId"
+    }
+
     def "Load specific #container attributes from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "Specific #container attributes will be loaded"
         htmlView."${container}Id".ariaLabel.get() == "ariaLabelString"
@@ -104,7 +116,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load specific orderedList attributes from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "Specific orderedList attributes will be loaded"
         htmlView.orderedListId.type == OrderedList.NumberingType.UPPERCASE_LETTER
@@ -112,7 +124,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load #component from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "Html component attributes will be loaded"
         def htmlComponent = htmlView."${component}Id" as HtmlComponent
@@ -135,7 +147,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load specific hr attributes from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "Specific hr attributes will be loaded"
         htmlView.hrId.title.get() == "hrTitle"
@@ -143,7 +155,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load specific iframe attributes from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "Specific iframe attributes will be loaded"
         verifyAll(htmlView.iframeId) {
@@ -160,7 +172,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load input attributes from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "Input attributes will be loaded"
         verifyAll(htmlView.inputId) {
@@ -174,6 +186,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             minHeight == "40px"
             minWidth == "80px"
             placeholder.get() == "placeholderString"
+            tabIndex == 3
             type == "password"
             valueChangeMode == ValueChangeMode.ON_CHANGE
             valueChangeTimeout == 50
@@ -182,9 +195,34 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         }
     }
 
+    def "Load JmixImage from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView.class)
+
+        then: "JmixImage attributes will be loaded"
+        def htmlContainer = htmlView."imageId" as HtmlContainer
+
+        verifyAll(htmlContainer) {
+            id.get() == "imageId"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            enabled
+            height == "50px"
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            title.get() == "imageTitle"
+            visible
+            whiteSpace == HasText.WhiteSpace.PRE
+            width == "100px"
+            getElement().getThemeList().containsAll(["primary", "small"])
+            (getChildren().findAny().get() as HtmlContainer).getText() == "imageChild"
+        }
+    }
+
     def "Load specific param attributes from XML"() {
         when: "Open the HtmlView"
-        def htmlView = openScreen(HtmlView.class)
+        def htmlView = navigateToView(HtmlView.class)
 
         then: "Specific param attributes will be loaded"
         verifyAll(htmlView.paramId) {

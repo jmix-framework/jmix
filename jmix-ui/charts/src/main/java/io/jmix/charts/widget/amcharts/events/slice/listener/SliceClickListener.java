@@ -16,9 +16,10 @@
 
 package io.jmix.charts.widget.amcharts.events.slice.listener;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.charts.widget.amcharts.events.slice.SliceClickEvent;
 
-public interface SliceClickListener {
+public interface SliceClickListener extends SerializableEventListener {
 
     void onClick(SliceClickEvent event);
 }

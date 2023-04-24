@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-.jmix-text-layout {
-  padding: var(--lumo-space-wide-l);
-}
-
-.jmix-text-layout-closeable {
-  padding-top: calc(var(--lumo-space-l) / 2);
-  padding-bottom: calc(var(--lumo-space-l) / 2);
-  padding-inline-start: var(--lumo-space-l);
-}
-
 .jmix-text-layout-closeable .title,
 .jmix-text-layout-closeable .message,
 .jmix-text-layout .title,
@@ -51,23 +41,32 @@
   gap: var(--lumo-space-s)
 }
 
-.jmix-closeable-layout .close-button {
+vaadin-notification-card:not([slot$='stretch']) .jmix-closeable-layout {
+  padding-inline-end: var(--lumo-space-xs);
+}
+
+vaadin-notification-card[slot$='stretch'] .jmix-closeable-layout .close-button {
   padding-top: var(--lumo-space-s);
   padding-inline-end: var(--lumo-space-s);
 }
 
-.close-button vaadin-icon {
-  color: var(--_lumo-button-color, var(--lumo-contrast))
+vaadin-notification-card:not([slot$='stretch']) .jmix-closeable-layout .close-button {
+  padding-top: var(--lumo-space-xs);
+  padding-inline-end: var(--lumo-space-xs);
 }
 
 vaadin-notification-card[slot$='stretch'] .jmix-text-layout-closeable {
   padding-inline-start: unset;
 }
 
-vaadin-notification-card[slot$='stretch'] .jmix-closeable-layout .close-button {
+.close-button {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+.close-button vaadin-icon {
+  color: var(--_lumo-button-color, var(--lumo-contrast))
 }
 
 vaadin-notification-card[theme~='warning'] .jmix-text-layout-closeable .title,

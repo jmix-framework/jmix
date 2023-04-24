@@ -22,7 +22,7 @@ import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Table
 import io.jmix.ui.screen.MasterDetailScreen
-import io.jmix.ui.testassist.spec.ScreenSpecification
+import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import master_detail.screen.OrderMasterDetailTestScreen
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration

@@ -37,8 +37,6 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
 
 		this.session = session;
         this.name = className;
-
-        ((SessionImpl) this.session).registerClass(this);
     }
 
     @Override
@@ -134,7 +132,6 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
 
     public void setJavaClass(Class javaClass) {
         this.javaClass = javaClass;
-        ((SessionImpl) session).registerClass(this);
     }
 
     public void addAncestor(MetaClass ancestorClass) {

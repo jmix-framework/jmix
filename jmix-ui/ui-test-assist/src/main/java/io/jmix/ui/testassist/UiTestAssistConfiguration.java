@@ -50,7 +50,7 @@ public class UiTestAssistConfiguration {
 
         formatStringsRegistry.setFormatStrings(Locale.ENGLISH, new FormatStrings(
                 '.', ',',
-                "#,##0", "#,##0.###", "#,##0.##",
+                "#,##0", "#,##0.###", "#,##0.00",
                 "dd/MM/yyyy", "dd/MM/yyyy HH:mm", "dd/MM/yyyy HH:mm Z", "HH:mm", "HH:mm Z",
                 "True", "False"));
     }

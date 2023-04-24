@@ -17,6 +17,7 @@
 package component_xml_load
 
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant
+import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.ComponentView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
@@ -46,7 +47,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerScreenBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen")
 
         def saveContext = new SaveContext()
         def user = dataManager.create(User)
@@ -71,7 +72,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load checkBox component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
 
         then: "CheckBox attributes will be loaded"
         verifyAll(componentView.checkBoxId) {
@@ -89,9 +90,18 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             readOnly
             requiredIndicatorVisible
+            tabIndex == 3
             value
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -100,7 +110,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "CheckBox will be will be loaded with the value of the property"
@@ -115,7 +125,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "ComboBox will be loaded with the value of the property"
@@ -144,10 +154,20 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
+            title == "titleString"
             value == order.number
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -156,7 +176,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "DatePicker will be loaded with the value of the property"
@@ -183,11 +203,20 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             typedValue == order.date
             visible
             weekNumbersVisible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -196,7 +225,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "TimePicker will be loaded with the value of the property"
@@ -221,10 +250,19 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             typedValue == order.time
             themeNames.containsAll(["small", "align-center"])
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -233,7 +271,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "DateTimePicker will be loaded with the value of the property"
@@ -257,12 +295,21 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             timePlaceholder == "timePlaceholderString"
             typedValue == order.dateTime
             visible
             weekNumbersVisible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -271,14 +318,14 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "RadioButtonGroup will be loaded with the value of the property"
         verifyAll(componentView.radioButtonGroupId) {
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             enabled
-            errorMessage == "errorMessageString"
+            errorMessage == null
             height == "50px"
             helperText == "helperTextString"
             !invalid
@@ -290,6 +337,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             !readOnly
             required
             requiredIndicatorVisible
+            requiredMessage == "requiredMessageString"
             themeNames.containsAll([RadioGroupVariant.LUMO_VERTICAL.name()])
             value == order.number
             visible
@@ -302,7 +350,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         def order = dataManager.load(Order).all().one()
 
         when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
+        def componentView = navigateToView(ComponentView.class)
         componentView.loadData()
 
         then: "Select will be loaded with the value of the property"
@@ -325,9 +373,18 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             requiredIndicatorVisible
+            tabIndex == 3
             value == order.number
             visible
             width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 }

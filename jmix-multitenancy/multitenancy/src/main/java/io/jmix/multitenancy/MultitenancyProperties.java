@@ -25,7 +25,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class MultitenancyProperties {
 
     /**
-     * Parameter name in {@link io.jmix.ui.navigation.UrlRouting} to pass tenant Id.
+     * Parameter name in URL to pass tenant Id.
      */
     final String tenantIdUrlParamName;
 

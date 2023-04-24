@@ -7,8 +7,7 @@
 
     <!-- DO NOT REMOVE. This is a master changelog that runs all other changelogs. -->
 
-    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
-    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+    <include file="/io/jmix/data/liquibase/changelog.xml"/>
 
     <includeAll path="/${project_rootPath}/liquibase/changelog"/>
 

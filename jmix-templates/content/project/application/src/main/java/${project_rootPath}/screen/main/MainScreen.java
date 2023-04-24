@@ -36,7 +36,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
     }
 
     @Subscribe("collapseDrawerButton")
-    private void onCollapseDrawerButtonClick(Button.ClickEvent event) {
+    private void onCollapseDrawerButtonClick(final Button.ClickEvent event) {
         drawer.toggle();
         if (drawer.isCollapsed()) {
             collapseDrawerButton.setIconFromSet(JmixIcon.CHEVRON_RIGHT);
@@ -46,7 +46,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
     }
 
     @Subscribe
-    public void onAfterShow(AfterShowEvent event) {
+    public void onAfterShow(final AfterShowEvent event) {
         screenTools.openDefaultScreen(
                 UiControllerUtils.getScreenContext(this).getScreens());
 

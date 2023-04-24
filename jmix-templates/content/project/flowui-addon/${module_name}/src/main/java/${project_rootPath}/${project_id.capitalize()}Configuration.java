@@ -23,18 +23,18 @@ import java.util.Collections;
 public class ${project_id.capitalize()}Configuration {
 
     @Bean("${project_id}_${project_id.capitalize()}ViewControllers")
-    public ViewControllersConfiguration screens(ApplicationContext applicationContext,
-                                                AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        ViewControllersConfiguration viewControllers
+    public ViewControllersConfiguration screens(final ApplicationContext applicationContext,
+                                                final AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        final ViewControllersConfiguration viewControllers
                 = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
         viewControllers.setBasePackages(Collections.singletonList("${project_rootPackage}"));
         return viewControllers;
     }
 
     @Bean("${project_id}_${project_id.capitalize()}Actions")
-    public ActionsConfiguration actions(ApplicationContext applicationContext,
-                                                AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        ActionsConfiguration actions
+    public ActionsConfiguration actions(final ApplicationContext applicationContext,
+                                        final AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        final ActionsConfiguration actions
                 = new ActionsConfiguration(applicationContext, metadataReaderFactory);
         actions.setBasePackages(Collections.singletonList("${project_rootPackage}"));
         return actions;

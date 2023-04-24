@@ -11,11 +11,11 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 
@@ -54,15 +54,18 @@ public class ${controllerName} extends Screen {
     private LoginScreenSupport loginScreenSupport;
 
     @Autowired
-    private UiLoginProperties loginProperties;
-
-    @Autowired
     private JmixApp app;
+
+    @Value("\${ui.login.defaultUsername:}")
+    private String defaultUsername;
+
+    @Value("\${ui.login.defaultPassword:}")
+    private String defaultPassword;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Subscribe
-    private void onInit(InitEvent event) {
+    private void onInit(final InitEvent event) {
         usernameField.focus();
         initLogoImage();
         initLocalesField();
@@ -76,7 +79,7 @@ public class ${controllerName} extends Screen {
         localesField.addValueChangeListener(this::onLocalesFieldValueChangeEvent);
     }
 
-    private void onLocalesFieldValueChangeEvent(HasValue.ValueChangeEvent<Locale> event) {
+    private void onLocalesFieldValueChangeEvent(final HasValue.ValueChangeEvent<Locale> event) {
         //noinspection ConstantConditions
         app.setLocale(event.getValue());
         UiControllerUtils.getScreenContext(this).getScreens()
@@ -85,15 +88,13 @@ public class ${controllerName} extends Screen {
     }
 
     private void initDefaultCredentials() {
-        String defaultUsername = loginProperties.getDefaultUsername();
-        if (!StringUtils.isBlank(defaultUsername) && !"<disabled>".equals(defaultUsername)) {
+        if (!StringUtils.isBlank(defaultUsername)) {
             usernameField.setValue(defaultUsername);
         } else {
             usernameField.setValue("");
         }
 
-        String defaultPassword = loginProperties.getDefaultPassword();
-        if (!StringUtils.isBlank(defaultPassword) && !"<disabled>".equals(defaultPassword)) {
+        if (!StringUtils.isBlank(defaultPassword)) {
             passwordField.setValue(defaultPassword);
         } else {
             passwordField.setValue("");
@@ -101,13 +102,13 @@ public class ${controllerName} extends Screen {
     }
 
     @Subscribe("submit")
-    private void onSubmitActionPerformed(Action.ActionPerformedEvent event) {
+    private void onSubmitActionPerformed(final Action.ActionPerformedEvent event) {
         login();
     }
 
     private void login() {
-        String username = usernameField.getValue();
-        String password = passwordField.getValue();
+        final String username = usernameField.getValue();
+        final String password = passwordField.getValue();
 
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             notifications.create(Notifications.NotificationType.WARNING)
@@ -121,7 +122,7 @@ public class ${controllerName} extends Screen {
                     AuthDetails.of(username, password)
                             .withLocale(localesField.getValue())
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);
-        } catch (BadCredentialsException | DisabledException e) {
+        } catch (final BadCredentialsException | DisabledException e) {
             log.info("Login failed", e);
             notifications.create(Notifications.NotificationType.ERROR)
                     .withCaption(messages.getMessage(getClass(), "loginFailed"))

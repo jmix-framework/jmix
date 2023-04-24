@@ -13,7 +13,7 @@ public class ColorButton extends JmixButton {
     }
 
     @Override
-    protected ColorButtonState getState(boolean markAsDirty) {
+    protected ColorButtonState getState(final boolean markAsDirty) {
         return (ColorButtonState) super.getState(markAsDirty);
     }
 
@@ -21,7 +21,7 @@ public class ColorButton extends JmixButton {
         return getState(false).color;
     }
 
-    public void setColor(String color) {
+    public void setColor(final String color) {
         if (!Objects.equals(getState(false).color, color)) {
             getState().color = color;
         }

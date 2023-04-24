@@ -22,11 +22,11 @@
             <inject variable="reportRunner" classQualifiedName="io.jmix.reports.runner.ReportRunner"/>
 
             <text language="java">
-                com.haulmont.yarg.reporting.ReportOutputDocument document = reportRunner.byReportCode("user-list")
+                ${IS_FINAL}com.haulmont.yarg.reporting.ReportOutputDocument document = reportRunner.byReportCode("user-list")
                         .addParam("active", true)
                         .run();
-                byte[] reportContent = document.getContent();
-                String reportName = document.getDocumentName();
+                ${IS_FINAL}byte[] reportContent = document.getContent();
+                ${IS_FINAL}String reportName = document.getDocumentName();
             </text>
             <text language="kotlin">
                 val document = reportRunner.byReportCode("user-list")

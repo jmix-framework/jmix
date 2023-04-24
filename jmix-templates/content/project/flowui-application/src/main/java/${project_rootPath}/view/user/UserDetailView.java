@@ -38,26 +38,26 @@ public class UserDetailView extends StandardDetailView<User> {
     private PasswordEncoder passwordEncoder;
 
     @Subscribe
-    public void onInit(InitEvent event) {
+    public void onInit(final InitEvent event) {
         timeZoneField.setItems(List.of(TimeZone.getAvailableIDs()));
     }
 
     @Subscribe
-    public void onInitEntity(InitEntityEvent<User> event) {
+    public void onInitEntity(final InitEntityEvent<User> event) {
         usernameField.setReadOnly(false);
         passwordField.setVisible(true);
         confirmPasswordField.setVisible(true);
     }
 
     @Subscribe
-    public void onReady(ReadyEvent event) {
+    public void onReady(final ReadyEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
             usernameField.focus();
         }
     }
 
     @Subscribe
-    public void onValidation(ValidationEvent event) {
+    public void onValidation(final ValidationEvent event) {
         if (entityStates.isNew(getEditedEntity())
                 && !Objects.equals(passwordField.getValue(), confirmPasswordField.getValue())) {
             event.getErrors().add(messageBundle.getMessage("passwordsDoNotMatch"));
@@ -65,7 +65,7 @@ public class UserDetailView extends StandardDetailView<User> {
     }
 
     @Subscribe
-    protected void onBeforeSave(BeforeSaveEvent event) {
+    protected void onBeforeSave(final BeforeSaveEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
             getEditedEntity().setPassword(passwordEncoder.encode(passwordField.getValue()));
         }

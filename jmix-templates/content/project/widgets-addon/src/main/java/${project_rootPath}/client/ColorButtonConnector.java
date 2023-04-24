@@ -15,11 +15,11 @@ public class ColorButtonConnector extends JmixButtonConnector {
     }
 
     @Override
-    public void onStateChanged(StateChangeEvent event) {
+    public void onStateChanged(final StateChangeEvent event) {
         super.onStateChanged(event);
 
         if (event.hasPropertyChanged("color")) {
-            Style style = getWidget().getElement().getStyle();
+            final Style style = getWidget().getElement().getStyle();
             style.setBackgroundColor(getState().color);
             style.setBackgroundImage("none");
         }

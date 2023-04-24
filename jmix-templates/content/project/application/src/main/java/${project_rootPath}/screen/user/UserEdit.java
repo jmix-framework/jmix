@@ -50,12 +50,12 @@ public class UserEdit extends StandardEditor<User> {
     private boolean isNewEntity;
 
     @Subscribe
-    public void onInit(InitEvent event) {
+    public void onInit(final InitEvent event) {
         timeZoneField.setOptionsList(Arrays.asList(TimeZone.getAvailableIDs()));
     }
 
     @Subscribe
-    public void onInitEntity(InitEntityEvent<User> event) {
+    public void onInitEntity(final InitEntityEvent<User> event) {
         usernameField.setEditable(true);
         passwordField.setVisible(true);
         confirmPasswordField.setVisible(true);
@@ -63,14 +63,14 @@ public class UserEdit extends StandardEditor<User> {
     }
 
     @Subscribe
-    public void onAfterShow(AfterShowEvent event) {
+    public void onAfterShow(final AfterShowEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
             usernameField.focus();
         }
     }
 
     @Subscribe
-    protected void onBeforeCommit(BeforeCommitChangesEvent event) {
+    protected void onBeforeCommit(final BeforeCommitChangesEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
             if (!Objects.equals(passwordField.getValue(), confirmPasswordField.getValue())) {
                 notifications.create(Notifications.NotificationType.WARNING)
@@ -83,7 +83,7 @@ public class UserEdit extends StandardEditor<User> {
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPostCommit(DataContext.PostCommitEvent event) {
+    public void onPostCommit(final DataContext.PostCommitEvent event) {
         if (isNewEntity) {
             getApplicationContext().publishEvent(new SingleUserPasswordChangeEvent(getEditedEntity().getUsername(), passwordField.getValue()));
         }

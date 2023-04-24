@@ -23,7 +23,7 @@ public class ${controllerName} extends AbstractMainWindow {
     private SideMenu sideMenu;
 
     @Override
-    public void init(Map<String, Object> params) {
+    public void init(final Map<String, Object> params) {
         super.init(params);
 
         sideMenu.requestFocus();

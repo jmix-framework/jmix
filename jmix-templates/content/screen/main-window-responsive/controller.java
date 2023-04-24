@@ -19,7 +19,7 @@ public class ${controllerName} extends AbstractMainWindow {
     private ${imageType} logoImage;
 
     @Override
-    public void init(Map<String, Object> params) {
+    public void init(final Map<String, Object> params) {
         super.init(params);
 
         initLayoutAnalyzerContextMenu(logoImage);

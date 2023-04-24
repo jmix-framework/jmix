@@ -62,7 +62,7 @@ public class LoginScreen extends Screen {
     private final Logger log = LoggerFactory.getLogger(LoginScreen.class);
 
     @Subscribe
-    private void onInit(InitEvent event) {
+    private void onInit(final InitEvent event) {
         usernameField.focus();
         initLocalesField();
         initDefaultCredentials();
@@ -74,7 +74,7 @@ public class LoginScreen extends Screen {
         localesField.addValueChangeListener(this::onLocalesFieldValueChangeEvent);
     }
 
-    private void onLocalesFieldValueChangeEvent(HasValue.ValueChangeEvent<Locale> event) {
+    private void onLocalesFieldValueChangeEvent(final HasValue.ValueChangeEvent<Locale> event) {
         //noinspection ConstantConditions
         app.setLocale(event.getValue());
         UiControllerUtils.getScreenContext(this).getScreens()
@@ -97,13 +97,13 @@ public class LoginScreen extends Screen {
     }
 
     @Subscribe("submit")
-    private void onSubmitActionPerformed(Action.ActionPerformedEvent event) {
+    private void onSubmitActionPerformed(final Action.ActionPerformedEvent event) {
         login();
     }
 
     private void login() {
-        String username = usernameField.getValue();
-        String password = passwordField.getValue();
+        final String username = usernameField.getValue();
+        final String password = passwordField.getValue();
 
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             notifications.create(Notifications.NotificationType.WARNING)
@@ -117,7 +117,7 @@ public class LoginScreen extends Screen {
                     AuthDetails.of(username, password)
                             .withLocale(localesField.getValue())
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);
-        } catch (BadCredentialsException | DisabledException | LockedException e) {
+        } catch (final BadCredentialsException | DisabledException | LockedException e) {
             log.warn("Login failed for user '{}': {}", username, e.toString());
             notifications.create(Notifications.NotificationType.ERROR)
                     .withCaption(messages.getMessage(getClass(), "loginFailed"))

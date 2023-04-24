@@ -42,12 +42,12 @@ public class ${project_classPrefix}Application implements AppShellConfigurator {
     @Bean
     @Primary
     @ConfigurationProperties("main.datasource.hikari")
-    DataSource dataSource(DataSourceProperties dataSourceProperties) {
+    DataSource dataSource(final DataSourceProperties dataSourceProperties) {
         return dataSourceProperties.initializeDataSourceBuilder().build();
     }
 
     @EventListener
-    public void printApplicationUrl(ApplicationStartedEvent event) {
+    public void printApplicationUrl(final ApplicationStartedEvent event) {
         LoggerFactory.getLogger(${project_classPrefix}Application.class).info("Application started at "
                 + "http://localhost:"
                 + environment.getProperty("local.server.port")

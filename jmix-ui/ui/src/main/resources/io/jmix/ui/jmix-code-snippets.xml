@@ -25,7 +25,7 @@
                                  superClass="org.springframework.context.ApplicationEvent" includeLibraries="true"/>
 
             <text language="java">
-                ${eventClass} event = new ${eventClass}();
+                ${IS_FINAL}${eventClass} event = new ${eventClass}();
                 uiEventPublisher.publishEvent(event);
             </text>
             <text language="kotlin">

@@ -28,7 +28,7 @@ public class ${controllerName} extends Screen implements Window.HasWorkArea {
     }
 
     @Subscribe
-    public void onAfterShow(AfterShowEvent event) {
+    public void onAfterShow(final AfterShowEvent event) {
         screenTools.openDefaultScreen(
                 UiControllerUtils.getScreenContext(this).getScreens());
 

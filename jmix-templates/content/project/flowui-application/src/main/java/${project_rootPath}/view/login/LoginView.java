@@ -51,7 +51,7 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     private String defaultPassword;
 
     @Subscribe
-    public void onInit(InitEvent event) {
+    public void onInit(final InitEvent event) {
         initLocales();
         initDefaultCredentials();
     }
@@ -74,26 +74,26 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     }
 
     @Subscribe("login")
-    public void onLogin(LoginEvent event) {
+    public void onLogin(final LoginEvent event) {
         try {
             loginViewSupport.authenticate(
                     AuthDetails.of(event.getUsername(), event.getPassword())
                             .withLocale(login.getSelectedLocale())
                             .withRememberMe(login.isRememberMe())
             );
-        } catch (BadCredentialsException | DisabledException | LockedException | AccessDeniedException e) {
+        } catch (final BadCredentialsException | DisabledException | LockedException | AccessDeniedException e) {
             log.info("Login failed", e);
             event.getSource().setError(true);
         }
     }
 
     @Override
-    public void localeChange(LocaleChangeEvent event) {
+    public void localeChange(final LocaleChangeEvent event) {
         UI.getCurrent().getPage().setTitle(messageBundle.getMessage("LoginView.title"));
 
-        JmixLoginI18n loginI18n = JmixLoginI18n.createDefault();
+        final JmixLoginI18n loginI18n = JmixLoginI18n.createDefault();
 
-        JmixLoginI18n.JmixForm form = new JmixLoginI18n.JmixForm();
+        final JmixLoginI18n.JmixForm form = new JmixLoginI18n.JmixForm();
         form.setTitle(messageBundle.getMessage("loginForm.headerTitle"));
         form.setUsername(messageBundle.getMessage("loginForm.username"));
         form.setPassword(messageBundle.getMessage("loginForm.password"));
@@ -102,7 +102,7 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
         form.setRememberMe(messageBundle.getMessage("loginForm.rememberMe"));
         loginI18n.setForm(form);
 
-        LoginI18n.ErrorMessage errorMessage = new LoginI18n.ErrorMessage();
+        final LoginI18n.ErrorMessage errorMessage = new LoginI18n.ErrorMessage();
         errorMessage.setTitle(messageBundle.getMessage("loginForm.errorTitle"));
         errorMessage.setMessage(messageBundle.getMessage("loginForm.badCredentials"));
         loginI18n.setErrorMessage(errorMessage);

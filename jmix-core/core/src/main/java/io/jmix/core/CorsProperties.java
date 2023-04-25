@@ -17,13 +17,12 @@
 package io.jmix.core;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.util.pattern.PathPattern;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -31,7 +30,6 @@ import java.util.List;
  * module auto-configuration.
  */
 @ConfigurationProperties(prefix = "jmix.cors")
-@ConstructorBinding
 public class CorsProperties {
 
     /**

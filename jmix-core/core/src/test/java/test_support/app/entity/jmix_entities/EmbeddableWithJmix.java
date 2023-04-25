@@ -2,8 +2,8 @@ package test_support.app.entity.jmix_entities;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @JmixEntity
 @Embeddable

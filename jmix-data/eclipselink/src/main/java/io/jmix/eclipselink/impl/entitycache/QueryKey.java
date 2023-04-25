@@ -19,8 +19,8 @@ package io.jmix.eclipselink.impl.entitycache;
 import com.google.common.base.MoreObjects;
 import io.jmix.core.UuidProvider;
 
-import javax.persistence.Parameter;
-import javax.persistence.Query;
+import jakarta.persistence.Parameter;
+import jakarta.persistence.Query;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;

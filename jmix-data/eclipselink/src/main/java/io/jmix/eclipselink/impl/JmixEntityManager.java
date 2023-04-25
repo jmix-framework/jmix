@@ -32,19 +32,20 @@ import io.jmix.data.impl.converters.AuditConversionService;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.eclipse.persistence.internal.helper.CubaUtil;
+//todo SB3 uncomment Jmix Eclipselink CubaUtil
+//import org.eclipse.persistence.internal.helper.CubaUtil;
 import org.eclipse.persistence.sessions.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.metamodel.Metamodel;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -420,8 +421,9 @@ public class JmixEntityManager implements EntityManager {
 
     private void setSoftDeletion(boolean softDeletion) {
         delegate.setProperty(PersistenceHints.SOFT_DELETION, softDeletion);
-        CubaUtil.setSoftDeletion(softDeletion);
-        CubaUtil.setOriginalSoftDeletion(softDeletion);
+        //todo SB3 Jmix Eclipselink CubaUtil
+//        CubaUtil.setSoftDeletion(softDeletion);
+//        CubaUtil.setOriginalSoftDeletion(softDeletion);
     }
 
     private boolean isSoftDeletion(Map<String, Object> properties) {
@@ -473,8 +475,9 @@ public class JmixEntityManager implements EntityManager {
 
     private <T> T internalMerge(T entity) {
         try {
-            CubaUtil.setSoftDeletion(false);
-            CubaUtil.setOriginalSoftDeletion(false);
+            //todo SB3 uncomment Jmix Eclipselink CubaUtil
+//            CubaUtil.setSoftDeletion(false);
+//            CubaUtil.setOriginalSoftDeletion(false);
 
             T merged = delegate.merge(entity);
 
@@ -499,8 +502,9 @@ public class JmixEntityManager implements EntityManager {
             return merged;
         } finally {
             boolean softDeletion = PersistenceHints.isSoftDeletion(delegate);
-            CubaUtil.setSoftDeletion(softDeletion);
-            CubaUtil.setOriginalSoftDeletion(softDeletion);
+            //todo SB3 uncomment Jmix Eclipselink CubaUtil
+//            CubaUtil.setSoftDeletion(softDeletion);
+//            CubaUtil.setOriginalSoftDeletion(softDeletion);
         }
     }
 

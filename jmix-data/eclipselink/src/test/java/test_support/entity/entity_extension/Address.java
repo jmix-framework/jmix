@@ -17,7 +17,7 @@ package test_support.entity.entity_extension;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Embeddable
 @JmixEntity(name = "exttest_Address")

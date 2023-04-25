@@ -18,7 +18,7 @@ package test_support.app.entity;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity(name = "app_LockableChildEntity")
 @JmixEntity

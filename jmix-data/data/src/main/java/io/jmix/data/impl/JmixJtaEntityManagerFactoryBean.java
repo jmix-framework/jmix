@@ -47,6 +47,6 @@ public class JmixJtaEntityManagerFactoryBean extends JmixBaseEntityManagerFactor
     protected void setupJpaProperties() {
         super.setupJpaProperties();
         getJpaPropertyMap().put("eclipselink.target-server", JmixJtaServerPlatform.class.getName());
-        getJpaPropertyMap().put("javax.persistence.transactionType", "JTA");
+        getJpaPropertyMap().put("jakarta.persistence.transactionType", "JTA");
     }
 }

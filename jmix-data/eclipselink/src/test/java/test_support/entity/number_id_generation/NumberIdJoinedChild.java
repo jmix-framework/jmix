@@ -18,10 +18,10 @@ package test_support.entity.number_id_generation;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @DiscriminatorValue("C")
 @Table(name = "TEST_NUMBER_ID_JOINED_CHILD")

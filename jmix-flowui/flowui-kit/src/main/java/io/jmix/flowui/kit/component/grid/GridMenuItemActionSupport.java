@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Objects;
 
 public class GridMenuItemActionSupport {

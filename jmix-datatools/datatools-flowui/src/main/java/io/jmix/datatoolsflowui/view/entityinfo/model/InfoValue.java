@@ -20,7 +20,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.util.UUID;
 
 @JmixEntity(name = "datatl_InfoValue")

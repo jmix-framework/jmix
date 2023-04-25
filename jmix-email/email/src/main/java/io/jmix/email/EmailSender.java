@@ -18,7 +18,7 @@ package io.jmix.email;
 
 import io.jmix.email.entity.SendingMessage;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 /**
  * Adapter to javax.mail email sending API.
  * <br>

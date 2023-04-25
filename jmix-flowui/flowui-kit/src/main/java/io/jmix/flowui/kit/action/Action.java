@@ -21,7 +21,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.HasShortcutCombination;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.function.Consumer;
 

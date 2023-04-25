@@ -36,6 +36,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
+    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
     implementation'com.google.code.gson:gson'

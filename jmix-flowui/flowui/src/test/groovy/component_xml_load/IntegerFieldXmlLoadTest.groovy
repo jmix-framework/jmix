@@ -101,7 +101,7 @@ class IntegerFieldXmlLoadTest extends FlowuiTestSpecification {
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
-            hasControls()
+            stepButtonsVisible
             height == "50px"
             helperText == "helperTextString"
             label == "labelString"

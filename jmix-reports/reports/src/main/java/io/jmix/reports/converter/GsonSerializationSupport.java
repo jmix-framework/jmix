@@ -33,15 +33,15 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import org.springframework.beans.factory.BeanFactory;
 
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
 import static java.lang.String.format;
 
-@NotThreadSafe
+//todo SB3 restore NotThreadSafe annotation?
+//@NotThreadSafe
 //todo add dynamic attributes support
 //todo add not meta property objects support
 public class GsonSerializationSupport {

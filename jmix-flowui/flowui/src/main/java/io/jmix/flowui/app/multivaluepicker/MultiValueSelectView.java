@@ -22,7 +22,7 @@ import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;

@@ -19,7 +19,7 @@ package io.jmix.flowui.upload;
 import io.jmix.core.FileTypesHelper;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public final class FileUploadTypesHelper {
 

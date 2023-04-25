@@ -20,8 +20,8 @@ import com.sun.mail.iap.ProtocolException;
 import com.sun.mail.imap.IMAPStore;
 import com.sun.mail.imap.protocol.IMAPProtocol;
 
-import javax.mail.Session;
-import javax.mail.URLName;
+import jakarta.mail.Session;
+import jakarta.mail.URLName;
 import java.io.IOException;
 
 public class JmixIMAPStore extends IMAPStore {

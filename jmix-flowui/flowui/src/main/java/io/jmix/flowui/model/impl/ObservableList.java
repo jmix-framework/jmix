@@ -20,7 +20,7 @@ import com.google.common.collect.ForwardingList;
 import io.jmix.core.Entity;
 import io.jmix.flowui.model.CollectionChangeType;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.*;

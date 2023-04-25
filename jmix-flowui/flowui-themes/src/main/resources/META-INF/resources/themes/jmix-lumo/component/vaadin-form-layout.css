@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-:host([theme~='warning']) [part='overlay'] {
-  background-color: var(--jmix-lumo-warning-background-color);
-  color: var(--jmix-lumo-warning-color);
-  box-shadow: var(--lumo-box-shadow-l);
+vaadin-form-item[theme~='jmix-group-filter-form-item']:not([label-position='top']) {
+  align-items: center;
 }
 
-:host([theme~='warning']) {
-  --_lumo-button-background-color: var(--lumo-shade-20pct);
-  --_lumo-button-color: var(--jmix-lumo-warning-color);
-  --_lumo-button-primary-background-color: var(--jmix-lumo-warning-color);
-  --_lumo-button-primary-color: var(--jmix-lumo-warning-primary-text-color);
+vaadin-form-item[theme~='jmix-group-filter-form-item']:not([label-position='top'])::part(label) {
+  margin: 0;
 }
 
-[part='overlay'] {
+vaadin-form-item[theme~='label-align-end']:not([label-position='top'])::part(label) {
   display: flex;
-  justify-content: center;
-  position: relative;
+  justify-content: end;
 }

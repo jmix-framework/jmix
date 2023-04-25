@@ -16,11 +16,10 @@
 
 package io.jmix.reports;
 
+import jakarta.annotation.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +27,6 @@ import java.util.List;
  * Reporting configuration interface.
  */
 @ConfigurationProperties(prefix = "jmix.reports")
-@ConstructorBinding
 public class ReportsProperties {
 
     /**

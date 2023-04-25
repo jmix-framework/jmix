@@ -19,7 +19,7 @@ package io.jmix.core.entity;
 import io.jmix.core.Entity;
 import io.jmix.core.annotation.Internal;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 /**
  * Used for {@link Embeddable} entities  by enhancing process

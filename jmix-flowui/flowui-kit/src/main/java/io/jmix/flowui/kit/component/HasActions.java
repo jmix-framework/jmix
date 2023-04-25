@@ -18,7 +18,7 @@ package io.jmix.flowui.kit.component;
 
 import io.jmix.flowui.kit.action.Action;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 public interface HasActions {

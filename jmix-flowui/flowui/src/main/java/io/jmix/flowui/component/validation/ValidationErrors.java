@@ -18,7 +18,7 @@ package io.jmix.flowui.component.validation;
 
 import com.vaadin.flow.component.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

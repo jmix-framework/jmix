@@ -18,7 +18,7 @@ package io.jmix.securityflowui.model;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 
 public enum ResourcePolicyType implements EnumClass<String> {

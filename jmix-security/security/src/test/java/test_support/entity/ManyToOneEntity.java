@@ -18,7 +18,7 @@ package test_support.entity;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Table(name = "TEST_MANY_TO_ONE_ENTITY")
 @Entity(name = "test_ManyToOneEntity")

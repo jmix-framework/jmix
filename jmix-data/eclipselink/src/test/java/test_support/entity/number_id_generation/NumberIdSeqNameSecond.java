@@ -20,7 +20,7 @@ package test_support.entity.number_id_generation;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @DiscriminatorValue("R")
 @Table(name = "TEST_NUMBER_ID_SEQ_NAME_SECOND")

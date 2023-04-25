@@ -18,7 +18,7 @@ package io.jmix.flowui.kit.component;
 
 import com.vaadin.flow.component.HasValue;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface SupportsUserAction<V> {
 

@@ -21,8 +21,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
 
 public class JmixJtaTransactionManager extends JtaTransactionManager implements ApplicationContextAware {
     protected ApplicationContext applicationContext;

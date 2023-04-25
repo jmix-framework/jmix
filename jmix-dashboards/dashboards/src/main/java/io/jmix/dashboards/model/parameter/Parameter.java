@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.dashboards.model.parameter.type.*;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.util.UUID;
 
 @JmixEntity(name = "dshbrd_Parameter")

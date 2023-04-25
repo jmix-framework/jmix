@@ -19,7 +19,7 @@ package io.jmix.dynattr;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Objects;
 
 public enum OptionsLoaderType implements EnumClass<String> {

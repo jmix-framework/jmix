@@ -25,7 +25,7 @@ import org.springframework.context.support.AbstractResourceBasedMessageSource;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @Configuration
 public class MessageSourceConfiguration implements ImportAware {

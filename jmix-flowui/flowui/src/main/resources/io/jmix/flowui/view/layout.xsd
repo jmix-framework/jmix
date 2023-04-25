@@ -1957,7 +1957,7 @@
                 <xs:attribute name="required" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
-                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasTitle"/>
@@ -2289,8 +2289,6 @@
                 <xs:attribute name="selectionMode" type="gridSelectionMode"/>
                 <xs:attribute name="detailsVisibleOnClick" type="xs:boolean"/>
                 <xs:attribute name="columnReorderingAllowed" type="xs:boolean"/>
-                <xs:attribute name="verticalScrollingEnabled" type="xs:boolean"/>
-                <xs:attribute name="verticalScrollingEnabled" type="xs:boolean"/>
                 <xs:attribute name="nestedNullBehavior" type="gridNestedNullBehaviorEnum"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2317,6 +2315,7 @@
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
                 <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="maxLength" type="xs:integer"/>
                 <xs:attribute name="minLength" type="xs:integer"/>
                 <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
@@ -2332,10 +2331,9 @@
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
                 <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="maxLength" type="xs:integer"/>
                 <xs:attribute name="minLength" type="xs:integer"/>
-
-                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasRequired"/>
@@ -2348,7 +2346,7 @@
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
                 <xs:attribute name="pattern" type="xs:string"/>
-                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
@@ -2362,7 +2360,8 @@
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
-                <xs:attribute name="hasControls" type="xs:boolean"/>
+                <xs:attribute name="stepButtonsVisible" type="xs:boolean"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
@@ -2385,7 +2384,7 @@
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
-                <xs:attribute name="hasControls" type="xs:boolean"/>
+                <xs:attribute name="stepButtonsVisible" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
@@ -2475,8 +2474,8 @@
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
-                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasRequired"/>
@@ -2502,7 +2501,7 @@
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="tooltipText" type="resourceString"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
-                <xs:attribute name="allowedCharPattern" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
@@ -2573,6 +2572,7 @@
                 <xs:attribute name="datatype" type="timeDatatypeEnum"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="timePickerThemeNames"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2596,6 +2596,7 @@
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="datePickerThemeNames"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
@@ -2746,6 +2747,7 @@
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="value" type="xs:string"/>
                 <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="autoselect" type="xs:boolean"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="textAreaThemeNames"/>

@@ -17,7 +17,7 @@
 package io.jmix.flowui.kit.component;
 
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Interface for UI components that provide additional objects for framework as part of component API.

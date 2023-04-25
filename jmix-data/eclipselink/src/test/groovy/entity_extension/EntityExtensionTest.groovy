@@ -25,9 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.entity_extension.*
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
-import javax.persistence.TypedQuery
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
+import jakarta.persistence.TypedQuery
 
 class EntityExtensionTest extends DataSpec {
 

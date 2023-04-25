@@ -19,7 +19,7 @@ package io.jmix.dashboards.model.visualmodel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @JmixEntity(name = "dshbrd_GridCellLayout")
 public class GridCellLayout extends VerticalLayout {

@@ -23,7 +23,7 @@ import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

@@ -21,7 +21,7 @@ import io.jmix.flowui.data.BufferedDataUnit;
 import io.jmix.flowui.model.InstanceContainer;
 import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Objects;
 
 public class BufferedContainerValueSource<E, V> extends ContainerValueSource<E, V> implements BufferedDataUnit {

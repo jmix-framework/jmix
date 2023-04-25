@@ -30,7 +30,6 @@ public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends Abst
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
-        loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
@@ -41,5 +40,6 @@ public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends Abst
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+        componentLoader().loadAllowedCharPattern(resultComponent, element, context);
     }
 }

@@ -21,13 +21,13 @@ import io.jmix.core.Metadata;
 import io.jmix.data.impl.jpql.model.JpqlEntityModel;
 import io.jmix.core.metamodel.model.MetaClass;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@NotThreadSafe
+//todo SB3 restore NotThreadSafe annotation?
+//@NotThreadSafe
 public class DomainModel {
     protected Map<String, JpqlEntityModel> entities = new HashMap<>();
     protected ExtendedEntities extendedEntities;

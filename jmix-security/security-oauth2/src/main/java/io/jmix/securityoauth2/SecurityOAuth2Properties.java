@@ -17,11 +17,9 @@
 package io.jmix.securityoauth2;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.security.oauth2")
-@ConstructorBinding
 public class SecurityOAuth2Properties {
     private final String clientId;
     private final String clientSecret;

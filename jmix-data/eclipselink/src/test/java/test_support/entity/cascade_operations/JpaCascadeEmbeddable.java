@@ -2,7 +2,7 @@ package test_support.entity.cascade_operations;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @JmixEntity(name = "test$JpaCascadeEmbeddable")
 @Embeddable

@@ -1,11 +1,9 @@
 package io.jmix.oidc;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.oidc")
-@ConstructorBinding
 public class OidcProperties {
 
     /**

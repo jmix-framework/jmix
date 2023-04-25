@@ -34,9 +34,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import javax.sql.DataSource;
 import java.util.*;
 
@@ -376,7 +376,7 @@ public class DeletePolicyProcessor {
     }
 
     protected boolean isPersistent(MetaClass metaClass) {
-        return metaClass.getJavaClass().isAnnotationPresent(javax.persistence.Entity.class);
+        return metaClass.getJavaClass().isAnnotationPresent(jakarta.persistence.Entity.class);
     }
 
     protected void cascade(String entityName, MetaProperty property) {

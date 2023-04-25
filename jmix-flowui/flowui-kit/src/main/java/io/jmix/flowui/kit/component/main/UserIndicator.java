@@ -24,7 +24,7 @@ import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.SupportsFormatter;
 import io.jmix.flowui.kit.component.formatter.Formatter;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public class UserIndicator<V> extends Composite<Div> implements SupportsFormatter<V>, HasTitle, HasStyle, HasSize,
         HasEnabled, HasTooltip {

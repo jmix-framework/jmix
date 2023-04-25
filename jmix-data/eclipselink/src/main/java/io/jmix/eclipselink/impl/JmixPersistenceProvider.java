@@ -19,8 +19,8 @@ package io.jmix.eclipselink.impl;
 import org.eclipse.persistence.jpa.PersistenceProvider;
 import org.springframework.beans.factory.ListableBeanFactory;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 import java.util.Map;
 
 public class JmixPersistenceProvider extends PersistenceProvider {

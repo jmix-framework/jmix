@@ -42,13 +42,13 @@ public class MetaModelUtil {
     public static final String SETTERS_ENHANCED_TYPE = "io.jmix.core.entity.JmixSettersEnhanced";
     public static final String ENTITY_ENTRY_ENHANCED_TYPE = "io.jmix.core.entity.JmixEntityEntryEnhanced";
 
-    public static final String TRANSIENT_ANNOTATION_TYPE = "javax.persistence.Transient";
+    public static final String TRANSIENT_ANNOTATION_TYPE = "jakarta.persistence.Transient";
     public static final String JMIX_PROPERTY_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.JmixProperty";
     public static final String DISABLE_ENHANCING_ANNOTATION_TYPE = "io.jmix.core.entity.annotation.DisableEnhancing";
     public static final String JMIX_ENTITY_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.JmixEntity";
-    public static final String ENTITY_ANNOTATION_TYPE = "javax.persistence.Entity";
-    public static final String EMBEDDABLE_ANNOTATION_TYPE = "javax.persistence.Embeddable";
-    public static final String CONVERTER_ANNOTATION_TYPE = "javax.persistence.Converter";
+    public static final String ENTITY_ANNOTATION_TYPE = "jakarta.persistence.Entity";
+    public static final String EMBEDDABLE_ANNOTATION_TYPE = "jakarta.persistence.Embeddable";
+    public static final String CONVERTER_ANNOTATION_TYPE = "jakarta.persistence.Converter";
     public static final String STORE_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.Store";
     public static final String REPLACE_ENTITY_ANNOTATION_TYPE = "io.jmix.core.entity.annotation.ReplaceEntity";
 
@@ -104,7 +104,7 @@ public class MetaModelUtil {
 
     public static boolean isJpaMappedSuperclass(CtClass ctClass) {
         AnnotationsAttribute attribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
-        return attribute != null && attribute.getAnnotation("javax.persistence.MappedSuperclass") != null;
+        return attribute != null && attribute.getAnnotation("jakarta.persistence.MappedSuperclass") != null;
     }
 
     public static boolean isModuleConfig(CtClass ctClass) {
@@ -133,7 +133,7 @@ public class MetaModelUtil {
         AnnotationsAttribute annotationsInfo = (AnnotationsAttribute) field.getFieldInfo().getAttribute(AnnotationsAttribute.visibleTag);
 
         if (annotationsInfo != null) {
-            if (annotationsInfo.getAnnotation("javax.persistence.GeneratedValue") != null) {
+            if (annotationsInfo.getAnnotation("jakarta.persistence.GeneratedValue") != null) {
                 return true;
             }
         }

@@ -22,8 +22,8 @@ import com.google.gson.GsonBuilder;
 import io.jmix.dynattr.ConfigurationExclusionStrategy;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter
 public class CategoryAttributeConfigurationConvertor implements AttributeConverter<CategoryAttributeConfiguration, String> {

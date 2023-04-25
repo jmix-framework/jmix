@@ -23,7 +23,7 @@
             <pagination component="pagination"/>
         </queryParameters>
     </facets>
-    <layout expand="usersTable">
+    <layout>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="usersTable.create"/>
             <button id="editBtn" action="usersTable.edit"/>

@@ -18,7 +18,7 @@ package io.jmix.flowui.model;
 
 import io.jmix.core.common.event.Subscription;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;

@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.view;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Optional;
 
 public class ViewInfo {

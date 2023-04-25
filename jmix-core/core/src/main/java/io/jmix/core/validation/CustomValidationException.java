@@ -16,7 +16,7 @@
 
 package io.jmix.core.validation;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 public class CustomValidationException extends ValidationException {
     public CustomValidationException(String message) {

@@ -18,7 +18,6 @@ package io.jmix.core.common.event;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -26,7 +25,8 @@ import java.util.function.Consumer;
 /**
  * EventHub class implementing the event listening model with concrete event classes.
  */
-@NotThreadSafe
+//todo SB3 restore NotThreadSafe annotation?
+//@NotThreadSafe
 public class EventHub {
     protected static final int EVENTS_MAP_EXPECTED_MAX_SIZE = 4;
 

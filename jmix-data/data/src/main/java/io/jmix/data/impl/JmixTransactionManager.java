@@ -25,7 +25,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 public class JmixTransactionManager extends JpaTransactionManager implements ApplicationContextAware {
 

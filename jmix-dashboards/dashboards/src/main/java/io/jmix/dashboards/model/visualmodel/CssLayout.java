@@ -20,7 +20,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.dashboards.utils.DashboardLayoutManager;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @JmixEntity(name = "dshbrd_CssLayout")
 public class CssLayout extends DashboardLayout implements ContainerLayout {

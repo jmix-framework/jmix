@@ -25,6 +25,7 @@ registerStyles('jmix-multi-select-combo-box-picker', [],{
     moduleId: 'jmix-multi-select-combo-box-picker-styles'
 });
 
+// CAUTION: copied from @vaadin/login [last update Vaadin 24.0.3]
 export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
 
     static get is() {
@@ -78,25 +79,17 @@ export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
                             part="input-field"
                             readonly="[[readonly]]"
                             disabled="[[disabled]]"
-                            field-readonly="[[fieldReadonly]]"
                             invalid="[[invalid]]"
                             theme$="[[_theme]]"
                     >
-                        <vaadin-multi-select-combo-box-chip
-                                id="overflow"
-                                slot="prefix"
-                                part$="[[_getOverflowPart(_overflowItems.length)]]"
-                                disabled="[[disabled]]"
-                                readonly="[[readonly]]"
-                                label="[[_getOverflowLabel(_overflowItems.length)]]"
-                                title$="[[_getOverflowTitle(_overflowItems)]]"
-                                hidden$="[[_isOverflowHidden(_overflowItems.length)]]"
-                                on-mousedown="_preventBlur"
-                        ></vaadin-multi-select-combo-box-chip>
-                        <div id="chips" part="chips" slot="prefix"></div>
+                        <slot name="overflow" slot="prefix"></slot>
+                        <div id="chips" part="chips" slot="prefix">
+                            <slot name="chip"></slot>
+                        </div>
                         <slot name="input"></slot>
                         <div id="toggleButton" class="toggle-button" part="toggle-button" slot="suffix"
                              aria-hidden="true"></div>
+                        <!-- Jmix API -->
                         <div id="pickerAction" part="action-part" slot="suffix">
                             <slot name="actions"></slot>
                         </div>

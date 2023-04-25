@@ -23,7 +23,7 @@ import io.jmix.core.LoadContext;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.kit.component.pagination.AbstractPagination;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Function;
 
 /**

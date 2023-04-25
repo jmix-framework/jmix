@@ -18,7 +18,7 @@ package io.jmix.reports.entity;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public enum ReportOutputType implements EnumClass<Integer> {
     XLS(0, JmixReportOutputType.xls),

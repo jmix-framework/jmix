@@ -18,11 +18,9 @@ package io.jmix.flowui;
 
 import com.vaadin.flow.component.notification.Notification.Position;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.flowui.view")
-@ConstructorBinding
 public class FlowuiViewProperties {
 
     String closeShortcut;

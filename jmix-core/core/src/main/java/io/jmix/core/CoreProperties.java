@@ -16,11 +16,10 @@
 
 package io.jmix.core;
 
+import jakarta.annotation.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @ConfigurationProperties(prefix = "jmix.core")
-@ConstructorBinding
 public class CoreProperties {
 
     /**

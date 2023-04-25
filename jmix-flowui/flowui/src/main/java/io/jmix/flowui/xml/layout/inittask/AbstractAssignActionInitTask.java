@@ -29,7 +29,7 @@ import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Optional;
 
 public abstract class AbstractAssignActionInitTask<C extends Component> implements ComponentLoader.InitTask {

@@ -16,7 +16,7 @@
 
 package io.jmix.core.querycondition;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;

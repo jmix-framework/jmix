@@ -38,7 +38,7 @@ import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 @org.springframework.stereotype.Component("flowui_PropertyFilterComponentGenerationStrategy")
 public class PropertyFilterComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {

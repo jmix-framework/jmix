@@ -39,7 +39,7 @@ public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
             project.getLogger().lifecycle("Running EclipseLink enhancer in {} for {}", project, sourceSet);
 
             project.javaexec(javaExecSpec -> {
-                javaExecSpec.setMain("org.eclipse.persistence.tools.weaving.jpa.StaticWeave");
+                javaExecSpec.getMainClass().set("org.eclipse.persistence.tools.weaving.jpa.StaticWeave");
 
                 javaExecSpec.setClasspath(project.files(
                         project.getConfigurations().getByName("enhancing").getAsFileTree(),

@@ -20,7 +20,11 @@ import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
+import com.vaadin.flow.component.checkbox.dataview.CheckboxGroupDataView;
+import com.vaadin.flow.component.checkbox.dataview.CheckboxGroupListDataView;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.InMemoryDataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
@@ -38,7 +42,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -148,12 +152,34 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
     }
 
     @Override
-    public void setDataProvider(DataProvider<V, ?> dataProvider) {
-        // Method is called from a constructor so bean can be null
+    public CheckboxGroupDataView<V> setItems(DataProvider<V, Void> dataProvider) {
+        bindDataProvider(dataProvider);
+        return super.setItems(dataProvider);
+    }
+
+    @Override
+    public CheckboxGroupDataView<V> setItems(InMemoryDataProvider<V> inMemoryDataProvider) {
+        bindDataProvider(inMemoryDataProvider);
+        return super.setItems(inMemoryDataProvider);
+    }
+
+    @Override
+    public CheckboxGroupListDataView<V> setItems(ListDataProvider<V> dataProvider) {
+        bindDataProvider(dataProvider);
+        return super.setItems(dataProvider);
+    }
+
+    protected void bindDataProvider(DataProvider<V, ?> dataProvider) {
+        // One of binding methods is called from a constructor so bean can be null
         if (dataViewDelegate != null) {
             dataViewDelegate.bind(dataProvider);
         }
-        super.setDataProvider(dataProvider);
+    }
+
+    @Nullable
+    @Override
+    public DataProvider<V, ?> getDataProvider() {
+        return dataViewDelegate.getDataProvider();
     }
 
     @Nullable

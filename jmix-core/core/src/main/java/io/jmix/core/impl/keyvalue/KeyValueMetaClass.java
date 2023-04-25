@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.model.*;
 import io.jmix.core.metamodel.model.impl.MetadataObjectImpl;
 import org.springframework.beans.factory.BeanFactory;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;

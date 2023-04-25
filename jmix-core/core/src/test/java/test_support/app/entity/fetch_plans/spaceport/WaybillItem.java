@@ -22,15 +22,13 @@ import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import org.apache.commons.lang3.LocaleUtils;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.Locale;
 import java.util.UUID;
 
 @Table(name = "ST_WAYBILL_ITEM")
-@javax.persistence.Entity(name = "st_WaybillItem")
+@jakarta.persistence.Entity(name = "st_WaybillItem")
 @JmixEntity
 public class WaybillItem {
     private static final long serialVersionUID = 5178883424732340774L;

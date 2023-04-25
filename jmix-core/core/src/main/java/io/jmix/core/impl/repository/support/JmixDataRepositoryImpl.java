@@ -25,9 +25,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 
@@ -40,7 +41,7 @@ import static io.jmix.core.impl.repository.query.utils.LoaderHelper.springToJmix
  * @param <ID>
  */
 @NoRepositoryBean
-public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> {
+public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>, CrudRepository<T, ID> {
 
 
     protected Metadata metadata;

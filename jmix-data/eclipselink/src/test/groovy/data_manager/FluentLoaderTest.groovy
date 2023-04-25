@@ -25,7 +25,7 @@ import test_support.DataSpec
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Status
 
-import javax.persistence.TemporalType
+import jakarta.persistence.TemporalType
 
 class FluentLoaderTest extends DataSpec {
     @Autowired

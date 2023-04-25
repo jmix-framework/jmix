@@ -71,7 +71,7 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
                         readonly="[[readonly]]"
                         disabled="[[disabled]]"
                         invalid="[[invalid]]"
-                        theme$="[[theme]]"
+                        theme$="[[_theme]]"
                 >
                     <slot name="prefix" slot="prefix"></slot>
                     <slot name="input"></slot>
@@ -128,9 +128,8 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
         this.addController(new LabelledInputController(this.inputElement, this._labelController));
 
         this._tooltipController = new TooltipController(this);
-        this.addController(this._tooltipController);
         this._tooltipController.setPosition('top');
-        this._tooltipController.setShouldShow((target) => !target.opened);
+        this.addController(this._tooltipController);
     }
 
 

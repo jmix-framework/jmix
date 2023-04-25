@@ -18,8 +18,8 @@ package io.jmix.core;
 
 import io.jmix.core.constraint.AccessConstraint;
 
-import javax.persistence.LockModeType;
-import javax.persistence.TemporalType;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
 

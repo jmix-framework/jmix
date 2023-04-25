@@ -22,7 +22,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface SupportsTypedValue<C extends Component, E extends HasValue.ValueChangeEvent<P>, V, P> extends HasValue<E, P> {
 

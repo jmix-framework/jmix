@@ -18,7 +18,7 @@ package io.jmix.dashboards.utils;
 
 import io.jmix.dashboards.model.visualmodel.*;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

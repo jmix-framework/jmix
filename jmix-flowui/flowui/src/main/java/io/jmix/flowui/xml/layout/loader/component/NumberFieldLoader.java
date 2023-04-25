@@ -36,11 +36,11 @@ public class NumberFieldLoader extends AbstractComponentLoader<JmixNumberField> 
         loadDouble(element, "max", resultComponent::setMax);
         loadDouble(element, "min", resultComponent::setMin);
         loadDouble(element, "step", resultComponent::setStep);
+        loadBoolean(element, "stepButtonsVisible", resultComponent::setStepButtonsVisible);
         loadDouble(element, "value", resultComponent::setValue);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
-        loadBoolean(element, "hasControls", resultComponent::setHasControls);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
@@ -59,6 +59,7 @@ public class NumberFieldLoader extends AbstractComponentLoader<JmixNumberField> 
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+        componentLoader().loadAllowedCharPattern(resultComponent, element, context);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

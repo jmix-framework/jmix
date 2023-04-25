@@ -31,7 +31,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;

@@ -38,7 +38,7 @@ import test_support.TestContextInititalizer;
 import test_support.entity.sales.Customer;
 import test_support.entity.sales.Order;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

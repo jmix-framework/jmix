@@ -61,6 +61,7 @@ class TextAreaXmlLoadTest extends FlowuiTestSpecification {
         then: "BigDecimalField attributes will be loaded"
         verifyAll(componentView.textAreaId) {
             id.get() == "textAreaId"
+            allowedCharPattern == "charPattern"
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
             autocorrect

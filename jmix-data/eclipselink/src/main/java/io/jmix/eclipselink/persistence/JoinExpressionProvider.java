@@ -20,7 +20,7 @@ import io.jmix.eclipselink.impl.mapping.JoinCriteriaMappingProcessor;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.mappings.DatabaseMapping;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Generates additional join expression for entity mappings. Used in {@link JoinCriteriaMappingProcessor}.

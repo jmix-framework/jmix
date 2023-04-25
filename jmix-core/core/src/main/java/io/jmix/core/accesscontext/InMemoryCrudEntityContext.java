@@ -19,7 +19,7 @@ package io.jmix.core.accesscontext;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -34,7 +34,7 @@ public class InMemoryCrudEntityContext implements AccessContext {
     protected BiPredicate readPredicate;
     protected BiPredicate updatePredicate;
     protected BiPredicate deletePredicate;
-    
+
     protected ApplicationContext applicationContext;
 
     public InMemoryCrudEntityContext(MetaClass entityClass, ApplicationContext applicationContext) {

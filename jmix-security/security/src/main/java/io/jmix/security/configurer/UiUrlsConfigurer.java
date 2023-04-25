@@ -28,11 +28,9 @@ public class UiUrlsConfigurer extends AbstractHttpConfigurer<UiUrlsConfigurer, H
 
     private void initUiUrls(HttpSecurity http) {
         try {
-            http.requestMatchers()
-                    .antMatchers("/**")
-                    .and()
-                    .authorizeRequests()
-                    .anyRequest().permitAll();
+            http.authorizeHttpRequests( authorize -> {
+                authorize.anyRequest().permitAll();
+            });
         } catch (Exception e) {
             throw new RuntimeException("Error while init security", e);
         }

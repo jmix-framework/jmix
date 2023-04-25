@@ -49,10 +49,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.Nullable;
-import javax.validation.Validator;
-import javax.validation.constraints.NotNull;
-import javax.validation.metadata.BeanDescriptor;
+import jakarta.annotation.Nullable;
+import jakarta.validation.Validator;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.metadata.BeanDescriptor;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;

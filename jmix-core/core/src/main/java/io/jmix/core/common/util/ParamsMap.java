@@ -18,7 +18,7 @@ package io.jmix.core.common.util;
 
 import com.google.common.collect.ImmutableMap;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

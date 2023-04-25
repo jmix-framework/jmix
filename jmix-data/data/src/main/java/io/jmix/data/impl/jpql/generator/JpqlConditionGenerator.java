@@ -24,7 +24,7 @@ import io.jmix.core.querycondition.JpqlCondition;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

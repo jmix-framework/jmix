@@ -17,13 +17,12 @@
 package io.jmix.dashboards.model.visualmodel;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.dashboards.model.json.Exclude;
 import io.jmix.dashboards.utils.DashboardLayoutUtils;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

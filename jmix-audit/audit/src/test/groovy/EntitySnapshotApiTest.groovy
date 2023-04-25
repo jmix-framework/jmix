@@ -28,7 +28,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.userdetails.User
 import test_support.testmodel.IdentityEntity
 
-import javax.persistence.TypedQuery
+import jakarta.persistence.TypedQuery
 
 class EntitySnapshotApiTest extends AbstractEntityLogTest {
 

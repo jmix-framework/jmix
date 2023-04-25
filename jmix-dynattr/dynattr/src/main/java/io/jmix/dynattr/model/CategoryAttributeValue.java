@@ -32,8 +32,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-@javax.persistence.Entity(name = "dynat_CategoryAttributeValue")
+@jakarta.persistence.Entity(name = "dynat_CategoryAttributeValue")
 @Table(name = "DYNAT_ATTR_VALUE")
 @SystemLevel
 public class CategoryAttributeValue implements Serializable {

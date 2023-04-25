@@ -60,6 +60,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.numberFieldId) {
             id.get() == "numberFieldId"
             !invalid
+            allowedCharPattern == "charPattern"
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
             autocorrect

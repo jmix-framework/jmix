@@ -17,11 +17,9 @@
 package io.jmix.core.rememberme;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.core.rememberme")
-@ConstructorBinding
 public class RememberMeProperties {
 
     String key;

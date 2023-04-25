@@ -18,7 +18,7 @@ package test_support;
 
 import io.jmix.search.index.impl.StartupIndexSynchronizer;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Disables synchronization of indexes on application startup

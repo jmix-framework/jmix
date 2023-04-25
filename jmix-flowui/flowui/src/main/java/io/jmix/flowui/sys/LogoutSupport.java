@@ -20,8 +20,8 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.servlet.ServletContext;
+import jakarta.annotation.Nullable;
+import jakarta.servlet.ServletContext;
 
 @Component("flowui_LogoutSupport")
 public class LogoutSupport {

@@ -17,10 +17,8 @@
 package io.jmix.localfs;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "jmix.localfs")
-@ConstructorBinding
 public class LocalFileStorageProperties {
 
     /**

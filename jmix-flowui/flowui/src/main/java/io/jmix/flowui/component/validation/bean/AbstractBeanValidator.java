@@ -24,8 +24,8 @@ import io.jmix.core.validation.group.UiComponentChecks;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.CompositeValidationException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.groups.Default;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +41,7 @@ public class AbstractBeanValidator implements Validator {
     protected Metadata metadata;
     protected Messages messages;
     protected MessageTools messageTools;
-    protected javax.validation.Validator validator;
+    protected jakarta.validation.Validator validator;
 
     protected AbstractBeanValidator(Class beanClass, String beanProperty) {
         this.beanClass = beanClass;

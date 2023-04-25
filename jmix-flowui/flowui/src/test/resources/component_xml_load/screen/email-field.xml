@@ -32,6 +32,7 @@
     </facets>
     <layout>
         <emailField id="emailFieldId"
+                    allowedCharPattern="charPattern"
                     autocapitalize="SENTENCES"
                     autocomplete="ADDITIONAL_NAME"
                     autocorrect="true"
@@ -53,7 +54,6 @@
                     minWidth="80px"
                     pattern="patternString"
                     placeholder="placeholderString"
-                    preventInvalidInput="true"
                     readOnly="true"
                     required="true"
                     requiredMessage="requiredMessage"

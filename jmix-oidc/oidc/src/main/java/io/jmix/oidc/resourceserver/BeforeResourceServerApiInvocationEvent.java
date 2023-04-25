@@ -19,8 +19,8 @@ package io.jmix.oidc.resourceserver;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.Authentication;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * A copy of io.jmix.securityoauth2.event.BeforeInvocationEvent. Event fired before API call. Event listeners can

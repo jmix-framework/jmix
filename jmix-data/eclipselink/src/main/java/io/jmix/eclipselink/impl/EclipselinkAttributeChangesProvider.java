@@ -31,8 +31,8 @@ import org.eclipse.persistence.sessions.changesets.ObjectChangeSet;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.HashSet;

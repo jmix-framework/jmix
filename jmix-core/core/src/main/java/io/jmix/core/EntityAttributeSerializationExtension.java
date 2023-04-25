@@ -19,7 +19,7 @@ package io.jmix.core;
 import com.google.gson.JsonElement;
 import io.jmix.core.metamodel.model.MetaProperty;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * An extension point for a mechanism to serialize and deserialize entity to JSON.

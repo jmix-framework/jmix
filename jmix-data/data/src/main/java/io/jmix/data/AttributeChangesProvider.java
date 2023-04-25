@@ -18,7 +18,7 @@ package io.jmix.data;
 
 import io.jmix.core.event.AttributeChanges;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**

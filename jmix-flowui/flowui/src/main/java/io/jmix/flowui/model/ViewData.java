@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.model;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**

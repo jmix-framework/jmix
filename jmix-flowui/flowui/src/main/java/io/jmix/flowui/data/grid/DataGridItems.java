@@ -20,7 +20,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 

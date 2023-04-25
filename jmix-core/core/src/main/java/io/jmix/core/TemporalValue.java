@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import javax.persistence.TemporalType;
+import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
 

@@ -5,9 +5,9 @@ import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.annotation.Nullable;
-import javax.persistence.Transient;
-import javax.validation.constraints.Positive;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Positive;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;

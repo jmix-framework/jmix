@@ -22,7 +22,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.KeyCombination;
 import org.apache.commons.collections4.CollectionUtils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -2,8 +2,8 @@ package test_support.app.entity.sales;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 @Entity(name = "core_OrderLineB")
 @JmixEntity

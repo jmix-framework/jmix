@@ -21,7 +21,7 @@ import '@vaadin/select/src/vaadin-select.js';
 import '@vaadin/login/src/vaadin-login-form-wrapper.js';
 
 import {html} from '@polymer/polymer/polymer-element.js';
-import {LoginForm} from '@vaadin/vaadin-login/src/vaadin-login-form.js';
+import {LoginForm} from '@vaadin/login/src/vaadin-login-form.js';
 
 /**
  * ### Styling
@@ -46,28 +46,17 @@ import {LoginForm} from '@vaadin/vaadin-login/src/vaadin-login-form.js';
  * @fires {CustomEvent} remember-me-changed - Fired when "rememberMeCheckbox" is checked or unchecked.
  * @fires {CustomEvent} locale-selection-changed - Fired when selection in "localesSelect" is changed
  */
+// CAUTION: copied from @vaadin/login [last update Vaadin 24.0.3]
 class JmixLoginForm extends LoginForm {
     static get template() {
         return html`
             <style>
-                [part='vaadin-login-native-form'] * {
+                vaadin-login-form-wrapper > form > * {
                     width: 100%;
                 }
             </style>
-            <vaadin-login-form-wrapper
-                    theme$="[[_theme]]"
-                    part="vaadin-login-native-form-wrapper"
-                    action="{{action}}"
-                    disabled="{{disabled}}"
-                    error="{{error}}"
-                    no-forgot-password="{{noForgotPassword}}"
-                    i18n="{{i18n}}"
-                    on-login="_retargetEvent"
-                    on-forgot-password="_retargetEvent"
-                    class="jmix-login-form-vaadin-login-form-wrapper"
-            >
-                <form part="vaadin-login-native-form" method="POST" action$="[[action]]" slot="form"
-                      class="jmix-login-form-form">
+            <vaadin-login-form-wrapper theme$="[[_theme]]" error="[[error]]" i18n="[[i18n]]">
+                <form method="POST" action$="[[action]]" slot="form">
                     <input id="csrf" type="hidden"/>
                     <vaadin-text-field
                             name="username"
@@ -78,6 +67,7 @@ class JmixLoginForm extends LoginForm {
                             autocapitalize="none"
                             autocorrect="off"
                             spellcheck="false"
+                            autocomplete="username"
                             value="[[username]]"
                     >
                         <input type="text" slot="input" on-keyup="_handleInputKeyup"/>
@@ -105,12 +95,19 @@ class JmixLoginForm extends LoginForm {
                         </vaadin-select>
                     </div>
 
-                    <vaadin-button part="vaadin-login-submit" theme="primary contained" on-click="submit"
-                                   disabled$="[[disabled]]"
-                    >[[i18n.form.submit]]
-                    </vaadin-button
-                    >
+                    <vaadin-button theme="primary contained submit" on-click="submit" disabled$="[[disabled]]">
+                        [[i18n.form.submit]]
+                    </vaadin-button>
                 </form>
+
+                <vaadin-button
+                        slot="forgot-password"
+                        theme="tertiary small"
+                        on-click="_onForgotPasswordClick"
+                        hidden$="[[noForgotPassword]]"
+                >
+                    [[i18n.form.forgotPassword]]
+                </vaadin-button>
             </vaadin-login-form-wrapper>
         `;
     }

@@ -21,14 +21,14 @@ import io.jmix.core.repository.JmixDataRepository;
 import io.jmix.core.repository.Query;
 import io.jmix.core.repository.QueryHints;
 import io.jmix.data.PersistenceHints;
-import org.jetbrains.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import test_support.entity.repository.Customer;
 import test_support.entity.repository.SalesOrder;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

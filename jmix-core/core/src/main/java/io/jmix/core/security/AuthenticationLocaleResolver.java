@@ -19,7 +19,7 @@ package io.jmix.core.security;
 import org.springframework.core.Ordered;
 import org.springframework.security.core.Authentication;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Locale;
 
 /**

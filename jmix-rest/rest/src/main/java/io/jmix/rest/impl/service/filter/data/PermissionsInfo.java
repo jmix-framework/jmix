@@ -19,7 +19,7 @@ package io.jmix.rest.impl.service.filter.data;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

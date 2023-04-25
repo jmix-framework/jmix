@@ -22,7 +22,7 @@ import io.jmix.core.repository.QueryHints;
 import io.jmix.dynattr.DynAttrQueryHints;
 import test_support.entity.User;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

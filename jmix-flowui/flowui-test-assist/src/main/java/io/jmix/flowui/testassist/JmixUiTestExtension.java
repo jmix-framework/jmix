@@ -46,8 +46,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.Nullable;
-import javax.servlet.ServletException;
+import jakarta.annotation.Nullable;
+import jakarta.servlet.ServletException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

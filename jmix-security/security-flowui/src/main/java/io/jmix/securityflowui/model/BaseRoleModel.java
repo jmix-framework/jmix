@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

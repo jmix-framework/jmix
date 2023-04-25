@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 import test_support.entity.TestEmbeddableEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @JmixEntity

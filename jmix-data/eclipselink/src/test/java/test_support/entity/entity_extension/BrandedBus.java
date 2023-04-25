@@ -19,9 +19,9 @@ package test_support.entity.entity_extension;
 import io.jmix.core.entity.annotation.ReplaceEntity;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @JmixEntity
 @Table(name = "EXTTEST_BRANDED_BUS")

@@ -16,7 +16,7 @@
 
 package io.jmix.securityflowui.authentication;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Locale;
 import java.util.TimeZone;
 

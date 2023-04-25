@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.pessimisticlocking.PessimisticLock;
 import test_support.entity.TestBaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity(name = "test_Customer")
 @JmixEntity

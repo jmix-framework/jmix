@@ -25,7 +25,7 @@ import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 @Tag("jmix-combo-box-picker")

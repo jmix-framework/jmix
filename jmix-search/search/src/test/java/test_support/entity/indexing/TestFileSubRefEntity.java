@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.PropertyDatatype;
 import test_support.entity.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @JmixEntity
 @Table(name = "TEST_FILE_SUB_REF_ENTITY")

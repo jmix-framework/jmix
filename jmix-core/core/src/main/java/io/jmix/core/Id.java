@@ -18,7 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.entity.EntityValues;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;

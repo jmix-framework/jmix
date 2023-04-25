@@ -32,7 +32,7 @@ import com.vaadin.flow.dom.ElementConstants;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.upload.event.*;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

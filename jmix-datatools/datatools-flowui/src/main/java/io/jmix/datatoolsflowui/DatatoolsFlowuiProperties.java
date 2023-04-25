@@ -17,14 +17,12 @@
 package io.jmix.datatoolsflowui;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.datatools.flowui")
-@ConstructorBinding
 public class DatatoolsFlowuiProperties {
 
     /**

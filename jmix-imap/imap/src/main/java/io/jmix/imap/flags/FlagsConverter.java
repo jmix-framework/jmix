@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

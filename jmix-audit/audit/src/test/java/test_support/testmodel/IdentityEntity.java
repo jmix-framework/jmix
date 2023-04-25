@@ -19,7 +19,7 @@ package test_support.testmodel;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity(name = "test$IdentityEntity")
 @JmixEntity

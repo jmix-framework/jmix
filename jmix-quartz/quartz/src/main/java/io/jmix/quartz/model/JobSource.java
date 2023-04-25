@@ -2,7 +2,7 @@ package io.jmix.quartz.model;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 
 public enum JobSource implements EnumClass<String> {

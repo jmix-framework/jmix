@@ -18,7 +18,7 @@ package io.jmix.audit;
 
 import io.jmix.core.event.AttributeChanges;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Allows to log entity lifecycle events: create, modify, delete.

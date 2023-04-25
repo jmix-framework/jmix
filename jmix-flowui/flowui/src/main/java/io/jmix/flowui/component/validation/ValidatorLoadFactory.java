@@ -25,7 +25,7 @@ import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.function.BiFunction;

@@ -16,7 +16,7 @@
 
 package io.jmix.core.accesscontext;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Marker interface for classes defining authorization points.

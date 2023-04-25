@@ -27,8 +27,8 @@ import org.springframework.data.repository.core.support.RepositoryProxyPostProce
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.util.ReflectionUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;

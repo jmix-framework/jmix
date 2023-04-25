@@ -18,7 +18,7 @@ package test_support.entity.sales;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public enum Status implements EnumClass<String> {
 

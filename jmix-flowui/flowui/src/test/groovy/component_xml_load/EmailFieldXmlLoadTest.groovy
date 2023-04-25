@@ -60,6 +60,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(emailFieldView.emailFieldId) {
             id.get() == "emailFieldId"
             !invalid
+            allowedCharPattern == "charPattern"
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
             autocorrect
@@ -80,7 +81,6 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             pattern == "patternString"
             placeholder == "placeholderString"
-            preventInvalidInput
             readOnly
             required
             requiredMessage == "requiredMessage"

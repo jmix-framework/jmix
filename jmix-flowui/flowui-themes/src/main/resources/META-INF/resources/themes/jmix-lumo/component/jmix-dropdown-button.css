@@ -19,3 +19,20 @@
     height: var(--lumo-icon-size-s);
     margin-inline-end: var(--lumo-space-s);
 }
+
+/* DropdownButton Styles */
+vaadin-menu-bar[jmix-role='jmix-dropdown-button'] > vaadin-menu-bar-button {
+    margin: var(--lumo-space-xs) calc(var(--lumo-space-xs) / 2);
+}
+
+/* ComboButton Styles */
+vaadin-menu-bar[jmix-role='jmix-combo-button-icon'] > vaadin-menu-bar-button {
+    margin-top: var(--lumo-space-xs);
+    margin-bottom: var(--lumo-space-xs);
+}
+
+vaadin-menu-bar[jmix-role='jmix-combo-button-icon'] > vaadin-menu-bar-button:nth-last-of-type(2) {
+    min-width: var(--lumo-button-size);
+    padding-left: calc(var(--lumo-button-size) / 4);
+    padding-right: calc(var(--lumo-button-size) / 4);
+}

@@ -19,7 +19,7 @@ package io.jmix.core.security;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 public class SystemAuthenticationToken extends AbstractAuthenticationToken {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -35,7 +35,7 @@ class VersionsJsonFilter {
 
     private final String dependenciesKey;
 
-    private static final String OLDER_VERSION_WARNING = "Using user (package.json) pinned version '{}' of '{}' which is older than the current platform version '{}'";
+    private static final String OLDER_VERSION_WARNING = "Using user (package.json) pinned version '%s' of '%s' which is older than the current platform version '%s'";
 
     VersionsJsonFilter(JsonObject packageJson, String dependenciesKey) {
         this.dependenciesKey = dependenciesKey;
@@ -74,10 +74,11 @@ class VersionsJsonFilter {
                             "/package.json -> { vaadin { dependencies }}");
             if (userManagedVersion != null) {
                 if (version.isNewerThan(userManagedVersion)) {
-                    LoggerFactory.getLogger("Versions").warn(
-                            OLDER_VERSION_WARNING,
+                    String message = String.format(OLDER_VERSION_WARNING,
                             userManagedDependencies.getString(key), key,
                             versions.getString(key));
+                    LoggerFactory.getLogger("Versions").warn(message);
+                    FrontendUtils.logInFile(message);
                 }
                 json.put(key, userManagedDependencies.getString(key));
             } else if (vaadinDepsVersion != null

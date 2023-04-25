@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,6 +20,7 @@ import com.vaadin.flow.di.Lookup;
 import com.vaadin.flow.internal.BrowserLiveReload;
 import com.vaadin.flow.internal.BrowserLiveReloadAccessor;
 import com.vaadin.flow.internal.DevModeHandler;
+import com.vaadin.flow.internal.NetworkUtil;
 import com.vaadin.flow.internal.UrlUtil;
 import com.vaadin.flow.server.ExecutionFailedException;
 import com.vaadin.flow.server.HandlerHelper;
@@ -32,20 +33,19 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.startup.ApplicationConfiguration;
 import io.jmix.flowui.devserver.frontend.FrontendTools;
 import io.jmix.flowui.devserver.frontend.FrontendUtils;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
-import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -63,7 +63,7 @@ import java.util.regex.Pattern;
 public abstract class AbstractDevServerRunner implements DevModeHandler {
     private static final String START_FAILURE = "Couldn't start dev server because";
 
-    private static final String DEV_SERVER_HOST = "http://localhost";
+    public static final String DEV_SERVER_HOST = "http://localhost";
 
     private static final String FAILED_MSG = "\n------------------ Frontend compilation failed. ------------------\n\n";
     private static final String SUCCEED_MSG = "\n----------------- Frontend compiled successfully. -----------------\n\n";
@@ -154,7 +154,7 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
             doStartDevModeServer();
         } catch (ExecutionFailedException exception) {
             getLogger().error(null, exception);
-            FrontendUtils.logInFile(exception.toString());
+            FrontendUtils.logInFile(Arrays.toString(exception.getStackTrace()));
             throw new CompletionException(exception);
         }
     }
@@ -176,9 +176,11 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
                 reuseExistingPort(port);
                 return;
             } else {
-                getLogger().warn(String.format(
+                String message = String.format(
                         "%s port '%d' is defined but it's not working properly. Using a new free port...",
-                        getServerName(), port));
+                        getServerName(), port);
+                getLogger().warn(message);
+                FrontendUtils.logInFile(message);
                 port = 0;
             }
         }
@@ -193,7 +195,7 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         watchDog.set(new DevServerWatchDog());
 
         // Look for a free port
-        port = getFreePort();
+        port = NetworkUtil.getFreePort();
         // save the port immediately before start a dev server, see #8981
         saveRunningDevServerPort();
 
@@ -222,29 +224,32 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         File binary = getServerBinary();
         File config = getServerConfig();
         if (!getStudioRoot().exists()) {
-            getLogger().warn("No project folder '{}' exists", getProjectRoot());
+            String message = String.format("No project folder '%s' exists", getStudioRoot());
+            getLogger().warn(message);
+            FrontendUtils.logInFile(message);
             throw new ExecutionFailedException(START_FAILURE
                     + " the target execution folder doesn't exist.");
         }
         if (!binary.exists()) {
-            getLogger().warn("'{}' doesn't exist. Did you run `npm install`?",
-                    binary);
+            String message = String.format("'%s' doesn't exist. Did you run `npm install`?", binary);
+            getLogger().warn(message);
+            FrontendUtils.logInFile(message);
             throw new ExecutionFailedException(String.format(
                     "%s '%s' doesn't exist. `npm install` has not run or failed.",
                     START_FAILURE, binary));
         } else if (!binary.canExecute()) {
-            getLogger().warn(
-                    " '{}' is not an executable. Did you run `npm install`?",
-                    binary);
+            String message = String.format(" '%s' is not an executable. Did you run `npm install`?", binary);
+            getLogger().warn(message);
+            FrontendUtils.logInFile(message);
             throw new ExecutionFailedException(String.format(
                     "%s '%s' is not an executable."
                             + " `npm install` has not run or failed.",
                     START_FAILURE, binary));
         }
         if (!config.canRead()) {
-            getLogger().warn(
-                    "{} configuration '{}' is not found or is not readable.",
-                    getServerName(), config);
+            String message = String.format("%s configuration '%s' is not found or is not readable.", getServerName(), config);
+            getLogger().warn(message);
+            FrontendUtils.logInFile(message);
             throw new ExecutionFailedException(
                     String.format("%s '%s' doesn't exist or is not readable.",
                             START_FAILURE, config));
@@ -312,10 +317,8 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         List<String> command = getServerStartupCommand(tools);
 
         FrontendUtils.console(FrontendUtils.GREEN, START);
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug(FrontendUtils.commandToString(
-                    getProjectRoot().getAbsolutePath(), command));
-        }
+        FrontendUtils.console(FrontendUtils.YELLOW, FrontendUtils.commandToString(
+                getStudioRoot().getAbsolutePath(), command));
 
         processBuilder.command(command);
 
@@ -349,7 +352,7 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
             FrontendUtils.logInFile(startMessage, true);
 
             int timeout = Integer.parseInt(config.getStringProperty(
-                    InitParameters.SERVLET_PARAMETER_DEVMODE_WEBPACK_TIMEOUT,
+                    InitParameters.SERVLET_PARAMETER_DEVMODE_TIMEOUT,
                     DEFAULT_TIMEOUT_FOR_PATTERN));
             outputTracker.awaitFirstMatch(timeout);
 
@@ -467,25 +470,11 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
     }
 
     /**
-     * Returns an available tcp port in the system.
-     *
-     * @return a port number which is not busy
-     */
-    static int getFreePort() {
-        try (ServerSocket s = new ServerSocket(0)) {
-            s.setReuseAddress(true);
-            return s.getLocalPort();
-        } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Unable to find a free port for running the dev server", e);
-        }
-    }
-
-    /**
      * Get the listening port of the dev server.
      *
      * @return the listening port
      */
+    @Override
     public int getPort() {
         return port;
     }
@@ -616,11 +605,10 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         } else {
             if (request.getHeader("X-DevModePoll") == null) {
                 // The initial request while the dev server is starting
-                InputStream inputStream;
-                inputStream = FrontendUtils.getResourceAsStream(
-                        "dev-mode-not-ready.html", AbstractDevServerRunner.class.getClassLoader()
-                );
-                IOUtils.copy(inputStream, response.getOutputStream());
+                try (InputStream inputStream = FrontendUtils.getResourceAsStream(
+                        "dev-mode-not-ready.html")) {
+                    IOUtils.copy(inputStream, response.getOutputStream());
+                }
             } else {
                 // A polling request while the server is starting
                 response.getWriter().write("Pending");
@@ -669,7 +657,7 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         }
 
         // Redirect theme source request
-        if (StaticFileServer.APP_THEME_PATTERN.matcher(requestFilename)
+        if (StaticFileServer.APP_THEME_ASSETS_PATTERN.matcher(requestFilename)
                 .find()) {
             requestFilename = "/VAADIN/static" + requestFilename;
         }

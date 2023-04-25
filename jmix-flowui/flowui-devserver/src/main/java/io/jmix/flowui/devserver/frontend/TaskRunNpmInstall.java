@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,7 +22,6 @@ import com.vaadin.flow.server.Platform;
 import com.vaadin.flow.server.frontend.FallibleCommand;
 import com.vaadin.flow.server.frontend.FrontendToolsSettings;
 import com.vaadin.flow.server.frontend.FrontendVersion;
-import com.vaadin.flow.server.frontend.installer.NodeInstaller;
 import com.vaadin.flow.shared.util.SharedUtil;
 import elemental.json.JsonObject;
 import org.apache.commons.io.FileUtils;
@@ -33,19 +32,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.commandToString;
-import static io.jmix.flowui.devserver.frontend.FrontendUtils.logInFile;
 import static io.jmix.flowui.devserver.frontend.NodeUpdater.HASH_KEY;
+import static io.jmix.flowui.devserver.frontend.NodeUpdater.PROJECT_FOLDER;
 import static io.jmix.flowui.devserver.frontend.NodeUpdater.VAADIN_DEP_KEY;
 import static io.jmix.flowui.devserver.frontend.NodeUpdater.VAADIN_VERSION;
 
@@ -54,13 +50,17 @@ import static io.jmix.flowui.devserver.frontend.NodeUpdater.VAADIN_VERSION;
  */
 public class TaskRunNpmInstall implements FallibleCommand {
 
-    /** Container for npm installation statistics. */
+    /**
+     * Container for npm installation statistics.
+     */
     public static class Stats {
         private long installTimeMs = 0;
         private long cleanupTimeMs = 0;
         private String packageManager = "";
 
-        /** Create an instance. */
+        /**
+         * Create an instance.
+         */
         private Stats() {
         }
 
@@ -119,53 +119,24 @@ public class TaskRunNpmInstall implements FallibleCommand {
     private final List<String> ignoredNodeFolders = Arrays.asList(".bin",
             "pnpm", ".ignored_pnpm", ".pnpm", ".staging", ".vaadin",
             MODULES_YAML);
-    private final boolean enablePnpm;
-    private final boolean requireHomeNodeExec;
-    private final boolean autoUpdate;
 
-    private final String nodeVersion;
-    private final URI nodeDownloadRoot;
-    private final boolean useGlobalPnpm;
-
-    private List<String> additionalPostinstallPackages;
+    private final Options options;
 
     /**
      * Create an instance of the command.
      *
-     * @param packageUpdater                package-updater instance used for checking if previous
-     *                                      execution modified the package.json file
-     * @param enablePnpm                    whether pnpm should be used instead of npm
-     * @param requireHomeNodeExec           whether vaadin home node executable has to be used
-     * @param nodeVersion                   The node.js version to be used when node.js is installed
-     *                                      automatically by Vaadin, for example <code>"v16.0.0"</code>.
-     *                                      Use {@value FrontendTools#DEFAULT_NODE_VERSION} by default.
-     * @param nodeDownloadRoot              Download node.js from this URL. Handy in heavily firewalled
-     *                                      corporate environments where the node.js download can be
-     *                                      provided from an intranet mirror. Use
-     *                                      {@link NodeInstaller#DEFAULT_NODEJS_DOWNLOAD_ROOT} by default.
-     * @param useGlobalPnpm                 use globally installed pnpm instead of the default one (see
-     *                                      {@link FrontendTools#DEFAULT_PNPM_VERSION})
-     * @param autoUpdate                    {@code true} to automatically update to a new node version
-     * @param additionalPostinstallPackages a list of packages to run postinstall for
+     * @param packageUpdater package-updater instance used for checking if previous
+     *                       execution modified the package.json file
+     * @param options        the options for the task
      */
-    TaskRunNpmInstall(NodeUpdater packageUpdater, boolean enablePnpm,
-                      boolean requireHomeNodeExec, String nodeVersion,
-                      URI nodeDownloadRoot, boolean useGlobalPnpm, boolean autoUpdate,
-                      List<String> additionalPostinstallPackages) {
+    TaskRunNpmInstall(NodeUpdater packageUpdater, Options options) {
         this.packageUpdater = packageUpdater;
-        this.enablePnpm = enablePnpm;
-        this.requireHomeNodeExec = requireHomeNodeExec;
-        this.nodeVersion = Objects.requireNonNull(nodeVersion);
-        this.nodeDownloadRoot = Objects.requireNonNull(nodeDownloadRoot);
-        this.useGlobalPnpm = useGlobalPnpm;
-        this.autoUpdate = autoUpdate;
-        this.additionalPostinstallPackages = Objects
-                .requireNonNull(additionalPostinstallPackages);
+        this.options = options;
     }
 
     @Override
     public void execute() throws ExecutionFailedException {
-        String toolName = enablePnpm ? "pnpm" : "npm";
+        String toolName = options.isEnablePnpm() ? "pnpm" : "npm";
         if (packageUpdater.modified || shouldRunNpmInstall()) {
             String logMessage = "Running `" + toolName + " install` to "
                     + "resolve and optionally download frontend dependencies. "
@@ -173,13 +144,12 @@ public class TaskRunNpmInstall implements FallibleCommand {
             packageUpdater.log().info(logMessage);
             FrontendUtils.logInFile(logMessage);
             runNpmInstall();
-
             updateLocalHash();
         } else {
             String logMessage = String.format("Skipping `%s install` because the frontend packages are already "
                             + "installed in the folder '%s' and the hash in the file '%s' is the same as in '%s'",
                     toolName,
-                    packageUpdater.nodeModulesFolder.getAbsolutePath(),
+                    options.getNodeModulesFolder().getAbsolutePath(),
                     packageUpdater.getVaadinJsonFile().getAbsolutePath(),
                     Constants.PACKAGE_JSON);
             packageUpdater.log().info(logMessage);
@@ -194,7 +164,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
      * node_modules/.vaadin/vaadin.json
      * </pre>
      * <p>
-     * with package.json hash and the platform version.
+     * with package.json hash, project folder and the platform version.
      * <p>
      * This is for handling updated package to the code repository by another
      * developer as then the hash is updated and we may just be missing one
@@ -206,7 +176,9 @@ public class TaskRunNpmInstall implements FallibleCommand {
             final JsonObject vaadin = packageUpdater.getPackageJson(packageUpdater.getStudioJsonFile())
                     .getObject(VAADIN_DEP_KEY);
             if (vaadin == null) {
-                packageUpdater.log().warn("No vaadin object in package.json");
+                String message = "No vaadin object in package.json";
+                packageUpdater.log().warn(message);
+                FrontendUtils.logInFile(message);
                 return;
             }
             final String hash = vaadin.getString(HASH_KEY);
@@ -215,19 +187,23 @@ public class TaskRunNpmInstall implements FallibleCommand {
             updates.put(HASH_KEY, hash);
             Platform.getVaadinVersion()
                     .ifPresent(s -> updates.put(VAADIN_VERSION, s));
+            updates.put(PROJECT_FOLDER,
+                    options.getStudioFolder().getAbsolutePath());
             packageUpdater.updateVaadinJsonContents(updates);
         } catch (IOException e) {
-            packageUpdater.log().warn("Failed to update node_modules hash.", e);
+            String message = "Failed to update node_modules hash.";
+            packageUpdater.log().warn(message, e);
+            FrontendUtils.logInFile(message + "\n" + Arrays.toString(e.getStackTrace()));
         }
     }
 
     private boolean shouldRunNpmInstall() {
-        if (!packageUpdater.nodeModulesFolder.isDirectory()) {
+        if (!options.getNodeModulesFolder().isDirectory()) {
             return true;
         }
         // Ignore .bin and pnpm folders as those are always installed for
         // pnpm execution
-        File[] installedPackages = packageUpdater.nodeModulesFolder
+        File[] installedPackages = options.getNodeModulesFolder()
                 .listFiles((dir, name) -> !ignoredNodeFolders.contains(name));
         assert installedPackages != null;
         if (installedPackages.length == 0) {
@@ -243,12 +219,25 @@ public class TaskRunNpmInstall implements FallibleCommand {
                     .getVaadinJsonContents();
             if (nodeModulesVaadinJson.hasKey(HASH_KEY)) {
                 final JsonObject packageJson = packageUpdater.getPackageJson(packageUpdater.getStudioJsonFile());
-                return !nodeModulesVaadinJson.getString(HASH_KEY).equals(packageJson
-                        .getObject(VAADIN_DEP_KEY).getString(HASH_KEY));
+                if (!nodeModulesVaadinJson.getString(HASH_KEY)
+                        .equals(packageJson.getObject(VAADIN_DEP_KEY)
+                                .getString(HASH_KEY))) {
+                    return true;
+                }
+
+                if (nodeModulesVaadinJson.hasKey(PROJECT_FOLDER)
+                        && !options.getStudioFolder().getAbsolutePath()
+                        .equals(nodeModulesVaadinJson
+                                .getString(PROJECT_FOLDER))) {
+                    return true;
+                }
+
+                return false;
             }
         } catch (IOException e) {
-            packageUpdater.log()
-                    .warn("Failed to load hashes forcing npm execution", e);
+            String message = "Failed to load hashes forcing npm execution";
+            packageUpdater.log().warn(message, e);
+            FrontendUtils.logInFile(message+ "\n" + Arrays.toString(e.getStackTrace()));
         }
         return true;
     }
@@ -263,18 +252,18 @@ public class TaskRunNpmInstall implements FallibleCommand {
         long startTime = System.currentTimeMillis();
 
         Logger logger = packageUpdater.log();
-        String baseDir = packageUpdater.npmFolder.getAbsolutePath();
+        String baseDir = options.getStudioFolder().getAbsolutePath();
 
         FrontendToolsSettings settings = new FrontendToolsSettings(baseDir,
                 () -> FrontendUtils.getVaadinHomeDirectory().getAbsolutePath());
-        settings.setNodeDownloadRoot(nodeDownloadRoot);
-        settings.setForceAlternativeNode(requireHomeNodeExec);
-        settings.setUseGlobalPnpm(useGlobalPnpm);
-        settings.setAutoUpdate(autoUpdate);
-        settings.setNodeVersion(nodeVersion);
+        settings.setNodeDownloadRoot(options.getNodeDownloadRoot());
+        settings.setForceAlternativeNode(options.isRequireHomeNodeExec());
+        settings.setUseGlobalPnpm(options.isUseGlobalPnpm());
+        settings.setAutoUpdate(options.isNodeAutoUpdate());
+        settings.setNodeVersion(options.getNodeVersion());
         FrontendTools tools = new FrontendTools(settings);
         tools.validateNodeAndNpmVersion();
-        if (enablePnpm) {
+        if (options.isEnablePnpm()) {
             try {
                 createPnpmFile(packageUpdater.versionsPath, tools);
             } catch (IOException exception) {
@@ -288,9 +277,11 @@ public class TaskRunNpmInstall implements FallibleCommand {
             try {
                 createNpmRcFile();
             } catch (IOException exception) {
-                logger.warn(".npmrc generation failed; pnpm "
+                String message = ".npmrc generation failed; pnpm "
                         + "package installation may require manaually passing "
-                        + "the --shamefully-hoist flag", exception);
+                        + "the --shamefully-hoist flag";
+                logger.warn(message, exception);
+                FrontendUtils.logInFile(message);
             }
         }
 
@@ -299,10 +290,10 @@ public class TaskRunNpmInstall implements FallibleCommand {
         List<String> postinstallCommand;
 
         try {
-            if (requireHomeNodeExec) {
+            if (options.isRequireHomeNodeExec()) {
                 tools.forceAlternativeNodeExecutable();
             }
-            if (enablePnpm) {
+            if (options.isEnablePnpm()) {
                 validateInstalledNpm(tools);
                 npmExecutable = tools.getPnpmExecutable();
             } else {
@@ -324,15 +315,13 @@ public class TaskRunNpmInstall implements FallibleCommand {
         postinstallCommand.add("run");
         postinstallCommand.add("postinstall");
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    commandToString(packageUpdater.npmFolder.getAbsolutePath(),
-                            npmInstallCommand));
-        }
+        logger.debug(
+                commandToString(options.getStudioFolder().getAbsolutePath(),
+                        npmInstallCommand));
 
-        String toolName = enablePnpm ? "pnpm" : "npm";
+        String toolName = options.isEnablePnpm() ? "pnpm" : "npm";
 
-        String commandString = npmInstallCommand.stream().collect(Collectors.joining(" "));
+        String commandString = String.join(" ", npmInstallCommand);
 
         String logMessage = String.format(
                 "using '%s' for frontend package installation",
@@ -345,7 +334,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
         // missing as "npm install" in this case can take minutes
         // https://github.com/vaadin/flow/issues/12825
         File packageLockFile = packageUpdater.getStudioPackageLockFile();
-        if (!enablePnpm && !packageLockFile.exists()) {
+        if (!options.isEnablePnpm() && !packageLockFile.exists()) {
             String packageLockFileNotFoundWarnMessage = "package-lock.json is missing from this "
                     + "project. This may cause the npm package installation to "
                     + "take several minutes. It is recommended to keep the "
@@ -357,7 +346,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
 
         Process process = null;
         try {
-            process = runNpmCommand(npmInstallCommand, packageUpdater.studioFolder);
+            process = runNpmCommand(npmInstallCommand, options.getStudioFolder());
 
             logger.debug("Output of `{}`:", commandString);
             StringBuilder toolOutput = new StringBuilder();
@@ -408,7 +397,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
         postinstallPackages.add(".");
         postinstallPackages.add("esbuild");
         postinstallPackages.add("@vaadin/vaadin-usage-statistics");
-        postinstallPackages.addAll(additionalPostinstallPackages);
+        postinstallPackages.addAll(options.getPostinstallPackages());
 
         for (String postinstallPackage : postinstallPackages) {
             File packageJsonFile = getPackageJsonForModule(postinstallPackage);
@@ -450,8 +439,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
             }
         }
         lastInstallStats.installTimeMs = System.currentTimeMillis() - startTime;
-        lastInstallStats.packageManager = enablePnpm ? "pnpm" : "npm";
-
+        lastInstallStats.packageManager = options.isEnablePnpm() ? "pnpm" : "npm";
     }
 
     private File getPackageJsonForModule(String module) {
@@ -460,10 +448,10 @@ public class TaskRunNpmInstall implements FallibleCommand {
         }
         if (module.equals(".")) {
             // The location of the project package.json
-            return new File(packageUpdater.npmFolder, "package.json");
+            return new File(options.getStudioFolder(), "package.json");
         }
 
-        return new File(new File(packageUpdater.nodeModulesFolder, module),
+        return new File(new File(options.getNodeModulesFolder(), module),
                 "package.json");
 
     }
@@ -527,11 +515,9 @@ public class TaskRunNpmInstall implements FallibleCommand {
             packageUpdater.log().error("Failed to determine pnpm version", e);
         }
 
-        File pnpmFile = new File(packageUpdater.npmFolder.getAbsolutePath(),
+        File pnpmFile = new File(options.getStudioFolder().getAbsolutePath(),
                 pnpmFileName);
-        try (InputStream content = FrontendUtils.getResourceAsStream(
-                "pnpmfile.js", TaskRunNpmInstall.class.getClassLoader()
-        )) {
+        try (InputStream content = FrontendUtils.getResourceAsStream("pnpmfile.js")) {
             if (content == null) {
                 throw new IOException("Couldn't find template pnpmfile.js in the classpath");
             }
@@ -541,19 +527,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
             packageUpdater.log().debug("Generated pnpmfile hook file: '{}'", pnpmFile);
 
             FileUtils.writeLines(pnpmFile, modifyPnpmFile(pnpmFile, versionsPath));
-
-            copyPnpmFile(pnpmFile);
-        }
-    }
-
-    private void copyPnpmFile(File pnpmFile) {
-        final String pnpmFileName = "pnpmfile.js";
-        File copyPnpmFile = new File(packageUpdater.studioFolder.getAbsolutePath(), pnpmFileName);
-        try {
-            FileUtils.copyFile(pnpmFile, copyPnpmFile);
-        } catch (Exception e) {
-            logInFile("Error when copying '" + pnpmFileName + "' to '" +
-                    packageUpdater.studioFolder.getAbsolutePath() + "'\n" + e.getMessage());
         }
     }
 
@@ -561,7 +534,8 @@ public class TaskRunNpmInstall implements FallibleCommand {
      * Create an .npmrc file in the project directory if there is none.
      */
     private void createNpmRcFile() throws IOException {
-        File npmrcFile = new File(packageUpdater.npmFolder.getAbsolutePath(), ".npmrc");
+        File npmrcFile = new File(options.getStudioFolder().getAbsolutePath(),
+                ".npmrc");
         boolean shouldWrite;
         if (npmrcFile.exists()) {
             List<String> lines = FileUtils.readLines(npmrcFile, StandardCharsets.UTF_8);
@@ -583,9 +557,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
             shouldWrite = true;
         }
         if (shouldWrite) {
-            try (InputStream content = FrontendUtils.getResourceAsStream(
-                    "npmrc", TaskRunNpmInstall.class.getClassLoader()
-            )) {
+            try (InputStream content = FrontendUtils.getResourceAsStream("npmrc")) {
                 if (content == null) {
                     FrontendUtils.logInFile("Couldn't find template npmrc in the classpath");
                     throw new IOException("Couldn't find template npmrc in the classpath");
@@ -611,24 +583,23 @@ public class TaskRunNpmInstall implements FallibleCommand {
     }
 
     private void cleanUp() throws ExecutionFailedException {
-        if (!packageUpdater.nodeModulesFolder.exists()) {
+        if (!options.getNodeModulesFolder().exists()) {
             lastInstallStats.cleanupTimeMs = 0;
             return;
         }
         long startTime = System.currentTimeMillis();
-        File modulesYaml = new File(packageUpdater.nodeModulesFolder,
+        File modulesYaml = new File(options.getNodeModulesFolder(),
                 MODULES_YAML);
         boolean hasModulesYaml = modulesYaml.exists() && modulesYaml.isFile();
-        if (!enablePnpm && hasModulesYaml) {
-            deleteNodeModules(packageUpdater.nodeModulesFolder);
-        } else if (enablePnpm && !hasModulesYaml) {
+        if (!options.isEnablePnpm() && hasModulesYaml) {
+            deleteNodeModules(options.getNodeModulesFolder());
+        } else if (options.isEnablePnpm() && !hasModulesYaml) {
             // presence of .staging dir with a "pnpm-*" folder means that pnpm
             // download is in progress, don't remove anything in this case
-            File staging = new File(packageUpdater.nodeModulesFolder,
-                    ".staging");
+            File staging = new File(options.getNodeModulesFolder(), ".staging");
             if (!staging.isDirectory() || staging.listFiles(
                     (dir, name) -> name.startsWith("pnpm-")).length == 0) {
-                deleteNodeModules(packageUpdater.nodeModulesFolder);
+                deleteNodeModules(options.getNodeModulesFolder());
             }
         }
         lastInstallStats.cleanupTimeMs = System.currentTimeMillis() - startTime;
@@ -642,7 +613,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
             Logger log = packageUpdater.log();
             log.debug("Exception removing node_modules", exception);
             String failedToRemoveNodeModulesErrorMessage = "Failed to remove '"
-                    + packageUpdater.nodeModulesFolder.getAbsolutePath()
+                    + options.getStudioFolder().getAbsolutePath()
                     + "'. Please remove it manually.";
             log.error(failedToRemoveNodeModulesErrorMessage);
             FrontendUtils.logInFile(failedToRemoveNodeModulesErrorMessage);
@@ -657,11 +628,14 @@ public class TaskRunNpmInstall implements FallibleCommand {
             npmCacheDir = tools.getNpmCacheDir();
         } catch (FrontendUtils.CommandExecutionException
                  | IllegalStateException e) {
-            packageUpdater.log().warn("Failed to get npm cache directory", e);
+            String message = "Failed to get npm cache directory";
+            packageUpdater.log().warn(message, e);
+            FrontendUtils.logInFile(message);
         }
 
         if (npmCacheDir != null
                 && !tools.folderIsAcceptableByNpm(npmCacheDir)) {
+            FrontendUtils.console(String.format(NPM_VALIDATION_FAIL_MESSAGE));
             throw new IllegalStateException(
                     String.format(NPM_VALIDATION_FAIL_MESSAGE));
         }

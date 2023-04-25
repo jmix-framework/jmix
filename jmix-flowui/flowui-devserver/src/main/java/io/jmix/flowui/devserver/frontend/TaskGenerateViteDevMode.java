@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,35 +31,34 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class TaskGenerateViteDevMode extends AbstractTaskClientGenerator {
 
-    private final File frontendDirectory;
+    private Options options;
 
-/**
- * Create a task to generate <code>index.js</code> if necessary.
- *
- * @param frontendDirectory
- *            frontend directory is to check if the file already exists
- *            there.
- */
-    TaskGenerateViteDevMode(File frontendDirectory) {
-        this.frontendDirectory = frontendDirectory;
+    /**
+     * Create a task to generate <code>index.js</code> if necessary.
+     *
+     * @param options the task options
+     */
+    TaskGenerateViteDevMode(Options options) {
+        this.options = options;
     }
 
     @Override
     protected File getGeneratedFile() {
-        return new File(new File(frontendDirectory, FrontendUtils.GENERATED),
+        return new File(
+                new File(options.getFrontendDirectory(),
+                        FrontendUtils.GENERATED),
                 FrontendUtils.VITE_DEVMODE_TS);
     }
 
     @Override
     protected boolean shouldGenerate() {
-        return true;
+        return options.isProductionMode() || options.isFrontendHotdeploy()
+                || options.isDevBundleBuild();
     }
 
     @Override
     protected String getFileContent() throws IOException {
-        try (InputStream devModeStream = FrontendUtils.getResourceAsStream(
-                VITE_DEVMODE_TS, TaskGenerateViteDevMode.class.getClassLoader()
-        )) {
+        try (InputStream devModeStream = FrontendUtils.getResourceAsStream(VITE_DEVMODE_TS)) {
             return IOUtils.toString(devModeStream, UTF_8);
         }
     }

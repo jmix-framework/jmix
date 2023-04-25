@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,22 +16,28 @@
 
 package io.jmix.flowui.devserver.frontend;
 
+import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.di.Lookup;
 import com.vaadin.flow.di.ResourceProvider;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.internal.DevModeHandler;
 import com.vaadin.flow.internal.DevModeHandlerManager;
+import com.vaadin.flow.server.AbstractConfiguration;
+import com.vaadin.flow.server.AppShellRegistry;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.VaadinContext;
-import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.frontend.FallbackChunk;
 import com.vaadin.flow.server.frontend.FallbackChunk.CssImportData;
 import com.vaadin.flow.server.frontend.FrontendVersion;
-import com.vaadin.flow.server.frontend.WebpackConnectionException;
+import com.vaadin.flow.server.frontend.TaskRunDevBundleBuild;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.ThemeDefinition;
+import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
+import jakarta.servlet.ServletContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -39,19 +45,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletContext;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.io.UncheckedIOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -62,18 +61,20 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static com.vaadin.flow.server.Constants.STATISTICS_JSON_DEFAULT;
-import static com.vaadin.flow.server.Constants.VAADIN_SERVLET_RESOURCES;
+import static com.vaadin.flow.server.Constants.COMPATIBILITY_RESOURCES_FRONTEND_DEFAULT;
+import static com.vaadin.flow.server.Constants.DEV_BUNDLE_JAR_PATH;
+import static com.vaadin.flow.server.Constants.RESOURCES_FRONTEND_DEFAULT;
 import static com.vaadin.flow.server.Constants.VAADIN_WEBAPP_RESOURCES;
-import static com.vaadin.flow.server.InitParameters.SERVLET_PARAMETER_STATISTICS_JSON;
 import static com.vaadin.flow.server.frontend.FrontendTools.INSTALL_NODE_LOCALLY;
 import static java.lang.String.format;
 
@@ -87,9 +88,8 @@ public class FrontendUtils {
 
     /**
      * Default folder for the node related content. It's the base directory for
-     * {@link Constants#PACKAGE_JSON}, {@link FrontendUtils#WEBPACK_CONFIG},
-     * {@link FrontendUtils#NODE_MODULES}.
-     *
+     * {@link Constants#PACKAGE_JSON} and {@link FrontendUtils#NODE_MODULES}.
+     * <p>
      * By default it's the project root folder.
      */
     public static final String DEFAULT_NODE_DIR = "./";
@@ -115,16 +115,12 @@ public class FrontendUtils {
     /**
      * Path of the folder containing application frontend source files, it needs
      * to be relative to the {@link FrontendUtils#DEFAULT_NODE_DIR}
-     *
+     * <p>
      * By default it is <code>/frontend</code> in the project folder.
      */
     public static final String DEFAULT_FRONTEND_DIR = DEFAULT_NODE_DIR
             + FRONTEND;
 
-    /**
-     * The name of the webpack configuration file.
-     */
-    public static final String WEBPACK_CONFIG = "webpack.config.js";
 
     /**
      * The name of the vite configuration file.
@@ -136,14 +132,10 @@ public class FrontendUtils {
      */
     public static final String VITE_GENERATED_CONFIG = "vite.generated.ts";
 
-    /**
-     * The name of the webpack generated configuration file.
-     */
-    public static final String WEBPACK_GENERATED = "webpack.generated.js";
 
     /**
      * The name of the service worker source file for InjectManifest method of
-     * workbox-webpack-plugin.
+     * the workbox plugin.
      */
     public static final String SERVICE_WORKER_SRC = "sw.ts";
 
@@ -180,8 +172,8 @@ public class FrontendUtils {
 
     /**
      * Name of the file that contains application imports, javascript, theme and
-     * style annotations. It is also the entry-point for webpack. It is always
-     * generated in the {@link FrontendUtils#DEFAULT_GENERATED_DIR} folder.
+     * style annotations. It is always generated in the
+     * {@link FrontendUtils#DEFAULT_GENERATED_DIR} folder.
      */
     public static final String IMPORTS_NAME = "generated-flow-imports.js";
 
@@ -234,26 +226,16 @@ public class FrontendUtils {
      */
     public static final String INDEX_JS = "index.js";
 
+    /**
+     * File name of the index.tsx in client side.
+     */
+    public static final String INDEX_TSX = "index.tsx";
 
     /**
      * File name of Vite helper used in development mode.
      */
     public static final String VITE_DEVMODE_TS = "vite-devmode.ts";
 
-    /**
-     * Default Java source folder for OpenAPI generator.
-     */
-    public static final String DEFAULT_CONNECT_JAVA_SOURCE_FOLDER = "src/main/java";
-
-    /**
-     * Default application properties file path in Vaadin project.
-     */
-    public static final String DEFAULT_CONNECT_APPLICATION_PROPERTIES = "src/main/resources/application.properties";
-
-    /**
-     * Default generated path for OpenAPI spec file.
-     */
-    public static final String DEFAULT_CONNECT_OPENAPI_JSON_FILE = "generated-resources/openapi.json";
 
     /**
      * Default generated path for generated frontend files.
@@ -348,10 +330,6 @@ public class FrontendUtils {
 
     public static final String DISABLE_CHECK = "%nYou can disable the version check using -D%s=true";
 
-    private static final String NO_CONNECTION = "Webpack-dev-server couldn't be reached for %s.%n"
-            + "Check the startup logs for exceptions in running webpack-dev-server.%n"
-            + "If server should be running in production mode check that production mode flag is set correctly.";
-
     private static final String TOO_OLD = "%n%n======================================================================================================"
             + "%nYour installed '%s' version (%s) is too old. Supported versions are %d.%d+" //
             + "%nPlease install a new one either:"
@@ -374,6 +352,9 @@ public class FrontendUtils {
     public static final String GREEN = "\u001b[38;5;35m%s\u001b[0m";
 
     public static final String BRIGHT_BLUE = "\u001b[94m%s\u001b[0m";
+
+    private static final Pattern THEME_GENERATED_FILE_PATTERN = Pattern
+            .compile("theme-([\\s\\S]+?)\\.generated\\.js");
 
     /**
      * Only static stuff here.
@@ -468,15 +449,6 @@ public class FrontendUtils {
         return processBuilder;
     }
 
-    /**
-     * Clears the <code>stats.json</code> cache within this
-     * {@link VaadinContext}.
-     *
-     * @param service the vaadin service.
-     */
-    public static void clearCachedStatsContent(VaadinService service) {
-        service.getContext().removeAttribute(Stats.class);
-    }
 
     /**
      * Gets the content of the <code>frontend/index.html</code> file which is
@@ -508,18 +480,16 @@ public class FrontendUtils {
      * watcher. Auto-reloading will work automatically, like other files managed
      * by webpack in `frontend/` folder.
      *
-     * @param service
-     *            the vaadin service
+     * @param service the vaadin service
      * @return the content of the web-component.html file as a string, null if
-     *         not found.
-     * @throws IOException
-     *             on error when reading file
-     *
+     * not found.
+     * @throws IOException on error when reading file
      */
     public static String getWebComponentHtmlContent(VaadinService service)
             throws IOException {
         return getFileContent(service, WEB_COMPONENT_HTML);
     }
+
     private static String getFileContent(VaadinService service, String path)
             throws IOException {
         DeploymentConfiguration config = service.getDeploymentConfiguration();
@@ -528,18 +498,34 @@ public class FrontendUtils {
         try {
             Optional<DevModeHandler> devModeHandler = DevModeHandlerManager
                     .getDevModeHandler(service);
-            if (!config.isProductionMode() && config.enableDevServer()
-                    && devModeHandler.isPresent()) {
+            if (config.isProductionMode()) {
+                // In production mode, this is on the class path
+                content = getFileFromClassPath(service, path);
+            } else if (devModeHandler.isPresent()) {
                 content = getFileFromDevModeHandler(devModeHandler.get(), path);
+            } else {
+                // Get directly from the frontend folder in the project
+                content = getFileFromFrontendDir(config, path);
             }
 
-            if (content == null) {
-                content = getFileFromClassPath(service, path);
-            }
             return content != null ? streamToString(content) : null;
         } finally {
             IOUtils.closeQuietly(content);
         }
+    }
+
+    private static InputStream getFileFromFrontendDir(
+            AbstractConfiguration config, String path) {
+        File file = new File(new File(System.getProperty(PARAM_STUDIO_DIR), "frontend"),
+                path);
+        if (file.exists()) {
+            try {
+                return Files.newInputStream(file.toPath());
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+        return null;
     }
 
     private static InputStream getFileFromClassPath(VaadinService service,
@@ -559,108 +545,6 @@ public class FrontendUtils {
         }
     }
 
-    private static InputStream getResourceFromWebpack(
-            DevModeHandler devModeHandler, String resource,
-            String exceptionMessage) throws IOException {
-        HttpURLConnection statsConnection = devModeHandler
-                .prepareConnection(resource, "GET");
-        if (statsConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new WebpackConnectionException(
-                    String.format(NO_CONNECTION, exceptionMessage));
-        }
-        return statsConnection.getInputStream();
-    }
-
-    private static InputStream getStatsFromExternalUrl(String externalStatsUrl,
-                                                       VaadinContext context) {
-        String url;
-        // If url is relative try to get host from request
-        // else fallback on 127.0.0.1:8080
-        if (externalStatsUrl.startsWith("/")) {
-            VaadinRequest request = VaadinRequest.getCurrent();
-            url = getHostString(request) + externalStatsUrl;
-        } else {
-            url = externalStatsUrl;
-        }
-        try {
-            URL uri = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) uri
-                    .openConnection();
-            connection.setRequestMethod("GET");
-            // one minute timeout should be enough
-            connection.setReadTimeout(60000);
-            connection.setConnectTimeout(60000);
-            String lastModified = connection.getHeaderField("last-modified");
-            if (lastModified != null) {
-                LocalDateTime modified = ZonedDateTime
-                        .parse(lastModified,
-                                DateTimeFormatter.RFC_1123_DATE_TIME)
-                        .toLocalDateTime();
-                Stats statistics = context.getAttribute(Stats.class);
-                if (statistics == null || modified.isAfter(statistics
-                        .getLastModified().orElse(LocalDateTime.MIN))) {
-                    byte[] buffer = IOUtils
-                            .toByteArray(connection.getInputStream());
-                    statistics = new Stats(buffer, lastModified);
-                    context.setAttribute(statistics);
-                }
-                return new ByteArrayInputStream(statistics.statsJson);
-            }
-            return connection.getInputStream();
-        } catch (IOException e) {
-            getLogger().error("Failed to retrieve stats.json from the url {}.", url, e);
-            logInFile(String.format("Failed to retrieve stats.json from the url %s.", url) + "\n" + e);
-        }
-        return null;
-    }
-
-    private static String getHostString(VaadinRequest request) {
-        String host = request.getHeader("host");
-        if (host == null) {
-            host = "http://127.0.0.1:8080";
-        } else if (!host.contains("://")) {
-            String scheme = request.getHeader("scheme");
-            if (scheme == null) {
-                scheme = "http";
-            }
-            host = scheme + "://" + host;
-        }
-        return host;
-    }
-
-    private static InputStream getStatsFromClassPath(VaadinService service) {
-        Stats statistics = service.getContext().getAttribute(Stats.class);
-
-        if (statistics != null) {
-            return new ByteArrayInputStream(statistics.statsJson);
-        }
-
-        String stats = service.getDeploymentConfiguration()
-                .getStringProperty(SERVLET_PARAMETER_STATISTICS_JSON,
-                        VAADIN_SERVLET_RESOURCES + STATISTICS_JSON_DEFAULT)
-                // Remove absolute
-                .replaceFirst("^/", "");
-        ResourceProvider resourceProvider = service.getContext()
-                .getAttribute(Lookup.class).lookup(ResourceProvider.class);
-        URL statsUrl = resourceProvider.getApplicationResource(stats);
-        InputStream stream = null;
-        if (statsUrl != null) {
-            try (InputStream statsStream = statsUrl.openStream()) {
-                byte[] buffer = IOUtils.toByteArray(statsStream);
-                statistics = new Stats(buffer, null);
-                service.getContext().setAttribute(statistics);
-                stream = new ByteArrayInputStream(buffer);
-            } catch (IOException exception) {
-                getLogger().warn("Couldn't read content of stats file {}", stats, exception);
-                stream = null;
-            }
-        }
-        if (stream == null) {
-            getLogger().error("Cannot get the 'stats.json' from the classpath '{}'", stats);
-            logInFile(String.format("Cannot get the 'stats.json' from the classpath '%s'", stats));
-        }
-        return stream;
-    }
 
     private static InputStream getFileFromDevModeHandler(
             DevModeHandler devModeHandler, String filePath) throws IOException {
@@ -698,10 +582,8 @@ public class FrontendUtils {
      * {@value FrontendUtils#JAR_RESOURCES_FOLDER}. If the path does not start
      * with {@code ./}, look in {@code node_modules} instead.
      *
-     * @param projectRoot
-     *            the project root folder.
-     * @param path
-     *            the file path.
+     * @param projectRoot the project root folder.
+     * @param path        the file path.
      * @return an existing {@link File} , or null if the file doesn't exist.
      */
     public static File resolveFrontendPath(File projectRoot, String path) {
@@ -715,12 +597,9 @@ public class FrontendUtils {
      * {@value FrontendUtils#JAR_RESOURCES_FOLDER}. If the path does not start
      * with {@code ./}, look in {@code node_modules} instead.
      *
-     * @param projectRoot
-     *            the project root folder.
-     * @param path
-     *            the file path.
-     * @param frontendDirectory
-     *            the frontend directory.
+     * @param projectRoot       the project root folder.
+     * @param path              the file path.
+     * @param frontendDirectory the frontend directory.
      * @return an existing {@link File} , or null if the file doesn't exist.
      */
     public static File resolveFrontendPath(File projectRoot, String path,
@@ -735,7 +614,39 @@ public class FrontendUtils {
                 .filter(File::exists).findFirst().orElse(null);
     }
 
-    private static File getJarResourcesFolder(File frontendDirectory) {
+    /**
+     * Get resource from JAR package.
+     *
+     * @param jarImport jar file to get (no resource folder should be added)
+     * @return resource as String or {@code null} if not found
+     */
+    public static String getJarResourceString(String jarImport) {
+        final ClassLoader classLoader = FrontendUtils.class.getClassLoader();
+        URL resource = classLoader
+                .getResource(RESOURCES_FRONTEND_DEFAULT + "/" + jarImport);
+        if (resource == null) {
+            resource = classLoader.getResource(
+                    COMPATIBILITY_RESOURCES_FRONTEND_DEFAULT + "/" + jarImport);
+        }
+
+        if (resource == null) {
+            return null;
+        }
+        try (InputStream frontendContent = resource.openStream()) {
+            return FrontendUtils.streamToString(frontendContent);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Get the front-end resources folder. This is where the contents of JAR
+     * dependencies are copied to.
+     *
+     * @param frontendDirectory project's frontend directory
+     * @return a {@link File} representing a folder with copied resources
+     */
+    public static File getJarResourcesFolder(File frontendDirectory) {
         return new File(getFrontendGeneratedFolder(frontendDirectory),
                 JAR_RESOURCES_FOLDER);
     }
@@ -744,89 +655,6 @@ public class FrontendUtils {
         return new File(frontendDirectory, GENERATED);
     }
 
-    /**
-     * Load the asset chunks from <code>stats.json</code>. We will only read the
-     * file until we have reached the assetsByChunkName json and return that as
-     * a json object string.
-     * <p>
-     * Note: The <code>stats.json</code> is cached when external stats is
-     * enabled or <code>stats.json</code> is provided from the class path. To
-     * clear the cache use {@link #clearCachedStatsContent(VaadinService)}.
-     *
-     * @param service the Vaadin service.
-     * @return json for assetsByChunkName object in stats.json or {@code null}
-     * if stats.json not found or content not found.
-     * @throws IOException if an I/O error occurs while creating the input stream.
-     */
-    public static String getStatsAssetsByChunkName(VaadinService service)
-            throws IOException {
-        DeploymentConfiguration config = service.getDeploymentConfiguration();
-        Optional<DevModeHandler> devModeHandler = DevModeHandlerManager
-                .getDevModeHandler(service);
-        if (!config.isProductionMode() && config.enableDevServer()
-                && devModeHandler.isPresent()) {
-            return streamToString(getResourceFromWebpack(devModeHandler.get(),
-                    "/assetsByChunkName", "getting assets by chunk name."));
-        }
-        InputStream resourceAsStream;
-        if (config.isStatsExternal()) {
-            resourceAsStream = getStatsFromExternalUrl(
-                    config.getExternalStatsUrl(), service.getContext());
-        } else {
-            resourceAsStream = getStatsFromClassPath(service);
-        }
-        if (resourceAsStream == null) {
-            return null;
-        }
-        try (Scanner scan = new Scanner(resourceAsStream, StandardCharsets.UTF_8)) {
-            StringBuilder assets = new StringBuilder();
-            assets.append("{");
-            // Scan until we reach the assetsByChunkName object line
-            scanToAssetChunkStart(scan, assets);
-            // Add lines until we reach the first } breaking the object
-            while (scan.hasNextLine()) {
-                String line = scan.nextLine().trim();
-                if ("}".equals(line) || "},".equals(line)) {
-                    // Encountering } or }, means end of asset chunk
-                    return assets.append("}").toString();
-                } else if (line.endsWith("}") || line.endsWith("},")) {
-                    return assets
-                            .append(line.substring(0, line.indexOf('}')).trim())
-                            .append("}").toString();
-                } else if (line.contains("{")) {
-                    // Encountering { means something is wrong as the assets
-                    // should only contain key-value pairs.
-                    break;
-                }
-                assets.append(line);
-            }
-            String errorMessage = "Could not parse assetsByChunkName from stats.json";
-            getLogger().error(errorMessage);
-            logInFile(errorMessage);
-        }
-        return null;
-    }
-
-    /**
-     * Scan until we reach the assetsByChunkName json object start. If faulty
-     * format add first jsonObject to assets builder.
-     *
-     * @param scan   Scanner used to scan data
-     * @param assets assets builder
-     */
-    private static void scanToAssetChunkStart(Scanner scan,
-                                              StringBuilder assets) {
-        do {
-            String line = scan.nextLine().trim();
-            // Walk file until we get to the assetsByChunkName object.
-            if (line.startsWith("\"assetsByChunkName\"")) {
-                if (!line.endsWith("{")) {
-                    assets.append(line.substring(line.indexOf('{') + 1).trim());
-                }
-                break;
-            }
-        } while (scan.hasNextLine());
-    }
 
     private static String buildTooOldString(String tool, String version,
                                             int supportedMajor, int supportedMinor) {
@@ -847,20 +675,6 @@ public class FrontendUtils {
                 DEFAULT_FRONTEND_DIR);
     }
 
-    /**
-     * Checks whether the {@code file} is a webpack configuration file with the
-     * expected content (includes a configuration generated by Flow).
-     *
-     * @param file a file to check
-     * @return {@code true} iff the file exists and includes a generated
-     * configuration
-     * @throws IOException if an I/O error occurs while reading the file
-     */
-    public static boolean isWebpackConfigFile(File file) throws IOException {
-        return file.exists()
-                && FileUtils.readFileToString(file, StandardCharsets.UTF_8)
-                .contains("./webpack.generated.js");
-    }
 
     /**
      * Get relative path from a source path to a target path in Unix form. All
@@ -1001,18 +815,16 @@ public class FrontendUtils {
          * Constructs an exception telling what code the command execution
          * process was exited with and the output that it produced.
          *
-         * @param processExitCode
-         *            process exit code
-         * @param output
-         *            the output from the command
-         * @param errorOutput
-         *            the error output from the command
+         * @param processExitCode process exit code
+         * @param output          the output from the command
+         * @param errorOutput     the error output from the command
          */
         public CommandExecutionException(int processExitCode, String output,
-                String errorOutput) {
+                                         String errorOutput) {
             super("Process execution failed with exit code " + processExitCode
                     + "\nOutput: " + output + "\nError output: " + errorOutput);
         }
+
         /**
          * Constructs an exception telling what was the original exception the
          * command execution process failed with.
@@ -1142,39 +954,6 @@ public class FrontendUtils {
         return LoggerFactory.getLogger(FrontendUtils.class);
     }
 
-    /**
-     * Container class for caching the external stats.json contents.
-     */
-    private static class Stats implements Serializable {
-        private final String lastModified;
-        protected final byte[] statsJson;
-
-        /**
-         * Create a new container for stats.json caching.
-         *
-         * @param statsJson    the gotten stats.json as a string
-         * @param lastModified last modification timestamp for stats.json in RFC-1123
-         *                     date-time format, such as 'Tue, 3 Jun 2008 11:05:30 GMT'
-         */
-        public Stats(byte[] statsJson, String lastModified) {
-            this.statsJson = statsJson;
-            this.lastModified = lastModified;
-        }
-
-        /**
-         * Return last modified timestamp for contained stats.json.
-         *
-         * @return timestamp as LocalDateTime
-         */
-        public Optional<LocalDateTime> getLastModified() {
-            if (lastModified == null) {
-                return Optional.empty();
-            }
-            return Optional.of(ZonedDateTime
-                    .parse(lastModified, DateTimeFormatter.RFC_1123_DATE_TIME)
-                    .toLocalDateTime());
-        }
-    }
 
     /**
      * Pretty prints a command line order. It split in lines adapting to 80
@@ -1197,7 +976,7 @@ public class FrontendUtils {
             curLine.append(fragment.replace(baseDir, "."));
             curLine.append(" ");
         }
-        retval.append(curLine);
+        retval.append(curLine.toString());
         retval.append("\n");
         return retval.toString();
     }
@@ -1240,7 +1019,6 @@ public class FrontendUtils {
      * @param format  Format of the line to send to console, it must contain a `%s`
      *                outlet for the message
      * @param message the string to show
-     *
      * @see FrontendUtils#console(String, Object, boolean)
      */
     @SuppressWarnings("squid:S106")
@@ -1299,7 +1077,9 @@ public class FrontendUtils {
         try {
             Path filePath = getLogFilePath();
             if (filePath == null) {
-                getLogger().warn("Log file path is null");
+                String logFileIsNull = "Log file path is null";
+                getLogger().warn(logFileIsNull);
+                console(RED, logFileIsNull, false);
                 return null;
             }
 
@@ -1316,7 +1096,9 @@ public class FrontendUtils {
             return logFile;
 
         } catch (IOException e) {
-            getLogger().warn(Arrays.toString(e.getStackTrace()));
+            String stackTrace = Arrays.toString(e.getStackTrace());
+            getLogger().warn(stackTrace);
+            console(RED, stackTrace, false);
             return null;
         }
     }
@@ -1362,9 +1144,11 @@ public class FrontendUtils {
     private static void logInFile(@Nonnull File logFile, String text) {
         if (logFile.exists() && logFile.canWrite()) {
             try {
-                Files.write(logFile.toPath(), text.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+                Files.writeString(logFile.toPath(), text, StandardOpenOption.APPEND);
             } catch (IOException e) {
-                getLogger().warn("Error when writing in log file..." + "\n" + e);
+                String errorMsg = "Error when writing in log file...";
+                getLogger().warn(errorMsg, e);
+                console(RED, errorMsg + "\n" + Arrays.toString(e.getStackTrace()), false);
             }
         } else if (!logFile.exists()) {
             throw new RuntimeException("File not found: " + logFile.getAbsolutePath());
@@ -1394,7 +1178,7 @@ public class FrontendUtils {
      * @throws IOException on failure to delete any one file, or if the directory name
      *                     is not {@code node_modules}
      */
-    public static void deleteNodeModules(@Nonnull File nodeModules) throws IOException {
+    public static void deleteNodeModules(File nodeModules) throws IOException {
         if (!nodeModules.exists()) {
             return;
         }
@@ -1408,6 +1192,15 @@ public class FrontendUtils {
         deleteDirectory(nodeModules);
     }
 
+    /**
+     * Recursively delete given directory and contents.
+     * <p>
+     * Will not delete contents of symlink or junction directories, only the
+     * link file.
+     *
+     * @param directory directory to delete
+     * @throws IOException on failure to delete or read any one file
+     */
     public static void deleteDirectory(File directory) throws IOException {
         if (!directory.exists() || !directory.isDirectory()) {
             return;
@@ -1428,11 +1221,9 @@ public class FrontendUtils {
      * Check that directory is not a windows junction which is basically a
      * symlink.
      *
-     * @param directory
-     *            directory path to check
+     * @param directory directory path to check
      * @return true if directory is a windows junction
-     * @throws IOException
-     *             if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     private static boolean isJunction(Path directory) throws IOException {
         boolean isWindows = System.getProperty("os.name").toLowerCase()
@@ -1493,48 +1284,174 @@ public class FrontendUtils {
      * for serving the VAADIN frontend bundle.
      *
      * @return the path to the servlet used for the frontend bundle. Empty for a
-     *         /* mapping, otherwise always starts with a slash but never ends
-     *         with a slash
+     * /* mapping, otherwise always starts with a slash but never ends
+     * with a slash
      */
     public static String getFrontendServletPath(ServletContext servletContext) {
         String mapping = VaadinServlet.getFrontendMapping();
-        if (mapping.endsWith("/*")) {
+        if (mapping != null && mapping.endsWith("/*")) {
             mapping = mapping.replace("/*", "");
         }
 
         return mapping;
     }
 
-    public static InputStream getResourceAsStream(String name, ClassLoader studioClassLoader) {
-        InputStream[] resultStream = new InputStream[1];
-        final String DEV_SERVER_ARTIFACT_JAR_NAME = "jmix-flowui-devserver";
-
-        try {
-            Method getUrlsMethod = studioClassLoader.getClass().getMethod("getUrls");
-            @SuppressWarnings("unchecked")
-            List<URL> invoke = (List<URL>) getUrlsMethod.invoke(studioClassLoader);
-            Optional<URL> devServerJar = invoke.stream()
-                    .filter(it -> it.getFile().contains(DEV_SERVER_ARTIFACT_JAR_NAME))
-                    .findFirst();
-
-            if (devServerJar.isPresent()) {
-                @SuppressWarnings("resource")
-                JarFile jarFile = new JarFile(new File(devServerJar.get().toURI()));
-                Iterator<JarEntry> jarEntryIterator = jarFile.entries().asIterator();
-                while (jarEntryIterator.hasNext()) {
-                    JarEntry entry = jarEntryIterator.next();
-                    if (entry.getName().endsWith(name)) {
-                        resultStream[0] = jarFile.getInputStream(jarFile.getEntry(entry.getName()));
-                        return resultStream[0];
-                    }
-                }
+    /**
+     * Finds the given file inside the express mode development bundle that is
+     * used.
+     * <p>
+     *
+     * @param projectDir the project root folder
+     * @param filename   the file name inside the bundle
+     * @return a URL referring to the file inside the bundle or {@code null} if
+     * the file was not found
+     */
+    public static URL findBundleFile(File projectDir, String filename)
+            throws IOException {
+        File devBundleFolder = getDevBundleFolder(projectDir);
+        if (devBundleFolder.exists()) {
+            // Has an application bundle
+            File bundleFile = new File(devBundleFolder, filename);
+            if (bundleFile.exists()) {
+                return bundleFile.toURI().toURL();
             }
-        } catch (URISyntaxException | IOException | InvocationTargetException | IllegalAccessException |
-                 NoSuchMethodException e) {
-            FrontendUtils.logInFile(e.toString());
-            throw new RuntimeException(e);
+        }
+        return TaskRunDevBundleBuild.class.getClassLoader()
+                .getResource(DEV_BUNDLE_JAR_PATH + filename);
+    }
+
+    /**
+     * Get the folder where an application specific bundle is stored.
+     *
+     * @param projectDir the project base directory
+     * @return the bundle directory
+     */
+    public static File getDevBundleFolder(File projectDir) {
+        return new File(projectDir, Constants.DEV_BUNDLE_LOCATION);
+    }
+
+    /**
+     * Get the stats.json for the application specific development bundle.
+     *
+     * @param projectDir the project base directory
+     * @return stats.json content or {@code null} if not found
+     * @throws IOException if an I/O exception occurs.
+     */
+    public static String findBundleStatsJson(File projectDir)
+            throws IOException {
+        URL statsJson = findBundleFile(projectDir, "config/stats.json");
+        if (statsJson == null) {
+            getLogger().warn(
+                    "There is no dev-bundle in the project " +
+                            "or on the classpath nor is there a default bundle included."
+            );
+            return null;
         }
 
-        return resultStream[0];
+        return IOUtils.toString(statsJson, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Gets the custom theme name if the custom theme is used in the project.
+     * <p>
+     * Should be only used in the development mode.
+     *
+     * @param projectFolder the project root folder
+     * @return custom theme name or empty optional if no theme is used
+     * @throws IOException if I/O exceptions occur while trying to extract the theme
+     *                     name.
+     */
+    public static Optional<String> getThemeName(File projectFolder)
+            throws IOException {
+        File themeJs = new File(projectFolder, com.vaadin.flow.server.frontend.FrontendUtils.FRONTEND
+                + com.vaadin.flow.server.frontend.FrontendUtils.GENERATED + com.vaadin.flow.server.frontend.FrontendUtils.THEME_IMPORTS_NAME);
+
+        if (!themeJs.exists()) {
+            return Optional.empty();
+        }
+
+        String themeJsContent = FileUtils.readFileToString(themeJs,
+                StandardCharsets.UTF_8);
+        Matcher matcher = THEME_GENERATED_FILE_PATTERN.matcher(themeJsContent);
+        if (matcher.find()) {
+            return Optional.of(matcher.group(1));
+        } else {
+            throw new IllegalStateException(
+                    "Couldn't extract theme name from theme imports file 'theme.js'");
+        }
+    }
+
+    /**
+     * Gets the theme annotation for the project.
+     *
+     * @param context the Vaadin context
+     * @return the theme annotation or an empty optional
+     */
+    public static Optional<Theme> getThemeAnnotation(VaadinContext context) {
+        AppShellRegistry registry = AppShellRegistry.getInstance(context);
+        Class<? extends AppShellConfigurator> shell = registry.getShell();
+        if (shell == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(shell.getAnnotation(Theme.class));
+    }
+
+    public static Optional<JsonObject> getThemeJsonInFrontend(
+            File frontendFolder, String themeName) throws IOException {
+        File themeJsonFile = Path.of(frontendFolder.getAbsolutePath(),
+                        Constants.APPLICATION_THEME_ROOT, themeName, "theme.json")
+                .toFile();
+        if (themeJsonFile.exists()) {
+            String content = FileUtils.readFileToString(themeJsonFile,
+                    StandardCharsets.UTF_8);
+            content = content.replaceAll("\\r\\n", "\n");
+            return Optional.of(Json.parse(content));
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<JsonObject> getThemeJsonInFrontend(Options options,
+                                                              ThemeDefinition themeDefinition) throws IOException {
+        if (themeDefinition != null) {
+            String themeName = themeDefinition.getName();
+            return getThemeJsonInFrontend(options.getFrontendDirectory(),
+                    themeName);
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<String> getParentThemeNameInFrontend(
+            File frontendFolder, JsonObject themeJson) {
+        if (themeJson != null) {
+            if (themeJson.hasKey("parent")) {
+                String parentThemeName = themeJson.getString("parent");
+                File parentThemeFolder = Path
+                        .of(frontendFolder.getAbsolutePath(),
+                                Constants.APPLICATION_THEME_ROOT,
+                                parentThemeName)
+                        .toFile();
+                if (parentThemeFolder.exists()) {
+                    return Optional.of(parentThemeName);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<String> getParentThemeNameInFrontend(
+            File frontendFolder, String projectCustomThemeName)
+            throws IOException {
+        Optional<JsonObject> themeJson = getThemeJsonInFrontend(frontendFolder,
+                projectCustomThemeName);
+        if (themeJson.isPresent()) {
+            return getParentThemeNameInFrontend(frontendFolder,
+                    themeJson.get());
+        }
+        return Optional.empty();
+    }
+
+    public static InputStream getResourceAsStream(String name) {
+        final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
+        return FrontendUtils.class.getClassLoader().getResourceAsStream(devServerResourcesBaseDir + name);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -14,7 +14,7 @@
  * the License.
  */
 
-const { processThemeResources, extractThemeName, findParentThemes } = require('./theme-handle');
+import { processThemeResources, extractThemeName, findParentThemes } from './theme-handle.js';
 
 /**
  * The application theme plugin is for generating, collecting and copying of theme files for the application theme.
@@ -53,4 +53,4 @@ class ApplicationThemePlugin {
   }
 }
 
-module.exports = { ApplicationThemePlugin, processThemeResources, extractThemeName, findParentThemes };
+export { ApplicationThemePlugin, processThemeResources, extractThemeName, findParentThemes };

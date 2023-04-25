@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -35,19 +35,17 @@ public class TaskGenerateIndexHtml extends AbstractTaskClientGenerator {
     /**
      * Create a task to generate <code>index.html</code> if necessary.
      *
-     * @param frontendDirectory frontend directory is to check if the file already exists
-     *                          there.
+     * @param options the task options
      */
-    TaskGenerateIndexHtml(File frontendDirectory) {
-        indexHtml = new File(frontendDirectory, INDEX_HTML);
+    TaskGenerateIndexHtml(Options options) {
+        indexHtml = new File(options.getFrontendDirectory(), INDEX_HTML);
     }
 
     @Override
     protected String getFileContent() throws IOException {
-        InputStream indexStream = FrontendUtils.getResourceAsStream(
-                INDEX_HTML, TaskGenerateIndexHtml.class.getClassLoader()
-        );
-        return IOUtils.toString(indexStream, UTF_8);
+        try (InputStream indexStream = FrontendUtils.getResourceAsStream(INDEX_HTML)) {
+            return IOUtils.toString(indexStream, UTF_8);
+        }
     }
 
     @Override

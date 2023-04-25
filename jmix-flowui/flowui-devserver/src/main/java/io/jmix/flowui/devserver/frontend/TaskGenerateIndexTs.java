@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,33 +24,36 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.INDEX_JS;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.INDEX_TS;
+import static io.jmix.flowui.devserver.frontend.FrontendUtils.INDEX_TSX;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * Generate <code>index.js</code> if it is missing in frontend folder.
+ * Generate <code>index.ts</code> if it is missing in frontend folder.
+ * <p>
+ * For internal use only. May be renamed or removed in a future release.
+ *
+ * @since 3.0
  */
 public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
 
+    private final Options options;
     private final File frontendDirectory;
     private final File generatedImports;
-    private final File buildDirectory;
 
     /**
      * Create a task to generate <code>index.js</code> if necessary.
      *
-     * @param frontendDirectory frontend directory is to check if the file already exists
-     *                          there.
-     * @param generatedImports  the flow generated imports file to include in the
-     *                          <code>index.js</code>
+     * @param options the task options
      */
-    TaskGenerateIndexTs(File frontendDirectory, File generatedImports,
-                        File buildDirectory) {
-        this.frontendDirectory = frontendDirectory;
-        this.generatedImports = generatedImports;
-        this.buildDirectory = buildDirectory;
+    TaskGenerateIndexTs(Options options) {
+        this.options = options;
+        this.generatedImports = new File(options.getGeneratedFolder(),
+                FrontendUtils.IMPORTS_NAME);
+        this.frontendDirectory = options.getFrontendDirectory();
     }
 
     @Override
@@ -61,34 +64,35 @@ public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
 
     @Override
     protected boolean shouldGenerate() {
-        File indexTs = new File(frontendDirectory, INDEX_TS);
-        File indexJs = new File(frontendDirectory, INDEX_JS);
-        compareActualIndexTsOrJsWithIndexTempalate(indexTs, indexJs);
-        return !indexTs.exists() && !indexJs.exists();
+        return Arrays.asList(INDEX_TSX, INDEX_TS, INDEX_JS).stream()
+                .map(type -> new File(frontendDirectory, type))
+                .filter(File::exists)
+                .peek(this::compareActualIndexWithIndexTemplate).findAny()
+                .isEmpty();
     }
 
     @Override
     protected String getFileContent() throws IOException {
         String indexTemplate;
-        InputStream indexTsStream = FrontendUtils.getResourceAsStream(
-                INDEX_TS, TaskGenerateIndexTs.class.getClassLoader()
-        );
-        assert indexTsStream != null;
-        indexTemplate = IOUtils.toString(indexTsStream, UTF_8);
-        String relativizedImport = ensureValidRelativePath(
-                FrontendUtils.getUnixRelativePath(buildDirectory.toPath(),
-                        generatedImports.toPath()));
+        try (InputStream indexTsStream = FrontendUtils.getResourceAsStream(INDEX_TS)) {
+            assert indexTsStream != null;
+            indexTemplate = IOUtils.toString(indexTsStream, UTF_8);
 
-        String generatedDirRelativePathToBuildDir = FrontendUtils
-                .getUnixRelativePath(
-                        getGeneratedFile().getParentFile().toPath(),
-                        buildDirectory.toPath());
-        relativizedImport = relativizedImport
-                // replace `./` with `../../target/` to make it work
-                .replaceFirst("^./", generatedDirRelativePathToBuildDir + "/");
+            String relativizedImport = ensureValidRelativePath(FrontendUtils
+                    .getUnixRelativePath(options.getBuildDirectory().toPath(),
+                            generatedImports.toPath()));
 
-        return indexTemplate.replace("[to-be-generated-by-flow]",
-                relativizedImport);
+            String generatedDirRelativePathToBuildDir = FrontendUtils
+                    .getUnixRelativePath(
+                            getGeneratedFile().getParentFile().toPath(),
+                            options.getBuildDirectory().toPath());
+            relativizedImport = relativizedImport
+                    // replace `./` with `../../target/` to make it work
+                    .replaceFirst("^./", generatedDirRelativePathToBuildDir + "/");
+
+            return indexTemplate.replace("[to-be-generated-by-flow]",
+                    relativizedImport);
+        }
     }
 
     /**
@@ -105,22 +109,19 @@ public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
         return relativePath;
     }
 
-    private void compareActualIndexTsOrJsWithIndexTempalate(File indexTs,
-                                                            File indexJs) {
-        if (indexTs.exists() || indexJs.exists()) {
-            File indexFileExist = indexTs.exists() ? indexTs : indexJs;
-            String indexContent = null;
-            String indexTemplate = null;
-            try {
-                indexContent = IOUtils.toString(indexFileExist.toURI(), UTF_8);
-                indexTemplate = getFileContent();
-            } catch (IOException e) {
-                log().warn("Failed to read file content", e);
-            }
-            if (indexContent != null && !indexContent.equals(indexTemplate)) {
-                UsageStatistics.markAsUsed(Constants.STATISTIC_ROUTING_CLIENT,
-                        Version.getFullVersion());
-            }
+    private void compareActualIndexWithIndexTemplate(File indexFileExist) {
+        String indexContent = null;
+        String indexTemplate = null;
+        try {
+            indexContent = IOUtils.toString(indexFileExist.toURI(), UTF_8);
+            indexTemplate = getFileContent();
+        } catch (IOException e) {
+            log().warn("Failed to read file content", e);
+            FrontendUtils.logInFile("Failed to read file content\n" + Arrays.toString(e.getStackTrace()));
+        }
+        if (indexContent != null && !indexContent.equals(indexTemplate)) {
+            UsageStatistics.markAsUsed(Constants.STATISTIC_ROUTING_CLIENT,
+                    Version.getFullVersion());
         }
     }
 

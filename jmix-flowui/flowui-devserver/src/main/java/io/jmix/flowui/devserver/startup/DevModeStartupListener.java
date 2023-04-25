@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,6 +25,7 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.di.Lookup;
 import com.vaadin.flow.internal.DevModeHandlerManager;
+import com.vaadin.flow.internal.Template;
 import com.vaadin.flow.router.HasErrorParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
@@ -36,21 +37,26 @@ import com.vaadin.flow.server.startup.VaadinInitializerException;
 import com.vaadin.flow.server.startup.VaadinServletContextStartupInitializer;
 import com.vaadin.flow.theme.NoTheme;
 import com.vaadin.flow.theme.Theme;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.HandlesTypes;
+import jakarta.servlet.annotation.WebListener;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.HandlesTypes;
-import javax.servlet.annotation.WebListener;
 import java.io.Serializable;
 import java.util.Set;
 
+/**
+ * Trigger for running dev mode initialization when running in a compatible
+ * servlet environment.
+ */
 @HandlesTypes({Route.class, UIInitListener.class,
         VaadinServiceInitListener.class, WebComponentExporter.class,
         WebComponentExporterFactory.class, NpmPackage.class,
         NpmPackage.Container.class, JsModule.class, JsModule.Container.class,
         CssImport.class, CssImport.Container.class, JavaScript.class,
         JavaScript.Container.class, Theme.class, NoTheme.class,
-        HasErrorParameter.class, PWA.class, AppShellConfigurator.class})
+        HasErrorParameter.class, PWA.class, AppShellConfigurator.class,
+        Template.class })
 @WebListener
 public class DevModeStartupListener
         implements VaadinServletContextStartupInitializer, Serializable,

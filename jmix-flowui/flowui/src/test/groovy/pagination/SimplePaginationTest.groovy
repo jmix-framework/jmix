@@ -16,7 +16,6 @@
 
 package pagination
 
-import com.vaadin.flow.component.shared.Tooltip
 import io.jmix.core.DataManager
 import io.jmix.flowui.component.pagination.ItemsPerPage
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,14 +32,14 @@ class SimplePaginationTest extends FlowuiTestSpecification {
     @Autowired
     DataManager dataManager
 
-    List<Customer> customers;
-    private int customerItems = 10;
+    List<Customer> customers
+    private int customerItems = 10
 
     @Override
     void setup() {
         registerViewBasePackages("pagination")
 
-        customers = new ArrayList<>(customerItems);
+        customers = new ArrayList<>(customerItems)
         customerItems.times { customers.add(dataManager.create(Customer)) }
         dataManager.save(customers.toArray())
     }
@@ -192,23 +191,4 @@ class SimplePaginationTest extends FlowuiTestSpecification {
         then: "SimplePagination should change value accordingly"
         view.simplePagination1.itemsPerPage.itemsPerPageValue == 1
     }
-
-    def "SimplePagination with tooltip"() {
-        when: "Show View"
-
-        def view = (SimplePaginationDefaultValueTestView) navigateToView(SimplePaginationDefaultValueTestView)
-
-        then: "Tooltip should be loaded"
-
-        verifyAll(view.simplePagination9) {
-            tooltip.text == "tooltipText"
-            tooltip.focusDelay == 1
-            tooltip.hideDelay == 2
-            tooltip.hoverDelay == 3
-            tooltip.manual
-            tooltip.opened
-            tooltip.position == Tooltip.TooltipPosition.BOTTOM
-        }
-    }
-
 }

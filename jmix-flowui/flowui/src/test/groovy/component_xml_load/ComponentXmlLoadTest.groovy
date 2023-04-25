@@ -222,14 +222,6 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
-
-            tooltip.text == "tooltipText"
-            tooltip.focusDelay == 1
-            tooltip.hideDelay == 2
-            tooltip.hoverDelay == 3
-            tooltip.manual
-            tooltip.opened
-            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -265,14 +257,6 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
-
-            tooltip.text == "tooltipText"
-            tooltip.focusDelay == 1
-            tooltip.hideDelay == 2
-            tooltip.hoverDelay == 3
-            tooltip.manual
-            tooltip.opened
-            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 

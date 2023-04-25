@@ -1987,8 +1987,6 @@
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
-
-                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="openOnHover" type="xs:boolean"/>
@@ -2129,10 +2127,6 @@
     <xs:complexType name="simplePaginationComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
-
                 <xs:attribute name="dataLoader" type="xs:string"/>
 
                 <xs:attribute name="itemsPerPageDefaultValue" type="xs:integer"/>
@@ -2194,10 +2188,6 @@
     <xs:complexType name="userIndicatorComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
-
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>

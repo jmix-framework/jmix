@@ -24,6 +24,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.component.shared.Tooltip;
 
 import javax.annotation.Nullable;
 
@@ -79,6 +80,18 @@ public abstract class AbstractPagination extends Composite<Div> implements HasSt
         if (this.jmixRowsPerPage != null) {
             getContent().add(this.jmixRowsPerPage);
         }
+    }
+
+    @Deprecated
+    @Override
+    public Tooltip setTooltipText(String text) {
+        return HasTooltip.super.setTooltipText(text);
+    }
+
+    @Deprecated
+    @Override
+    public Tooltip getTooltip() {
+        return HasTooltip.super.getTooltip();
     }
 
     protected void initNavigationButtons() {

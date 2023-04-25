@@ -20,6 +20,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.component.shared.Tooltip;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.SupportsFormatter;
 import io.jmix.flowui.kit.component.formatter.Formatter;
@@ -69,6 +70,18 @@ public class UserIndicator<V> extends Composite<Div> implements SupportsFormatte
             return userFormatter.apply(user);
         }
         return "";
+    }
+
+    @Deprecated
+    @Override
+    public Tooltip setTooltipText(String text) {
+        return HasTooltip.super.setTooltipText(text);
+    }
+
+    @Deprecated
+    @Override
+    public Tooltip getTooltip() {
+        return HasTooltip.super.getTooltip();
     }
 
     @Nullable

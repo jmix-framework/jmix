@@ -30,7 +30,7 @@ import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.eclipse.persistence.queries.LoadGroup;
 import org.eclipse.persistence.sessions.CopyGroup;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -110,11 +110,6 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
     }
 
     @Override
-    public Set<String> getAttributes() {
-        return wrappedFetchGroup.getAttributes();
-    }
-
-    @Override
     public FetchGroupTracker getRootEntity() {
         return wrappedFetchGroup.getRootEntity();
     }
@@ -152,11 +147,6 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
     @Override
     public FetchGroup clone() {
         return new JmixEntityFetchGroup(wrappedFetchGroup.clone(), entityStates);
-    }
-
-    @Override
-    public CoreAttributeGroup cloneWithSameAttributes(Map<CoreAttributeGroup<AttributeItem, ClassDescriptor>, CoreAttributeGroup<AttributeItem, ClassDescriptor>> cloneMap) {
-        return new JmixEntityFetchGroup(wrappedFetchGroup.cloneWithSameAttributes(), entityStates);
     }
 
     @Override

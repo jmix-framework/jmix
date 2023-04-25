@@ -18,7 +18,7 @@ package io.jmix.core.repository;
 
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

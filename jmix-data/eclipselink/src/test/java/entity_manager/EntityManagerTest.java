@@ -39,10 +39,10 @@ import test_support.entity.sales.Customer;
 import test_support.entity.sales.Order;
 import test_support.listeners.TestCustomerListener;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

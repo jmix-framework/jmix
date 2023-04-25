@@ -18,7 +18,7 @@ package io.jmix.flowui.model;
 
 import io.jmix.core.querycondition.Condition;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
 

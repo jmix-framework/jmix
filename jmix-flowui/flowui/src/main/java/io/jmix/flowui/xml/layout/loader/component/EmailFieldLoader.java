@@ -41,7 +41,6 @@ public class EmailFieldLoader extends AbstractComponentLoader<JmixEmailField> {
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
-        loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
         componentLoader().loadLabel(resultComponent, element);
@@ -59,6 +58,7 @@ public class EmailFieldLoader extends AbstractComponentLoader<JmixEmailField> {
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+        componentLoader().loadAllowedCharPattern(resultComponent, element, context);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

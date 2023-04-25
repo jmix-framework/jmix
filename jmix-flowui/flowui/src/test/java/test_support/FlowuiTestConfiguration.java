@@ -45,8 +45,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManagerFactory;
-import javax.servlet.ServletContext;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.servlet.ServletContext;
 import javax.sql.DataSource;
 
 @Configuration

@@ -16,7 +16,7 @@
 
 package io.jmix.data.persistence;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.sql.ResultSet;
 
 /**

@@ -17,7 +17,7 @@
 package io.jmix.imap.exception;
 
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 public class ImapException extends RuntimeException {
 

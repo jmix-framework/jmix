@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-:host([theme~='splitter-spacing']) {
-    gap: var(--lumo-space-s);
+.jmix-upload-button vaadin-button[theme~="jmix-upload-field-no-margin"] {
+  margin: 0;
 }

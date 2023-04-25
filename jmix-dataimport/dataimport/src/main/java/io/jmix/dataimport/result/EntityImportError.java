@@ -18,7 +18,7 @@ package io.jmix.dataimport.result;
 
 import io.jmix.dataimport.extractor.data.ImportedDataItem;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * An object that contains the following details if an entity import fails:

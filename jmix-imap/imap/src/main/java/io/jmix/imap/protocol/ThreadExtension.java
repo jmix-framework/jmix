@@ -20,7 +20,7 @@ import com.sun.mail.imap.protocol.FetchItem;
 import com.sun.mail.imap.protocol.FetchResponse;
 import com.sun.mail.imap.protocol.Item;
 
-import javax.mail.FetchProfile;
+import jakarta.mail.FetchProfile;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class ThreadExtension {

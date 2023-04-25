@@ -1,6 +1,6 @@
 package io.jmix.data;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 public interface JmixQuery<T> extends TypedQuery<T> {
 

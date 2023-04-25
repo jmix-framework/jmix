@@ -26,7 +26,7 @@ import com.vaadin.flow.function.SerializableBiFunction;
 import com.vaadin.flow.function.SerializableRunnable;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public class JmixGridContextMenu<E> extends GridContextMenu<E> {
 

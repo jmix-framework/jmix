@@ -34,7 +34,7 @@ import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
 import test_support.entity.sales.Order;
 
-import javax.persistence.TemporalType;
+import jakarta.persistence.TemporalType;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;

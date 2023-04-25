@@ -23,9 +23,12 @@ const loginForm = css`
     justify-content: end;
     padding-top: var(--lumo-space-m);
   }
+  
   .jmix-login-form-remember-me {
     align-self: center;
+    flex-grow: 1;
   }
+  
   .jmix-login-form-locales-select {
     width: var(--jmix-login-form-locales-select-width, 8em);
   }

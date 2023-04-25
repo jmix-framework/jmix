@@ -17,9 +17,9 @@ package io.jmix.imap.entity;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Table(name = "IMAP_SIMPLE_AUTHENTICATION")
 @Entity(name = "imap_SimpleAuthentication")

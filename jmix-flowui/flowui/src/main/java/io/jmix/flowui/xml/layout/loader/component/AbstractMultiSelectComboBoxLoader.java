@@ -38,7 +38,6 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
         loadInteger(element, "pageSize", resultComponent::setPageSize);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
-        loadString(element, "allowedCharPattern", resultComponent::setAllowedCharPattern);
 
         loadResourceString(element, "placeholder",
                 context.getMessageGroup(), resultComponent::setPlaceholder);
@@ -55,6 +54,7 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+        componentLoader().loadAllowedCharPattern(resultComponent, element, context);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

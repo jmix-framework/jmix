@@ -21,7 +21,7 @@ import io.jmix.core.MessageTools;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 

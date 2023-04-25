@@ -18,10 +18,7 @@ package io.jmix.sessions.events;
 
 import io.jmix.sessions.SessionRepositoryWrapper;
 import org.springframework.security.core.session.SessionCreationEvent;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.Session;
-
-import javax.servlet.http.HttpSession;
 
 /**
  * Published by the {@link SessionRepositoryWrapper} when an {@code Session} is

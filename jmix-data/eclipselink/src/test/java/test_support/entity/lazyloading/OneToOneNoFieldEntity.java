@@ -19,7 +19,7 @@ package test_support.entity.lazyloading;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Table(name = "TEST_ONE_TO_ONE_NO_FIELD_ENTITY")
 @JmixEntity

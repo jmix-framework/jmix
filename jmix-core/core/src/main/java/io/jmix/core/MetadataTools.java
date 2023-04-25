@@ -46,11 +46,11 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.persistence.Id;
-import javax.persistence.*;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -391,7 +391,7 @@ public class MetadataTools {
      *     <li>{@link LastModifiedBy}</li>
      *     <li>{@link DeletedDate}</li>
      *     <li>{@link DeletedBy}</li>
-     *     <li>{@link javax.persistence.Version}</li>
+     *     <li>{@link jakarta.persistence.Version}</li>
      * </ul>
      *
      * @return names of system properties used in Entity determined by {@code metaClass} parameter
@@ -562,7 +562,7 @@ public class MetadataTools {
     public boolean isJpaEntity(MetaClass metaClass) {
         checkNotNullArgument(metaClass, "metaClass is null");
         return metaClass.getStore().getDescriptor().isJpa()
-                && metaClass.getJavaClass().isAnnotationPresent(javax.persistence.Entity.class);
+                && metaClass.getJavaClass().isAnnotationPresent(jakarta.persistence.Entity.class);
     }
 
     /**
@@ -579,7 +579,7 @@ public class MetadataTools {
     public boolean isJpaEmbeddable(MetaClass metaClass) {
         checkNotNullArgument(metaClass, "metaClass is null");
         return metaClass.getStore().getDescriptor().isJpa()
-                && metaClass.getJavaClass().isAnnotationPresent(javax.persistence.Embeddable.class);
+                && metaClass.getJavaClass().isAnnotationPresent(jakarta.persistence.Embeddable.class);
     }
 
     /**
@@ -748,7 +748,7 @@ public class MetadataTools {
             return null;
 
         Class<?> javaClass = metaClass.getJavaClass();
-        javax.persistence.Table annotation = javaClass.getAnnotation(javax.persistence.Table.class);
+        jakarta.persistence.Table annotation = javaClass.getAnnotation(jakarta.persistence.Table.class);
         if (annotation != null && StringUtils.isNotEmpty(annotation.name())) {
             return annotation.name();
         } else if (metaClass.getAncestor() != null) {

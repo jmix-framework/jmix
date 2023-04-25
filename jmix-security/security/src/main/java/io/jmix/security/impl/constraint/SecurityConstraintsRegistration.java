@@ -22,7 +22,7 @@ import io.jmix.security.constraint.ExportImportEntityConstraint;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 public class SecurityConstraintsRegistration {
 

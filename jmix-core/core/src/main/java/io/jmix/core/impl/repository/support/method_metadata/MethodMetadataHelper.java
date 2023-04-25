@@ -23,7 +23,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collections;

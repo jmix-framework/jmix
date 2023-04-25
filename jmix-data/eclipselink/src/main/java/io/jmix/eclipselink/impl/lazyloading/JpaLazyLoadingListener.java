@@ -30,8 +30,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Basic;
-import javax.persistence.FetchType;
+import jakarta.persistence.Basic;
+import jakarta.persistence.FetchType;
 import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;

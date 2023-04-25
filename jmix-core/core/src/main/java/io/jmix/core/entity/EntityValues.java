@@ -21,7 +21,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.PropertyPath;
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.UUID;
 

@@ -10,8 +10,8 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.dynattr.model.Categorized;
 import io.jmix.dynattr.model.Category;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
 

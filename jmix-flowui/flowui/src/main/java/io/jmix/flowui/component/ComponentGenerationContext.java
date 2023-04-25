@@ -22,7 +22,7 @@ import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.model.CollectionContainer;
 import org.dom4j.Element;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Contains information for {@link ComponentGenerationStrategy} when creating

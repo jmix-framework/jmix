@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import test_support.base.entity.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity(name = "app_Pet")
 @JmixEntity

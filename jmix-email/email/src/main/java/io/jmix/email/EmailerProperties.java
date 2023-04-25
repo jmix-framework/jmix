@@ -18,16 +18,13 @@ package io.jmix.email;
 
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.PositiveOrZero;
-
 @Validated
 @ConfigurationProperties(prefix = "jmix.email")
-@ConstructorBinding
 public class EmailerProperties {
 
     /**

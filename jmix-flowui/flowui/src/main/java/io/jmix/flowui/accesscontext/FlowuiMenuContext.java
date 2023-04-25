@@ -19,7 +19,7 @@ package io.jmix.flowui.accesscontext;
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.flowui.menu.MenuItem;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public class FlowuiMenuContext implements AccessContext {
     protected final MenuItem menuItem;

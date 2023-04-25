@@ -18,7 +18,7 @@ package io.jmix.rest.test.testmodel;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  *

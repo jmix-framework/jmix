@@ -16,7 +16,7 @@
 
 package io.jmix.core.security;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.TimeZone;

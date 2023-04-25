@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import test_support.entity.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Table(name = "TEST_MANY_TO_ONE_ENTITY")
 @JmixEntity

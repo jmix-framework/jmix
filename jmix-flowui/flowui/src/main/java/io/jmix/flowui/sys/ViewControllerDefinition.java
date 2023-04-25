@@ -18,7 +18,7 @@ package io.jmix.flowui.sys;
 
 import org.springframework.core.io.Resource;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public final class ViewControllerDefinition {
 

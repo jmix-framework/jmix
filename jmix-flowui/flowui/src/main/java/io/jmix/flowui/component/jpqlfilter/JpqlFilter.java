@@ -24,7 +24,7 @@ import io.jmix.flowui.component.filer.SingleFilterComponentBase;
 import io.jmix.flowui.model.DataLoader;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkState;

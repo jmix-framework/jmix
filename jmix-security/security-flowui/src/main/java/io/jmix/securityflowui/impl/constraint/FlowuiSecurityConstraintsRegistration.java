@@ -22,7 +22,7 @@ import io.jmix.securityflowui.constraint.FlowuiMenuConstraint;
 import io.jmix.securityflowui.constraint.FlowuiShowViewConstraint;
 import org.springframework.beans.factory.BeanFactory;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 public class FlowuiSecurityConstraintsRegistration {
 

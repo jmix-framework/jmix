@@ -28,7 +28,7 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Objects;
 
 @Component("flowui_FilterQueryParametersSupport")

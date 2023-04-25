@@ -23,8 +23,8 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.dashboards.model.parameter.Parameter;
 import io.jmix.dashboards.model.visualmodel.*;
 
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

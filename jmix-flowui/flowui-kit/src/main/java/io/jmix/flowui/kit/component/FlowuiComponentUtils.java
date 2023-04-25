@@ -28,7 +28,7 @@ import com.vaadin.flow.dom.Element;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;

@@ -20,8 +20,8 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.persistence.Id;
-import java.io.Serializable;
+import jakarta.persistence.Id;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;

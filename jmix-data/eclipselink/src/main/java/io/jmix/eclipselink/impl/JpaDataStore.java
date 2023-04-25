@@ -51,8 +51,8 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.Nullable;
-import javax.persistence.*;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
@@ -61,7 +61,7 @@ import java.util.regex.PatternSyntaxException;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 import static io.jmix.core.entity.EntityValues.getValue;
-import static javax.persistence.CascadeType.*;
+import static jakarta.persistence.CascadeType.*;
 
 /**
  * INTERNAL.

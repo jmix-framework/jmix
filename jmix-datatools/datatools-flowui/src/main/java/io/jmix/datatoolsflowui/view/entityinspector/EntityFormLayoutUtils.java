@@ -19,8 +19,8 @@ package io.jmix.datatoolsflowui.view.entityinspector;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import java.util.UUID;
 
 public final class EntityFormLayoutUtils {
@@ -56,8 +56,8 @@ public final class EntityFormLayoutUtils {
      * @return true if embedded, false otherwise
      */
     public static boolean isEmbedded(MetaProperty metaProperty) {
-        return metaProperty.getAnnotatedElement().isAnnotationPresent(javax.persistence.Embedded.class)
-                || metaProperty.getAnnotatedElement().isAnnotationPresent(javax.persistence.EmbeddedId.class);
+        return metaProperty.getAnnotatedElement().isAnnotationPresent(jakarta.persistence.Embedded.class)
+                || metaProperty.getAnnotatedElement().isAnnotationPresent(jakarta.persistence.EmbeddedId.class);
     }
 
     /**

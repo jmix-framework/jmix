@@ -20,7 +20,7 @@ import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @JmixEntity
 @Table(name = "REPOSITORY_CUSTOMER")

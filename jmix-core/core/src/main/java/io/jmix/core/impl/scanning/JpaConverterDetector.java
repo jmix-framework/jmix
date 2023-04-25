@@ -19,7 +19,7 @@ package io.jmix.core.impl.scanning;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Converter;
+import jakarta.persistence.Converter;
 
 @Component("core_JpaConverterDetector")
 public class JpaConverterDetector implements ClasspathScanCandidateDetector {

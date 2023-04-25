@@ -18,12 +18,10 @@ package io.jmix.flowui;
 
 import io.jmix.flowui.view.navigation.CrockfordUuidEncoder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
 import java.util.UUID;
 
 @ConfigurationProperties(prefix = "jmix.flowui.navigation")
-@ConstructorBinding
 public class FlowuiNavigationProperties {
 
     /**

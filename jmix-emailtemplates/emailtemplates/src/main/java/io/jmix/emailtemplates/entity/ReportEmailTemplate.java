@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.reports.entity.Report;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity(name = "emltmp_ReportEmailTemplate")
 @JmixEntity

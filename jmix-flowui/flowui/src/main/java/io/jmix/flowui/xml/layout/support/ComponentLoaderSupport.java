@@ -22,6 +22,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
+import com.vaadin.flow.component.shared.HasAllowedCharPattern;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
@@ -52,7 +53,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
@@ -309,6 +310,11 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loadHeight(component, element);
         loadMaxHeight(component, element);
         loadMinHeight(component, element);
+    }
+
+    public void loadAllowedCharPattern(HasAllowedCharPattern component, Element element, Context context) {
+        loaderSupport.loadResourceString(element, "allowedCharPattern",
+                context.getMessageGroup(), component::setAllowedCharPattern);
     }
 
     public Optional<Icon> loadIcon(Element element) {

@@ -18,8 +18,8 @@ package io.jmix.flowui.testassist.vaadin;
 
 import org.springframework.mock.web.MockServletContext;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import java.util.EventListener;
 
 /**

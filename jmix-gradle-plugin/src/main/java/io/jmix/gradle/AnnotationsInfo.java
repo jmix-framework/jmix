@@ -188,10 +188,10 @@ public class AnnotationsInfo {
         DELETED_BY("io.jmix.core.annotation.DeletedBy"),
         DELETED_DATE("io.jmix.core.annotation.DeletedDate"),
 
-        VERSION("javax.persistence.Version"),
+        VERSION("jakarta.persistence.Version"),
 
-        ID("javax.persistence.Id"),
-        EMBEDDED_ID("javax.persistence.EmbeddedId"),
+        ID("jakarta.persistence.Id"),
+        EMBEDDED_ID("jakarta.persistence.EmbeddedId"),
         JMIX_ID("io.jmix.core.entity.annotation.JmixId"),
         JMIX_GENERATED_VALUE("io.jmix.core.entity.annotation.JmixGeneratedValue", false);
 

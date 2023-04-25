@@ -17,8 +17,8 @@ import test_support.TestInMemoryDataStore
 import test_support.entity.cars.Colour
 import test_support.entity.multidb.*
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 
 class MultiDbDataManagerTest extends DataSpec {
 

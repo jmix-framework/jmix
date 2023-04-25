@@ -38,7 +38,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.cache.Cache;
 import javax.cache.configuration.MutableConfiguration;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @AutoConfiguration

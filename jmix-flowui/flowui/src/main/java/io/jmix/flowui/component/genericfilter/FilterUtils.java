@@ -22,7 +22,7 @@ import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.WordUtils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public class FilterUtils {
 

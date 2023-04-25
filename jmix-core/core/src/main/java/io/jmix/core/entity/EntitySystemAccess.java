@@ -21,7 +21,7 @@ import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
 import io.jmix.core.annotation.Internal;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import static io.jmix.core.entity.EntityValues.isAuditSupported;
 import static io.jmix.core.entity.EntityValues.isSoftDeletionSupported;

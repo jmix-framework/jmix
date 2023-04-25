@@ -19,8 +19,8 @@ package test_support;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import org.springframework.core.type.classreading.MetadataReader;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Detects only specified Index Definition classes/packages

@@ -28,11 +28,10 @@ import io.jmix.core.metamodel.model.SessionImplementation;
 import io.jmix.core.metamodel.model.impl.ClassRange;
 import io.jmix.core.metamodel.model.impl.MetaClassImpl;
 import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
-import io.jmix.core.metamodel.model.impl.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

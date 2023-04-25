@@ -26,9 +26,9 @@ import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.charts.ChartType;
 
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

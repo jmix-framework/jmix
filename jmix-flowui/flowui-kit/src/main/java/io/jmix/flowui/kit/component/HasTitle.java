@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.HasElement;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface HasTitle extends HasElement {
 

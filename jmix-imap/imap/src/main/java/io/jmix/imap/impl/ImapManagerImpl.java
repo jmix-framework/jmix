@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.mail.*;
-import javax.mail.internet.MimeUtility;
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeUtility;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -75,7 +75,7 @@ public class ImapManagerImpl implements ImapManager {
 
         return result;
     }
-    
+
     @Override
     public Collection<ImapFolderDto> fetchFolders(ImapMailBox box) {
         log.debug("fetch folders for box {}", box);

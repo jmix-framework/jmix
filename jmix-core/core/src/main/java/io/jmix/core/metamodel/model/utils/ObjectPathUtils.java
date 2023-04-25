@@ -16,7 +16,7 @@
 
 package io.jmix.core.metamodel.model.utils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

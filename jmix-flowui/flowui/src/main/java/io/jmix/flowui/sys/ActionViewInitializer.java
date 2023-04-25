@@ -26,7 +26,7 @@ import io.jmix.flowui.view.builder.WindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import io.jmix.flowui.view.navigation.ViewNavigator;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class ActionViewInitializer {

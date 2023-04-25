@@ -9,7 +9,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 @ManagedResource(description = "Manages Amazon S3 file storage client", objectName = "jmix.awsfs:type=AwsFileStorage")
 @Component("awsfs_AwsFileStorageManagementFacade")

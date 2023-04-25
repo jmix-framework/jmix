@@ -18,7 +18,7 @@ package io.jmix.core.accesscontext;
 
 import io.jmix.core.metamodel.model.MetaClass;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

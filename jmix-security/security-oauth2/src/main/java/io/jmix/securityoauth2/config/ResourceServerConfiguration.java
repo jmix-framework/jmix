@@ -26,7 +26,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
@@ -38,7 +37,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.ReflectionUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +45,7 @@ import java.util.Map;
 
 /**
  * A copy of {@link org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfiguration}
- * that doesn't extend {@link WebSecurityConfigurerAdapter}.
+ * that doesn't extend {@code WebSecurityConfigurerAdapter}.
  */
 @Configuration
 public class ResourceServerConfiguration implements Ordered {
@@ -151,7 +150,7 @@ public class ResourceServerConfiguration implements Ordered {
         http.apply(resources);
         if (endpoints != null) {
             // Assume we are in an Authorization Server
-            http.requestMatcher(new NotOAuthRequestMatcher(endpoints.oauth2EndpointHandlerMapping()));
+            http.securityMatcher(new NotOAuthRequestMatcher(endpoints.oauth2EndpointHandlerMapping()));
         }
         for (ResourceServerConfigurer configurer : configurers) {
             // Delegates can add authorizeRequests() here

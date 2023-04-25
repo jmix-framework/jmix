@@ -23,9 +23,9 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 
-import javax.annotation.Nullable;
-import javax.persistence.LockModeType;
-import javax.persistence.TemporalType;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;

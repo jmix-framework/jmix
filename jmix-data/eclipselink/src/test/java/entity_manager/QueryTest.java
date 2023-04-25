@@ -37,9 +37,9 @@ import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
 import test_support.entity.sales.Customer;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -25,6 +25,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurer;
@@ -87,15 +88,14 @@ public class OAuth2AuthorizationServerConfigurer implements AuthorizationServerC
     @Bean("sec_OAuthAuthorizationServerSecurityFilterChain")
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.requestMatchers()
-                .antMatchers("/oauth/revoke")
-                .and()
+        //todo SB3 check token revocation
+        http
+                .securityMatcher("/oauth/revoke")
+                .authorizeHttpRequests(authorize -> {
+                    authorize.requestMatchers("/oauth/revoke").authenticated();
+                })
                 .csrf().disable()
-                .httpBasic()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/oauth/revoke").authenticated()
-                .and()
+                .httpBasic(Customizer.withDefaults())
                 .authenticationProvider(getAuthenticationProvider());
         return http.build();
     }

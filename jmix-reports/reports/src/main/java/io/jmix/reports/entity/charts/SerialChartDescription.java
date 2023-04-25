@@ -20,7 +20,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.persistence.OrderBy;
+import jakarta.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -20,7 +20,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.dashboards.utils.DashboardLayoutManager;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;

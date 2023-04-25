@@ -20,7 +20,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class TestLicense {
     private Date activationDate;
 
     @JmixProperty
-    @Temporal(TemporalType.DATE)
+//    @Temporal(TemporalType.DATE)
     @Transient
     private Date expirationDate;
 

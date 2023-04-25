@@ -4,7 +4,7 @@ import io.jmix.appsettings.entity.AppSettingsEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 // TODO: remove after
 //  https://github.com/Haulmont/jmix-data/issues/115

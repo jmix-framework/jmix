@@ -23,7 +23,6 @@ import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.Arrays;
@@ -31,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.search")
-@ConstructorBinding
 public class SearchProperties {
 
     private static final Logger log = LoggerFactory.getLogger(SearchProperties.class);

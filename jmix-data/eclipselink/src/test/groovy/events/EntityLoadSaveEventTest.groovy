@@ -27,8 +27,8 @@ import test_support.entity.events.Bar
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Status
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 
 /**
  * @see test_support.listeners.TestLoadSaveEventListener

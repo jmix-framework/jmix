@@ -23,12 +23,12 @@ import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
 @Table(name = "ST_WAYBILL")
-@javax.persistence.Entity(name = "st_Waybill")
+@jakarta.persistence.Entity(name = "st_Waybill")
 @JmixEntity
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
 @Inheritance(strategy = InheritanceType.JOINED)

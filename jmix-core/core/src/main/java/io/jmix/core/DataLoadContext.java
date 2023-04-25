@@ -16,8 +16,8 @@
 
 package io.jmix.core;
 
-import javax.annotation.Nullable;
-import javax.persistence.LockModeType;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.LockModeType;
 
 /**
  * Base interface for load contexts used in {@link DataManager}.

@@ -43,18 +43,18 @@ import static io.jmix.gradle.MetaModelUtil.*;
 public class DescriptorGenerationUtils {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DescriptorGenerationUtils.class);
 
-    private static final String ORM_XMLNS = "http://xmlns.jcp.org/xml/ns/persistence/orm";
-    private static final String ORM_SCHEMA_LOCATION = ORM_XMLNS + " http://xmlns.jcp.org/xml/ns/persistence/orm_2_2.xsd";
+    private static final String ORM_XMLNS = "https://jakarta.ee/xml/ns/persistence/orm";
+    private static final String ORM_SCHEMA_LOCATION = ORM_XMLNS + " https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd";
 
-    private static final String PERSISTENCE_XMLNS = "http://xmlns.jcp.org/xml/ns/persistence";
-    private static final String PERSISTENCE_SCHEMA_LOCATION = PERSISTENCE_XMLNS + " http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd";
+    private static final String PERSISTENCE_XMLNS = "https://jakarta.ee/xml/ns/persistence";
+    private static final String PERSISTENCE_SCHEMA_LOCATION = PERSISTENCE_XMLNS + " https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd";
 
-    private static final String PERSISTENCE_VER = "2.2";
+    private static final String PERSISTENCE_VER = "3.0";
 
-    public static final String ONE_TO_ONE_ANNOTATION = "javax.persistence.OneToOne";
-    public static final String ONE_TO_MANY_ANNOTATION = "javax.persistence.OneToMany";
-    public static final String MANY_TO_ONE_ANNOTATION = "javax.persistence.ManyToOne";
-    public static final String MANY_TO_MANY_ANNOTATION = "javax.persistence.ManyToMany";
+    public static final String ONE_TO_ONE_ANNOTATION = "jakarta.persistence.OneToOne";
+    public static final String ONE_TO_MANY_ANNOTATION = "jakarta.persistence.OneToMany";
+    public static final String MANY_TO_ONE_ANNOTATION = "jakarta.persistence.ManyToOne";
+    public static final String MANY_TO_MANY_ANNOTATION = "jakarta.persistence.ManyToMany";
 
     static final String CONVERTERS_LIST_PROPERTY = "io.jmix.enhancing.converters-list";
 
@@ -345,11 +345,11 @@ public class DescriptorGenerationUtils {
                 el.addAttribute("mapped-by", mappedBy);
 
             // either
-            new JoinColumnHandler(getAnnotation(field, "javax.persistence.JoinColumn")).toXml(el);
+            new JoinColumnHandler(getAnnotation(field, "jakarta.persistence.JoinColumn")).toXml(el);
             // or
-            new OrderByHandler(getAnnotation(field, "javax.persistence.OrderBy")).toXml(el);
-            new JoinTableHandler(getAnnotation(field, "javax.persistence.JoinTable")).toXml(el);
-            new MapsIdHandler(getAnnotation(field, "javax.persistence.MapsId")).toXml(el);
+            new OrderByHandler(getAnnotation(field, "jakarta.persistence.OrderBy")).toXml(el);
+            new JoinTableHandler(getAnnotation(field, "jakarta.persistence.JoinTable")).toXml(el);
+            new MapsIdHandler(getAnnotation(field, "jakarta.persistence.MapsId")).toXml(el);
 
             List<String> cascadeTypes = type.getCascade(field);
             if (cascadeTypes != null && cascadeTypes.size() > 0) {

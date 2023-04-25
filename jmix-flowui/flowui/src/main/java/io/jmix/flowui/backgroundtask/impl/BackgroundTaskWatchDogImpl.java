@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of {@link BackgroundTaskWatchDog} for {@link BackgroundWorker}.

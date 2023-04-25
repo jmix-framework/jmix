@@ -39,7 +39,6 @@ public class PasswordFieldLoader extends AbstractComponentLoader<JmixPasswordFie
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
-        loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
         loadBoolean(element, "revealButtonVisible", resultComponent::setRevealButtonVisible);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
@@ -58,6 +57,7 @@ public class PasswordFieldLoader extends AbstractComponentLoader<JmixPasswordFie
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+        componentLoader().loadAllowedCharPattern(resultComponent, element, context);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

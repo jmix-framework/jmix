@@ -51,9 +51,11 @@ public class JoinCriteriaMappingProcessor implements MappingProcessor {
         if (mapping.isOneToManyMapping() || mapping.isOneToOneMapping()) {
             //Apply expression to mappings
             if (mapping.isOneToManyMapping()) {
-                ((OneToManyMapping) mapping).setAdditionalJoinCriteria(expression);
+                //todo SB3 uncomment Jmix Eclipselink additional join criteria
+//                ((OneToManyMapping) mapping).setAdditionalJoinCriteria(expression);
             } else if (mapping.isOneToOneMapping()) {
-                ((OneToOneMapping) mapping).setAdditionalJoinCriteria(expression);
+                //todo SB3 uncomment Jmix Eclipselink additional join criteria
+//                ((OneToOneMapping) mapping).setAdditionalJoinCriteria(expression);
             }
         }
     }

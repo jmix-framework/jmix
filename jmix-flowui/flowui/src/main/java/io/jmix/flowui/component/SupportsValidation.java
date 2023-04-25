@@ -17,15 +17,14 @@
 package io.jmix.flowui.component;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.HasElement;
-import com.vaadin.flow.component.HasValidation;
+import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
-public interface SupportsValidation<V> extends HasValidation, HasElement {
+public interface SupportsValidation<V> extends HasValidationProperties {
 
     String PROPERTY_ERROR_MESSAGE = "errorMessage";
 

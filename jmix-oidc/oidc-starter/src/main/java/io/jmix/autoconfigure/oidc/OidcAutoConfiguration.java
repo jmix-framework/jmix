@@ -94,7 +94,7 @@ public class OidcAutoConfiguration {
                         authorize
                                 //if we don't allow /vaadinServlet/PUSH URL the Session Expired toolbox won't
                                 //be shown in the web browser
-                                .antMatchers("/vaadinServlet/PUSH/**").permitAll()
+                                .requestMatchers("/vaadinServlet/PUSH/**").permitAll()
                                 .anyRequest().authenticated();
                     })
                     .oauth2Login(oauth2Login -> {

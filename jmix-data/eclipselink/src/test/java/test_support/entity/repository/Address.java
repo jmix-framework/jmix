@@ -19,8 +19,8 @@ package test_support.entity.repository;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @JmixEntity(name = "repository$Address")
 @Embeddable

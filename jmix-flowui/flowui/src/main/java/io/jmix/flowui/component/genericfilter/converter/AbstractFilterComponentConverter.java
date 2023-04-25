@@ -22,7 +22,7 @@ import io.jmix.flowui.component.filer.FilterComponent;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.entity.filter.FilterCondition;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public abstract class AbstractFilterComponentConverter<C extends Component & FilterComponent, M extends FilterCondition>
         implements FilterConverter<C, M> {

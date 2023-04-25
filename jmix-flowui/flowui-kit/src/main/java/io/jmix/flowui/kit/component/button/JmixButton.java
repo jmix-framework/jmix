@@ -25,7 +25,7 @@ import io.jmix.flowui.kit.component.HasShortcutCombination;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.KeyCombination;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Objects;
 
 public class JmixButton extends Button implements HasTitle, HasAction, HasShortcutCombination {

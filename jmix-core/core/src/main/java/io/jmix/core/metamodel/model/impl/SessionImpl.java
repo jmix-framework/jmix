@@ -19,7 +19,7 @@ package io.jmix.core.metamodel.model.impl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.SessionImplementation;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

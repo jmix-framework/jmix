@@ -24,9 +24,9 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.dynattr.OptionsLoaderType;
 
-import javax.annotation.Nullable;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;

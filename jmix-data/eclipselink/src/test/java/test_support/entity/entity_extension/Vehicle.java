@@ -19,7 +19,7 @@ package test_support.entity.entity_extension;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.UUID;
 
 @JmixEntity(name = "exttest_Vehicle")

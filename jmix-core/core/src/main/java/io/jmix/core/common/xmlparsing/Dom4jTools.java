@@ -31,8 +31,8 @@ import org.xml.sax.SAXException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
-import javax.servlet.ServletContext;
+import jakarta.annotation.Nullable;
+import jakarta.servlet.ServletContext;
 import javax.xml.parsers.SAXParser;
 import java.io.*;
 import java.util.Map;

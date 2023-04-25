@@ -21,7 +21,7 @@ import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.entity.filter.FilterCondition;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Registers a UI filter component in the framework. Registered components can be

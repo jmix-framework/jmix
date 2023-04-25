@@ -31,9 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.persistence.*;
+import jakarta.annotation.Nullable;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.*;
 import java.lang.reflect.Field;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -233,7 +233,7 @@ public class EntitySqlGenerator {
 
     protected void collectTableMetadata(MetaClass metaClass, Table table) {
         Class<?> javaClass = metaClass.getJavaClass();
-        javax.persistence.Table annotation = javaClass.getAnnotation(javax.persistence.Table.class);
+        jakarta.persistence.Table annotation = javaClass.getAnnotation(jakarta.persistence.Table.class);
         MetaClass ancestor = metaClass.getAncestor();
 
         if (annotation != null && StringUtils.isNotEmpty(annotation.name())) {

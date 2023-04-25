@@ -17,13 +17,18 @@
 package io.jmix.flowui.component.listbox;
 
 import com.vaadin.flow.component.listbox.ListBox;
+import com.vaadin.flow.component.listbox.dataview.ListBoxDataView;
+import com.vaadin.flow.component.listbox.dataview.ListBoxListDataView;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.InMemoryDataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.data.SupportsDataProvider;
 import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.model.CollectionContainer;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -73,12 +78,34 @@ public class JmixListBox<V> extends ListBox<V> implements SupportsDataProvider<V
     }
 
     @Override
-    public void setDataProvider(DataProvider<V, ?> dataProvider) {
-        // Method is called from a constructor so bean can be null
+    public ListBoxDataView<V> setItems(DataProvider<V, Void> dataProvider) {
+        bindDataProvider(dataProvider);
+        return super.setItems(dataProvider);
+    }
+
+    @Override
+    public ListBoxDataView<V> setItems(InMemoryDataProvider<V> inMemoryDataProvider) {
+        bindDataProvider(inMemoryDataProvider);
+        return super.setItems(inMemoryDataProvider);
+    }
+
+    @Override
+    public ListBoxListDataView<V> setItems(ListDataProvider<V> listDataProvider) {
+        bindDataProvider(listDataProvider);
+        return super.setItems(listDataProvider);
+    }
+
+    protected void bindDataProvider(DataProvider<V, ?> dataProvider) {
+        // One of binding methods is called from a constructor so bean can be null
         if (dataViewDelegate != null) {
             dataViewDelegate.bind(dataProvider);
         }
-        super.setDataProvider(dataProvider);
+    }
+
+    @Nullable
+    @Override
+    public DataProvider<V, ?> getDataProvider() {
+        return dataViewDelegate.getDataProvider();
     }
 
     @SuppressWarnings("unchecked")

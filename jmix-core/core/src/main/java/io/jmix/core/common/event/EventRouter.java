@@ -18,14 +18,14 @@ package io.jmix.core.common.event;
 
 import io.jmix.core.common.util.Preconditions;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
  * Generic Event router with lazily initialized event map.
  */
-@NotThreadSafe
+//todo SB3 restore NotThreadSafe annotation?
+//@NotThreadSafe
 public class EventRouter {
     private static final int EVENTS_MAP_EXPECTED_MAX_SIZE = 4;
     private static final int EVENTS_LIST_INITIAL_CAPACITY = 2;

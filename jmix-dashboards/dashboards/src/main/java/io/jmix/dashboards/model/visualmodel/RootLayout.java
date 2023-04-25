@@ -19,7 +19,7 @@ package io.jmix.dashboards.model.visualmodel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.dashboards.utils.DashboardLayoutManager;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @JmixEntity(name = "dshbrd_RootLayout")
 public class RootLayout extends VerticalLayout {

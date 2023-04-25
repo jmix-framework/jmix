@@ -26,8 +26,8 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.Id;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;

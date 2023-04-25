@@ -20,7 +20,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
 import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 

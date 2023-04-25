@@ -20,8 +20,8 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.pessimisticlocking.PessimisticLock;
 import test_support.base.entity.BaseUuidEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 @Entity(name = "app_LockableParentEntity")
 @JmixEntity

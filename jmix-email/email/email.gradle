@@ -24,7 +24,10 @@ dependencies {
     api project(':core')
     api project(':data')
 
-    api 'com.sun.mail:jakarta.mail'
+    api 'jakarta.mail:jakarta.mail-api'
+
+    //todo SB3 check email sending. Do we need this starter?
+    api 'org.springframework.boot:spring-boot-starter-mail'
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

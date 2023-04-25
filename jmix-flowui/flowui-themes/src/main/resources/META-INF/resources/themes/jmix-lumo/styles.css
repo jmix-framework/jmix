@@ -20,14 +20,20 @@
 @import url('app/login-view.css');
 
 @import url('component/jmix-list-menu.css');
-@import url('component/jmix-notification.css');
 @import url('component/jmix-user-indicator.css');
 @import url('component/jmix-simple-pagintion.css');
 @import url('component/jmix-items-per-page.css');
-@import url('component/jmix-dropdown-button-item-icon.css');
+@import url('component/jmix-dropdown-button.css');
 @import url('component/jmix-upload-field.css');
 @import url('component/jmix-image.css');
 @import url('component/jmix-property-filter.css');
+@import url('component/jmix-tabsheet.css');
+@import url('component/jmix-upload-button.css');
+
+@import url('component/vaadin-form-layout.css');
+@import url('component/vaadin-grid.css');
+@import url('component/vaadin-notification-card.css');
+@import url('component/vaadin-split-layout.css');
 
 html {
   --jmix-lumo-warning-background-color: hsla(43, 100%, 74%, 1);

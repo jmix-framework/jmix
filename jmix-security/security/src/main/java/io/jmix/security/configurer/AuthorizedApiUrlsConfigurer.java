@@ -20,6 +20,7 @@ import io.jmix.core.security.AuthorizedUrlsProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 
 import java.util.Collection;
@@ -45,17 +46,15 @@ public class AuthorizedApiUrlsConfigurer extends AbstractHttpConfigurer<Authoriz
             try {
                 String[] urlPatterns = toArray(concat(anonymousUrlPatterns, authenticatedUrlPatterns), String.class);
 
-                ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry = http.requestMatchers()
-                        .antMatchers(urlPatterns)
-                        .and()
-                        .authorizeRequests();
+                AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry urlRegistry = http.securityMatcher(urlPatterns)
+                        .authorizeHttpRequests();
 
                 if (!anonymousUrlPatterns.isEmpty()) {
-                    urlRegistry.antMatchers(toArray(anonymousUrlPatterns, String.class)).permitAll();
+                    urlRegistry.requestMatchers(toArray(anonymousUrlPatterns, String.class)).permitAll();
                 }
 
                 if (!authenticatedUrlPatterns.isEmpty()) {
-                    urlRegistry.antMatchers(toArray(authenticatedUrlPatterns, String.class)).authenticated();
+                    urlRegistry.requestMatchers(toArray(authenticatedUrlPatterns, String.class)).authenticated();
                 }
 
             } catch (Exception e) {

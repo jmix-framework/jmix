@@ -20,7 +20,7 @@ package io.jmix.data.impl.querymacro;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.impl.QueryMacroHandler;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.TimeZone;

@@ -138,9 +138,9 @@ public class MetadataLoader {
     }
 
     private boolean isOrmAnnotation(Annotation annotation) {
-        return javax.persistence.Entity.class.isAssignableFrom(annotation.getClass())
-                || javax.persistence.MappedSuperclass.class.isAssignableFrom(annotation.getClass())
-                || javax.persistence.Embeddable.class.isAssignableFrom(annotation.getClass());
+        return jakarta.persistence.Entity.class.isAssignableFrom(annotation.getClass())
+                || jakarta.persistence.MappedSuperclass.class.isAssignableFrom(annotation.getClass())
+                || jakarta.persistence.Embeddable.class.isAssignableFrom(annotation.getClass());
     }
 
     protected void initExtensionMetaAnnotations() {

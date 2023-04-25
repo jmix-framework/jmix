@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.time.ZoneId;
 
 public interface HasZoneId {

@@ -54,9 +54,9 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
@@ -183,7 +183,7 @@ public class MetaModelLoader {
         if (storeAnn != null) {
             store = stores.get(storeAnn.name());
         } else {
-            if (javaClass.getAnnotation(javax.persistence.Entity.class) != null || javaClass.getAnnotation(Embeddable.class) != null) {
+            if (javaClass.getAnnotation(jakarta.persistence.Entity.class) != null || javaClass.getAnnotation(Embeddable.class) != null) {
                 store = stores.get(Stores.MAIN);
             } else {
                 if (javaClass.getAnnotation(MappedSuperclass.class) != null) {
@@ -229,7 +229,7 @@ public class MetaModelLoader {
 
     @Nullable
     protected String getMetaClassName(Class<?> javaClass) {
-        javax.persistence.Entity entityAnnotation = javaClass.getAnnotation(javax.persistence.Entity.class);
+        jakarta.persistence.Entity entityAnnotation = javaClass.getAnnotation(jakarta.persistence.Entity.class);
 
         JmixEntity jmixEntityAnnotation = javaClass.getAnnotation(JmixEntity.class);
 
@@ -734,7 +734,7 @@ public class MetaModelLoader {
     }
 
     protected boolean hasJpaAnnotation(Class<?> javaClass) {
-        return javaClass.isAnnotationPresent(javax.persistence.Entity.class)
+        return javaClass.isAnnotationPresent(jakarta.persistence.Entity.class)
                 || javaClass.isAnnotationPresent(Embeddable.class)
                 || javaClass.isAnnotationPresent(MappedSuperclass.class);
     }
@@ -857,7 +857,7 @@ public class MetaModelLoader {
     }
 
     protected boolean isDefinedForDefaultValidationGroup(Annotation annotation) {
-        return isDefinedForValidationGroup(annotation, javax.validation.groups.Default.class, true);
+        return isDefinedForValidationGroup(annotation, jakarta.validation.groups.Default.class, true);
     }
 
     protected boolean isDefinedForValidationGroup(Annotation annotation, Class groupClass, boolean inheritDefault) {

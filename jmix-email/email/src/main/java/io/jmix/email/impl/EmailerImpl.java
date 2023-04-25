@@ -33,9 +33,9 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.annotation.Resource;
-import javax.mail.internet.AddressException;
+import jakarta.annotation.Nullable;
+import jakarta.annotation.Resource;
+import jakarta.mail.internet.AddressException;
 import java.util.*;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;

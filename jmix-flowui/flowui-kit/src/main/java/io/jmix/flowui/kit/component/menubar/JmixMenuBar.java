@@ -23,12 +23,13 @@ import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.function.SerializableConsumer;
+import com.vaadin.flow.function.SerializableRunnable;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBar [since Vaadin 23.1.7]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 24.0.3]
 public class JmixMenuBar extends MenuBar
         implements HasMenuItemsEnhanced, Focusable<JmixMenuBar>, HasTooltip {
 
@@ -44,17 +45,26 @@ public class JmixMenuBar extends MenuBar
     protected void initComponent() {
         menuItemsArrayGenerator = new MenuItemsArrayGenerator<>(this);
 
-        menuManager = new JmixMenuManager<>(this, this::resetContent,
+        // Not a lambda because of UI serialization purposes
+        SerializableRunnable resetContent = new SerializableRunnable() {
+            @Override
+            public void run() {
+                resetContent();
+            }
+        };
+        menuManager = new JmixMenuManager<>(this, resetContent,
                 (menu, contentReset) -> new JmixMenuBarRootItem(this, contentReset),
                 MenuItem.class, null);
 
         addAttachListener(this::attachListener);
     }
 
+    @Override
     public JmixMenuItem addItem(String text) {
         return (JmixMenuItem) menuManager.addItem(text);
     }
 
+    @Override
     public JmixMenuItem addItem(Component component) {
         return (JmixMenuItem) menuManager.addItem(component);
     }
@@ -110,12 +120,12 @@ public class JmixMenuBar extends MenuBar
         return menuManager.getChildren();
     }
 
-    void resetContent() {
+    protected void resetContent() {
         menuItemsArrayGenerator.generate();
         updateButtons();
     }
 
-    void updateButtons() {
+    protected void updateButtons() {
         if (updateScheduled) {
             return;
         }
@@ -131,6 +141,7 @@ public class JmixMenuBar extends MenuBar
     }
 
     protected void attachListener(AttachEvent attachEvent) {
+        // TODO: gg, init connector?
         resetContent();
     }
 

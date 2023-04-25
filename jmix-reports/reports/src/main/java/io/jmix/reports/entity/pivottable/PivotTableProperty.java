@@ -21,9 +21,9 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import java.io.Serializable;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+
 import java.util.UUID;
 
 @JmixEntity(name = "report_PivotTableProperty")

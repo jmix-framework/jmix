@@ -11,11 +11,11 @@ import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
 import {OverflowController} from '@vaadin/component-base/src/overflow-controller.js';
 import {SlotController} from '@vaadin/component-base/src/slot-controller.js';
 import {generateUniqueId} from '@vaadin/component-base/src/unique-id-utils.js';
-import {DelegateStateMixin} from '@vaadin/field-base/src/delegate-state-mixin.js';
+import {DelegateStateMixin} from '@vaadin/component-base/src/delegate-state-mixin.js';
 import {Tabs} from '@vaadin/tabs/src/vaadin-tabs.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/tabsheet [since Vaadin 23.3.0]
+// CAUTION: copied from @vaadin/login [last update Vaadin 24.0.3]
 /**
  * @private
  * A controller which observes the <vaadin-tabs> slotted to the tabs slot.
@@ -196,6 +196,10 @@ class JmixTabSheet extends ControllerMixin(DelegateStateMixin(ElementMixin(Thema
         };
     }
 
+    static get observers() {
+        return ['__itemsOrPanelsChanged(items, __panels)', '__selectedTabItemChanged(selected, items, __panels)'];
+    }
+
     /** @override */
     static get delegateProps() {
         return ['selected'];
@@ -225,10 +229,6 @@ class JmixTabSheet extends ControllerMixin(DelegateStateMixin(ElementMixin(Thema
         });
     }
 
-    static get observers() {
-        return ['__itemsOrPanelsChanged(items, __panels)', '__selectedTabItemChanged(selected, items, __panels)'];
-    }
-
     /**
      * An observer which applies the necessary roles and ARIA attributes
      * to associate the tab elements with the panels.
@@ -243,7 +243,9 @@ class JmixTabSheet extends ControllerMixin(DelegateStateMixin(ElementMixin(Thema
             const panel = panels.find((panel) => panel.getAttribute('tab') === tabItem.id);
             if (panel) {
                 panel.role = 'tabpanel';
-                panel.id = panel.id || `tabsheet-panel-${generateUniqueId()}`;
+                if (!panel.id) {
+                    panel.id = `tabsheet-panel-${generateUniqueId()}`;
+                }
                 panel.setAttribute('aria-labelledby', tabItem.id);
 
                 tabItem.setAttribute('aria-controls', panel.id);

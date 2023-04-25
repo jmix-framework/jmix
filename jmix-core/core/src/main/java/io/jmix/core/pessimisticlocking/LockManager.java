@@ -16,7 +16,7 @@
 
 package io.jmix.core.pessimisticlocking;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 public interface LockManager {

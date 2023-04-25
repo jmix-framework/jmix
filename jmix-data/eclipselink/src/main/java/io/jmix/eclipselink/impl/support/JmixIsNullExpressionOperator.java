@@ -21,7 +21,8 @@ import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.internal.expressions.ExpressionSQLPrinter;
 import org.eclipse.persistence.internal.expressions.QueryKeyExpression;
 import org.eclipse.persistence.internal.helper.ClassConstants;
-import org.eclipse.persistence.internal.helper.CubaUtil;
+//todo SB3 uncomment Jmix Eclipselink CubaUtil
+//import org.eclipse.persistence.internal.helper.CubaUtil;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -44,9 +45,13 @@ public class JmixIsNullExpressionOperator extends ExpressionOperator {
         this.metadataTools = metadataTools;
     }
 
-    @Override
+    //todo SB3 restore Override?
+    //    @Override
     public void printCollection(Vector items, ExpressionSQLPrinter printer) {
-        if (items.size() == 1 && items.get(0) instanceof QueryKeyExpression && !CubaUtil.isSoftDeletion()) {
+        if (items.size() == 1 && items.get(0) instanceof QueryKeyExpression
+                //todo SB3 uncomment Jmix Eclipselink CubaUtil
+//               && !CubaUtil.isSoftDeletion()
+        ) {
             QueryKeyExpression expression = (QueryKeyExpression) items.get(0);
             //noinspection unchecked
             Class<?> clazz = expression.getContainingDescriptor().getJavaClass();

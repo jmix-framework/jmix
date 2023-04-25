@@ -30,7 +30,7 @@ import org.eclipse.persistence.mappings.OneToOneMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.OneToOne;
+import jakarta.persistence.OneToOne;
 
 /**
  * Generates expression to support soft delete feature in Jmix.

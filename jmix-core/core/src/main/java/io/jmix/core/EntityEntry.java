@@ -24,9 +24,9 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.impl.EntityInternals;
 
-import javax.annotation.Nullable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Id;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.util.Collection;
 

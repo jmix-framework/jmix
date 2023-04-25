@@ -19,22 +19,22 @@ package io.jmix.flowui.devserver.servlet;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.internal.JavaScriptBootstrapUI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinServlet;
 import elemental.json.JsonValue;
 import io.jmix.flowui.devserver.frontend.FrontendUtils;
+import jakarta.servlet.ServletContext;
 
-import javax.servlet.ServletContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
 @PreserveOnRefresh
-public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
+public class JmixUI extends UI {
 
     private Object editorPanelStorage = null;
 
@@ -121,11 +121,14 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
     }
 
     @Override
-    public void connectClient(String clientElementTag,
-                              String clientElementId,
-                              String flowRoute,
-                              String appShellTitle,
-                              JsonValue historyState) {
+    public void connectClient(
+            String clientElementTag,
+            String clientElementId,
+            String flowRoutePath,
+            String flowRouteQuery,
+            String appShellTitle,
+            JsonValue historyState
+    ) {
         // do nothing
     }
 

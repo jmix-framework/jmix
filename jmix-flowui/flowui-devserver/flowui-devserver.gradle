@@ -29,13 +29,11 @@ archivesBaseName = 'jmix-flowui-devserver'
 dependencies {
     api(project(":flowui-kit"))
 
-    api("org.eclipse.jetty:jetty-continuation:$jettyVersion")
     api("org.eclipse.jetty:jetty-webapp:$jettyVersion")
-    api("org.eclipse.jetty.websocket:websocket-server:$jettyVersion")
-    api("org.eclipse.jetty.websocket:javax-websocket-server-impl:$jettyVersion")
-
+    api("org.eclipse.jetty.websocket:websocket-jakarta-server:$jettyVersion")
+    api('jakarta.servlet:jakarta.servlet-api:6.0.0')
+    api('commons-logging:commons-logging:1.2')
     api('org.slf4j:slf4j-nop:2.0.7')
-    api("javax.servlet:javax.servlet-api:4.0.1")
 }
 
 shadowJar {

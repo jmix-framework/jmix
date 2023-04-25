@@ -19,6 +19,7 @@ package io.jmix.flowui.devserver.servlet;
 import com.vaadin.flow.component.PushConfiguration;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.internal.BootstrapHandlerHelper;
 import com.vaadin.flow.server.AppShellRegistry;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
@@ -40,7 +41,7 @@ public class JmixJavaScriptBootstrapHandler extends JavaScriptBootstrapHandler {
                                                VaadinRequest request,
                                                VaadinResponse response,
                                                VaadinSession session) {
-        UI ui = new JmixJavaScriptBootstrapUI();
+        UI ui = new JmixUI();
         ui.getInternals().setContextRoot(request.getService().getContextRootRelativePath(request));
 
         PushConfiguration pushConfiguration = ui.getPushConfiguration();
@@ -55,12 +56,10 @@ public class JmixJavaScriptBootstrapHandler extends JavaScriptBootstrapHandler {
                 vaadinRequest -> vaadinRequest.getService().getContextRootRelativePath(request)
         );
 
-
         Optional<Push> push = context.getPageConfigurationAnnotation(Push.class);
 
         setupPushConnectionFactory(pushConfiguration, context);
-        pushConfiguration.setPushMode
-                (PushMode.MANUAL);
+        pushConfiguration.setPushMode(PushMode.MANUAL);
         push.stream()
                 .map(Push::transport)
                 .forEach(pushConfiguration::setTransport);
@@ -78,6 +77,10 @@ public class JmixJavaScriptBootstrapHandler extends JavaScriptBootstrapHandler {
         JsonObject config = context.getApplicationParameters();
 
         String requestURL = getRequestUrl(request);
+
+        context.getUI()
+                .getPushConfiguration()
+                .setPushServletMapping(BootstrapHandlerHelper.determinePushServletMapping(session));
 
         AppShellRegistry registry = AppShellRegistry.getInstance(session.getService().getContext());
         registry.modifyPushConfiguration(pushConfiguration);

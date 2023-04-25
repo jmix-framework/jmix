@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -29,6 +29,7 @@ import static io.jmix.flowui.devserver.frontend.FrontendUtils.FEATURE_FLAGS_FILE
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.GENERATED;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.INDEX_JS;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.INDEX_TS;
+import static io.jmix.flowui.devserver.frontend.FrontendUtils.INDEX_TSX;
 
 /**
  * A task for generating the bootstrap file
@@ -38,21 +39,16 @@ public class TaskGenerateBootstrap extends AbstractTaskClientGenerator {
 
     static final String DEV_TOOLS_IMPORT = String.format(
             "import '%svaadin-dev-tools.js';%n",
-            FrontendUtils.JAR_RESOURCES_IMPORT);
+            FrontendUtils.JAR_RESOURCES_IMPORT + "vaadin-dev-tools/");
     private final FrontendDependenciesScanner frontDeps;
-    private final File frontendGeneratedDirectory;
-    private final File frontendDirectory;
     private final ThemeDefinition themeDefinition;
-    private final boolean productionMode;
+    private final Options options;
 
     TaskGenerateBootstrap(FrontendDependenciesScanner frontDeps,
-                          File frontendDirectory, boolean productionMode,
+                          Options options,
                           ThemeDefinition themeDefinition) {
         this.frontDeps = frontDeps;
-        this.frontendDirectory = frontendDirectory;
-        this.productionMode = productionMode;
-        this.frontendGeneratedDirectory = new File(frontendDirectory,
-                GENERATED);
+        this.options = options;
         this.themeDefinition = themeDefinition;
     }
 
@@ -72,6 +68,8 @@ public class TaskGenerateBootstrap extends AbstractTaskClientGenerator {
 
     @Override
     protected File getGeneratedFile() {
+        File frontendGeneratedDirectory = new File(
+                options.getFrontendDirectory(), GENERATED);
         return new File(frontendGeneratedDirectory, BOOTSTRAP_FILE_NAME);
     }
 
@@ -81,8 +79,10 @@ public class TaskGenerateBootstrap extends AbstractTaskClientGenerator {
     }
 
     private String getIndexTsEntryPath() {
+        File frontendDirectory = options.getFrontendDirectory();
         boolean hasCustomIndexFile = new File(frontendDirectory, INDEX_TS)
-                .exists() || new File(frontendDirectory, INDEX_JS).exists();
+                .exists() || new File(frontendDirectory, INDEX_JS).exists()
+                || new File(frontendDirectory, INDEX_TSX).exists();
         if (hasCustomIndexFile) {
             return "../index";
         } else {

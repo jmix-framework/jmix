@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,16 +16,30 @@
 
 package io.jmix.flowui.devserver;
 
+import com.vaadin.flow.internal.BrowserLiveReload;
+import com.vaadin.flow.internal.BrowserLiveReloadAccessor;
 import com.vaadin.flow.internal.DevModeHandler;
 import com.vaadin.flow.internal.DevModeHandlerManager;
+import com.vaadin.flow.server.Constants;
+import com.vaadin.flow.server.Mode;
 import com.vaadin.flow.server.VaadinContext;
+import com.vaadin.flow.server.startup.ApplicationConfiguration;
 import com.vaadin.flow.server.startup.VaadinInitializerException;
+import io.jmix.flowui.devserver.frontend.FrontendUtils;
 import io.jmix.flowui.devserver.startup.DevModeInitializer;
 import io.jmix.flowui.devserver.startup.DevModeStartupListener;
+import jakarta.servlet.annotation.HandlesTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.servlet.annotation.HandlesTypes;
+import java.io.File;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
+
+import static io.jmix.flowui.devserver.frontend.FrontendUtils.PARAM_STUDIO_DIR;
 
 @SuppressWarnings("unused")
 public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
@@ -39,11 +53,13 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
      *
      * Addresses the issue https://github.com/vaadin/spring/issues/502
      */
-    private static final class DevModeHandlerAlreadyStartedAttribute
-            implements Serializable {
+    private static final class DevModeHandlerAlreadyStartedAttribute implements Serializable {
+
     }
 
+    private static final Logger log = LoggerFactory.getLogger(DevModeHandlerManagerImpl.class);
     private DevModeHandler devModeHandler;
+    private FileWatcher themeFilesWatcher;
 
     @Override
     public Class<?>[] getHandlesTypes() {
@@ -85,6 +101,60 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
         if (devModeHandler != null) {
             devModeHandler.stop();
             devModeHandler = null;
+        }
+        if (themeFilesWatcher != null) {
+            try {
+                themeFilesWatcher.stop();
+            } catch (Exception e) {
+                String message = "Failed to stop theme files watcher";
+                FrontendUtils.logInFile(message + Arrays.toString(e.getStackTrace()));
+                log.error(message, e);
+            }
+        }
+    }
+
+    private void startWatchingThemeFolder(VaadinContext context) {
+        ApplicationConfiguration config = ApplicationConfiguration.get(context);
+
+        if (config.getMode() != Mode.DEVELOPMENT_BUNDLE) {
+            // Theme files are watched by Vite or app runs in prod mode
+            return;
+        }
+
+        try {
+            File projectFolder = config.getProjectFolder();
+            File studioFolder = new File(System.getProperty(PARAM_STUDIO_DIR));
+            Optional<String> themeName = FrontendUtils
+                    .getThemeName(studioFolder.exists() ? studioFolder : projectFolder);
+
+            if (themeName.isEmpty()) {
+                log.debug("Found no custom theme in the project. "
+                        + "Skipping watching the theme files");
+                return;
+            }
+
+            // TODO: frontend folder to be taken from config
+            // see https://github.com/vaadin/flow/pull/15552
+            File watchDirectory = new File(studioFolder.exists() ? studioFolder : projectFolder,
+                    Path.of(FrontendUtils.FRONTEND,
+                                    Constants.APPLICATION_THEME_ROOT, themeName.get())
+                            .toString());
+
+            Optional<BrowserLiveReload> liveReload = BrowserLiveReloadAccessor
+                    .getLiveReloadFromContext(context);
+            if (liveReload.isPresent()) {
+                themeFilesWatcher = new FileWatcher(
+                        file -> liveReload.get().reload(), watchDirectory);
+                themeFilesWatcher.start();
+            } else {
+                String message = "Browser live reload is not available. Failed to start live-reload for theme files";
+                FrontendUtils.logInFile(message);
+                log.error(message);
+            }
+        } catch (Exception e) {
+            String message = "Failed to start live-reload for theme files";
+            FrontendUtils.logInFile(message + "\n" + Arrays.toString(e.getStackTrace()));
+            log.error(message, e);
         }
     }
 

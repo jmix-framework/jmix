@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import static com.vaadin.flow.server.Constants.PROJECT_FRONTEND_GENERATED_DIR_TOKEN;
 import static com.vaadin.flow.server.Constants.VAADIN_PREFIX;
+import static com.vaadin.flow.server.InitParameters.FRONTEND_HOTDEPLOY;
 import static com.vaadin.flow.server.InitParameters.SERVLET_PARAMETER_ENABLE_PNPM;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.*;
 
@@ -54,5 +55,6 @@ public class JmixSystemPropertiesLifeCycleListener implements LifeCycle.Listener
         this.properties.setProperty(PARAM_FLOW_FRONTEND_DIR, projectBaseDir + FLOW_FRONTEND_FOLDER);
         this.properties.setProperty(VAADIN_PREFIX + SERVLET_PARAMETER_ENABLE_PNPM, isPnpmEnabled);
         this.properties.setProperty(VAADIN_PREFIX + PROJECT_FRONTEND_GENERATED_DIR_TOKEN, projectBaseDir + GENERATED_FRONTEND_FOLDER);
+        this.properties.setProperty(VAADIN_PREFIX + FRONTEND_HOTDEPLOY, "true");
     }
 }

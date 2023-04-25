@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.devserver.frontend;
 
-import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.server.Constants;
@@ -66,15 +65,7 @@ public class TaskUpdateImports extends NodeUpdater {
     private static final Pattern NEW_LINE_TRIM = Pattern
             .compile("(?m)(^\\s+|\\s?\n)");
 
-    private final File frontendDirectory;
     private final FrontendDependenciesScanner fallbackScanner;
-    private final File tokenFile;
-    private final JsonObject tokenFileData;
-
-    private final boolean enablePnpm;
-    private final boolean productionMode;
-    private final boolean useLegacyV14Bootstrap;
-
     private final ThemeDefinition themeDefinition;
     private final AbstractTheme theme;
 
@@ -86,14 +77,12 @@ public class TaskUpdateImports extends NodeUpdater {
         private final File fallBackImports;
         private final ClassFinder finder;
 
-        UpdateMainImportsFile(ClassFinder classFinder, File frontendDirectory,
-                              File npmDirectory, File generatedDirectory,
-                              File fallBackImports, File tokenFile, boolean productionMode,
-                              boolean useLegacyV14Bootstrap, FeatureFlags featureFlags) {
-            super(frontendDirectory, npmDirectory, generatedDirectory,
-                    tokenFile, productionMode, useLegacyV14Bootstrap, featureFlags);
-            generatedFlowImports = new File(generatedDirectory, IMPORTS_NAME);
-            generatedFlowDefinitions = new File(generatedDirectory,
+        UpdateMainImportsFile(ClassFinder classFinder, File fallBackImports,
+                              Options options) {
+            super(options);
+            generatedFlowImports = new File(options.getGeneratedFolder(),
+                    IMPORTS_NAME);
+            generatedFlowDefinitions = new File(options.getGeneratedFolder(),
                     IMPORTS_D_TS_NAME);
             finder = classFinder;
             this.fallBackImports = fallBackImports;
@@ -150,12 +139,6 @@ public class TaskUpdateImports extends NodeUpdater {
                 boolean hasApplicationTheme = themeDef != null && !"".equals(themeDef.getName());
                 // There is no application theme in use, write theme includes
                 // here. Otherwise they are written by the theme
-                if (useLegacyV14Bootstrap && hasApplicationTheme) {
-                    lines.add("import {applyTheme} from 'generated/theme.js';");
-                    lines.add("if (window.Vaadin.theme.flowBootstrap) {");
-                    lines.add("  applyTheme(document);");
-                    lines.add("}");
-                }
                 if (!theme.getHeaderInlineContents().isEmpty()) {
                     lines.add("");
                     if (hasApplicationTheme) {
@@ -197,7 +180,8 @@ public class TaskUpdateImports extends NodeUpdater {
         protected Collection<String> getGeneratedModules() {
             final Set<String> exclude = new HashSet<>(
                     Arrays.asList(generatedFlowImports.getName(), FrontendUtils.FALLBACK_IMPORTS_NAME));
-            return NodeUpdater.getGeneratedModules(generatedFolder, exclude);
+            return NodeUpdater.getGeneratedModules(options.getGeneratedFolder(),
+                    exclude);
         }
 
         @Override
@@ -236,13 +220,10 @@ public class TaskUpdateImports extends NodeUpdater {
         private final File generatedFallBack;
         private final ClassFinder finder;
 
-        UpdateFallBackImportsFile(ClassFinder classFinder,
-                                  File frontendDirectory, File npmDirectory,
-                                  File generatedDirectory, File tokenFile, boolean productionMode,
-                                  boolean useLegacyV14Bootstrap, FeatureFlags featureFlags) {
-            super(frontendDirectory, npmDirectory, generatedDirectory,
-                    tokenFile, productionMode, useLegacyV14Bootstrap, featureFlags);
-            generatedFallBack = new File(generatedDirectory, FrontendUtils.FALLBACK_IMPORTS_NAME);
+        UpdateFallBackImportsFile(ClassFinder classFinder, Options options) {
+            super(options);
+            generatedFallBack = new File(options.getGeneratedFolder(),
+                    FrontendUtils.FALLBACK_IMPORTS_NAME);
             finder = classFinder;
         }
 
@@ -266,7 +247,7 @@ public class TaskUpdateImports extends NodeUpdater {
         protected List<String> getModules() {
             LinkedHashSet<String> set = new LinkedHashSet<>(
                     fallbackScanner.getModules());
-            set.removeAll(frontDeps.getModules());
+            frontDeps.getModules().forEach(set::remove);
             return new ArrayList<>(set);
         }
 
@@ -332,32 +313,14 @@ public class TaskUpdateImports extends NodeUpdater {
      * @param finder                  a reusable class finder
      * @param frontendDepScanner      a reusable frontend dependencies scanner
      * @param fallBackScannerProvider fallback scanner provider, not {@code null}
-     * @param npmFolder               folder with the `package.json` file
-     * @param studioFolder            folder with generated `package.json` file
-     * @param generatedPath           folder where flow generated files will be placed.
-     * @param frontendDirectory       a directory with project's frontend files
-     * @param tokenFile               the token (flow-build-info.json) path, may be {@code null}
-     * @param tokenFileData           object to fill with token file data, may be {@code null}
-     * @param enablePnpm              if {@code true} then pnpm is used instead of npm, otherwise
-     *                                npm is used
-     * @param buildDir                the used build directory
      */
     TaskUpdateImports(ClassFinder finder,
                       FrontendDependenciesScanner frontendDepScanner,
                       SerializableFunction<ClassFinder, FrontendDependenciesScanner> fallBackScannerProvider,
-                      File npmFolder, File studioFolder, File generatedPath, File frontendDirectory,
-                      File tokenFile, JsonObject tokenFileData, boolean enablePnpm,
-                      String buildDir, boolean productionMode,
-                      boolean useLegacyV14Bootstrap, FeatureFlags featureFlags,
+                      Options options,
                       ThemeDefinition themeDefinition) {
-        super(finder, frontendDepScanner, npmFolder, studioFolder, generatedPath, buildDir, featureFlags);
-        this.frontendDirectory = frontendDirectory;
-        fallbackScanner = fallBackScannerProvider.apply(finder);
-        this.tokenFile = tokenFile;
-        this.tokenFileData = tokenFileData;
-        this.enablePnpm = enablePnpm;
-        this.productionMode = productionMode;
-        this.useLegacyV14Bootstrap = useLegacyV14Bootstrap;
+        super(finder, frontendDepScanner, options);
+        this.fallbackScanner = fallBackScannerProvider.apply(finder);
         this.themeDefinition = themeDefinition;
 
         AbstractTheme abstractTheme = null;
@@ -373,16 +336,14 @@ public class TaskUpdateImports extends NodeUpdater {
         File fallBack = null;
         if (fallbackScanner != null) {
             UpdateFallBackImportsFile fallBackUpdate = new UpdateFallBackImportsFile(
-                    finder, frontendDirectory, studioFolder, generatedFolder,
-                    tokenFile, productionMode, useLegacyV14Bootstrap, featureFlags);
+                    finder, options);
             fallBackUpdate.run();
             fallBack = fallBackUpdate.getGeneratedFallbackFile();
             updateBuildFile(fallBackUpdate);
         }
 
         UpdateMainImportsFile mainUpdate = new UpdateMainImportsFile(finder,
-                frontendDirectory, studioFolder, generatedFolder, fallBack,
-                tokenFile, productionMode, useLegacyV14Bootstrap, featureFlags);
+                fallBack, options);
         mainUpdate.run();
     }
 
@@ -395,27 +356,32 @@ public class TaskUpdateImports extends NodeUpdater {
     }
 
     private void updateBuildFile(AbstractUpdateImports updater) {
-        boolean tokenFileExists = tokenFile != null && tokenFile.exists();
+        boolean tokenFileExists = options.getTokenFile() != null
+                && options.getTokenFile().exists();
         if (!tokenFileExists) {
-            log().warn(
-                    "Token file is not available. Fallback chunk data won't be written.");
+            String message = "Token file is not available. Fallback chunk data won't be written.";
+            log().warn(message);
+            FrontendUtils.logInFile(message);
         }
         try {
             if (tokenFileExists) {
-                String json = FileUtils.readFileToString(tokenFile,
+                String json = FileUtils.readFileToString(options.getTokenFile(),
                         StandardCharsets.UTF_8);
                 JsonObject buildInfo = json.isEmpty() ? Json.createObject()
                         : JsonUtil.parse(json);
                 populateFallbackData(buildInfo, updater);
-                FileUtils.write(tokenFile, JsonUtil.stringify(buildInfo, 2),
+                FileUtils.write(options.getTokenFile(),
+                        JsonUtil.stringify(buildInfo, 2),
                         StandardCharsets.UTF_8);
             }
 
         } catch (IOException e) {
-            log().warn("Unable to read token file", e);
+            String message = "Unable to read token file";
+            log().warn(message, e);
+            FrontendUtils.logInFile(message + "\n" + Arrays.toString(e.getStackTrace()));
         }
-        if (tokenFileData != null) {
-            populateFallbackData(tokenFileData, updater);
+        if (options.getTokenFileData() != null) {
+            populateFallbackData(options.getTokenFileData(), updater);
         }
     }
 
@@ -478,11 +444,11 @@ public class TaskUpdateImports extends NodeUpdater {
     }
 
     private String getAbsentPackagesMessage() {
-        String lockFile = enablePnpm ? "pnpm-lock.yaml"
+        String lockFile = options.isEnablePnpm() ? "pnpm-lock.yaml"
                 : Constants.PACKAGE_LOCK_JSON;
-        String command = enablePnpm ? "pnpm" : "npm";
+        String command = options.isEnablePnpm() ? "pnpm" : "npm";
         String note = "";
-        if (enablePnpm) {
+        if (options.isEnablePnpm()) {
             note = "\nMake sure first that `pnpm` command is installed, otherwise you should install it using npm: `npm add -g pnpm@"
                     + FrontendTools.DEFAULT_PNPM_VERSION + "`";
         }

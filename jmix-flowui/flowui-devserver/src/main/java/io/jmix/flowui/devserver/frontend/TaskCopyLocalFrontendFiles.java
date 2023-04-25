@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,12 +22,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -35,35 +39,29 @@ import java.util.stream.Stream;
  */
 public class TaskCopyLocalFrontendFiles implements FallibleCommand {
 
-    private final File flowResourcesFolder;
-    private final File localResourcesFolder;
+    private final Options options;
 
     /**
      * Copy project local frontend files from defined frontendResourcesDirectory
      * (by default 'src/main/resources/META-INF/resources/frontend'). This
      * enables running jar projects locally.
-     *
-     * @param flowResourcesFolder
-     *            target directory for the discovered files
-     * @param localResourcesFolder
-     *            local folder containing resources to copy
      */
-    TaskCopyLocalFrontendFiles(File flowResourcesFolder,
-                               File localResourcesFolder) {
-        this.flowResourcesFolder = flowResourcesFolder;
-        this.localResourcesFolder = localResourcesFolder;
+    TaskCopyLocalFrontendFiles(Options options) {
+        this.options = options;
     }
 
     @Override
     public void execute() {
-        createTargetFolder(flowResourcesFolder);
+        File target = options.getJarFrontendResourcesFolder();
+        File localResourcesFolder = options.getLocalResourcesFolder();
+        createTargetFolder(target);
 
         if (localResourcesFolder != null
                 && localResourcesFolder.isDirectory()) {
             String startMessage = "Copying project local frontend resources...";
             log().info(startMessage);
             FrontendUtils.logInFile(startMessage);
-            copyLocalResources(localResourcesFolder, flowResourcesFolder);
+            copyLocalResources(localResourcesFolder, target);
             String completeMessage = "Copying frontend directory completed.";
             log().info(completeMessage);
             FrontendUtils.logInFile(completeMessage);
@@ -72,18 +70,34 @@ public class TaskCopyLocalFrontendFiles implements FallibleCommand {
         }
     }
 
-    static void copyLocalResources(File source, File target) {
+    /**
+     * Copies the local resources from specified source directory to within the
+     * specified target directory ignoring the file exclusions defined as a
+     * relative paths to source directory.
+     *
+     * @param source                 directory to copy the files from
+     * @param target                 directory to copy the files to
+     * @param relativePathExclusions files or directories that shouldn't be copied, relative to
+     *                               source directory
+     * @return set of copied files
+     */
+    static Set<String> copyLocalResources(File source, File target,
+                                          String... relativePathExclusions) {
         if (!source.isDirectory() || !target.isDirectory()) {
-            return;
+            return Collections.emptySet();
         }
         try {
-            FileUtils.copyDirectory(source, target);
+            Set<String> handledFiles = new HashSet<>(TaskCopyFrontendFiles
+                    .getFilesInDirectory(source, relativePathExclusions));
+            FileUtils.copyDirectory(source, target,
+                    withoutExclusions(source, relativePathExclusions));
             try (Stream<Path> fileStream = Files
                     .walk(Paths.get(target.getPath()))) {
                 // used with try-with-resources as defined in walk API note
                 fileStream.filter(file -> !Files.isWritable(file)).forEach(
                         filePath -> filePath.toFile().setWritable(true));
             }
+            return handledFiles;
         } catch (IOException e) {
             throw new UncheckedIOException(String.format(
                     "Failed to copy project frontend resources from '%s' to '%s'",
@@ -99,6 +113,22 @@ public class TaskCopyLocalFrontendFiles implements FallibleCommand {
                     String.format("Failed to create directory '%s'", target),
                     e);
         }
+    }
+
+    static boolean keepFile(File source, String[] relativePathExclusions,
+                            File fileToCheck) {
+        for (String exclusion : relativePathExclusions) {
+            File basePath = new File(source, exclusion);
+            if (fileToCheck.getPath().startsWith(basePath.getPath())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static FileFilter withoutExclusions(File source,
+                                                String[] relativePathExclusions) {
+        return file -> keepFile(source, relativePathExclusions, file);
     }
 
     private static Logger log() {

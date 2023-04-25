@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.devserver.frontend;
 
-import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.server.ExecutionFailedException;
 import elemental.json.Json;
 import elemental.json.JsonObject;
@@ -43,8 +42,7 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
     private static final String VERSION = "flow_version";
     private static final String ES_TARGET_VERSION = "target";
     private static final String TSCONFIG_JSON_OLDER_VERSIONS_TEMPLATE = "tsconfig-%s.json";
-    private static final String[] vaadinVersions = {"latest", "v23.3.0",
-            "v23.2", "v23.1", "v22", "v14", "osgi"};
+    private static final String[] vaadinVersions = {"latest", "osgi"};
 
     //@formatter:off
     static final String ERROR_MESSAGE =
@@ -56,17 +54,15 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
                     + "%n**************************************************************************%n%n";
     //@formatter:on
 
-    private final File studioFolder;
-    private final FeatureFlags featureFlags;
+    private Options options;
 
     /**
      * Create a task to generate <code>tsconfig.json</code> file.
      *
-     * @param studioFolder project folder where the file will be generated.
+     * @param options the task options
      */
-    TaskGenerateTsConfig(File studioFolder, FeatureFlags featureFlags) {
-        this.studioFolder = studioFolder;
-        this.featureFlags = featureFlags;
+    TaskGenerateTsConfig(Options options) {
+        this.options = options;
     }
 
     @Override
@@ -83,17 +79,9 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
             fileName = String.format(TSCONFIG_JSON_OLDER_VERSIONS_TEMPLATE, vaadinVersion);
         }
 
-        InputStream tsConfStream = FrontendUtils.getResourceAsStream(
-                fileName,
-                AbstractTaskClientGenerator.class.getClassLoader()
-        );
-        String config = IOUtils.toString(tsConfStream, UTF_8);
-        if (featureFlags.isEnabled(FeatureFlags.WEBPACK)) {
-            // webpack 4 cannot use anything newer than es2019...
-            config = config.replaceFirst("\"target\".*",
-                    "\"target\": \"es2019\",");
+        try (InputStream tsConfStream = FrontendUtils.getResourceAsStream(fileName)) {
+            return IOUtils.toString(tsConfStream, UTF_8);
         }
-        return config;
     }
 
     @Override
@@ -102,17 +90,13 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
             super.execute();
         } else {
             overrideIfObsolete();
-            if (featureFlags.isEnabled(FeatureFlags.WEBPACK)) {
-                ensureTarget("es2019");
-            } else {
-                ensureTarget(getDefaultEsTargetVersion());
-            }
+            ensureTarget(getDefaultEsTargetVersion());
         }
     }
 
     private void ensureTarget(String esVersion) {
         try {
-            File projectTsconfig = new File(studioFolder, TSCONFIG_JSON);
+            File projectTsconfig = new File(options.getStudioFolder(), TSCONFIG_JSON);
             String current = FileUtils.readFileToString(projectTsconfig,
                     StandardCharsets.UTF_8);
             String currentEsVersion = getEsTargetVersion(current);
@@ -148,11 +132,21 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
         return Json.parse(json);
     }
 
+    @Override
+    protected File getGeneratedFile() {
+        return new File(options.getStudioFolder(), TSCONFIG_JSON);
+    }
+
+    @Override
+    protected boolean shouldGenerate() {
+        File tsConfig = new File(options.getStudioFolder(), TSCONFIG_JSON);
+        return !tsConfig.exists();
+    }
 
     private void overrideIfObsolete() throws ExecutionFailedException {
         try {
             // Project's TS config
-            File projectTsConfigFile = new File(studioFolder.getPath(),
+            File projectTsConfigFile = new File(options.getStudioFolder().getPath(),
                     TSCONFIG_JSON);
             String projectTsConfigAsString = FileUtils
                     .readFileToString(projectTsConfigFile, UTF_8);
@@ -228,17 +222,6 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
 
     private String removeWhiteSpaces(String content) {
         return content.replaceAll("\\s", "");
-    }
-
-    @Override
-    protected File getGeneratedFile() {
-        return new File(studioFolder, TSCONFIG_JSON);
-    }
-
-    @Override
-    protected boolean shouldGenerate() {
-        File tsConfig = new File(studioFolder, TSCONFIG_JSON);
-        return !tsConfig.exists();
     }
 }
 

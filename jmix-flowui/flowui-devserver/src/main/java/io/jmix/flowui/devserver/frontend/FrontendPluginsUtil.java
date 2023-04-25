@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,27 +16,32 @@
 
 package io.jmix.flowui.devserver.frontend;
 
+import com.vaadin.flow.server.frontend.FrontendUtils;
+import com.vaadin.flow.server.frontend.TaskInstallFrontendBuildPlugins;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-/**
- * Utility class for Flow Webpack plugins.
- * <p>
- * Unifies getting the list of available plugins.
- */
-class WebpackPluginsUtil {
+import static java.nio.charset.StandardCharsets.UTF_8;
 
-    private WebpackPluginsUtil() {
+/**
+ * Utility class for frontend build plugins.
+ * Unifies getting the list of available plugins.
+ * <p>
+ * For internal use only. May be renamed or removed in a future release.
+ */
+class FrontendPluginsUtil {
+
+    private FrontendPluginsUtil() {
     }
 
     /**
@@ -51,13 +56,10 @@ class WebpackPluginsUtil {
      */
     protected static List<String> getPlugins() {
         try {
-            final JsonObject jsonFile = getJsonFile(
-                    "plugins/webpack-plugins.json");
+            final JsonObject jsonFile = getJsonFile("plugins/plugins.json");
             if (jsonFile == null) {
-                LoggerFactory.getLogger("WebpackPlugins").error(
-                        "Couldn't locate plugins/webpack-plugins.json, no Webpack plugins for Flow will be installed."
-                                + "If webpack build fails validate flow-server jar content.");
-                return Collections.emptyList();
+                throw new IllegalStateException(
+                        "Couldn't locate plugins/plugins.json");
             }
 
             final JsonArray plugins = jsonFile.getArray("plugins");
@@ -67,8 +69,8 @@ class WebpackPluginsUtil {
             }
             return pluginsToInstall;
         } catch (IOException ioe) {
-            throw new UncheckedIOException(
-                    "Couldn't load webpack-plugins.json file", ioe);
+            throw new UncheckedIOException("Couldn't load plugins/plugins.json",
+                    ioe);
         }
     }
 
@@ -79,30 +81,37 @@ class WebpackPluginsUtil {
      * @return parsed Json for file if found
      * @throws IOException thrown for problems reading file
      */
-    protected static JsonObject getJsonFile(String jsonFilePath) throws IOException {
-        try (final InputStream inputStream = getResourceAsStream(jsonFilePath)) {
-            if (inputStream == null) {
-                return null;
-            }
-
-            String jsonString;
-            try (inputStream) {
-                jsonString = FrontendUtils.streamToString(inputStream);
-            }
-
-            return Json.parse(jsonString);
+    protected static JsonObject getJsonFile(String jsonFilePath)
+            throws IOException {
+        final URL urlResource = getResourceUrl(jsonFilePath);
+        if (urlResource == null) {
+            return null;
         }
+        File jsonFile = new File(urlResource.getFile());
+        String jsonString;
+        if (!jsonFile.exists()) {
+            try (InputStream resourceAsStream = getResourceAsStream(
+                    jsonFilePath)) {
+                if (resourceAsStream != null) {
+                    jsonString = FrontendUtils.streamToString(resourceAsStream);
+                } else {
+                    return null;
+                }
+            }
+        } else {
+            jsonString = FileUtils.readFileToString(jsonFile, UTF_8);
+        }
+        return Json.parse(jsonString);
     }
 
     /**
      * Get URL for given resource.
-     * Do not use, because Studio ClassLoader doesn't contain resources from this module
+     *
      * @param resource resource to get URL for
      * @return resource URL
      */
-    @Deprecated
     protected static URL getResourceUrl(String resource) {
-        ClassLoader cl = TaskInstallWebpackPlugins.class.getClassLoader();
+        ClassLoader cl = TaskInstallFrontendBuildPlugins.class.getClassLoader();
         return cl.getResource(resource);
     }
 
@@ -113,7 +122,9 @@ class WebpackPluginsUtil {
      * @return input stream for resource
      */
     protected static InputStream getResourceAsStream(String resource) {
-        ClassLoader cl = TaskInstallWebpackPlugins.class.getClassLoader();
-        return FrontendUtils.getResourceAsStream(resource, cl);
+        ClassLoader cl = TaskInstallFrontendBuildPlugins.class.getClassLoader();
+        return cl.getResourceAsStream(resource);
     }
+
 }
+

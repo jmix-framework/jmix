@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -59,26 +59,19 @@ public class TaskUpdatePackages extends NodeUpdater {
     /**
      * Create an instance of the updater given all configurable parameters.
      *
-     * @param finder               a reusable class finder
-     * @param frontendDependencies a reusable frontend dependencies
-     * @param npmFolder            folder with the `package.json` file
-     * @param studioFolder         folder with generated `package.json` file
-     * @param generatedPath        folder where flow generated files will be placed.
-     * @param jarResourcesFolder  folder where frontend resources from jar files will be placed.
-     * @param forceCleanUp         forces the clean up process to be run. If {@code false}, clean
-     *                             up will be performed when platform version update is detected.
-     * @param enablePnpm           if {@code true} then pnpm is used instead of npm, otherwise
-     *                             npm is used
-     * @param buildDir             the used build directory
+     * @param finder
+     *            a reusable class finder
+     * @param frontendDependencies
+     *            a reusable frontend dependencies
+     * @param options
+     *            the task options
      */
     TaskUpdatePackages(ClassFinder finder,
-                       FrontendDependenciesScanner frontendDependencies, File npmFolder, File studioFolder,
-                       File generatedPath, File jarResourcesFolder, boolean forceCleanUp,
-                       boolean enablePnpm, String buildDir, FeatureFlags featureFlags) {
-        super(finder, frontendDependencies, npmFolder, studioFolder, generatedPath, buildDir, featureFlags);
-        this.jarResourcesFolder = jarResourcesFolder;
-        this.forceCleanUp = forceCleanUp;
-        this.enablePnpm = enablePnpm;
+            FrontendDependenciesScanner frontendDependencies, Options options) {
+        super(finder, frontendDependencies, options);
+        this.jarResourcesFolder = options.getJarFrontendResourcesFolder();
+        this.forceCleanUp = options.isCleanNpmFiles();
+        this.enablePnpm = options.isEnablePnpm();
     }
 
     @Override
@@ -118,7 +111,7 @@ public class TaskUpdatePackages extends NodeUpdater {
         }
         boolean versionLockingUpdated = false;
 
-        File generatedVersionsFile = new File(studioFolder, versionsPath);
+        File generatedVersionsFile = new File(options.getStudioFolder(), versionsPath);
         final JsonObject versionsJson = Json.parse(FileUtils.readFileToString(
                 generatedVersionsFile, StandardCharsets.UTF_8));
 
@@ -172,8 +165,8 @@ public class TaskUpdatePackages extends NodeUpdater {
     }
 
     private boolean isInternalPseudoDependency(String dependencyVersion) {
-        return dependencyVersion != null
-                && dependencyVersion.startsWith("./" + buildDir);
+        return dependencyVersion != null && dependencyVersion
+                .startsWith("./" + options.getBuildDirectoryName());
     }
 
     private JsonObject getOverridesSection(JsonObject packageJson) {
@@ -317,7 +310,7 @@ public class TaskUpdatePackages extends NodeUpdater {
         return removed;
     }
 
-    private boolean pinPlatformDependency(JsonObject packageJson,
+    protected static boolean pinPlatformDependency(JsonObject packageJson,
                                           JsonObject platformPinnedVersions, String pkg) {
         final FrontendVersion platformPinnedVersion = FrontendUtils
                 .getPackageVersionFromJson(platformPinnedVersions, pkg,
@@ -352,13 +345,15 @@ public class TaskUpdatePackages extends NodeUpdater {
      * considered updated.
      *
      * @return {@code true} if the version has changed, {@code false} if not
-     * @throws IOException when file reading fails
+     * @throws IOException
+     *             when file reading fails
      */
     private boolean isPlatformVersionUpdated() throws IOException {
         // if no record of current version is present, version is not
         // considered updated
         Optional<String> platformVersion = Platform.getVaadinVersion();
-        if (platformVersion.isPresent() && nodeModulesFolder.exists()) {
+        if (platformVersion.isPresent()
+                && options.getNodeModulesFolder().exists()) {
             JsonObject vaadinJsonContents = getVaadinJsonContents();
             // If no record of previous version, version is considered updated
             if (!vaadinJsonContents.hasKey(NodeUpdater.VAADIN_VERSION)) {
@@ -375,9 +370,11 @@ public class TaskUpdatePackages extends NodeUpdater {
      * Cleans up any previous version properties from the packageJson object if
      * present.
      *
-     * @param packageJson JsonObject of current package.json contents
+     * @param packageJson
+     *            JsonObject of current package.json contents
      * @return amount of removed properties
-     * @throws IOException thrown if removal of package-lock.json fails
+     * @throws IOException
+     *             thrown if removal of package-lock.json fails
      */
     private int removeLegacyProperties(JsonObject packageJson)
             throws IOException {
@@ -420,7 +417,7 @@ public class TaskUpdatePackages extends NodeUpdater {
     }
 
     private void cleanUp() throws IOException {
-        FrontendUtils.deleteNodeModules(nodeModulesFolder);
+        FrontendUtils.deleteNodeModules(options.getNodeModulesFolder());
 
         if (jarResourcesFolder != null && jarResourcesFolder.exists()) {
             // This feels like cleanup done in the wrong place but is left here
@@ -430,14 +427,15 @@ public class TaskUpdatePackages extends NodeUpdater {
                 }
             }
 
-        File generatedNodeModules = new File(generatedFolder, NODE_MODULES);
+        File generatedNodeModules = new File(options.getGeneratedFolder(),
+                NODE_MODULES);
         if (generatedNodeModules.exists()) {
             FrontendUtils.deleteNodeModules(generatedNodeModules);
         }
     }
 
     private void deletePnpmLockFile() throws IOException {
-        File lockFile = new File(studioFolder, "pnpm-lock.yaml");
+        File lockFile = new File(options.getStudioFolder(), "pnpm-lock.yaml");
         if (lockFile.exists()) {
             FileUtils.forceDelete(lockFile);
         }
@@ -451,7 +449,8 @@ public class TaskUpdatePackages extends NodeUpdater {
      * Dependencies will be sorted by key so that different runs for same
      * dependencies in different order will not trigger npm install.
      *
-     * @param packageJson JsonObject built in the same format as package.json
+     * @param packageJson
+     *            JsonObject built in the same format as package.json
      * @return has for dependencies and devDependencies
      */
     static String generatePackageJsonHash(JsonObject packageJson) {

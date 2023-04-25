@@ -824,6 +824,7 @@
             <xs:extension base="abstractAxis">
                 <xs:all>
                     <xs:element name="categoryFunction" minOccurs="0"/>
+                    <xs:element name="labelFunction" minOccurs="0"/>
                 </xs:all>
 
                 <xs:attribute name="autoWrap" type="xs:boolean"/>

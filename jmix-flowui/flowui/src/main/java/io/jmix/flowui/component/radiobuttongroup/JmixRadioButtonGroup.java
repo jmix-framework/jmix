@@ -17,7 +17,11 @@
 package io.jmix.flowui.component.radiobuttongroup;
 
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.radiobutton.dataview.RadioButtonGroupDataView;
+import com.vaadin.flow.component.radiobutton.dataview.RadioButtonGroupListDataView;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.InMemoryDataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
@@ -92,6 +96,7 @@ public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements Supp
         dataViewDelegate.setItems(itemsEnum);
     }
 
+    @Deprecated
     @Override
     public void setDataProvider(DataProvider<V, ?> dataProvider) {
         // Method is called from a constructor so bean can be null
@@ -99,6 +104,37 @@ public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements Supp
             dataViewDelegate.bind(dataProvider);
         }
         super.setDataProvider(dataProvider);
+    }
+
+    @Override
+    public RadioButtonGroupDataView<V> setItems(DataProvider<V, Void> dataProvider) {
+        bindDataProvider(dataProvider);
+        return super.setItems(dataProvider);
+    }
+
+    @Override
+    public RadioButtonGroupDataView<V> setItems(InMemoryDataProvider<V> inMemoryDataProvider) {
+        bindDataProvider(inMemoryDataProvider);
+        return super.setItems(inMemoryDataProvider);
+    }
+
+    @Override
+    public RadioButtonGroupListDataView<V> setItems(ListDataProvider<V> dataProvider) {
+        bindDataProvider(dataProvider);
+        return super.setItems(dataProvider);
+    }
+
+    protected void bindDataProvider(DataProvider<V, ?> dataProvider) {
+        // One of binding methods is called from a constructor so bean can be null
+        if (dataViewDelegate != null) {
+            dataViewDelegate.bind(dataProvider);
+        }
+    }
+
+    @Nullable
+    @Override
+    public DataProvider<V, ?> getDataProvider() {
+        return dataViewDelegate.getDataProvider();
     }
 
     @Nullable

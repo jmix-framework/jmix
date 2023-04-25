@@ -96,6 +96,15 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
     @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
     }
 
     @Override

@@ -118,6 +118,20 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
         fieldDelegate.setValueSource(valueSource);
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {

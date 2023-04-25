@@ -158,8 +158,8 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
                 try {
                     validator.accept(value);
                 } catch (ValidationException e) {
-                    setInvalidInternal(true);
                     setErrorMessage(e.getDetailsMessage());
+                    setInvalidInternal(true);
                     throw new ComponentValidationException(e.getDetailsMessage(), component, e);
                 }
             }
@@ -207,6 +207,10 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     @Nullable
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    public void updateRequiredState() {
+        updateInvalidState();
     }
 
     public void setStatusChangeHandler(@Nullable Consumer<StatusContext<C>> statusChangeHandler) {

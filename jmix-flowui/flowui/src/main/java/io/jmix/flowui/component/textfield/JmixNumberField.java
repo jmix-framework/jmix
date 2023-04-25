@@ -110,8 +110,17 @@ public class JmixNumberField extends NumberField implements SupportsValueSource<
     }
 
     @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
     }
 
     @Override

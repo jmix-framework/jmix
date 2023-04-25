@@ -32,9 +32,13 @@ public class JmixIconRenderer implements Renderer<Icon> {
             icon.setHeight("0");
         }
 
-        Element iconElement = icon.getElement();
-        cell.getElement().setInnerHTML(getOuterHtml(iconElement));
+        String html = "";
+        if (icon != null) {
+            Element iconElement = icon.getElement();
+            html = getOuterHtml(iconElement);
+        }
 
+        cell.getElement().setInnerHTML(html);
     }
 
     protected native String getOuterHtml(Element element) /*-{

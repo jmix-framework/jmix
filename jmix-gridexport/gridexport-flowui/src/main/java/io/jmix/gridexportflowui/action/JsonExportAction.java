@@ -37,7 +37,7 @@ public class JsonExportAction extends ExportAction {
     }
 
     public JsonExportAction(String id) {
-        super(ID);
+        super(id);
     }
 
     @Override

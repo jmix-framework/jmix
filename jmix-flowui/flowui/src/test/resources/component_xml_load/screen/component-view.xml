@@ -837,15 +837,6 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
-
-            <tooltip text="tooltipText"
-                     focusDelay="1"
-                     hideDelay="2"
-                     hoverDelay="3"
-                     manual="true"
-                     opened="true"
-                     position="BOTTOM"
-            />
         </dropdownButton>
 
         <comboButton id="comboButtonId"
@@ -878,15 +869,6 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
-
-            <tooltip text="tooltipText"
-                     focusDelay="1"
-                     hideDelay="2"
-                     hoverDelay="3"
-                     manual="true"
-                     opened="true"
-                     position="BOTTOM"
-            />
         </comboButton>
 
         <upload id="uploadId"

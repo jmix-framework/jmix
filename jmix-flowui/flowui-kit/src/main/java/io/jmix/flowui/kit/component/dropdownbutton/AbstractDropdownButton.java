@@ -398,11 +398,13 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         return getContent().addFocusShortcut(key, keyModifiers);
     }
 
+    @Deprecated
     @Override
     public Tooltip setTooltipText(String text) {
         return getContent().setTooltipText(text);
     }
 
+    @Deprecated
     @Override
     public Tooltip getTooltip() {
         return getContent().getTooltip();

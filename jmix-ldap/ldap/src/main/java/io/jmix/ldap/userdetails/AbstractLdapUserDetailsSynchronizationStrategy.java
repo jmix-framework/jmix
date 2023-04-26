@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A basic implementation of {@link LdapUserDetailsSynchronizationStrategy}, which provides
@@ -81,14 +82,31 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
         if (ldapProperties.getSynchronizeRoleAssignments()) {
             Set<GrantedAuthority> grantedAuthorities = authoritiesMapper.mapAuthorities(authorities);
 
-            //clean previous role assignments
             List<RoleAssignmentEntity> existingRoleAssignments = dataManager.load(RoleAssignmentEntity.class)
                     .query("select e from sec_RoleAssignmentEntity e where e.username = :username")
                     .parameter("username", username)
                     .list();
-            saveContext.removing(existingRoleAssignments);
+            Set<String> existingRoleAssignmentCodes = existingRoleAssignments.stream()
+                    .map(RoleAssignmentEntity::getRoleCode)
+                    .collect(Collectors.toSet());
 
-            saveContext.saving(buildRoleAssignments(grantedAuthorities, username));
+            Collection<RoleAssignmentEntity> grantedRoleAssignments = buildRoleAssignments(grantedAuthorities, username);
+            Set<String> grantedRoleAssignmentsCodes = grantedRoleAssignments.stream()
+                    .map(RoleAssignmentEntity::getRoleCode)
+                    .collect(Collectors.toSet());
+
+            //remove only existing role assignments that should not be granted
+            List<RoleAssignmentEntity> roleAssignmentsToRemove = existingRoleAssignments.stream()
+                    .filter(roleAssignmentEntity -> !grantedRoleAssignmentsCodes.contains(roleAssignmentEntity.getRoleCode()))
+                    .collect(Collectors.toList());
+
+            //create only non-existing assignments
+            List<RoleAssignmentEntity> roleAssignmentsToCreate = grantedRoleAssignments.stream()
+                    .filter(roleAssignmentEntity -> !existingRoleAssignmentCodes.contains(roleAssignmentEntity.getRoleCode()))
+                    .collect(Collectors.toList());
+
+            saveContext.removing(roleAssignmentsToRemove);
+            saveContext.saving(roleAssignmentsToCreate);
         }
         saveContext.saving(jmixUserDetails);
 

@@ -101,6 +101,8 @@ public class TagPickerImpl<V> extends ValuesPickerImpl<V> implements TagPicker<V
 
     protected void setItemsToPresentation(Stream<V> options) {
         getFieldInternal().setItems(this::filterItem, options.collect(Collectors.toList()));
+
+        hideSelectedOptionsInPresentation(getValue());
     }
 
     protected boolean filterItem(String itemCaption, String filterText) {

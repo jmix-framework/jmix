@@ -61,6 +61,8 @@ public class RemoveOperation {
     protected EntityStates entityStates;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     /**
      * Creates a remove builder.
@@ -191,7 +193,7 @@ public class RemoveOperation {
                                   ScreenData screenData) {
 
         List<?> entitiesToCommit = entitiesToRemove.stream()
-                .filter(entity -> !entityStates.isNew(entity))
+                .filter(entity -> !entityStates.isNew(entity) || !metadataTools.isJpaEntity(entity.getClass()))
                 .collect(Collectors.toList());
 
         boolean needCommit = !entitiesToCommit.isEmpty();

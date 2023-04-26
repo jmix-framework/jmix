@@ -27,9 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 
 @ActionType(GenericFilterSaveWithValuesAction.ID)
-public class GenericFilterSaveWithValuesAction extends GenericFilterSaveAction<GenericFilterSaveWithValuesAction> {
+public class GenericFilterSaveWithValuesAction
+        extends AbstractGenericFilterSaveAction<GenericFilterSaveWithValuesAction> {
 
-    public static final String ID = "filter_saveWithValues";
+    public static final String ID = "genericFilter_saveWithValues";
 
     public GenericFilterSaveWithValuesAction() {
         this(ID);
@@ -40,7 +41,6 @@ public class GenericFilterSaveWithValuesAction extends GenericFilterSaveAction<G
     }
 
     @Autowired
-    @Override
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.GenericFilter.SaveWithValues");
         this.messages = messages;
@@ -55,7 +55,22 @@ public class GenericFilterSaveWithValuesAction extends GenericFilterSaveAction<G
 
     @Override
     public void execute() {
-        super.execute();
+        checkTarget();
+
+        Configuration configuration = target.getCurrentConfiguration();
+
+        if (configuration == target.getEmptyConfiguration()) {
+            openInputDialog();
+        } else {
+            FilterConfiguration configurationModel = ((FlowuiDataGenericFilterSupport) genericFilterSupport)
+                    .loadFilterConfigurationModel(target, configuration.getId());
+
+            if (configurationModel != null) {
+                saveExistedConfigurationModel(configuration, configurationModel);
+            } else {
+                openInputDialog();
+            }
+        }
     }
 
     @Override
@@ -71,7 +86,8 @@ public class GenericFilterSaveWithValuesAction extends GenericFilterSaveAction<G
     @Override
     protected void saveExistedConfigurationModel(Configuration configuration,
                                                  @Nullable FilterConfiguration existedConfigurationModel) {
-        ((FlowuiDataGenericFilterSupport) genericFilterSupport).saveConfigurationModel(configuration, existedConfigurationModel);
+        ((FlowuiDataGenericFilterSupport) genericFilterSupport)
+                .saveConfigurationModel(configuration, existedConfigurationModel);
         genericFilterSupport.refreshConfigurationDefaultValues(configuration);
         setCurrentFilterConfiguration(configuration);
     }

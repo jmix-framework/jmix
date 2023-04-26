@@ -27,7 +27,6 @@ public abstract class FilterConditionDetailView<E extends FilterCondition>
     protected Configuration currentConfiguration;
 
     protected FilterConditionDetailView() {
-        super();
         setShowSaveNotification(false);
     }
 

@@ -53,7 +53,7 @@ import java.util.function.Predicate;
 public class GenericFilterAddConditionAction extends GenericFilterAction<GenericFilterAddConditionAction>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "filter_addCondition";
+    public static final String ID = "genericFilter_addCondition";
 
     protected Messages messages;
     protected DialogWindows dialogWindows;

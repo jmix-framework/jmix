@@ -134,7 +134,8 @@ public class AddConditionView extends StandardListView<FilterCondition> {
     protected void initCreateConditionBtn() {
         for (Class<? extends FilterCondition> modelClass : filterComponents.getRegisteredModelClasses()) {
             if (JpqlFilterCondition.class.isAssignableFrom(modelClass)) {
-                FlowuiFilterModifyJpqlConditionContext jpqlConditionsContext = new FlowuiFilterModifyJpqlConditionContext();
+                FlowuiFilterModifyJpqlConditionContext jpqlConditionsContext =
+                        new FlowuiFilterModifyJpqlConditionContext();
                 accessManager.applyRegisteredConstraints(jpqlConditionsContext);
 
                 if (!jpqlConditionsContext.isPermitted()) {
@@ -155,7 +156,7 @@ public class AddConditionView extends StandardListView<FilterCondition> {
                 "addConditionView.createDropdownButton.actionItemText",
                 messageTools.getEntityCaption(metaClass));
 
-        return new BaseAction("filter_create" + detailViewId)
+        return new BaseAction("genericFilter_create" + detailViewId)
                 .withText(actionText)
                 .withHandler(event -> {
                     DialogWindow<View<?>> detailView = dialogWindows.detail(this, modelClass)

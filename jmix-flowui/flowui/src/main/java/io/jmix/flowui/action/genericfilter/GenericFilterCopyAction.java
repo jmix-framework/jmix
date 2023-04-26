@@ -33,7 +33,7 @@ import java.util.Map;
 @ActionType(GenericFilterCopyAction.ID)
 public class GenericFilterCopyAction extends GenericFilterAction<GenericFilterCopyAction> {
 
-    public static final String ID = "filter_copy";
+    public static final String ID = "genericFilter_copy";
 
     protected FilterComponents filterComponents;
     protected GenericFilterSupport genericFilterSupport;

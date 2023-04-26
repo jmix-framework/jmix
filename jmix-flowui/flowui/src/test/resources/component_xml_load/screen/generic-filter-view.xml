@@ -63,7 +63,7 @@
                      position="BOTTOM"
             />
             <actions>
-                <action id="filter_copy" type="filter_copy"/>
+                <action id="genericFilter_copy" type="genericFilter_copy"/>
             </actions>
         </genericFilter>
 

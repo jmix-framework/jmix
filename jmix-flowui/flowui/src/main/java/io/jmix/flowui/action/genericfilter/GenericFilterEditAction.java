@@ -42,7 +42,7 @@ import java.util.Objects;
 @ActionType(GenericFilterEditAction.ID)
 public class GenericFilterEditAction extends GenericFilterAction<GenericFilterEditAction> {
 
-    public static final String ID = "filter_edit";
+    public static final String ID = "genericFilter_edit";
 
     protected Messages messages;
     protected FilterComponents filterComponents;
@@ -107,8 +107,8 @@ public class GenericFilterEditAction extends GenericFilterAction<GenericFilterEd
         DialogWindow<? extends FilterConditionDetailView<?>> detailDialog = createDetailDialog(modelClass, model);
 
         boolean isNewConfiguration = isNewConfiguration(currentConfiguration);
-        AbstractConfigurationDetail configurationDetail =
-                genericFilterSupport.createFilterConfigurationDetail(detailDialog, isNewConfiguration, currentConfiguration);
+        AbstractConfigurationDetail configurationDetail = genericFilterSupport.createFilterConfigurationDetail(
+                detailDialog, isNewConfiguration, currentConfiguration);
 
         detailDialog.getView().getContent().addComponentAsFirst(configurationDetail);
 
@@ -143,7 +143,7 @@ public class GenericFilterEditAction extends GenericFilterAction<GenericFilterEd
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected DialogWindow createDetailDialog(Class modelClass, LogicalFilterCondition model) {
-        View<?> parent = findParent();
+        View<?> parent = findParentView();
 
         if (parent == null) {
             throw new IllegalStateException(String.format("A component '%s' is not attached to a view",

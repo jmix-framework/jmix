@@ -36,6 +36,7 @@ import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.RemoveOperation;
+import io.jmix.flowui.view.MessageBundle;
 import io.jmix.flowui.view.Subscribe;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -49,7 +50,7 @@ public abstract class LogicalFilterConditionDetailView<E extends LogicalFilterCo
         extends FilterConditionDetailView<E> {
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
     @Autowired
     protected FilterComponents filterComponents;
     @Autowired
@@ -86,7 +87,7 @@ public abstract class LogicalFilterConditionDetailView<E extends LogicalFilterCo
 
     protected void prepareEditedEntity() {
         String localizedLabel = getEditedEntity().getOperation() == null
-                ? messages.getMessage(getClass(), "logicalFilterConditionDetailView.emptyOperationTreeLabel")
+                ? messageBundle.getMessage("logicalFilterConditionDetailView.emptyOperationTreeLabel")
                 : getEditedEntity().getOperation().getId();
 
         getEditedEntity().setLocalizedLabel(localizedLabel);
@@ -215,12 +216,12 @@ public abstract class LogicalFilterConditionDetailView<E extends LogicalFilterCo
 
     protected ValidationErrors performOwnFilterComponentsValidation() {
         if (hasEmptyLogicalFilterConditions()) {
-            return ValidationErrors.of(messages.getMessage(getClass(),
+            return ValidationErrors.of(messageBundle.getMessage(
                     "logicalFilterConditionDetailView.logicalConditionCannotBeEmpty"));
         }
 
         if (configurationExist()) {
-            return ValidationErrors.of(messages.getMessage(getClass(),
+            return ValidationErrors.of(messageBundle.getMessage(
                     "logicalFilterConditionDetailView.uniqueConfigurationId"));
         }
 

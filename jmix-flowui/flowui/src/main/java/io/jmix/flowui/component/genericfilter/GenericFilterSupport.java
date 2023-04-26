@@ -48,10 +48,9 @@ public class GenericFilterSupport {
         this.uiComponents = uiComponents;
     }
 
-    @SuppressWarnings("rawtypes")
     public List<GenericFilterAction<?>> getDefaultFilterActions(GenericFilter filter) {
         List<GenericFilterAction<?>> filterActions = new ArrayList<>();
-        for (Class<? extends GenericFilterAction> actionClass : getDefaultFilterActionClasses()) {
+        for (Class<? extends GenericFilterAction<?>> actionClass : getDefaultFilterActionClasses()) {
             filterActions.add(createFilterAction(actionClass, filter));
         }
         return filterActions;
@@ -76,9 +75,10 @@ public class GenericFilterSupport {
         filter.removeConfiguration(filter.getCurrentConfiguration());
     }
 
-    public AbstractConfigurationDetail createFilterConfigurationDetail(DialogWindow<? extends FilterConditionDetailView<?>> dialog,
-                                                                       boolean isNewConfiguration,
-                                                                       Configuration currentConfiguration) {
+    public AbstractConfigurationDetail createFilterConfigurationDetail(
+            DialogWindow<? extends FilterConditionDetailView<?>> dialog,
+            boolean isNewConfiguration,
+            Configuration currentConfiguration) {
         FilterConfigurationDetail configurationDetail = uiComponents.create(FilterConfigurationDetail.class);
         initFilterConfigurationDetail(configurationDetail, isNewConfiguration, currentConfiguration);
 
@@ -186,8 +186,7 @@ public class GenericFilterSupport {
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    protected Set<Class<? extends GenericFilterAction>> getDefaultFilterActionClasses() {
+    protected Set<Class<? extends GenericFilterAction<?>>> getDefaultFilterActionClasses() {
         return ImmutableSet.of(
                 GenericFilterEditAction.class,
                 GenericFilterCopyAction.class,
@@ -199,8 +198,7 @@ public class GenericFilterSupport {
         return Collections.emptyMap();
     }
 
-    @SuppressWarnings("rawtypes")
-    protected GenericFilterAction<?> createFilterAction(Class<? extends GenericFilterAction> filterActionClass,
+    protected GenericFilterAction<?> createFilterAction(Class<? extends GenericFilterAction<?>> filterActionClass,
                                                         GenericFilter filter) {
         GenericFilterAction<?> filterAction = actions.create(filterActionClass);
         filterAction.setTarget(filter);

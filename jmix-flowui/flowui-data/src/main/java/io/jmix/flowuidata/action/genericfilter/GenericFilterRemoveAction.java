@@ -28,7 +28,7 @@ import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
-import io.jmix.flowuidata.accesscontext.FlowuiFilterModifyGlobalConfigurationContext;
+import io.jmix.flowuidata.accesscontext.FlowuiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowuidata.entity.FilterConfiguration;
 import io.jmix.flowuidata.genericfilter.FlowuiDataGenericFilterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(GenericFilterRemoveAction.ID)
 public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilterRemoveAction> {
 
-    public static final String ID = "filter_remove";
+    public static final String ID = "genericFilter_remove";
 
     protected GenericFilterSupport genericFilterSupport;
     protected Dialogs dialogs;
@@ -77,8 +77,8 @@ public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilter
 
     @Autowired
     public void setAccessManager(AccessManager accessManager) {
-        FlowuiFilterModifyGlobalConfigurationContext globalFilterContext =
-                new FlowuiFilterModifyGlobalConfigurationContext();
+        FlowuiGenericFilterModifyGlobalConfigurationContext globalFilterContext =
+                new FlowuiGenericFilterModifyGlobalConfigurationContext();
         accessManager.applyRegisteredConstraints(globalFilterContext);
         globalConfigurationModificationPermitted = globalFilterContext.isPermitted();
     }

@@ -16,23 +16,19 @@
 
 package io.jmix.flowuidata.action.genericfilter;
 
-import com.google.common.base.Strings;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.Configuration;
-import io.jmix.flowuidata.accesscontext.FlowuiFilterModifyGlobalConfigurationContext;
+import io.jmix.flowuidata.accesscontext.FlowuiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowuidata.entity.FilterConfiguration;
 import io.jmix.flowuidata.genericfilter.FlowuiDataGenericFilterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
-import java.util.Map;
-
 @ActionType(GenericFilterSaveAction.ID)
-public class GenericFilterSaveAction<A extends GenericFilterSaveAsAction<A>> extends GenericFilterSaveAsAction<A> {
+public class GenericFilterSaveAction extends AbstractGenericFilterSaveAction<GenericFilterSaveAction> {
 
-    public static final String ID = "filter_save";
+    public static final String ID = "genericFilter_save";
 
     protected boolean globalConfigurationModificationPermitted;
 
@@ -45,7 +41,6 @@ public class GenericFilterSaveAction<A extends GenericFilterSaveAsAction<A>> ext
     }
 
     @Autowired
-    @Override
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.GenericFilter.Save");
         this.messages = messages;
@@ -53,8 +48,8 @@ public class GenericFilterSaveAction<A extends GenericFilterSaveAsAction<A>> ext
 
     @Autowired
     public void setAccessManager(AccessManager accessManager) {
-        FlowuiFilterModifyGlobalConfigurationContext globalFilterContext =
-                new FlowuiFilterModifyGlobalConfigurationContext();
+        FlowuiGenericFilterModifyGlobalConfigurationContext globalFilterContext =
+                new FlowuiGenericFilterModifyGlobalConfigurationContext();
         accessManager.applyRegisteredConstraints(globalFilterContext);
         globalConfigurationModificationPermitted = globalFilterContext.isPermitted();
     }
@@ -84,24 +79,5 @@ public class GenericFilterSaveAction<A extends GenericFilterSaveAsAction<A>> ext
                 openInputDialog();
             }
         }
-    }
-
-    protected void saveExistedConfigurationModel(Configuration configuration,
-                                                 @Nullable FilterConfiguration existedConfigurationModel) {
-        Map<String, Object> valuesMap = genericFilterSupport.initConfigurationValuesMap(configuration);
-        ((FlowuiDataGenericFilterSupport) genericFilterSupport).saveConfigurationModel(configuration,
-                existedConfigurationModel);
-
-        genericFilterSupport.resetConfigurationValuesMap(configuration, valuesMap);
-
-        setCurrentFilterConfiguration(configuration);
-    }
-
-    protected boolean isCurrentConfigurationAvailableForAll() {
-        Configuration currentConfiguration = target.getCurrentConfiguration();
-        FilterConfiguration model = ((FlowuiDataGenericFilterSupport) genericFilterSupport)
-                .loadFilterConfigurationModel(target, currentConfiguration.getId());
-
-        return model != null && Strings.isNullOrEmpty(model.getUsername());
     }
 }

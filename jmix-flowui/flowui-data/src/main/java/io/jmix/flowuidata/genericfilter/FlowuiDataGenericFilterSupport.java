@@ -42,7 +42,10 @@ import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowuidata.action.genericfilter.*;
+import io.jmix.flowuidata.action.genericfilter.GenericFilterRemoveAction;
+import io.jmix.flowuidata.action.genericfilter.GenericFilterSaveAction;
+import io.jmix.flowuidata.action.genericfilter.GenericFilterSaveAsAction;
+import io.jmix.flowuidata.action.genericfilter.GenericFilterSaveWithValuesAction;
 import io.jmix.flowuidata.component.genericfilter.configuration.FlowuiDataFilterConfigurationDetail;
 import io.jmix.flowuidata.entity.FilterConfiguration;
 import org.slf4j.Logger;
@@ -117,14 +120,16 @@ public class FlowuiDataGenericFilterSupport extends GenericFilterSupport {
     }
 
     @Override
-    public AbstractConfigurationDetail createFilterConfigurationDetail(DialogWindow<? extends FilterConditionDetailView<?>> dialog,
-                                                                       boolean isNewConfiguration,
-                                                                       Configuration currentConfiguration) {
+    public AbstractConfigurationDetail createFilterConfigurationDetail(
+            DialogWindow<? extends FilterConditionDetailView<?>> dialog,
+            boolean isNewConfiguration,
+            Configuration currentConfiguration) {
         FilterConfiguration configurationModel = loadFilterConfigurationModel(isNewConfiguration, currentConfiguration);
         InstanceContainer<FilterConfiguration> configurationDc = registerConfigurationDc(configurationModel,
                 ViewControllerUtils.getViewData(dialog.getView()));
 
-        FlowuiDataFilterConfigurationDetail configurationDetail = uiComponents.create(FlowuiDataFilterConfigurationDetail.class);
+        FlowuiDataFilterConfigurationDetail configurationDetail =
+                uiComponents.create(FlowuiDataFilterConfigurationDetail.class);
         boolean defaultFormMeFieldVisible = isDefaultForMeFieldVisible(currentConfiguration, configurationModel);
         configurationDetail.setDefaultForMeFieldVisible(defaultFormMeFieldVisible);
         configurationDetail.setConfigurationDc(configurationDc);
@@ -168,17 +173,14 @@ public class FlowuiDataGenericFilterSupport extends GenericFilterSupport {
         dataManager.save(configurationModel);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    protected Set<Class<? extends GenericFilterAction>> getDefaultFilterActionClasses() {
+    protected Set<Class<? extends GenericFilterAction<?>>> getDefaultFilterActionClasses() {
         return ImmutableSet.of(
                 GenericFilterSaveAction.class,
                 GenericFilterSaveWithValuesAction.class,
                 GenericFilterSaveAsAction.class,
                 GenericFilterEditAction.class,
                 GenericFilterRemoveAction.class,
-//TODO: kremnevda, viewSettingsFacet 10.04.2023
-//                GenericFilterMakeDefaultAction.class,
                 GenericFilterCopyAction.class,
                 GenericFilterClearValuesAction.class
         );

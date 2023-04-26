@@ -26,7 +26,7 @@ import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.genericfilter.configuration.AbstractConfigurationDetail;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowuidata.accesscontext.FlowuiFilterModifyGlobalConfigurationContext;
+import io.jmix.flowuidata.accesscontext.FlowuiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowuidata.entity.FilterConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
@@ -106,8 +106,8 @@ public class FlowuiDataFilterConfigurationDetail extends AbstractConfigurationDe
     }
 
     protected void initSecondConfigurationFormRow() {
-        FlowuiFilterModifyGlobalConfigurationContext globalFilterContext =
-                new FlowuiFilterModifyGlobalConfigurationContext();
+        FlowuiGenericFilterModifyGlobalConfigurationContext globalFilterContext =
+                new FlowuiGenericFilterModifyGlobalConfigurationContext();
         accessManager.applyRegisteredConstraints(globalFilterContext);
         boolean allowGlobalFilters = globalFilterContext.isPermitted();
 
@@ -159,7 +159,7 @@ public class FlowuiDataFilterConfigurationDetail extends AbstractConfigurationDe
         availableForAllUsersField.setWidthFull();
         availableForAllUsersField.addValueChangeListener(this::availableForAllUsersFieldValueChangeListener);
 
-        String label = messages.getMessage(getClass(), "availableForAllUsersField.label");
+        String label = messageBundle.getMessage("availableForAllUsersField.label");
         FormLayout.FormItem availableForAllUsersFormItem = getContent().addFormItem(availableForAllUsersField, label);
 
         availableForAllUsersFormItem.setVisible(allowGlobalFilters);
@@ -181,7 +181,7 @@ public class FlowuiDataFilterConfigurationDetail extends AbstractConfigurationDe
 
     protected void initGeneratedIdField() {
         FormLayout.FormItem formItem = getContent().addFormItem(generatedIdField,
-                messages.getMessage(getClass(), "generatedIdField.label"));
+                messageBundle.getMessage("generatedIdField.label"));
 
         formItem.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
     }

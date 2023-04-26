@@ -66,7 +66,8 @@ public class GenericFilterConfigurationConverter {
         String id = configurationModel.getConfigurationId();
         LogicalFilterCondition rootCondition = configurationModel.getRootCondition();
         FilterConverter converter = filterComponents.getConverterByModelClass(rootCondition.getClass(), filter);
-        LogicalFilterComponent<?> logicalFilterComponent = (LogicalFilterComponent<?>) converter.convertToComponent(rootCondition);
+        LogicalFilterComponent<?> logicalFilterComponent =
+                (LogicalFilterComponent<?>) converter.convertToComponent(rootCondition);
         Configuration configuration = new RunTimeConfiguration(id, logicalFilterComponent, filter);
         configuration.setName(configurationModel.getName());
 

@@ -56,7 +56,7 @@ public class GroupFilter extends Composite<VerticalLayout>
         implements LogicalFilterComponent<GroupFilter>, SupportsResponsiveSteps,
         ApplicationContextAware, InitializingBean {
 
-    protected static final String GROUP_FILTER_CLASS_NAME = "jmix-group-filter border border-contrast-20 rounded-l my-s";
+    protected static final String GROUP_FILTER_CLASS_NAME = "jmix-group-filter";
 
     protected ApplicationContext applicationContext;
     protected UiComponents uiComponents;

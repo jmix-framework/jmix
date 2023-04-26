@@ -84,6 +84,8 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
     @Autowired
     protected Messages messages;
     @Autowired
+    protected MessageBundle messageBundle;
+    @Autowired
     protected Metadata metadata;
     @Autowired
     protected MessageTools messageTools;
@@ -111,7 +113,6 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
     @Override
     public void setCurrentConfiguration(Configuration currentConfiguration) {
         super.setCurrentConfiguration(currentConfiguration);
-
         filterMetaClass = currentConfiguration.getOwner().getDataLoader().getContainer().getEntityMetaClass();
     }
 
@@ -187,7 +188,7 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
         }
 
         if (defaultValueField instanceof HasLabel) {
-            String label = messages.getMessage("io.jmix.flowui.entity.filter/FilterValueComponent.defaultValue");
+            String label = messageBundle.getMessage("jpqlFilterConditionDetailView.defaultValue");
             ((HasLabel) defaultValueField).setLabel(label);
         }
     }
@@ -211,7 +212,8 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
     }
 
     @Subscribe("parameterClassField")
-    protected void onParameterClassFieldComponentValueChange(ComponentValueChangeEvent<JmixSelect<Class<?>>, Class<?>> event) {
+    protected void onParameterClassFieldComponentValueChange(
+            ComponentValueChangeEvent<JmixSelect<Class<?>>, Class<?>> event) {
         Class<?> parameterClass = event.getValue();
 
         entityClassField.setVisible(parameterClass == Entity.class);
@@ -247,14 +249,16 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
     }
 
     @Subscribe("entityClassField")
-    protected void onEntityClassFieldComponentValueChange(ComponentValueChangeEvent<JmixSelect<Class<?>>, Class<?>> event) {
+    protected void onEntityClassFieldComponentValueChange(
+            ComponentValueChangeEvent<JmixSelect<Class<?>>, Class<?>> event) {
         if (event.isFromClient()) {
             updateDefaultValueByClass(event.getValue());
         }
     }
 
     @Subscribe("enumClassField")
-    protected void onEnumClassFieldComponentValueChange(ComponentValueChangeEvent<JmixSelect<Class<?>>, Class<?>> event) {
+    protected void onEnumClassFieldComponentValueChange(
+            ComponentValueChangeEvent<JmixSelect<Class<?>>, Class<?>> event) {
         if (event.isFromClient()) {
             updateDefaultValueByClass(event.getValue());
         }
@@ -270,7 +274,7 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
 
     @Install(to = "parameterClassField", subject = "itemLabelGenerator")
     protected String parameterClassFieldItemLabelGenerator(Class<?> parameterClass) {
-        return messages.getMessage(getClass(), "jpqlFilterConditionDetailView.parameterClassField."
+        return messageBundle.getMessage("jpqlFilterConditionDetailView.parameterClassField."
                 + parameterClass.getSimpleName());
     }
 
@@ -312,12 +316,10 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
 
     protected void createHelperButton(JmixTextArea textArea) {
         JmixButton helperButton = uiComponents.create(JmixButton.class);
-
         helperButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
-
         helperButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
 
-        String message = messages.getMessage(getClass(),
+        String message = messageBundle.getMessage(
                 "jpqlFilterConditionDetailView." + textArea.getId().orElseThrow() + ".tooltipMessage");
         helperButton.addClickListener(event ->
                 notifications.create(new Html(message))

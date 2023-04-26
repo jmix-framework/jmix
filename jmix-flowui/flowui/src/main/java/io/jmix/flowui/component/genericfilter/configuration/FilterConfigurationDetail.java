@@ -40,7 +40,7 @@ public class FilterConfigurationDetail extends AbstractConfigurationDetail {
         createNameField();
 
         getContent().addFormItem(nameField,
-                messages.getMessage(getClass(), "filterConfigurationDetail.nameField.label"));
+                messageBundle.getMessage("filterConfigurationDetail.nameField.label"));
     }
 
     protected void initConfigurationIdField() {
@@ -48,7 +48,7 @@ public class FilterConfigurationDetail extends AbstractConfigurationDetail {
 
         configurationIdField.setEnabled(false);
 
-        String label = messages.getMessage(getClass(), "filterConfigurationDetail.configurationIdField.label");
+        String label = messageBundle.getMessage("filterConfigurationDetail.configurationIdField.label");
         FormLayout.FormItem formItem = getContent().addFormItem(configurationIdField, label);
 
         formItem.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
@@ -58,7 +58,7 @@ public class FilterConfigurationDetail extends AbstractConfigurationDetail {
         createGeneratedIdField();
 
         FormLayout.FormItem formItem = getContent().addFormItem(generatedIdField,
-                messages.getMessage(getClass(), "filterConfigurationDetail.generatedIdField.label"));
+                messageBundle.getMessage("filterConfigurationDetail.generatedIdField.label"));
 
         formItem.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
     }

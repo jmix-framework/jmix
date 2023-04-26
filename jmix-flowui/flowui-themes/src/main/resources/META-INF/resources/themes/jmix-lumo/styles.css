@@ -28,6 +28,7 @@
 @import url('component/jmix-upload-field.css');
 @import url('component/jmix-image.css');
 @import url('component/jmix-property-filter.css');
+@import url('component/jmix-group-filter.css');
 
 html {
   --jmix-lumo-warning-background-color: hsla(43, 100%, 74%, 1);

@@ -24,7 +24,6 @@ import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -63,8 +62,6 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     @ViewComponent
     protected JmixSelect<PropertyFilter.Operation> operationField;
     @ViewComponent
-    protected TypedTextField<String> parameterNameField;
-    @ViewComponent
     protected HorizontalLayout defaultValueBox;
 
     @Autowired
@@ -80,7 +77,7 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     @Autowired
     protected MessageTools messageTools;
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     protected MetaClass filterMetaClass;
     protected String query;
@@ -154,7 +151,8 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
             FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
             if (valueComponent != null && valueComponent.getDefaultValue() != null) {
                 String modelDefaultValue = valueComponent.getDefaultValue();
-                MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(filterMetaClass, property);
+                MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(filterMetaClass,
+                        property);
 
                 if (metaPropertyPath != null) {
                     Object defaultValue = propertyFilterSupport.parseDefaultValue(metaPropertyPath.getMetaProperty(),
@@ -176,7 +174,7 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
         }
 
         if (defaultValueField instanceof HasLabel) {
-            String label = messages.getMessage("io.jmix.flowui.entity.filter/FilterValueComponent.defaultValue");
+            String label = messageBundle.getMessage("propertyFilterConditionDetailView.defaultValue");
             ((HasLabel) defaultValueField).setLabel(label);
         }
     }

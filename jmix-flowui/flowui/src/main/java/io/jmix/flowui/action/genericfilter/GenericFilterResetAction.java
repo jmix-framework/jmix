@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(GenericFilterResetAction.ID)
 public class GenericFilterResetAction extends GenericFilterAction<GenericFilterResetAction> {
 
-    public static final String ID = "filter_reset";
+    public static final String ID = "genericFilter_reset";
 
     public GenericFilterResetAction() {
         this(ID);

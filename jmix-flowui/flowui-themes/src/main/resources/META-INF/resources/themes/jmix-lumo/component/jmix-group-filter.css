@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.flowuidata.accesscontext;
-
-import io.jmix.core.accesscontext.SpecificOperationAccessContext;
-
-public class FlowuiFilterModifyGlobalConfigurationContext extends SpecificOperationAccessContext {
-
-    public static final String NAME = "flowui.genericfilter.modifyGlobalConfiguration";
-
-    public FlowuiFilterModifyGlobalConfigurationContext() {
-        super(NAME);
-    }
+.jmix-group-filter {
+  border: 1px solid;
+  border-color: var(--lumo-contrast-20pct);
+  border-radius: var(--lumo-border-radius-l);
+  margin-top: var(--lumo-space-s);
+  margin-bottom: var(--lumo-space-s);
 }

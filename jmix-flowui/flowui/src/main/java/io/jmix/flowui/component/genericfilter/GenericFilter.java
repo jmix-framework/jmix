@@ -888,7 +888,7 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected Action createConfigurationAction(Configuration configuration) {
-        return new BaseAction("filter_select_" + configuration.getId())
+        return new BaseAction("genericFilter_select_" + configuration.getId())
                 .withText(getConfigurationName(configuration))
                 .withHandler(actionPerformedEvent -> {
                     setCurrentConfigurationInternal(configuration, true);

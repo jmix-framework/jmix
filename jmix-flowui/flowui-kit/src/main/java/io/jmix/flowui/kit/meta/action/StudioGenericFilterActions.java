@@ -22,7 +22,7 @@ import io.jmix.flowui.kit.meta.*;
 public interface StudioGenericFilterActions {
 
     @StudioAction(
-            type = "filter_addCondition",
+            type = "genericFilter_addCondition",
             description = "Adds condition to current filter configuration",
             classFqn = "io.jmix.flowui.action.genericfilter.GenericFilterAddConditionAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -35,7 +35,7 @@ public interface StudioGenericFilterActions {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID,
-                            required = true, initialValue = "filter_addCondition"),
+                            required = true, initialValue = "genericFilter_addCondition"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -50,7 +50,7 @@ public interface StudioGenericFilterActions {
     void addConditionAction();
 
     @StudioAction(
-            type = "filter_clearValues",
+            type = "genericFilter_clearValues",
             description = "Clears the filter condition values",
             classFqn = "io.jmix.flowui.action.genericfilter.GenericFilterClearValuesAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -63,7 +63,7 @@ public interface StudioGenericFilterActions {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID,
-                            required = true, initialValue = "filter_clearValues"),
+                            required = true, initialValue = "genericFilter_clearValues"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -78,7 +78,7 @@ public interface StudioGenericFilterActions {
     void clearValuesAction();
 
     @StudioAction(
-            type = "filter_copy",
+            type = "genericFilter_copy",
             description = "Copies all conditions from design-time configuration to run-time configuration",
             classFqn = "io.jmix.flowui.action.genericfilter.GenericFilterCopyAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -91,7 +91,7 @@ public interface StudioGenericFilterActions {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID,
-                            required = true, initialValue = "filter_copy"),
+                            required = true, initialValue = "genericFilter_copy"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -106,7 +106,7 @@ public interface StudioGenericFilterActions {
     void copyAction();
 
     @StudioAction(
-            type = "filter_reset",
+            type = "genericFilter_reset",
             description = "Resets current configuration",
             classFqn = "io.jmix.flowui.action.genericfilter.GenericFilterResetAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -119,7 +119,7 @@ public interface StudioGenericFilterActions {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID,
-                            required = true, initialValue = "filter_reset"),
+                            required = true, initialValue = "genericFilter_reset"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")

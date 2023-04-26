@@ -21,7 +21,6 @@ import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.Messages;
 import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
@@ -30,6 +29,7 @@ import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.view.MessageBundle;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -45,7 +45,7 @@ public abstract class AbstractConfigurationDetail extends Composite<FormLayout>
 
     protected ApplicationContext applicationContext;
     protected UiComponents uiComponents;
-    protected Messages messages;
+    protected MessageBundle messageBundle;
     protected FlowuiComponentProperties flowuiComponentProperties;
 
     protected TypedTextField<String> nameField;
@@ -77,7 +77,7 @@ public abstract class AbstractConfigurationDetail extends Composite<FormLayout>
 
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
-        messages = applicationContext.getBean(Messages.class);
+        messageBundle = applicationContext.getBean(MessageBundle.class);
         flowuiComponentProperties = applicationContext.getBean(FlowuiComponentProperties.class);
     }
 

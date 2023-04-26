@@ -121,8 +121,10 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                     String path = FilterUtils.generateFilterPath((GenericFilter) component);
 
                     if (filterPaths.contains(path)) {
-                        throw new GuiDevelopmentException("Filters with the same component path should have different ids",
-                                getComponentContext());
+                        throw new GuiDevelopmentException(
+                                "Filters with the same component path should have different ids",
+                                getComponentContext()
+                        );
                     } else {
                         filterPaths.add(path);
                     }

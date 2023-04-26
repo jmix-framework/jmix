@@ -44,7 +44,7 @@ import java.util.List;
 @DialogMode(height = "AUTO", width = "64em")
 public class GroupFilterConditionDetailView extends LogicalFilterConditionDetailView<GroupFilterCondition> {
 
-    protected static final String GROUP_FILTER_CLASS_NAME = "jmix-group-filter border border-contrast-20 rounded-l my-s";
+    protected static final String GROUP_FILTER_CLASS_NAME = "jmix-group-filter";
 
     @ViewComponent
     protected InstanceContainer<GroupFilterCondition> filterConditionDc;
@@ -121,7 +121,8 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
 
     @Subscribe
     protected void onReady(ReadyEvent event) {
-        getCollectionContainer().addItemChangeListener(itemChangeEvent -> refreshMoveButtonsState(itemChangeEvent.getItem()));
+        getCollectionContainer().addItemChangeListener(itemChangeEvent ->
+                refreshMoveButtonsState(itemChangeEvent.getItem()));
         operationField.addValueChangeListener(valueChangeEvent -> {
             if (valueChangeEvent.getValue() != null) {
                 getEditedEntity().setLocalizedLabel(valueChangeEvent.getValue().getId());

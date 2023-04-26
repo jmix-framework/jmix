@@ -101,4 +101,9 @@ public class JmixCheckBoxConnector extends CheckBoxConnector {
     protected void updateWidgetReadOnlyState() {
         getWidget().setReadOnly(isReadOnly());
     }
+
+    @Override
+    protected boolean isCaptionManagedByLayout() {
+        return getState().captionManagedByLayout;
+    }
 }

@@ -54,6 +54,7 @@ public class RemoveOperation {
     protected ExtendedEntities extendedEntities;
     protected EntityStates entityStates;
     protected Metadata metadata;
+    protected MetadataTools metadataTools;
 
     @Autowired
     public void setDataManager(DataManager dataManager) {
@@ -78,6 +79,11 @@ public class RemoveOperation {
     @Autowired
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
     }
 
     /**
@@ -215,7 +221,7 @@ public class RemoveOperation {
                                 CollectionContainer<?> container, ViewData viewData) {
 
         List<?> entitiesToSave = entitiesToRemove.stream()
-                .filter(entity -> !entityStates.isNew(entity))
+                .filter(entity -> !entityStates.isNew(entity) || !metadataTools.isJpaEntity(entity.getClass()))
                 .collect(Collectors.toList());
 
         boolean needSave = !entitiesToSave.isEmpty();

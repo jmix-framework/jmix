@@ -17,7 +17,6 @@
 package io.jmix.ui.settings.component.binder;
 
 import com.google.common.base.Strings;
-import io.jmix.core.UuidProvider;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
@@ -218,8 +217,12 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
             columnSettings.setId(columnId.toString());
 
             int width = vTable.getColumnWidth(columnId);
-            if (width > -1)
+            float expandRatio = vTable.getColumnExpandRatio(columnId);
+            if (width > -1) {
                 columnSettings.setWidth(width);
+            } else if (expandRatio > -1) {
+                columnSettings.setExpandRatio(expandRatio);
+            }
 
             boolean visible = !vTable.isColumnCollapsed(columnId);
             columnSettings.setVisible(visible);
@@ -307,7 +310,15 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
                     newColumns.add(column);
 
                     Integer width = columnSetting.getWidth();
-                    vTable.setColumnWidth(column, width == null ? -1 : width);
+                    Float expandRatio = columnSetting.getExpandRatio();
+                    if (width != null) {
+                        vTable.setColumnWidth(column, width);
+                    } else if (expandRatio != null) {
+                        vTable.setColumnExpandRatio(column, expandRatio);
+                    } else {
+                        vTable.setColumnWidth(column, -1);
+                    }
+
 
                     Boolean visible = columnSetting.getVisible();
                     if (visible != null) {

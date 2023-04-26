@@ -82,6 +82,7 @@ public class TableSettings implements ComponentSettings {
 
         protected String id;
         protected Integer width;
+        protected Float expandRatio;
         protected Boolean visible;
 
         public String getId() {
@@ -99,6 +100,15 @@ public class TableSettings implements ComponentSettings {
 
         public void setWidth(Integer width) {
             this.width = width;
+        }
+
+        @Nullable
+        public Float getExpandRatio() {
+            return expandRatio;
+        }
+
+        public void setExpandRatio(Float expandRatio) {
+            this.expandRatio = expandRatio;
         }
 
         @Nullable

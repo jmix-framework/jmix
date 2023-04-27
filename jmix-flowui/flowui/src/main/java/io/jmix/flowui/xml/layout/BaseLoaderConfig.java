@@ -90,6 +90,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("fileStorageUploadField", FileStorageUploadFieldLoader.class);
         loaders.put("upload", UploadLoader.class);
         loaders.put("propertyFilter", PropertyFilterLoader.class);
+        loaders.put("jpqlFilter", JpqlFilterLoader.class);
+        loaders.put("groupFilter", GroupFilterLoader.class);
         loaders.put("genericFilter", GenericFilterLoader.class);
 
         /* HTML components */

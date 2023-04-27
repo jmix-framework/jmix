@@ -231,6 +231,7 @@ public interface StudioElements {
                     "io.jmix.flowui.component.details.JmixDetails",
                     "io.jmix.flowui.component.genericfilter.GenericFilter",
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
+                    "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
                     "com.vaadin.flow.component.tabs.Tab"},
             properties = {
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.STRING, required = true),
@@ -272,7 +273,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
             }
     )
-    void propertyFilter();
+    void facetPropertyFilter();
 
     @StudioElement(
             name = "ResponsiveStep",
@@ -286,5 +287,167 @@ public interface StudioElements {
                             options = {"ASIDE", "TOP"})
             }
     )
-    FormLayout.ResponsiveStep responsiveStep();
+    FormLayout.ResponsiveStep formLayoutResponsiveStep();
+
+    @StudioElement(
+            name = "ResponsiveStep",
+            classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
+            xmlElement = "responsiveStep",
+            properties = {
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE, required = true),
+                    @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
+                    @StudioProperty(xmlAttribute = "labelsPosition", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps$ResponsiveStep$LabelsPosition",
+                            options = {"ASIDE", "TOP"})
+            }
+    )
+    void responsiveStep();
+
+    @StudioElement(
+            name = "PropertyFilter",
+            classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter",
+            xmlElement = "propertyFilter",
+            target = {
+                    "io.jmix.flowui.component.logicalfilter.GroupFilter",
+                    "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "defaultValue", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "operation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter$Operation",
+                            options = {"EQUAL", "NOT_EQUAL", "GREATER",
+                                    "GREATER_OR_EQUAL", "LESS", "LESS_OR_EQUAL", "CONTAINS", "NOT_CONTAINS",
+                                    "STARTS_WITH", "ENDS_WITH", "IS_SET"}, required = true),
+                    @StudioProperty(xmlAttribute = "operationEditable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "operationTextVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "parameterName", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF,
+                            typeParameter = "V", required = true),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+    )
+    void propertyFilter();
+
+    @StudioElement(
+            name = "JpqlFilter",
+            classFqn = "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
+            xmlElement = "jpqlFilter",
+            target = {
+                    "io.jmix.flowui.component.logicalfilter.GroupFilter",
+                    "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "defaultValue", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "hasInExpression", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "parameterClass", type = StudioPropertyType.STRING,
+                            typeParameter = "V", required = true),
+                    @StudioProperty(xmlAttribute = "parameterName", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    void jpqlFilter();
+
+    @StudioElement(
+            name = "GroupFilter",
+            classFqn = "io.jmix.flowui.component.logicalfilter.GroupFilter",
+            xmlElement = "groupFilter",
+            target = {
+                    "io.jmix.flowui.component.logicalfilter.GroupFilter",
+                    "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "operation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.logicalfilter.LogicalFilterComponent$Operation",
+                            options = {"AND", "OR"}, required = true),
+                    @StudioProperty(xmlAttribute = "operationTextVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "summaryText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+            }
+    )
+    void groupFilter();
+
+    @StudioElement(
+            name = "Configuration",
+            classFqn = "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration",
+            xmlElement = "configuration",
+            properties = {
+                    @StudioProperty(xmlAttribute = "default", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "operation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.logicalfilter.LogicalFilterComponent$Operation",
+                            options = {"AND", "OR"}, defaultValue = "AND"),
+            }
+    )
+    void configuration();
+
+    @StudioElement(
+            name = "Properties",
+            classFqn = "io.jmix.flowui.component.genericfilter.inspector.FilterPropertiesInspector",
+            xmlElement = "properties",
+            target = {"io.jmix.flowui.component.genericfilter.GenericFilter"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "include", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "excludeProperties", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "excludeRecursively", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false")
+            }
+    )
+    void properties();
 }

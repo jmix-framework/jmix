@@ -71,8 +71,12 @@ public class LogicalFilterSupport {
             }
 
             if (condition instanceof LogicalFilterCondition) {
-                return findSelectedConditionFromRootFilterCondition(
+                FilterCondition foundCondition = findSelectedConditionFromRootFilterCondition(
                         (LogicalFilterCondition) condition, selectedCondition);
+
+                if (foundCondition != null) {
+                    return foundCondition;
+                }
             }
         }
 

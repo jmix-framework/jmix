@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,6 @@ package io.jmix.flowui.entity.filter;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
-
-import jakarta.annotation.Nullable;
-import java.util.Objects;
 
 @JmixEntity(name = "flowui_PropertyFilterCondition")
 @SystemLevel
@@ -54,7 +51,7 @@ public class PropertyFilterCondition extends AbstractSingleFilterCondition {
     }
 
     public Operation getOperation() {
-        return operationFromId(operation);
+        return Operation.fromId(operation);
     }
 
     public void setOperation(Operation operation) {
@@ -75,15 +72,5 @@ public class PropertyFilterCondition extends AbstractSingleFilterCondition {
 
     public void setOperationTextVisible(Boolean operationTextVisible) {
         this.operationTextVisible = operationTextVisible;
-    }
-
-    @Nullable
-    public static Operation operationFromId(String id) {
-        for (Operation operation : Operation.values()) {
-            if (Objects.equals(id, operation.name())) {
-                return operation;
-            }
-        }
-        return null;
     }
 }

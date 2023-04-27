@@ -31,6 +31,7 @@ import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.component.delegate.DatePickerDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.kit.meta.StudioIgnore;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -98,6 +99,7 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
         return internalValue;
     }
 
+    @StudioIgnore
     @Override
     public void setTypedValue(@Nullable V value) {
         setValueInternal(convertToPresentation(value));

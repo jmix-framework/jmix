@@ -16,9 +16,16 @@
 
 package io.jmix.flowui.kit.meta;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Annotation marks which elements should be ignored in the Studio.
  * For example, ignoring some methods when scanning component class for handlers.
  */
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
+@Retention(RetentionPolicy.SOURCE)
 public @interface StudioIgnore {
 }

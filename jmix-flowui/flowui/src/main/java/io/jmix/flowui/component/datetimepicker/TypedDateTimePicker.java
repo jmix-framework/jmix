@@ -35,7 +35,6 @@ import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.kit.meta.StudioIgnore;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -212,7 +211,6 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
         return internalValue;
     }
 
-    @StudioIgnore
     @Override
     public void setTypedValue(@Nullable V value) {
         setValueInternal(convertToPresentation(value));

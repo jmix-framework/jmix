@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.component;
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ItemLabelGenerator;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -82,6 +83,11 @@ public final class FlowuiComponentUtils {
         }
 
         return index;
+    }
+
+    public static <T> void setItemsMap(CheckboxGroup<T> component, Map<T, String> items) {
+        setItemsMapInternal(component, items);
+        component.setItemLabelGenerator(createItemLabelGenerator(items));
     }
 
     public static <T> void setItemsMap(ComboBox<T> component, Map<T, String> items) {

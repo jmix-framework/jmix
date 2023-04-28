@@ -99,9 +99,10 @@ public class CoreProperties {
     PessimisticLock pessimisticLock;
 
     /**
-     * Whether BigDecimalDatatype should round the actual parsed value according to format settings.
+     * Whether BigDecimalDatatype, DoubleDatatype and FloatDatatype should round the actual parsed value
+     * according to format settings.
      */
-    boolean bigDecimalValueRoundByFormat;
+    boolean decimalValueRoundByFormat;
 
     public CoreProperties(
             String webHostName,
@@ -123,7 +124,7 @@ public class CoreProperties {
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
             @DefaultValue PessimisticLock pessimisticLock,
-            @DefaultValue("true") boolean bigDecimalValueRoundByFormat) {
+            @DefaultValue("true") boolean decimalValueRoundByFormat) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -152,7 +153,7 @@ public class CoreProperties {
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.pessimisticLock = pessimisticLock;
-        this.bigDecimalValueRoundByFormat = bigDecimalValueRoundByFormat;
+        this.decimalValueRoundByFormat = decimalValueRoundByFormat;
     }
 
     public String getWebHostName() {
@@ -288,9 +289,9 @@ public class CoreProperties {
     }
 
     /**
-     * @see #bigDecimalValueRoundByFormat
+     * @see #decimalValueRoundByFormat
      */
-    public boolean isBigDecimalValueRoundByFormat() {
-        return bigDecimalValueRoundByFormat;
+    public boolean isDecimalValueRoundByFormat() {
+        return decimalValueRoundByFormat;
     }
 }

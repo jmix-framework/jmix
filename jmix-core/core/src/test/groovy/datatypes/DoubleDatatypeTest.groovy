@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,42 +17,42 @@
 package datatypes
 
 import format_strings.TestFormatStringsRegistry
-import io.jmix.core.metamodel.datatype.impl.BigDecimalDatatype
+import io.jmix.core.metamodel.datatype.impl.DoubleDatatype
 import properties.TestCoreProperties
 import spock.lang.Specification
 
 import java.text.ParseException
 
-class BigDecimalDatatypeTest extends Specification {
+class DoubleDatatypeTest  extends Specification {
 
     def "format/parse without locale, without rounding"() {
-        def datatype = new BigDecimalDatatype()
+        def datatype = new DoubleDatatype()
         datatype.coreProperties = TestCoreProperties.builder()
                 .setDecimalValueRoundByFormat(false)
                 .build()
 
         expect:
 
-        datatype.format(new BigDecimal('12345678.12345678')) == '12345678.1235'
-        datatype.parse('12345678.12345678') == new BigDecimal('12345678.12345678')
-        datatype.parse('12345678.456789') == new BigDecimal('12345678.456789')
+        datatype.format(Double.valueOf('12345678.12345678')) == '12345678.123'
+        datatype.parse('12345678.12345678') == Double.valueOf('12345678.12345678')
+        datatype.parse('12345678.456789') == Double.valueOf('12345678.456789')
     }
 
     def "format/parse without locale, with rounding"() {
-        def datatype = new BigDecimalDatatype()
+        def datatype = new DoubleDatatype()
         datatype.coreProperties = TestCoreProperties.builder()
                 .setDecimalValueRoundByFormat(true)
                 .build()
 
         expect:
 
-        datatype.format(new BigDecimal('12345678.12345678')) == '12345678.1235'
-        datatype.parse('12345678.12345678') == new BigDecimal('12345678.1235')
-        datatype.parse('12345678.456789') == new BigDecimal('12345678.4568')
+        datatype.format(Double.valueOf('12345678.12345678')) == '12345678.123'
+        datatype.parse('12345678.12345678') == Double.valueOf('12345678.123')
+        datatype.parse('12345678.456789') == Double.valueOf('12345678.457')
     }
 
-    def "format/parse with locale, without rounding"() {
-        def datatype = new BigDecimalDatatype()
+    def "format/parse with locale, without decimal rounding"() {
+        def datatype = new DoubleDatatype()
         datatype.formatStringsRegistry = new TestFormatStringsRegistry()
         datatype.coreProperties = TestCoreProperties.builder()
                 .setDecimalValueRoundByFormat(false)
@@ -60,15 +60,15 @@ class BigDecimalDatatypeTest extends Specification {
 
         expect:
 
-        datatype.format(new BigDecimal('12345678.12345678'), Locale.ENGLISH) == '12,345,678.12'
-        datatype.parse('12345678.12345678', Locale.ENGLISH) == new BigDecimal('12345678.12345678')
-        datatype.parse('12345678.456789', Locale.ENGLISH) == new BigDecimal('12345678.456789')
-        datatype.parse('12,345,678.12345678', Locale.ENGLISH) == new BigDecimal('12345678.12345678')
+        datatype.format(Double.valueOf('12345678.12345678'), Locale.ENGLISH) == '12,345,678.123'
+        datatype.parse('12345678.12345678', Locale.ENGLISH) == Double.valueOf('12345678.12345678')
+        datatype.parse('12345678.456789', Locale.ENGLISH) == Double.valueOf('12345678.456789')
+        datatype.parse('12,345,678.12345678', Locale.ENGLISH) == Double.valueOf('12345678.12345678')
 
     }
 
-    def "format/parse with locale, with rounding"() {
-        def datatype = new BigDecimalDatatype()
+    def "format/parse with locale, with decimal rounding"() {
+        def datatype = new DoubleDatatype()
         datatype.formatStringsRegistry = new TestFormatStringsRegistry()
         datatype.coreProperties = TestCoreProperties.builder()
                 .setDecimalValueRoundByFormat(true)
@@ -76,19 +76,19 @@ class BigDecimalDatatypeTest extends Specification {
 
         expect:
 
-        datatype.format(new BigDecimal('12345678.12345678'), Locale.ENGLISH) == '12,345,678.12'
-        datatype.parse('12345678.12345678', Locale.ENGLISH) == new BigDecimal('12345678.12')
-        datatype.parse('12345678.456789', Locale.ENGLISH) == new BigDecimal('12345678.46')
-        datatype.parse('12,345,678.12345678', Locale.ENGLISH) == new BigDecimal('12345678.12')
+        datatype.format(Double.valueOf('12345678.12345678'), Locale.ENGLISH) == '12,345,678.123'
+        datatype.parse('12345678.12345678', Locale.ENGLISH) == Double.valueOf('12345678.123')
+        datatype.parse('12345678.456789', Locale.ENGLISH) == Double.valueOf('12345678.457')
+        datatype.parse('12,345,678.12345678', Locale.ENGLISH) == Double.valueOf('12345678.123')
     }
 
     def "parse error due to unknown separators"() {
-        def datatype = new BigDecimalDatatype()
+        def datatype = new DoubleDatatype()
         datatype.formatStringsRegistry = new TestFormatStringsRegistry()
 
         when:
 
-        datatype.parse('12 345 678,12345678', Locale.ENGLISH) == new BigDecimal('12345678.12345678')
+        datatype.parse('12 345 678,12345678', Locale.ENGLISH) == Double.valueOf('12345678.12345678')
 
         then:
 

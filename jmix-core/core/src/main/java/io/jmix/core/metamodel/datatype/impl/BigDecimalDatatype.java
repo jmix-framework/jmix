@@ -98,8 +98,12 @@ public class BigDecimalDatatype extends NumberDatatype implements Datatype<BigDe
         DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
         DecimalFormat format = new DecimalFormat(formatStrings.getDecimalFormat(), formatSymbols);
         format.setParseBigDecimal(true);
-        BigDecimal result = (BigDecimal) parse(value, format);
-        if(coreProperties.isBigDecimalValueRoundByFormat()) {
+        return (BigDecimal) parse(value, format);
+    }
+
+    protected Number parse(String value, java.text.NumberFormat format) throws ParseException {
+        BigDecimal result = (BigDecimal) super.parse(value, format);
+        if (coreProperties.isDecimalValueRoundByFormat()) {
             int maximumFractionDigits = format.getMaximumFractionDigits();
             RoundingMode roundingMode = format.getRoundingMode();
             result = result.setScale(maximumFractionDigits, roundingMode);

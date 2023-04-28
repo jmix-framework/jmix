@@ -46,61 +46,66 @@ public class QuartzService {
             List<JobKey> jobDetailsKeys = jobDetailsFinder.getJobDetailBeanKeys();
 
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
-                JobModel jobModel = dataManager.create(JobModel.class);
-                jobModel.setJobName(jobKey.getName());
-                jobModel.setJobGroup(jobKey.getGroup());
-                jobModel.setJobDataParameters(getDataParamsOfJob(jobKey));
+                try {
+                    JobDetail jobDetail = scheduler.getJobDetail(jobKey);
 
-                JobDetail jobDetail = scheduler.getJobDetail(jobKey);
-                jobModel.setJobClass(jobDetail.getJobClass().getName());
-                jobModel.setDescription(jobDetail.getDescription());
+                    JobModel jobModel = dataManager.create(JobModel.class);
+                    jobModel.setJobName(jobKey.getName());
+                    jobModel.setJobGroup(jobKey.getGroup());
+                    jobModel.setJobDataParameters(getDataParamsOfJob(jobKey));
 
-                jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
+                    jobModel.setJobClass(jobDetail.getJobClass().getName());
+                    jobModel.setDescription(jobDetail.getDescription());
 
-                List<TriggerModel> triggerModels = new ArrayList<>();
-                List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
-                if (!CollectionUtils.isEmpty(jobTriggers)) {
-                    boolean isActive = false;
-                    for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
-                        TriggerModel triggerModel = dataManager.create(TriggerModel.class);
-                        triggerModel.setTriggerName(trigger.getKey().getName());
-                        triggerModel.setTriggerGroup(trigger.getKey().getGroup());
-                        triggerModel.setScheduleType(trigger instanceof SimpleTrigger ? ScheduleType.SIMPLE : ScheduleType.CRON_EXPRESSION);
-                        triggerModel.setStartDate(trigger.getStartTime());
-                        triggerModel.setLastFireDate(trigger.getPreviousFireTime());
-                        triggerModel.setNextFireDate(trigger.getNextFireTime());
+                    jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
 
-                        boolean isTriggeredNow = false;
-                        if (trigger instanceof CronTrigger) {
-                            triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
-                        } else if (trigger instanceof SimpleTrigger) {
-                            SimpleTrigger simpleTrigger = (SimpleTrigger) trigger;
-                            if (simpleTrigger.getRepeatCount() > 0) {
-                                //because org.quartz.SimpleScheduleBuilder.withRepeatCount
-                                triggerModel.setRepeatCount(simpleTrigger.getRepeatCount() + 1);
+                    List<TriggerModel> triggerModels = new ArrayList<>();
+                    List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
+                    if (!CollectionUtils.isEmpty(jobTriggers)) {
+                        boolean isActive = false;
+                        for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
+                            TriggerModel triggerModel = dataManager.create(TriggerModel.class);
+                            triggerModel.setTriggerName(trigger.getKey().getName());
+                            triggerModel.setTriggerGroup(trigger.getKey().getGroup());
+                            triggerModel.setScheduleType(trigger instanceof SimpleTrigger ? ScheduleType.SIMPLE : ScheduleType.CRON_EXPRESSION);
+                            triggerModel.setStartDate(trigger.getStartTime());
+                            triggerModel.setLastFireDate(trigger.getPreviousFireTime());
+                            triggerModel.setNextFireDate(trigger.getNextFireTime());
+
+                            boolean isTriggeredNow = false;
+                            if (trigger instanceof CronTrigger) {
+                                triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
+                            } else if (trigger instanceof SimpleTrigger) {
+                                SimpleTrigger simpleTrigger = (SimpleTrigger) trigger;
+                                if (simpleTrigger.getRepeatCount() > 0) {
+                                    //because org.quartz.SimpleScheduleBuilder.withRepeatCount
+                                    triggerModel.setRepeatCount(simpleTrigger.getRepeatCount() + 1);
+                                }
+                                triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());
+
+                                isTriggeredNow = simpleTrigger.getRepeatCount() == 0 && simpleTrigger.getRepeatInterval() == 0L;
                             }
-                            triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());
 
-                            isTriggeredNow = simpleTrigger.getRepeatCount() == 0 && simpleTrigger.getRepeatInterval() == 0L;
+                            if (!isTriggeredNow) {
+                                triggerModels.add(triggerModel);
+                                if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL &&
+                                        scheduler.isStarted() && !scheduler.isInStandbyMode()) {
+                                    isActive = true;
+                                }
+                            }
                         }
 
-                        if (!isTriggeredNow) {
-                            triggerModels.add(triggerModel);
-                            if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL &&
-                                    scheduler.isStarted() && !scheduler.isInStandbyMode()) {
-                                isActive = true;
-                            }
-                        }
+                        jobModel.setTriggers(triggerModels);
+                        jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
                     }
 
-                    jobModel.setTriggers(triggerModels);
-                    jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                    result.add(jobModel);
+                } catch (SchedulerException e) {
+                    log.error("Unable to fetch information about the job: {}", jobKey, e);
                 }
-
-                result.add(jobModel);
             }
         } catch (SchedulerException e) {
-            log.warn("Unable to fetch information about active jobs", e);
+            log.error("Unable to fetch information about active jobs", e);
         }
 
         return result;

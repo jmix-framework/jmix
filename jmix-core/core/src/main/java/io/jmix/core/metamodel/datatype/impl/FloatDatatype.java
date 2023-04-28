@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -37,6 +38,9 @@ import java.util.Locale;
         groupingSeparator = ""
 )
 public class FloatDatatype extends NumberDatatype implements Datatype<Float> {
+
+    private static final BigDecimal FLOAT_MIN_VALUE = BigDecimal.valueOf(-Float.MAX_VALUE);
+    private static final BigDecimal FLOAT_MAX_VALUE = BigDecimal.valueOf(Float.MAX_VALUE);
 
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
@@ -83,36 +87,23 @@ public class FloatDatatype extends NumberDatatype implements Datatype<Float> {
         }
 
         DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
-        NumberFormat format = new DecimalFormat(formatStrings.getDoubleFormat(), formatSymbols);
+        DecimalFormat format = new DecimalFormat(formatStrings.getDoubleFormat(), formatSymbols);
+        format.setParseBigDecimal(true);
         return parse(value, format).floatValue();
     }
 
     @Override
     protected Number parse(String value, NumberFormat format) throws ParseException {
-        Number result = super.parse(value, format);
-        if (!hasValidFloatRange(result)) {
+        BigDecimal result = (BigDecimal)super.parse(value, format);
+        if (!isInFloatRange(result)) {
             throw new ParseException(String.format("Float range exceeded: \"%s\"", value), 0);
         }
 
         return result;
     }
 
-    protected boolean hasValidFloatRange(Number result) {
-        if (result instanceof Long) {
-            Long longResult = (Long) result;
-
-            if (longResult > Float.MAX_VALUE || longResult < Float.MIN_VALUE) {
-                return false;
-            }
-        } else {
-            Double doubleResult = (Double) result;
-
-            if (doubleResult > Float.MAX_VALUE || doubleResult < Float.MIN_VALUE) {
-                return false;
-            }
-        }
-
-        return true;
+    protected boolean isInFloatRange(BigDecimal result) {
+        return result.compareTo(FLOAT_MAX_VALUE) <= 0 && result.compareTo(FLOAT_MIN_VALUE) >= 0;
     }
 
     @Override

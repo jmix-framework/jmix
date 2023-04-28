@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.action.multivaluepicker;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -28,6 +30,7 @@ import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.app.multivaluepicker.MultiValueSelectView;
 import io.jmix.flowui.app.multivaluepicker.MultiValueSelectView.MultiValueSelectContext;
+import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
@@ -39,10 +42,10 @@ import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.WindowBuilder;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -58,7 +61,7 @@ import static io.jmix.flowui.view.StandardOutcome.SELECT;
  */
 @ActionType(MultiValueSelectAction.ID)
 public class MultiValueSelectAction<E>
-        extends PickerAction<MultiValueSelectAction<E>, JmixMultiValuePicker<E>, Collection<E>>
+        extends PickerAction<MultiValueSelectAction<E>, PickerComponent<Collection<E>>, Collection<E>>
         implements InitializingBean, ViewOpeningAction {
 
     public static final String ID = "multi_value_select";
@@ -277,7 +280,7 @@ public class MultiValueSelectAction<E>
     public void execute() {
         checkTarget();
 
-        View<?> origin = UiComponentUtils.findView(target);
+        View<?> origin = UiComponentUtils.findView((Component) target);
         if (origin == null) {
             String message = String.format("%s component is not bound to a view", target.getClass().getSimpleName());
             throw new IllegalStateException(message);
@@ -297,13 +300,13 @@ public class MultiValueSelectAction<E>
         }
 
         multiValueSelectContext.setTargetClass(view.getClass());
-        multiValueSelectContext.setReadOnly(target.isReadOnly());
+        multiValueSelectContext.setReadOnly(((HasValueAndElement<?, ?>) target).isReadOnly());
 
         if (target.getValueSource() instanceof EntityValueSource) {
             initMultiValuePickerComponentValueType((EntityValueSource<?, ?>) target.getValueSource());
         }
 
-        multiValueSelectContext.setInitialValues(target.getValue());
+        multiValueSelectContext.setInitialValues(((HasValueAndElement<?, Collection<E>>) target).getValue());
 
         ((MultiValueSelectView<E>) view).setMultiValueSelectContext(multiValueSelectContext);
 

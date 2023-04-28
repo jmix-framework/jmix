@@ -34,7 +34,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * An instance of this class should be obtained through {@link ViewNavigators#detailView(Class)} and its overloaded
  * variants.
  */
-public class DetailViewNavigator<E> extends ViewNavigator {
+public class DetailViewNavigator<E> extends AbstractViewNavigator {
 
     protected final Class<E> entityClass;
 
@@ -48,6 +48,15 @@ public class DetailViewNavigator<E> extends ViewNavigator {
         checkNotNullArgument(entityClass);
 
         this.entityClass = entityClass;
+    }
+
+    protected DetailViewNavigator(DetailViewNavigator<E> viewNavigator) {
+        super(viewNavigator);
+
+        this.entityClass = viewNavigator.entityClass;
+        this.editedEntity = viewNavigator.editedEntity;
+        this.readOnly = viewNavigator.readOnly;
+        this.mode = viewNavigator.mode;
     }
 
     public DetailViewNavigator<E> newEntity() {
@@ -69,10 +78,14 @@ public class DetailViewNavigator<E> extends ViewNavigator {
         return this;
     }
 
-    @Override
-    public DetailViewNavigator<E> withViewClass(@Nullable Class<? extends View> viewClass) {
-        super.withViewClass(viewClass);
-        return this;
+    /**
+     * Sets the opened view by its class.
+     *
+     * @param viewClass view class
+     * @return this instance for chaining
+     */
+    public <V extends View<?>> DetailViewClassNavigator<E, V> withViewClass(Class<V> viewClass) {
+        return new DetailViewClassNavigator<>(this, viewClass);
     }
 
     @Override

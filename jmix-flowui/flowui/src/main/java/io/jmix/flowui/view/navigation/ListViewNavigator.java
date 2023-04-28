@@ -31,7 +31,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * <p>
  * An instance of this class should be obtained through {@link ViewNavigators#listView(Class)}.
  */
-public class ListViewNavigator<E> extends ViewNavigator {
+public class ListViewNavigator<E> extends AbstractViewNavigator {
 
     protected final Class<E> entityClass;
 
@@ -43,16 +43,26 @@ public class ListViewNavigator<E> extends ViewNavigator {
         this.entityClass = entityClass;
     }
 
+    protected ListViewNavigator(ListViewNavigator<E> viewNavigator) {
+        super(viewNavigator);
+
+        this.entityClass = viewNavigator.entityClass;
+    }
+
     @Override
     public ListViewNavigator<E> withViewId(@Nullable String viewId) {
         super.withViewId(viewId);
         return this;
     }
 
-    @Override
-    public ListViewNavigator<E> withViewClass(@Nullable Class<? extends View> viewClass) {
-        super.withViewClass(viewClass);
-        return this;
+    /**
+     * Sets the opened view by its class.
+     *
+     * @param viewClass view class
+     * @return this instance for chaining
+     */
+    public <V extends View<?>> ListViewClassNavigator<E, V> withViewClass(Class<V> viewClass) {
+        return new ListViewClassNavigator<>(this, viewClass);
     }
 
     @Override

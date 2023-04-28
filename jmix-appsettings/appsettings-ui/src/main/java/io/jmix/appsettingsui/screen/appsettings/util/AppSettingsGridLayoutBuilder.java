@@ -9,7 +9,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
@@ -31,9 +30,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.Convert;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static io.jmix.appsettingsui.screen.appsettings.util.EntityUtils.isMany;
 
@@ -94,9 +91,7 @@ public class AppSettingsGridLayoutBuilder {
 
     public GridLayout build() {
         MetaClass metaClass = container.getEntityMetaClass();
-        List<MetaProperty> metaProperties = collectMetaProperties(metaClass, container.getItem()).stream()
-                .sorted(Comparator.comparing(MetadataObject::getName))
-                .collect(Collectors.toList());
+        List<MetaProperty> metaProperties = collectMetaProperties(metaClass, container.getItem());
 
         GridLayout gridLayout = uiComponents.create(GridLayout.class);
         gridLayout.setSpacing(true);
@@ -155,6 +150,9 @@ public class AppSettingsGridLayoutBuilder {
             }
         }
 
+        result.sort((m1, m2) -> appSettingsTools.getPropertyOrder(metaClass.getJavaClass(), m1.getName())
+                - appSettingsTools.getPropertyOrder(metaClass.getJavaClass(), m2.getName()));
+
         return result;
     }
 
@@ -186,19 +184,19 @@ public class AppSettingsGridLayoutBuilder {
         ValueSource valueSource = new ContainerValueSource<>(container, metaProperty.getName());
         ComponentGenerationContext componentContext = new ComponentGenerationContext(metaClass, metaProperty.getName());
         componentContext.setValueSource(valueSource);
-        gridLayout.add(createField(metaProperty, range, componentContext), 1, currentRow + 1);
+        gridLayout.add(createField(null, metaProperty, range, componentContext), 1, currentRow + 1);
 
         //default value
         ComponentGenerationContext componentContextForDefaultField = new ComponentGenerationContext(metaClass, metaProperty.getName());
         ValueSource valueSourceForDefaultField = new ContainerValueSource<>(dataComponents.createInstanceContainer(metaClass.getJavaClass()), metaProperty.getName());
         componentContextForDefaultField.setValueSource(valueSourceForDefaultField);
-        Field defaultValueField = createField(metaProperty, range, componentContextForDefaultField);
+        Field defaultValueField = createField(metaClass, metaProperty, range, componentContextForDefaultField);
         defaultValueField.setValue(appSettingsTools.getDefaultPropertyValue(metaClass.getJavaClass(), metaProperty.getName()));
         defaultValueField.setEditable(false);
         gridLayout.add(defaultValueField, 2, currentRow + 1);
     }
 
-    protected Field createField(MetaProperty metaProperty, Range range, ComponentGenerationContext componentContext) {
+    protected Field createField(MetaClass metaClass, MetaProperty metaProperty, Range range, ComponentGenerationContext componentContext) {
         Field field = (Field) uiComponentsGenerator.generate(componentContext);
 
         if (EntityUtils.requireTextArea(metaProperty, this.container.getItem(), MAX_TEXT_FIELD_STRING_LENGTH)) {
@@ -219,6 +217,13 @@ public class AppSettingsGridLayoutBuilder {
 
         field.setValueSource(componentContext.getValueSource());
         field.setWidth(FIELD_WIDTH);
+
+        if (metaClass != null) {
+            field.setContextHelpText(
+                    appSettingsTools.getPropertyDescribe(metaClass.getJavaClass(), metaProperty.getName())
+            );
+        }
+
         return field;
     }
 

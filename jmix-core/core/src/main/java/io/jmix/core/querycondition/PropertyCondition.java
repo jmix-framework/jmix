@@ -41,7 +41,18 @@ public class PropertyCondition implements Condition {
 
     private Object parameterValue;
 
+    private boolean keyValueProperty;
+
     public PropertyCondition() {
+    }
+
+    public boolean isKeyValueProperty() {
+        return keyValueProperty;
+    }
+
+    public PropertyCondition keyValueProperty() {
+        this.keyValueProperty = true;
+        return this;
     }
 
     /**
@@ -292,4 +303,5 @@ public class PropertyCondition implements Condition {
         public static final String NOT_IN_LIST = "not_in_list";
         public static final String IN_INTERVAL = "in_interval";
     }
+
 }

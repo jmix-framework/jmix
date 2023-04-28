@@ -111,4 +111,35 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
                 .map(MetadataObject::getName)
                 .collect(Collectors.toList());
     }
+
+
+    @Nullable
+    @Override
+    public String getPropertyDescribe(Class<? extends AppSettingsEntity> clazz, String propertyName) {
+        Field field = ReflectionUtils.findField(clazz, propertyName);
+        if (field == null) {
+            throw new IllegalArgumentException("Unable to find property " + propertyName + " for class " + clazz);
+        }
+
+        if (field.isAnnotationPresent(AppSettingsDescription.class)) {
+            return field.getAnnotation(AppSettingsDescription.class).value();
+        }
+
+        return null;
+    }
+
+    @Override
+    public int getPropertyOrder(Class<? extends AppSettingsEntity> clazz, String propertyName) {
+        Field field = ReflectionUtils.findField(clazz, propertyName);
+        if (field == null) {
+            throw new IllegalArgumentException("Unable to find property " + propertyName + " for class " + clazz);
+        }
+
+        if (field.isAnnotationPresent(AppSettingsOrder.class)) {
+            return Integer.parseInt(field.getAnnotation(AppSettingsOrder.class).value());
+        }
+
+        return 0;
+    }
+
 }

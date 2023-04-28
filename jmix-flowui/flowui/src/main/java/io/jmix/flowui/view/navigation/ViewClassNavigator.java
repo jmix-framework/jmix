@@ -77,7 +77,16 @@ public class ViewClassNavigator<V extends View<?>> extends ViewNavigator
     /**
      * Adds a handler that will be invoked if navigation to a view actually happened.
      * <p>
-     * Note: this handler if in invoked after all lifecycle events of a view.
+     * Note: this handler is invoked after all lifecycle events of a view.
+     * <p>
+     * Example of setting a custom parameter to a view:
+     * <pre>
+     *     viewNavigators.view(FooView.class)
+     *         .withAfterNavigationHandler(navigationEvent -> {
+     *             FooView view = navigationEvent.getView();
+     *             view.setBar("bar");
+     *         }).navigate();
+     * </pre>
      *
      * @param handler a handler to set
      * @return this instance for chaining

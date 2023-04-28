@@ -89,7 +89,18 @@ public class DetailViewClassNavigator<E, V extends View<?>> extends DetailViewNa
     /**
      * Adds a handler that will be invoked if navigation to a view actually happened.
      * <p>
-     * Note: this handler if in invoked after all lifecycle events of a view.
+     * Note: this handler is invoked after all lifecycle events of a view.
+     * <p>
+     * Example of setting a custom parameter to a view:
+     * <pre>
+     *     viewNavigators.detailView(Foo.class)
+     *         .newEntity()
+     *         .withViewClass(FooDetailView.class)
+     *         .withAfterNavigationHandler(navigationEvent -> {
+     *             FooDetailView view = navigationEvent.getView();
+     *             view.setBar("bar");
+     *         }).navigate();
+     * </pre>
      *
      * @param handler a handler to set
      * @return this instance for chaining

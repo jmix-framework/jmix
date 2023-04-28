@@ -1,7 +1,7 @@
 package test_support.app.entity.jmix_entities;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public class MappedWithoutJmix {

@@ -272,6 +272,7 @@ public class DataContextImpl implements DataContextInternal {
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (!property.getRange().isClass()                                   // local
+                    && !(metadataTools.isMethodBased(property) && property.isReadOnly())
                     && (srcNew || entityStates.isLoaded(srcEntity, propertyName))// loaded src
                     && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {// loaded dst - have to check to avoid unfetched for local properties
 
@@ -289,6 +290,7 @@ public class DataContextImpl implements DataContextInternal {
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (property.getRange().isClass()                                               // refs and collections
+                    && !(metadataTools.isMethodBased(property) && property.isReadOnly())
                     && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {        // loaded src
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 

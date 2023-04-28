@@ -18,7 +18,7 @@ package test_support.app.entity.jmix_entities;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 import java.util.Date;
 import java.util.List;
 

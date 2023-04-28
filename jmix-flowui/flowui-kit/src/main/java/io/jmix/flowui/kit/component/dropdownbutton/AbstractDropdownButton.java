@@ -21,8 +21,6 @@ import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.shared.HasTooltip;
-import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
@@ -33,14 +31,14 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.event.EventBus;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.function.Consumer;
 
 public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         implements DropdownButtonComponent, AttachNotifier, DetachNotifier,
-        HasTitle, HasSize, HasTheme, HasEnabled, HasStyle, HasText, Focusable<AbstractDropdownButton>, HasTooltip {
+        HasTitle, HasSize, HasTheme, HasEnabled, HasStyle, HasText, Focusable<AbstractDropdownButton> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
 
@@ -396,16 +394,6 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     @Override
     public ShortcutRegistration addFocusShortcut(Key key, KeyModifier... keyModifiers) {
         return getContent().addFocusShortcut(key, keyModifiers);
-    }
-
-    @Override
-    public Tooltip setTooltipText(String text) {
-        return getContent().setTooltipText(text);
-    }
-
-    @Override
-    public Tooltip getTooltip() {
-        return getContent().getTooltip();
     }
 
     @Override

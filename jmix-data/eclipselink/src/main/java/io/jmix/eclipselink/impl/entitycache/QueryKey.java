@@ -19,8 +19,8 @@ package io.jmix.eclipselink.impl.entitycache;
 import com.google.common.base.MoreObjects;
 import io.jmix.core.UuidProvider;
 
-import javax.persistence.Parameter;
-import javax.persistence.Query;
+import jakarta.persistence.Parameter;
+import jakarta.persistence.Query;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
@@ -114,16 +114,25 @@ public class QueryKey implements Serializable {
         this.originalNamedParameters = namedParameters;
         if (this.originalNamedParameters != null) {
             this.normalizedParameters = new Object[originalNamedParameters.size()];
+
+            Map<String, String> parameterReplacements = new HashMap<>();
             StringBuffer queryBuilder = new StringBuffer();
             int i = 0;
             Matcher m = PARAMETER_TEMPLATE_PATTERN.matcher(originalQueryString);
             while (m.find()) {
                 String parameterName = m.group().substring(1);
-                String newParameterName = "normalized_param_" + i;
+                String newParameterName;
 
-                this.normalizedParameters[i] = originalNamedParameters.get(parameterName);
+                if (parameterReplacements.containsKey(parameterName)) {
+                    newParameterName = parameterReplacements.get(parameterName);
+                } else {
+                    newParameterName = "normalized_param_" + i;
+                    this.normalizedParameters[i] = originalNamedParameters.get(parameterName);
+                    parameterReplacements.put(parameterName, newParameterName);
+                    i++;
+                }
+
                 m.appendReplacement(queryBuilder, String.format(":%s", newParameterName));
-                i++;
             }
             m.appendTail(queryBuilder);
             this.queryString = queryBuilder.toString();

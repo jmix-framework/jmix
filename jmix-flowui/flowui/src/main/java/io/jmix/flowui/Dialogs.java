@@ -18,18 +18,21 @@ package io.jmix.flowui;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Paragraph;
 import io.jmix.flowui.action.inputdialog.InputDialogAction;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
-import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -204,6 +207,22 @@ public interface Dialogs {
          */
         InputDialogBuilder withParameters(InputParameter... parameters);
 
+        /**
+         * Sets responsive steps. Responsive steps used in describing the responsive layouting behavior of a
+         * {@link FormLayout}.
+         *
+         * @param responsiveSteps responsive steps
+         * @return builder
+         */
+        InputDialogBuilder withResponsiveSteps(List<ResponsiveStep> responsiveSteps);
+
+        /**
+         * Sets labels position for default responsive steps.
+         *
+         * @param labelsPosition position of labels
+         * @return builder
+         * @see #withResponsiveSteps(List)
+         */
         InputDialogBuilder withLabelsPosition(LabelsPosition labelsPosition);
 
         /**

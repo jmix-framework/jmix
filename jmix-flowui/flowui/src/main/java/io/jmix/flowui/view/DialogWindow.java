@@ -22,7 +22,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
-import com.vaadin.flow.component.dialog.GeneratedVaadinDialog.OpenedChangeEvent;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.Scroller;
@@ -43,7 +42,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.EventObject;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -218,7 +217,7 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
         dialog.close();
     }
 
-    protected void onDialogOpenedChanged(OpenedChangeEvent<Dialog> openedChangeEvent) {
+    protected void onDialogOpenedChanged(Dialog.OpenedChangeEvent openedChangeEvent) {
         if (openedChangeEvent.isOpened()) {
             fireViewReadyEvent(view);
 

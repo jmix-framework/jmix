@@ -19,7 +19,7 @@ package io.jmix.core.common.collections;
 import org.apache.commons.collections4.map.AbstractLinkedMap;
 import org.apache.commons.collections4.map.LinkedMap;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.Collection;

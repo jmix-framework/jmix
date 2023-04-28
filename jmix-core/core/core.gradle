@@ -29,12 +29,12 @@ dependencies {
     api 'org.apache.commons:commons-compress'
     api 'org.slf4j:slf4j-api'
     api 'io.micrometer:micrometer-core'
-    api 'org.codehaus.groovy:groovy'
+    api 'org.apache.groovy:groovy'
     api 'org.apache.commons:commons-pool2'
-    api 'javax.servlet:javax.servlet-api'
-    api 'javax.validation:validation-api'
+    api 'jakarta.servlet:jakarta.servlet-api'
+    api 'jakarta.validation:jakarta.validation-api'
     api 'org.hibernate.validator:hibernate-validator'
-    api 'org.glassfish:javax.el'
+    api 'org.glassfish:jakarta.el'
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'
     api 'org.springframework.security:spring-security-web'
@@ -50,9 +50,9 @@ dependencies {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'pull-parser', module: 'pull-parser'
     }
-    api 'javax.annotation:javax.annotation-api'
+    api 'jakarta.annotation:jakarta.annotation-api'
 
-    api 'org.eclipse.persistence:jakarta.persistence'
+    api 'jakarta.persistence:jakarta.persistence-api'
 
     api 'javax.cache:cache-api'
 

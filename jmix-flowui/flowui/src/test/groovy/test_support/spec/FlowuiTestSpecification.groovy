@@ -49,7 +49,7 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import spock.lang.Specification
 import test_support.*
 
-import javax.servlet.ServletException
+import jakarta.servlet.ServletException
 
 import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
 import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE

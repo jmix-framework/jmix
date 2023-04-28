@@ -33,8 +33,8 @@ import test_support.listeners.cascade_operations.TestCascadeBarEventListener
 import test_support.listeners.cascade_operations.TestCascadeFooEventListener
 import test_support.listeners.cascade_operations.TestCascadeItemEventListener
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 
 class CascadeEventsTest extends DataSpec {
 

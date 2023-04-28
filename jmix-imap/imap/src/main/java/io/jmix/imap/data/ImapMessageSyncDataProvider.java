@@ -32,9 +32,9 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
-import javax.mail.Flags;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.mail.Flags;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -172,7 +172,7 @@ public class ImapMessageSyncDataProvider {
                 .getResultList();
         return CollectionUtils.isEmpty(resultList) ? null : resultList.get(0);
     }
-    
+
     protected ImapMessageSync findMessageSync(ImapMessage message, ImapSyncStatus status) {
         List<ImapMessageSync> resultList = entityManager.createQuery(
                 "select ms from imap_MessageSync ms where ms.message.id = :msgId and ms.status = :oldStatus", ImapMessageSync.class)

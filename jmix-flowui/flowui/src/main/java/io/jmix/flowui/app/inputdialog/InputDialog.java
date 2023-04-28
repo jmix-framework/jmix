@@ -46,7 +46,7 @@ import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -101,7 +101,7 @@ public class InputDialog extends StandardView {
     protected FormLayout formLayout;
     protected HorizontalLayout actionBox;
 
-    protected List<ResponsiveStep> responsiveSteps = new ArrayList<>();
+    protected List<ResponsiveStep> responsiveSteps = Collections.emptyList();
     protected LabelsPosition labelsPosition = LabelsPosition.ASIDE;
 
     protected DialogActions dialogActions = DialogActions.OK_CANCEL;
@@ -215,10 +215,35 @@ public class InputDialog extends StandardView {
         return parameters;
     }
 
+    /**
+     * Sets responsive steps. Responsive steps used in describing the responsive layouting behavior of a
+     * {@link FormLayout}.
+     *
+     * @param responsiveSteps - responsive steps
+     */
+    public void setResponsiveSteps(List<ResponsiveStep> responsiveSteps) {
+        this.responsiveSteps = responsiveSteps;
+    }
+
+    /**
+     * @return responsive steps of FormLayout
+     */
+    public List<ResponsiveStep> getResponsiveSteps() {
+        return responsiveSteps;
+    }
+
+    /**
+     * Sets labels position for default responsiveSteps.
+     *
+     * @param labelsPosition position of labels
+     */
     public void setLabelsPosition(LabelsPosition labelsPosition) {
         this.labelsPosition = labelsPosition;
     }
 
+    /**
+     * @return labels position for default responsiveSteps
+     */
     public LabelsPosition getLabelsPosition() {
         return labelsPosition;
     }

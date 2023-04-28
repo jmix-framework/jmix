@@ -183,7 +183,7 @@
                   pageSize="20"
                   pattern="patternString"
                   placeholder="placeholderString"
-                  preventInvalidInput="true"
+                  allowedCharPattern="charPattern"
                   property="number"
                   readOnly="true"
                   required="true"
@@ -205,6 +205,7 @@
         </comboBox>
 
         <datePicker id="datePickerId"
+                    allowedCharPattern="charPattern"
                     autoOpen="true"
                     classNames="cssClassName1, cssClassName2"
                     clearButtonVisible="true"
@@ -244,6 +245,7 @@
         </datePicker>
 
         <timePicker id="timePickerId"
+                    allowedCharPattern="charPattern"
                     autoOpen="true"
                     classNames="cssClassName1, cssClassName2"
                     clearButtonVisible="true"
@@ -349,7 +351,7 @@
                      clearButtonVisible="true"
                      enabled="true"
                      errorMessage="errorMessageString"
-                     hasControls="true"
+                     stepButtonsVisible="true"
                      height="50px"
                      helperText="helperTextString"
                      invalid="false"
@@ -386,6 +388,7 @@
         <numberField id="numberFieldWithValueId" dataContainer="orderDc" property="total"/>
 
         <passwordField id="passwordFieldId"
+                       allowedCharPattern="charPattern"
                        autocapitalize="SENTENCES"
                        autocomplete="ADDITIONAL_NAME"
                        autocorrect="true"
@@ -405,7 +408,6 @@
                        minWidth="80px"
                        pattern="patternString"
                        placeholder="placeholderString"
-                       preventInvalidInput="true"
                        readOnly="true"
                        required="true"
                        requiredIndicatorVisible="true"
@@ -511,6 +513,7 @@
         </select>
 
         <textArea id="textAreaId"
+                  allowedCharPattern="charPattern"
                   autocapitalize="SENTENCES"
                   autocomplete="ADDITIONAL_NAME"
                   autocorrect="true"
@@ -553,6 +556,7 @@
         <textArea id="textAreaWithValueId" dataContainer="orderDc" property="number"/>
 
         <textField id="textFieldId"
+                   allowedCharPattern="charPattern"
                    autocapitalize="SENTENCES"
                    autocomplete="ADDITIONAL_NAME"
                    autocorrect="true"
@@ -742,7 +746,7 @@
                         pageSize="20"
                         pattern="patternString"
                         placeholder="placeholderString"
-                        preventInvalidInput="true"
+                        allowedCharPattern="charPattern"
                         readOnly="true"
                         required="true"
                         requiredIndicatorVisible="true"
@@ -784,7 +788,7 @@
                         pageSize="20"
                         pattern="patternString"
                         placeholder="placeholderString"
-                        preventInvalidInput="true"
+                        allowedCharPattern="charPattern"
                         readOnly="true"
                         required="true"
                         requiredIndicatorVisible="true"
@@ -837,15 +841,6 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
-
-            <tooltip text="tooltipText"
-                     focusDelay="1"
-                     hideDelay="2"
-                     hoverDelay="3"
-                     manual="true"
-                     opened="true"
-                     position="BOTTOM"
-            />
         </dropdownButton>
 
         <comboButton id="comboButtonId"
@@ -878,15 +873,6 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
-
-            <tooltip text="tooltipText"
-                     focusDelay="1"
-                     hideDelay="2"
-                     hoverDelay="3"
-                     manual="true"
-                     opened="true"
-                     position="BOTTOM"
-            />
         </comboButton>
 
         <upload id="uploadId"

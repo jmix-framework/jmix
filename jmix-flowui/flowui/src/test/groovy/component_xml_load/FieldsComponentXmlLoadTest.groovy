@@ -149,7 +149,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             pageSize == 20
             pattern == "patternString"
             placeholder == "placeholderString"
-            preventInvalidInput
+            allowedCharPattern == "charPattern"
             readOnly
             required
             requiredIndicatorVisible
@@ -182,6 +182,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         then: "DatePicker will be loaded with the value of the property"
         verifyAll(componentView.datePickerId) {
             id.get() == "datePickerId"
+            allowedCharPattern == "charPattern"
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             clearButtonVisible
@@ -231,6 +232,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         then: "TimePicker will be loaded with the value of the property"
         verifyAll(componentView.timePickerId) {
             id.get() == "timePickerId"
+            allowedCharPattern == "charPattern"
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             clearButtonVisible

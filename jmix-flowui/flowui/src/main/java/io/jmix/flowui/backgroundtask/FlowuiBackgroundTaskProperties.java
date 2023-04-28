@@ -17,7 +17,6 @@
 package io.jmix.flowui.backgroundtask;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.boot.convert.DurationUnit;
 
@@ -25,7 +24,6 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 @ConfigurationProperties(prefix = "jmix.flowui.background-task")
-@ConstructorBinding
 public class FlowuiBackgroundTaskProperties {
 
     /**

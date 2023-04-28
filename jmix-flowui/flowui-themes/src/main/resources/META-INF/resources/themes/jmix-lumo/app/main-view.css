@@ -15,9 +15,6 @@
  */
 
 .jmix-main-view-header {
-  background-color: var(--lumo-base-color);
-  border-bottom: 1px solid;
-  border-color: var(--lumo-contrast-10pct);
   box-sizing: border-box;
   display: flex;
   height: var(--lumo-size-xl);
@@ -35,7 +32,6 @@
 }
 
 .jmix-main-view-section {
-  background-image: linear-gradient(0deg, var(--lumo-shade-5pct), var(--lumo-shade-5pct));
   display: flex;
   flex-direction: column;
   align-items: stretch;

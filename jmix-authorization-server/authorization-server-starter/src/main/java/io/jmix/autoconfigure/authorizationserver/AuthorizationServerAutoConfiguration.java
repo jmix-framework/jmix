@@ -31,14 +31,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -80,8 +80,8 @@ public class AuthorizationServerAutoConfiguration {
         public SecurityFilterChain loginFormSecurityFilterChain(HttpSecurity http)
                 throws Exception {
             http
-                    .mvcMatcher("/login")
-                    .authorizeRequests(authorize -> {
+                    .securityMatcher("/login")
+                    .authorizeHttpRequests(authorize -> {
                         authorize.anyRequest().permitAll();
                     })
                     .formLogin();
@@ -110,8 +110,8 @@ public class AuthorizationServerAutoConfiguration {
         }
 
         @Bean
-        public ProviderSettings providerSettings() {
-            return ProviderSettings.builder().build();
+        public AuthorizationServerSettings authorizationServerSettings() {
+            return AuthorizationServerSettings.builder().build();
         }
     }
 
@@ -126,7 +126,7 @@ public class AuthorizationServerAutoConfiguration {
                                                                      OpaqueTokenIntrospector opaqueTokenIntrospector) throws Exception {
             http.apply(SecurityConfigurers.apiSecurity());
             http
-                    .authorizeRequests(authorize -> {
+                    .authorizeHttpRequests(authorize -> {
                         authorize.anyRequest().authenticated();
                     })
                     .oauth2ResourceServer(oauth2 -> oauth2

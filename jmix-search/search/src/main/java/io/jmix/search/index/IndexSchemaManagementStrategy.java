@@ -16,7 +16,7 @@
 
 package io.jmix.search.index;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

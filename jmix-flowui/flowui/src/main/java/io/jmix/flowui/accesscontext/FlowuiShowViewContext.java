@@ -18,7 +18,7 @@ package io.jmix.flowui.accesscontext;
 
 import io.jmix.core.accesscontext.AccessContext;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public class FlowuiShowViewContext implements AccessContext {
 

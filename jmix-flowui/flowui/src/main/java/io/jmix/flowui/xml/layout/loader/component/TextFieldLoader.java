@@ -35,7 +35,6 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
 
         componentLoader().loadDatatype(resultComponent, element);
         loadString(element, "value", resultComponent::setValue);
-
         loadString(element, "pattern", resultComponent::setPattern);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadInteger(element, "maxLength", resultComponent::setMaxLength);
@@ -60,6 +59,7 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+        componentLoader().loadAllowedCharPattern(resultComponent, element, context);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

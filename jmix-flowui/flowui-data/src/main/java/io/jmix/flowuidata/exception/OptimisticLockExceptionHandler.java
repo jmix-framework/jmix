@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +40,7 @@ public class OptimisticLockExceptionHandler extends AbstractUiExceptionHandler {
 
     public OptimisticLockExceptionHandler(Messages messages, Notifications notifications) {
         super(org.eclipse.persistence.exceptions.OptimisticLockException.class.getName(),
-                javax.persistence.OptimisticLockException.class.getName());
+                jakarta.persistence.OptimisticLockException.class.getName());
         this.messages = messages;
         this.notifications = notifications;
     }

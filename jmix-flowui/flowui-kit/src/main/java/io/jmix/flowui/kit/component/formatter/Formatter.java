@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.kit.component.formatter;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Function;
 
 /**

@@ -20,10 +20,11 @@ import io.jmix.core.FetchPlan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -38,7 +39,7 @@ import java.util.Optional;
  */
 @NoRepositoryBean
 @ApplyConstraints
-public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T, ID> {
+public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T, ID>, CrudRepository<T, ID> {
 
     /**
      * Instantiate an entity.

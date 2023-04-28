@@ -49,11 +49,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.*;
 
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import jakarta.annotation.Nullable;
+//todo SB3 restore GuardedBy annotation
+//import jakarta.annotation.concurrent.GuardedBy;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
@@ -107,9 +108,12 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
     protected volatile boolean enabled;
     protected volatile boolean loaded;
 
-    @GuardedBy("lock")
+    //todo SB3 restore GuardedBy annotation
+//    @GuardedBy("lock")
     protected Map<String, Set<String>> entitiesManual;
-    @GuardedBy("lock")
+
+    //todo SB3 restore GuardedBy annotation
+//    @GuardedBy("lock")
     protected Map<String, Set<String>> entitiesAuto;
 
     protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();

@@ -23,11 +23,10 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.shared.HasTooltip;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
-public abstract class AbstractPagination extends Composite<Div> implements HasStyle, HasTooltip {
+public abstract class AbstractPagination extends Composite<Div> implements HasStyle {
 
     public static final String BASE_BUTTON_CLASS_NAME = "-navigation-button";
 

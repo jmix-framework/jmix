@@ -19,7 +19,7 @@ package test_support.entity;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.text.ParseException;
 import java.util.Locale;
 

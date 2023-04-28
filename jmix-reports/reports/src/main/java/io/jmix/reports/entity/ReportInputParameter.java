@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.reports.util.MsgBundleTools;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.util.UUID;
 
 @JmixEntity(name = "report_ReportInputParameter")

@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.el.ExpressionFactory;
-import javax.validation.MessageInterpolator;
-import javax.validation.ValidationException;
+import jakarta.el.ExpressionFactory;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.ValidationException;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -124,7 +124,7 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
         String parameterValue;
         String messageCode = removeCurlyBraces(parameterName);
         try {
-            if (messageCode.startsWith("javax.validation.constraints")
+            if (messageCode.startsWith("jakarta.validation.constraints")
                     || messageCode.startsWith("org.hibernate.validator.constraints")) {
                 parameterValue = messages.getMessage(messageCode, locale);
                 // try to find tokens recursive

@@ -44,8 +44,8 @@ import io.jmix.flowui.data.SupportsValueSource;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-import javax.annotation.Nullable;
-import javax.persistence.Lob;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Lob;
 import java.lang.annotation.Annotation;
 import java.sql.Time;
 import java.time.*;

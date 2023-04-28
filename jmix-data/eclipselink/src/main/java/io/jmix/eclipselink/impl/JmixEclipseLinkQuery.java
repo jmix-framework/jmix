@@ -41,7 +41,8 @@ import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
 import org.eclipse.persistence.internal.helper.ClassConstants;
 import org.eclipse.persistence.internal.helper.ConversionManager;
-import org.eclipse.persistence.internal.helper.CubaUtil;
+//todo SB3 uncomment Jmix Eclipselink CubaUtil
+//import org.eclipse.persistence.internal.helper.CubaUtil;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
 import org.eclipse.persistence.jpa.JpaQuery;
 import org.eclipse.persistence.queries.DatabaseQuery;
@@ -51,8 +52,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Nullable;
-import javax.persistence.*;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
@@ -548,7 +549,8 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             }
         }
         if (!useJPQLCache) {
-            CubaUtil.setEnabledJPQLParseCache(false);
+            //todo SB3 uncomment Jmix Eclipselink CubaUtil
+//            CubaUtil.setEnabledJPQLParseCache(false);
         }
         try {
             if (resultClass != null) {
@@ -557,7 +559,8 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
                 return (JpaQuery) entityManager.createQuery(queryString);
             }
         } finally {
-            CubaUtil.setEnabledJPQLParseCache(true);
+            //todo SB3 uncomment Jmix Eclipselink CubaUtil
+//            CubaUtil.setEnabledJPQLParseCache(true);
         }
     }
 
@@ -766,7 +769,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         return resultQuery;
     }
 
-    private void addMacroParams(javax.persistence.TypedQuery jpaQuery) {
+    private void addMacroParams(jakarta.persistence.TypedQuery jpaQuery) {
         if (macroHandlers != null) {
             for (QueryMacroHandler handler : macroHandlers) {
 

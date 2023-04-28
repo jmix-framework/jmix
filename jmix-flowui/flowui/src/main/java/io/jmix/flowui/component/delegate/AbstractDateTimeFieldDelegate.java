@@ -27,7 +27,7 @@ import io.jmix.flowui.component.validation.DateTimeRangeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public abstract class AbstractDateTimeFieldDelegate<C extends AbstractField<?, V>, T extends Comparable, V>
         extends AbstractFieldDelegate<C, T, V> {

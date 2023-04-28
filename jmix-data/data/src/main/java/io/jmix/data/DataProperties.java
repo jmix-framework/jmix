@@ -16,14 +16,11 @@
 
 package io.jmix.data;
 
+import jakarta.annotation.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-import javax.annotation.Nullable;
-
 @ConfigurationProperties(prefix = "jmix.data")
-@ConstructorBinding
 public class DataProperties {
 
     boolean useReadOnlyTransactionForLoad;

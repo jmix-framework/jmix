@@ -29,7 +29,7 @@ import io.jmix.flowui.view.LookupView.ValidationContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;

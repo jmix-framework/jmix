@@ -4,7 +4,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.UUID;
 
 @JmixEntity(name = "quartz_JobDataParameterModel")

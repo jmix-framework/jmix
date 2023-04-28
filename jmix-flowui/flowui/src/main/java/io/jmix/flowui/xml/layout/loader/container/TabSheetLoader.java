@@ -36,10 +36,10 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
     public void initComponent() {
         super.initComponent();
 
-        createSubComponents();
+        createTabs(element);
     }
 
-    protected void createSubComponents() {
+    protected void createTabs(Element element) {
         LayoutLoader loader = getLayoutLoader();
 
         for (Element subElement : element.elements("tab")) {

@@ -361,4 +361,9 @@
         <Class name="io.jmix.reportsui.screen.report.wizard.OutputFormatTools"/>
         <Method name="getOutputAvailableFormats"/>
     </Match>
+
+    <Match>
+        <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
+        <Class name="name.fraser.neil.plaintext.diff_match_patch"/>
+    </Match>
 </FindBugsFilter>

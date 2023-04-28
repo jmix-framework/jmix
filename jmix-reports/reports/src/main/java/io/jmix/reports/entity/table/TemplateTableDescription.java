@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.reports.converter.MetadataFieldsIgnoringGson;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;

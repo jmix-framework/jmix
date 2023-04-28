@@ -23,6 +23,7 @@ import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -50,7 +51,7 @@ import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
@@ -682,6 +683,15 @@ public class DialogsImpl implements Dialogs {
 
         public Collection<InputParameter> getParameters() {
             return inputDialog.getParameters();
+        }
+
+        public InputDialogBuilder withResponsiveSteps(List<ResponsiveStep> responsiveSteps) {
+            inputDialog.setResponsiveSteps(responsiveSteps);
+            return this;
+        }
+
+        public List<ResponsiveStep> getResponsiveSteps() {
+            return inputDialog.getResponsiveSteps();
         }
 
         public InputDialogBuilder withLabelsPosition(LabelsPosition labelsPosition) {

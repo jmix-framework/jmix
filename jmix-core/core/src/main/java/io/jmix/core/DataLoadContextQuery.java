@@ -18,7 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.querycondition.Condition;
 
-import javax.persistence.TemporalType;
+import jakarta.persistence.TemporalType;
 import java.util.Date;
 import java.util.Map;
 

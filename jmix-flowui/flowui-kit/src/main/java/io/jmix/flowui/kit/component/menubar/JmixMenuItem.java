@@ -20,13 +20,12 @@ import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.function.SerializableRunnable;
 
-// CAUTION: copied from com.vaadin.flow.component.contextmenu.MenuItem [since Vaadin 23.1.7]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 24.0.3]
 public class JmixMenuItem extends MenuItem {
 
     protected final SerializableRunnable contentReset;
 
-    public JmixMenuItem(ContextMenu contextMenu,
-                        SerializableRunnable contentReset) {
+    public JmixMenuItem(ContextMenu contextMenu, SerializableRunnable contentReset) {
         super(contextMenu, contentReset);
         this.contentReset = contentReset;
     }

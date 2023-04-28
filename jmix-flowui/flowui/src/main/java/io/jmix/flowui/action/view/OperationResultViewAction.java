@@ -22,7 +22,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Supplier;
 
 public abstract class OperationResultViewAction<A extends OperationResultViewAction<A, V>, V extends View>

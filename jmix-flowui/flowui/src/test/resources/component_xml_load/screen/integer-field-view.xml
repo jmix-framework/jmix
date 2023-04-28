@@ -42,7 +42,7 @@
                 clearButtonVisible="true"
                 enabled="true"
                 errorMessage="errorMessageString"
-                hasControls="true"
+                stepButtonsVisible="true"
                 height="50px"
                 helperText="helperTextString"
                 invalid="false"

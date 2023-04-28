@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 import test_support.entity.TestEnum;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @JmixEntity
 @Table(name = "TEST_ENUM_SUB_REF_ENTITY")

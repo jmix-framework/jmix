@@ -18,9 +18,9 @@ package io.jmix.eclipselink.impl;
 
 import org.springframework.beans.factory.ListableBeanFactory;
 
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.metamodel.Metamodel;
 import java.util.Map;
 
 public class JmixEntityManagerFactory implements EntityManagerFactory {

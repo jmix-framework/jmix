@@ -16,8 +16,8 @@
 
 package io.jmix.imap.protocol;
 
-import javax.mail.Session;
-import javax.mail.URLName;
+import jakarta.mail.Session;
+import jakarta.mail.URLName;
 
 public class JmixIMAPSSLStore extends JmixIMAPStore {
     public JmixIMAPSSLStore(Session session, URLName url) {

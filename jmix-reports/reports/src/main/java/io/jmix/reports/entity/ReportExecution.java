@@ -24,8 +24,8 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 

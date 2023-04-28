@@ -42,14 +42,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.MessageIDTerm;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.search.FlagTerm;
+import jakarta.mail.search.MessageIDTerm;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.*;
 
 @Component("imap_Synchronizer")

@@ -16,7 +16,7 @@
 
 package io.jmix.search.utils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public class BooleanParser {
 

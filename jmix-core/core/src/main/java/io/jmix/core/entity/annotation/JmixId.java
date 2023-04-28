@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation should be used on an id attribute if the attribute has no other appropriate annotation
- * recognized by the framework (such as {@link javax.persistence.Id}).
+ * recognized by the framework (such as {@link jakarta.persistence.Id}).
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

@@ -29,8 +29,8 @@ import org.eclipse.persistence.jpa.JpaCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.persistence.EntityManagerFactory;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManagerFactory;
 
 @Component("eclipselink_OrmCacheSupport")
 public class JpaCacheSupport {

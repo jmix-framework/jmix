@@ -20,7 +20,7 @@ package io.jmix.flowui.view;
 import io.jmix.flowui.component.LookupComponent;
 import io.jmix.flowui.util.OperationResult;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;

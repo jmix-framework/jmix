@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,14 +31,10 @@ import static io.jmix.flowui.devserver.frontend.FrontendUtils.GENERATED;
  */
 public class TaskGenerateFeatureFlags extends AbstractTaskClientGenerator {
 
-    private final File frontendGeneratedDirectory;
-    private final FeatureFlags featureFlags;
+    private final Options options;
 
-    TaskGenerateFeatureFlags(File frontendDirectory,
-                             FeatureFlags featureFlags) {
-        this.frontendGeneratedDirectory = new File(frontendDirectory,
-                GENERATED);
-        this.featureFlags = featureFlags;
+    TaskGenerateFeatureFlags(Options options) {
+        this.options = options;
     }
 
     @Override
@@ -49,6 +45,7 @@ public class TaskGenerateFeatureFlags extends AbstractTaskClientGenerator {
         lines.add(
                 "window.Vaadin.featureFlags = window.Vaadin.featureFlags || {};");
 
+        FeatureFlags featureFlags = options.getFeatureFlags();
         featureFlags.getFeatures().forEach(feature -> {
             lines.add(String.format("window.Vaadin.featureFlags.%s = %s;",
                     feature.getId(), featureFlags.isEnabled(feature)));
@@ -61,6 +58,8 @@ public class TaskGenerateFeatureFlags extends AbstractTaskClientGenerator {
 
     @Override
     protected File getGeneratedFile() {
+        File frontendGeneratedDirectory = new File(
+                options.getFrontendDirectory(), GENERATED);
         return new File(frontendGeneratedDirectory, FEATURE_FLAGS_FILE_NAME);
     }
 

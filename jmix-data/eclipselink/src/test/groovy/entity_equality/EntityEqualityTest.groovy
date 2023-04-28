@@ -24,8 +24,8 @@ import test_support.entity.equality.GFoo
 import test_support.entity.equality.NFoo
 import test_support.entity.equality.NGFoo
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 
 class EntityEqualityTest extends DataSpec {
 

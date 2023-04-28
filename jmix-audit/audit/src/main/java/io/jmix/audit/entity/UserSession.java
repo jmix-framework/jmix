@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.session.SessionInformation;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 import java.util.Date;
 
 @JmixEntity(name = "audit_UserSession", annotatedPropertiesOnly = true)

@@ -21,15 +21,15 @@ import io.jmix.core.EntityEntry;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * An {@link EntityEntry} implementation for model objects without identifiers.<br>
  * Used by enhancing process when {@link JmixEntity} does not include any of annotations:
  *  <ul>
- *      <li>{@link javax.persistence.Id}</li>
- *      <li>{@link javax.persistence.EmbeddedId}</li>
+ *      <li>{@link jakarta.persistence.Id}</li>
+ *      <li>{@link jakarta.persistence.EmbeddedId}</li>
  *      <li>{@link io.jmix.core.entity.annotation.JmixId}</li>
  *  </ul>
  * <p>

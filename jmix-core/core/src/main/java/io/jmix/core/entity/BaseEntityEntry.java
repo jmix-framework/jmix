@@ -28,9 +28,9 @@ import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.RelatedPropertiesCache;
 import org.springframework.lang.NonNull;
 
-import javax.annotation.Nullable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Id;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Id;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;

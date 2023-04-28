@@ -18,7 +18,7 @@ package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.querycondition.Condition;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Modifies parts of JPQL query

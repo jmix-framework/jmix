@@ -29,21 +29,26 @@ dependencies {
     api 'com.thoughtworks.xstream:xstream'
 
     api ('com.haulmont.yarg:yarg-api') {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+        exclude group: 'org.apache.groovy', module: 'groovy-all'
     }
     api ('com.haulmont.yarg:yarg') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
         exclude group: 'commons-dbcp', module: 'commons-dbcp'
     }
 
-    implementation 'org.codehaus.groovy:groovy-templates'
+    implementation 'org.apache.groovy:groovy-templates'
 
     implementation 'com.google.code.gson:gson'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
-    testImplementation project(':ui-test-assist-spock')
+    //todo SB3 why ui-test-assist-spock in reports module?
+//    testImplementation project(':ui-test-assist-spock')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.springframework:spring-test'
+    testImplementation "org.spockframework:spock-core"
+    testImplementation "org.spockframework:spock-spring"
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

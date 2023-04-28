@@ -31,11 +31,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.mail.*;
-import javax.mail.internet.MimeUtility;
-import javax.mail.search.ComparisonTerm;
-import javax.mail.search.IntegerComparisonTerm;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeUtility;
+import jakarta.mail.search.ComparisonTerm;
+import jakarta.mail.search.IntegerComparisonTerm;
+import jakarta.mail.search.SearchTerm;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;

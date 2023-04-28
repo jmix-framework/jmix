@@ -21,7 +21,7 @@ import io.jmix.flowui.component.filer.FilterComponent;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A configuration is a set of filter components.

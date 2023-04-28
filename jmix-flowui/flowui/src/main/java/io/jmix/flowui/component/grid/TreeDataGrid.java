@@ -36,11 +36,11 @@ import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -211,12 +211,6 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     @Override
     public Column<E> addColumn(Renderer<E> renderer) {
         Column<E> column = super.addColumn(renderer);
-        return gridDelegate.addColumn(column);
-    }
-
-    @Override
-    public Column<E> addColumn(Renderer<E> renderer, String... sortingProperties) {
-        Column<E> column = super.addColumn(renderer, sortingProperties);
         return gridDelegate.addColumn(column);
     }
 

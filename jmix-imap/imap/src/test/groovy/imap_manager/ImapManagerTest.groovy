@@ -31,15 +31,19 @@ import io.jmix.imap.dto.ImapMessageDto
 import io.jmix.imap.entity.*
 import io.jmix.imap.exception.ImapException
 import io.jmix.imap.flags.ImapFlag
+import jakarta.mail.Folder
+import jakarta.mail.Message
+import jakarta.mail.Session
+import jakarta.mail.Store
+import jakarta.mail.URLName
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.ImapTestConfiguration
 
-import javax.mail.*
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
+import jakarta.mail.internet.InternetAddress
+import jakarta.mail.internet.MimeMessage
 import java.util.concurrent.atomic.AtomicInteger
 
 @ContextConfiguration(classes = [ImapTestConfiguration])

@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 import test_support.entity.sec.User;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;

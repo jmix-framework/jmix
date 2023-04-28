@@ -19,8 +19,8 @@ package io.jmix.securityoauth2.event;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.Authentication;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * Event fired after an API controller call.

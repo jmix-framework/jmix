@@ -22,8 +22,8 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.annotation.Nullable;
-import javax.persistence.Id;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;

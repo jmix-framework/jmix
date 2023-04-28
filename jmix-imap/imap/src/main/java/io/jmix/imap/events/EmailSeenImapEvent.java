@@ -20,7 +20,7 @@ package io.jmix.imap.events;
 import io.jmix.imap.entity.ImapMessage;
 
 /**
- * Event triggered when IMAP message was marked by {@link javax.mail.Flags.Flag#SEEN} flag
+ * Event triggered when IMAP message was marked by {@link jakarta.mail.Flags.Flag#SEEN} flag
  */
 public class EmailSeenImapEvent extends BaseImapEvent {
 

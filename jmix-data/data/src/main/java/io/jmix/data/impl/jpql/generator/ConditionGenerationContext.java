@@ -20,8 +20,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
+import jakarta.annotation.Nullable;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -75,7 +75,8 @@ class JmixPlugin implements Plugin<Project> {
 
             if (project.jmix.entitiesEnhancing.enabled) {
                 project.configurations.create('enhancing')
-                project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix')
+                //todo SB3 change eclipselink version to Jmix fork
+                project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:4.0.1')
 
                 if (javaPlugin) {
                     project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))
@@ -132,16 +133,16 @@ class JmixPlugin implements Plugin<Project> {
             int minorVersion = kotlinPluginVersionNumbers[1]
             project.tasks.getByName('compileKotlin', {task ->
                 if (majorVersion == 1 && minorVersion < 7) {
-                    task.destinationDir = project.sourceSets.main.java.outputDir
+                    task.destinationDir = project.sourceSets.main.java.destinationDirectory.get()
                 } else {
-                    task.destinationDirectory = project.sourceSets.main.java.outputDir
+                    task.destinationDirectory = project.sourceSets.main.java.destinationDirectory
                 }
             })
             project.tasks.getByName('compileTestKotlin', {task ->
                 if (majorVersion == 1 && minorVersion < 7) {
-                    task.destinationDir = project.sourceSets.test.java.outputDir
+                    task.destinationDir = project.sourceSets.test.java.destinationDirectory.get()
                 } else {
-                    task.destinationDirectory = project.sourceSets.test.java.outputDir
+                    task.destinationDirectory = project.sourceSets.test.java.destinationDirectory
                 }
             })
         } catch (UnknownTaskException ignored) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,6 +23,18 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Opens a server socket which is supposed to be opened until dev mode is active
+ * inside JVM.
+ * <p>
+ * If this socket is closed then there is no anymore Java "client" for the dev
+ * server and it should be stopped.
+ * <p>
+ * For internal use only. May be renamed or removed in a future release.
+ *
+ * @author Vaadin Ltd
+ * @since 2.0
+ */
 class DevServerWatchDog {
 
     private static class WatchDogServer implements Runnable {

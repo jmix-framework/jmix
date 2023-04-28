@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,10 +18,12 @@
  * This file handles the generation of the '[theme-name].js' to
  * the themes/[theme-name] folder according to properties from 'theme.json'.
  */
-const glob = require('glob');
-const path = require('path');
-const fs = require('fs');
-const { checkModules } = require('./theme-copy');
+import glob from 'glob';
+import { resolve, basename } from 'path';
+import { existsSync, writeFileSync } from 'fs';
+import { checkModules } from './theme-copy.js';
+
+const { sync } = glob;
 
 // Special folder inside a theme for component themes that go inside the component shadow root
 const themeComponentsFolder = 'components';
@@ -97,27 +99,47 @@ export const injectGlobalCss = (css, target, first) => {
 };
 `;
 
+const addLumoImportStyleTag = `
+const addLumoImportStyleTag = (lumoStyles, target) => {
+  const styleTag = document.createElement('style');
+  styleTag.type = 'text/css';
+  styleTag.appendChild(document.createTextNode(lumoStyles));
+  // For target document append to head else append to target
+  if (target === document) {
+    document.head.appendChild(styleTag);
+  } else {
+    target.appendChild(styleTag);
+  }
+};
+`;
+
 /**
  * Generate the [themeName].js file for themeFolder which collects all required information from the folder.
  *
  * @param {string} themeFolder folder of the theme
  * @param {string} themeName name of the handled theme
  * @param {JSON} themeProperties content of theme.json
- * @param {boolean} productionMode true if making a production build.
+ * @param {Object} options build options (e.g. prod or dev mode)
  * @returns {string} theme file content
  */
-function generateThemeFile(themeFolder, themeName, themeProperties, productionMode) {
-  const styles = path.resolve(themeFolder, stylesCssFile);
-  const document = path.resolve(themeFolder, documentCssFile);
-  const componentsFiles = glob.sync('*.css', {
-    cwd: path.resolve(themeFolder, themeComponentsFolder),
-    nodir: true
-  });
-
+function generateThemeFile(themeFolder, themeName, themeProperties, options) {
+  const productionMode = !options.devMode;
+  const useDevServer = !options.useDevBundle;
+  const styles = resolve(themeFolder, stylesCssFile);
+  const document = resolve(themeFolder, documentCssFile);
+  const autoInjectComponents = themeProperties.autoInjectComponents ?? true;
   let themeFile = headerImport;
+  var componentsFiles;
 
-  if (componentsFiles.length > 0) {
-    themeFile += "import { unsafeCSS, registerStyles } from '@vaadin/vaadin-themable-mixin/register-styles';\n";
+  if (autoInjectComponents) {
+    componentsFiles = sync('*.css', {
+      cwd: resolve(themeFolder, themeComponentsFolder),
+      nodir: true
+    });
+
+    if (componentsFiles.length > 0) {
+      themeFile += "import { unsafeCSS, registerStyles } from '@vaadin/vaadin-themable-mixin/register-styles';\n";
+    }
   }
 
   if (themeProperties.parent) {
@@ -127,6 +149,7 @@ function generateThemeFile(themeFolder, themeName, themeProperties, productionMo
 
   themeFile += createLinkReferences;
   themeFile += injectGlobalCssMethod;
+  themeFile += addLumoImportStyleTag;
 
   const imports = [];
   const globalCssCode = [];
@@ -139,11 +162,11 @@ function generateThemeFile(themeFolder, themeName, themeProperties, productionMo
   const globalCssFlag = themeIdentifier + 'globalCss';
   const componentCssFlag = themeIdentifier + 'componentCss';
 
-  if (!fs.existsSync(styles)) {
+  if (!existsSync(styles)) {
     if (productionMode) {
       throw new Error(`styles.css file is missing and is needed for '${themeName}' in folder '${themeFolder}'`);
     }
-    fs.writeFileSync(
+    writeFileSync(
       styles,
       '/* Import your application global css files here or add the styles directly to this file */',
       'utf8'
@@ -151,9 +174,11 @@ function generateThemeFile(themeFolder, themeName, themeProperties, productionMo
   }
 
   // styles.css will always be available as we write one if it doesn't exist.
-  let filename = path.basename(styles);
+  let filename = basename(styles);
   let variable = camelCase(filename);
-  imports.push(`import ${variable} from 'themes/${themeName}/${filename}?inline';\n`);
+  if (useDevServer) {
+    imports.push(`import ${variable} from 'themes/${themeName}/${filename}?inline';\n`);
+  }
   /* Lumo must be first so that custom styles override Lumo styles */
   const lumoImports = themeProperties.lumoImports || ['color', 'typography'];
   if (lumoImports && lumoImports.length > 0) {
@@ -161,17 +186,28 @@ function generateThemeFile(themeFolder, themeName, themeProperties, productionMo
       imports.push(`import { ${lumoImport} } from '@vaadin/vaadin-lumo-styles/${lumoImport}.js';\n`);
     });
 
-    lumoImports.forEach((lumoImport) => {
-      lumoCssCode.push(`injectGlobalCss(${lumoImport}.cssText, target, true);\n`);
-    });
+    if (useDevServer) {
+      lumoImports.forEach((lumoImport) => {
+        lumoCssCode.push(`injectGlobalCss(${lumoImport}.cssText, target, true);\n`);
+      });
+    } else {
+      lumoImports.forEach((lumoImport) => {
+        lumoCssCode.push(`addLumoImportStyleTag(${lumoImport}.cssText, target);\n`);
+      });
+    }
   }
 
-  globalCssCode.push(`injectGlobalCss(${variable}.toString(), target);\n    `);
-  if (fs.existsSync(document)) {
-    filename = path.basename(document);
+  if (useDevServer) {
+    globalCssCode.push(`injectGlobalCss(${variable}.toString(), target);\n    `);
+  }
+  if (existsSync(document)) {
+    filename = basename(document);
     variable = camelCase(filename);
-    imports.push(`import ${variable} from 'themes/${themeName}/${filename}?inline';\n`);
-    globalCssCode.push(`injectGlobalCss(${variable}.toString(), document);\n    `);
+
+    if (useDevServer) {
+      imports.push(`import ${variable} from 'themes/${themeName}/${filename}?inline';\n`);
+      globalCssCode.push(`injectGlobalCss(${variable}.toString(), document);\n    `);
+    }
   }
 
   let i = 0;
@@ -213,19 +249,21 @@ function generateThemeFile(themeFolder, themeName, themeProperties, productionMo
     });
   }
 
-  componentsFiles.forEach((componentCss) => {
-    const filename = path.basename(componentCss);
-    const tag = filename.replace('.css', '');
-    const variable = camelCase(filename);
-    imports.push(`import ${variable} from 'themes/${themeName}/${themeComponentsFolder}/${filename}?inline';\n`);
-    // Don't format as the generated file formatting will get wonky!
-    const componentString = `registerStyles(
-      '${tag}',
-      unsafeCSS(${variable}.toString())
-    );
-    `;
-    componentCssCode.push(componentString);
-  });
+  if (autoInjectComponents) {
+    componentsFiles.forEach((componentCss) => {
+      const filename = basename(componentCss);
+      const tag = filename.replace('.css', '');
+      const variable = camelCase(filename);
+      imports.push(`import ${variable} from 'themes/${themeName}/${themeComponentsFolder}/${filename}?inline';\n`);
+      // Don't format as the generated file formatting will get wonky!
+      const componentString = `registerStyles(
+        '${tag}',
+        unsafeCSS(${variable}.toString())
+      );
+      `;
+      componentCssCode.push(componentString);
+    });
+  }
 
   themeFile += imports.join('');
   themeFile += `
@@ -301,4 +339,4 @@ function camelCase(str) {
     .replace(/\.|\-/g, '');
 }
 
-module.exports = generateThemeFile;
+export { generateThemeFile };

@@ -16,7 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A helper class to be used in {@link EnumClass} implementations to convert identifiers to enum values.

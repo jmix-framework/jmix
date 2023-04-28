@@ -24,8 +24,8 @@ import io.jmix.security.BruteForceProtectionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.PostConstruct;
 import java.util.concurrent.ExecutionException;
 
 @Component("sec_BruteForceProtection")

@@ -18,6 +18,8 @@ package io.jmix.flowui.component.tabsheet;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.component.tabs.Tab;
@@ -29,7 +31,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.ComponentContainer;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,11 +41,12 @@ import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [since Vaadin 23.3.0]
+// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [since Vaadin 24.0.3]
 @Tag("jmix-tabsheet")
 @JsModule("./src/tabsheet/jmix-tabsheet.js")
 public class JmixTabSheet extends Component
-        implements HasStyle, HasSize, HasThemeVariant<TabSheetVariant>, ComponentContainer {
+        implements HasStyle, HasSize, HasThemeVariant<TabSheetVariant>, HasPrefix, HasSuffix,
+        ComponentContainer {
 
     protected static final String GENERATED_TAB_ID_PREFIX = "tabsheet-tab-";
 
@@ -99,6 +102,18 @@ public class JmixTabSheet extends Component
         return add(tab, content, -1);
     }
 
+    /**
+     * Adds a tab with the given content to the given position.
+     *
+     * @param tab
+     *            the tab
+     * @param content
+     *            the content related to the tab
+     * @param position
+     *            the position where the tab should be added. If negative, the
+     *            tab is added at the end.
+     * @return the added tab
+     */
     public Tab add(Tab tab, Component content, int position) {
         Preconditions.checkNotNullArgument(tab, "The tab to be added cannot be null");
         Preconditions.checkNotNullArgument(content, "The content to be added cannot be null");
@@ -106,7 +121,7 @@ public class JmixTabSheet extends Component
         if (position < 0) {
             tabs.add(tab);
         } else {
-            tabs.addComponentAtIndex(position, tab);
+            tabs.addTabAtIndex(position, tab);
         }
 
         // Make sure possible old content related to the same tab gets removed
@@ -245,7 +260,7 @@ public class JmixTabSheet extends Component
      *                                  number of tabs
      */
     public Tab getTabAt(int position) {
-        return (Tab) tabs.getComponentAt(position);
+        return tabs.getTabAt(position);
     }
 
     /**
@@ -270,7 +285,12 @@ public class JmixTabSheet extends Component
         return tabs.addSelectedChangeListener(event -> {
             listener.onComponentEvent(new SelectedChangeEvent(JmixTabSheet.this,
                     event.getPreviousTab(), event.isFromClient(),
-                    event.isInitialSelection()));
+                    event.isInitialSelection()) {
+                @Override
+                public void unregisterListener() {
+                    event.unregisterListener();
+                }
+            });
         });
 
     }
@@ -294,54 +314,6 @@ public class JmixTabSheet extends Component
             component.getElement().setAttribute("slot", "prefix");
             getElement().appendChild(component.getElement());
         }
-    }
-
-    /**
-     * Gets the component in the prefix slot of this component.
-     *
-     * @return the prefix component of this component, or {@code null} if no
-     * prefix component has been set
-     * @see #setPrefixComponent(Component)
-     */
-    @Nullable
-    public Component getPrefixComponent() {
-        return SlotUtils.getChildInSlot(this, "prefix");
-    }
-
-    /**
-     * Adds the given component as the suffix of this component, replacing any
-     * existing suffix component.
-     * <p>
-     * This is most commonly used to add a simple icon or static text into the
-     * component.
-     *
-     * @param component the component to set, can be {@code null} to remove existing
-     *                  suffix component
-     */
-    public void setSuffixComponent(@Nullable Component component) {
-        SlotUtils.clearSlot(this, "suffix");
-
-        if (component != null) {
-            if (component instanceof Text) {
-                throw new IllegalArgumentException(
-                        "Text as a suffix is not supported. Consider wrapping the Text inside a Div.");
-            }
-
-            component.getElement().setAttribute("slot", "suffix");
-            getElement().appendChild(component.getElement());
-        }
-    }
-
-    /**
-     * Gets the component in the suffix slot of this component.
-     *
-     * @return the suffix component of this component, or {@code null} if no
-     * suffix component has been set
-     * @see #setPrefixComponent(Component)
-     */
-    @Nullable
-    public Component getSuffixComponent() {
-        return SlotUtils.getChildInSlot(this, "suffix");
     }
 
     /**

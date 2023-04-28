@@ -1933,44 +1933,44 @@
     </xs:complexType>
 
     <xs:complexType name="baseComboBoxPickerComponent">
-            <xs:complexContent>
-                <xs:extension base="baseComponent">
-                    <xs:sequence>
-                        <xs:element name="actions" minOccurs="0">
-                            <xs:complexType>
-                                <xs:sequence>
-                                    <xs:choice maxOccurs="unbounded">
-                                        <xs:element name="action" type="pickerAction"/>
-                                    </xs:choice>
-                                </xs:sequence>
-                            </xs:complexType>
-                        </xs:element>
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="actions" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice maxOccurs="unbounded">
+                                    <xs:element name="action" type="pickerAction"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
 
-                        <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
-                    </xs:sequence>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                </xs:sequence>
 
-                    <xs:attribute name="opened" type="xs:boolean"/>
-                    <xs:attribute name="pattern" type="xs:string"/>
-                    <xs:attribute name="autoOpen" type="xs:boolean"/>
-                    <xs:attribute name="pageSize" type="xs:integer"/>
-                    <xs:attribute name="autofocus" type="xs:boolean"/>
-                    <xs:attribute name="required" type="xs:boolean"/>
-                    <xs:attribute name="allowCustomValue" type="xs:boolean"/>
-                    <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
-                    <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+                <xs:attribute name="opened" type="xs:boolean"/>
+                <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="autoOpen" type="xs:boolean"/>
+                <xs:attribute name="pageSize" type="xs:integer"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="required" type="xs:boolean"/>
+                <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+                <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
-                    <xs:attributeGroup ref="hasSize"/>
-                    <xs:attributeGroup ref="hasTitle"/>
-                    <xs:attributeGroup ref="hasLabel"/>
-                    <xs:attributeGroup ref="hasEnabled"/>
-                    <xs:attributeGroup ref="hasTabIndex"/>
-                    <xs:attributeGroup ref="hasClassNames"/>
-                    <xs:attributeGroup ref="hasValidation"/>
-                    <xs:attributeGroup ref="hasHelperText"/>
-                    <xs:attributeGroup ref="hasPlaceholder"/>
-                    <xs:attributeGroup ref="hasValueAndElement"/>
-                </xs:extension>
-            </xs:complexContent>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasValidation"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasPlaceholder"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="baseDropdownButtonComponent">
@@ -1987,8 +1987,6 @@
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
-
-                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="openOnHover" type="xs:boolean"/>
@@ -2129,10 +2127,6 @@
     <xs:complexType name="simplePaginationComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
-
                 <xs:attribute name="dataLoader" type="xs:string"/>
 
                 <xs:attribute name="itemsPerPageDefaultValue" type="xs:integer"/>
@@ -2194,10 +2188,6 @@
     <xs:complexType name="userIndicatorComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
-
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -2289,8 +2279,6 @@
                 <xs:attribute name="selectionMode" type="gridSelectionMode"/>
                 <xs:attribute name="detailsVisibleOnClick" type="xs:boolean"/>
                 <xs:attribute name="columnReorderingAllowed" type="xs:boolean"/>
-                <xs:attribute name="verticalScrollingEnabled" type="xs:boolean"/>
-                <xs:attribute name="verticalScrollingEnabled" type="xs:boolean"/>
                 <xs:attribute name="nestedNullBehavior" type="gridNestedNullBehaviorEnum"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2317,6 +2305,7 @@
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
                 <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="maxLength" type="xs:integer"/>
                 <xs:attribute name="minLength" type="xs:integer"/>
                 <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
@@ -2332,10 +2321,9 @@
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
                 <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="maxLength" type="xs:integer"/>
                 <xs:attribute name="minLength" type="xs:integer"/>
-
-                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasRequired"/>
@@ -2348,7 +2336,7 @@
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
                 <xs:attribute name="pattern" type="xs:string"/>
-                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
@@ -2362,7 +2350,8 @@
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
-                <xs:attribute name="hasControls" type="xs:boolean"/>
+                <xs:attribute name="stepButtonsVisible" type="xs:boolean"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
@@ -2385,7 +2374,7 @@
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
-                <xs:attribute name="hasControls" type="xs:boolean"/>
+                <xs:attribute name="stepButtonsVisible" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
@@ -2475,8 +2464,8 @@
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
-                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasRequired"/>
@@ -2502,7 +2491,7 @@
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="tooltipText" type="resourceString"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
-                <xs:attribute name="allowedCharPattern" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
@@ -2512,6 +2501,25 @@
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValidation"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- MultiSelectComboBoxPicker-->
+    <xs:complexType name="multiSelectComboBoxPickerComponent">
+        <xs:complexContent>
+            <xs:extension base="multiSelectComboBoxComponent">
+                <xs:sequence>
+                    <xs:element name="actions" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice maxOccurs="unbounded">
+                                    <xs:element name="action" type="pickerAction"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2554,6 +2562,7 @@
                 <xs:attribute name="datatype" type="timeDatatypeEnum"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="timePickerThemeNames"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2577,6 +2586,7 @@
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="datePickerThemeNames"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
@@ -2727,6 +2737,7 @@
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="value" type="xs:string"/>
                 <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="autoselect" type="xs:boolean"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="textAreaThemeNames"/>
@@ -3482,6 +3493,7 @@
                 <xs:element name="comboButton" type="comboButtonComponent"/>
                 <xs:element name="comboBox" type="comboBoxComponent"/>
                 <xs:element name="multiSelectComboBox" type="multiSelectComboBoxComponent"/>
+                <xs:element name="multiSelectComboBoxPicker" type="multiSelectComboBoxPickerComponent"/>
                 <xs:element name="valuePicker" type="valuePickerComponent"/>
                 <xs:element name="multiValuePicker" type="valuePickerComponent"/>
                 <xs:element name="entityPicker" type="entityPickerComponent"/>

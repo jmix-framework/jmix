@@ -19,15 +19,14 @@ package io.jmix.flowui.kit.component.main;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.shared.HasTooltip;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.SupportsFormatter;
 import io.jmix.flowui.kit.component.formatter.Formatter;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public class UserIndicator<V> extends Composite<Div> implements SupportsFormatter<V>, HasTitle, HasStyle, HasSize,
-        HasEnabled, HasTooltip {
+        HasEnabled {
 
     protected static final String USER_INDICATOR_CLASS_NAME = "jmix-user-indicator";
     protected static final String USER_INDICATOR_LABEL_CLASS_NAME = "jmix-user-indicator-label";

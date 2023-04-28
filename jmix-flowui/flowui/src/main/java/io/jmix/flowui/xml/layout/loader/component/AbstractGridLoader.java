@@ -51,7 +51,7 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.datatype.DatatypeElementFactory;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -78,7 +78,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(element, "detailsVisibleOnClick", resultComponent::setDetailsVisibleOnClick);
         loadEnum(element, SelectionMode.class, "selectionMode", resultComponent::setSelectionMode);
         loadBoolean(element, "columnReorderingAllowed", resultComponent::setColumnReorderingAllowed);
-        loadBoolean(element, "verticalScrollingEnabled", resultComponent::setVerticalScrollingEnabled);
         loadEnum(element, NestedNullBehavior.class, "nestedNullBehavior", resultComponent::setNestedNullBehavior);
         loadBoolean(element, "editorBuffered", editorBuffered ->
                 resultComponent.getEditor().setBuffered(editorBuffered));

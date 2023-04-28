@@ -20,13 +20,11 @@ import com.vaadin.flow.component.notification.Notification;
 import io.jmix.flowui.app.filter.condition.AddConditionView;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.flowui.component")
-@ConstructorBinding
 public class FlowuiComponentProperties {
 
     String gridCreateShortcut;

@@ -22,8 +22,8 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Id;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Id;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 

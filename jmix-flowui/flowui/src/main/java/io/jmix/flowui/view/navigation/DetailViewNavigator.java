@@ -22,7 +22,7 @@ import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.DetailViewMode;
 import io.jmix.flowui.view.View;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 

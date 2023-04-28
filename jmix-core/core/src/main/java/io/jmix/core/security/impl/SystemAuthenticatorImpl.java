@@ -33,7 +33,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 @Component("core_SystemAuthenticator")
 public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implements SystemAuthenticator {

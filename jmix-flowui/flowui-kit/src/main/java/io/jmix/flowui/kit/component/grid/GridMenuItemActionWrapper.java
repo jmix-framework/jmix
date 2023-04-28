@@ -23,7 +23,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Optional;
 
 public class GridMenuItemActionWrapper<T> implements HasText, HasComponents, HasEnabled {

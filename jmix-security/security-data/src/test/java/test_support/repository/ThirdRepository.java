@@ -17,7 +17,7 @@
 package test_support.repository;
 
 import io.jmix.core.FetchPlan;
-import org.jetbrains.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import org.springframework.data.domain.Sort;
 import test_support.entity.TestOrder;
 

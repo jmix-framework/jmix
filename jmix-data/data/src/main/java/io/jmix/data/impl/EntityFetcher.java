@@ -27,10 +27,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.persistence.Basic;
-import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Basic;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.FetchType;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 import java.util.function.Consumer;

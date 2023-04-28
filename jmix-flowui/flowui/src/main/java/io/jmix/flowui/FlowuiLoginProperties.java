@@ -18,7 +18,6 @@ package io.jmix.flowui;
 
 import com.google.common.base.Strings;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.Optional;
@@ -28,7 +27,6 @@ import java.util.Optional;
  *
  */
 @ConfigurationProperties(prefix = "jmix.flowui.login")
-@ConstructorBinding
 @Deprecated
 public class FlowuiLoginProperties {
 

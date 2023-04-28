@@ -19,7 +19,7 @@ package test_support.entity.sales;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.TestBaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Table(name = "TEST_ORDER_LINE_PARAM")
 @Entity(name = "test_OrderLineParam")

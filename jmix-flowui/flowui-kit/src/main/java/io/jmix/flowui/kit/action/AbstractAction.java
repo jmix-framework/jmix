@@ -21,7 +21,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.event.EventBus;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
 import java.util.Objects;

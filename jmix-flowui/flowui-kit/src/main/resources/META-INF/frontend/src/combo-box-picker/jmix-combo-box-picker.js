@@ -23,6 +23,7 @@ registerStyles('jmix-combo-box-picker', [],{
     moduleId: 'jmix-combo-box-picker-styles'
 });
 
+// CAUTION: copied from @vaadin/login [last update Vaadin 24.0.3]
 export class JmixComboBoxPicker extends ComboBox {
 
     static get is() {
@@ -39,7 +40,7 @@ export class JmixComboBoxPicker extends ComboBox {
                 :host([readonly]) [part="action-part"] {
                     display: none;
                 }
-                
+
                 :host([opened]) {
                     pointer-events: auto;
                 }
@@ -54,14 +55,14 @@ export class JmixComboBoxPicker extends ComboBox {
                 <vaadin-input-container
                         part="input-field"
                         readonly="[[readonly]]"
-                        field-readonly="[[fieldReadonly]]"
                         disabled="[[disabled]]"
                         invalid="[[invalid]]"
-                        theme$="[[theme]]"
+                        theme$="[[_theme]]"
                 >
                     <slot name="prefix" slot="prefix"></slot>
                     <slot name="input"></slot>
                     <div id="toggleButton" part="toggle-button" slot="suffix" aria-hidden="true"></div>
+                    <!-- Jmix API -->
                     <div id="pickerAction" part="action-part" slot="suffix">
                         <slot name="actions"></slot>
                     </div>

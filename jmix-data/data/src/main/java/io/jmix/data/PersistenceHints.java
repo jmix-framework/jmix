@@ -18,8 +18,8 @@ package io.jmix.data;
 
 import io.jmix.core.FetchPlan;
 
-import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
 import java.util.*;
 
 public class PersistenceHints {

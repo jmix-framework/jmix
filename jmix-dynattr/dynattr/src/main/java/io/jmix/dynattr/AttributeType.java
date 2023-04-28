@@ -17,9 +17,8 @@
 package io.jmix.dynattr;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.core.metamodel.datatype.impl.EnumUtils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Objects;
 
 public enum AttributeType implements EnumClass<String> {

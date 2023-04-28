@@ -36,11 +36,11 @@ public class IntegerFieldLoader extends AbstractComponentLoader<JmixIntegerField
         loadInteger(element, "max", resultComponent::setMax);
         loadInteger(element, "min", resultComponent::setMin);
         loadInteger(element, "step", resultComponent::setStep);
+        loadBoolean(element, "stepButtonsVisible", resultComponent::setStepButtonsVisible);
         loadInteger(element, "value", resultComponent::setValue);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
-        loadBoolean(element, "hasControls", resultComponent::setHasControls);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 

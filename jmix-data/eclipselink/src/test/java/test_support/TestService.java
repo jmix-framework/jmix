@@ -24,8 +24,8 @@ import test_support.entity.multidb.Db1Customer;
 import test_support.entity.sec.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Component
 public class TestService {

@@ -19,7 +19,7 @@ package test_support.entity.petclinic;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.TestBaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity(name = "pc_City")
 @JmixEntity

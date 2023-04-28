@@ -23,7 +23,7 @@ import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.ValueSource;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 

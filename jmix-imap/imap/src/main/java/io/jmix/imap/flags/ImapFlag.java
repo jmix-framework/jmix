@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;

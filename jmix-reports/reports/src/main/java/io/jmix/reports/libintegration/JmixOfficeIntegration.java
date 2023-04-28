@@ -25,7 +25,7 @@ import com.sun.star.comp.helper.BootstrapException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.*;
 

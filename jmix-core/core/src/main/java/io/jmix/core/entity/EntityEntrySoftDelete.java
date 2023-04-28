@@ -18,7 +18,7 @@ package io.jmix.core.entity;
 
 import io.jmix.core.annotation.Internal;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 @Internal
 public interface EntityEntrySoftDelete {

@@ -33,7 +33,7 @@ import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.model.DataLoader;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.BiConsumer;
 
 import static com.google.common.base.Preconditions.checkState;

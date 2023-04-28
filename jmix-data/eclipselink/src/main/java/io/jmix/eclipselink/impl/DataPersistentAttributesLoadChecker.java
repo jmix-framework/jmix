@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 
@@ -79,7 +79,7 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
                 return true;//NoValue placeholder should be considered as loaded like null values of just saved entities
             }
         } catch (RuntimeException e) {
-            log.debug("Cannot get value for property {} of class {}", property, entity.getClass().getName());
+            log.trace("Cannot get value for property {} of class {}", property, entity.getClass().getName());
         }
 
         EntityManagerFactory emf = storeAwareLocator.getEntityManagerFactory(metaClass.getStore().getName());

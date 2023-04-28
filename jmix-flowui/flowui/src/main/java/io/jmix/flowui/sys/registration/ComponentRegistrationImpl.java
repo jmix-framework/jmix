@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 @Internal
 public class ComponentRegistrationImpl implements ComponentRegistration {

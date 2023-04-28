@@ -25,7 +25,7 @@ import io.jmix.flowui.view.Install;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**

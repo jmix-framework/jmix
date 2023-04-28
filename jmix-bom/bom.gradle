@@ -60,15 +60,16 @@ publishing {
 
 group = 'io.jmix.bom'
 
+//todo SB3 remove vaadin8
 def vaadinVersion = '8.14.3-2-jmix'
-def vaadinFlowVersion = '23.3.0'
+def vaadinFlowVersion = '24.0.3'
 
 javaPlatform {
     allowDependencies()
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:2.7.9")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.0.5")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -259,6 +260,7 @@ dependencies {
         api "io.jmix.translations:jmix-translations-el:$freeVersion"
         api "io.jmix.translations:jmix-translations-ckb:$freeVersion"
         api "io.jmix.translations:jmix-translations-nl:$freeVersion"
+        api "io.jmix.translations:jmix-translations-it:$freeVersion"
 
         api "io.jmix.ui:jmix-ui:$freeVersion"
         api "io.jmix.ui:jmix-ui-data:$freeVersion"
@@ -286,22 +288,32 @@ dependencies {
 
         api 'com.google.guava:guava:31.1-jre'
         api 'commons-io:commons-io:2.11.0'
-        api 'commons-fileupload:commons-fileupload:1.4'
-        api 'javax.annotation:javax.annotation-api:1.3.2'
-        api 'javax.inject:javax.inject:1'
+//        api 'javax.annotation:javax.annotation-api:1.3.2'
+//        api 'javax.inject:javax.inject:1'
         api 'org.antlr:antlr-runtime:3.5.2'
         api 'org.apache.commons:commons-collections4:4.4'
         api 'org.apache.commons:commons-text:1.10.0'
-        api 'org.apache.commons:commons-compress:1.21'
-        api 'org.dom4j:dom4j:2.1.3'
-        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
-        api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.9-6-jmix'
-        api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix'
-        api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.9'
-        api 'org.glassfish:javax.el:3.0.1-b12'
+        api 'org.apache.commons:commons-compress:1.23.0'
+        api 'org.dom4j:dom4j:2.1.4'
+
+//        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
+
+        //todo SB3 use Jmix fork of eclipselink
+        def eclipselinkVersion = '4.0.1'
+        api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
+        api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
+        api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkVersion"
+//        api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.9-6-jmix'
+//        api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix'
+//        api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.9'
+
+        api 'org.glassfish:jakarta.el:4.0.2'
+
         api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.1'
 
+        //todo SB3 jakarta.xml.bind-api:2.3.3 -> 4.0.0
         api 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
+        //todo SB3 org.glassfish.jaxb:jaxb-runtime:2.3.6 -> 4.0.2
         api 'org.glassfish.jaxb:jaxb-runtime:2.3.6'
 
         api "com.vaadin:vaadin-server:$vaadinVersion"
@@ -346,8 +358,8 @@ dependencies {
 
         api 'org.webjars.bowergithub.mootools:slick:1.1.7'
 
-        api 'org.spockframework:spock-core:2.0-groovy-3.0'
-        api 'org.spockframework:spock-spring:2.0-groovy-3.0'
+        api 'org.spockframework:spock-core:2.3-groovy-4.0'
+        api 'org.spockframework:spock-spring:2.3-groovy-4.0'
 
         api 'io.swagger.core.v3:swagger-models:2.1.11'
         api 'io.swagger.core.v3:swagger-core:2.1.11'
@@ -356,11 +368,11 @@ dependencies {
 
         api 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
 
-        api 'org.springframework.security:spring-security-oauth2-authorization-server:0.3.1'
+        api 'org.springframework.security:spring-security-oauth2-authorization-server:1.0.1'
 
         api 'javax.cache:cache-api:1.1.1'
 
-        api 'com.icegreen:greenmail:1.6.9'
+        api 'com.icegreen:greenmail:2.0.0'
 
         def geoToolsVersion = '24.6'
         api "org.geotools:gt-main:$geoToolsVersion"
@@ -371,13 +383,14 @@ dependencies {
         api "org.geotools:gt-shapefile:$geoToolsVersion"
         api 'javax.media.jai:com.springsource.javax.media.jai.core:1.1.3'
 
+        //todo SB3 org.liquibase:liquibase-core:4.11.0 -> 4.20.0
         api 'org.liquibase:liquibase-core:4.11.0'
 
         api 'com.thoughtworks.xstream:xstream:1.4.19'
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        def yargVersion = '2.2.20'
+        def yargVersion = '2.2.21'
         api "com.haulmont.yarg:yarg-api:$yargVersion"
         api "com.haulmont.yarg:yarg:$yargVersion"
 
@@ -391,7 +404,8 @@ dependencies {
         api 'org.webjars:jquery-ui-touch-punch:0.2.3-2'
         api 'org.webjars:amcharts:3.21.12.jmix.0'
 
-        def flowableVersion = '6.8.0'
+        //todo SB3 Update flowable 7.0 to production version
+        def flowableVersion = '7.0.0.M1'
         api "org.flowable:flowable-spring-configurator:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-process:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn:$flowableVersion"
@@ -417,7 +431,8 @@ dependencies {
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
 
-        runtime 'org.hsqldb:hsqldb:2.4.1'
+        //todo SB3 test default HSQLDB version
+//        runtime 'org.hsqldb:hsqldb:2.7.1'
     }
 }
 

@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;

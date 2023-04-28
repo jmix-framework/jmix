@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.base.entity.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Table(name = "CORE_ORDER_LINE")
 @Entity(name = "core_OrderLine")

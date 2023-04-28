@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configuration.ClientDetailsServiceConfiguration;
@@ -33,6 +32,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpointHandlerMapping;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,7 @@ import java.util.List;
  * A copy of
  * {@link
  * org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration}
- * that doesn't extend {@link WebSecurityConfigurerAdapter}.
+ * that doesn't extend {@code WebSecurityConfigurerAdapter}.
  */
 @Configuration
 @Import({ClientDetailsServiceConfiguration.class, AuthorizationServerEndpointsConfiguration.class})
@@ -78,16 +78,15 @@ public class AuthorizationServerSecurityConfiguration {
             UserDetailsService userDetailsService = http.getSharedObject(UserDetailsService.class);
             endpoints.getEndpointsConfigurer().userDetailsService(userDetailsService);
         }
+        //todo SB3 check token endpoints
         // @formatter:off
         http
-                .authorizeRequests()
-                .antMatchers(tokenEndpointPath).fullyAuthenticated()
-                .antMatchers(tokenKeyPath).access(configurer.getTokenKeyAccess())
-                .antMatchers(checkTokenPath).access(configurer.getCheckTokenAccess())
-                .and()
-                .requestMatchers()
-                .antMatchers(tokenEndpointPath, tokenKeyPath, checkTokenPath)
-                .and()
+                .securityMatcher(tokenEndpointPath, tokenKeyPath, checkTokenPath)
+                .authorizeHttpRequests(authorize -> {
+                    authorize.requestMatchers(tokenEndpointPath).fullyAuthenticated();
+                    authorize.requestMatchers(tokenKeyPath).access(new WebExpressionAuthorizationManager(configurer.getTokenKeyAccess()));
+                    authorize.requestMatchers(checkTokenPath).access(new WebExpressionAuthorizationManager(configurer.getCheckTokenAccess()));
+                })
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
         // @formatter:on
         http.setSharedObject(ClientDetailsService.class, clientDetailsService);

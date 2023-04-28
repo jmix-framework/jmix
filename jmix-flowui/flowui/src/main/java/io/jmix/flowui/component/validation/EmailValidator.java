@@ -24,9 +24,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.validation.Validator;
-import javax.validation.constraints.Email;
+import jakarta.annotation.Nullable;
+import jakarta.validation.Validator;
+import jakarta.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.List;
 

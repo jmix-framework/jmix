@@ -61,6 +61,7 @@ class TextFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "TextField attributes will be loaded"
         verifyAll(componentView.textFieldId) {
             id.get() == "textFieldId"
+            allowedCharPattern == "charPattern"
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
             autocorrect

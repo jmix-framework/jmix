@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.backgroundtask;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface TaskExecutor<T, V> {
     /**

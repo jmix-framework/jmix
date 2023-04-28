@@ -58,7 +58,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.Convert;
+import jakarta.persistence.Convert;
 import java.util.*;
 import java.util.stream.Collectors;
 

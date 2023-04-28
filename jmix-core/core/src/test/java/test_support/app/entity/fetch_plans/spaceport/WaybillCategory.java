@@ -20,13 +20,13 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.UUID;
 
 @Table(name = "ST_WAYBILL_CATEGORY")
-@javax.persistence.Entity(name = "st_WaybillCategory")
+@jakarta.persistence.Entity(name = "st_WaybillCategory")
 @JmixEntity
 public class WaybillCategory {
     @JmixGeneratedValue

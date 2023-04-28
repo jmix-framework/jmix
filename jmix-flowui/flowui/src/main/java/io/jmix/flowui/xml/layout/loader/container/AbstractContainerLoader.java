@@ -77,46 +77,4 @@ public abstract class AbstractContainerLoader<T extends Component> extends Abstr
             });
         }
     }
-
-    // TODO: what is it?
-    /*protected void setComponentsRatio(ComponentContainer resultComponent, Element element) {
-        if (!(resultComponent instanceof SupportsExpandRatio)) {
-            return;
-        }
-
-        List<Element> elements = element.elements();
-        if (elements.isEmpty()) {
-            return;
-        }
-
-        SupportsExpandRatio supportsRatio = (SupportsExpandRatio) resultComponent;
-        List<Component> ownComponents = resultComponent.getOwnComponentsStream().collect(Collectors.toList());
-        if (ownComponents.size() != elements.size()) {
-            return;
-        }
-
-        for (int i = 0; i < elements.size(); i++) {
-            String stringRatio = elements.get(i).attributeValue("box.expandRatio");
-            if (!Strings.isNullOrEmpty(stringRatio)) {
-
-                Component subComponent = ownComponents.get(i);
-                if (subComponent != null) {
-                    float ratio = Float.parseFloat(stringRatio);
-                    supportsRatio.setExpandRatio(subComponent, ratio);
-                }
-            }
-        }
-    }*/
-
-    /*@Nullable
-    protected String find(String[] parts, String name) {
-        String prefix = name + "=";
-
-        for (String part : parts) {
-            if (part.trim().startsWith(prefix)) {
-                return part.trim().substring((prefix).length()).trim();
-            }
-        }
-        return null;
-    }*/
 }

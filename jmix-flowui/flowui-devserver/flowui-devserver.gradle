@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'io.jmix'
-
+apply plugin: 'maven-publish'
 
 group = 'io.jmix.flowui'
 archivesBaseName = 'jmix-flowui-devserver'
 
-configurations {
-    extraLibs
-}
-
 dependencies {
-    //extraLibs(project(':flowui-kit'))
+    api(project(":flowui-kit"))
 
-    extraLibs("com.vaadin:flow-server:$vaadinFlowVersion")
-    extraLibs("javax.servlet:javax.servlet-api:4.0.1")
-
-    implementation("com.vaadin:flow-server:$vaadinFlowVersion")
-    implementation("javax.servlet:javax.servlet-api:4.0.1")
+    api("org.eclipse.jetty:jetty-webapp")
+    api("org.eclipse.jetty.websocket:websocket-jakarta-server")
+    api('jakarta.servlet:jakarta.servlet-api')
+    api('commons-logging:commons-logging:1.2')
+    api('org.slf4j:slf4j-nop:2.0.7')
 }
 
-jar {
-    duplicatesStrategy = DuplicatesStrategy.WARN
-    from {
-        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+shadowJar {
+    dependsOn(jar)
+    mergeServiceFiles()
+    archiveClassifier.set("")
 }

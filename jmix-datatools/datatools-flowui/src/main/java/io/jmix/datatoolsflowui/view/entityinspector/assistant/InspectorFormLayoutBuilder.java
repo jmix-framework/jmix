@@ -46,7 +46,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Convert;
+import jakarta.persistence.Convert;
 import java.util.Arrays;
 import java.util.List;
 

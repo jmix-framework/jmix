@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '1.5.0'
+    id 'io.jmix' version '2.0.0-M2'
     id 'org.jetbrains.kotlin.jvm' version '1.7.20'
     id 'java'
 }

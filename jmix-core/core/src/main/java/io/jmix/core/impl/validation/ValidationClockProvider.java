@@ -21,7 +21,7 @@ import io.jmix.core.TimeSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.validation.ClockProvider;
+import jakarta.validation.ClockProvider;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 

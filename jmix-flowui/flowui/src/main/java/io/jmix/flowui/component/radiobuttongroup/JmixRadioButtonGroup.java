@@ -17,7 +17,11 @@
 package io.jmix.flowui.component.radiobuttongroup;
 
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.radiobutton.dataview.RadioButtonGroupDataView;
+import com.vaadin.flow.component.radiobutton.dataview.RadioButtonGroupListDataView;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.InMemoryDataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
@@ -33,7 +37,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements SupportsValueSource<V>,
@@ -93,12 +97,34 @@ public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements Supp
     }
 
     @Override
-    public void setDataProvider(DataProvider<V, ?> dataProvider) {
-        // Method is called from a constructor so bean can be null
+    public RadioButtonGroupDataView<V> setItems(DataProvider<V, Void> dataProvider) {
+        bindDataProvider(dataProvider);
+        return super.setItems(dataProvider);
+    }
+
+    @Override
+    public RadioButtonGroupDataView<V> setItems(InMemoryDataProvider<V> inMemoryDataProvider) {
+        bindDataProvider(inMemoryDataProvider);
+        return super.setItems(inMemoryDataProvider);
+    }
+
+    @Override
+    public RadioButtonGroupListDataView<V> setItems(ListDataProvider<V> dataProvider) {
+        bindDataProvider(dataProvider);
+        return super.setItems(dataProvider);
+    }
+
+    protected void bindDataProvider(DataProvider<V, ?> dataProvider) {
+        // One of binding methods is called from a constructor so bean can be null
         if (dataViewDelegate != null) {
             dataViewDelegate.bind(dataProvider);
         }
-        super.setDataProvider(dataProvider);
+    }
+
+    @Nullable
+    @Override
+    public DataProvider<V, ?> getDataProvider() {
+        return dataViewDelegate.getDataProvider();
     }
 
     @Nullable

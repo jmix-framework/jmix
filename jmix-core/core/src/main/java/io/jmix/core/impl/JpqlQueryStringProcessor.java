@@ -44,7 +44,7 @@ public class JpqlQueryStringProcessor implements QueryStringProcessor {
         if (Strings.isNullOrEmpty(queryString)) {
             return queryString;
         }
-        if (entityClass.getAnnotation(javax.persistence.Entity.class) != null) {
+        if (entityClass.getAnnotation(jakarta.persistence.Entity.class) != null) {
             return processJpaQuery(queryString, entityClass);
         } else {
             return queryString;

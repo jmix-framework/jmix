@@ -19,7 +19,7 @@ package test_support.entity.cascade_operations;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity(name = "test$JpaCascadeItem")
 @JmixEntity

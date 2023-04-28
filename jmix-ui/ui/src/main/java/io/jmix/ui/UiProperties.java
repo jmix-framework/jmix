@@ -135,6 +135,11 @@ public class UiProperties {
      */
     int mainTabCaptionLength;
 
+    /**
+     * Whether to reinitialize a session after login to protect from session fixation attacks.
+     */
+    boolean useSessionFixationProtection;
+
     public UiProperties(
             boolean testMode,
             boolean performanceTestMode,
@@ -161,7 +166,8 @@ public class UiProperties {
             @DefaultValue("main") String mainScreenId,
             String initialScreenId,
             @DefaultValue("true") boolean localeSelectVisible,
-            @DefaultValue("25") int mainTabCaptionLength
+            @DefaultValue("25") int mainTabCaptionLength,
+            @DefaultValue("true") boolean useSessionFixationProtection
     ) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
@@ -189,6 +195,7 @@ public class UiProperties {
         this.initialScreenId = initialScreenId;
         this.localeSelectVisible = localeSelectVisible;
         this.mainTabCaptionLength = mainTabCaptionLength;
+        this.useSessionFixationProtection = useSessionFixationProtection;
     }
 
     /**
@@ -353,5 +360,12 @@ public class UiProperties {
      */
     public boolean isLocaleSelectVisible() {
         return localeSelectVisible;
+    }
+
+    /**
+     * @see #useSessionFixationProtection
+     */
+    public boolean isUseSessionFixationProtection() {
+        return useSessionFixationProtection;
     }
 }

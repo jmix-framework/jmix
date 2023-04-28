@@ -17,14 +17,12 @@
 package io.jmix.authorizationserver;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.Duration;
 import java.util.Set;
 
 @ConfigurationProperties(prefix = "jmix.authorization-server.default-client")
-@ConstructorBinding
 public class DefaultRegisteredClientProperties {
 
     /**

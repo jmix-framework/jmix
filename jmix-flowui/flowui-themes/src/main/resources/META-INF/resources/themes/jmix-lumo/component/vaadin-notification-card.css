@@ -1,0 +1,114 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.jmix-text-layout-closeable .title,
+.jmix-text-layout-closeable .message,
+.jmix-text-layout .title,
+.jmix-text-layout .message {
+  white-space: pre;
+}
+
+.jmix-text-layout-closeable .title,
+.jmix-text-layout .title {
+  font-size: var(--lumo-font-size-l);
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+.jmix-text-layout-closeable .message,
+.jmix-text-layout .message {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.jmix-closeable-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lumo-space-s)
+}
+
+.jmix-closeable-layout .close-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.jmix-closeable-layout .close-button vaadin-icon {
+  color: var(--_lumo-button-color, var(--lumo-contrast))
+}
+
+vaadin-notification-card:not([slot$='stretch']) .jmix-closeable-layout {
+  padding-inline-end: var(--lumo-space-xs);
+}
+
+vaadin-notification-card[slot$='stretch'] .jmix-closeable-layout .close-button {
+  padding-top: var(--lumo-space-s);
+  padding-inline-end: var(--lumo-space-s);
+}
+
+vaadin-notification-card:not([slot$='stretch']) .jmix-closeable-layout .close-button {
+  padding-top: var(--lumo-space-xs);
+  padding-inline-end: var(--lumo-space-xs);
+}
+
+vaadin-notification-card[slot$='stretch'] .jmix-text-layout-closeable {
+  padding-inline-start: unset;
+}
+
+vaadin-notification-card[theme~='warning'] .jmix-text-layout-closeable .title,
+vaadin-notification-card[theme~='warning'] .jmix-text-layout .title {
+  color: var(--jmix-lumo-warning-color);
+}
+
+vaadin-notification-card[theme~='contrast'] .jmix-text-layout-closeable .title,
+vaadin-notification-card[theme~='contrast'] .jmix-text-layout .title {
+  color: var(--lumo-base-color);
+}
+
+vaadin-notification-card[theme~='error'] .jmix-text-layout-closeable .title,
+vaadin-notification-card[theme~='error'] .jmix-text-layout .title {
+  color: var(--lumo-error-contrast-color);
+}
+
+vaadin-notification-card[theme~='success'] .jmix-text-layout-closeable .title,
+vaadin-notification-card[theme~='success'] .jmix-text-layout .title {
+  color: var(--lumo-success-contrast-color);
+}
+
+vaadin-notification-card[theme~='primary'] .jmix-text-layout-closeable .title,
+vaadin-notification-card[theme~='primary'] .jmix-text-layout .title {
+  color: var(--lumo-primary-contrast-color);
+}
+
+vaadin-notification-card::part(overlay) {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+vaadin-notification-card[theme~='warning'] {
+  --_lumo-button-background-color: var(--lumo-shade-20pct);
+  --_lumo-button-color: var(--jmix-lumo-warning-color);
+  --_lumo-button-primary-background-color: var(--jmix-lumo-warning-color);
+  --_lumo-button-primary-color: var(--jmix-lumo-warning-primary-text-color);
+}
+
+vaadin-notification-card[theme~='warning']::part(overlay) {
+  background-color: var(--jmix-lumo-warning-background-color);
+  color: var(--jmix-lumo-warning-color);
+  box-shadow: var(--lumo-box-shadow-l);
+}

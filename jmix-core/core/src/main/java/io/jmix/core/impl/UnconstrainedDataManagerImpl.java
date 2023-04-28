@@ -35,7 +35,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -318,8 +318,7 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
 
     @Override
     public <T> T getReference(Class<T> entityClass, Object id) {
-        T entity = metadata.create(entityClass);
-        EntityValues.setId(entity, id);
+        T entity = metadata.create(entityClass, id);
         entityStates.makePatch(entity);
         return entity;
     }

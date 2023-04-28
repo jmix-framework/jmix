@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.vaadin.flow.server.Constants.APPLICATION_THEME_ROOT;
 import static com.vaadin.flow.server.frontend.FrontendUtils.GENERATED;
@@ -36,7 +35,7 @@ import static io.jmix.flowui.devserver.frontend.FrontendUtils.THEME_IMPORTS_NAME
 /**
  * Task generating the theme definition file 'theme.js' for importing
  * application theme into the generated frontend directory.
- *
+ * <p>
  * Default directory is ' ./frontend/generated'
  */
 public class TaskUpdateThemeImport implements FallibleCommand {
@@ -50,15 +49,13 @@ public class TaskUpdateThemeImport implements FallibleCommand {
     private final File themeImportFile;
     private final File themeImportFileDefinition;
     private final ThemeDefinition theme;
-    private final File frontendDirectory;
-    private final File studioFolder;
+    private final Options options;
 
-    TaskUpdateThemeImport(File studioFolder, ThemeDefinition theme,
-                          File frontendDirectory) {
+    TaskUpdateThemeImport(ThemeDefinition theme, Options options) {
         this.theme = theme;
-        this.frontendDirectory = frontendDirectory;
-        this.studioFolder = studioFolder;
-        File frontendGeneratedFolder = new File(frontendDirectory, GENERATED);
+        this.options = options;
+        File frontendGeneratedFolder = new File(options.getFrontendDirectory(),
+                GENERATED);
         themeImportFile = new File(frontendGeneratedFolder, THEME_IMPORTS_NAME);
         themeImportFileDefinition = new File(frontendGeneratedFolder,
                 THEME_IMPORTS_D_TS_NAME);
@@ -86,7 +83,7 @@ public class TaskUpdateThemeImport implements FallibleCommand {
         try {
             AbstractTaskClientGenerator.writeIfChanged(themeImportFile, String
                     .format("import {applyTheme as _applyTheme} from './theme-%s.generated.js';%n"
-                            + "export const applyTheme = _applyTheme;%n",
+                                    + "export const applyTheme = _applyTheme;%n",
                             theme.getName()));
             AbstractTaskClientGenerator.writeIfChanged(
                     themeImportFileDefinition, EXPORT_MODULES_DEF);
@@ -105,8 +102,8 @@ public class TaskUpdateThemeImport implements FallibleCommand {
         List<String> appThemePossiblePaths = getAppThemePossiblePaths(
                 themePath);
         List<File> existingAppThemeDirectories = appThemePossiblePaths.stream()
-                .map(path -> new File(studioFolder, path)).filter(File::exists)
-                .collect(Collectors.toList());
+                .map(path -> new File(options.getStudioFolder(), path)).filter(File::exists)
+                .toList();
 
         if (existingAppThemeDirectories.isEmpty()) {
             String errorMessage = "Discovered @Theme annotation with theme "
@@ -116,8 +113,8 @@ public class TaskUpdateThemeImport implements FallibleCommand {
                     + "or have mistyped the theme or folder name for '%s'.";
             throw new ExecutionFailedException(
                     String.format(errorMessage, themeName,
-                            new File(frontendDirectory, APPLICATION_THEME_ROOT)
-                                    .getPath(),
+                            new File(options.getFrontendDirectory(),
+                                    APPLICATION_THEME_ROOT).getPath(),
                             themeName));
         }
         if (existingAppThemeDirectories.size() >= 2) {
@@ -143,15 +140,15 @@ public class TaskUpdateThemeImport implements FallibleCommand {
                         + "inside the project is '%s'";
                 throw new ExecutionFailedException(String.format(errorMessage,
                         themeName, themeName,
-                        new File(frontendDirectory, APPLICATION_THEME_ROOT)
-                                .getPath()));
+                        new File(options.getFrontendDirectory(),
+                                APPLICATION_THEME_ROOT).getPath()));
             }
         }
     }
 
     private List<String> getAppThemePossiblePaths(String themePath) {
-        String frontendTheme = String.join("/", studioFolder.toPath()
-                .relativize(frontendDirectory.toPath()).toString(), themePath);
+        String frontendTheme = String.join("/", options.getStudioFolder().toPath()
+                .relativize(options.getFrontendDirectory().toPath()).toString(), themePath);
 
         String themePathInMetaInfResources = String.join("/",
                 APPLICATION_META_INF_RESOURCES, themePath);

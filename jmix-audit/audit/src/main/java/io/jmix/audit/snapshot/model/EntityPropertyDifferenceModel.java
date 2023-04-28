@@ -24,8 +24,8 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.model.MetaProperty;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.Id;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.Id;
 import java.util.UUID;
 
 /**

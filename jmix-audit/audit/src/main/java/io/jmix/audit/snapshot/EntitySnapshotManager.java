@@ -20,7 +20,7 @@ import io.jmix.audit.snapshot.model.EntitySnapshotModel;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.metamodel.model.MetaClass;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

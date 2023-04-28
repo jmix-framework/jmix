@@ -2,7 +2,7 @@ package io.jmix.appsettings;
 
 import io.jmix.appsettings.entity.AppSettingsEntity;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 public interface AppSettingsTools {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package io.jmix.flowui.devserver;
 
 import com.vaadin.flow.di.Lookup;
@@ -79,7 +78,8 @@ public final class ViteHandler extends AbstractDevServerRunner {
     }
 
     @Override
-    public List<String> getServerStartupCommand(FrontendTools frontendTools) {
+    protected List<String> getServerStartupCommand(
+            FrontendTools frontendTools) {
         List<String> command = new ArrayList<>();
         command.add(frontendTools.getNodeExecutable());
         command.add(getServerBinary().getAbsolutePath());
@@ -163,9 +163,22 @@ public final class ViteHandler extends AbstractDevServerRunner {
         return super.prepareConnection(vitePath, method);
     }
 
+    /**
+     * Gets the url path to the /VAADIN folder.
+     *
+     * @return the url path to the /VAADIN folder, relative to the host root
+     */
     private String getPathToVaadin() {
-        return getContextPath()
-                + FrontendUtils.getFrontendServletPath(
+        return getContextPath() + getPathToVaadinInContext();
+    }
+
+    /**
+     * Gets the url path to the /VAADIN folder inside the context root.
+     *
+     * @return the url path to the /VAADIN folder, relative to the context root
+     */
+    public String getPathToVaadinInContext() {
+        return FrontendUtils.getFrontendServletPath(
                         getServletContext().getContext())
                 + "/" + VAADIN_MAPPING;
     }

@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.kit.component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface HasShortcutCombination {
 

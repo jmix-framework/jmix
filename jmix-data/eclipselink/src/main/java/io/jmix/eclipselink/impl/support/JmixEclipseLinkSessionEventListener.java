@@ -61,7 +61,7 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
         boolean hasMultipleTableConstraintDependency = hasMultipleTableConstraintDependency();
 
         //noinspection rawtypes
-        for (Map.Entry<Class, ClassDescriptor> entry : session.getDescriptors().entrySet()) {
+        for (Map.Entry<Class<?>, ClassDescriptor> entry : session.getDescriptors().entrySet()) {
             MetaClass metaClass = metadata.getSession().getClass(entry.getKey());
             ClassDescriptor descriptor = entry.getValue();
 

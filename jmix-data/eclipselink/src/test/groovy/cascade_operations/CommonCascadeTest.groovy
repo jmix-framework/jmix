@@ -8,7 +8,7 @@ import test_support.DataSpec
 import test_support.entity.cascade_operations.JpaCascadeBar
 import test_support.entity.cascade_operations.JpaCascadeFoo
 
-import javax.persistence.CascadeType
+import jakarta.persistence.CascadeType
 import java.util.stream.Collectors
 
 class CommonCascadeTest extends DataSpec {

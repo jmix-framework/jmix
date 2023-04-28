@@ -208,14 +208,14 @@ The application component supports the following kinds of IMAP events:
 * `NewEmailImapEvent` is triggered for a folder having an event of the `ImapEventType.NEW_EMAIL` type enabled,
 when a new message appears in the folder on the IMAP server.
 * `EmailSeenImapEvent` is triggered for a folder having an event of the `ImapEventType.EMAIL_SEEN` type enabled,
-when a message is marked with the `javax.mail.Flags.Flag.SEEN` IMAP flag.
+when a message is marked with the `jakarta.mail.Flags.Flag.SEEN` IMAP flag.
 * `EmailAnsweredImapEvent` is triggered for a folder having an event of the `ImapEventType.NEW_ANSWER` type enabled,
-when a message is replied (usually it happens when a message is marked with the `javax.mail.Flags.Flag.ANSWERED` IMAP flag).
+when a message is replied (usually it happens when a message is marked with the `jakarta.mail.Flags.Flag.ANSWERED` IMAP flag).
 * `EmailFlagChangedImapEvent` is triggered for a folder having an event of the `ImapEventType.FLAGS_UPDATED` type enabled,
 when a standard or custom IMAP flag is changed for a message.
 The event contains a `Map` of all changed flags and their actual state (set or unset).
 * `EmailDeletedImapEvent` is triggered for a folder having an event of the `ImapEventType.EMAIL_DELETED` type enabled,
-when a message is completely deleted from a folder on the IMAP server side, it is **not** related to the IMAP flag `javax.mail.Flags.Flag.DELETED`.
+when a message is completely deleted from a folder on the IMAP server side, it is **not** related to the IMAP flag `jakarta.mail.Flags.Flag.DELETED`.
 Such events are also triggered when a message is moved to a trash folder (if it is configured for a mailbox) on the server.
 * `EmailMovedImapEvent` is triggered for a folder having an event of the `ImapEventType.EMAIL_MOVED` type enabled,
 when a message is moved to another folder on the IMAP server.

@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EmptyDataUnit;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 

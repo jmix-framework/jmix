@@ -18,10 +18,10 @@ package test_support.entity.entity_extension;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import java.util.List;
 
 @JmixEntity

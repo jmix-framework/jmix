@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.text.ParseException;
 import java.util.Locale;
 

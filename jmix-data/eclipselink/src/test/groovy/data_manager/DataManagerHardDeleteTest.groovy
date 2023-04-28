@@ -20,14 +20,13 @@ import io.jmix.core.DataManager
 import io.jmix.core.Id
 import io.jmix.core.SaveContext
 import io.jmix.data.PersistenceHints
-import org.junit.jupiter.api.Disabled
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.support.TransactionTemplate
 import test_support.DataSpec
 import test_support.entity.sales.Customer
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 
 class DataManagerHardDeleteTest extends DataSpec {
 

@@ -18,8 +18,8 @@ package test_support;
 
 import org.springframework.mock.web.MockServletContext;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import java.util.EventListener;
 
 /**

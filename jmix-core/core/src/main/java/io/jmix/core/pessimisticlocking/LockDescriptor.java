@@ -20,7 +20,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 
 /**
  * The {@code LockDescriptor} contains configuration information about a pessimistic lock.

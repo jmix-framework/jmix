@@ -10,8 +10,8 @@ import io.jmix.core.metamodel.annotation.JmixEntity
 import io.jmix.security.authentication.JmixUserDetails
 import org.springframework.security.core.GrantedAuthority
 import java.util.*
-import javax.persistence.*
-import javax.validation.constraints.Email
+import jakarta.persistence.*
+import jakarta.validation.constraints.Email
 
 @JmixEntity
 @Entity<%if(!normalizedPrefix_underscore.isEmpty()) {%>(name = "${normalizedPrefix_underscore}User")<%}%>

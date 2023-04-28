@@ -67,6 +67,7 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "PasswordField attributes will be loaded"
         verifyAll(componentView.passwordFieldId) {
             id.get() == "passwordFieldId"
+            allowedCharPattern == "charPattern"
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
             autocorrect
@@ -86,7 +87,6 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             pattern == "patternString"
             placeholder == "placeholderString"
-            preventInvalidInput
             readOnly
             required
             requiredIndicatorVisible

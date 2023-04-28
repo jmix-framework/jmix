@@ -16,7 +16,8 @@
 
 package entity_extension
 
-import groovy.util.slurpersupport.GPathResult
+import groovy.xml.XmlSlurper
+import groovy.xml.slurpersupport.GPathResult
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import test_support.DataSpec

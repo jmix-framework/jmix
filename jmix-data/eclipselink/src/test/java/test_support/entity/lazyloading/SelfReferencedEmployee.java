@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 import test_support.entity.entity_extension.Address;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @JmixEntity
 @Table(name = "TEST_SELFREF_EMPLOYEE")

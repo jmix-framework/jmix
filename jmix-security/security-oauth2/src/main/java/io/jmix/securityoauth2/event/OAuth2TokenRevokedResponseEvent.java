@@ -19,7 +19,7 @@ package io.jmix.securityoauth2.event;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.http.ResponseEntity;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Event fired when token has been revoked by client before HTTP response is sent.

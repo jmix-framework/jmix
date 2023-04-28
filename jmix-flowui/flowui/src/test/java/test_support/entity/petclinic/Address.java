@@ -18,7 +18,7 @@ package test_support.entity.petclinic;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Embeddable
 @JmixEntity(name = "pc_Address")

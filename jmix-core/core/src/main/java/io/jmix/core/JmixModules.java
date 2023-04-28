@@ -19,7 +19,7 @@ package io.jmix.core;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;

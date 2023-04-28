@@ -6,9 +6,9 @@ import com.vaadin.flow.internal.AnnotationReader;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.internal.RouteUtil;
 import com.vaadin.flow.server.HandlerHelper;
+import com.vaadin.flow.server.VaadinServletContext;
 import com.vaadin.flow.spring.VaadinConfigurationProperties;
 import com.vaadin.flow.spring.security.RequestUtil;
-import com.vaadin.flow.spring.security.VaadinAwareSecurityContextHolderStrategy;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import com.vaadin.flow.spring.security.VaadinSavedRequestAwareAuthenticationSuccessHandler;
 import io.jmix.core.JmixOrder;
@@ -21,9 +21,14 @@ import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
 import io.jmix.securityflowui.access.FlowuiViewAccessChecker;
+import jakarta.annotation.Nullable;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
@@ -33,9 +38,8 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
@@ -49,20 +53,20 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.context.WebApplicationContext;
 
-import javax.annotation.Nullable;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+//@EnableWebSecurity
+//@Configuration
 public class FlowuiSecurityConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(FlowuiSecurityConfiguration.class);
@@ -71,6 +75,8 @@ public class FlowuiSecurityConfiguration {
     public static final String LOGOUT_SUCCESS_URL = "/";
     public static final String SECURITY_CONFIGURER_QUALIFIER = "flowui";
 
+    protected ApplicationContext applicationContext;
+
     protected VaadinDefaultRequestCache vaadinDefaultRequestCache;
     protected VaadinConfigurationProperties configurationProperties;
     protected RequestUtil requestUtil;
@@ -78,6 +84,11 @@ public class FlowuiSecurityConfiguration {
     protected FlowuiViewAccessChecker viewAccessChecker;
     protected FlowuiProperties flowuiProperties;
     protected ViewRegistry viewRegistry;
+
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Autowired
     public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache) {
@@ -124,11 +135,18 @@ public class FlowuiSecurityConfiguration {
     @Bean("sec_FlowUiSecurityFilterChain")
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Use a security context holder that can find the context from Vaadin
-        // specific classes
-        SecurityContextHolder.setStrategyName(
-                VaadinAwareSecurityContextHolderStrategy.class.getName());
+        configure(http);
 
+        // Apply Jmix SecurityConfigurer beans with the given qualifier to the HttpSecurity
+        // Can be used as extension points to adjust security configurations
+        SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
+
+        initLoginView(http);
+
+        return http.build();
+    }
+
+    protected void configure(HttpSecurity http) throws Exception {
         // Respond with 401 Unauthorized HTTP status code for unauthorized
         // requests for protected Fusion endpoints, so that the response could
         // be handled on the client side using e.g. `InvalidSessionMiddleware`.
@@ -148,12 +166,13 @@ public class FlowuiSecurityConfiguration {
         // login
         http.requestCache().requestCache(vaadinDefaultRequestCache);
 
+        // Jmix additional configurers
         http.apply(new AnonymousConfigurer());
         http.apply(new SessionManagementConfigurer());
         http.apply(new RememberMeConfigurer());
 
-        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry =
-                http.authorizeRequests();
+        AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry urlRegistry = http
+                .authorizeHttpRequests();
 
         // Vaadin internal requests must always be allowed to allow public Flow
         // pages
@@ -170,13 +189,11 @@ public class FlowuiSecurityConfiguration {
         // all other requests require authentication
         urlRegistry.anyRequest().authenticated();
 
+        http.securityContext(contextConfigurer ->
+                contextConfigurer.requireExplicitSave(false));
+
         // Enable view access control
         viewAccessChecker.enable();
-
-        initLoginView(http);
-
-        SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
-        return http.build();
     }
 
     @Bean("sec_AuthenticationManager")
@@ -218,17 +235,6 @@ public class FlowuiSecurityConfiguration {
                 .map(path -> applyUrlMapping(urlMapping, path))
                 .forEach(paths::add);
 
-        String mappedRoot = applyUrlMapping(urlMapping, "");
-        if ("/".equals(mappedRoot)) {
-            // Permit should be needed only on /vaadinServlet/, not on sub paths
-            // The '**' suffix is left for backward compatibility.
-            // Should we remove it?
-            paths.add("/vaadinServlet/**");
-        } else {
-            // We need only to permit root of the mapping because other Vaadin
-            // public urls and resources are already permitted
-            paths.add(mappedRoot);
-        }
         return new OrRequestMatcher(paths.build()
                 .map(AntPathRequestMatcher::new).collect(Collectors.toList()));
     }
@@ -243,11 +249,15 @@ public class FlowuiSecurityConfiguration {
      * @return default {@link WebSecurity} ignore matcher
      */
     public static RequestMatcher getDefaultWebSecurityIgnoreMatcher(String urlMapping) {
-        checkNotNullArgument(urlMapping, "Vaadin servlet url mapping is required");
-
-        return new OrRequestMatcher(Stream
+        Objects.requireNonNull(urlMapping,
+                "Vaadin servlet url mapping is required");
+        Stream<String> mappingRelativePaths = Stream
                 .of(HandlerHelper.getPublicResources())
-                .map(path -> applyUrlMapping(urlMapping, path))
+                .map(path -> applyUrlMapping(urlMapping, path));
+        Stream<String> rootPaths = Stream
+                .of(HandlerHelper.getPublicResourcesRoot());
+        return new OrRequestMatcher(Stream
+                .concat(mappingRelativePaths, rootPaths)
                 .map(AntPathRequestMatcher::new).collect(Collectors.toList()));
     }
 
@@ -268,16 +278,23 @@ public class FlowuiSecurityConfiguration {
     }
 
     protected void setLoginView(HttpSecurity http,
-                                Class<? extends Component> viewClass, String logoutUrl) throws Exception {
-        Optional<Route> route = AnnotationReader.getAnnotationFor(viewClass, Route.class);
+                                Class<? extends Component> loginViewClass, String logoutUrl) throws Exception {
+        Optional<Route> route = AnnotationReader.getAnnotationFor(loginViewClass, Route.class);
 
         if (route.isEmpty()) {
             throw new IllegalArgumentException(
                     "Unable find a @Route annotation on the login view "
-                            + viewClass.getName());
+                            + loginViewClass.getName());
         }
 
-        String loginPath = RouteUtil.getRoutePath(viewClass, route.get());
+        if (!(applicationContext instanceof WebApplicationContext)) {
+            throw new RuntimeException(
+                    "VaadinWebSecurity cannot be used without WebApplicationContext.");
+        }
+
+        VaadinServletContext vaadinServletContext = new VaadinServletContext(
+                ((WebApplicationContext) applicationContext).getServletContext());
+        String loginPath = RouteUtil.getRoutePath(vaadinServletContext, loginViewClass);
         if (!loginPath.startsWith("/")) {
             loginPath = "/" + loginPath;
         }
@@ -288,7 +305,8 @@ public class FlowuiSecurityConfiguration {
         formLogin.loginPage(loginPath).permitAll();
         formLogin.successHandler(createSuccessHandler(http));
 
-        http.csrf().ignoringAntMatchers(loginPath);
+        http.csrf().ignoringRequestMatchers(loginPath);
+        // TODO: gg, replace with VaadinWebSecurity.configureLogout?
         http.logout()
                 .logoutUrl(LOGOUT_URL)
                 .logoutRequestMatcher(createLogoutRequestMatcher(LOGOUT_URL))
@@ -296,7 +314,7 @@ public class FlowuiSecurityConfiguration {
         http.exceptionHandling().defaultAuthenticationEntryPointFor(
                 new LoginUrlAuthenticationEntryPoint(loginPath), AnyRequestMatcher.INSTANCE);
 
-        viewAccessChecker.setLoginView(viewClass);
+        viewAccessChecker.setLoginView(loginViewClass);
     }
 
     protected RequestMatcher createLogoutRequestMatcher(String logoutUrl) {
@@ -375,7 +393,7 @@ public class FlowuiSecurityConfiguration {
      * A {@code null} path is treated as empty string; the same applies for
      * url mapping.
      *
-     * @param path a path
+     * @param path       a path
      * @param urlMapping url mapping
      * @return the path with prepended url mapping.
      * @see VaadinConfigurationProperties#getUrlMapping()

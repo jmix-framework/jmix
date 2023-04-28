@@ -32,7 +32,7 @@ import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.spi.PersistenceProvider;
+import jakarta.persistence.spi.PersistenceProvider;
 import java.util.Map;
 
 @Component("eclipselink_JmixEclipseLinkJpaVendorAdapter")
@@ -80,7 +80,7 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
         map.put("eclipselink.flush-clear.cache", "Merge");
         map.put("eclipselink.cache.shared.default", "false");
 
-        map.put("javax.persistence.validation.mode", "NONE");
+        map.put("jakarta.persistence.validation.mode", "NONE");
 
         map.put("eclipselink.session.customizer", new JmixEclipseLinkSessionCustomizer());
         map.put("eclipselink.application-id", Integer.toString(System.identityHashCode(this)));
@@ -92,7 +92,7 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
         }
 
         for (String name : EnvironmentUtils.getPropertyNames(environment)) {
-            if (name.startsWith("javax.persistence.")) {
+            if (name.startsWith("jakarta.persistence.")) {
                 map.put(name, environment.getProperty(name));
             }
         }

@@ -21,7 +21,7 @@ import io.jmix.data.PersistenceHints;
 import org.eclipse.persistence.jpa.JpaQuery;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;

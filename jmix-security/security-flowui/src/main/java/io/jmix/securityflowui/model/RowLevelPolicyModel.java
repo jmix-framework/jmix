@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

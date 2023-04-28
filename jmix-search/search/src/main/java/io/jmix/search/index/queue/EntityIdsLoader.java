@@ -19,7 +19,7 @@ package io.jmix.search.index.queue;
 import io.jmix.core.annotation.Internal;
 import io.jmix.search.index.queue.entity.EnqueueingSession;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 

@@ -19,7 +19,7 @@ package io.jmix.audit.snapshot;
 import io.jmix.audit.snapshot.model.EntityDifferenceModel;
 import io.jmix.audit.snapshot.model.EntitySnapshotModel;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface EntityDifferenceManager {
 

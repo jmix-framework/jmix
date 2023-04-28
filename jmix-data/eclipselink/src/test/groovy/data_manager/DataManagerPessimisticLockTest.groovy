@@ -26,7 +26,7 @@ import test_support.DataSpec
 import test_support.TestAppender
 import test_support.entity.sales.Customer
 
-import javax.persistence.LockModeType
+import jakarta.persistence.LockModeType
 
 class DataManagerPessimisticLockTest extends DataSpec {
 

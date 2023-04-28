@@ -25,12 +25,12 @@ import org.hibernate.validator.internal.constraintvalidators.bv.time.past.*;
 import org.hibernate.validator.internal.constraintvalidators.bv.time.pastorpresent.*;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import javax.validation.ClockProvider;
-import javax.validation.MessageInterpolator;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.PastOrPresent;
+import jakarta.validation.ClockProvider;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import java.time.Instant;
 import java.util.Date;
 
@@ -47,7 +47,7 @@ public class JmixLocalValidatorFactoryBean extends LocalValidatorFactoryBean {
     }
 
     @Override
-    protected void postProcessConfiguration(javax.validation.Configuration<?> configuration) {
+    protected void postProcessConfiguration(jakarta.validation.Configuration<?> configuration) {
         super.postProcessConfiguration(configuration);
 
         if (clockProvider != null) {

@@ -36,7 +36,7 @@ import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.data.items.EnumDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -63,6 +63,11 @@ public abstract class AbstractDataViewDelegate<C extends Component
         }
     }
 
+    @Nullable
+    public DataProvider<V, ?> getDataProvider() {
+        return binding != null ? binding.getDataProvider() : null;
+    }
+
     @Override
     public void valueBindingChanged(ValueBindingChangeEvent<?> event) {
         if (binding instanceof SuspendableBindingAware
@@ -87,9 +92,8 @@ public abstract class AbstractDataViewDelegate<C extends Component
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void setItems(CollectionContainer<V> container) {
-        component.setItems(new ContainerDataProvider(container));
+        component.setItems(new ContainerDataProvider<>(container));
     }
 
 

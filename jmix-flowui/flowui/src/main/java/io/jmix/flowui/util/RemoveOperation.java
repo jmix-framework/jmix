@@ -24,10 +24,10 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.DialogAction;
-import io.jmix.flowui.data.ContainerDataUnit;
-import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.data.ContainerDataUnit;
+import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.View;
@@ -35,7 +35,7 @@ import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -54,6 +54,7 @@ public class RemoveOperation {
     protected ExtendedEntities extendedEntities;
     protected EntityStates entityStates;
     protected Metadata metadata;
+    protected MetadataTools metadataTools;
 
     @Autowired
     public void setDataManager(DataManager dataManager) {
@@ -80,6 +81,11 @@ public class RemoveOperation {
         this.metadata = metadata;
     }
 
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
     /**
      * Creates a remove builder.
      *
@@ -98,7 +104,7 @@ public class RemoveOperation {
      * Creates a remove builder using {@link ListDataComponent} component.
      *
      * @param listDataComponent list data component
-     * @param <E>  type of entity
+     * @param <E>               type of entity
      */
     public <E> RemoveBuilder<E> builder(ListDataComponent<E> listDataComponent) {
         checkNotNullArgument(listDataComponent);
@@ -124,7 +130,7 @@ public class RemoveOperation {
      * After confirmation removes items from DB if the bound container is not nested.
      *
      * @param listDataComponent list data component
-     * @param <E>    entity type
+     * @param <E>               entity type
      */
     public <E> void removeSelected(ListDataComponent<E> listDataComponent) {
         builder(listDataComponent)
@@ -136,7 +142,7 @@ public class RemoveOperation {
      * Excludes selected items from the {@link ListDataComponent} component without confirmation. Works with nested containers only.
      *
      * @param listDataComponent list data component
-     * @param <E>    entity type
+     * @param <E>               entity type
      */
     public <E> void excludeSelected(ListDataComponent<E> listDataComponent) {
         builder(listDataComponent)
@@ -178,6 +184,10 @@ public class RemoveOperation {
             removeItems(builder, selectedItems);
         }
 
+        if (builder.getListDataComponent() != null) {
+            selectedItems.forEach(item -> builder.getListDataComponent().deselect(item));
+        }
+
         if (builder.getAfterActionPerformedHandler() != null) {
             AfterActionPerformedEvent<E> event = new AfterActionPerformedEvent<>(builder.origin, selectedItems);
             builder.getAfterActionPerformedHandler().accept(event);
@@ -211,7 +221,7 @@ public class RemoveOperation {
                                 CollectionContainer<?> container, ViewData viewData) {
 
         List<?> entitiesToSave = entitiesToRemove.stream()
-                .filter(entity -> !entityStates.isNew(entity))
+                .filter(entity -> !entityStates.isNew(entity) || !metadataTools.isJpaEntity(entity.getClass()))
                 .collect(Collectors.toList());
 
         boolean needSave = !entitiesToSave.isEmpty();

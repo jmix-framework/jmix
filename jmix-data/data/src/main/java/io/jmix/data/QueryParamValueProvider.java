@@ -16,7 +16,7 @@
 
 package io.jmix.data;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Interface to be implemented by beans that provide values for query parameters if they are not set explicitly.

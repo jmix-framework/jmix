@@ -66,11 +66,16 @@
   white-space: nowrap;
 }
 
-[slot='drawer'] .jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
+.jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
   color: var(--lumo-primary-text-color);
 }
 
-[slot='drawer'] .jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
+.jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
   background-color: var(--lumo-primary-color-10pct);
   border-radius: var(--lumo-border-radius);
+}
+
+.jmix-list-menu .jmix-menubar-item vaadin-details-summary::part(content) {
+  display: flex;
+  overflow: hidden;
 }

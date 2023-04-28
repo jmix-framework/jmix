@@ -25,7 +25,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.Validator;
+import jakarta.validation.Validator;
 
 /**
  * Validator that applies JSR 303 rules for {@link HasValue} instance. <br>

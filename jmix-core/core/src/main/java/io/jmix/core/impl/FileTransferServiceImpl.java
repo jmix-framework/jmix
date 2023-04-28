@@ -33,11 +33,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.Nullable;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nullable;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Objects;
@@ -152,7 +152,7 @@ public class FileTransferServiceImpl implements FileTransferService {
     }
 
     private ResponseEntity<FileInfoResponse> createFileInfoResponseEntity(HttpServletRequest request,
-                                                                            FileRef fileRef, String filename, long size) {
+                                                                          FileRef fileRef, String filename, long size) {
         FileInfoResponse fileInfo = new FileInfoResponse(fileRef.toString(), filename, size);
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
@@ -177,10 +177,11 @@ public class FileTransferServiceImpl implements FileTransferService {
 
             long size = file.getSize();
 
-            InputStream is = file.getInputStream();
             FileStorage fileStorage = getFileStorageByNameOrDefault(fileStorageName);
-            FileRef fileRef = uploadToFileStorage(fileStorage, is, name);
-
+            FileRef fileRef;
+            try (InputStream is = file.getInputStream()) {
+                fileRef = uploadToFileStorage(fileStorage, is, name);
+            }
             return createFileInfoResponseEntity(request, fileRef, name, size);
         } catch (Exception e) {
             log.error("File upload failed", e);

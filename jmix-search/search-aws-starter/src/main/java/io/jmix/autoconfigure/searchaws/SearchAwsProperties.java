@@ -17,11 +17,9 @@
 package io.jmix.autoconfigure.searchaws;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.search.elasticsearch.aws")
-@ConstructorBinding
 public class SearchAwsProperties {
 
     /**

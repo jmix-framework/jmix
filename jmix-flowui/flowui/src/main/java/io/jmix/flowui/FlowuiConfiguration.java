@@ -16,6 +16,7 @@
 
 package io.jmix.flowui;
 
+import com.vaadin.flow.spring.VaadinServletContextInitializer;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
@@ -31,13 +32,11 @@ import io.jmix.flowui.entity.filter.GroupFilterCondition;
 import io.jmix.flowui.entity.filter.JpqlFilterCondition;
 import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.JmixVaadinServletContextInitializer;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
 import java.util.Collections;
 
@@ -87,5 +86,11 @@ public class FlowuiConfiguration {
                         GroupFilterCondition.class,
                         GroupFilterConverter.class)
                 .build();
+    }
+
+    @Bean
+    @Primary
+    public VaadinServletContextInitializer jmixVaadinServletContextInitializer(ApplicationContext applicationContext) {
+        return new JmixVaadinServletContextInitializer(applicationContext);
     }
 }

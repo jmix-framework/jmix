@@ -24,6 +24,14 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
+/**
+ * Workaround on Windows OS if you build project using gradle with long class path.
+ * This class extends {@link VaadinServletContextInitializer} and overrides it using
+ * {@code jmix.core.exclude-beans} property in module properties.
+ * <p>
+ * Also see issue and comments:
+ * <a href="https://github.com/jmix-framework/jmix/issues/1571">jmix-framework/jmix#1571</a>
+ */
 public class JmixVaadinServletContextInitializer extends VaadinServletContextInitializer {
 
     protected ApplicationContext applicationContext;
@@ -51,7 +59,7 @@ public class JmixVaadinServletContextInitializer extends VaadinServletContextIni
 
             // Add listener that restores previous class path with which application run
             // after other listeners are added.
-            servletContext.addListener(new RestoreClassPathContextListener(previousClassPath));
+            servletContext.addListener(new SetupTempClassPathContextListener(previousClassPath));
             return;
         }
 
@@ -63,28 +71,9 @@ public class JmixVaadinServletContextInitializer extends VaadinServletContextIni
      */
     protected class SetupTempClassPathContextListener implements ServletContextListener {
 
-        protected String newClassPath;
-
-        public SetupTempClassPathContextListener(String newClassPath) {
-            this.newClassPath = newClassPath;
-        }
-
-        @Override
-        public void contextInitialized(ServletContextEvent sce) {
-            ServletContextListener.super.contextInitialized(sce);
-
-            System.setProperty("java.class.path", newClassPath);
-        }
-    }
-
-    /**
-     * Listener restores saved class path to "java.class.path" property.
-     */
-    protected class RestoreClassPathContextListener implements ServletContextListener {
-
         protected String classPath;
 
-        public RestoreClassPathContextListener(String classPath) {
+        public SetupTempClassPathContextListener(String classPath) {
             this.classPath = classPath;
         }
 

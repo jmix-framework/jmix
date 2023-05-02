@@ -170,7 +170,9 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
         if (LazyLoadingContext.isDisabled()) {
             return originalValueHolder.getRow();
         }
-        throw new RuntimeException("Unsupported by lazy loading");
+
+        // rework in case of NPE or another problems somewhere
+        return null; // return null in order to force loading through getValue()
     }
 
     @Override

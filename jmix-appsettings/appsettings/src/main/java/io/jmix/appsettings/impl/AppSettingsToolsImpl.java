@@ -48,7 +48,7 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
         //only one record for T can exist at the same time in database with default identifier
         return dataManager.load(clazz)
                 .id(Id.of(1, clazz))
-                .optional().orElse(dataManager.create(clazz));
+                .optional().orElse(metadata.create(clazz, 1));
     }
 
     @Override

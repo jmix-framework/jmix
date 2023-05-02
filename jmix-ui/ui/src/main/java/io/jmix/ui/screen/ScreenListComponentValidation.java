@@ -71,8 +71,8 @@ public class ScreenListComponentValidation {
                 String property = ((CollectionPropertyContainer<?>) itemsContainer).getProperty();
                 MetaClass metaClass = masterContainer.getEntityMetaClass();
                 Class<?> javaClass = metaClass.getJavaClass();
-                Object instance = masterContainer.getItem();
-                if (javaClass != KeyValueEntity.class) {
+                Object instance = masterContainer.getItemOrNull();
+                if (instance != null && javaClass != KeyValueEntity.class) {
                     Set<ConstraintViolation<Object>> violations = validator.validateProperty(instance, property);
                     violations.forEach(violation -> errors.add(listComponent, violation.getMessage()));
                 }

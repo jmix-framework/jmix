@@ -18,8 +18,8 @@ package io.jmix.flowui.component.genericfilter.configuration;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.flowui.component.filer.FilterComponent;
-import io.jmix.flowui.component.filer.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;

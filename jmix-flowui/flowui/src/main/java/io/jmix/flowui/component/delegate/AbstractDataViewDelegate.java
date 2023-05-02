@@ -63,6 +63,11 @@ public abstract class AbstractDataViewDelegate<C extends Component
         }
     }
 
+    @Nullable
+    public DataProvider<V, ?> getDataProvider() {
+        return binding != null ? binding.getDataProvider() : null;
+    }
+
     @Override
     public void valueBindingChanged(ValueBindingChangeEvent<?> event) {
         if (binding instanceof SuspendableBindingAware
@@ -87,11 +92,9 @@ public abstract class AbstractDataViewDelegate<C extends Component
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void setItems(CollectionContainer<V> container) {
-        component.setItems(new ContainerDataProvider(container));
+        component.setItems(new ContainerDataProvider<>(container));
     }
-
 
     public void setItems(Class<V> itemsEnum) {
         checkNotNullArgument(itemsEnum);

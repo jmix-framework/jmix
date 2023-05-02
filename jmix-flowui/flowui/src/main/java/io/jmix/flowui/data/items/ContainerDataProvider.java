@@ -17,7 +17,9 @@
 package io.jmix.flowui.data.items;
 
 import com.vaadin.flow.data.provider.AbstractDataProvider;
+import com.vaadin.flow.data.provider.InMemoryDataProvider;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.function.SerializableComparator;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
@@ -32,16 +34,22 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class ContainerDataProvider<E> extends AbstractDataProvider<E, SerializablePredicate<E>>
-        implements ContainerDataUnit<E>, EntityItems<E> {
+        implements InMemoryDataProvider<E>, ContainerDataUnit<E>, EntityItems<E> {
 
     protected CollectionContainer<E> container;
     protected DataLoader loader;
 
     protected E deferredSelectedItem;
+
+    protected SerializableComparator<E> sortOrder;
+    protected SerializablePredicate<E> filter;
 
     private EventBus eventBus;
 
@@ -132,24 +140,38 @@ public class ContainerDataProvider<E> extends AbstractDataProvider<E, Serializab
     }
 
     @Override
-    public boolean isInMemory() {
-        return true;
-    }
-
-    @Override
     public int size(Query<E, SerializablePredicate<E>> query) {
         return (int) getFilteredItems(query).count();
     }
 
     @Override
     public Stream<E> fetch(Query<E, SerializablePredicate<E>> query) {
-        return getFilteredItems(query)
+        Stream<E> items = getFilteredItems(query);
+
+        // TODO: gg, needs testing
+        Optional<Comparator<E>> comparing = Stream
+                .of(query.getInMemorySorting(), sortOrder)
+                .filter(Objects::nonNull)
+                .reduce(Comparator::thenComparing);
+
+        if (comparing.isPresent()) {
+            items = items.sorted(comparing.get());
+        }
+
+        return items
                 .skip(query.getOffset())
                 .limit(query.getLimit());
     }
 
     protected Stream<E> getFilteredItems(Query<E, SerializablePredicate<E>> query) {
         Stream<E> items = getItems();
+
+        // Apply our own filters first so that query filters never see the items
+        // that would already have been filtered out
+        if (filter != null) {
+            items = items.filter(filter);
+        }
+
         return query.getFilter()
                 .map(items::filter)
                 .orElse(items);
@@ -157,6 +179,32 @@ public class ContainerDataProvider<E> extends AbstractDataProvider<E, Serializab
 
     protected Stream<E> getItems() {
         return container.getItems().stream();
+    }
+
+    @Override
+    public SerializablePredicate<E> getFilter() {
+        return filter;
+    }
+
+    @Override
+    public void setFilter(SerializablePredicate<E> filter) {
+        if (!Objects.equals(this.filter, filter)) {
+            this.filter = filter;
+            refreshAll();
+        }
+    }
+
+    @Override
+    public SerializableComparator<E> getSortComparator() {
+        return sortOrder;
+    }
+
+    @Override
+    public void setSortComparator(SerializableComparator<E> comparator) {
+        if (!Objects.equals(this.sortOrder, comparator)) {
+            this.sortOrder = comparator;
+            refreshAll();
+        }
     }
 
     @Override

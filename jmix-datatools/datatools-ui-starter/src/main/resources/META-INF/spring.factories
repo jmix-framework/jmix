@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- io.jmix.autoconfigure.datatoolsui.DatatoolsUiAutoConfiguration,io.jmix.autoconfigure.ui.UiAutoConfiguration,\
- io.jmix.autoconfigure.ui.vaadin.VaadinAutoConfiguration

@@ -203,6 +203,7 @@ public interface StudioElements {
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
                     "io.jmix.flowui.component.checkbox.JmixCheckbox",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.kit.component.combobox.ComboBoxPicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",

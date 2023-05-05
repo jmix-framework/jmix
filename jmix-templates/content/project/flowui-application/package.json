@@ -105,6 +105,7 @@
       "@vaadin/vaadin-virtual-list": "23.3.0",
       "@vaadin/vertical-layout": "23.3.0",
       "@vaadin/virtual-list": "23.3.0",
+      "ace-builds": "1.18.0",
       "construct-style-sheets-polyfill": "3.1.0",
       "date-fns": "2.29.3",
       "lit": "2.3.0",
@@ -244,6 +245,7 @@
     "@vaadin/vaadin-virtual-list": "23.3.0",
     "@vaadin/vertical-layout": "23.3.0",
     "@vaadin/virtual-list": "23.3.0",
+    "ace-builds": "1.18.0",
     "construct-style-sheets-polyfill": "3.1.0",
     "date-fns": "2.29.3",
     "lit": "2.4.1",
@@ -384,6 +386,7 @@
     "lit": "$lit",
     "@polymer/polymer": "$@polymer/polymer",
     "proj4": "$proj4",
-    "date-fns": "$date-fns"
+    "date-fns": "$date-fns",
+    "ace-builds": "$ace-builds"
   }
 }

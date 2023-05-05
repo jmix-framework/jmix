@@ -91,6 +91,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("upload", UploadLoader.class);
         loaders.put("propertyFilter", PropertyFilterLoader.class);
         loaders.put("genericFilter", GenericFilterLoader.class);
+        loaders.put("codeEditor", CodeEditorLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

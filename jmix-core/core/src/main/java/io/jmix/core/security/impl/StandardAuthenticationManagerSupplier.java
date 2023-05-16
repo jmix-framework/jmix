@@ -27,7 +27,8 @@ import org.springframework.security.authentication.ProviderManager;
 import java.util.List;
 
 /**
- * An AuthenticationManager supplier that provides AuthenticationManager used by basic application.
+ * The default AddonAuthenticationManagerSupplier supplier that provides AuthenticationManager used by basic
+ * application.
  */
 public class StandardAuthenticationManagerSupplier implements AddonAuthenticationManagerSupplier {
 

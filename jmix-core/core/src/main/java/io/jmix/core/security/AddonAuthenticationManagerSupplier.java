@@ -22,7 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
  * Implementations of the interface are responsible for constructing a global {@link AuthenticationManager}.
  * <p>
  * Several add-ons may provide an instance of {@link AddonAuthenticationManagerSupplier}. The AuthenticationManager
- * produced by the instance with the highest order will be used in the application.
+ * produced by the instance with the highest order will be used in the application as a global AuthenticationManager.
  *
  * @see AuthenticationManagerSupplier
  */

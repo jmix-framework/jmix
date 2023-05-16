@@ -19,7 +19,7 @@ package io.jmix.core.security;
 import org.springframework.security.authentication.AuthenticationManager;
 
 /**
- * Interface is responsible for providing an instance of global {@link AuthenticationManager}. It goes over all
+ * Interface is responsible for providing an instance of global {@link AuthenticationManager}. It iterates over all
  * registered {@link AddonAuthenticationManagerSupplier} and returns an AuthenticationManager provided by the supplier
  * with the highest order.
  *
@@ -28,7 +28,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 public interface AuthenticationManagerSupplier {
 
     /**
-     * Returns a global AuthenticationManager instance based on information from all registered
+     * Returns a global AuthenticationManager instance based on information provided by all registered
      * {@link AddonAuthenticationManagerSupplier}
      *
      * @return global authentication manager

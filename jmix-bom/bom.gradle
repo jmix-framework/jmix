@@ -102,6 +102,8 @@ dependencies {
         api "io.jmix.bpm:jmix-bpm:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-modeler:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-starter:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-flowui:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-flowui-starter:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-rest:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-rest-starter:$premiumVersion"
 

@@ -17,10 +17,12 @@
 package io.jmix.ldap;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.security.AddonAuthenticationManagerSupplier;
 import io.jmix.core.security.event.PreAuthenticationCheckEvent;
+import io.jmix.ldap.authentication.ActiveDirectoryAuthenticationManagerSupplier;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
 import io.jmix.security.SecurityConfigurers;
-import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
+import io.jmix.core.security.StandardAuthenticationProvidersProducer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,8 +34,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.List;
 
 import static io.jmix.security.SecurityConfigurers.uiSecurity;
 
@@ -61,19 +61,15 @@ public class LdapActiveDirectorySecurityConfiguration {
         return http.build();
     }
 
-    @Bean("ldap_AuthenticationManager")
-    public AuthenticationManager ldapAuthenticationManager(StandardAuthenticationProvidersProducer providersProducer,
-                                                           AuthenticationEventPublisher authenticationEventPublisher) {
-        List<AuthenticationProvider> providers = providersProducer.getStandardProviders();
-        providers.add(activeDirectoryLdapAuthenticationProvider());
-        ProviderManager providerManager = new ProviderManager(providers);
-        providerManager.setAuthenticationEventPublisher(authenticationEventPublisher);
-        return providerManager;
-    }
-
-    @Bean("ldap_AuthenticationEventPublisher")
-    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher publisher) {
-        return new DefaultAuthenticationEventPublisher(publisher);
+    @Bean("ldap_ActiveDirectoryAuthenticationManagerSupplier")
+    @Order(100)
+    public AddonAuthenticationManagerSupplier ldapActiveDirectoryAuthenticationManagerSupplier(StandardAuthenticationProvidersProducer providersProducer,
+                                                                                               ApplicationEventPublisher publisher,
+                                                                                               LdapProperties ldapProperties,
+                                                                                               UserDetailsContextMapper ldapUserDetailsContextMapper,
+                                                                                               JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper) {
+        return new ActiveDirectoryAuthenticationManagerSupplier(providersProducer, publisher, ldapProperties,
+                ldapUserDetailsContextMapper, grantedAuthoritiesMapper);
     }
 
     protected AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {

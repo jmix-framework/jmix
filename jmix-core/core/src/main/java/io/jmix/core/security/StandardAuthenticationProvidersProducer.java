@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.security.impl;
+package io.jmix.core.security;
 
 import io.jmix.core.security.PostAuthenticationChecks;
 import io.jmix.core.security.PreAuthenticationChecks;

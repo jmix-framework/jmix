@@ -19,7 +19,6 @@ import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
-import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
 import io.jmix.securityflowui.access.FlowuiViewAccessChecker;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.ServletException;
@@ -29,12 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -57,7 +54,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -194,20 +190,6 @@ public class FlowuiSecurityConfiguration {
 
         // Enable view access control
         viewAccessChecker.enable();
-    }
-
-    @Bean("sec_AuthenticationManager")
-    public AuthenticationManager providerManager(StandardAuthenticationProvidersProducer providersProducer,
-                                                 AuthenticationEventPublisher authenticationEventPublisher) {
-        List<AuthenticationProvider> providers = providersProducer.getStandardProviders();
-        ProviderManager providerManager = new ProviderManager(providers);
-        providerManager.setAuthenticationEventPublisher(authenticationEventPublisher);
-        return providerManager;
-    }
-
-    @Bean("sec_AuthenticationEventPublisher")
-    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher publisher) {
-        return new DefaultAuthenticationEventPublisher(publisher);
     }
 
     protected void initLoginView(HttpSecurity http) throws Exception {

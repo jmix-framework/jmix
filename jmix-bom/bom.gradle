@@ -237,14 +237,11 @@ dependencies {
 
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
 
-        //todo SB3 use Jmix fork of eclipselink
-        def eclipselinkVersion = '4.0.1'
+        def eclipselinkOriginalVersion = '4.0.1'
+        def eclipselinkVersion = '4.0.1-2-jmix'
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
-        api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkVersion"
-//        api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.9-6-jmix'
-//        api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix'
-//        api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.9'
+        api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
 
         api 'org.glassfish:jakarta.el:4.0.2'
 

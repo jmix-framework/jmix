@@ -18,6 +18,7 @@ package io.jmix.eclipselink.impl.support;
 import io.jmix.core.EnvironmentUtils;
 import io.jmix.core.MetadataTools;
 import io.jmix.eclipselink.impl.JmixPersistenceProvider;
+import jakarta.persistence.spi.PersistenceProvider;
 import org.eclipse.persistence.config.SessionCustomizer;
 import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
@@ -32,7 +33,6 @@ import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.spi.PersistenceProvider;
 import java.util.Map;
 
 @Component("eclipselink_JmixEclipseLinkJpaVendorAdapter")
@@ -57,11 +57,13 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
                                            MetadataTools metadataTools) {
         this.environment = environment;
         this.jpaDialect = jpaDialect;
-        this.persistenceProvider = new JmixPersistenceProvider(beanFactory);
+        this.persistenceProvider = new JmixPersistenceProvider(beanFactory, metadataTools);
         this.sessionEventListener = sessionEventListener;
         this.transportManagerProvider = transportManagerProvider;
 
+        //may be obsolete since eclipselink 4 because platform operations have priority over user-defined operations.
         ExpressionOperator.addOperator(new JmixIsNullExpressionOperator(metadataTools));
+
         setGenerateDdl(false);
         setShowSql(true);
     }

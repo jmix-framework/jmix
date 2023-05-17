@@ -52,6 +52,7 @@ jmix.authorization-server.default-client.client-id=someclient
 jmix.authorization-server.default-client.client-secret={noop}somesecret
 jmix.authorization-server.default-client.access-token-time-to-live=60m
 jmix.authorization-server.default-client.refresh-token-time-to-live=10d
+jmix.authorization-server.default-client.redirect-uris=https://oauth.pstmn.io/v1/callback
 ```
 
 Custom implementation of the interface may look as follows:

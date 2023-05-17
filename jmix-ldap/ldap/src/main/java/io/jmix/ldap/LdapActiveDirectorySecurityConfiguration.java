@@ -17,6 +17,7 @@
 package io.jmix.ldap;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.core.security.AddonAuthenticationManagerSupplier;
 import io.jmix.core.security.event.PreAuthenticationCheckEvent;
 import io.jmix.ldap.authentication.ActiveDirectoryAuthenticationManagerSupplier;
@@ -51,7 +52,7 @@ public class LdapActiveDirectorySecurityConfiguration {
     protected JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper;
 
     @Bean("ldap_SecurityFilterChain")
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
+    @Order(JmixSecurityFilterChainOrder.LDAP_ACTIVE_DIRECTORY)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.apply(uiSecurity());
         http.logout(logout -> logout

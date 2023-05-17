@@ -11,7 +11,7 @@ import com.vaadin.flow.spring.VaadinConfigurationProperties;
 import com.vaadin.flow.spring.security.RequestUtil;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import com.vaadin.flow.spring.security.VaadinSavedRequestAwareAuthenticationSuccessHandler;
-import io.jmix.core.JmixOrder;
+import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.flowui.FlowuiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
@@ -129,7 +129,7 @@ public class FlowuiSecurityConfiguration {
     }
 
     @Bean("sec_FlowUiSecurityFilterChain")
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
+    @Order(JmixSecurityFilterChainOrder.FLOWUI)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         configure(http);
 

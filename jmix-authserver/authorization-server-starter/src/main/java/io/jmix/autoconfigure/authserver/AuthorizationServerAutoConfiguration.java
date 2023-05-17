@@ -21,7 +21,7 @@ import io.jmix.authserver.DefaultRegisteredClientProperties;
 import io.jmix.authserver.client.RegisteredClientProvider;
 import io.jmix.authserver.client.impl.DefaultRegisteredClientProvider;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
-import io.jmix.core.JmixOrder;
+import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.security.SecurityConfigurers;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -59,7 +59,7 @@ public class AuthorizationServerAutoConfiguration {
         public static final String LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER = "authorization-server-login-form";
 
         @Bean("authsr_AuthorizationServerSecurityFilterChain")
-        @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
+        @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER)
         public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
                 throws Exception {
             OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
@@ -76,7 +76,7 @@ public class AuthorizationServerAutoConfiguration {
         }
 
         @Bean("authsr_LoginFormSecurityFilterChain")
-        @Order(JmixOrder.HIGHEST_PRECEDENCE + 110)
+        @Order(JmixSecurityFilterChainOrder.AUTHSERVER_LOGIN_FORM)
         public SecurityFilterChain loginFormSecurityFilterChain(HttpSecurity http)
                 throws Exception {
             http
@@ -121,7 +121,7 @@ public class AuthorizationServerAutoConfiguration {
         public static final String SECURITY_CONFIGURER_QUALIFIER = "authorization-server-resource-server";
 
         @Bean("authsr_ResourceServerSecurityFilterChain")
-        @Order(JmixOrder.HIGHEST_PRECEDENCE + 150)
+        @Order(JmixSecurityFilterChainOrder.AUTHSERVER_RESOURCE_SERVER)
         public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
                                                                      OpaqueTokenIntrospector opaqueTokenIntrospector) throws Exception {
             http.apply(SecurityConfigurers.apiSecurity());

@@ -16,7 +16,7 @@
 
 package io.jmix.security;
 
-import io.jmix.core.JmixOrder;
+import io.jmix.core.JmixSecurityFilterChainOrder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,7 +30,7 @@ public class StandardSecurityConfiguration {
 
     //todo MG do we still need this SecurityFilterChain here?
     @Bean("sec_StandardSecurityFilterChain")
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
+    @Order(JmixSecurityFilterChainOrder.STANDARD_SECURITY)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.apply(uiSecurity());
         http.logout(logout -> logout

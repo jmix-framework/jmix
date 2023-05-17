@@ -16,7 +16,10 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.*;
+import io.jmix.core.EntityInitializer;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Resources;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasInstanceMetaClass;
@@ -71,7 +74,9 @@ public class MetadataImpl implements Metadata {
         Class<T> extClass = getSession().getClass(entityClass).getJavaClass();
         try {
             T obj = extClass.getDeclaredConstructor().newInstance();
-            EntityValues.setId(obj, id);
+            if(id != null) {
+                EntityValues.setId(obj, id);
+            }
 
             if (entityInitializers != null) {
                 for (EntityInitializer initializer : entityInitializers) {

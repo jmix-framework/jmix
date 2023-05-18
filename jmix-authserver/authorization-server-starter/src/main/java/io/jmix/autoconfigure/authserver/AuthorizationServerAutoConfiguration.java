@@ -42,6 +42,9 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Collection;
 import java.util.List;
@@ -51,6 +54,16 @@ import java.util.stream.Collectors;
 @Import({AuthorizationServerConfiguration.class})
 @ConditionalOnProperty(name = "jmix.authorization-server.use-default-configuration", matchIfMissing = true)
 public class AuthorizationServerAutoConfiguration {
+
+    @Configuration
+    @EnableWebMvc
+    public class AuthorizationServerLoginPageConfiguration implements WebMvcConfigurer {
+
+        @Override
+        public void addViewControllers(ViewControllerRegistry registry) {
+            registry.addViewController("/as-login/**").setViewName("as-login.html");
+        }
+    }
 
     @Configuration(proxyBeanMethods = false)
     public static class AuthorizationServerSecurityConfiguration {
@@ -68,7 +81,7 @@ public class AuthorizationServerAutoConfiguration {
                     // authorization endpoint
                     .exceptionHandling((exceptions) -> exceptions
                             .authenticationEntryPoint(
-                                    new LoginUrlAuthenticationEntryPoint("/login"))
+                                    new LoginUrlAuthenticationEntryPoint("/as-login"))
                     );
 
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
@@ -80,11 +93,13 @@ public class AuthorizationServerAutoConfiguration {
         public SecurityFilterChain loginFormSecurityFilterChain(HttpSecurity http)
                 throws Exception {
             http
-                    .securityMatcher("/login")
+                    .securityMatcher("/as-login")
                     .authorizeHttpRequests(authorize -> {
                         authorize.anyRequest().permitAll();
                     })
-                    .formLogin();
+                    .formLogin(form -> {
+                        form.loginPage("/as-login");
+                    });
 
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER);
             return http.build();

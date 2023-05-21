@@ -18,7 +18,7 @@ package io.jmix.eclipselink.impl;
 
 import io.jmix.data.impl.JmixTransactionManager;
 import jakarta.persistence.EntityManagerFactory;
-import org.eclipse.persistence.internal.helper.CubaUtil;
+import org.eclipse.persistence.internal.helper.JmixUtil;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 
@@ -32,8 +32,8 @@ public class JmixEclipselinkTransactionManager extends JmixTransactionManager {
     protected void doBegin(Object transaction, TransactionDefinition definition) {
         super.doBegin(transaction, definition);
         // set soft deletion at beginning of each new transaction
-        CubaUtil.setSoftDeletion(true);
-        CubaUtil.setOriginalSoftDeletion(true);
+        JmixUtil.setSoftDeletion(true);
+        JmixUtil.setOriginalSoftDeletion(true);
     }
 
     @Override

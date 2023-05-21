@@ -43,7 +43,7 @@ import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
 import org.eclipse.persistence.internal.helper.ClassConstants;
 import org.eclipse.persistence.internal.helper.ConversionManager;
-import org.eclipse.persistence.internal.helper.CubaUtil;
+import org.eclipse.persistence.internal.helper.JmixUtil;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
 import org.eclipse.persistence.jpa.JpaQuery;
 import org.eclipse.persistence.queries.DatabaseQuery;
@@ -548,7 +548,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             }
         }
         if (!useJPQLCache) {
-            CubaUtil.setEnabledJPQLParseCache(false);
+            JmixUtil.setEnabledJPQLParseCache(false);
         }
         try {
             if (resultClass != null) {
@@ -557,7 +557,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
                 return (JpaQuery) entityManager.createQuery(queryString);
             }
         } finally {
-            CubaUtil.setEnabledJPQLParseCache(true);
+            JmixUtil.setEnabledJPQLParseCache(true);
         }
     }
 

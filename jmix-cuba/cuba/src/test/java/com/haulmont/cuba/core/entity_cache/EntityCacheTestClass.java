@@ -1000,7 +1000,7 @@ public class EntityCacheTestClass {
             assertNotNull(children);
 
             /* Next line checks that changes from eclipselink 2.7.9-6-jmix (Haulmont/jmix-data#107) works:
-             * DatabaseValueHolder passes additional criteria parameters using CubaUtil.
+             * DatabaseValueHolder passes additional criteria parameters using JmixUtil.
              * Entity in shared cache has no access to ClientSession with additional criteria parameters
              * so they has to be passed using another way.
              *

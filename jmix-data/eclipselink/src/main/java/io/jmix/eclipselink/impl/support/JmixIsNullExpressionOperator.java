@@ -22,7 +22,7 @@ import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.internal.expressions.ExpressionSQLPrinter;
 import org.eclipse.persistence.internal.expressions.QueryKeyExpression;
 import org.eclipse.persistence.internal.helper.ClassConstants;
-import org.eclipse.persistence.internal.helper.CubaUtil;
+import org.eclipse.persistence.internal.helper.JmixUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,7 +48,7 @@ public class JmixIsNullExpressionOperator extends ExpressionOperator {
 
     @Override
     public void printCollection(List<Expression> items, ExpressionSQLPrinter printer) {
-        if (items.size() == 1 && items.get(0) instanceof QueryKeyExpression && !CubaUtil.isSoftDeletion()) {
+        if (items.size() == 1 && items.get(0) instanceof QueryKeyExpression && !JmixUtil.isSoftDeletion()) {
             QueryKeyExpression expression = (QueryKeyExpression) items.get(0);
             //noinspection unchecked
             Class<?> clazz = expression.getContainingDescriptor().getJavaClass();

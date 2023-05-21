@@ -39,7 +39,7 @@ import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.metamodel.Metamodel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.eclipse.persistence.internal.helper.CubaUtil;
+import org.eclipse.persistence.internal.helper.JmixUtil;
 import org.eclipse.persistence.sessions.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -420,8 +420,8 @@ public class JmixEntityManager implements EntityManager {
 
     private void setSoftDeletion(boolean softDeletion) {
         delegate.setProperty(PersistenceHints.SOFT_DELETION, softDeletion);
-        CubaUtil.setSoftDeletion(softDeletion);
-        CubaUtil.setOriginalSoftDeletion(softDeletion);
+        JmixUtil.setSoftDeletion(softDeletion);
+        JmixUtil.setOriginalSoftDeletion(softDeletion);
     }
 
     private boolean isSoftDeletion(Map<String, Object> properties) {
@@ -473,8 +473,8 @@ public class JmixEntityManager implements EntityManager {
 
     private <T> T internalMerge(T entity) {
         try {
-            CubaUtil.setSoftDeletion(false);
-            CubaUtil.setOriginalSoftDeletion(false);
+            JmixUtil.setSoftDeletion(false);
+            JmixUtil.setOriginalSoftDeletion(false);
 
             T merged = delegate.merge(entity);
 
@@ -499,8 +499,8 @@ public class JmixEntityManager implements EntityManager {
             return merged;
         } finally {
             boolean softDeletion = PersistenceHints.isSoftDeletion(delegate);
-            CubaUtil.setSoftDeletion(softDeletion);
-            CubaUtil.setOriginalSoftDeletion(softDeletion);
+            JmixUtil.setSoftDeletion(softDeletion);
+            JmixUtil.setOriginalSoftDeletion(softDeletion);
         }
     }
 

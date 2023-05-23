@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package properties;
+package test_support;
 
 import io.jmix.core.CoreProperties;
 
@@ -42,15 +42,15 @@ public class TestCoreProperties extends CoreProperties {
                               boolean triggerFilesEnabled,
                               Duration triggerFilesProcessInterval,
                               PessimisticLock pessimisticLock,
-                              boolean decimalValueRoundByFormat) {
+                              boolean roundDecimalValueByFormat) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
                 entitySerializationTokenRequired, entitySerializationTokenEncryptionKey,
                 legacyFetchPlanSerializationAttributeName, triggerFilesEnabled, triggerFilesProcessInterval,
-                pessimisticLock, decimalValueRoundByFormat);
+                pessimisticLock, roundDecimalValueByFormat);
     }
-    
+
     public static Builder builder() {
         return new Builder();
     }
@@ -75,7 +75,7 @@ public class TestCoreProperties extends CoreProperties {
         boolean triggerFilesEnabled = true;
         Duration triggerFilesProcessInterval = Duration.ofSeconds(5000);
         PessimisticLock pessimisticLock = new PessimisticLock("0 * * * * ?", true);
-        boolean decimalValueRoundByFormat = true;
+        boolean roundDecimalValueByFormat = true;
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;
@@ -172,8 +172,8 @@ public class TestCoreProperties extends CoreProperties {
             return this;
         }
 
-        public Builder setDecimalValueRoundByFormat(boolean decimalValueRoundByFormat) {
-            this.decimalValueRoundByFormat = decimalValueRoundByFormat;
+        public Builder setRoundDecimalValueByFormat(boolean roundDecimalValueByFormat) {
+            this.roundDecimalValueByFormat = roundDecimalValueByFormat;
             return this;
         }
 
@@ -198,7 +198,7 @@ public class TestCoreProperties extends CoreProperties {
                     this.triggerFilesEnabled,
                     this.triggerFilesProcessInterval,
                     this.pessimisticLock,
-                    this.decimalValueRoundByFormat);
+                    this.roundDecimalValueByFormat);
         }
     }
 }

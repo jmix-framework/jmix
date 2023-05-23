@@ -99,14 +99,14 @@ public class FloatDatatype extends NumberDatatype implements Datatype<Float> {
     @Override
     protected Number parse(String value, NumberFormat format) throws ParseException {
         BigDecimal result = (BigDecimal) super.parse(value, format);
-        if (coreProperties.isDecimalValueRoundByFormat()) {
+        if (coreProperties.isRoundDecimalValueByFormat()) {
             int maximumFractionDigits = format.getMaximumFractionDigits();
             RoundingMode roundingMode = format.getRoundingMode();
             result = result.setScale(maximumFractionDigits, roundingMode);
         }
 
         if (!isInFloatRange(result)) {
-            throw new ParseException(String.format("Float range exceeded: \"%s\"", value), 0);
+            throw new ParseException(String.format("The value is out of Float datatype range: \"%s\"", value), 0);
         }
 
         return result;

@@ -103,7 +103,7 @@ public class BigDecimalDatatype extends NumberDatatype implements Datatype<BigDe
 
     protected Number parse(String value, java.text.NumberFormat format) throws ParseException {
         BigDecimal result = (BigDecimal) super.parse(value, format);
-        if (coreProperties.isDecimalValueRoundByFormat()) {
+        if (coreProperties.isRoundDecimalValueByFormat()) {
             int maximumFractionDigits = format.getMaximumFractionDigits();
             RoundingMode roundingMode = format.getRoundingMode();
             result = result.setScale(maximumFractionDigits, roundingMode);

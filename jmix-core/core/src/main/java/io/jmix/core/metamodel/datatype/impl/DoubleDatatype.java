@@ -97,14 +97,14 @@ public class DoubleDatatype extends NumberDatatype implements Datatype<Double> {
 
     protected Number parse(String value, NumberFormat format) throws ParseException {
         BigDecimal result = (BigDecimal) super.parse(value, format);
-        if (coreProperties.isDecimalValueRoundByFormat()) {
+        if (coreProperties.isRoundDecimalValueByFormat()) {
             int maximumFractionDigits = format.getMaximumFractionDigits();
             RoundingMode roundingMode = format.getRoundingMode();
             result = result.setScale(maximumFractionDigits, roundingMode);
         }
 
         if (!isInDoubleRange(result)) {
-            throw new ParseException(String.format("Double range exceeded: \"%s\"", value), 0);
+            throw new ParseException(String.format("The value is out of Double datatype range: \"%s\"", value), 0);
         }
 
         return result;

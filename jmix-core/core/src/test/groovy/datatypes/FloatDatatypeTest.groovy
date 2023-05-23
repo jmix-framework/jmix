@@ -18,8 +18,8 @@ package datatypes
 
 import format_strings.TestFormatStringsRegistry
 import io.jmix.core.metamodel.datatype.impl.FloatDatatype
-import properties.TestCoreProperties
 import spock.lang.Specification
+import test_support.TestCoreProperties
 
 import java.text.ParseException
 
@@ -28,7 +28,7 @@ class FloatDatatypeTest extends Specification {
     def "format/parse without locale, without rounding"() {
         def datatype = new FloatDatatype()
         datatype.coreProperties = TestCoreProperties.builder()
-                .setDecimalValueRoundByFormat(false)
+                .setRoundDecimalValueByFormat(false)
                 .build()
 
         expect:
@@ -41,7 +41,7 @@ class FloatDatatypeTest extends Specification {
     def "format/parse without locale, with rounding"() {
         def datatype = new FloatDatatype()
         datatype.coreProperties = TestCoreProperties.builder()
-                .setDecimalValueRoundByFormat(true)
+                .setRoundDecimalValueByFormat(true)
                 .build()
 
         expect:
@@ -55,7 +55,7 @@ class FloatDatatypeTest extends Specification {
         def datatype = new FloatDatatype()
         datatype.formatStringsRegistry = new TestFormatStringsRegistry()
         datatype.coreProperties = TestCoreProperties.builder()
-                .setDecimalValueRoundByFormat(false)
+                .setRoundDecimalValueByFormat(false)
                 .build()
 
         expect:
@@ -71,7 +71,7 @@ class FloatDatatypeTest extends Specification {
         def datatype = new FloatDatatype()
         datatype.formatStringsRegistry = new TestFormatStringsRegistry()
         datatype.coreProperties = TestCoreProperties.builder()
-                .setDecimalValueRoundByFormat(true)
+                .setRoundDecimalValueByFormat(true)
                 .build()
 
         expect:

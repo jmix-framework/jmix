@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security.impl;
+package io.jmix.security.authentication;
 
 import io.jmix.core.security.AddonAuthenticationManagerSupplier;
-import io.jmix.core.security.StandardAuthenticationProvidersProducer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;

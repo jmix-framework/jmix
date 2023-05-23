@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.facet.queryparameters;
+package io.jmix.flowui.facet.urlqueryparameters;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -35,7 +35,7 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent.FilterComponentsChangeEvent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
-import io.jmix.flowui.facet.QueryParametersFacet.QueryParametersChangeEvent;
+import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.KeyValueCollectionLoader;
@@ -48,10 +48,10 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
 
-import static io.jmix.flowui.facet.queryparameters.FilterQueryParametersSupport.SEPARATOR;
+import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 import static java.util.Objects.requireNonNull;
 
-public class GenericFilterQueryParametersBinder extends AbstractQueryParametersBinder {
+public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
 
     public static final String NAME = "genericFilter";
 
@@ -66,11 +66,11 @@ public class GenericFilterQueryParametersBinder extends AbstractQueryParametersB
     protected UrlParamSerializer urlParamSerializer;
     protected UiComponents uiComponents;
     protected SingleFilterSupport singleFilterSupport;
-    protected FilterQueryParametersSupport filterQueryParametersSupport;
+    protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
 
-    public GenericFilterQueryParametersBinder(GenericFilter filter,
-                                              UrlParamSerializer urlParamSerializer,
-                                              ApplicationContext applicationContext) {
+    public GenericFilterUrlQueryParametersBinder(GenericFilter filter,
+                                                 UrlParamSerializer urlParamSerializer,
+                                                 ApplicationContext applicationContext) {
         this.filter = filter;
         this.urlParamSerializer = urlParamSerializer;
         this.applicationContext = applicationContext;
@@ -81,7 +81,7 @@ public class GenericFilterQueryParametersBinder extends AbstractQueryParametersB
 
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
-        filterQueryParametersSupport = applicationContext.getBean(FilterQueryParametersSupport.class);
+        filterUrlQueryParametersSupport = applicationContext.getBean(FilterUrlQueryParametersSupport.class);
     }
 
     protected Registration filterComponentsChangeRegistration;
@@ -130,16 +130,16 @@ public class GenericFilterQueryParametersBinder extends AbstractQueryParametersB
 
         QueryParameters queryParameters =
                 new QueryParameters(ImmutableMap.of(getConditionParam(), params));
-        fireQueryParametersChanged(new QueryParametersChangeEvent(this, queryParameters));
+        fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
     }
 
     protected String serializePropertyCondition(PropertyCondition condition) {
         String property = urlParamSerializer.serialize(
-                filterQueryParametersSupport.replaceSeparatorValue(condition.getProperty()));
+                filterUrlQueryParametersSupport.replaceSeparatorValue(condition.getProperty()));
         String operation = urlParamSerializer.serialize(
-                filterQueryParametersSupport.replaceSeparatorValue(condition.getOperation()));
+                filterUrlQueryParametersSupport.replaceSeparatorValue(condition.getOperation()));
         Object parameterValue = urlParamSerializer.serialize(
-                filterQueryParametersSupport.getSerializableValue(condition.getParameterValue()));
+                filterUrlQueryParametersSupport.getSerializableValue(condition.getParameterValue()));
 
         return PROPERTY_CONDITION_PREFIX +
                 property + SEPARATOR +
@@ -194,7 +194,7 @@ public class GenericFilterQueryParametersBinder extends AbstractQueryParametersB
 
         String propertyString = conditionString.substring(0, separatorIndex);
         String property = urlParamSerializer.deserialize(String.class,
-                filterQueryParametersSupport.restoreSeparatorValue(propertyString));
+                filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
 
         conditionString = conditionString.substring(separatorIndex + 1);
         separatorIndex = conditionString.indexOf(SEPARATOR);
@@ -205,7 +205,7 @@ public class GenericFilterQueryParametersBinder extends AbstractQueryParametersB
         String operationString = conditionString.substring(0, separatorIndex);
         PropertyFilter.Operation operation = urlParamSerializer
                 .deserialize(PropertyFilter.Operation.class,
-                        filterQueryParametersSupport.restoreSeparatorValue(operationString));
+                        filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
 
         PropertyFilter propertyFilter = uiComponents.create(PropertyFilter.class);
         propertyFilter.setProperty(property);
@@ -220,7 +220,7 @@ public class GenericFilterQueryParametersBinder extends AbstractQueryParametersB
 
         String valueString = conditionString.substring(separatorIndex + 1);
         if (!Strings.isNullOrEmpty(valueString)) {
-            Object parsedValue = filterQueryParametersSupport
+            Object parsedValue = filterUrlQueryParametersSupport
                     .parseValue(dataLoader.getContainer().getEntityMetaClass(),
                             property, operation.getType(), valueString);
             propertyFilter.setValue(parsedValue);

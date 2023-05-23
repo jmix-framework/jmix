@@ -23,11 +23,11 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.facet.QueryParametersFacet;
-import io.jmix.flowui.facet.impl.QueryParametersFacetImpl;
-import io.jmix.flowui.facet.queryparameters.GenericFilterQueryParametersBinder;
-import io.jmix.flowui.facet.queryparameters.PaginationQueryParametersBinder;
-import io.jmix.flowui.facet.queryparameters.PropertyFilterQueryParametersBinder;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
+import io.jmix.flowui.facet.impl.UrlQueryParametersFacetImpl;
+import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder;
+import io.jmix.flowui.facet.urlqueryparameters.PaginationUrlQueryParametersBinder;
+import io.jmix.flowui.facet.urlqueryparameters.PropertyFilterUrlQueryParametersBinder;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
@@ -41,17 +41,17 @@ import org.springframework.context.ApplicationContextAware;
 
 import jakarta.annotation.Nullable;
 
-@org.springframework.stereotype.Component("flowui_QueryParametersFacetProvider")
-public class QueryParametersFacetProvider implements FacetProvider<QueryParametersFacet>, ApplicationContextAware {
+@org.springframework.stereotype.Component("flowui_UrlQueryParametersFacetProvider")
+public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryParametersFacet>, ApplicationContextAware {
 
     protected LoaderSupport loaderSupport;
     protected RouteSupport routeSupport;
     protected UrlParamSerializer urlParamSerializer;
     protected ApplicationContext applicationContext;
 
-    public QueryParametersFacetProvider(LoaderSupport loaderSupport,
-                                        RouteSupport routeSupport,
-                                        UrlParamSerializer urlParamSerializer) {
+    public UrlQueryParametersFacetProvider(LoaderSupport loaderSupport,
+                                           RouteSupport routeSupport,
+                                           UrlParamSerializer urlParamSerializer) {
         this.loaderSupport = loaderSupport;
         this.routeSupport = routeSupport;
         this.urlParamSerializer = urlParamSerializer;
@@ -63,22 +63,22 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
     }
 
     @Override
-    public Class<QueryParametersFacet> getFacetClass() {
-        return QueryParametersFacet.class;
+    public Class<UrlQueryParametersFacet> getFacetClass() {
+        return UrlQueryParametersFacet.class;
     }
 
     @Override
-    public QueryParametersFacet create() {
-        return new QueryParametersFacetImpl(routeSupport);
+    public UrlQueryParametersFacet create() {
+        return new UrlQueryParametersFacetImpl(routeSupport);
     }
 
     @Override
     public String getFacetTag() {
-        return QueryParametersFacet.NAME;
+        return UrlQueryParametersFacet.NAME;
     }
 
     @Override
-    public void loadFromXml(QueryParametersFacet facet, Element element, ComponentContext context) {
+    public void loadFromXml(UrlQueryParametersFacet facet, Element element, ComponentContext context) {
         facet.setOwner(context.getView());
 
         loaderSupport.loadString(element, "id", facet::setId);
@@ -88,16 +88,16 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
         }
     }
 
-    protected void loadBinder(QueryParametersFacet facet, Element element, ComponentContext context) {
+    protected void loadBinder(UrlQueryParametersFacet facet, Element element, ComponentContext context) {
         // TODO: gg, rework, some registration is needed
         switch (element.getName()) {
-            case PaginationQueryParametersBinder.NAME:
+            case PaginationUrlQueryParametersBinder.NAME:
                 loadPaginationQueryParametersBinder(facet, element, context);
                 break;
-            case GenericFilterQueryParametersBinder.NAME:
+            case GenericFilterUrlQueryParametersBinder.NAME:
                 loadGenericFilterQueryParametersBinder(facet, element, context);
                 break;
-            case PropertyFilterQueryParametersBinder.NAME:
+            case PropertyFilterUrlQueryParametersBinder.NAME:
                 loadPropertyFilterQueryParametersBinder(facet, element, context);
                 break;
             default:
@@ -107,7 +107,7 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
         }
     }
 
-    protected void loadPropertyFilterQueryParametersBinder(QueryParametersFacet facet,
+    protected void loadPropertyFilterQueryParametersBinder(UrlQueryParametersFacet facet,
                                                            Element element, ComponentContext context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
@@ -118,7 +118,7 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
         ));
     }
 
-    protected void loadGenericFilterQueryParametersBinder(QueryParametersFacet facet,
+    protected void loadGenericFilterQueryParametersBinder(UrlQueryParametersFacet facet,
                                                           Element element, ComponentContext context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
@@ -129,7 +129,7 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
         ));
     }
 
-    protected void loadPaginationQueryParametersBinder(QueryParametersFacet facet,
+    protected void loadPaginationQueryParametersBinder(UrlQueryParametersFacet facet,
                                                        Element element, ComponentContext context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
@@ -155,14 +155,14 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
 
     public static class PaginationQueryParametersBinderInitTask implements ComponentLoader.InitTask {
 
-        protected final QueryParametersFacet facet;
+        protected final UrlQueryParametersFacet facet;
         protected final String binderId;
         protected final String componentId;
         protected final String firstResultParam;
         protected final String maxResultsParam;
         protected final UrlParamSerializer urlParamSerializer;
 
-        public PaginationQueryParametersBinderInitTask(QueryParametersFacet facet,
+        public PaginationQueryParametersBinderInitTask(UrlQueryParametersFacet facet,
                                                        String componentId,
                                                        @Nullable String binderId,
                                                        @Nullable String firstResultParam,
@@ -178,15 +178,15 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
 
         @Override
         public void execute(ComponentContext context, View<?> view) {
-            Preconditions.checkState(facet.getOwner() != null, "%s owner is not set", QueryParametersFacet.NAME);
+            Preconditions.checkState(facet.getOwner() != null, "%s owner is not set", UrlQueryParametersFacet.NAME);
 
             Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
             if (!(component instanceof PaginationComponent)) {
                 throw new IllegalStateException(String.format("'%s' is not a pagination component", componentId));
             }
 
-            PaginationQueryParametersBinder binder =
-                    new PaginationQueryParametersBinder(((PaginationComponent<?>) component), urlParamSerializer);
+            PaginationUrlQueryParametersBinder binder =
+                    new PaginationUrlQueryParametersBinder(((PaginationComponent<?>) component), urlParamSerializer);
 
             binder.setId(binderId);
             binder.setFirstResultParam(firstResultParam);
@@ -198,14 +198,14 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
 
     public static class PropertyFilterQueryParametersBinderInitTask implements ComponentLoader.InitTask {
 
-        protected final QueryParametersFacet facet;
+        protected final UrlQueryParametersFacet facet;
         protected final String binderId;
         protected final String componentId;
         protected final String parameter;
         protected final UrlParamSerializer urlParamSerializer;
         protected final ApplicationContext applicationContext;
 
-        public PropertyFilterQueryParametersBinderInitTask(QueryParametersFacet facet,
+        public PropertyFilterQueryParametersBinderInitTask(UrlQueryParametersFacet facet,
                                                            String componentId,
                                                            @Nullable String parameter,
                                                            @Nullable String binderId,
@@ -221,15 +221,15 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
 
         @Override
         public void execute(ComponentContext context, View<?> view) {
-            Preconditions.checkState(facet.getOwner() != null, "%s owner is not set", QueryParametersFacet.NAME);
+            Preconditions.checkState(facet.getOwner() != null, "%s owner is not set", UrlQueryParametersFacet.NAME);
 
             Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
             if (!(component instanceof PropertyFilter)) {
                 throw new IllegalStateException(String.format("'%s' is not a property filter component", componentId));
             }
 
-            PropertyFilterQueryParametersBinder binder =
-                    new PropertyFilterQueryParametersBinder(((PropertyFilter<?>) component),
+            PropertyFilterUrlQueryParametersBinder binder =
+                    new PropertyFilterUrlQueryParametersBinder(((PropertyFilter<?>) component),
                             urlParamSerializer, applicationContext);
 
             binder.setId(binderId);
@@ -241,14 +241,14 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
 
     public static class GenericFilterQueryParametersBinderInitTask implements ComponentLoader.InitTask {
 
-        protected final QueryParametersFacet facet;
+        protected final UrlQueryParametersFacet facet;
         protected final String binderId;
         protected final String componentId;
         protected final String conditionParam;
         protected final UrlParamSerializer urlParamSerializer;
         protected final ApplicationContext applicationContext;
 
-        public GenericFilterQueryParametersBinderInitTask(QueryParametersFacet facet,
+        public GenericFilterQueryParametersBinderInitTask(UrlQueryParametersFacet facet,
                                                           String componentId,
                                                           @Nullable String binderId,
                                                           @Nullable String conditionParam,
@@ -264,15 +264,15 @@ public class QueryParametersFacetProvider implements FacetProvider<QueryParamete
 
         @Override
         public void execute(ComponentContext context, View<?> view) {
-            Preconditions.checkState(facet.getOwner() != null, "%s owner is not set", QueryParametersFacet.NAME);
+            Preconditions.checkState(facet.getOwner() != null, "%s owner is not set", UrlQueryParametersFacet.NAME);
 
             Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
             if (!(component instanceof GenericFilter)) {
                 throw new IllegalStateException(String.format("'%s' is not a generic filter component", componentId));
             }
 
-            GenericFilterQueryParametersBinder binder =
-                    new GenericFilterQueryParametersBinder(((GenericFilter) component),
+            GenericFilterUrlQueryParametersBinder binder =
+                    new GenericFilterUrlQueryParametersBinder(((GenericFilter) component),
                             urlParamSerializer, applicationContext);
 
             binder.setId(binderId);

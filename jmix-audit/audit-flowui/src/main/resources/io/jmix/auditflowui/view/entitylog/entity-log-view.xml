@@ -84,10 +84,10 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <queryParameters>
+        <urlQueryParameters>
             <pagination component="paginationEntityLog"/>
             <pagination component="paginationLoggedEntity"/>
-        </queryParameters>
+        </urlQueryParameters>
     </facets>
     <layout>
         <tabs id="tabsheet" width="100%">

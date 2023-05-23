@@ -34,9 +34,9 @@ def tableXml = api.processSnippet('table.xml',
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <queryParameters>
+        <urlQueryParameters>
             <pagination component="pagination"/>
-        </queryParameters>
+        </urlQueryParameters>
     </facets>
     <actions>
         <action id="selectAction" type="lookup_select"/>

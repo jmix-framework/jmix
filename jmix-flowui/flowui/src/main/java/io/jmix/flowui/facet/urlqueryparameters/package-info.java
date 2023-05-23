@@ -16,7 +16,7 @@
 
 @Internal
 @NonNullApi
-package io.jmix.flowui.facet.queryparameters;
+package io.jmix.flowui.facet.urlqueryparameters;
 
 import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

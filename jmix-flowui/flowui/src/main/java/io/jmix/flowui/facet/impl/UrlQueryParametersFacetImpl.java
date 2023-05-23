@@ -20,7 +20,7 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.facet.QueryParametersFacet;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -31,14 +31,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class QueryParametersFacetImpl extends AbstractFacet implements QueryParametersFacet {
+public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQueryParametersFacet {
 
     protected RouteSupport routeSupport;
 
     protected List<Binder> binders = new ArrayList<>();
     protected Registration queryParametersChangeRegistration;
 
-    public QueryParametersFacetImpl(RouteSupport routeSupport) {
+    public UrlQueryParametersFacetImpl(RouteSupport routeSupport) {
         this.routeSupport = routeSupport;
     }
 
@@ -71,11 +71,11 @@ public class QueryParametersFacetImpl extends AbstractFacet implements QueryPara
     public void registerBinder(Binder binder) {
         Preconditions.checkNotNullArgument(binder);
 
-        binder.addQueryParametersChangeListener(this::onComponentQueryParametersChanged);
+        binder.addUrlQueryParametersChangeListener(this::onComponentQueryParametersChanged);
         binders.add(binder);
     }
 
-    protected void onComponentQueryParametersChanged(QueryParametersChangeEvent event) {
+    protected void onComponentQueryParametersChanged(UrlQueryParametersChangeEvent event) {
         if (owner == null || UiComponentUtils.isComponentAttachedToDialog(owner)) {
             return;
         }

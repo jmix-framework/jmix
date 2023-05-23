@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.0.5")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.1.0")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -264,8 +264,6 @@ dependencies {
 
         //todo SB3 remove dependency after security-oauth2 module is removed
         api 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
-
-        api 'org.springframework.security:spring-security-oauth2-authorization-server:1.0.1'
 
         api 'javax.cache:cache-api:1.1.1'
 

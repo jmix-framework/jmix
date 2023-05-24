@@ -112,8 +112,13 @@ public class EntityTreeFragment extends ScreenFragment {
                 .filter(childNode -> isSuitable(searchValue, childNode))
                 .forEach(child -> {
                     result.add(child);
+
                     if (!child.getChildren().isEmpty()) {
-                        fill(child, result);
+                        if (child.getLocalizedName().toLowerCase().contains(searchValue)) {
+                            fill(child, result);
+                        } else {
+                            fill(child, searchValue, result);
+                        }
                     }
                 });
     }
@@ -145,7 +150,15 @@ public class EntityTreeFragment extends ScreenFragment {
     }
 
     protected boolean isSuitable(String searchValue, EntityTreeNode child) {
-        return StringUtils.isEmpty(searchValue) || child.getLocalizedName().toLowerCase().contains(searchValue);
+        return StringUtils.isEmpty(searchValue)
+                || child.getLocalizedName().toLowerCase().contains(searchValue)
+                || isSuitableRecursively(searchValue, child);
+    }
+
+    protected boolean isSuitableRecursively(String searchValue, EntityTreeNode node) {
+        return !node.getChildren().isEmpty() && node.getChildren()
+                .stream()
+                .anyMatch(child -> isSuitable(searchValue, child));
     }
 
     protected void fill(final EntityTreeNode parentNode, List<EntityTreeNode> result) {

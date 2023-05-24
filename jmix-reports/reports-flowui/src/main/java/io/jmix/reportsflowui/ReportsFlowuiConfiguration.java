@@ -22,6 +22,7 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.model.DataComponents;
+import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
 import io.jmix.reports.ReportsConfiguration;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.security.constraint.PolicyStore;
@@ -35,7 +36,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {FlowuiConfiguration.class, ReportsConfiguration.class})
+@JmixModule(dependsOn = {FlowuiConfiguration.class, ReportsConfiguration.class, GridExportFlowuiConfiguration.class})
 @PropertySource(name = "io.jmix.reportsflowui", value = "classpath:/io/jmix/reportsflowui/module.properties")
 public class ReportsFlowuiConfiguration {
 

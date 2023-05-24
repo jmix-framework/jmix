@@ -2,13 +2,12 @@ package io.jmix.reportsflowui.view.reportwizard;
 
 
 import io.jmix.reportsflowui.ReportsUiHelper;
-import io.jmix.reportsflowui.flowui.ReportsClientProperties;
+import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.main.MainView;
-import io.jmix.reportsflowui.view.newentity.EntityTreeList;
-import io.jmix.reportsflowui.view.testentity.RegionDetail;
+import io.jmix.reportsflowui.view.entitytreelist.EntityTreeList;
+import io.jmix.reportsflowui.view.region.RegionDetail;
 import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -60,7 +59,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.*;
 
-@Route(value = "reportWizard", layout = MainView.class)
+@Route(value = "reportWizard", layout = DefaultMainViewParent.class)
 @ViewController("ReportWizardCreator")
 @ViewDescriptor("report-wizard.xml")
 public class ReportWizardCreator extends StandardView {

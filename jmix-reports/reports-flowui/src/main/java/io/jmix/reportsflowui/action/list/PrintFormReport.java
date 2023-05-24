@@ -1,6 +1,6 @@
 package io.jmix.reportsflowui.action.list;
 
-import io.jmix.reportsflowui.flowui.ReportsClientProperties;
+import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;

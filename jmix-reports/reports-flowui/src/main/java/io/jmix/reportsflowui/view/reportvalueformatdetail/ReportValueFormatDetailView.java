@@ -1,7 +1,5 @@
 package io.jmix.reportsflowui.view.reportvalueformatdetail;
 
-
-import io.jmix.reportsflowui.view.main.MainView;
 import io.jmix.reportsflowui.view.scripteditor.ScriptEditorView;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -30,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Route(value = "ReportValueFormatDetailView/:id", layout = MainView.class)
+@Route(value = "ReportValueFormatDetailView/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportValueFormat.detail")
 @ViewDescriptor("report-value-format-detail-view.xml")
 @EditedEntityContainer("valuesFormatsDc")

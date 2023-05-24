@@ -49,7 +49,7 @@ public abstract class AbstractOfficeGenerator implements Generator {
             Save saver = new Save(basePackage);
             saver.save(byteArrayOutputStream);
             template = byteArrayOutputStream.toByteArray();
-        } catch (Docx4JException | JAXBException | javax.xml.bind.JAXBException | IOException e) {
+        } catch (Docx4JException | JAXBException | IOException e) {
             throw new TemplateGenerationException(e);
         }
         return template;
@@ -86,5 +86,5 @@ public abstract class AbstractOfficeGenerator implements Generator {
         }
     }
 
-    protected abstract OpcPackage generatePackage(ReportData reportData) throws TemplateGenerationException, Docx4JException, JAXBException, jakarta.xml.bind.JAXBException, javax.xml.bind.JAXBException;
+    protected abstract OpcPackage generatePackage(ReportData reportData) throws TemplateGenerationException, Docx4JException, JAXBException;
 }

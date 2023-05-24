@@ -43,6 +43,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
+    //todo migrate lib to bom
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+
     //todo SB3 why ui-test-assist-spock in reports module?
 //    testImplementation project(':ui-test-assist-spock')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'

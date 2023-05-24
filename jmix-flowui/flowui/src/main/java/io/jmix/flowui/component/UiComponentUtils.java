@@ -223,6 +223,16 @@ public final class UiComponentUtils {
     }
 
     @Nullable
+    public static Dialog findDialog(Component component) {
+        if (component instanceof Dialog) {
+            return (Dialog) component;
+        }
+
+        Optional<Component> parent = component.getParent();
+        return parent.map(UiComponentUtils::findDialog).orElse(null);
+    }
+
+    @Nullable
     public static View<?> findView(Component component) {
         if (component instanceof View) {
             return (View<?>) component;

@@ -41,27 +41,22 @@ public class BandDefinition implements ReportBand {
     protected UUID id;
 
     @InstanceName
-    @JmixProperty
     protected String name;
 
-    @JmixProperty
     protected BandDefinition parentBandDefinition;
 
-    @JmixProperty
     protected Report report;
 
-    @JmixProperty
     protected List<BandDefinition> childrenBandDefinitions = new ArrayList<>();
 
-    @JmixProperty
     @Composition
     protected List<DataSet> dataSets = new ArrayList<>();
 
-    @JmixProperty
     protected Integer orientation;
 
-    @JmixProperty
     protected Integer position;
+
+    protected Boolean multiDataSet = false;
 
     public UUID getId() {
         return id;
@@ -146,5 +141,13 @@ public class BandDefinition implements ReportBand {
     @Override
     public BandOrientation getBandOrientation() {
         return BandOrientation.defaultIfNull(getOrientation() != null ? getOrientation().getBandOrientation() : null);
+    }
+
+    public Boolean getMultiDataSet() {
+        return multiDataSet;
+    }
+
+    public void setMultiDataSet(Boolean multiDataSet) {
+        this.multiDataSet = multiDataSet;
     }
 }

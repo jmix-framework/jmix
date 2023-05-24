@@ -23,4 +23,5 @@ archivesBaseName = 'jmix-reports-flowui'
 dependencies {
     api project(':reports')
     api project(':flowui')
+    api project(':gridexport-flowui')
 }

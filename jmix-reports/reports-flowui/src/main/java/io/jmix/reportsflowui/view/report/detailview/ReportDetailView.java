@@ -1,10 +1,9 @@
 package io.jmix.reportsflowui.view.report.detailview;
 
 import io.jmix.reportsflowui.ReportsUiHelper;
-import io.jmix.reportsflowui.flowui.ReportsClientProperties;
+import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.template.edit.ReportTemplateDetailView;
-import io.jmix.reportsflowui.view.main.MainView;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
@@ -76,7 +75,7 @@ import java.util.stream.Collectors;
 import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_CLASS_NAME;
 import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 
-@Route(value = "reports/:id", layout = MainView.class)
+@Route(value = "reports/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.detail")
 @ViewDescriptor("report-detail-view.xml")
 @EditedEntityContainer("reportDc")

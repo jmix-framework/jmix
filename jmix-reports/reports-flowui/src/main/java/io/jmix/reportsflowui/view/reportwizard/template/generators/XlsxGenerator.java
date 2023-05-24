@@ -15,11 +15,11 @@
  */
 
 package io.jmix.reportsflowui.view.reportwizard.template.generators;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import org.apache.poi.ss.util.CellReference;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.OpcPackage;

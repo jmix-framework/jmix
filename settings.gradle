@@ -107,6 +107,8 @@ includeProject('reports', 'jmix-reports/reports')
 includeProject('reports-rest', 'jmix-reports/reports-rest')
 includeProject('reports-starter', 'jmix-reports/reports-starter')
 includeProject('reports-rest-starter', 'jmix-reports/reports-rest-starter')
+includeProject('reports-flowui', 'jmix-reports/reports-flowui')
+includeProject('reports-flowui-starter', 'jmix-reports/reports-flowui-starter')
 
 includeProject('search', 'jmix-search/search')
 includeProject('search-starter', 'jmix-search/search-starter')

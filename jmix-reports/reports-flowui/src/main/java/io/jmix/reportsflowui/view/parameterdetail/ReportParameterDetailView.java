@@ -3,7 +3,6 @@ package io.jmix.reportsflowui.view.parameterdetail;
 import io.jmix.reportsflowui.ReportsUiHelper;
 import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
 import io.jmix.reportsflowui.view.run.ParameterFieldCreator;
-import io.jmix.reportsflowui.view.main.MainView;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
@@ -38,7 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-@Route(value = "parameter/:id", layout = MainView.class)
+@Route(value = "parameter/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportInputParameter.detail")
 @ViewDescriptor("report-parameter-detail-view.xml")
 @EditedEntityContainer("parameterDc")

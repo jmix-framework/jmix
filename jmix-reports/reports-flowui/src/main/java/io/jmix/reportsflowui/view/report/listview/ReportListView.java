@@ -1,13 +1,12 @@
 package io.jmix.reportsflowui.view.report.listview;
 
-import io.jmix.reportsflowui.flowui.ReportsClientProperties;
+import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import io.jmix.reportsflowui.view.importdialog.ReportImportView;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
-import io.jmix.reportsflowui.view.main.MainView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreator;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
@@ -44,7 +43,7 @@ import java.util.Set;
 
 import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
 
-@Route(value = "reports", layout = MainView.class)
+@Route(value = "reports", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.list")
 @ViewDescriptor("report-list-view.xml")
 @LookupComponent("reportsDataGrid")

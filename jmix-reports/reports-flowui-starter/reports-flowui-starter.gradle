@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
 
 group = 'io.jmix.reports'
 archivesBaseName = 'jmix-reports-flowui-starter'

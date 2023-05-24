@@ -24,6 +24,8 @@ dependencies {
     api project(':core')
     api project(':data')
     api project(':security')
+    api project(':eclipselink')
+
     compileOnly project(':dynattr')
 
     api 'com.thoughtworks.xstream:xstream'

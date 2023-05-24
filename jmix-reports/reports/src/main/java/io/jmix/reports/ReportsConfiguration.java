@@ -30,6 +30,7 @@ import com.haulmont.yarg.util.groovy.Scripting;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.reports.libintegration.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -45,7 +46,7 @@ import java.util.Map;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = DataConfiguration.class)
+@JmixModule(dependsOn = {DataConfiguration.class, EclipselinkConfiguration.class})
 @PropertySource(name = "io.jmix.reports", value = "classpath:/io/jmix/reports/module.properties")
 public class ReportsConfiguration {
 

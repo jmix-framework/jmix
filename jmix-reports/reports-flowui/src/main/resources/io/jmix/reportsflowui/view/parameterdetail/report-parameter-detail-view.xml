@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://reportParameterDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="parameterDc"
+                  class="io.jmix.reports.entity.ReportInputParameter">
+            <fetchPlan extends="_base"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout expand="tabsheet">
+        <tabSheet id="tabsheet" width="100%">
+            <tab id="optionsTab" label="msg://parameters.optionsTab">
+                <formLayout dataContainer="parameterDc" width="100%">
+                    <textField id="name" label="msg://parameters.caption"
+                               property="name" required="true"
+                               width="100%" requiredMessage="msg://parameters.nameMsg"/>
+                    <textField id="alias" label="msg://parameters.alias"
+                               property="alias" required="true"
+                               width="100%" requiredMessage="msg://parameters.aliasMsg">
+                        <!--                                <todo validators>-->
+                        <!--                                    <custom bean="report_ReportParamAliasValidator"/>-->
+                        <!--                                </validators>-->
+                    </textField>
+                    <comboBox id="parameterTypeField" property="type"
+                              required="true"
+                              label="msg://parameters.type"
+                              allowCustomValue="false"
+                              width="100%" requiredMessage="msg://parameters.typeMsg"/>
+                    <checkbox id="hidden" label="msg://parameters.hidden"
+                              property="hidden"/>
+                    <checkbox id="isRequiredField" label="msg://parameters.required"
+                              property="required"/>
+                    <checkbox id="isLookupField" label="msg://parameters.lookup"
+                              property="lookup"/>
+                    <comboBox id="metaClassField" label="msg://parameters.metaClass" width="100%"
+                              property="entityMetaClass"
+                              requiredMessage="msg://parameters.requiredMetaClass" required="true"/>
+                    <comboBox id="enumerationField" width="100%" label="msg://parameters.enum"
+                              property="enumerationClass"
+                              requiredMessage="msg://parameters.requiredEnumClass" required="true"/>
+                    <comboBox id="screenField" width="100%" label="msg://parameters.screen"
+                              property="screen"/>
+                    <hbox id="defaultValueBox" width="100%"/>
+                    <checkbox id="isDefaultDateIsCurrentField" label="msg://parameters.defaultDateIsCurrent"
+                              property="defaultDateIsCurrent"/>
+                    <responsiveSteps>
+                        <responsiveStep minWidth="0" columns="1"/>
+                    </responsiveSteps>
+                </formLayout>
+            </tab>
+            <tab id="localesTab" label="msg://parameters.localesTab">
+                <textArea id="localeField"
+                          dataContainer="parameterDc"
+                          property="localeNames"
+                          width="100%" height="240px"/>
+            </tab>
+            <tab id="processParamTab" label="msg://parameters.transformationTab">
+                <vbox id="predefinedTransformationBox">
+                    <checkbox id="isPredefinedTransformationField"
+                              label="msg://parameters.predefinedTransformation"/>
+                    <comboBox id="wildcardsField"
+                              label="msg://parameters.wildcards"
+                              dataContainer="parameterDc"
+                              property="predefinedTransformation"
+                              width="200px"/>
+                    <h4 id="transformationScripth4" text="msg://parameters.groovyScript"/>
+                    <textArea id="transformationScript"
+                              width="100%"
+                              height="15em"
+                              property="transformationScript"
+                              dataContainer="parameterDc"/>
+                </vbox>
+            </tab>
+            <tab id="validationTab" label="msg://parameters.validationTab">
+                <vbox id="includeValidationBox">
+                    <checkbox id="includeValidation" dataContainer="parameterDc"
+                              label="msg://parameters.validateFields"
+                              property="validationOn"/>
+                    <textArea id="validationScript"
+                              width="100%"
+                              height="15em"
+                              property="validationScript"
+                              dataContainer="parameterDc"/>
+                </vbox>
+            </tab>
+            <tab id="lookupSettingsTab" label="msg://parameters.lookupSettingsTab">
+                <vbox id="lookupSettingsBox" width="100%">
+                    <textArea id="lookupJoin"
+                              height="15em"
+                              width="100%"
+                              property="lookupJoin"
+                              label="msg://lookupJoin"
+                              dataContainer="parameterDc"/>
+                    <textArea id="lookupWhere"
+                              height="15em"
+                              width="100%"
+                              label="msg://lookupWhere"
+                              property="lookupWhere"
+                              dataContainer="parameterDc"/>
+                </vbox>
+            </tab>
+        </tabSheet>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

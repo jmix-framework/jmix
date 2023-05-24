@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://reportTemplateDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="reportTemplateDc"
+                  class="io.jmix.reports.entity.ReportTemplate">
+            <fetchPlan extends="template.edit"/>
+            <loader/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <hbox id="templateFields" width="100%">
+            <vbox id="fieldsBox" padding="false">
+                <formLayout id="templateForm"
+                            dataContainer="reportTemplateDc"
+                            classNames="table-edit-fragment-template-form">
+                    <textField id="codeField" property="code"
+                               label="msg://codeField.label" width="100%"
+                               required="true" requiredMessage="msg://codeField.requiredMessage"/>
+                    <fileUploadField id="templateUploadField" fileNameVisible="true"
+                                     label="msg://templateUploadField.label" width="100%"/>
+                    <textArea id="templateFileEditor" width="100%" height="20em"/>
+                    <comboBox id="outputTypeField" property="reportOutputType" label="msg://outputTypeField.label"
+                              pageSize="20" width="100%"
+                              required="true" requiredMessage="msg://outputTypeField.requiredMessage"/>
+                    <textField id="outputNamePatternField" property="outputNamePattern"
+                               label="msg://outputNamePatternField.label" width="100%">
+                        <validators>
+                            <custom bean="reportflowui_OutputFileNameValidator"/>
+                        </validators>
+                    </textField>
+                    <radioButtonGroup id="isGroovyRadioButtonGroup" property="groovy"
+                                      label="msg://isGroovyRadioButtonGroup.label" width="100%"/>
+                    <checkbox id="customField" property="custom" label="msg://customField.label" width="100%"/>
+                    <checkbox id="alterableField" property="alterable" label="msg://alterableField.label" width="100%"/>
+                    <select id="customDefinedByField" property="customDefinedBy"
+                              label="msg://customDefinedByField.label"
+                              requiredMessage="msg://customDefinedByField.requiredMessage" width="100%"/>
+
+                    <vbox id="customDefinitionBox" spacing="false" padding="false" width="100%" alignItems="END">
+                        <textArea id="customDefinitionField" property="customDefinition"
+                                  label="msg://customDefinitionField.label"
+                                  height="6em"
+                                  requiredMessage="msg://customDefinitionField.requiredMessage" width="100%"/>
+                    </vbox>
+
+                    <responsiveSteps>
+                        <responsiveStep minWidth="0" columns="1"/>
+                    </responsiveSteps>
+                </formLayout>
+                <hbox id="descriptionEditBox">
+                </hbox>
+            </vbox>
+            <vbox id="previewBox" visible="false">
+            </vbox>
+        </hbox>
+        <hbox id="detailActions" width="100%">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

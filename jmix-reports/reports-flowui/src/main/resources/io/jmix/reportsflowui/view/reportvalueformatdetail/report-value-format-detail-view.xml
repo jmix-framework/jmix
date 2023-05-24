@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://reportValueFormatDetailView.title">
+    <data>
+        <instance id="valuesFormatsDc"
+                  class="io.jmix.reports.entity.ReportValueFormat">
+            <loader id="valuesFormatsDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveCloseAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout dataContainer="valuesFormatsDc">
+            <vbox>
+                <textField id="valueNameField" property="valueName" required="true" width="100%"
+                           requiredMessage="msg://valueNameMsg"/>
+                <comboBox id="formatField" required="true"
+                          width="100%"
+                          property="formatString"
+                          label="msg://formatStringMsg"
+                          requiredMessage="msg://formatStringMsg"/>
+                <checkbox id="groovyField" dataContainer="valuesFormatsDc" property="groovyScript"
+                          label="msg://valuesFormats.groovyScript"/>
+                <vbox id="groovyVBox"
+                      visible="false"
+                      padding="false">
+                    <hbox width="100%">
+                        <h4 text="msg://valuesFormats.groovyScript"/>
+                        <button id="groovyFullScreenLinkButton"
+                                text="msg://fullScreen"/>
+
+                    </hbox>
+                    <textArea id="groovyCodeEditor" height="200px" width="100%"
+                              required="true"
+                              requiredMessage="msg://groovyScriptMsg"
+                              dataContainer="valuesFormatsDc"
+                              property="formatString"/>
+                </vbox>
+                <hbox id="detailActions" width="100%">
+                    <button id="saveAndCloseBtn" action="saveCloseAction"/>
+                    <button id="closeBtn" action="closeAction"/>
+                </hbox>
+            </vbox>
+        </formLayout>
+    </layout>
+</view>

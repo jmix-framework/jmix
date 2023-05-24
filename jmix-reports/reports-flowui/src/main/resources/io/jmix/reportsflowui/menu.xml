@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/flowui/menu">
+
+    <menu id="application" title="msg://io.jmix.reportsflowui/menu.application.title" opened="true">
+        <item view="User.list" title="msg://io.jmix.reportsflowui.view.user/UserListView.title"/>
+    </menu>
+    <menu id="project-reports" title="Project reports">
+        <item view="report_Report.list" title="msg://io.jmix.reportsflowui.flowui/menu.report_Report.list"/>
+        <item view="report_ReportGroup.list" title="msg://io.jmix.reportsflowui.flowui/menu.report_ReportGroup.list"/>
+        <item view="report_ReportRun.view" title="msg://io.jmix.reportsflowui.flowui/menu.report_ReportRun.view"/>
+        <item view="report_ReportTable.view" title="msg://io.jmix.reportsflowui.flowui/menu.report_ReportTable.view"/>
+    </menu>
+
+</menu-config>

@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://reportDetailView.title">
+    <data>
+        <instance id="reportDc"
+                  class="io.jmix.reports.entity.Report">
+            <fetchPlan extends="report.edit"/>
+            <collection id="parametersDc" property="inputParameters"/>
+            <collection id="valuesFormatsDc" property="valuesFormats"/>
+            <collection id="reportRolesDc" property="reportRoles"/>
+            <collection id="reportScreensDc" property="reportScreens"/>
+            <collection id="templatesDc" property="templates"/>
+            <collection id="bandsDc" property="bands">
+                <collection id="dataSetsDc" property="dataSets"/>
+            </collection>
+            <collection id="stringParametersDc" property="inputParameters"/>
+            <loader id="reportDl"/>
+        </instance>
+
+        <collection id="availableParentBandsDc" class="io.jmix.reports.entity.BandDefinition"/>
+        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup">
+            <loader id="groupsDl">
+                <query>
+                    select rg from report_ReportGroup rg order by rg.createTs asc
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveCloseAction" type="detail_saveClose"/>
+        <action id="saveAction" type="detail_save"/>
+        <action id="runAction" icon="ANGLE_DOUBLE_RIGHT" text="msg://view.runAction.text"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <tabSheet id="mainTabSheet" width="100%" height="100%" minHeight="0">
+            <tab id="detailsTab" label="msg://mainTabSheet.detailsTab.label">
+                <vbox id="detailsTabContent">
+                    <formLayout id="reportForm" dataContainer="reportDc">
+                        <textField id="nameField" property="name"
+                                   requiredMessage="msg://detailsTab.nameField.requiredMessage"/>
+                        <entityComboBox id="defaultTemplateField" property="defaultTemplate"
+                                        itemsContainer="templatesDc">
+                            <actions>
+                                <action id="create" icon="PLUS"
+                                        description="msg://detailsTab.defaultTemplateField.create.description"/>
+                                <action id="download" icon="DOWNLOAD"
+                                        description="msg://detailsTab.defaultTemplateField.download.description"/>
+                                <action id="upload" icon="UPLOAD"
+                                        description="msg://detailsTab.defaultTemplateField.upload.description"/>
+                                <action id="edit" icon="EDIT"
+                                        description="msg://detailsTab.defaultTemplateField.edit.description"/>
+                            </actions>
+                        </entityComboBox>
+                        <entityComboBox id="groupField" property="group"
+                                        requiredMessage="msg://detailsTab.groupField.requiredMessage"
+                                        itemsContainer="groupsDc"/>
+                        <textField id="codeField" property="code"/>
+                        <textArea id="descriptionField" property="description"/>
+                        <textArea id="localeTextField" property="localeNames" label="msg://nameLocale"/>
+                        <checkbox id="systemField" property="system"/>
+                        <checkbox id="restAccessField" property="restAccess"/>
+                        <!-- todo report invisible upload?-->
+                    </formLayout>
+                </vbox>
+            </tab>
+            <tab id="bandsTab" label="msg://mainTabSheet.bandsTab.label">
+                <div id="bandsTabContent" width="100%" height="100%" classNames="reports-flex-layout">
+                    <vbox id="bandsLayout" classNames="bands-layout">
+                        <hbox id="bandsButtonsLayout">
+                            <button id="createBandBtn" action="bandsTreeDataGrid.create"/>
+                            <button id="removeBandBtn" action="bandsTreeDataGrid.remove"/>
+                            <button id="upBandBtn" action="bandsTreeDataGrid.upBand"/>
+                            <button id="downBandBtn" action="bandsTreeDataGrid.downBand"/>
+                        </hbox>
+                        <treeDataGrid id="bandsTreeDataGrid" dataContainer="bandsDc"
+                                      hierarchyProperty="parentBandDefinition">
+                            <actions>
+                                <action id="create" icon="PLUS" actionVariant="PRIMARY"
+                                        description="msg://bandsTab.createBand.tooltipText"/>
+                                <action id="remove" type="remove" description="msg://bandsTab.removeBand.tooltipText"/>
+                                <action id="upBand" type="itemTracking" icon="ARROW_UP"
+                                        description="msg://bandsTab.upBand.tooltipText"/>
+                                <action id="downBand" type="itemTracking" icon="ARROW_DOWN"
+                                        description="msg://bandsTab.downBand.tooltipText"/>
+                            </actions>
+                            <columns>
+                                <column property="name"/>
+                            </columns>
+                        </treeDataGrid>
+                    </vbox>
+                    <vbox id="bandsDetailsLayout" classNames="bands-details-layout">
+                        <formLayout id="bandForm" dataContainer="bandsDc">
+                            <textField id="bandNameField" property="name"/>
+                            <select id="orientationField" property="orientation" emptySelectionAllowed="true"/>
+                            <entityComboBox id="parentBandField" property="parentBandDefinition"
+                                            itemsContainer="availableParentBandsDc"/>
+                            <checkbox id="multiDataSetField" property="multiDataSet"
+                                      label="msg://bandsTab.multiDataSetField.label"/>
+                            <select id="singleDataSetTypeField" dataContainer="dataSetsDc" property="type"
+                                    label="msg://bandsTab.singleDataSetTypeField.label"/>
+                            <responsiveSteps>
+                                <responsiveStep minWidth="0" columns="1"/>
+                                <responsiveStep minWidth="30em" columns="2"/>
+                                <responsiveStep minWidth="40em" columns="3"/>
+                                <responsiveStep minWidth="50em" columns="4"/>
+                            </responsiveSteps>
+                        </formLayout>
+                        <div id="dataSetsLayout" classNames="reports-flex-layout" width="100%" height="100%">
+                            <div id="singleDataSetLayout" classNames="reports-flex-layout" width="100%" height="100%">
+                                <!--Movable layout-->
+                                <div id="dataSetTypeLayout" width="100%" height="100%">
+                                    <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptField"
+                                          height="100%"
+                                          spacing="true">
+                                        <textArea id="dataSetScriptField" dataContainer="dataSetsDc" property="text"
+                                                  label="msg://bandsTab.dataSetTypeLayout.dataSetScriptField.label"
+                                                  width="100%"/>
+                                        <formLayout id="textParamsForm" dataContainer="dataSetsDc" width="100%">
+                                            <textField id="linkParameterNameField"
+                                                       label="msg://bandsTab.dataSetTypeLayout.linkParameterNameField.label"
+                                                       property="linkParameterName"/>
+                                            <select id="dataStoreField"
+                                                    emptySelectionAllowed="true"
+                                                    label="msg://bandsTab.dataSetTypeLayout.dataStoreField.label"
+                                                    property="dataStore"/>
+                                            <responsiveSteps>
+                                                <responsiveStep minWidth="0" columns="1"/>
+                                                <responsiveStep minWidth="30em" columns="2"/>
+                                            </responsiveSteps>
+                                        </formLayout>
+                                        <checkbox id="isProcessTemplateField"
+                                                  dataContainer="dataSetsDc"
+                                                  label="msg://bandsTab.dataSetTypeLayout.isProcessTemplateField.label"
+                                                  property="processTemplate"/>
+                                    </vbox>
+                                    <vbox id="commonEntityGrid" padding="false" width="100%">
+                                        <formLayout>
+                                            <comboBox id="entitiesParamField"
+                                                      allowCustomValue="true"
+                                                      clearButtonVisible="true"
+                                                      label="msg://bandsTab.dataSetTypeLayout.entitiesParamField.label"/>
+                                            <comboBox id="entityParamField"
+                                                      allowCustomValue="true"
+                                                      clearButtonVisible="true"
+                                                      label="msg://bandsTab.dataSetTypeLayout.entityParamField.label"/>
+                                            <checkbox id="isUseExistingFetchPlanField" dataContainer="dataSetsDc"
+                                                      property="useExistingFetchPLan"
+                                                      label="msg://bandsTab.dataSetTypeLayout.useExistingFetchPlan.label"/>
+                                            <button id="fetchPlanEditButton"
+                                                    text="msg://bandsTab.dataSetTypeLayout.fetchPlanEditButton.text"/>
+                                            <comboBox id="fetchPlanNameField"
+                                                      allowCustomValue="true"
+                                                      label="msg://bandsTab.dataSetTypeLayout.fetchPlanNameField.label"/>
+                                            <responsiveSteps>
+                                                <responsiveStep minWidth="0" columns="1"/>
+                                                <responsiveStep minWidth="30em" columns="2"/>
+                                            </responsiveSteps>
+                                        </formLayout>
+                                    </vbox>
+                                    <vbox id="jsonDataSetTypeVBox" padding="false" width="100%" height="100%">
+                                        <textArea id="jsonPathQueryTextAreaField"
+                                                  dataContainer="dataSetsDc"
+                                                  label="msg://bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.label"
+                                                  property="jsonPathQuery"
+                                                  required="true"
+                                                  width="100%"
+                                                  requiredMessage="msg://bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.requiredMessage"/>
+
+                                        <formLayout>
+                                            <comboBox id="jsonSourceTypeField"
+                                                      dataContainer="dataSetsDc"
+                                                      label="msg://bandsTab.dataSetTypeLayout.jsonSourceTypeField.label"
+                                                      property="jsonSourceType"/>
+                                            <responsiveSteps>
+                                                <responsiveStep minWidth="0" columns="1"/>
+                                                <responsiveStep minWidth="30em" columns="2"/>
+                                            </responsiveSteps>
+                                        </formLayout>
+
+                                        <textArea id="jsonGroovyCodeEditor" width="100%"
+                                                  dataContainer="dataSetsDc"
+                                                  label="msg://bandsTab.dataSetTypeLayout.jsonGroovyCodeEditor.label"
+                                                  property="jsonSourceText"/>
+                                        <textArea id="jsonSourceURLTextArea" width="100%"
+                                                  dataContainer="dataSetsDc"
+                                                  label="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.label"
+                                                  property="jsonSourceText" required="true"
+                                                  requiredMessage="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.requiredMessage"/>
+
+                                        <formLayout id="jsonQueryParameterForm">
+                                            <entityComboBox id="jsonQueryParameterField"
+                                                            dataContainer="dataSetsDc"
+                                                            label="msg://bandsTab.dataSetTypeLayout.jsonQueryParameterField.label"
+                                                            itemsContainer="parametersDc"
+                                                            property="jsonSourceInputParameter"/>
+                                            <responsiveSteps>
+                                                <responsiveStep minWidth="0" columns="1"/>
+                                                <responsiveStep minWidth="30em" columns="2"/>
+                                            </responsiveSteps>
+                                        </formLayout>
+
+                                    </vbox>
+                                </div>
+                            </div>
+                            <div id="multiDataSetLayout" classNames="reports-flex-layout multi-data-set-layout"
+                                 width="100%" height="100%"
+                                 visible="false">
+                                <vbox id="dataSetsDataGridLayout" padding="false" height="100%"
+                                      classNames="data-sets-data-grid-layout">
+                                    <hbox id="dataSetsButtonsLayout">
+                                        <button id="createDataSetBtn" action="dataSetsDataGrid.create"/>
+                                        <button id="removeDataSetBtn" action="dataSetsDataGrid.remove"/>
+                                    </hbox>
+                                    <dataGrid id="dataSetsDataGrid" dataContainer="dataSetsDc" height="100%">
+                                        <actions>
+                                            <action id="create" type="create" actionVariant="PRIMARY"
+                                                    description="msg://bandsTab.dataSetsDataGrid.action.create.description"/>
+                                            <action id="remove" type="remove"
+                                                    description="msg://bandsTab.dataSetsDataGrid.action.remove.description"/>
+                                        </actions>
+                                    </dataGrid>
+                                </vbox>
+                                <div id="dataSetDetailsLayout" classNames="data-set-details-layout">
+                                    <!--In multiDataSet mode contains 'dataSetTypeLayout'-->
+                                </div>
+                            </div>
+                        </div>
+                    </vbox>
+                </div>
+            </tab>
+            <tab id="parametersTab" label="msg://mainTabSheet.parametersTab.label">
+                <div classNames="reports-flex-layout" width="100%" height="100%">
+                    <vbox classNames="parameters-layout">
+                        <hbox>
+                            <button action="inputParametersTable.createParameter"/>
+                            <button action="inputParametersTable.editParameter"/>
+                            <button action="inputParametersTable.removeParameter"/>
+                            <button id="upButton" action="inputParametersTable.up"/>
+                            <button id="downButton" action="inputParametersTable.down"/>
+                        </hbox>
+                        <dataGrid id="inputParametersTable" multiSort="true" dataContainer="parametersDc">
+                            <actions>
+                                <action id="createParameter" type="create">
+                                    <properties>
+                                        <property name="openMode" value="DIALOG"/>
+                                    </properties>
+                                </action>
+                                <action id="removeParameter" type="remove"/>
+                                <action id="editParameter" type="edit">
+                                    <properties>
+                                        <property name="openMode" value="DIALOG"/>
+                                    </properties>
+                                </action>
+                                <action id="up" type="itemTracking" icon="ARROW_UP"/>
+                                <action id="down" type="itemTracking" icon="ARROW_DOWN"/>
+                            </actions>
+                            <columns>
+                                <column property="name"/>
+                                <column property="alias"/>
+                                <column property="type"/>
+                            </columns>
+                        </dataGrid>
+                    </vbox>
+                    <vbox classNames="parameters-validate-layout">
+                        <h2 text="msg://report.crossParametersValidation"/>
+                        <checkbox id="validationOnCheckBox"
+                                  label="msg://parameters.validationOn"
+                                  dataContainer="reportDc"
+                                  property="validationOn"/>
+                        <textArea id="validationScriptCodeEditor"
+                                  dataContainer="reportDc"
+                                  property="validationScript"
+                                  label="msg://parameters.groovyScript"
+                                  width="100%" height="20em"/>
+                    </vbox>
+                </div>
+            </tab>
+            <tab id="valuesFormatsTab" label="msg://mainTabSheet.valuesFormats.label">
+                <vbox id="valuesFormatsVBox" height="100%">
+                    <hbox>
+                        <button action="valuesFormatsTable.createValueFormat"/>
+                        <button action="valuesFormatsTable.editValueFormat"/>
+                        <button action="valuesFormatsTable.removeValueFormat"/>
+                    </hbox>
+                    <dataGrid id="valuesFormatsTable" width="100%"
+                              dataContainer="valuesFormatsDc"
+                              columnReorderingAllowed="false">
+                        <actions>
+                            <action id="createValueFormat" type="create">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="editValueFormat" type="edit">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="removeValueFormat" type="remove"/>
+                        </actions>
+                        <columns>
+                            <column property="valueName"/>
+                            <column property="formatString"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+            <tab id="templatesTab" label="msg://mainTabSheet.templatesTab.label">
+                <vbox id="templatesTabContent" height="100%">
+                    <hbox>
+                        <button action="templatesTable.create"/>
+                        <button action="templatesTable.edit"/>
+                        <button action="templatesTable.remove"/>
+                        <button action="templatesTable.defaultAction"/>
+                        <button action="templatesTable.copy"/>
+                    </hbox>
+                    <dataGrid id="templatesTable" width="100%" dataContainer="templatesDc"
+                              columnReorderingAllowed="false" detailsVisibleOnClick="false">
+                        <actions>
+                            <action id="create" type="create"/>
+                            <action id="remove" type="remove"/>
+                            <action id="edit" type="edit"/>
+                            <action id="defaultAction" type="itemTracking" text="msg://report.defaultTemplate"
+                                    icon="CHECK"/>
+                            <action id="copy" type="itemTracking" icon="COPY"/>
+                        </actions>
+                        <columns>
+                            <column property="name" sortable="false"/>
+                            <column property="code" sortable="false"/>
+                            <column property="reportOutputType" sortable="false"/>
+                            <column property="customDefinition" sortable="false"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+            <tab id="securityTab" label="msg://mainTabSheet.securityTab.label">
+                <div id="securityTabContent" width="100%" height="100%" classNames="reports-flex-layout">
+                    <vbox classNames="roles-layout" expand="rolesTable">
+                        <h2 text="msg://securityFrame.roles"/>
+                        <hbox id="addRoleGroupBox" expand="rolesField" width="100%">
+                            <comboBox id="rolesField"/>
+                            <button id="addRoleBtn" text="msg://roles.add" action="rolesTable.add"/>
+                        </hbox>
+                        <hbox>
+                            <button action="rolesTable.exclude" text="msg://roles.removeRole"/>
+                        </hbox>
+                        <dataGrid id="rolesTable" dataContainer="reportRolesDc"
+                                  columnReorderingAllowed="false" detailsVisibleOnClick="false">
+                            <actions>
+                                <action id="add" type="add"/>
+                                <action id="exclude" type="exclude" icon="CLOSE"
+                                        text="msg://screens.removeScreen"/>
+                            </actions>
+                            <columns>
+                                <column property="roleName"/>
+                                <column property="roleCode"/>
+                            </columns>
+                        </dataGrid>
+                    </vbox>
+                    <vbox classNames="views-layout" expand="screenTable">
+                        <h2 text="msg://securityFrame.screens"/>
+                        <hbox id="addScreenGroupBox" expand="screenIdField" width="100%">
+                            <comboBox id="screenIdField"/>
+                            <button id="addReportScreenBtn" action="screenTable.add"
+                                    text="msg://screens.add"/>
+                        </hbox>
+                        <button action="screenTable.remove" icon="font-icon:REMOVE"/>
+                        <dataGrid id="screenTable"
+                                  dataContainer="reportScreensDc"
+                                  columnReorderingAllowed="false" detailsVisibleOnClick="false">
+                            <actions>
+                                <action id="add" type="add"/>
+                                <action id="remove" type="remove" icon="CLOSE"/>
+                            </actions>
+                            <columns>
+                                <column property="screenId"/>
+                            </columns>
+                        </dataGrid>
+                    </vbox>
+                </div>
+            </tab>
+        </tabSheet>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveCloseAction"/>
+            <button id="saveBtn" action="saveAction"/>
+            <button id="runBtn" action="runAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

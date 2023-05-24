@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://reportWizard.title">
+    <data>
+        <instance id="reportDataDc" class="io.jmix.reports.entity.wizard.ReportData">
+            <collection id="reportRegionsDc" property="reportRegions">
+                <collection id="regionPropertiesDc" property="regionProperties"/>
+            </collection>
+            <collection id="queryParametersDc" property="queryParameters"/>
+        </instance>
+
+        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup" fetchPlan="_local">
+            <loader id="groupsDl">
+                <query>
+                    <![CDATA[select rg from report_ReportGroup rg order by rg.createTs asc]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="back" icon="ARROW_LEFT" text="msg://backward"/>
+        <action id="next" icon="ARROW_RIGHT" text="msg://forward"/>
+        <action id="save" icon="CHECK" text="msg://save"/>
+    </actions>
+
+
+    <layout>
+        <div id="detailsDiv">
+            <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="25em">
+                <responsiveSteps>
+                    <responsiveStep minWidth="0" columns="1"/>
+                </responsiveSteps>
+                <comboBox id="entityField"
+                          label="msg://entity"
+                          required="true" requiredMessage="msg://fillEntityMsg"
+                          helperText="msg://entityHintMsg" width="100%"/>
+                <comboBox id="templateFileTypeField"
+                          property="templateFileType"
+                          label="msg://templateFileFormat" required="true"
+                          requiredMessage="msg://fillTemplateTypeMsg"
+                          helperText="msg://templateTypeHintMsg" width="100%"/>
+                <textField id="reportNameField"
+                           property="name"
+                           label="msg://reportName"
+                           required="true"
+                           requiredMessage="msg://fillReportNameMsg"
+                           width="100%"/>
+                <entityComboBox id="groupField"
+                                label="msg://group"
+                                requiredMessage="msg://groupHintMsg"
+                                metaClass="report_ReportGroup"
+                                width="100%"
+                                itemsContainer="groupsDc"/>
+                <vbox>
+                <radioButtonGroup id="reportTypeGenerateField"
+                                  label="msg://reportBuildType"/>
+                </vbox>
+                <label id="spacer"/>
+            </formLayout>
+        </div>
+        <div id="saveDiv">
+            <formLayout id="saveBox" width="100%">
+                <vbox id="props" expand="chartPreviewBox">
+                    <vbox width="100%">
+                        <hbox width="100%">
+                            <button id="downloadTemplateFile"
+                                    title="msg://templateHintMsg"/>
+                        </hbox>
+                        <textField id="outputFileName" width="100%"
+                                   required="true"
+                                   label="msg://outputFileName"
+                                   dataContainer="reportDataDc" property="outputNamePattern"
+                                   helperText="msg://outputFileNameHintMsg" maxLength="255">
+                            <validators>
+                                <custom bean="reportflowui_OutputFileNameValidator"/>
+                            </validators>
+                        </textField>
+                        <comboBox id="outputFileFormat" required="true" width="100%"
+                                  label="msg://outputFileFormat"
+                                  dataContainer="reportDataDc" property="outputFileType"
+                                  helperText="msg://outputFileTypeHintMsg"/>
+                        <comboBox id="diagramType" required="true" width="100%" visible="false"
+                                  label="msg://diagramType"
+                                  itemsEnum="io.jmix.reports.entity.charts.ChartType"/>
+                    </vbox>
+                    <vbox id="chartPreviewBox" visible="false" width="100%">
+                    </vbox>
+                </vbox>
+            </formLayout>
+        </div>
+        <div id="regionsDiv">
+            <hbox spacing="true"
+                  width="100%"
+                  expand="spacerRegions">
+                <hbox id="buttonsBox">
+                    <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
+                    <button id="addSimpleRegionBtn"
+                            text="msg://simpleRegion"/>
+                    <button id="addTabulatedRegionBtn"
+                            text="msg://tabulatedRegion"/>
+                    <!--                    todo return buttons?-->
+                    <!--                    <dropdownButton id="addRegionPopupBtn" text="msg://add">-->
+                    <!--                        <items>-->
+                    <!--                            <actionItem id="addSimpleRegionItem">-->
+                    <!--                                <action id="addSimpleRegion"/>-->
+                    <!--                            </actionItem>-->
+                    <!--                            <actionItem id="addTabulatedRegionItem">-->
+                    <!--                                <action id="addTabulatedRegion"/>-->
+                    <!--                            </actionItem>-->
+                    <!--                        </items>-->
+                    <!--                    </dropdownButton>-->
+                </hbox>
+                <button id="regionsRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+
+                <label id="spacerRegions"/>
+
+                <button id="moveUpBtn" action="regionsTable.up" icon="CARET_UP"/>
+                <button id="moveDownBtn" action="regionsTable.down" icon="CARET_DOWN"/>
+                <button id="removeBtn" action="regionsTable.remove" icon="CLOSE"/>
+            </hbox>
+            <vbox id="regionsBox">
+                <dataGrid id="regionsTable" dataContainer="reportRegionsDc"
+                          columnReorderingAllowed="false"
+                          height="30em" width="40em">
+                    <actions>
+                        <action id="up" type="itemTracking" icon="ARROW_UP"/>
+                        <action id="down" type="itemTracking" icon="ARROW_DOWN"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                </dataGrid>
+            </vbox>
+        </div>
+        <div id="queryDiv">
+            <formLayout id="queryBox">
+                <responsiveSteps>
+                    <responsiveStep minWidth="0em" columns="1"/>
+                </responsiveSteps>
+                        <button id="queryRunBtn" title="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+                        <textArea id="reportQueryCodeEditor"
+                                  width="100%"
+                                  height="15em"
+                                  required="true"
+                                  label="msg://reportQuery"
+                                  property="query"
+                                  dataContainer="reportDataDc"/>
+                        <hbox>
+                            <button id="generateParameters" action="reportParameterTable.generate"/>
+                            <button id="createParameterBtn" action="reportParameterTable.create"/>
+                            <button id="editParameterBtn" action="reportParameterTable.edit"/>
+                            <button id="removeParameterBtn" action="reportParameterTable.remove"/>
+                        </hbox>
+                        <dataGrid id="reportParameterTable"
+                                  dataContainer="queryParametersDc"
+                                  height="250px"
+                                  width="100%">
+                            <actions>
+                                <action id="generate" text="msg://generateParameters"/>
+                                <action id="create" type="create"/>
+                                <action id="edit" type="edit"/>
+                                <action id="remove" type="remove"/>
+                            </actions>
+                            <columns>
+                                <column property="name"/>
+                                <column property="parameterType"/>
+                                <column property="defaultValueString"/>
+                            </columns>
+                        </dataGrid>
+            </formLayout>
+        </div>
+
+
+        <hbox id="navBtnsPanel">
+            <button id="backBtn" action="back"/>
+            <button id="nextBtn" action="next"/>
+            <button id="saveBtn" action="save"/>
+        </hbox>
+    </layout>
+
+</view>

@@ -28,8 +28,10 @@ import io.jmix.securityui.role.annotation.ScreenPolicy;
 /**
  * Grants permissions to add full text search condition to filter
  */
-@ResourceRole(name = "Search: edit filter", code = "search-edit-filter", scope = SecurityScope.UI)
+@ResourceRole(name = "Search: edit filter", code = EditSearchFilterRole.CODE, scope = SecurityScope.UI)
 public interface EditSearchFilterRole {
+
+    String CODE = "search-edit-filter";
 
     @ScreenPolicy(screenIds = "search_FullTextFilterCondition.edit")
     @EntityPolicy(entityClass = FullTextFilterCondition.class, actions = EntityPolicyAction.ALL)

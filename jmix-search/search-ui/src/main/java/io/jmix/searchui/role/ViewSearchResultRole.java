@@ -23,8 +23,10 @@ import io.jmix.securityui.role.annotation.ScreenPolicy;
 /**
  * Grants permissions to view Search Results screen
  */
-@ResourceRole(name = "Search: view search results", code = "search-view-search-results", scope = SecurityScope.UI)
+@ResourceRole(name = "Search: view search results", code = ViewSearchResultRole.CODE, scope = SecurityScope.UI)
 public interface ViewSearchResultRole {
+
+    String CODE = "search-view-search-results";
 
     @ScreenPolicy(screenIds = "search_SearchResults.screen")
     void viewSearchResults();

@@ -15,12 +15,15 @@
  */
 package io.jmix.reportsflowui.exception;
 
-import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.Messages;
+import io.jmix.flowui.Notifications;
+import io.jmix.flowui.exception.AbstractUiExceptionHandler;
+import io.jmix.flowui.exception.ExceptionDialog;
+import io.jmix.flowui.sys.BeanUtil;
 import io.jmix.reports.exception.*;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.exception.AbstractUiExceptionHandler;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -28,12 +31,15 @@ import javax.annotation.Nullable;
 /**
  * Handles reporting exceptions.
  */
-@UIScope
 @Component("report_ReportExceptionHandler")
 public class ReportExceptionHandler extends AbstractUiExceptionHandler {
 
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected Notifications notifications;
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     public ReportExceptionHandler() {
         super(
@@ -47,25 +53,35 @@ public class ReportExceptionHandler extends AbstractUiExceptionHandler {
     }
 
     @Override
-    protected void doHandle(String className, String message, @Nullable Throwable throwable, UiContext context) {
+    protected void doHandle(String className, String message, @Nullable Throwable throwable) {
         if (FailedToConnectToOpenOfficeException.class.getName().equals(className)) {
-            context.getNotifications().create(Notifications.NotificationType.ERROR)
-                    .withCaption(messages.getMessage(getClass(), "reportException.failedConnectToOffice"))
+            notifications.create(messages.getMessage(getClass(), "reportException.failedConnectToOffice"))
+                    .withType(Notifications.Type.ERROR)
                     .show();
         } else if (NoOpenOfficeFreePortsException.class.getName().equals(className)) {
-            context.getNotifications().create(Notifications.NotificationType.ERROR)
-                    .withCaption(messages.getMessage(getClass(), "reportException.noOpenOfficeFreePorts"))
+            notifications.create(messages.getMessage(getClass(), "reportException.noOpenOfficeFreePorts"))
+                    .withType(Notifications.Type.ERROR)
                     .show();
         } else if (ValidationException.class.getName().equals(className)) {
-            context.getNotifications().create(Notifications.NotificationType.ERROR)
-                    .withCaption(message)
+            notifications.create(message)
+                    .withType(Notifications.Type.ERROR)
                     .show();
         } else {
-            context.getDialogs().createExceptionDialog()
-                    .withThrowable(throwable)
-                    .withCaption(messages.getMessage(getClass(), "reportException.message"))
-                    .withMessage(message)
-                    .show();
+            Throwable rootCause = ExceptionUtils.getRootCause(throwable);
+            if (rootCause == null) {
+                rootCause = throwable;
+            }
+
+            ExceptionDialog exceptionDialog = new ExceptionDialog(rootCause);
+            BeanUtil.autowireContext(applicationContext, exceptionDialog);
+            exceptionDialog.open();
+
+            //todo
+//            dialogs.createExceptionDialog()
+//                    .withThrowable(throwable)
+//                    .withCaption(messages.getMessage(getClass(), "reportException.message"))
+//                    .withMessage(message)
+//                    .show();
         }
     }
 }

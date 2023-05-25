@@ -38,7 +38,7 @@
                               property="hidden"/>
                     <checkbox id="isRequiredField" label="msg://parameters.required"
                               property="required"/>
-                    <checkbox id="isLookupField" label="msg://parameters.lookup"
+                    <checkbox id="isLookupField" label="msg://parameters.dropdown"
                               property="lookup"/>
                     <comboBox id="metaClassField" label="msg://parameters.metaClass" width="100%"
                               property="entityMetaClass"
@@ -71,8 +71,8 @@
                               dataContainer="parameterDc"
                               property="predefinedTransformation"
                               width="200px"/>
-                    <h4 id="transformationScripth4" text="msg://parameters.groovyScript"/>
                     <textArea id="transformationScript"
+                              label="msg://parameters.groovyScript"
                               width="100%"
                               height="15em"
                               property="transformationScript"
@@ -85,6 +85,7 @@
                               label="msg://parameters.validateFields"
                               property="validationOn"/>
                     <textArea id="validationScript"
+                              label="msg://parameters.groovyScript"
                               width="100%"
                               height="15em"
                               property="validationScript"

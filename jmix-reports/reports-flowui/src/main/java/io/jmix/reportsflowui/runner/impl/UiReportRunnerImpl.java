@@ -208,12 +208,6 @@ public class UiReportRunnerImpl implements UiReportRunner {
                             notifications.create(text)
                                     .withType(Notifications.Type.ERROR)
                                     .show();
-                            //todo
-//                            ScreenContext screenContext = ComponentsHelper.getScreenContext(ownerScreen.getWindow());
-//                            Notifications notifications = screenContext.getNotifications();
-//                            notifications.create(text)
-//                                    .withType(Notifications.Type.ERROR)
-//                                    .show();
                             return true;
                         }
                         return false;

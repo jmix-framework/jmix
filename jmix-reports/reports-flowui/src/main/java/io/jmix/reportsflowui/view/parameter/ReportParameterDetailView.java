@@ -1,4 +1,4 @@
-package io.jmix.reportsflowui.view.parameterdetail;
+package io.jmix.reportsflowui.view.parameter;
 
 import io.jmix.reportsflowui.ReportsUiHelper;
 import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
@@ -64,7 +64,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @ViewComponent
     private JmixComboBox<PredefinedTransformation> wildcardsField;
     @ViewComponent
-    private VerticalLayout predefinedTransformationBox;
+    private Div predefinedTransformationBox;
     @ViewComponent
     private JmixTextArea localeField;
     @ViewComponent

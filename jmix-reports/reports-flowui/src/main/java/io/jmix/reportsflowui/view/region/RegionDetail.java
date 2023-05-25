@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 @Route(value = "region/:id", layout = DefaultMainViewParent.class)
-@ViewController("Region.detail")
+@ViewController("report_Region.detail")
 @ViewDescriptor("region-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
 public class RegionDetail extends StandardDetailView<ReportRegion> {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+@NonNullApi
+package io.jmix.reportsflowui.view.template;
 
-group = 'io.jmix.reports'
-archivesBaseName = 'jmix-reports-flowui'
-
-dependencies {
-    api project(':reports')
-    api project(':flowui')
-    api project(':gridexport-flowui')
-
-    compileOnly project(':security-flowui')
-}
+import org.springframework.lang.NonNullApi;

@@ -3,7 +3,7 @@ package io.jmix.reportsflowui.view.report.detailview;
 import io.jmix.reportsflowui.ReportsUiHelper;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import io.jmix.reportsflowui.view.template.edit.ReportTemplateDetailView;
+import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
@@ -1680,6 +1680,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         event.getSource().refreshState();
 
         templatesTable.focus();
+        templatesTable.getDataProvider().refreshAll();
     }
 
     protected void setupEntityParamFieldValue(DataSet dataSet) {

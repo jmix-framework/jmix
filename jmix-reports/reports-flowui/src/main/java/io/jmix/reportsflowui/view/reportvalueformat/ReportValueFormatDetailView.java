@@ -1,13 +1,10 @@
-package io.jmix.reportsflowui.view.reportvalueformatdetail;
+package io.jmix.reportsflowui.view.reportvalueformat;
 
 import io.jmix.reportsflowui.view.scripteditor.ScriptEditorView;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Messages;
@@ -32,6 +29,7 @@ import java.util.List;
 @ViewController("report_ReportValueFormat.detail")
 @ViewDescriptor("report-value-format-detail-view.xml")
 @EditedEntityContainer("valuesFormatsDc")
+@DialogMode(width = "30em")
 public class ReportValueFormatDetailView extends StandardDetailView<ReportValueFormat> {
     public static final String RETURN_VALUE = "return value";
 

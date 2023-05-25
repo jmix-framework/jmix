@@ -60,7 +60,7 @@ import org.springframework.lang.Nullable;
 import java.util.*;
 
 @Route(value = "reportWizard", layout = DefaultMainViewParent.class)
-@ViewController("ReportWizardCreator")
+@ViewController("report_ReportWizardCreator.view")
 @ViewDescriptor("report-wizard.xml")
 public class ReportWizardCreator extends StandardView {
     public static final String FIELD_ICON_SIZE_CLASS_NAME = "reports-field-icon-size";

@@ -9,7 +9,7 @@ import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
 @Route(value = "ScriptEditorView", layout = DefaultMainViewParent.class)
-@ViewController("ScriptEditorView")
+@ViewController("report_ScriptEditor.view")
 @ViewDescriptor("script-editor-view.xml")
 public class ScriptEditorView extends StandardView {
 }

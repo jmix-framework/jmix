@@ -12,7 +12,7 @@ import io.jmix.reportsflowui.view.EntityTreeFragment;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "entityTree", layout = DefaultMainViewParent.class)
-@ViewController("EntityTreeList.list")
+@ViewController("report_EntityTreeList.list")
 @ViewDescriptor("entity-tree-lookup.xml")
 @DialogMode(width = "50em", height = "37.5em")
 public class EntityTreeList extends StandardListView<EntityTreeNode> {

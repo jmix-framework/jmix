@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.reportsflowui.view.template.edit;
+package io.jmix.reportsflowui.exception;
 
 import org.springframework.lang.NonNullApi;

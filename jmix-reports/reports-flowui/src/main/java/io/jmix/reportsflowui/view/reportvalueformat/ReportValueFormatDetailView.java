@@ -1,9 +1,12 @@
 package io.jmix.reportsflowui.view.reportvalueformat;
 
+import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.reportsflowui.view.scripteditor.ScriptEditorView;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -24,6 +27,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 
 @Route(value = "ReportValueFormatDetailView/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportValueFormat.detail")
@@ -73,6 +78,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     @Subscribe
     public void onInit(InitEvent event) {
         initFormatComboBox();
+        initGroovyCodeEditor();
     }
 
     @Subscribe
@@ -97,10 +103,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     }
 
 
-    @Subscribe("groovyFullScreenLinkButton")
-    protected void showGroovyEditorDialog(ClickEvent<Button> event) {
-
-
+    protected void onGroovyCodeExpandIconClick(ClickEvent<Icon> event) {
         DialogWindow<ScriptEditorView> editorDialog = dialogWindows.view(this, ScriptEditorView.class).open();
 //todo an return with code editor
 //        editorDialog.addAfterCloseListener();
@@ -165,6 +168,29 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
 //                .withWidth("700px")
 //                .open();
 //    }
+
+    protected void initGroovyCodeEditor() {
+        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
+        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
+        expandIcon.addClickListener(this::onGroovyCodeExpandIconClick);
+
+        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
+        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
+        helpIcon.addClickListener(this::onGroovyCodeHelpIconClick);
+
+        groovyCodeEditor.setSuffixComponent(new Div(expandIcon, helpIcon));
+    }
+
+
+    protected void onGroovyCodeHelpIconClick(ClickEvent<Icon> event) {
+        dialogs.createMessageDialog()
+                .withHeader(messages.getMessage("valuesFormats.groovyScript"))
+                .withContent(new Html(messages.getMessage("valuesFormats.groovyScriptHelpText")))
+                .withResizable(true)
+                .withModal(false)
+                .withWidth("50em")
+                .open();
+    }
 
     protected void initFormatComboBox() {
         formatField.setItems(Arrays.asList(defaultFormats));

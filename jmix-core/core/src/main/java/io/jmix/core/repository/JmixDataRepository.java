@@ -24,7 +24,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Optional;
 
 /**

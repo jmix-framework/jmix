@@ -42,7 +42,7 @@ import io.jmix.flowui.model.KeyValueCollectionLoader;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.context.ApplicationContext;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;

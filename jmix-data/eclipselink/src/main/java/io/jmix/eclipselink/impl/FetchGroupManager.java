@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;

@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

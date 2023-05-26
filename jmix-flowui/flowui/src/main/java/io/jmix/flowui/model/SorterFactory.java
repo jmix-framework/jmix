@@ -22,7 +22,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Factory bean for sorters.

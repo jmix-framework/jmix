@@ -30,7 +30,7 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerButton;
 import org.springframework.core.annotation.Order;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;

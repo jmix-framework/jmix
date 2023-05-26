@@ -19,7 +19,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.kit.component.KeyCombination;
 import org.dom4j.Element;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

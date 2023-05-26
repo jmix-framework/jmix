@@ -29,7 +29,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;

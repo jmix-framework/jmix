@@ -25,7 +25,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

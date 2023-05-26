@@ -22,7 +22,7 @@ import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.View;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;

@@ -20,7 +20,7 @@ import io.jmix.eclipselink.persistence.JoinExpressionProvider;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.mappings.*;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Simplifies join expression generation depending on mapping type.

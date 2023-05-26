@@ -28,7 +28,7 @@ import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.util.ReflectionUtils;
 
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;

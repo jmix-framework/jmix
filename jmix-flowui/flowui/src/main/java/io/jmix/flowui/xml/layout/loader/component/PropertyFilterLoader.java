@@ -27,7 +27,6 @@ import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
 import org.dom4j.Element;
 
 import static io.jmix.core.querycondition.PropertyConditionUtils.generateParameterName;
-import static java.util.Objects.requireNonNull;
 
 public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<PropertyFilter> {
 
@@ -52,15 +51,24 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
         loadBoolean(element, "operationEditable", resultComponent::setOperationEditable);
         loadBoolean(element, "operationTextVisible", resultComponent::setOperationTextVisible);
 
+        String property = resultComponent.getProperty();
+        if (property == null) {
+            throw new RuntimeException("Property cannot be null");
+        }
         resultComponent.setParameterName(loadString(element, "parameterName")
-                .orElse(generateParameterName(requireNonNull(resultComponent.getProperty()))));
+                .orElse(generateParameterName(property)));
     }
 
     @Override
     protected Component generateValueComponent() {
         MetaClass metaClass = resultComponent.getDataLoader().getContainer().getEntityMetaClass();
+        String property = resultComponent.getProperty();
+        if (property == null) {
+            throw new RuntimeException("Property cannot be null");
+        }
+
         return ((Component) getSingleFilterSupport().generateValueComponent(metaClass,
-                requireNonNull(resultComponent.getProperty()), resultComponent.getOperation()));
+                resultComponent.getProperty(), resultComponent.getOperation()));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -68,8 +76,11 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
         loadString(element, "defaultValue")
                 .map(defaultValue -> {
                     MetaClass metaClass = component.getDataLoader().getContainer().getEntityMetaClass();
-                    MetaPropertyPath mpp = getMetadataTools()
-                            .resolveMetaPropertyPathOrNull(metaClass, requireNonNull(component.getProperty()));
+                    String property = component.getProperty();
+                    if (property == null) {
+                        throw new RuntimeException("Property cannot be null");
+                    }
+                    MetaPropertyPath mpp = getMetadataTools().resolveMetaPropertyPathOrNull(metaClass, property);
 
                     return mpp != null
                             ? getPropertyFilterSupport().parseDefaultValue(mpp.getMetaProperty(),

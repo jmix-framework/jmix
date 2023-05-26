@@ -30,7 +30,7 @@ import io.jmix.data.impl.EntityListenerManager;
 import io.jmix.data.impl.EntityListenerType;
 import io.jmix.data.impl.converters.AuditConversionService;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaDelete;

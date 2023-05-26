@@ -18,7 +18,7 @@ package io.jmix.imap.entity;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public enum ImapSyncStatus implements EnumClass<String> {
 

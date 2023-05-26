@@ -22,7 +22,7 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.model.DataLoader;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Component which cannot contain other filter component but can be used for filtering entities

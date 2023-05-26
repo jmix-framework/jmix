@@ -21,7 +21,7 @@ import io.jmix.flowui.facet.QueryParametersFacet;
 import io.jmix.flowui.facet.QueryParametersFacet.QueryParametersChangeEvent;
 import io.jmix.flowui.kit.event.EventBus;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public abstract class AbstractQueryParametersBinder implements QueryParametersFacet.Binder {

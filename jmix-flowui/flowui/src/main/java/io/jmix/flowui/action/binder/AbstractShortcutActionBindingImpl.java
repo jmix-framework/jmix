@@ -22,7 +22,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Optional;
 

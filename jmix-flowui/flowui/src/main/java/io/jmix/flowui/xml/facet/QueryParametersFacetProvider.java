@@ -39,7 +39,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @org.springframework.stereotype.Component("flowui_QueryParametersFacetProvider")
 public class QueryParametersFacetProvider implements FacetProvider<QueryParametersFacet>, ApplicationContextAware {

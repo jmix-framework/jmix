@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import java.lang.reflect.Field;

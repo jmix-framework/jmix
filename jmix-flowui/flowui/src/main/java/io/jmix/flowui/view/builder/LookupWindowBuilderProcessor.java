@@ -38,7 +38,7 @@ import io.jmix.flowui.view.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 
 @Internal

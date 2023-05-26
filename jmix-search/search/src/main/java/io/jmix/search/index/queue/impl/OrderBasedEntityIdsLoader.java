@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import java.util.ArrayList;

@@ -57,7 +57,7 @@ public class AuthorizationServerAutoConfiguration {
 
     @Configuration
     @EnableWebMvc
-    public class AuthorizationServerLoginPageConfiguration implements WebMvcConfigurer {
+    public static class AuthorizationServerLoginPageConfiguration implements WebMvcConfigurer {
 
         @Override
         public void addViewControllers(ViewControllerRegistry registry) {

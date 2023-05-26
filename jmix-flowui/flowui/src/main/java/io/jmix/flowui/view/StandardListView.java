@@ -24,7 +24,7 @@ import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.util.OperationResult;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;

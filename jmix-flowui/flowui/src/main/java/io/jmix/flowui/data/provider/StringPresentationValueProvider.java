@@ -21,7 +21,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public class StringPresentationValueProvider<T> implements ValueProvider<T, String> {
 

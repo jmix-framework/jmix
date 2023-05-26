@@ -19,7 +19,7 @@ package io.jmix.flowui.facet.impl;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.view.View;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public abstract class AbstractFacet implements Facet {
 

@@ -18,7 +18,7 @@ package io.jmix.flowui.xml.layout;
 
 import org.dom4j.Element;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Marker interface for component loaders.

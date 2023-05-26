@@ -21,7 +21,7 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 

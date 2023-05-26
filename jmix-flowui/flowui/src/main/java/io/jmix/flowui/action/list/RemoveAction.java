@@ -36,7 +36,7 @@ import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 @ActionType(RemoveAction.ID)

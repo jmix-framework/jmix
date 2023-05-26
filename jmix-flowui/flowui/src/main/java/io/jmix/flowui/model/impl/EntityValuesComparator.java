@@ -22,7 +22,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.beans.factory.BeanFactory;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * A comparison function, which imposes a ordering for entity attribute values.

@@ -23,7 +23,7 @@ import io.jmix.securityflowui.model.ResourcePolicyModel;
 import io.jmix.securityflowui.model.ResourcePolicyType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

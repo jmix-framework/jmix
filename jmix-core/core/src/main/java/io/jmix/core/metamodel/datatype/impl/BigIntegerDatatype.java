@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;

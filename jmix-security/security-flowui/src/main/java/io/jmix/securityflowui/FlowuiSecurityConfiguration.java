@@ -20,7 +20,7 @@ import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.securityflowui.access.FlowuiViewAccessChecker;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

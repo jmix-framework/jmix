@@ -24,7 +24,8 @@
                     fetchPlan="report.selectTemplate">
             <loader id="reportsDl">
                 <query>
-                    <![CDATA[select distinct r from report_Report r, in (r.templates) t where t.reportOutputType = 70]]>
+                    <![CDATA[select r from report_Report r where exists
+                        (select t from report_ReportTemplate t where t.report.id = r.id and t.reportOutputType = 70)]]>
                 </query>
             </loader>
         </collection>

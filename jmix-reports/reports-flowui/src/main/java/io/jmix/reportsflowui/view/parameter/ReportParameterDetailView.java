@@ -444,6 +444,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             }
             field.getElement().setProperty("required", false);
             field.getElement().setProperty("label", messages.getMessage(getClass(), "parameters.defaultValue"));
+            field.getElement().setProperty("width", "100%");
 
             defaultValueBox.add(field);
         }

@@ -92,7 +92,7 @@
                               dataContainer="parameterDc"/>
                 </div>
             </tab>
-            <tab id="lookupSettingsTab" label="msg://parameters.lookupSettingsTab">
+            <tab id="lookupSettingsTab" label="msg://parameters.dropdownSettingsTab">
                 <div id="lookupSettingsBox" width="100%">
                     <textArea id="lookupJoin"
                               height="15em"

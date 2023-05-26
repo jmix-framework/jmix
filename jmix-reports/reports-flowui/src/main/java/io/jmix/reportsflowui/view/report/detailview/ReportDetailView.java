@@ -164,7 +164,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixSelect<Orientation> orientationField;
     @ViewComponent
-    protected EntityComboBox<BandDefinition> parentBandField;
+    protected JmixSelect<BandDefinition> parentBandField;
     @ViewComponent
     protected JmixCheckbox multiDataSetField;
     @ViewComponent
@@ -227,6 +227,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected DataGrid<ReportTemplate> templatesTable;
     @ViewComponent
     protected JmixTextArea validationScriptCodeEditor;
+    @ViewComponent
+    protected FormLayout bandForm;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -447,7 +449,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         parentDefinition.getChildrenBandDefinitions().add(newBandDefinition);
 
         bandsDc.getMutableItems().add(newBandDefinition);
-        bandsDc.setItem(newBandDefinition);
+        //bandsDc.setItem(newBandDefinition);
 
         // Create default DataSet for band
         DataSet dataset = dataSetFactory.createEmptyDataSet(newBandDefinition);
@@ -998,6 +1000,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void updateBandFieldRequiredIndicators(@Nullable BandDefinition item) {
         boolean required = !(item == null || reportDc.getItem().getRootBandDefinition().equals(item));
         parentBandField.setRequired(required);
+//        parentBandField.setEmptySelectionAllowed(!required);
         orientationField.setRequired(required);
         orientationField.setEmptySelectionAllowed(!required);
         bandNameField.setRequired(item != null);

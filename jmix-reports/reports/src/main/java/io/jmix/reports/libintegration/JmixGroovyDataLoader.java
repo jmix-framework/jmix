@@ -16,12 +16,12 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.exception.DataLoadingException;
-import com.haulmont.yarg.exception.ValidationException;
-import com.haulmont.yarg.loaders.ReportDataLoader;
-import com.haulmont.yarg.structure.BandData;
-import com.haulmont.yarg.structure.ReportQuery;
-import com.haulmont.yarg.util.groovy.Scripting;
+import io.jmix.reports.yarg.exception.DataLoadingException;
+import io.jmix.reports.yarg.exception.ValidationException;
+import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.util.groovy.Scripting;
 import io.jmix.core.Resources;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

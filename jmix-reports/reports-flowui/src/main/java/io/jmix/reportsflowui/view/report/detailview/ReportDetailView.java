@@ -1,15 +1,10 @@
 package io.jmix.reportsflowui.view.report.detailview;
 
-import io.jmix.reportsflowui.ReportsUiHelper;
-import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Multimap;
-import com.haulmont.yarg.structure.BandOrientation;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
@@ -57,7 +52,12 @@ import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.util.DataSetFactory;
+import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reportsflowui.CrossTabDataGridDecorator;
+import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.ReportsUiHelper;
+import io.jmix.reportsflowui.view.run.InputParametersDialog;
+import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.security.model.BaseRole;
@@ -81,10 +81,8 @@ import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 @EditedEntityContainer("reportDc")
 public class ReportDetailView extends StandardDetailView<Report> {
 
-    protected static final String TRANSPARENT_CODE_CLASS_NAME = "reports-dialog-transparent-code";
-
     public static final String ROOT_BAND = "Root";
-
+    protected static final String TRANSPARENT_CODE_CLASS_NAME = "reports-dialog-transparent-code";
     @Autowired
     protected ReportsPersistence reportsPersistence;
     @Autowired
@@ -180,16 +178,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected DataGrid<DataSet> dataSetsDataGrid;
     @ViewComponent
-    private JmixTextArea localeTextField;
-    @ViewComponent
-    private JmixComboBox<String> screenIdField;
-    @ViewComponent
-    private CollectionPropertyContainer<ReportScreen> reportScreensDc;
-    @ViewComponent
-    private JmixComboBox<BaseRole> rolesField;
-    @ViewComponent
-    private CollectionPropertyContainer<ReportRole> reportRolesDc;
-    @ViewComponent
     protected JmixSelect<DataSetType> singleDataSetTypeField;
     @ViewComponent
     protected JmixTextArea dataSetScriptField;
@@ -229,10 +217,21 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected JmixTextArea validationScriptCodeEditor;
     @ViewComponent
     protected FormLayout bandForm;
-
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
     protected JmixComboBoxBinder<String> fetchPlanNameFieldBinder;
+    @ViewComponent
+    private JmixTextArea localeTextField;
+    @ViewComponent
+    private JmixComboBox<String> screenIdField;
+    @ViewComponent
+    private CollectionPropertyContainer<ReportScreen> reportScreensDc;
+    @ViewComponent
+    private JmixComboBox<BaseRole> rolesField;
+    @ViewComponent
+    private CollectionPropertyContainer<ReportRole> reportRolesDc;
+    @ViewComponent
+    private DataGrid<ReportInputParameter> inputParametersTable;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -449,7 +448,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         parentDefinition.getChildrenBandDefinitions().add(newBandDefinition);
 
         bandsDc.getMutableItems().add(newBandDefinition);
-        //bandsDc.setItem(newBandDefinition);
+        bandsDc.setItem(newBandDefinition);
 
         // Create default DataSet for band
         DataSet dataset = dataSetFactory.createEmptyDataSet(newBandDefinition);
@@ -608,10 +607,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
             if (event.getValue() == event.getItem()) {
                 event.getItem().setParentBandDefinition(previousParent);
             } else {
-                previousParent.getChildrenBandDefinitions().remove(event.getItem());
-                parent.getChildrenBandDefinitions().add(event.getItem());
-                bandsDc.replaceItem(previousParent);
-                bandsDc.replaceItem(parent);
+                if (previousParent != null) {
+                    previousParent.getChildrenBandDefinitions().remove(event.getItem());
+                    bandsDc.replaceItem(previousParent);
+                }
+                if (parent != null) {
+                    parent.getChildrenBandDefinitions().add(event.getItem());
+                    bandsDc.replaceItem(parent);
+                }
             }
 
             if (event.getPrevValue() != null) {
@@ -862,6 +865,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
     }
 
+    // todo check can we implement
+    /*protected void setScreenCaption() {
+        if (!StringUtils.isEmpty(getEditedEntity().getName())) {
+            getWindow().setCaption(messageBundle.formatMessage("reportEditor.format", getEditedEntity().getName()));
+        }
+    }*/
+
     protected boolean validateInputOutputFormats() {
         ReportTemplate template = getEditedEntity().getDefaultTemplate();
         if (template != null && !template.isCustom()
@@ -880,13 +890,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
         return true;
     }
-
-    // todo check can we implement
-    /*protected void setScreenCaption() {
-        if (!StringUtils.isEmpty(getEditedEntity().getName())) {
-            getWindow().setCaption(messageBundle.formatMessage("reportEditor.format", getEditedEntity().getName()));
-        }
-    }*/
 
     protected BandDefinition createRootBandDefinition(Report report) {
         BandDefinition rootDefinition = dataContext.create(BandDefinition.class);
@@ -1378,15 +1381,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
         entityParamField.setVisible(visibleEntityGrid);
         entitiesParamField.setVisible(visibleEntitiesGrid);
     }
-
-    @ViewComponent
-    private DataGrid<ReportInputParameter> inputParametersTable;
 //todo AN implement value provider
 //    @Install(to = "inputParametersTable.name", subject = "valueProvider")
 //    protected String inputParametersTableNameValueProvider(ReportInputParameter parameter) {
 //        return metadataTools.getInstanceName(parameter);
 //    }
-
 
     @Install(to = "inputParametersTable.up", subject = "enabledRule")
     protected boolean inputParametersTableUpEnabledRule() {
@@ -1504,7 +1503,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 .open();
     }
 
-    protected void initScreenIdField(){
+    protected void initScreenIdField() {
         Collection<ViewInfo> viewInfoCollection = viewRegistry.getViewInfos();
         Map<String, String> screens = new LinkedHashMap<>();
         for (ViewInfo windowInfo : viewInfoCollection) {
@@ -1659,7 +1658,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
             templatesDc.getMutableItems().add(copy);
         }
     }
-
 
 
     @Install(to = "templatesTable.defaultAction", subject = "enabledRule")

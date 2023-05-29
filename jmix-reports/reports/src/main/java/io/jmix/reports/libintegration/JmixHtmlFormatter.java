@@ -16,12 +16,12 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.exception.ReportFormattingException;
-import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
-import com.haulmont.yarg.formatters.impl.HtmlFormatter;
-import com.haulmont.yarg.formatters.impl.pdf.HtmlToPdfConverter;
-import com.haulmont.yarg.formatters.impl.pdf.ITextPdfConverter;
-import com.haulmont.yarg.structure.BandData;
+import io.jmix.reports.yarg.exception.ReportFormattingException;
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
+import io.jmix.reports.yarg.formatters.impl.HtmlFormatter;
+import io.jmix.reports.yarg.formatters.impl.pdf.HtmlToPdfConverter;
+import io.jmix.reports.yarg.formatters.impl.pdf.ITextPdfConverter;
+import io.jmix.reports.yarg.structure.BandData;
 import com.lowagie.text.Image;
 import freemarker.ext.util.WrapperTemplateModel;
 import freemarker.template.TemplateMethodModelEx;

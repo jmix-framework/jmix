@@ -96,7 +96,7 @@
                         <formLayout id="bandForm" dataContainer="bandsDc">
                             <textField id="bandNameField" property="name"/>
                             <select id="orientationField" property="orientation" emptySelectionAllowed="true"/>
-                            <select id="parentBandField" property="parentBandDefinition"
+                            <select id="parentBandField" property="parentBandDefinition" emptySelectionAllowed="true"
                                             itemsContainer="availableParentBandsDc"/>
                             <checkbox id="multiDataSetField" property="multiDataSet"
                                       label="msg://bandsTab.multiDataSetField.label"/>

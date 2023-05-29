@@ -17,7 +17,7 @@
 package io.jmix.reportsrest.controller;
 
 import com.google.common.base.Strings;
-import com.haulmont.yarg.structure.ReportOutputType;
+import io.jmix.reports.yarg.structure.ReportOutputType;
 import io.jmix.core.FileTypesHelper;
 import io.jmix.core.common.util.URLEncodeUtils;
 import io.jmix.reports.ReportPrintHelper;

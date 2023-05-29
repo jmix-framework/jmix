@@ -17,7 +17,7 @@
 package io.jmix.reports.runner;
 
 import com.google.common.base.Strings;
-import com.haulmont.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Id;

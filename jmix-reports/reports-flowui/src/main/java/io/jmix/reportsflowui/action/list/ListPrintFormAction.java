@@ -62,6 +62,7 @@ import java.util.Set;
 public class ListPrintFormAction<E> extends ListDataComponentAction<ListPrintFormAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
+    //listViewPrint
     public static final String ID = "listPrintForm";
 
     protected Dialogs dialogs;

@@ -16,10 +16,10 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.formatters.factory.DefaultFormatterFactory;
-import com.haulmont.yarg.formatters.impl.DocxFormatter;
-import com.haulmont.yarg.formatters.impl.HtmlFormatter;
-import com.haulmont.yarg.formatters.impl.XlsxFormatter;
+import io.jmix.reports.yarg.formatters.factory.DefaultFormatterFactory;
+import io.jmix.reports.yarg.formatters.impl.DocxFormatter;
+import io.jmix.reports.yarg.formatters.impl.HtmlFormatter;
+import io.jmix.reports.yarg.formatters.impl.XlsxFormatter;
 import io.jmix.reports.ReportsProperties;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;

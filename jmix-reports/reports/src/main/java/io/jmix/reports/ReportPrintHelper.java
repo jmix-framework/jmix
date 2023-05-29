@@ -16,7 +16,7 @@
 
 package io.jmix.reports;
 
-import com.haulmont.yarg.structure.ReportOutputType;
+import io.jmix.reports.yarg.structure.ReportOutputType;
 
 import jakarta.annotation.Nullable;
 import java.util.Arrays;

@@ -16,8 +16,8 @@
 
 package io.jmix.reportsrest.controller;
 
-import com.haulmont.yarg.reporting.ReportOutputDocument;
-import com.haulmont.yarg.structure.ReportOutputType;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.structure.ReportOutputType;
 
 public class ReportRestResult {
     protected byte[] content;

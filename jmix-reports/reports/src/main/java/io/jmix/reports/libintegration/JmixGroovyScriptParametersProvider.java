@@ -17,9 +17,9 @@
 package io.jmix.reports.libintegration;
 
 
-import com.haulmont.yarg.exception.ValidationException;
-import com.haulmont.yarg.structure.BandData;
-import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.exception.ValidationException;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.TimeSource;

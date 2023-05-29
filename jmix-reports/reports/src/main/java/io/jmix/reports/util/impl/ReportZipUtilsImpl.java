@@ -16,7 +16,7 @@
 
 package io.jmix.reports.util.impl;
 
-import com.haulmont.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reports.util.ReportZipUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

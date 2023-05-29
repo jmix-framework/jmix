@@ -16,7 +16,6 @@
 
 package io.jmix.reportsflowui.view.run;
 
-import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.HasEnabled;
@@ -38,7 +37,8 @@ import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.util.ReportsUtils;
-import org.apache.commons.collections.CollectionUtils;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;

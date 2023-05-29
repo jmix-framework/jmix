@@ -16,12 +16,12 @@
 
 package io.jmix.reports.runner.impl;
 
-import com.haulmont.yarg.exception.OpenOfficeException;
-import com.haulmont.yarg.exception.ReportingInterruptedException;
-import com.haulmont.yarg.formatters.impl.doc.connector.NoFreePortsException;
-import com.haulmont.yarg.reporting.ReportOutputDocument;
-import com.haulmont.yarg.reporting.ReportingAPI;
-import com.haulmont.yarg.reporting.RunParams;
+import io.jmix.reports.yarg.exception.OpenOfficeException;
+import io.jmix.reports.yarg.exception.ReportingInterruptedException;
+import io.jmix.reports.yarg.formatters.impl.doc.connector.NoFreePortsException;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportingAPI;
+import io.jmix.reports.yarg.reporting.RunParams;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Id;
@@ -137,37 +137,40 @@ public class ReportRunnerImpl implements ReportRunner {
                 template.setCustomReport(customFormatter);
             }
 
-            com.haulmont.yarg.structure.ReportOutputType resultOutputType = (outputType != null) ? outputType.getOutputType() : template.getOutputType();
+            io.jmix.reports.yarg.structure.ReportOutputType resultOutputType = (outputType != null) ? outputType.getOutputType() : template.getOutputType();
 
             return reportingAPI.runReport(new RunParams(report).template(template).params(resultParams).output(resultOutputType).outputNamePattern(outputNamePattern));
         } catch (NoFreePortsException nfe) {
             throw new NoOpenOfficeFreePortsException(nfe.getMessage());
         } catch (OpenOfficeException ooe) {
             throw new FailedToConnectToOpenOfficeException(ooe.getMessage());
-        } catch (com.haulmont.yarg.exception.UnsupportedFormatException fe) {
-            throw new UnsupportedFormatException(fe.getMessage());
-        } catch (com.haulmont.yarg.exception.ValidationException ve) {
-            throw new ValidationException(ve.getMessage());
         } catch (ReportingInterruptedException ie) {
             throw new ReportCanceledException(String.format("Report is canceled. %s", ie.getMessage()));
-        } catch (com.haulmont.yarg.exception.ReportingException re) {
-//            todo https://github.com/Haulmont/jmix-reports/issues/22
-//            Throwable rootCause = ExceptionUtils.getRootCause(re);
-//            if (rootCause instanceof ResourceCanceledException) {
-//                throw new ReportCanceledException(String.format("Report is canceled. %s", rootCause.getMessage()));
+        }
+        //todo
+//        catch (com.haulmont.yarg.exception.UnsupportedFormatException fe) {
+//            throw new UnsupportedFormatException(fe.getMessage());
+//        } catch (com.haulmont.yarg.exception.ValidationException ve) {
+//            throw new ValidationException(ve.getMessage());
+//        } catch (com.haulmont.yarg.exception.ReportingException re) {
+////            todo https://github.com/Haulmont/jmix-reports/issues/22
+////            Throwable rootCause = ExceptionUtils.getRootCause(re);
+////            if (rootCause instanceof ResourceCanceledException) {
+////                throw new ReportCanceledException(String.format("Report is canceled. %s", rootCause.getMessage()));
+////            }
+//            //noinspection unchecked
+//            List<Throwable> list = ExceptionUtils.getThrowableList(re);
+//            StringBuilder sb = new StringBuilder();
+//            for (Iterator<Throwable> it = list.iterator(); it.hasNext(); ) {
+//                //noinspection ThrowableResultOfMethodCallIgnored
+//                sb.append(it.next().getMessage());
+//                if (it.hasNext())
+//                    sb.append("\n");
 //            }
-            //noinspection unchecked
-            List<Throwable> list = ExceptionUtils.getThrowableList(re);
-            StringBuilder sb = new StringBuilder();
-            for (Iterator<Throwable> it = list.iterator(); it.hasNext(); ) {
-                //noinspection ThrowableResultOfMethodCallIgnored
-                sb.append(it.next().getMessage());
-                if (it.hasNext())
-                    sb.append("\n");
-            }
-
-            throw new ReportingException(sb.toString());
-        } finally {
+//
+//            throw new ReportingException(sb.toString());
+//        }
+        finally {
 //            todo https://github.com/Haulmont/jmix-reports/issues/22
 //            executions.endExecution();
             MDC.remove("user");

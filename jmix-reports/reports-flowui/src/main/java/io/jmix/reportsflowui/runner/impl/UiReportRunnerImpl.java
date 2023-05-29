@@ -23,7 +23,7 @@ import io.jmix.reportsflowui.runner.UiReportRunContext;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.run.ReportTableView;
-import com.haulmont.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.DialogWindows;
@@ -300,7 +300,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
             showReportTableViewDialogWindow.open();
         } else {
             byte[] byteArr = document.getContent();
-            com.haulmont.yarg.structure.ReportOutputType finalOutputType =
+            io.jmix.reports.yarg.structure.ReportOutputType finalOutputType =
                     (outputType != null) ? outputType.getOutputType() : document.getReportOutputType();
 
             DownloadFormat exportFormat = DownloadFormat.getByExtension(finalOutputType.getId());

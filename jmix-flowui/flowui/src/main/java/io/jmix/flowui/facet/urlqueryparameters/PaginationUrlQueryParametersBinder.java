@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.facet.queryparameters;
+package io.jmix.flowui.facet.urlqueryparameters;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
-import io.jmix.flowui.facet.QueryParametersFacet.QueryParametersChangeEvent;
+import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 
 import org.springframework.lang.Nullable;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class PaginationQueryParametersBinder extends AbstractQueryParametersBinder {
+public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
 
     public static final String NAME = "pagination";
 
@@ -43,8 +43,8 @@ public class PaginationQueryParametersBinder extends AbstractQueryParametersBind
 
     protected UrlParamSerializer urlParamSerializer;
 
-    public PaginationQueryParametersBinder(PaginationComponent<?> pagination,
-                                           UrlParamSerializer urlParamSerializer) {
+    public PaginationUrlQueryParametersBinder(PaginationComponent<?> pagination,
+                                              UrlParamSerializer urlParamSerializer) {
         this.pagination = pagination;
         this.urlParamSerializer = urlParamSerializer;
 
@@ -62,7 +62,7 @@ public class PaginationQueryParametersBinder extends AbstractQueryParametersBind
                     getMaxResultsParam(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
             ));
 
-            fireQueryParametersChanged(new QueryParametersChangeEvent(this, queryParameters));
+            fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
         });
     }
 

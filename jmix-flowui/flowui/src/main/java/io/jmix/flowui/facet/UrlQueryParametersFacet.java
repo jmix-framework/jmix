@@ -25,9 +25,9 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface QueryParametersFacet extends Facet, HasSubParts {
+public interface UrlQueryParametersFacet extends Facet, HasSubParts {
 
-    String NAME = "queryParameters";
+    String NAME = "urlQueryParameters";
 
     /**
      * Register a new query parameters binder.
@@ -67,12 +67,12 @@ public interface QueryParametersFacet extends Facet, HasSubParts {
         void updateState(QueryParameters queryParameters);
 
         /**
-         * Adds {@link QueryParametersChangeEvent} listener.
+         * Adds {@link UrlQueryParametersChangeEvent} listener.
          *
          * @param listener the listener to add, not {@code null}
          * @return a registration object that can be used for removing the listener.
          */
-        Registration addQueryParametersChangeListener(Consumer<QueryParametersChangeEvent> listener);
+        Registration addUrlQueryParametersChangeListener(Consumer<UrlQueryParametersChangeEvent> listener);
     }
 
     /**
@@ -80,11 +80,11 @@ public interface QueryParametersFacet extends Facet, HasSubParts {
      * its internal state has been changed and it should be reflected on
      * URL's query parameters.
      */
-    class QueryParametersChangeEvent extends EventObject {
+    class UrlQueryParametersChangeEvent extends EventObject {
 
         protected QueryParameters queryParameters;
 
-        public QueryParametersChangeEvent(Binder source, QueryParameters queryParameters) {
+        public UrlQueryParametersChangeEvent(Binder source, QueryParameters queryParameters) {
             super(source);
             this.queryParameters = queryParameters;
         }

@@ -275,7 +275,7 @@ public class MenuConfig {
         loadDescription(element, menuItem);
 
         menuItem.setProperties(loadMenuItemProperties(element));
-        menuItem.setQueryParameters(loadMenuItemParameters(element, "queryParameters"));
+        menuItem.setUrlQueryParameters(loadMenuItemParameters(element, "urlQueryParameters"));
         menuItem.setRouteParameters(loadMenuItemParameters(element, "routeParameters"));
 
         return menuItem;

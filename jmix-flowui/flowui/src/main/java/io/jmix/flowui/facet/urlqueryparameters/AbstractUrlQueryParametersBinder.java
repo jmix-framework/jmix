@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.facet.queryparameters;
+package io.jmix.flowui.facet.urlqueryparameters;
 
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.facet.QueryParametersFacet;
-import io.jmix.flowui.facet.QueryParametersFacet.QueryParametersChangeEvent;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
+import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.kit.event.EventBus;
 
 import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
-public abstract class AbstractQueryParametersBinder implements QueryParametersFacet.Binder {
+public abstract class AbstractUrlQueryParametersBinder implements UrlQueryParametersFacet.Binder {
 
     protected String id;
 
@@ -42,11 +42,11 @@ public abstract class AbstractQueryParametersBinder implements QueryParametersFa
     }
 
     @Override
-    public Registration addQueryParametersChangeListener(Consumer<QueryParametersChangeEvent> listener) {
-        return getEventBus().addListener(QueryParametersChangeEvent.class, listener);
+    public Registration addUrlQueryParametersChangeListener(Consumer<UrlQueryParametersChangeEvent> listener) {
+        return getEventBus().addListener(UrlQueryParametersChangeEvent.class, listener);
     }
 
-    protected void fireQueryParametersChanged(QueryParametersChangeEvent event) {
+    protected void fireQueryParametersChanged(UrlQueryParametersChangeEvent event) {
         getEventBus().fireEvent(event);
     }
 

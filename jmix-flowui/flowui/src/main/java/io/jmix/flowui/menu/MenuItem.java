@@ -51,7 +51,7 @@ public class MenuItem {
     private boolean isMenu = false;
 
     protected List<MenuItemProperty> properties;
-    protected List<MenuItemParameter> queryParameters;
+    protected List<MenuItemParameter> urlQueryParameters;
     protected List<MenuItemParameter> routeParameters;
 
     public MenuItem(@Nullable MenuItem parent, String id) {
@@ -215,15 +215,15 @@ public class MenuItem {
         this.properties = properties;
     }
 
-    public List<MenuItemParameter> getQueryParameters() {
-        if (queryParameters == null) {
+    public List<MenuItemParameter> getUrlQueryParameters() {
+        if (urlQueryParameters == null) {
             return Collections.emptyList();
         }
-        return queryParameters;
+        return urlQueryParameters;
     }
 
-    public void setQueryParameters(List<MenuItemParameter> queryParameters) {
-        this.queryParameters = queryParameters;
+    public void setUrlQueryParameters(List<MenuItemParameter> urlQueryParameters) {
+        this.urlQueryParameters = urlQueryParameters;
     }
 
     public List<MenuItemParameter> getRouteParameters() {

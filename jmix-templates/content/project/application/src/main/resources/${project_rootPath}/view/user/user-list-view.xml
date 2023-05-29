@@ -19,9 +19,9 @@
     </actions>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <queryParameters>
+        <urlQueryParameters>
             <pagination component="pagination"/>
-        </queryParameters>
+        </urlQueryParameters>
     </facets>
     <layout>
         <genericFilter id="genericFilter"

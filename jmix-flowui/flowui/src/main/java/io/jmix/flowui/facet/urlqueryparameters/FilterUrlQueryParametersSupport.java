@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.facet.queryparameters;
+package io.jmix.flowui.facet.urlqueryparameters;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Id;
@@ -31,8 +31,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
 import java.util.Objects;
 
-@Component("flowui_FilterQueryParametersSupport")
-public class FilterQueryParametersSupport {
+@Component("flowui_FilterUrlQueryParametersSupport")
+public class FilterUrlQueryParametersSupport {
 
     public static final String SEPARATOR = "_";
 
@@ -40,9 +40,9 @@ public class FilterQueryParametersSupport {
     protected MetadataTools metadataTools;
     protected UrlParamSerializer urlParamSerializer;
 
-    public FilterQueryParametersSupport(DataManager dataManager,
-                                        MetadataTools metadataTools,
-                                        UrlParamSerializer urlParamSerializer) {
+    public FilterUrlQueryParametersSupport(DataManager dataManager,
+                                           MetadataTools metadataTools,
+                                           UrlParamSerializer urlParamSerializer) {
         this.dataManager = dataManager;
         this.metadataTools = metadataTools;
         this.urlParamSerializer = urlParamSerializer;

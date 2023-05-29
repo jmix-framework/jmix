@@ -80,7 +80,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
         RouterLink menuItemComponent = super.createMenuItemComponent(menuItem);
         if (menuItem instanceof ViewMenuItem) {
-            QueryParameters queryParameters = ((ViewMenuItem) menuItem).getQueryParameters();
+            QueryParameters queryParameters = ((ViewMenuItem) menuItem).getUrlQueryParameters();
             RouteParameters routeParameters = ((ViewMenuItem) menuItem).getRouteParameters();
 
             if (queryParameters != null) {
@@ -127,7 +127,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     public static class ViewMenuItem extends MenuItem {
 
         protected Class<? extends View<?>> controllerClass;
-        protected QueryParameters queryParameters;
+        protected QueryParameters urlQueryParameters;
         protected RouteParameters routeParameters;
 
         public ViewMenuItem(String id) {
@@ -178,15 +178,15 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Nullable
-        public QueryParameters getQueryParameters() {
-            return queryParameters;
+        public QueryParameters getUrlQueryParameters() {
+            return urlQueryParameters;
         }
 
-        public ViewMenuItem withQueryParameters(List<MenuItemParameter> queryParameters) {
+        public ViewMenuItem withUrlQueryParameters(List<MenuItemParameter> queryParameters) {
             Map<String, String> parametersMap = queryParameters.stream()
                     .collect(Collectors.toMap(MenuItemParameter::getName, MenuItemParameter::getValue));
 
-            this.queryParameters = QueryParameters.simple(parametersMap);
+            this.urlQueryParameters = QueryParameters.simple(parametersMap);
             return this;
         }
 

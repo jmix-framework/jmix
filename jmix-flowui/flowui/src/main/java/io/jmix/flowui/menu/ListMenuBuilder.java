@@ -153,7 +153,7 @@ public class ListMenuBuilder {
                 .withTitle(menuConfig.getItemTitle(menuItem))
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
-                .withQueryParameters(menuItem.getQueryParameters())
+                .withUrlQueryParameters(menuItem.getUrlQueryParameters())
                 .withRouteParameters(menuItem.getRouteParameters())
                 .withShortcutCombination(menuItem.getShortcutCombination());
 

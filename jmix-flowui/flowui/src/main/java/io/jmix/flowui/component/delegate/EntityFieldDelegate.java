@@ -28,7 +28,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 @Component("flowui_EntityFieldDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

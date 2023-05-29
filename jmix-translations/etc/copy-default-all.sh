@@ -25,7 +25,6 @@
 
 ./copy-default-file.sh jmix-bpm/bpm io/jmix/bpm
 ./copy-default-file.sh jmix-bpm/bpm-ui io/jmix/bpmui
-./copy-default-file.sh jmix-bpm/bpm-flowui io/jmix/bpmflowui
 
 ./copy-default-file.sh jmix-core/core io/jmix/core
 

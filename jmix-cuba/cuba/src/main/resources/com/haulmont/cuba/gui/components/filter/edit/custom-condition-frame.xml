@@ -1,0 +1,97 @@
+<!--
+  ~ Copyright (c) 2008-2016 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        class="com.haulmont.cuba.gui.components.filter.edit.CustomConditionFrame"
+        focusComponent="nameField">
+
+    <layout spacing="true">
+        <grid id="conditionGrid" spacing="true" width="100%">
+            <columns>
+                <column/>
+                <column flex="1"/>
+                <column/>
+            </columns>
+            <rows>
+                <row>
+                    <label id="hiddenLabel" value="mainMsg://filter.conditionFrame.hidden" align="MIDDLE_LEFT"/>
+                    <checkBox id="hidden"/>
+                    <label id="hiddenHelp" value=""/>
+                </row>
+                <row>
+                    <label id="requiredLabel" value="mainMsg://filter.conditionFrame.required" align="MIDDLE_LEFT"/>
+                    <checkBox id="required"/>
+                    <label id="requiredHelp" value=""/>
+                </row>
+                <row>
+                    <label id="widthLabel" value="mainMsg://filter.conditionFrame.width" align="MIDDLE_LEFT"/>
+                    <lookupField id="width" width="theme://cuba.gui.filterEditor.widthLookup.width"/>
+                    <label id="widthHelp" value=""/>
+                </row>
+                <row>
+                    <label id="defaultValueLayoutLabel" htmlEnabled="true" value="mainMsg://filter.conditionFrame.defaultValue" align="MIDDLE_LEFT"/>
+                    <hbox id="defaultValueLayout" width="100%"/>
+                    <label id="defaultValueLayoutHelp" value=""/>
+                </row>
+                <row>
+                    <label id="nameLab" value="mainMsg://filter.customConditionFrame.name" align="MIDDLE_LEFT"/>
+                    <textField id="nameField" width="theme://cuba.gui.customConditionFrame.field.width" required="true" requiredMessage="mainMsg://filter.customConditionFrame.fillName"/>
+                    <label id="nameHelp" value=""/>
+                </row>
+                <row>
+                    <label value="mainMsg://filter.customConditionFrame.join"/>
+                    <sourceCodeEditor id="joinField" height="theme://cuba.gui.customConditionFrame.joinField.height" width="theme://cuba.gui.customConditionFrame.field.width"/>
+                    <linkButton icon="QUESTION_CIRCLE" invoke="getJoinClauseHelp"/>
+                </row>
+                <row>
+                    <label value="mainMsg://filter.customConditionFrame.where"/>
+                    <sourceCodeEditor id="whereField" height="theme://cuba.gui.customConditionFrame.whereField.height" width="theme://cuba.gui.customConditionFrame.field.width"
+                                      required="true" requiredMessage="mainMsg://filter.customConditionFrame.fillWhere"/>
+                    <linkButton icon="QUESTION_CIRCLE" invoke="getWhereClauseHelp"/>
+                </row>
+                <row>
+                    <label value="mainMsg://filter.customConditionFrame.type" align="MIDDLE_LEFT"/>
+                    <hbox spacing="true" align="MIDDLE_LEFT" width="theme://cuba.gui.customConditionFrame.field.width" expand="typeSelect">
+                        <lookupField id="typeSelect" required="true" requiredMessage="mainMsg://filter.customConditionFrame.fillType"/>
+                        <checkBox id="inExprCb" caption="mainMsg://filter.customConditionFrame.inExpr" align="MIDDLE_LEFT"/>
+                    </hbox>
+                    <label value=""/>
+                </row>
+                <row>
+                    <label id="useUserTimeZoneLab" value="mainMsg://filter.customConditionFrame.useUserTimeZone"/>
+                    <checkBox id="useUserTimeZone"/>
+                    <label value=""/>
+                </row>
+                <row>
+                    <label id="entityLab" value="mainMsg://filter.customConditionFrame.entity" align="MIDDLE_LEFT"/>
+                    <lookupField id="entitySelect" width="theme://cuba.gui.customConditionFrame.field.width" requiredMessage="mainMsg://filter.customConditionFrame.fillEntity"/>
+                    <label value=""/>
+                </row>
+                <row>
+                    <label id="paramWhereLab" value="mainMsg://filter.customConditionFrame.entityParamWhere"/>
+                    <sourceCodeEditor id="entityParamWhereField" height="theme://cuba.gui.customConditionFrame.entityParamWhereField.height" width="theme://cuba.gui.customConditionFrame.field.width"/>
+                    <linkButton icon="QUESTION_CIRCLE" invoke="getParamWhereClauseHelp"/>
+                </row>
+                <row>
+                    <label id="paramViewLab" value="mainMsg://filter.customConditionFrame.entityParamView" align="MIDDLE_LEFT"/>
+                    <textField id="entityParamViewField" width="theme://cuba.gui.customConditionFrame.field.width"/>
+                    <label value=""/>
+                </row>
+            </rows>
+        </grid>
+    </layout>
+</window>

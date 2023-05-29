@@ -20,7 +20,7 @@ import io.jmix.data.QueryParamValueProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

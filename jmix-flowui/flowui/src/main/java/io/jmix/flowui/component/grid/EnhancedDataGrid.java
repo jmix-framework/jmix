@@ -19,7 +19,7 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 public interface EnhancedDataGrid<T> {

@@ -16,7 +16,7 @@
 
 package io.jmix.dataimport.extractor.data;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 
 /**

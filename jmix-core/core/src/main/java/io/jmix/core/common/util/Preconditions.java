@@ -16,7 +16,7 @@
 
 package io.jmix.core.common.util;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Simple static methods to be called at the start of your own methods to verify correct arguments and state.

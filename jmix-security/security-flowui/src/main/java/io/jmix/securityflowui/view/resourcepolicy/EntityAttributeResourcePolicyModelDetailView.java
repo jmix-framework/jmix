@@ -10,7 +10,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.model.ResourcePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 @ViewController("sec_EntityAttributeResourcePolicyModel.detail")
 @ViewDescriptor("entity-attribute-resource-policy-model-detail-view.xml")

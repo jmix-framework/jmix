@@ -2,7 +2,7 @@ package query_conditions;
 
 import io.jmix.core.querycondition.Condition;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

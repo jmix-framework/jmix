@@ -21,7 +21,7 @@ import io.jmix.core.EntityEntry;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**

@@ -23,7 +23,7 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.view.Subscribe;
 
 import javax.annotation.CheckReturnValue;
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.Set;

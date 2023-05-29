@@ -33,7 +33,7 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.Comparator;
 import java.util.Objects;

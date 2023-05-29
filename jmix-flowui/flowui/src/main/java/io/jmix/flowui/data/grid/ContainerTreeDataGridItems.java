@@ -23,7 +23,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.model.CollectionContainer;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.stream.Stream;
 
 public class ContainerTreeDataGridItems<E> extends ContainerDataGridItems<E>

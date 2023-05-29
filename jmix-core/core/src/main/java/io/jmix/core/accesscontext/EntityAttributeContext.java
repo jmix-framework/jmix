@@ -19,7 +19,7 @@ package io.jmix.core.accesscontext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * An access context to check permissions on entity attributes.

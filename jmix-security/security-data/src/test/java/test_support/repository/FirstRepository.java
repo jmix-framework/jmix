@@ -19,7 +19,7 @@ package test_support.repository;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.repository.ApplyConstraints;
 import io.jmix.core.repository.JmixDataRepository;
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import org.springframework.data.domain.Sort;
 import test_support.entity.TestOrder;
 

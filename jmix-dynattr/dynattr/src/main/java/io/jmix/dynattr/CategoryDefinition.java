@@ -16,7 +16,7 @@
 
 package io.jmix.dynattr;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 

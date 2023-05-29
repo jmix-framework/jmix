@@ -23,7 +23,7 @@ import io.jmix.core.EntityValuesProvider;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.impl.EntityInternals;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;

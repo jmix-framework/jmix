@@ -19,7 +19,7 @@ package io.jmix.core.accesscontext;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.context.ApplicationContext;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;

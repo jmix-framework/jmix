@@ -83,6 +83,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             rowsDraggable
             tabIndex == 3
             themeNames.containsAll(["column-borders", "compact"])
+            verticalScrollingEnabled
             visible
             width == "100px"
             columns.size() == 11
@@ -144,6 +145,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             rowsDraggable
             tabIndex == 3
             themeNames.containsAll(["column-borders", "compact"])
+            verticalScrollingEnabled
             visible
             width == "100px"
             columns.size() == 11

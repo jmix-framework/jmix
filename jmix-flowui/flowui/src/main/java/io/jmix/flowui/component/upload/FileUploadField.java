@@ -45,7 +45,7 @@ import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class FileUploadField extends JmixFileUploadField<FileUploadField> implements SupportsValueSource<byte[]>,

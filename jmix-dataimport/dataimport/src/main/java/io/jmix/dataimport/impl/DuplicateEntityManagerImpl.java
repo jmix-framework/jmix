@@ -27,7 +27,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 

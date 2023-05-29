@@ -18,7 +18,7 @@ package io.jmix.imap.entity;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 public enum ImapSecureMode implements EnumClass<String> {
 

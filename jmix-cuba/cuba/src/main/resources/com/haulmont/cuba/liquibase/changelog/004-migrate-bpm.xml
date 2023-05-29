@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+        context="cuba and !migrated">
+
+    <changeSet id="5" author="migrator" dbms="mysql, mariadb">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_CONTENT_STORAGE"/>
+        </preConditions>
+
+        <dropForeignKeyConstraint baseTableName="BPROC_CONTENT_STORAGE" constraintName="FK_BPROC_CONTENT_STORAGE_AUTHOR"/>
+        <dropForeignKeyConstraint baseTableName="BPROC_USER_GROUP_ROLE" constraintName="FK_BPROC_USER_GROUP_ROLE_SEC_ROLE"/>
+        <dropForeignKeyConstraint baseTableName="BPROC_USER_GROUP_USER_LINK" constraintName="FK_USEGROUSE_USER"/>
+        <dropForeignKeyConstraint baseTableName="BPROC_USER_GROUP_USER_LINK" constraintName="FK_USEGROUSE_USER_GROUP"/>
+    </changeSet>
+
+    <changeSet id="10" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_CONTENT_STORAGE"/>
+        </preConditions>
+
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="UPDATED_BY" newColumnName="LAST_MODIFIED_BY" columnDataType="varchar(255)"/>
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE" columnDataType="datetime"/>
+        <addColumn tableName="BPROC_CONTENT_STORAGE">
+            <column name="AUTHOR_NAME" type="varchar(255)"/>
+        </addColumn>
+        <update tableName="BPROC_CONTENT_STORAGE">
+            <column name="AUTHOR_NAME" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = AUTHOR_ID)"/>
+        </update>
+        <dropColumn tableName="BPROC_CONTENT_STORAGE" columnName="AUTHOR_ID"/>
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="AUTHOR_NAME" newColumnName="AUTHOR_ID" columnDataType="varchar(255)"/>
+        <renameTable oldTableName="BPROC_CONTENT_STORAGE" newTableName="BPM_CONTENT_STORAGE"/>
+    </changeSet>
+
+    <changeSet id="15" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_USER_GROUP_ROLE"/>
+        </preConditions>
+
+        <delete tableName="BPROC_USER_GROUP_ROLE"/>
+        <dropColumn tableName="BPROC_USER_GROUP_ROLE" columnName="ROLE_ID"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="UPDATED_BY" newColumnName="LAST_MODIFIED_BY" columnDataType="varchar(255)"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="ROLE_NAME" newColumnName="ROLE_CODE" columnDataType="varchar(255)"/>
+        <renameTable oldTableName="BPROC_USER_GROUP_ROLE" newTableName="BPM_USER_GROUP_ROLE"/>
+    </changeSet>
+
+    <changeSet id="20" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
+        </preConditions>
+
+        <dropPrimaryKey tableName="BPROC_USER_GROUP_USER_LINK"/>
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="CREATED_BY" type="VARCHAR(255)"/>
+        </addColumn>
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="CREATED_DATE" type="DATETIME"/>
+        </addColumn>
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="LAST_MODIFIED_BY" type="VARCHAR(255)"/>
+        </addColumn>
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="LAST_MODIFIED_DATE" type="DATETIME"/>
+        </addColumn>
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="DELETED_BY" type="VARCHAR(255)"/>
+        </addColumn>
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="DELETED_DATE" type="DATETIME"/>
+        </addColumn>
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="USERNAME" type="VARCHAR(255)"/>
+        </addColumn>
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="VERSION" type="INT" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="21-pg" author="migrator" dbms="postgresql">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
+        </preConditions>
+
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="ID" type="${uuid.type}" defaultValueComputed="newid()">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_BPM_USER_GROUP_USER"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="21-mssql" author="migrator" dbms="mssql">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
+        </preConditions>
+
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="ID" type="${uuid.type}" defaultValueComputed="newid()">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_BPM_USER_GROUP_USER"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="21-mysql" author="migrator" dbms="mysql">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
+        </preConditions>
+
+        <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="ID" type="${uuid.type}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_BPM_USER_GROUP_USER"/>
+            </column>
+        </addColumn>
+
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            CREATE TRIGGER BPM_USER_GROUP_USER_BEFORE_INSERT
+                BEFORE INSERT ON BPROC_USER_GROUP_USER_LINK
+                FOR EACH ROW
+                SET new.ID = REPLACE(UUID(),'-','');
+            ]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="22" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
+        </preConditions>
+
+        <update tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="USERNAME" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = USER_ID)"/>
+        </update>
+        <dropColumn tableName="BPROC_USER_GROUP_USER_LINK" columnName="USER_ID"/>
+        <update tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="CREATED_BY"
+                    valueComputed="(select u.CREATED_BY from BPROC_USER_GROUP u where u.ID = USER_GROUP_ID)"/>
+        </update>
+        <update tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="CREATED_DATE"
+                    valueComputed="(select u.CREATE_TS from BPROC_USER_GROUP u where u.ID = USER_GROUP_ID)"/>
+        </update>
+        <update tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="LAST_MODIFIED_BY"
+                    valueComputed="(select u.UPDATED_BY from BPROC_USER_GROUP u where u.ID = USER_GROUP_ID)"/>
+        </update>
+        <update tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="LAST_MODIFIED_DATE"
+                    valueComputed="(select u.UPDATE_TS from BPROC_USER_GROUP u where u.ID = USER_GROUP_ID)"/>
+        </update>
+        <update tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="DELETED_BY"
+                    valueComputed="(select u.DELETED_BY from BPROC_USER_GROUP u where u.ID = USER_GROUP_ID)"/>
+        </update>
+        <update tableName="BPROC_USER_GROUP_USER_LINK">
+            <column name="DELETED_DATE"
+                    valueComputed="(select u.DELETE_TS from BPROC_USER_GROUP u where u.ID = USER_GROUP_ID)"/>
+        </update>
+        <renameTable oldTableName="BPROC_USER_GROUP_USER_LINK" newTableName="BPM_USER_GROUP_USER"/>
+    </changeSet>
+
+    <changeSet id="23" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_USER_GROUP_ROLE_LINK"/>
+        </preConditions>
+
+        <dropTable tableName="BPROC_USER_GROUP_ROLE_LINK"/>
+    </changeSet>
+
+    <changeSet id="24" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_USER_GROUP"/>
+        </preConditions>
+
+        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="UPDATED_BY" newColumnName="LAST_MODIFIED_BY" columnDataType="varchar(255)"/>
+        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE" columnDataType="datetime"/>
+        <renameTable oldTableName="BPROC_USER_GROUP" newTableName="BPM_USER_GROUP"/>
+    </changeSet>
+
+</databaseChangeLog>

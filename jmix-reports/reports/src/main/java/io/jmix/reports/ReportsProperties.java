@@ -16,7 +16,7 @@
 
 package io.jmix.reports;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 

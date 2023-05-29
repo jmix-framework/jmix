@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.dynattr.OptionsLoaderType;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
 import java.io.Serializable;

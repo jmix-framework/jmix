@@ -18,7 +18,7 @@ package io.jmix.core.common.util;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.dom4j.Element;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;

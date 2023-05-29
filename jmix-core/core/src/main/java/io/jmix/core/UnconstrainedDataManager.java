@@ -18,7 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.entity.KeyValueEntity;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

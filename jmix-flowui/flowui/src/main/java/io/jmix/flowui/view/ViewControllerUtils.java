@@ -27,7 +27,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View.QueryParametersChangeEvent;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 

@@ -37,7 +37,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -80,7 +80,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
         RouterLink menuItemComponent = super.createMenuItemComponent(menuItem);
         if (menuItem instanceof ViewMenuItem) {
-            QueryParameters queryParameters = ((ViewMenuItem) menuItem).getUrlQueryParameters();
+            QueryParameters queryParameters = ((ViewMenuItem) menuItem).getQueryParameters();
             RouteParameters routeParameters = ((ViewMenuItem) menuItem).getRouteParameters();
 
             if (queryParameters != null) {
@@ -127,7 +127,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     public static class ViewMenuItem extends MenuItem {
 
         protected Class<? extends View<?>> controllerClass;
-        protected QueryParameters urlQueryParameters;
+        protected QueryParameters queryParameters;
         protected RouteParameters routeParameters;
 
         public ViewMenuItem(String id) {
@@ -178,15 +178,15 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Nullable
-        public QueryParameters getUrlQueryParameters() {
-            return urlQueryParameters;
+        public QueryParameters getQueryParameters() {
+            return queryParameters;
         }
 
-        public ViewMenuItem withUrlQueryParameters(List<MenuItemParameter> queryParameters) {
+        public ViewMenuItem withQueryParameters(List<MenuItemParameter> queryParameters) {
             Map<String, String> parametersMap = queryParameters.stream()
                     .collect(Collectors.toMap(MenuItemParameter::getName, MenuItemParameter::getValue));
 
-            this.urlQueryParameters = QueryParameters.simple(parametersMap);
+            this.queryParameters = QueryParameters.simple(parametersMap);
             return this;
         }
 

@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.text.ParseException;
 import java.time.*;

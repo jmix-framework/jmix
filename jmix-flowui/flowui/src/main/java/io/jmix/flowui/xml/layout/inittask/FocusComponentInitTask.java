@@ -24,7 +24,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Optional;
 
 import static io.jmix.flowui.component.UiComponentUtils.findFocusComponent;

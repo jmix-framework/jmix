@@ -68,19 +68,22 @@ public class ExcelAllRecordsExporter extends AbstractAllRecordsExporter {
         Preconditions.checkNotNullArgument(excelRowCreator, "Cannot export all rows. ExcelRowCreator can't be null");
         Preconditions.checkNotNullArgument(excelRowChecker, "Cannot export all rows. ExcelRowChecker can't be null");
 
-        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
-        transactionTemplate.executeWithoutResult(transactionStatus -> {
-            long count = dataManager.getCount(generateLoadContext(dataUnit));
-            int loadBatchSize = gridExportProperties.getExportAllBatchSize();
+        LoadContext loadContext = generateLoadContext(dataUnit);
+        LoadContext.Query query = loadContext.getQuery();
 
+        Preconditions.checkNotNullArgument(query, "Cannot export all rows. %s can't be null",
+                LoadContext.Query.class.getSimpleName());
+
+        int loadBatchSize = gridExportProperties.getExportAllBatchSize();
+        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+
+        transactionTemplate.executeWithoutResult(transactionStatus -> {
+            long count = dataManager.getCount(loadContext);
             int rowNumber = 0;
             boolean initialLoading = true;
             Object lastLoadedPkValue = null;
 
             for (int firstResult = 0; firstResult < count && !excelRowChecker.test(rowNumber); firstResult += loadBatchSize) {
-                LoadContext loadContext = generateLoadContext(dataUnit);
-                LoadContext.Query query = loadContext.getQuery();
-
                 if (initialLoading) {
                     initialLoading = false;
                 } else {

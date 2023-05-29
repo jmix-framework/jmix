@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+        context="cuba and !migrated">
+
+    <changeSet id="10" author="migrator">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="IMAP_MAIL_BOX"/>
+        </preConditions>
+
+        <addColumn tableName="IMAP_MAIL_BOX">
+            <column name="ROOT_CERTIFICATE" type="clob"/>
+            <column name="JMIX_FLAG" type="varchar(255)"/>
+        </addColumn>
+
+    </changeSet>
+
+    <changeSet id="20" author="migrator">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="IMAP_FOLDER"/>
+        </preConditions>
+
+        <addColumn tableName="IMAP_FOLDER">
+            <column name="ENABLED" type="boolean"/>
+            <column name="CAN_HOLD_MESSAGES" type="boolean"/>
+            <column name="DELETED" type="boolean"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

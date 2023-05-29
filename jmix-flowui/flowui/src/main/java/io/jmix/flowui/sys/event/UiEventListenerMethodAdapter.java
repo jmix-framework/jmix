@@ -34,7 +34,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 import jakarta.annotation.Nonnull;
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

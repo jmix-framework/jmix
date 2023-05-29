@@ -198,19 +198,18 @@ public class RestFilterParser {
                     metaProperty.getJavaType().getCanonicalName());
         }
 
-        if (shouldAddPkNameToPropertyPath(metaProperty, op)) {
-            MetaClass _metaClass = metadata.getClass(metaProperty.getJavaType());
-            MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(_metaClass);
-            String pkName = primaryKeyProperty.getName();
-
-            propertyName += "." + pkName;
-            propertyPath = metaClass.getPropertyPath(propertyName);
-
-            if (propertyPath == null) {
-                throw new RestFilterParseException("Property " + propertyName + " for " + metaClass.getName() + " not found");
+        if (metaProperty.getRange().isClass()) {
+            if (Entity.class.isAssignableFrom(metaProperty.getJavaType())) {
+                MetaClass _metaClass = metadata.getClass(metaProperty.getJavaType());
+                MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(_metaClass);
+                String pkName = primaryKeyProperty.getName();
+                propertyName += "." + pkName;
+                propertyPath = metaClass.getPropertyPath(propertyName);
+                if (propertyPath == null) {
+                    throw new RestFilterParseException("Property " + propertyName + " for " + metaClass.getName() + " not found");
+                }
+                metaProperty = propertyPath.getMetaProperty();
             }
-
-            metaProperty = propertyPath.getMetaProperty();
         }
 
         if (isValueRequired) {
@@ -235,13 +234,6 @@ public class RestFilterParser {
         condition.setOperator(op);
 
         return condition;
-    }
-
-    protected boolean shouldAddPkNameToPropertyPath(MetaProperty metaProperty, RestFilterOp op) {
-        return metaProperty.getRange().isClass()
-                && Entity.class.isAssignableFrom(metaProperty.getJavaType())
-                && op != RestFilterOp.IS_NULL
-                && op != RestFilterOp.NOT_EMPTY;
     }
 
     protected Object parseValue(MetaProperty metaProperty, String stringValue) throws RestFilterParseException {

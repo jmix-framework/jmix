@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="cuba" context="!cuba">
+        <validCheckSum>8:9119eaab121a2481afd14caee612281d</validCheckSum>
+
+        <createTable tableName="SYS_FOLDER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="FOLDER_TYPE" type="char(1)"/>
+            <column name="NAME" type="varchar(100)"/>
+            <column name="SORT_ORDER" type="int"/>
+            <column name="TAB_NAME" type="varchar(255)"/>
+            <column name="PARENT_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_SYS_FOLDER_PARENT"
+                             references="SYS_FOLDER(ID)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="SYS_APP_FOLDER">
+            <column name="FOLDER_ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"
+                             foreignKeyName="FK_SYS_APP_FOLDER_FOLDER"
+                             references="SYS_FOLDER(ID)"/>
+            </column>
+            <column name="FILTER_COMPONENT" type="varchar(200)"/>
+            <column name="FILTER_XML" type="longvarchar"/>
+            <column name="VISIBILITY_SCRIPT" type="longvarchar"/>
+            <column name="QUANTITY_SCRIPT" type="longvarchar"/>
+            <column name="APPLY_DEFAULT" type="boolean"/>
+        </createTable>
+
+        <createTable tableName="SEC_SEARCH_FOLDER">
+            <column name="FOLDER_ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"
+                             foreignKeyName="FK_SEC_SEARCH_FOLDER_FOLDER"
+                             references="SYS_FOLDER(ID)"/>
+            </column>
+            <column name="FILTER_COMPONENT" type="varchar(200)"/>
+            <column name="FILTER_XML" type="longvarchar"/>
+            <column name="USERNAME" type="varchar(255)"/>
+            <column name="PRESENTATION_ID" type="${uuid.type}"/>
+            <column name="APPLY_DEFAULT" type="boolean"/>
+            <column name="IS_SET" type="boolean"/>
+            <column name="ENTITY_TYPE" type="varchar(50)"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="2" author="cuba" context="!cuba">
+
+        <createTable tableName="SEC_FILTER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="COMPONENT" type="varchar(255)"/>
+            <column name="NAME" type="varchar(255)"/>
+            <column name="CODE" type="varchar(200)"/>
+            <column name="XML" type="longvarchar"/>
+            <column name="USERNAME" type="varchar(255)"/>
+            <column name="GLOBAL_DEFAULT" type="boolean"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="3" author="cuba" context="!cuba">
+        <validCheckSum>8:de11723e05b1f36dddad8eaf0172f0ee</validCheckSum>
+
+        <createTable tableName="SYS_SCHEDULED_TASK">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="BEAN_NAME" type="varchar(50)"/>
+            <column name="METHOD_NAME" type="varchar(50)"/>
+            <column name="METHOD_PARAMS" type="longvarchar"/>
+            <column name="DEFINED_BY" type="varchar(1)" defaultValue="B"/>
+            <column name="CLASS_NAME" type="varchar(500)"/>
+            <column name="SCRIPT_NAME" type="varchar(500)"/>
+            <column name="USER_NAME" type="varchar(50)"/>
+            <column name="IS_SINGLETON" type="boolean"/>
+            <column name="IS_ACTIVE" type="boolean"/>
+            <column name="PERIOD_" type="integer"/>
+            <column name="TIMEOUT" type="integer"/>
+            <column name="START_DATE" type="datetime"/>
+            <column name="TIME_FRAME" type="integer"/>
+            <column name="START_DELAY" type="integer"/>
+            <column name="PERMITTED_SERVERS" type="longvarchar"/>
+            <column name="LOG_START" type="boolean"/>
+            <column name="LOG_FINISH" type="boolean"/>
+            <column name="LAST_START_TIME" type="datetime"/>
+            <column name="LAST_START_SERVER" type="varchar(512)"/>
+            <column name="DESCRIPTION" type="varchar(1000)"/>
+            <column name="CRON" type="varchar(1000)"/>
+            <column name="SCHEDULING_TYPE" type="varchar(1)" defaultValue="P"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="4-oracle-hsqldb" author="cuba" context="!cuba" dbms="oracle, hsqldb">
+        <validCheckSum>8:f3c8d9712cd86d430a7e588ab5736710</validCheckSum>
+
+        <createTable tableName="SYS_SCHEDULED_EXECUTION">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="TASK_ID" type="${uuid.type}"/>
+            <column name="SERVER" type="varchar(512)"/>
+            <column name="START_TIME" type="timestamp"/>
+            <column name="FINISH_TIME" type="timestamp"/>
+            <column name="RESULT" type="text"/>
+        </createTable>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHED_EXEC_START_TIME">
+            <column name="TASK_ID"/>
+            <column name="START_TIME"/>
+        </createIndex>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHED_EXEC_FIN_TIME">
+            <column name="TASK_ID"/>
+            <column name="FINISH_TIME"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="4-mssql-mysql" author="cuba" context="!cuba" dbms="mssql, mysql">
+
+        <createTable tableName="SYS_SCHEDULED_EXECUTION">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="TASK_ID" type="${uuid.type}"/>
+            <column name="SERVER" type="varchar(512)"/>
+            <column name="START_TIME" type="datetime"/>
+            <column name="FINISH_TIME" type="datetime"/>
+            <column name="RESULT" type="text"/>
+        </createTable>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_START_TIME">
+            <column name="TASK_ID"/>
+            <column name="START_TIME"/>
+        </createIndex>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_FINISH_TIME">
+            <column name="TASK_ID"/>
+            <column name="FINISH_TIME"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="4-postgres" author="cuba" context="!cuba" dbms="postgresql">
+
+        <createTable tableName="SYS_SCHEDULED_EXECUTION">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="TASK_ID" type="${uuid.type}"/>
+            <column name="SERVER" type="varchar(512)"/>
+            <column name="START_TIME" type="timestamp with time zone"/>
+            <column name="FINISH_TIME" type="timestamp with time zone"/>
+            <column name="RESULT" type="text"/>
+        </createTable>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_START_TIME">
+            <column name="TASK_ID"/>
+            <column name="START_TIME"/>
+        </createIndex>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_FINISH_TIME">
+            <column name="TASK_ID"/>
+            <column name="FINISH_TIME"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="5" author="cuba" context="!cuba">
+
+        <createTable tableName="SYS_SERVER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(512)"/>
+            <column name="IS_RUNNING" type="boolean"/>
+            <column name="DATA" type="text"/>
+        </createTable>
+
+        <createIndex tableName="SYS_SERVER" indexName="IDX_SYS_SERVER_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="6" author="cuba" context="!cuba">
+
+        <createTable tableName="SYS_CONFIG">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE_" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="SYS_CONFIG" indexName="IDX_SYS_CONFIG_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="7" author="cuba" context="!cuba">
+
+        <createTable tableName="SYS_FILE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="NAME" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXT" type="varchar(20)"/>
+            <column name="FILE_SIZE" type="bigint"/>
+            <column name="CREATE_DATE" type="timestamp"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="8" author="cuba" context="!cuba">
+        <addColumn tableName="SYS_CONFIG">
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

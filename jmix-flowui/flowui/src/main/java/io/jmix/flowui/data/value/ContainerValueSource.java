@@ -31,7 +31,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 

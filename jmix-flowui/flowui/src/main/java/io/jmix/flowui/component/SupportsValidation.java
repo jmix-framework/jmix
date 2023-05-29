@@ -22,7 +22,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface SupportsValidation<V> extends HasValidationProperties {
 

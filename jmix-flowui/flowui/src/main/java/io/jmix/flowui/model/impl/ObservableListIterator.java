@@ -19,7 +19,7 @@ package io.jmix.flowui.model.impl;
 import com.google.common.collect.ForwardingListIterator;
 import io.jmix.flowui.model.CollectionChangeType;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ListIterator;

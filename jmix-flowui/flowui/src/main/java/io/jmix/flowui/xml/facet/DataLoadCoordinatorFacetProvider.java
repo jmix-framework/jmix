@@ -34,7 +34,7 @@ import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 @org.springframework.stereotype.Component("flowui_DataLoadCoordinatorFacetProvider")
 public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadCoordinator> {

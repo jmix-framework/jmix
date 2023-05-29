@@ -16,7 +16,7 @@
 
 package io.jmix.rest.impl.service.filter;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 
 /**

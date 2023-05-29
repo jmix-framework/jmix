@@ -16,7 +16,7 @@
 
 package io.jmix.data.persistence;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 
 /**

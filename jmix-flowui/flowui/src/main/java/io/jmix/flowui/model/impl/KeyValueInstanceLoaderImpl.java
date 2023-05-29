@@ -30,7 +30,7 @@ import io.jmix.flowui.model.KeyValueContainer;
 import io.jmix.flowui.model.KeyValueInstanceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;

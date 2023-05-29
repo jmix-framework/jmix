@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.*;
 import java.util.List;

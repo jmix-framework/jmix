@@ -37,9 +37,9 @@
     </actions>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <urlQueryParameters>
+        <queryParameters>
             <pagination component="pagination"/>
-        </urlQueryParameters>
+        </queryParameters>
     </facets>
     <layout expand="tenantsTable">
         <hbox id="buttonsPanel" classNames="buttons-panel">

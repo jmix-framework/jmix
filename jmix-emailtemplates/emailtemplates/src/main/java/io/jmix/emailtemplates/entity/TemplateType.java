@@ -19,7 +19,7 @@ package io.jmix.emailtemplates.entity;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 
 public enum TemplateType implements EnumClass<String> {

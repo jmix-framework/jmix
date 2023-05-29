@@ -27,7 +27,7 @@ import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Stream;

@@ -19,7 +19,7 @@ package io.jmix.flowui.action;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.util.OperationResult;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Supplier;
 
 public interface OperationResultAction extends Action {

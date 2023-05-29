@@ -193,9 +193,8 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
         Set<MetaClass> entityClasses = new HashSet<>();
         entityClasses.add(metadata.getClass(fetchPlan.getEntityClass()));
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
-            FetchPlan propertyFetchPlan = property.getFetchPlan();
-            if (propertyFetchPlan != null) {
-                entityClasses.addAll(collectEntityClasses(propertyFetchPlan, visited));
+            if (property.getFetchPlan() != null) {
+                entityClasses.addAll(collectEntityClasses(property.getFetchPlan(), visited));
             }
         }
         return entityClasses;

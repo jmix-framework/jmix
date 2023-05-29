@@ -18,7 +18,7 @@ package io.jmix.core.metamodel.datatype;
 
 import io.jmix.core.metamodel.datatype.impl.DatatypeDefUtils;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.text.ParseException;
 import java.util.Locale;
 

@@ -19,7 +19,7 @@ package io.jmix.imap.entity;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.imap.events.*;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;

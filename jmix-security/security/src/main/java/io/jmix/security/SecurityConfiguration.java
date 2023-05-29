@@ -21,19 +21,15 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.rememberme.JmixRememberMeServices;
 import io.jmix.core.rememberme.RememberMeProperties;
-import io.jmix.core.security.*;
-import io.jmix.core.security.impl.AuthenticationManagerSupplierImpl;
+import io.jmix.core.security.PostAuthenticationChecks;
+import io.jmix.core.security.PreAuthenticationChecks;
+import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.JmixSessionAuthenticationStrategy;
 import io.jmix.core.session.SessionProperties;
-import io.jmix.security.authentication.StandardAuthenticationManagerSupplier;
-import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
 import io.jmix.security.impl.constraint.SecurityConstraintsRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.*;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -146,25 +142,4 @@ public class SecurityConfiguration {
     public PostAuthenticationChecks postAuthenticationChecks() {
         return new PostAuthenticationChecks();
     }
-
-    @Bean("sec_StandardAuthenticationManagerSupplier")
-    @Order(200)
-    public AddonAuthenticationManagerSupplier standardAuthenticationManagerSupplier(StandardAuthenticationProvidersProducer providersProducer,
-                                                                            ApplicationEventPublisher publisher) {
-        return new StandardAuthenticationManagerSupplier(providersProducer, publisher);
-    }
-
-    @Bean("sec_AuthenticationManagerSupplier")
-    public AuthenticationManagerSupplier authenticationManagerSupplier(List<AddonAuthenticationManagerSupplier> suppliers) {
-        return new AuthenticationManagerSupplierImpl(suppliers);
-    }
-
-    /**
-     * Global AuthenticationManager
-     */
-    @Bean("sec_AuthenticationManager")
-    public AuthenticationManager authenticationManager(AuthenticationManagerSupplier authenticationManagerSupplier) {
-        return authenticationManagerSupplier.getAuthenticationManager();
-    }
-
 }

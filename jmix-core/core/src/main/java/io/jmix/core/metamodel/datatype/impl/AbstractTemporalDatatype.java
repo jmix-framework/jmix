@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.datatype.ParameterizedDatatype;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.text.ParseException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;

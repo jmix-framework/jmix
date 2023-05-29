@@ -15,7 +15,7 @@
  */
 package io.jmix.core.common.datastruct;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;

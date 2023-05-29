@@ -22,7 +22,7 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import org.apache.commons.collections4.CollectionUtils;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

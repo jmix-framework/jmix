@@ -16,7 +16,7 @@
 
 package io.jmix.core.accesscontext;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * An access context to check permissions on arbitrary named functionality.

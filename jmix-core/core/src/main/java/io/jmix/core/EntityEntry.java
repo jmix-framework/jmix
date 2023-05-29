@@ -24,7 +24,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.impl.EntityInternals;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Id;
 import java.io.Serializable;

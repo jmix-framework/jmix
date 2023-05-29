@@ -20,7 +20,7 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportImportOption;
 import io.jmix.reports.entity.ReportImportResult;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumSet;

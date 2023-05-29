@@ -22,7 +22,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.text.ParseException;

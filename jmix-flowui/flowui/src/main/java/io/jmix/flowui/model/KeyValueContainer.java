@@ -19,7 +19,7 @@ package io.jmix.flowui.model;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.datatype.Datatype;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Container for a single {@code KeyValueEntity} instance.

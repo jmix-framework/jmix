@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.model.KeyValueContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 public class KeyValueContainerImpl extends InstanceContainerImpl<KeyValueEntity> implements KeyValueContainer {
 

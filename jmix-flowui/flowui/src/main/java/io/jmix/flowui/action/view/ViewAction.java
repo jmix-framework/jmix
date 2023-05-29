@@ -27,7 +27,7 @@ import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 

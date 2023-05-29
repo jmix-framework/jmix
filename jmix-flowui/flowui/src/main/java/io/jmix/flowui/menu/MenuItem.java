@@ -19,7 +19,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.kit.component.KeyCombination;
 import org.dom4j.Element;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +51,7 @@ public class MenuItem {
     private boolean isMenu = false;
 
     protected List<MenuItemProperty> properties;
-    protected List<MenuItemParameter> urlQueryParameters;
+    protected List<MenuItemParameter> queryParameters;
     protected List<MenuItemParameter> routeParameters;
 
     public MenuItem(@Nullable MenuItem parent, String id) {
@@ -215,15 +215,15 @@ public class MenuItem {
         this.properties = properties;
     }
 
-    public List<MenuItemParameter> getUrlQueryParameters() {
-        if (urlQueryParameters == null) {
+    public List<MenuItemParameter> getQueryParameters() {
+        if (queryParameters == null) {
             return Collections.emptyList();
         }
-        return urlQueryParameters;
+        return queryParameters;
     }
 
-    public void setUrlQueryParameters(List<MenuItemParameter> urlQueryParameters) {
-        this.urlQueryParameters = urlQueryParameters;
+    public void setQueryParameters(List<MenuItemParameter> queryParameters) {
+        this.queryParameters = queryParameters;
     }
 
     public List<MenuItemParameter> getRouteParameters() {

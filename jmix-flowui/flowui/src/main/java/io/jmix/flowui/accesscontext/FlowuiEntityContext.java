@@ -19,7 +19,7 @@ package io.jmix.flowui.accesscontext;
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

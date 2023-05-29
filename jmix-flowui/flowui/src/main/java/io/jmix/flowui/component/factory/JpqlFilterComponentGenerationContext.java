@@ -19,7 +19,7 @@ package io.jmix.flowui.component.factory;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.ComponentGenerationContext;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 public class JpqlFilterComponentGenerationContext extends ComponentGenerationContext {
 

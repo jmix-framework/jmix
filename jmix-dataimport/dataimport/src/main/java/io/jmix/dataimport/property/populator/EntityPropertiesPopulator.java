@@ -22,7 +22,7 @@ import io.jmix.dataimport.configuration.mapping.ReferenceMultiFieldPropertyMappi
 import io.jmix.dataimport.extractor.data.ImportedDataItem;
 import io.jmix.dataimport.extractor.data.RawValuesSource;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 

@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.data;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface SupportsValueSource<V> {
 

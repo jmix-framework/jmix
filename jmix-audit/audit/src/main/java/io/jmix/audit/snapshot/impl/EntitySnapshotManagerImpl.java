@@ -35,7 +35,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
@@ -91,9 +91,6 @@ public class EntitySnapshotManagerImpl implements EntitySnapshotManager {
                 .addFetchPlan(FetchPlan.LOCAL)
                 .build();
         Object entity = unconstrainedDataManager.load(new LoadContext<>(metaClass).setId(id).setFetchPlan(localFetchPlan));
-        if (entity == null) {
-            throw new RuntimeException("Entity instance not found");
-        }
         checkCompositePrimaryKey(metaClass, entity);
         return entitySnapshotDataStore.findEntitySnapshotByMetaClassAndEntity(entity, metaClass);
     }
@@ -101,11 +98,7 @@ public class EntitySnapshotManagerImpl implements EntitySnapshotManager {
     @Override
     public List<EntitySnapshotModel> getSnapshots(Object entity) {
         MetaClass entityMetaClass = metadata.getClass(entity);
-        Object entityId = EntityValues.getId(entity);
-        if (entityId == null) {
-            throw new RuntimeException("Cannot evaluate entity id for " + entity);
-        }
-        return getSnapshots(entityMetaClass, entityId);
+        return getSnapshots(entityMetaClass, EntityValues.getId(entity));
     }
 
     @Override

@@ -18,7 +18,7 @@ package io.jmix.dynattr;
 
 import io.jmix.core.metamodel.model.MetaProperty;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;

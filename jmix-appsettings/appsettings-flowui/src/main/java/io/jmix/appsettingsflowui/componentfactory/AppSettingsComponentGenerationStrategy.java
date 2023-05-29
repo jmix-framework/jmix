@@ -42,12 +42,11 @@ import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.data.SupportsValueSource;
-import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import org.springframework.core.Ordered;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 @org.springframework.stereotype.Component("appsettings_AppSettingsComponentGenerationStrategy")
 public class AppSettingsComponentGenerationStrategy
@@ -75,12 +74,10 @@ public class AppSettingsComponentGenerationStrategy
 
             AbstractField field = null;
 
-            ValueSource valueSource = context.getValueSource();
-            if (valueSource != null) {
-                Object containerItem = ((ContainerValueSource) valueSource).getContainer().getItemOrNull();
-                if (requireTextArea(metaProperty, containerItem)) {
-                    field = uiComponents.create(TypedTextField.class);
-                }
+            if (context.getValueSource() != null &&
+                    requireTextArea(metaProperty, ((ContainerValueSource) context.getValueSource())
+                            .getContainer().getItemOrNull())) {
+                field = uiComponents.create(TypedTextField.class);
             }
 
             if (isBoolean(metaProperty)) {
@@ -100,7 +97,7 @@ public class AppSettingsComponentGenerationStrategy
             }
 
             if (field instanceof SupportsValueSource) {
-                ((SupportsValueSource<?>) field).setValueSource(valueSource);
+                ((SupportsValueSource<?>) field).setValueSource(context.getValueSource());
             }
             return field;
         }
@@ -148,7 +145,7 @@ public class AppSettingsComponentGenerationStrategy
                 && metaProperty.getRange().asDatatype().getJavaClass().equals(Boolean.class);
     }
 
-    protected boolean requireTextArea(MetaProperty metaProperty, @Nullable Object item) {
+    protected boolean requireTextArea(MetaProperty metaProperty, Object item) {
         if (!String.class.equals(metaProperty.getJavaType())) {
             return false;
         }

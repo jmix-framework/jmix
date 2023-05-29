@@ -21,7 +21,10 @@ import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlans
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Slice
+import org.springframework.data.domain.Sort
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
 import test_support.entity.repository.Address
@@ -304,7 +307,7 @@ class OrderRepositoryTest extends DataSpec {
         when: "PageRequest.unpaged() passed"
         Page<SalesOrder> unpagedPage = orderRepository.findSalesByDateAfterAndNumberIn(
                 new Date(0),
-                Pageable.unpaged(),
+                PageRequest.unpaged(),
                 ["111", "114", "113", "112"])
         then:
         unpagedPage.numberOfElements == 4
@@ -403,7 +406,7 @@ class OrderRepositoryTest extends DataSpec {
         when:
         Slice<SalesOrder> unpagedSlice = orderRepository.findSalesByCustomerNameIn(
                 ["cust1", "some cust 2", "another cust 3"],
-                Pageable.unpaged())
+                PageRequest.unpaged())
         then:
         unpagedSlice != null
         unpagedSlice.numberOfElements == 5

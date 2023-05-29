@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.1.0")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.0.5")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -93,8 +93,8 @@ dependencies {
         api "io.jmix.audit:jmix-audit-starter:$freeVersion"
         api "io.jmix.audit:jmix-audit-flowui-starter:$freeVersion"
 
-        api "io.jmix.authserver:jmix-authorization-server:$freeVersion"
-        api "io.jmix.authserver:jmix-authorization-server-starter:$freeVersion"
+        api "io.jmix.authorizationserver:jmix-authorization-server:$freeVersion"
+        api "io.jmix.authorizationserver:jmix-authorization-server-starter:$freeVersion"
 
         api "io.jmix.awsfs:jmix-awsfs:$freeVersion"
         api "io.jmix.awsfs:jmix-awsfs-starter:$freeVersion"
@@ -102,8 +102,6 @@ dependencies {
         api "io.jmix.bpm:jmix-bpm:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-modeler:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-starter:$premiumVersion"
-        api "io.jmix.bpm:jmix-bpm-flowui:$premiumVersion"
-        api "io.jmix.bpm:jmix-bpm-flowui-starter:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-rest:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-rest-starter:$premiumVersion"
 
@@ -112,6 +110,9 @@ dependencies {
 
         api "io.jmix.core:jmix-core:$freeVersion"
         api "io.jmix.core:jmix-core-starter:$freeVersion"
+
+//        api "io.jmix.cuba:jmix-cuba:$freeVersion"
+//        api "io.jmix.cuba:jmix-cuba-starter:$freeVersion"
 
         api "io.jmix.dashboards:jmix-dashboards:$freeVersion"
         api "io.jmix.dashboards:jmix-dashboards-starter:$freeVersion"
@@ -234,11 +235,14 @@ dependencies {
 
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
 
-        def eclipselinkOriginalVersion = '4.0.1'
-        def eclipselinkVersion = '4.0.1-15-jmix'
+        //todo SB3 use Jmix fork of eclipselink
+        def eclipselinkVersion = '4.0.1'
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
-        api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
+        api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkVersion"
+//        api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.9-6-jmix'
+//        api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix'
+//        api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.9'
 
         api 'org.glassfish:jakarta.el:4.0.2'
 
@@ -261,6 +265,8 @@ dependencies {
 
         //todo SB3 remove dependency after security-oauth2 module is removed
         api 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
+
+        api 'org.springframework.security:spring-security-oauth2-authorization-server:1.0.1'
 
         api 'javax.cache:cache-api:1.1.1'
 

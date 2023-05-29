@@ -16,7 +16,7 @@
 
 package io.jmix.security.model;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

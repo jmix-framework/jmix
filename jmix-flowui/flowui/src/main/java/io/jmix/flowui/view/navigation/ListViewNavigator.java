@@ -21,7 +21,7 @@ import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.View;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;

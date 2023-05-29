@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 public interface DataLoadCoordinator extends Facet {

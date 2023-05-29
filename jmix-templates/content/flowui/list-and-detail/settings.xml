@@ -67,11 +67,6 @@
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
               optionsString="${actionSearch.getWizardTableActions()}"/>
-    <property caption="Create generic filter"
-              code="createGenericFilter"
-              step="1"
-              defaultValue="true"
-              propertyType="BOOLEAN"/>
     <property caption="Multiselect"
               code="multiselect"
               step="1"

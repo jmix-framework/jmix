@@ -21,7 +21,7 @@ import io.jmix.flowui.component.SupportsStatusChangeHandler.StatusContext;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.ValueSourceProvider;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**

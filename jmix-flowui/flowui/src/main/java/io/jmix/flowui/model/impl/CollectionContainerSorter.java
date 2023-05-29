@@ -21,7 +21,7 @@ import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.factory.BeanFactory;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

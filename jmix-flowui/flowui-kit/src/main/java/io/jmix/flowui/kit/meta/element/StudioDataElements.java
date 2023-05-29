@@ -103,7 +103,6 @@ public interface StudioDataElements {
             name = "Loader",
             classFqn = "io.jmix.flowui.model.KeyValueInstanceLoader",
             xmlElement = "loader",
-            icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueLoader.svg",
             target = "io.jmix.flowui.model.KeyValueContainer",
             unsupportedTarget = {"io.jmix.flowui.model.CollectionContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
@@ -120,7 +119,6 @@ public interface StudioDataElements {
             name = "Loader",
             classFqn = "io.jmix.flowui.model.KeyValueCollectionLoader",
             xmlElement = "loader",
-            icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueLoader.svg",
             target = "io.jmix.flowui.model.KeyValueCollectionContainer",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),

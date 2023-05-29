@@ -33,7 +33,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import jakarta.mail.internet.AddressException;
 import java.util.*;

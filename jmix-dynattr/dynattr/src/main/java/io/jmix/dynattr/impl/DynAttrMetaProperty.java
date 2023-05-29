@@ -19,7 +19,7 @@ package io.jmix.dynattr.impl;
 import io.jmix.core.metamodel.model.*;
 import io.jmix.core.metamodel.model.impl.MetadataObjectImpl;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;

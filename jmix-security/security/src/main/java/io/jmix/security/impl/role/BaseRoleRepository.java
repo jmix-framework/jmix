@@ -21,7 +21,7 @@ import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.RoleProvider;
 import io.jmix.security.role.RoleRepository;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;

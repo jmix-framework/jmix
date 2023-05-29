@@ -18,7 +18,7 @@ package io.jmix.flowui.data;
 
 import com.vaadin.flow.shared.Registration;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 

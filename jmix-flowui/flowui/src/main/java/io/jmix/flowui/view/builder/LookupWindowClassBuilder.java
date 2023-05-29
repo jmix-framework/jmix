@@ -25,7 +25,7 @@ import io.jmix.flowui.view.View;
 import com.vaadin.flow.component.HasValue;
 import io.jmix.flowui.model.CollectionContainer;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;

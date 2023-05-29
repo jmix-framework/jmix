@@ -18,7 +18,7 @@ package io.jmix.core.suggestion;
 
 import io.jmix.core.common.util.Preconditions;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 

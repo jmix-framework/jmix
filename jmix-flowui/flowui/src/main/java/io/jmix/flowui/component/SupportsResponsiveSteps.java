@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 

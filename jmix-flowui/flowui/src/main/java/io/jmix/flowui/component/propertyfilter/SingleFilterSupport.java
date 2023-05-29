@@ -26,7 +26,7 @@ import io.jmix.flowui.component.factory.PropertyFilterComponentGenerationContext
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 @Internal
 @Component("flowui_SingleFilterSupport")

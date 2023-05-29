@@ -19,7 +19,7 @@ package io.jmix.core;
 import io.jmix.core.annotation.Internal;
 import org.springframework.core.env.PropertySource;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

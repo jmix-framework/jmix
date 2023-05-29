@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.component.validation;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**

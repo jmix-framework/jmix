@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import jakarta.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.Collections;

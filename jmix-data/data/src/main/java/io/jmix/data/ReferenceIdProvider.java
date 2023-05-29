@@ -18,7 +18,7 @@ package io.jmix.data;
 
 import io.jmix.core.FetchPlan;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Enables working with references to entities without loading them from the database.

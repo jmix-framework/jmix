@@ -37,7 +37,6 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.component.accordion.AccordionPanel",
             target = {"com.vaadin.flow.component.accordion.Accordion"},
             xmlElement = "accordionPanel",
-            icon = "io/jmix/flowui/kit/meta/icon/element/tab.svg",
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
@@ -63,7 +62,6 @@ public interface StudioElements {
             name = "ActionItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ActionItem",
             xmlElement = "actionItem",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
@@ -75,7 +73,6 @@ public interface StudioElements {
             name = "AdditionalInformation",
             xmlElement = "additionalInformation",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING)
             }
@@ -118,7 +115,6 @@ public interface StudioElements {
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = "componentItem",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }
@@ -129,7 +125,6 @@ public interface StudioElements {
             name = "ErrorMessage",
             classFqn = "com.vaadin.flow.component.login.LoginI18n.ErrorMessage",
             xmlElement = "errorMessage",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
@@ -142,7 +137,6 @@ public interface StudioElements {
             name = "Form",
             classFqn = "io.jmix.flowui.kit.component.loginform.JmixLoginI18n.JmixForm",
             xmlElement = "form",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
             properties = {
                     @StudioProperty(xmlAttribute = "forgotPassword", type = StudioPropertyType.LOCALIZED_STRING),
@@ -160,7 +154,6 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.GenericFilterQueryParametersBinder",
             xmlElement = "genericFilter",
             target = {"io.jmix.flowui.facet.QueryParametersFacet"},
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -174,7 +167,6 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.component.tabs.Tab",
             target = {"com.vaadin.flow.component.tabs.Tabs", "io.jmix.flowui.component.tabsheet.JmixTabSheet"},
             xmlElement = "tab",
-            icon = "io/jmix/flowui/kit/meta/icon/element/tab.svg",
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
@@ -195,7 +187,6 @@ public interface StudioElements {
             name = "TextItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.TextItem",
             xmlElement = "textItem",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
@@ -261,7 +252,6 @@ public interface StudioElements {
             name = "Pagination",
             classFqn = "io.jmix.flowui.facet.queryparameters.PaginationQueryParametersBinder",
             xmlElement = "pagination",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.facet.QueryParametersFacet"},
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
@@ -277,7 +267,6 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.PropertyFilterQueryParametersBinder",
             xmlElement = "propertyFilter",
             target = {"io.jmix.flowui.facet.QueryParametersFacet"},
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -290,7 +279,6 @@ public interface StudioElements {
             name = "ResponsiveStep",
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveStep",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE, required = true),
                     @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),

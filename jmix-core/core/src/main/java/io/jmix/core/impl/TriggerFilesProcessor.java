@@ -30,7 +30,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Nonnull;
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.reflect.Method;

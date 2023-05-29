@@ -202,7 +202,6 @@ public class FileTypesHelper {
             + "video/dl                                        dl,"
             + "video/x-fli                                     fli,"
             + "video/gl                                        gl,"
-            + "video/mp4                                       mp4,"
             + "video/mpeg                                      mpeg mpg mpe m1v m2v,"
             + "video/quicktime                                 qt mov,"
             + "video/x-mng                                     mng,"

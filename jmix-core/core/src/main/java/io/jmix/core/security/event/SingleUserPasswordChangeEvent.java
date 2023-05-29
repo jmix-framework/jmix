@@ -16,7 +16,7 @@
 
 package io.jmix.core.security.event;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 
 /**

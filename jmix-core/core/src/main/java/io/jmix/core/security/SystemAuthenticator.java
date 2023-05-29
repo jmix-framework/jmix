@@ -18,7 +18,7 @@ package io.jmix.core.security;
 
 import org.springframework.security.core.Authentication;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Provides ad-hoc authentication, i.e. allows you to execute code on behalf of the 'system' or a specified user.

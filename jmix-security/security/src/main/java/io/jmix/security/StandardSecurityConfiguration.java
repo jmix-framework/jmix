@@ -16,11 +16,16 @@
 
 package io.jmix.security;
 
-import io.jmix.core.JmixSecurityFilterChainOrder;
+import io.jmix.core.JmixOrder;
+import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.List;
 
 import static io.jmix.security.SecurityConfigurers.uiSecurity;
 
@@ -28,9 +33,8 @@ public class StandardSecurityConfiguration {
 
     public static final String SECURITY_CONFIGURER_QUALIFIER = "standard-security";
 
-    //todo MG do we still need this SecurityFilterChain here?
     @Bean("sec_StandardSecurityFilterChain")
-    @Order(JmixSecurityFilterChainOrder.STANDARD_SECURITY)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.apply(uiSecurity());
         http.logout(logout -> logout
@@ -38,5 +42,19 @@ public class StandardSecurityConfiguration {
                 .logoutSuccessUrl("/"));
         SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
         return http.build();
+    }
+
+    @Bean("sec_AuthenticationManager")
+    public AuthenticationManager authenticationManager(StandardAuthenticationProvidersProducer providersProducer,
+                                                       AuthenticationEventPublisher authenticationEventPublisher) {
+        List<AuthenticationProvider> providers = providersProducer.getStandardProviders();
+        ProviderManager providerManager = new ProviderManager(providers);
+        providerManager.setAuthenticationEventPublisher(authenticationEventPublisher);
+        return providerManager;
+    }
+
+    @Bean("sec_AuthenticationEventPublisher")
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher publisher) {
+        return new DefaultAuthenticationEventPublisher(publisher);
     }
 }

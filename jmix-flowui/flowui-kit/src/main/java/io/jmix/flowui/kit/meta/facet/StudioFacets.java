@@ -43,10 +43,10 @@ public interface StudioFacets {
     void dataLoadCoordinator();
 
     @StudioFacet(
-            name = "UrlQueryParameters",
-            classFqn = "io.jmix.flowui.facet.UrlQueryParametersFacet",
+            name = "QueryParameters",
+            classFqn = "io.jmix.flowui.facet.QueryParametersFacet",
             category = "Facets",
-            xmlElement = "urlQueryParameters",
+            xmlElement = "queryParameters",
             icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),

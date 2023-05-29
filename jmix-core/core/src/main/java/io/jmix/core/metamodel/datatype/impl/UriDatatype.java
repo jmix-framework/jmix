@@ -19,7 +19,7 @@ package io.jmix.core.metamodel.datatype.impl;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;

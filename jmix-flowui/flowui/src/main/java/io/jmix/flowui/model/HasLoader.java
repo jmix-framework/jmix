@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.model;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Interface to be implemented by containers that can be loaded by loaders.

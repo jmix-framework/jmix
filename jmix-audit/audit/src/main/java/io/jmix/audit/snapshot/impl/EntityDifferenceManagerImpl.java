@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -149,9 +149,6 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
                 Object firstValue = firstEntity != null ? EntityValues.getValue(firstEntity,metaPropertyPath.toString()) : null;
                 Object secondValue = secondEntity != null ? EntityValues.getValue(secondEntity,metaPropertyPath.toString()) : null;
 
-                if (fetchPlanProperty == null) {
-                    throw new RuntimeException("Fetch plan property must not be null");
-                }
                 EntityPropertyDifferenceModel diff = getPropertyDifference(firstValue, secondValue, metaProperty, fetchPlanProperty, diffBranch);
                 if (diff != null)
                     propertyDiffs.add(diff);
@@ -296,8 +293,7 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
         } else {
             if ((firstValue != null) || (secondValue != null))
                 log.debug("Not null values for (null) fetchPlan ignored, property: " + metaProperty.getName() +
-                        "in class " + (metaProperty.getDeclaringClass() != null ?
-                        metaProperty.getDeclaringClass().getCanonicalName() : ""));
+                        "in class" + metaProperty.getDeclaringClass().getCanonicalName());
         }
         return propertyDiff;
     }
@@ -307,8 +303,7 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
         for (Object item : collection) {
             Entity itemEntity = (Entity) item;
 
-            Object entityId = EntityValues.getId(entity);
-            if (entityId != null && entityId.equals(EntityValues.getId(itemEntity)))
+            if (EntityValues.getId(entity).equals(EntityValues.getId(itemEntity)))
                 return itemEntity;
         }
         return null;
@@ -343,12 +338,8 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
         boolean isInternalChange = false;
         diffBranch.push(diffObject);
 
-        FetchPlan fetchPlanPropertyFetchPlan = fetchPlanProperty.getFetchPlan();
-        if (fetchPlanPropertyFetchPlan == null) {
-            throw new RuntimeException("Fetch plan property doesn't have a fetch plan");
-        }
         List<EntityPropertyDifferenceModel> propertyDiffs =
-                getPropertyDiffs(fetchPlanPropertyFetchPlan, firstValue, secondValue, diffBranch);
+                getPropertyDiffs(fetchPlanProperty.getFetchPlan(), firstValue, secondValue, diffBranch);
 
         diffBranch.pop();
 
@@ -376,7 +367,7 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
         for (FetchPlanProperty firstProperty : firstProps) {
             if (second.containsProperty(firstProperty.getName())) {
                 FetchPlanProperty secondProperty = second.getProperty(firstProperty.getName());
-                if ((firstProperty.getFetchPlan() != null) && (secondProperty != null && secondProperty.getFetchPlan() != null)) {
+                if ((firstProperty.getFetchPlan() != null) && (secondProperty.getFetchPlan() != null)) {
                     FetchPlan fetchPlan = intersectFetchPlans(firstProperty.getFetchPlan(), secondProperty.getFetchPlan());
                     builder.mergeProperty(firstProperty.getName(), fetchPlan, firstProperty.getFetchMode());
                 }

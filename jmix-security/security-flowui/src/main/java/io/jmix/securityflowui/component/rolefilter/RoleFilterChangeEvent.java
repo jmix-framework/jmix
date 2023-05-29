@@ -5,7 +5,7 @@ import io.jmix.security.model.BaseRole;
 import io.jmix.securityflowui.model.RoleSource;
 import org.apache.commons.lang3.StringUtils;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 public class RoleFilterChangeEvent extends ComponentEvent<RoleFilter> {
 

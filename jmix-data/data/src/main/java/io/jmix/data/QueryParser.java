@@ -16,7 +16,7 @@
 package io.jmix.data;
 
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 

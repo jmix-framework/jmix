@@ -21,7 +21,7 @@ import io.jmix.flowui.component.validation.number.*;
 import io.jmix.flowui.component.validation.time.AbstractTimeValidator.*;
 import io.jmix.flowui.component.validation.time.TimeValidator;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.*;

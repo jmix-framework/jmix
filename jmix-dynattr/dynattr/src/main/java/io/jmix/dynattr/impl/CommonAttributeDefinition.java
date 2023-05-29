@@ -24,7 +24,7 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.CategoryAttribute;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collections;

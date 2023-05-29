@@ -20,7 +20,7 @@ import io.jmix.core.FluentLoader;
 import io.jmix.core.Sort;
 import org.springframework.data.domain.Pageable;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 

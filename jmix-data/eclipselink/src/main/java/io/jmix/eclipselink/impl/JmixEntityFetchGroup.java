@@ -30,7 +30,7 @@ import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.eclipse.persistence.queries.LoadGroup;
 import org.eclipse.persistence.sessions.CopyGroup;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;

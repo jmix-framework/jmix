@@ -42,7 +42,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.ITextUserAgent;
 import org.xhtmlrenderer.resource.ImageResource;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;

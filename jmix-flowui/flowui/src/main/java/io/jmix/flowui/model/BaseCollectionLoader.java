@@ -18,7 +18,7 @@ package io.jmix.flowui.model;
 
 import io.jmix.core.Sort;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Root interface of collection loaders.

@@ -1,0 +1,26 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
+    <screen id="testHostScreen" template="/spec/haulmont/cuba/web/frames/screens/test-host-screen.xml"/>
+    <screen id="testOpenFrame" template="/spec/haulmont/cuba/web/frames/screens/test-open-frame.xml"/>
+    <screen id="test_LegacyUserBrowse" template="/spec/haulmont/cuba/web/frames/screens/legacy-user-browse-test.xml"/>
+    <screen id="test_LegacyUserEditor" template="/spec/haulmont/cuba/web/screens/legacy/legacy-user-edit.xml"/>
+    <screen id="test_PresentationsLegacyTestScreen"
+            template="/legacy_presentations/screens/presentations-legacy-test-screen.xml"/>
+    <screen id="autowireLegacyParamsScreen"
+            template="/spec/haulmont/cuba/web/ui_controller_depenency_injector/screen/autowire-legacy-params-screen.xml"/>
+</screen-config>

@@ -1,0 +1,97 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
+    <screen id="editWindowActions"
+            template="/com/haulmont/cuba/gui/edit-window.actions.xml"/>
+    <screen id="extendedEditWindowActions"
+            template="/com/haulmont/cuba/gui/extended-edit-window.actions.xml"/>
+    <screen id="lookupWindowActions"
+            template="/com/haulmont/cuba/gui/lookup-window.actions.xml"/>
+    <screen id="loginWindow"
+            template="/com/haulmont/cuba/web/app/loginwindow/loginwindow.xml"/>
+    <screen id="mainWindow"
+            template="/com/haulmont/cuba/web/app/mainwindow/mainwindow.xml"/>
+    <screen id="backgroundWorkWindow"
+            template="/com/haulmont/cuba/gui/backgroundwork/background-work-window.xml"/>
+    <screen id="backgroundWorkProgressWindow"
+            template="/com/haulmont/cuba/gui/backgroundwork/background-work-progress-window.xml"/>
+    <screen id="fileUploadDialog"
+            template="/com/haulmont/cuba/gui/app/core/file/file-upload-dialog.xml"/>
+    <screen id="list-editor-popup"
+            template="/com/haulmont/cuba/gui/components/listeditor/list-editor-popup.xml"/>
+    <screen id="bulkEditor"
+            template="/com/haulmont/cuba/gui/app/core/bulk/bulk-edit.xml"/>
+    <screen id="saveSetInFolder"
+            template="/com/haulmont/cuba/web/app/folders/save-set-window.xml"/>
+
+    <screen id="filterEditor"
+            template="/com/haulmont/cuba/gui/components/filter/edit/filter-edit.xml"/>
+
+    <screen id="addCondition"
+            template="/com/haulmont/cuba/gui/components/filter/addcondition/add-condition.xml"/>
+
+    <screen id="saveFilter"
+            template="/com/haulmont/cuba/gui/components/filter/save-filter.xml"/>
+
+    <screen id="customConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/custom-condition-frame.xml"/>
+
+    <screen id="dynamicAttributesConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/dynamic-attributes-condition-frame.xml"/>
+
+    <screen id="propertyConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/property-condition-frame.xml"/>
+
+    <screen id="customConditionEditor"
+            template="/com/haulmont/cuba/gui/components/filter/edit/custom-condition-edit.xml"/>
+
+    <screen id="dynamicAttributesConditionEditor"
+            template="/com/haulmont/cuba/gui/components/filter/edit/dynamic-attributes-condition-edit.xml"/>
+
+    <screen id="groupConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/group-condition-frame.xml"/>
+
+    <screen id="ftsConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/fts-condition-frame.xml"/>
+
+    <screen id="filterSelect"
+            template="/com/haulmont/cuba/gui/components/filter/filterselect/filter-select.xml"/>
+
+    <screen id="date-interval-editor"
+            template="/com/haulmont/cuba/gui/components/filter/dateinterval/date-interval-editor.xml"/>
+
+    <screen id="sys$ScheduledTask.browse"
+            template="/com/haulmont/cuba/web/app/scheduled/scheduled-task-browse.xml"/>
+
+    <screen id="sys$ScheduledTask.edit"
+            template="/com/haulmont/cuba/web/app/scheduled/scheduled-task-edit.xml"/>
+
+    <screen id="sys$ScheduledExecution.browse"
+            template="/com/haulmont/cuba/web/app/scheduled/scheduled-execution-browse.xml"/>
+
+    <screen id="appProperties"
+            template="com/haulmont/cuba/gui/app/core/appproperties/appproperties-browse.xml"
+            route="app-properties"/>
+
+    <screen id="appPropertyEditor"
+            template="com/haulmont/cuba/gui/app/core/appproperties/appproperties-edit.xml"/>
+
+    <screen id="appPropertiesExport"
+            template="com/haulmont/cuba/gui/app/core/appproperties/appproperties-export.xml"/>
+
+
+</screen-config>

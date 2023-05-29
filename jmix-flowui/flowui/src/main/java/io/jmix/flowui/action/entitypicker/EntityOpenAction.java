@@ -36,7 +36,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 

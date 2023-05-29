@@ -18,7 +18,7 @@ package test_support;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.data.QueryParamValueProvider;
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

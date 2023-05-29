@@ -33,7 +33,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -275,7 +275,7 @@ public class MenuConfig {
         loadDescription(element, menuItem);
 
         menuItem.setProperties(loadMenuItemProperties(element));
-        menuItem.setUrlQueryParameters(loadMenuItemParameters(element, "urlQueryParameters"));
+        menuItem.setQueryParameters(loadMenuItemParameters(element, "queryParameters"));
         menuItem.setRouteParameters(loadMenuItemParameters(element, "routeParameters"));
 
         return menuItem;

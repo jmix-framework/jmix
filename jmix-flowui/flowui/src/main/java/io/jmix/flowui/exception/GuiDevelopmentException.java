@@ -20,7 +20,7 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 
 public class GuiDevelopmentException extends DevelopmentException {

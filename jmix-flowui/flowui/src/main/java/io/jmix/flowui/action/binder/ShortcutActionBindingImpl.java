@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 public class ShortcutActionBindingImpl<C extends Component, A extends Action>

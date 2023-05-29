@@ -33,7 +33,7 @@ import io.jmix.flowui.model.InstanceContainer;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

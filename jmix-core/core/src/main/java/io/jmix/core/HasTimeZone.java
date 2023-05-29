@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Provides user time zone information.

@@ -39,7 +39,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;

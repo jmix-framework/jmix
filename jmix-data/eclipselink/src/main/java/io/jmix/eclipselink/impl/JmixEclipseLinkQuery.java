@@ -36,14 +36,13 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
 import io.jmix.eclipselink.impl.entitycache.QueryKey;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
-import org.springframework.lang.Nullable;
-import jakarta.persistence.*;
 import org.eclipse.persistence.config.CascadePolicy;
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
 import org.eclipse.persistence.internal.helper.ClassConstants;
 import org.eclipse.persistence.internal.helper.ConversionManager;
-import org.eclipse.persistence.internal.helper.JmixUtil;
+//todo SB3 uncomment Jmix Eclipselink CubaUtil
+//import org.eclipse.persistence.internal.helper.CubaUtil;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
 import org.eclipse.persistence.jpa.JpaQuery;
 import org.eclipse.persistence.queries.DatabaseQuery;
@@ -53,6 +52,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.env.Environment;
 
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
@@ -548,7 +549,8 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             }
         }
         if (!useJPQLCache) {
-            JmixUtil.setEnabledJPQLParseCache(false);
+            //todo SB3 uncomment Jmix Eclipselink CubaUtil
+//            CubaUtil.setEnabledJPQLParseCache(false);
         }
         try {
             if (resultClass != null) {
@@ -557,7 +559,8 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
                 return (JpaQuery) entityManager.createQuery(queryString);
             }
         } finally {
-            JmixUtil.setEnabledJPQLParseCache(true);
+            //todo SB3 uncomment Jmix Eclipselink CubaUtil
+//            CubaUtil.setEnabledJPQLParseCache(true);
         }
     }
 

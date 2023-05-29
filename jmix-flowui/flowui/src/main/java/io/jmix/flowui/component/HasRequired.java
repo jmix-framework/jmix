@@ -18,7 +18,7 @@ package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.HasElement;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface HasRequired extends HasElement {
 

@@ -16,7 +16,7 @@
 
 package io.jmix.autoconfigure.oidc;
 
-import io.jmix.core.JmixSecurityFilterChainOrder;
+import io.jmix.core.JmixOrder;
 import io.jmix.oidc.OidcConfiguration;
 import io.jmix.oidc.OidcProperties;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
@@ -86,7 +86,7 @@ public class OidcAutoConfiguration {
         public static final String SECURITY_CONFIGURER_QUALIFIER = "oidc-login";
 
         @Bean("oidc_OAuthLoginSecurityFilterChain")
-        @Order(JmixSecurityFilterChainOrder.OIDC_LOGIN)
+        @Order(JmixOrder.HIGHEST_PRECEDENCE + 200)
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                        JmixOidcUserService jmixOidcUserService,
                                                        ClientRegistrationRepository clientRegistrationRepository) throws Exception {
@@ -136,7 +136,7 @@ public class OidcAutoConfiguration {
         public static final String SECURITY_CONFIGURER_QUALIFIER = "oidc-resource-server";
 
         @Bean("oidc_JwtSecurityFilterChain")
-        @Order(JmixSecurityFilterChainOrder.OIDC_RESOURCE_SERVER)
+        @Order(JmixOrder.HIGHEST_PRECEDENCE + 150)
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                        JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter,
                                                        ApplicationEventPublisher applicationEventPublisher) throws Exception {

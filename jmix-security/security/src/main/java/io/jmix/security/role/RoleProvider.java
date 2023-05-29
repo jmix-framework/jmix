@@ -18,7 +18,7 @@ package io.jmix.security.role;
 
 import io.jmix.security.model.BaseRole;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 

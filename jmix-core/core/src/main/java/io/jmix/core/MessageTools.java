@@ -296,7 +296,7 @@ public class MessageTools {
         String notNullMessage = (String) metaProperty.getAnnotations()
                 .get(NotNull.class.getName() + "_notnull_message");
         if (notNullMessage != null
-                && !"{javax.validation.constraints.NotNull.message}".equals(notNullMessage)) {
+                && !"{jakarta.validation.constraints.NotNull.message}".equals(notNullMessage)) {
             if (notNullMessage.startsWith("{") && notNullMessage.endsWith("}")) {
                 notNullMessage = notNullMessage.substring(1, notNullMessage.length() - 1);
                 if (isMessageKey(notNullMessage)) {

@@ -196,6 +196,19 @@
         <Method name="setPopupButtonAction"/>
     </Match>
 
+
+    <!--  Do not analyze equals() method in all jmix entities  -->
+    <Match>
+        <Bug pattern="NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT"/>
+        <Package name="~io\.jmix\..*\.entity.*"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE"/>
+        <Class name="~.*\$JmixEntityEntry"/>
+    </Match>
+
+
     <!--  todo fix  -->
     <Match>
         <Bug pattern="NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT"/>
@@ -207,6 +220,21 @@
         <Or>
             <!-- ... -->
         </Or>
+    </Match>
+
+    <!--  todo Fix next Match. It is added here because in many places we have something like this:
+    if (a.getB() != null) {
+        doSmth(a.getB());
+    }
+    Spotbugs consider it an error.
+    The following works:
+    B b = a.getB();
+    if (b != null) {
+        doSmth(b);
+    }
+    -->
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
 
     <!-- Bad practice detected in EclipseLink generated code -->
@@ -366,4 +394,5 @@
         <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
         <Class name="name.fraser.neil.plaintext.diff_match_patch"/>
     </Match>
+
 </FindBugsFilter>

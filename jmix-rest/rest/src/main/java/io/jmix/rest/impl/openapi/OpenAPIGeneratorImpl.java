@@ -49,7 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.servlet.ServletContext;
 import java.util.*;
 import java.util.stream.Collectors;

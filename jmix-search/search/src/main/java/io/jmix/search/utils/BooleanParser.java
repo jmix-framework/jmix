@@ -16,7 +16,7 @@
 
 package io.jmix.search.utils;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public class BooleanParser {
 

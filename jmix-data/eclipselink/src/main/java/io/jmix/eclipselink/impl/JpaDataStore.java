@@ -51,7 +51,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.persistence.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;

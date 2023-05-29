@@ -18,16 +18,14 @@ package test_support.entity.soft_delete;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import java.util.UUID;
 
 @Table(name = "TEST_HARDDELETE_ENTITY")
 @JmixEntity
 @Entity(name = "test_HardDeleteEntity")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class HardDeleteEntity {
 
     @Id

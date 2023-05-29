@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Class is used for getting default policy group for the {@link ResourcePolicy} instance.

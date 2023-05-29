@@ -21,7 +21,7 @@ import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.View;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 /**

@@ -18,7 +18,7 @@ package io.jmix.core.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;

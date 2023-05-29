@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Component("data_PropertyConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)

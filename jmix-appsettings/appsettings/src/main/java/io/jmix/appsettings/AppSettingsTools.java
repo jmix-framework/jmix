@@ -1,8 +1,8 @@
 package io.jmix.appsettings;
 
 import io.jmix.appsettings.entity.AppSettingsEntity;
+import org.springframework.lang.Nullable;
 
-import jakarta.annotation.Nullable;
 import java.util.List;
 
 public interface AppSettingsTools {

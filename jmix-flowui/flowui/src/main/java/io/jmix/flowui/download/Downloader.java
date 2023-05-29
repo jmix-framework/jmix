@@ -19,7 +19,7 @@ package io.jmix.flowui.download;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Generic interface to download data from the system.

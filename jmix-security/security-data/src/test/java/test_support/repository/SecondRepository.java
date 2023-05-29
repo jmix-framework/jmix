@@ -18,7 +18,7 @@ package test_support.repository;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.repository.ApplyConstraints;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

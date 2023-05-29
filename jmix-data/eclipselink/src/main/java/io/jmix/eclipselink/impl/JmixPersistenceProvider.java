@@ -16,24 +16,27 @@
 
 package io.jmix.eclipselink.impl;
 
+import io.jmix.core.MetadataTools;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 import org.eclipse.persistence.jpa.PersistenceProvider;
 import org.springframework.beans.factory.ListableBeanFactory;
 
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.spi.PersistenceUnitInfo;
 import java.util.Map;
 
 public class JmixPersistenceProvider extends PersistenceProvider {
 
     private ListableBeanFactory beanFactory;
+    private MetadataTools metadataTools;
 
-    public JmixPersistenceProvider(ListableBeanFactory beanFactory) {
+    public JmixPersistenceProvider(ListableBeanFactory beanFactory, MetadataTools metadataTools) {
         this.beanFactory = beanFactory;
+        this.metadataTools = metadataTools;
     }
 
     @Override
     public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map properties) {
         EntityManagerFactory entityManagerFactory = super.createContainerEntityManagerFactory(info, properties);
-        return new JmixEntityManagerFactory(entityManagerFactory, beanFactory);
+        return new JmixEntityManagerFactory(entityManagerFactory, beanFactory, metadataTools);
     }
 }

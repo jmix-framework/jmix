@@ -27,7 +27,7 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.List;
 
 @ActionType(GenericFilterClearValuesAction.ID)

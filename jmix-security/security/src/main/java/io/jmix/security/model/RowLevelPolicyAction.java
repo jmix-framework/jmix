@@ -18,7 +18,7 @@ package io.jmix.security.model;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Objects;
 
 public enum RowLevelPolicyAction implements EnumClass<String> {

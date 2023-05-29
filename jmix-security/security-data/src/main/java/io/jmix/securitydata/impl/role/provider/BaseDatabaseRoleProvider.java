@@ -26,7 +26,7 @@ import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.RoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;

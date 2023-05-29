@@ -20,17 +20,14 @@ includeProject('audit-starter', 'jmix-audit/audit-starter')
 includeProject('audit-flowui', 'jmix-audit/audit-flowui')
 includeProject('audit-flowui-starter', 'jmix-audit/audit-flowui-starter')
 
-includeProject('authorization-server', 'jmix-authorization-server/authorization-server')
-includeProject('authorization-server-starter', 'jmix-authorization-server/authorization-server-starter')
+includeProject('authorization-server', 'jmix-authserver/authorization-server')
+includeProject('authorization-server-starter', 'jmix-authserver/authorization-server-starter')
 
 includeProject('awsfs', 'jmix-awsfs/awsfs')
 includeProject('awsfs-starter', 'jmix-awsfs/awsfs-starter')
 
 includeProject('core', 'jmix-core/core')
 includeProject('core-starter', 'jmix-core/core-starter')
-
-//includeProject('cuba', 'jmix-cuba/cuba')
-//includeProject('cuba-starter', 'jmix-cuba/cuba-starter')
 
 includeProject('data', 'jmix-data/data')
 includeProject('data-autoconfigure', 'jmix-data/data-autoconfigure')

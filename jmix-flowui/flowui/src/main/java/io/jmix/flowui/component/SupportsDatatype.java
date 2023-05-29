@@ -18,7 +18,7 @@ package io.jmix.flowui.component;
 
 import io.jmix.core.metamodel.datatype.Datatype;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public interface SupportsDatatype<V> {
 

@@ -64,21 +64,18 @@ public class JsonAllRecordsExporter extends AbstractAllRecordsExporter {
     public void exportAll(DataUnit dataUnit, Consumer<Object> jsonObjectCreator) {
         Preconditions.checkNotNullArgument(jsonObjectCreator, "jsonObjectCreator can't be null");
 
-        LoadContext loadContext = generateLoadContext(dataUnit);
-        LoadContext.Query query = loadContext.getQuery();
-
-        Preconditions.checkNotNullArgument(query, "Cannot export all rows. %s can't be null",
-                LoadContext.Query.class.getSimpleName());
-
-        int loadBatchSize = gridExportProperties.getExportAllBatchSize();
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
-
         transactionTemplate.executeWithoutResult(transactionStatus -> {
-            long count = dataManager.getCount(loadContext);
+            long count = dataManager.getCount(generateLoadContext(dataUnit));
+            int loadBatchSize = gridExportProperties.getExportAllBatchSize();
+
             boolean initialLoading = true;
             Object lastLoadedPkValue = null;
 
             for (int firstResult = 0; firstResult < count; firstResult += loadBatchSize) {
+                LoadContext loadContext = generateLoadContext(dataUnit);
+                LoadContext.Query query = loadContext.getQuery();
+
                 if (initialLoading) {
                     initialLoading = false;
                 } else {

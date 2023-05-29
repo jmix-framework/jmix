@@ -42,7 +42,7 @@ import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.WindowBuilder;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 

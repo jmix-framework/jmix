@@ -604,7 +604,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.kit.component.combobox.ComboBoxPicker",
             category = "Components",
             xmlElement = "comboBoxPicker",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/component/comboBox.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "allowedCharPattern", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "allowCustomValue", type = StudioPropertyType.BOOLEAN,

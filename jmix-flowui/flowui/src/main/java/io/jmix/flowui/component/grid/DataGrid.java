@@ -37,7 +37,7 @@ import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

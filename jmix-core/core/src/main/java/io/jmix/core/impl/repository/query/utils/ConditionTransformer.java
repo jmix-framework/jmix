@@ -22,7 +22,7 @@ import io.jmix.core.querycondition.PropertyCondition;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.List;
 
 /**

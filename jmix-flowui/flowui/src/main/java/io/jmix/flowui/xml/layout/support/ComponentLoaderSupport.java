@@ -53,7 +53,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;

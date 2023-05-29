@@ -21,7 +21,7 @@ import io.jmix.flowui.component.filer.FilterComponent;
 import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.entity.filter.FilterCondition;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Internal
 public class FilterComponentRegistrationImpl implements FilterComponentRegistration {

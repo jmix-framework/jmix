@@ -28,13 +28,12 @@ import io.jmix.eclipselink.persistence.DescriptorProcessor;
 import io.jmix.eclipselink.persistence.DescriptorProcessorContext;
 import io.jmix.eclipselink.persistence.MappingProcessor;
 import io.jmix.eclipselink.persistence.MappingProcessorContext;
+import jakarta.persistence.OneToOne;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.mappings.DatabaseMapping;
 import org.eclipse.persistence.mappings.OneToOneMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import jakarta.persistence.OneToOne;
 
 /**
  * Modifies mapping to support soft delete feature. Updates softDeletionForBatch and
@@ -60,16 +59,14 @@ public class SoftDeleteProcessor implements MappingProcessor, DescriptorProcesso
             OneToOneMapping oneToOneMapping = (OneToOneMapping) mapping;
             if (metadataTools.isSoftDeletable(oneToOneMapping.getReferenceClass())) {
                 if (mapping.isManyToOneMapping()) {
-                    //todo SB3 uncomment Jmix Eclipselink soft deletion
-//                    oneToOneMapping.setSoftDeletionForBatch(false);
-//                    oneToOneMapping.setSoftDeletionForValueHolder(false);
+                    oneToOneMapping.setSoftDeletionForBatch(false);
+                    oneToOneMapping.setSoftDeletionForValueHolder(false);
                 } else {
                     OneToOne oneToOne = metaProperty.getAnnotatedElement().getAnnotation(OneToOne.class);
                     if (oneToOne != null) {
                         if (Strings.isNullOrEmpty(oneToOne.mappedBy())) {
-                            //todo SB3 uncomment Jmix Eclipselink soft deletion
-//                            oneToOneMapping.setSoftDeletionForBatch(false);
-//                            oneToOneMapping.setSoftDeletionForValueHolder(false);
+                            oneToOneMapping.setSoftDeletionForBatch(false);
+                            oneToOneMapping.setSoftDeletionForValueHolder(false);
                         }
                     }
                 }
@@ -84,13 +81,12 @@ public class SoftDeleteProcessor implements MappingProcessor, DescriptorProcesso
         if (metadataTools.isSoftDeletable(descriptor.getJavaClass())) {
             String deletedDateProperty = metadataTools.findDeletedDateProperty(descriptor.getJavaClass());
             Preconditions.checkNotNull(deletedDateProperty);
-            //todo SB3 uncomment Jmix Eclipselink soft deletion
-//            descriptor.setDeletePredicate(entity -> {
-//                if (EntityValues.isSoftDeletionSupported(entity)) {
-//                    return entityStates.isLoaded(entity, deletedDateProperty) && EntityValues.isSoftDeleted(entity);
-//                }
-//                return false;
-//            });
+            descriptor.setDeletePredicate(entity -> {
+                if (EntityValues.isSoftDeletionSupported(entity)) {
+                    return entityStates.isLoaded(entity, deletedDateProperty) && EntityValues.isSoftDeleted(entity);
+                }
+                return false;
+            });
         }
     }
 }

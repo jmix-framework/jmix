@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.model;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.List;
 

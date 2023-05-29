@@ -42,7 +42,7 @@ import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.transaction.support.ResourceHolderSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;

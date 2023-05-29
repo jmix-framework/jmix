@@ -1809,7 +1809,7 @@
         </xs:sequence>
 
         <xs:attribute name="type" type="actionTypeEnum"/>
-        <xs:attribute name="shortcutCombination" type="shortcutCombination"/>
+        <xs:attribute name="shortcutCombination" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="text" type="resourceString"/>
         <xs:attribute name="description" type="resourceString"/>

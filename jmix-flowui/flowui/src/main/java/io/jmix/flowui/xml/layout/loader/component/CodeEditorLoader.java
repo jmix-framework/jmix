@@ -40,7 +40,7 @@ public class CodeEditorLoader extends AbstractComponentLoader<CodeEditor> {
         loadBoolean(element, "showLineNumbers", resultComponent::setShowLineNumbers);
         loadBoolean(element, "showPrintMargin", resultComponent::setShowPrintMargin);
         loadInteger(element, "printMarginColumn", resultComponent::setPrintMarginColumn);
-        loadInteger(element, "fontSize", resultComponent::setFontSize);
+        loadString(element, "fontSize", resultComponent::setFontSize);
 
         loadEnum(element, CodeEditorMode.class, "mode", resultComponent::setMode);
         loadEnum(element, CodeEditorTheme.class, "theme", resultComponent::setTheme);

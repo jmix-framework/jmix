@@ -15,6 +15,10 @@
  */
 package io.jmix.flowui.kit.component.codeeditor;
 
+import jakarta.annotation.Nullable;
+
+import java.util.Objects;
+
 public enum CodeEditorTheme {
 
     AMBIANCE("ambiance"),
@@ -62,13 +66,24 @@ public enum CodeEditorTheme {
     VIBRANT_INK("vibrant_ink"),
     XCODE("xcode");
 
-    private final String theme;
+    private final String id;
 
-    CodeEditorTheme(String theme) {
-        this.theme = theme;
+    CodeEditorTheme(String id) {
+        this.id = id;
     }
 
-    public String getThemeName() {
-        return this.theme;
+    public String getId() {
+        return this.id;
+    }
+
+    @Nullable
+    public static CodeEditorTheme fromId(String id) {
+        for (CodeEditorTheme theme : values()) {
+            if (Objects.equals(theme.getId(), id)) {
+                return theme;
+            }
+        }
+
+        return null;
     }
 }

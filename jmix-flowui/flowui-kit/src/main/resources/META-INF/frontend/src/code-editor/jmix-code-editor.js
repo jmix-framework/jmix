@@ -63,63 +63,52 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         return {
             theme: {
                 type: String,
-                reflect: true,
-                value: 'textmate',
                 observer: '_onThemeChange'
             },
 
             mode: {
                 type: String,
-                reflect: true,
-                value: 'javascript',
                 observer: '_onModeChange'
             },
 
             highlightActiveLine: {
                 type: Boolean,
-                reflect: true,
                 value: true,
                 observer: '_onHighlightActiveLineChange'
             },
 
             showGutter: {
                 type: Boolean,
-                reflect: true,
                 value: true,
                 observer: '_onShowGutterChange'
             },
 
             showLineNumbers: {
                 type: Boolean,
-                reflect: true,
                 value: true,
                 observer: '_onShowLineNumbersChange'
             },
 
             showPrintMargin: {
                 type: Boolean,
-                reflect: true,
                 value: true,
                 observer: '_onShowPrintMarginChange'
             },
 
             printMarginColumn: {
                 type: Number,
-                reflect: true,
                 value: 80,
                 observer: '_onPrintMarginColumnChange'
             },
 
             value: {
                 type: String,
-                reflect: true,
                 observer: '_onValueChange'
             },
 
             fontSize: {
-                type: Number,
-                reflect: true,
-                value: 16,
+                type: String,
+                value: '1rem',
                 observer: '_onFontSizeChange'
             },
 

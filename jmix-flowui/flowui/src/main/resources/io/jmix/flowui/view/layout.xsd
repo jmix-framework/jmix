@@ -3424,7 +3424,7 @@
                 <xs:attribute name="showLineNumbers" type="xs:boolean"/>
                 <xs:attribute name="showPrintMargin" type="xs:boolean"/>
                 <xs:attribute name="printMarginColumn" type="xs:integer"/>
-                <xs:attribute name="fontSize" type="xs:integer"/>
+                <xs:attribute name="fontSize" type="xs:string"/>
 
                 <xs:attribute name="mode" type="codeEditorMode"/>
                 <xs:attribute name="theme" type="codeEditorTheme"/>

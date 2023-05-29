@@ -15,6 +15,10 @@
  */
 package io.jmix.flowui.kit.component.codeeditor;
 
+import jakarta.annotation.Nullable;
+
+import java.util.Objects;
+
 public enum CodeEditorMode {
 
     ABAP("abap"),
@@ -200,14 +204,25 @@ public enum CodeEditorMode {
     YAML("yaml"),
     ZEEK("zeek");
 
-    private final String mode;
+    private final String id;
 
-    CodeEditorMode(String mode) {
-        this.mode = mode;
+    CodeEditorMode(String id) {
+        this.id = id;
     }
 
-    public String getModeName() {
-        return this.mode;
+    public String getId() {
+        return this.id;
+    }
+
+    @Nullable
+    public static CodeEditorMode fromId(String id) {
+        for (CodeEditorMode mode : values()) {
+            if (Objects.equals(mode.getId(), id)) {
+                return mode;
+            }
+        }
+
+        return null;
     }
 }
 

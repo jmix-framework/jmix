@@ -49,6 +49,9 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     protected static final String PROPERTY_PRINT_MARGIN_COLUMN = "printMarginColumn";
     protected static final String PROPERTY_FONT_SIZE = "fontSize";
 
+    protected static final int PRINT_MARGIN_COLUMN_DEFAULT_VALUE = 80;
+    protected static final String FONT_SIZE_DEFAULT_VALUE = "1rem";
+
     protected CodeEditorValidationSupport validationSupport;
 
     public JmixCodeEditor() {
@@ -65,79 +68,140 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         }
 
         setInvalid(false);
+        setPrintMarginColumn(PRINT_MARGIN_COLUMN_DEFAULT_VALUE);
+        setFontSize(FONT_SIZE_DEFAULT_VALUE);
+
         addValueChangeListener(e -> validate());
         addClientValidatedEventListener(e -> validate());
     }
 
+    /** @see JmixCodeEditor#setHighlightActiveLine(boolean)
+     *
+     * @return Visibility of highlighting the active line
+     */
     @Synchronize(PROPERTY_HIGHLIGHT_ACTIVE_LINE)
     public boolean isHighlightActiveLine() {
         return getElement().getProperty(PROPERTY_HIGHLIGHT_ACTIVE_LINE, true);
     }
 
+    /**
+     * Sets the highlight of the line the cursor is on
+     */
     public void setHighlightActiveLine(boolean highlightActiveLine) {
         getElement().setProperty(PROPERTY_HIGHLIGHT_ACTIVE_LINE, highlightActiveLine);
     }
 
+    /**
+     * @see JmixCodeEditor#setShowGutter(boolean)
+     * @return Gutter visibility
+     */
     @Synchronize(PROPERTY_SHOW_GUTTER)
     public boolean isShowGutter() {
         return getElement().getProperty(PROPERTY_SHOW_GUTTER, true);
     }
 
+    /**
+     * Sets visibility of the Gutter
+     */
     public void setShowGutter(boolean showGutter) {
         getElement().setProperty(PROPERTY_SHOW_GUTTER, showGutter);
     }
 
+    /**
+     * @see JmixCodeEditor#setShowLineNumbers(boolean)
+     * @return Editor line numbering visibility
+     */
     @Synchronize(PROPERTY_SHOW_LINE_NUMBERS)
     public boolean isShowLineNumbers() {
         return getElement().getProperty(PROPERTY_SHOW_LINE_NUMBERS, true);
     }
 
+    /**
+     * Sets the line numbering of the editor
+     */
     public void setShowLineNumbers(boolean showLineNumbers) {
         getElement().setProperty(PROPERTY_SHOW_LINE_NUMBERS, showLineNumbers);
     }
 
+    /**
+     * @see JmixCodeEditor#setShowPrintMargin(boolean)
+     * @return Print margin visibility
+     */
     @Synchronize(PROPERTY_SHOW_PRINT_MARGIN)
     public boolean isShowPrintMargin() {
         return getElement().getProperty(PROPERTY_SHOW_PRINT_MARGIN, true);
     }
 
+    /**
+     * Sets print margin visibility
+     */
     public void setShowPrintMargin(boolean showPrintMargin) {
         getElement().setProperty(PROPERTY_SHOW_PRINT_MARGIN, showPrintMargin);
     }
 
+    /**
+     * @see JmixCodeEditor#setPrintMarginColumn(int)
+     * @return Print margin position in symbols
+     */
     @Synchronize(PROPERTY_PRINT_MARGIN_COLUMN)
     public int getPrintMarginColumn() {
-        return getElement().getProperty(PROPERTY_PRINT_MARGIN_COLUMN, 80);
+        return getElement().getProperty(PROPERTY_PRINT_MARGIN_COLUMN, PRINT_MARGIN_COLUMN_DEFAULT_VALUE);
     }
 
+    /**
+     * Set print margin position in symbols
+     *
+     * @param printMarginColumn print margin position in symbols
+     */
     public void setPrintMarginColumn(int printMarginColumn) {
         getElement().setProperty(PROPERTY_PRINT_MARGIN_COLUMN, printMarginColumn);
     }
 
+    /**
+     * @see JmixCodeEditor#setTheme(CodeEditorTheme)
+     * @return Current visual theme
+     */
     @Synchronize(PROPERTY_THEME)
     public CodeEditorTheme getTheme() {
-        return CodeEditorTheme.valueOf(getElement().getProperty(PROPERTY_THEME));
+        return CodeEditorTheme.fromId(getElement().getProperty(PROPERTY_THEME));
     }
 
+    /**
+     * Sets the visual theme of the editor
+     */
     public void setTheme(CodeEditorTheme theme) {
-        getElement().setProperty(PROPERTY_THEME, theme.getThemeName());
+        getElement().setProperty(PROPERTY_THEME, theme.getId());
     }
 
+    /**
+     * @see JmixCodeEditor#setMode(CodeEditorMode)
+     * @return current syntax highlighting mode
+     */
     @Synchronize(PROPERTY_MODE)
     public CodeEditorMode getMode() {
-        return CodeEditorMode.valueOf(getElement().getProperty(PROPERTY_MODE));
+        return CodeEditorMode.fromId(getElement().getProperty(PROPERTY_MODE));
     }
 
+    /**
+     * Sets syntax highlighting for a specific mode
+     */
     public void setMode(CodeEditorMode mode) {
-        getElement().setProperty(PROPERTY_MODE, mode.getModeName());
+        getElement().setProperty(PROPERTY_MODE, mode.getId());
     }
 
+    /**
+     * @see JmixCodeEditor#setFontSize(String)
+     * @return Font size of the editor
+     */
     @Synchronize(PROPERTY_FONT_SIZE)
-    public int getFontSize() {
-        return getElement().getProperty(PROPERTY_FONT_SIZE, 16);
+    public String getFontSize() {
+        return getElement().getProperty(PROPERTY_FONT_SIZE, FONT_SIZE_DEFAULT_VALUE);
     }
 
-    public void setFontSize(int fontSize) {
+    /**
+     * Sets the font size for the editor
+     */
+    public void setFontSize(String fontSize) {
         getElement().setProperty(PROPERTY_FONT_SIZE, fontSize);
     }
 

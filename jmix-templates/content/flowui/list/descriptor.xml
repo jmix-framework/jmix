@@ -42,7 +42,11 @@ def tableXml = api.processSnippet('table.xml',
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
     </actions>
-    <layout>
+    <layout><%if (createGenericFilter) {%>
+        <genericFilter id="genericFilter"
+                       dataLoader="${tableDl}">
+            <properties include=".*"/>
+        </genericFilter><%}%>
         ${tableXml}
         <hbox id="lookupActions" visible="false">
             <button id="selectBtn" action="selectAction"/>

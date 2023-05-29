@@ -24,6 +24,10 @@
         </queryParameters>
     </facets>
     <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="usersDl">
+            <properties include=".*"/>
+        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="usersTable.create"/>
             <button id="editBtn" action="usersTable.edit"/>

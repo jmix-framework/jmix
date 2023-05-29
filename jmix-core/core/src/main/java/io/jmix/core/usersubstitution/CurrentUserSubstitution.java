@@ -18,7 +18,7 @@ package io.jmix.core.usersubstitution;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Interface is used to get the information about current user substitution

@@ -21,7 +21,7 @@ import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.component.page.Page.ExtendedClientDetailsReceiver;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Component("flowUI_ExtendedClientDetailsProvider")
 public class ExtendedClientDetailsProvider {

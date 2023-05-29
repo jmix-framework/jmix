@@ -65,8 +65,7 @@ class JmixPlugin implements Plugin<Project> {
 
             if (project.jmix.entitiesEnhancing.enabled) {
                 project.configurations.create('enhancing')
-                //todo SB3 change eclipselink version to Jmix fork
-                project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:4.0.1')
+                project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:4.0.1-15-jmix')
 
                 if (javaPlugin) {
                     project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))

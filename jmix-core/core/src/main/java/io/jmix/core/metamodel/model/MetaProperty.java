@@ -18,7 +18,7 @@ package io.jmix.core.metamodel.model;
 
 import io.jmix.core.entity.annotation.ReplaceEntity;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.lang.reflect.AnnotatedElement;
 
 /**

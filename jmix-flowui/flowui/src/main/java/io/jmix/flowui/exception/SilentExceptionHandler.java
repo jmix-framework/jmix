@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Component("flowui_SilentExceptionHandler")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 100)

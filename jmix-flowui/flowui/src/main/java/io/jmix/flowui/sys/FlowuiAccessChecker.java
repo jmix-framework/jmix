@@ -27,7 +27,7 @@ import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.ViewController;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Class checks UI access permission.

@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.flowui.model.InstanceContainer;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 
 public class CollectionPropertyContainerImpl<E>

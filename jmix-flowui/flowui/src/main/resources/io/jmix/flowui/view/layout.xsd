@@ -2045,7 +2045,7 @@
         </xs:sequence>
 
         <xs:attribute name="type" type="actionTypeEnum"/>
-        <xs:attribute name="shortcutCombination" type="shortcutCombination"/>
+        <xs:attribute name="shortcutCombination" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="text" type="resourceString"/>
         <xs:attribute name="description" type="resourceString"/>
@@ -3603,7 +3603,7 @@
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="dataLoadCoordinator" type="dataLoadCoordinatorType" minOccurs="0"/>
-                <xs:element name="queryParameters" type="queryParametersType" minOccurs="0"/>
+                <xs:element name="urlQueryParameters" type="urlQueryParametersType" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -3665,34 +3665,34 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <!-- queryParameters -->
+    <!-- urlQueryParameters -->
 
-    <xs:complexType name="queryParametersType">
+    <xs:complexType name="urlQueryParametersType">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="pagination" type="paginationQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="genericFilter" type="genericFilterQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="propertyFilter" type="propertyFilterQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="pagination" type="paginationUrlQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="genericFilter" type="genericFilterUrlQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="propertyFilter" type="propertyFilterUrlQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>
     </xs:complexType>
 
 
-    <xs:complexType name="paginationQueryParametersType">
+    <xs:complexType name="paginationUrlQueryParametersType">
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="component" type="xs:string" use="required"/>
         <xs:attribute name="firstResultParam" type="xs:string"/>
         <xs:attribute name="maxResultsParam" type="xs:string"/>
     </xs:complexType>
 
-    <xs:complexType name="genericFilterQueryParametersType">
+    <xs:complexType name="genericFilterUrlQueryParametersType">
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="component" type="xs:string" use="required"/>
         <xs:attribute name="conditionParam" type="xs:string"/>
     </xs:complexType>
 
-    <xs:complexType name="propertyFilterQueryParametersType">
+    <xs:complexType name="propertyFilterUrlQueryParametersType">
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="component" type="xs:string" use="required"/>
         <xs:attribute name="param" type="xs:string"/>

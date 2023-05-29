@@ -18,7 +18,7 @@ package io.jmix.data;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Provides information about current user for audit purposes -

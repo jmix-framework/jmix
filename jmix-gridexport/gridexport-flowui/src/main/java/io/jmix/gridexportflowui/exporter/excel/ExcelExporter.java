@@ -50,7 +50,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;

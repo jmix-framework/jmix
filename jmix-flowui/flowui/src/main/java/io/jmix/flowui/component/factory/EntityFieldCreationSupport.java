@@ -32,7 +32,7 @@ import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @SuppressWarnings({"rawtypes"})
 @Component("flowui_EntityFieldCreationSupport")

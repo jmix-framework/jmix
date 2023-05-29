@@ -18,7 +18,7 @@ package io.jmix.core.entity;
 
 import io.jmix.core.annotation.Internal;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Internal
 public interface EntityEntryAuditable {

@@ -28,7 +28,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import org.springframework.core.Ordered;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @org.springframework.stereotype.Component("flowui_CustomDatatypesComponentGenerationStrategy")
 public class CustomDatatypesComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {

@@ -26,7 +26,7 @@ import io.jmix.flowui.action.SecurityConstraintAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Action that changes its {@code enabled} property depending on a selected item in a bound {@link Grid}.

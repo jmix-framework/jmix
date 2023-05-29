@@ -61,6 +61,11 @@
               propertyType="MULTI_OPTION"
               preferences="true"
               optionsString="${actionSearch.getWizardTableActions()}"/>
+    <property caption="Create generic filter"
+              code="createGenericFilter"
+              defaultValue="true"
+              propertyType="BOOLEAN"
+              preferences="true"/>
     <property caption="Multiselect"
               code="multiselect"
               propertyType="BOOLEAN"

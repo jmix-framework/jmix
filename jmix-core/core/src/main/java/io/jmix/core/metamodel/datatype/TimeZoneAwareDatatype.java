@@ -16,7 +16,7 @@
 
 package io.jmix.core.metamodel.datatype;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Locale;
 import java.util.TimeZone;
 

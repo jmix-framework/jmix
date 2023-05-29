@@ -18,7 +18,7 @@ package io.jmix.core.datastore;
 
 import io.jmix.core.LoadContext;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

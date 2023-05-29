@@ -24,7 +24,7 @@ import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.kit.event.EventBus;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public abstract class AbstractValueComponentDelegate<C extends Component & HasValue<?, V>, T, V>

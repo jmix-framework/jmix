@@ -18,7 +18,7 @@ package io.jmix.flowui.backgroundtask;
 
 import io.jmix.flowui.view.View;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

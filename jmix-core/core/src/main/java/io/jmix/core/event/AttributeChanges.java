@@ -20,7 +20,7 @@ import io.jmix.core.Id;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;

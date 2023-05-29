@@ -19,7 +19,7 @@ package io.jmix.flowui.action;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.kit.action.Action;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public interface SecurityConstraintAction extends Action {
 

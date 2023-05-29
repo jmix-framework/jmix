@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.data.binding;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public interface SuspendableBindingAware {
 

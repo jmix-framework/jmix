@@ -18,7 +18,7 @@ package io.jmix.flowui.component;
 
 import io.jmix.core.metamodel.model.MetaClass;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public interface SupportsMetaClass {
 

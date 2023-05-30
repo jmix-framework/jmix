@@ -75,9 +75,8 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         addClientValidatedEventListener(e -> validate());
     }
 
-    /** @see JmixCodeEditor#setHighlightActiveLine(boolean)
-     *
-     * @return Visibility of highlighting the active line
+    /**
+     * @return {@code true} if the active line highlighting is enabled, {@code false} otherwise
      */
     @Synchronize(PROPERTY_HIGHLIGHT_ACTIVE_LINE)
     public boolean isHighlightActiveLine() {
@@ -85,15 +84,18 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * Sets the highlight of the line the cursor is on
+     * Sets the highlight of the active line. If the highlighting is enabled,
+     * the line the cursor is on will be highlighted.
+     * The highlight is enabled by default.
+     *
+     * @param highlightActiveLine whether to use active line highlighting
      */
     public void setHighlightActiveLine(boolean highlightActiveLine) {
         getElement().setProperty(PROPERTY_HIGHLIGHT_ACTIVE_LINE, highlightActiveLine);
     }
 
     /**
-     * @see JmixCodeEditor#setShowGutter(boolean)
-     * @return Gutter visibility
+     * @return {@code true} if gutter is visible, {@code false} otherwise
      */
     @Synchronize(PROPERTY_SHOW_GUTTER)
     public boolean isShowGutter() {
@@ -101,15 +103,17 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * Sets visibility of the Gutter
+     * Sets the visibility of the gutter.
+     * The gutter is visible by default.
+     *
+     * @param showGutter whether to show the gutter
      */
     public void setShowGutter(boolean showGutter) {
         getElement().setProperty(PROPERTY_SHOW_GUTTER, showGutter);
     }
 
     /**
-     * @see JmixCodeEditor#setShowLineNumbers(boolean)
-     * @return Editor line numbering visibility
+     * @return {@code true} if line numbers is visible, {@code false} otherwise
      */
     @Synchronize(PROPERTY_SHOW_LINE_NUMBERS)
     public boolean isShowLineNumbers() {
@@ -117,15 +121,17 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * Sets the line numbering of the editor
+     * Sets the line numbers visibility.
+     * The line number is visible by default.
+     *
+     * @param showLineNumbers whether to show the line numbers
      */
     public void setShowLineNumbers(boolean showLineNumbers) {
         getElement().setProperty(PROPERTY_SHOW_LINE_NUMBERS, showLineNumbers);
     }
 
     /**
-     * @see JmixCodeEditor#setShowPrintMargin(boolean)
-     * @return Print margin visibility
+     * @return {@code true} if the print margin, {@code false} otherwise
      */
     @Synchronize(PROPERTY_SHOW_PRINT_MARGIN)
     public boolean isShowPrintMargin() {
@@ -133,15 +139,17 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * Sets print margin visibility
+     * Sets the visibility of the vertical line that shows the limit on the length of a line of code.
+     * The print margin is visible by default.
+     *
+     * @param showPrintMargin whether to show the print margin
      */
     public void setShowPrintMargin(boolean showPrintMargin) {
         getElement().setProperty(PROPERTY_SHOW_PRINT_MARGIN, showPrintMargin);
     }
 
     /**
-     * @see JmixCodeEditor#setPrintMarginColumn(int)
-     * @return Print margin position in symbols
+     * @return print margin position in symbols
      */
     @Synchronize(PROPERTY_PRINT_MARGIN_COLUMN)
     public int getPrintMarginColumn() {
@@ -149,7 +157,8 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * Set print margin position in symbols
+     * Sets the column for the vertical line, which shows the limit on the length of a line of code.
+     * The print margin column is 80 by default.
      *
      * @param printMarginColumn print margin position in symbols
      */
@@ -158,8 +167,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * @see JmixCodeEditor#setTheme(CodeEditorTheme)
-     * @return Current visual theme
+     * @return current visual theme applied to the editor
      */
     @Synchronize(PROPERTY_THEME)
     public CodeEditorTheme getTheme() {
@@ -167,15 +175,17 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * Sets the visual theme of the editor
+     * Sets the visual theme of the editor.
+     * The visual theme is not applied by default.
+     *
+     * @param theme the instance of the {@link CodeEditorTheme} to be applied
      */
     public void setTheme(CodeEditorTheme theme) {
         getElement().setProperty(PROPERTY_THEME, theme.getId());
     }
 
     /**
-     * @see JmixCodeEditor#setMode(CodeEditorMode)
-     * @return current syntax highlighting mode
+     * @return current syntax highlighting mode applied to the editor
      */
     @Synchronize(PROPERTY_MODE)
     public CodeEditorMode getMode() {
@@ -183,15 +193,17 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * Sets syntax highlighting for a specific mode
+     * Sets syntax highlighting for a specific mode.
+     * The syntax highlighting mode is not applied by default.
+     *
+     * @param mode the instance of the {@link CodeEditorMode} to be applied
      */
     public void setMode(CodeEditorMode mode) {
         getElement().setProperty(PROPERTY_MODE, mode.getId());
     }
 
     /**
-     * @see JmixCodeEditor#setFontSize(String)
-     * @return Font size of the editor
+     * @return font size for code in the editor in CSS font-size string format
      */
     @Synchronize(PROPERTY_FONT_SIZE)
     public String getFontSize() {
@@ -199,7 +211,10 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * Sets the font size for the editor
+     * Sets the font size for code in the editor.
+     * The font size is {@code 1rem} by default.
+     *
+     * @param fontSize CSS font-size string
      */
     public void setFontSize(String fontSize) {
         getElement().setProperty(PROPERTY_FONT_SIZE, fontSize);

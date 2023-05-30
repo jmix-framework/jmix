@@ -18,7 +18,6 @@ package io.jmix.flowuidata.component.genericfilter.configuration;
 
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.CurrentAuthentication;
@@ -127,63 +126,73 @@ public class FlowuiDataFilterConfigurationDetail extends AbstractConfigurationDe
     }
 
     protected void initNameField() {
+        String label = getLabelByProperty("name");
+
+        nameField.setLabel(label);
         nameField.setValueSource(new ContainerValueSource<>(configurationDc, "name"));
 
-        String label = getLabelByProperty("name");
-        getContent().addFormItem(nameField, label);
+        getContent().add(nameField);
     }
 
     protected void initConfigurationIdField() {
+        String label = getLabelByProperty("configurationId");
+
+        configurationIdField.setLabel(label);
         configurationIdField.setValueSource(new ContainerValueSource<>(configurationDc, "configurationId"));
+
         configurationIdField.setEnabled(StringUtils.isEmpty(configurationDc.getItem().getConfigurationId())
                 && !generatedIdField.getValue());
+        configurationIdField.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
 
-        String label = getLabelByProperty("configurationId");
-        FormLayout.FormItem formItem = getContent().addFormItem(configurationIdField, label);
-
-        formItem.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
+        getContent().add(configurationIdField);
     }
 
     protected void initDefaultForMeField() {
         JmixCheckbox defaultForMeField = createCheckbox();
+        String label = getLabelByProperty("defaultForMe");
+
+        defaultForMeField.setLabel(label);
         defaultForMeField.setId(DEFAULT_FOR_ME_FIELD_ID);
         defaultForMeField.setWidthFull();
         defaultForMeField.setValueSource(new ContainerValueSource<>(configurationDc, "defaultForMe"));
 
-        String label = getLabelByProperty("defaultForMe");
-        getContent().addFormItem(defaultForMeField, label);
+        getContent().add(defaultForMeField);
     }
 
     protected void initAvailableForAllUsersField(boolean allowGlobalFilters, boolean isAvailableForAll) {
+        String label = messages.getMessage(getClass(), "availableForAllUsersField.label");
+
+        availableForAllUsersField.setLabel(label);
         availableForAllUsersField.setId(AVAILABLE_FOR_ALL_USERS_FIELD_ID);
         availableForAllUsersField.setWidthFull();
         availableForAllUsersField.addValueChangeListener(this::availableForAllUsersFieldValueChangeListener);
-
-        String label = messages.getMessage(getClass(), "availableForAllUsersField.label");
-        FormLayout.FormItem availableForAllUsersFormItem = getContent().addFormItem(availableForAllUsersField, label);
-
-        availableForAllUsersFormItem.setVisible(allowGlobalFilters);
+        availableForAllUsersField.setVisible(allowGlobalFilters);
         availableForAllUsersField.setValue(isAvailableForAll);
+
+        getContent().add(availableForAllUsersField);
     }
 
     protected void initDefaultForAllUsersField(boolean allowGlobalFilters, boolean isAvailableForAll) {
+        String label = getLabelByProperty("defaultForAll");
+
+        defaultForAllUsersField.setLabel(label);
         defaultForAllUsersField.setId(DEFAULT_FOR_ALL_USERS_FIELD_ID);
         defaultForAllUsersField.setWidthFull();
         defaultForAllUsersField.setValueSource(new ContainerValueSource<>(configurationDc, "defaultForAll"));
 
-        String label = getLabelByProperty("defaultForAll");
-        FormLayout.FormItem defaultForAllUsersFormItem = getContent().addFormItem(defaultForAllUsersField, label);
+        defaultForAllUsersField.setVisible(allowGlobalFilters);
+        defaultForAllUsersField.setEnabled(isAvailableForAll);
 
-        defaultForAllUsersFormItem.setVisible(allowGlobalFilters);
-
-        defaultForAllUsersFormItem.setEnabled(isAvailableForAll);
+        getContent().add(defaultForAllUsersField);
     }
 
     protected void initGeneratedIdField() {
-        FormLayout.FormItem formItem = getContent().addFormItem(generatedIdField,
-                messages.getMessage(getClass(), "generatedIdField.label"));
+        String label = messages.getMessage(getClass(), "generatedIdField.label");
 
-        formItem.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
+        generatedIdField.setLabel(label);
+        generatedIdField.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
+
+        getContent().add(generatedIdField);
     }
 
     protected void availableForAllUsersFieldValueChangeListener(ComponentValueChangeEvent<Checkbox, Boolean> event) {

@@ -306,6 +306,7 @@ public interface StudioElements {
             name = "ResponsiveStep",
             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
             xmlElement = "responsiveStep",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE, required = true),
                     @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
@@ -320,6 +321,7 @@ public interface StudioElements {
             name = "PropertyFilter",
             classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter",
             xmlElement = "propertyFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",
                     "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
@@ -369,6 +371,7 @@ public interface StudioElements {
             name = "JpqlFilter",
             classFqn = "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
             xmlElement = "jpqlFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",
                     "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
@@ -412,6 +415,7 @@ public interface StudioElements {
             name = "GroupFilter",
             classFqn = "io.jmix.flowui.component.logicalfilter.GroupFilter",
             xmlElement = "groupFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",
                     "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
@@ -438,6 +442,7 @@ public interface StudioElements {
             name = "Configuration",
             classFqn = "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration",
             xmlElement = "configuration",
+            icon = "io/jmix/flowui/kit/meta/icon/element/configuration.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "default", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
@@ -453,6 +458,7 @@ public interface StudioElements {
             name = "Properties",
             classFqn = "io.jmix.flowui.component.genericfilter.inspector.FilterPropertiesInspector",
             xmlElement = "properties",
+            icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
             target = {"io.jmix.flowui.component.genericfilter.GenericFilter"},
             properties = {
                     @StudioProperty(xmlAttribute = "include", type = StudioPropertyType.STRING, required = true),

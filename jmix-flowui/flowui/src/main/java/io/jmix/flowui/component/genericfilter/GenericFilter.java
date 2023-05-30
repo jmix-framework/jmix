@@ -71,10 +71,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.lang.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -630,8 +628,7 @@ public class GenericFilter extends Composite<JmixDetails>
                     updateGroupConditionButtons(((GroupFilter) filterComponent));
                 }
 
-                if (filterComponent instanceof PropertyFilter) {
-                    PropertyFilter<?> propertyFilter = (PropertyFilter<?>) filterComponent;
+                if (filterComponent instanceof PropertyFilter<?> propertyFilter) {
                     propertyFilter.addOperationChangeListener(operationChangeEvent -> {
                         updateSingleConditionRemoveButton(propertyFilter);
                         resetFilterComponentDefaultValue(propertyFilter);
@@ -965,8 +962,7 @@ public class GenericFilter extends Composite<JmixDetails>
         }
 
         for (FilterComponent component : rootLogicalFilterComponent.getFilterComponents()) {
-            if (component instanceof SingleFilterComponentBase) {
-                SingleFilterComponentBase singleFilterComponent = (SingleFilterComponentBase) component;
+            if (component instanceof SingleFilterComponentBase singleFilterComponent) {
                 singleFilterComponent.setValue(getCurrentConfiguration()
                         .getFilterComponentDefaultValue(singleFilterComponent.getParameterName()));
                 getDataLoader().removeParameter(singleFilterComponent.getParameterName());

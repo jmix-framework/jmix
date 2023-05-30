@@ -32,35 +32,38 @@ public class FilterConfigurationDetail extends AbstractConfigurationDetail {
     @Override
     protected void initFields() {
         initNameField();
-        initConfigurationIdField();
         initGeneratedIdField();
+        initConfigurationIdField();
     }
 
     protected void initNameField() {
         createNameField();
+        String label = messages.getMessage(getClass(), "filterConfigurationDetail.nameField.label");
 
-        getContent().addFormItem(nameField,
-                messages.getMessage(getClass(), "filterConfigurationDetail.nameField.label"));
-    }
+        nameField.setLabel(label);
 
-    protected void initConfigurationIdField() {
-        createConfigurationIdField();
-
-        configurationIdField.setEnabled(false);
-
-        String label = messages.getMessage(getClass(),"filterConfigurationDetail.configurationIdField.label");
-        FormLayout.FormItem formItem = getContent().addFormItem(configurationIdField, label);
-
-        formItem.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
+        getContent().add(nameField);
     }
 
     protected void initGeneratedIdField() {
         createGeneratedIdField();
+        String label = messages.getMessage(getClass(), "filterConfigurationDetail.generatedIdField.label");
 
-        FormLayout.FormItem formItem = getContent().addFormItem(generatedIdField,
-                messages.getMessage(getClass(),"filterConfigurationDetail.generatedIdField.label"));
+        generatedIdField.setLabel(label);
+        generatedIdField.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
 
-        formItem.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
+        getContent().add(generatedIdField);
+    }
+
+    protected void initConfigurationIdField() {
+        createConfigurationIdField();
+        String label = messages.getMessage(getClass(),"filterConfigurationDetail.configurationIdField.label");
+
+        configurationIdField.setLabel(label);
+        configurationIdField.setEnabled(false);
+        configurationIdField.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
+
+        getContent().add(configurationIdField);
     }
 
     public String getConfigurationId() {

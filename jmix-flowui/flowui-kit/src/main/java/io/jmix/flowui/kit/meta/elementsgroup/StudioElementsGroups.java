@@ -95,6 +95,7 @@ public interface StudioElementsGroups {
             name = "Configurations",
             elementClassFqn = "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration",
             xmlElement = "configurations",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/configurations.svg",
             target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}
     )
     void configurations();
@@ -103,6 +104,7 @@ public interface StudioElementsGroups {
             name = "Conditions",
             elementClassFqn = "io.jmix.flowui.component.filer.FilterComponent",
             xmlElement = "conditions",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/conditions.svg",
             target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}
     )
     void conditions();

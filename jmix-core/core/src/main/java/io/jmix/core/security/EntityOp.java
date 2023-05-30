@@ -15,7 +15,7 @@
  */
 package io.jmix.core.security;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Objects;
 
 /**

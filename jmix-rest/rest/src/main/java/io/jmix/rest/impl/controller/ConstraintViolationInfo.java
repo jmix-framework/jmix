@@ -16,7 +16,7 @@
 
 package io.jmix.rest.impl.controller;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public class ConstraintViolationInfo {
     private String message;

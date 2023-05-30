@@ -19,7 +19,7 @@ package io.jmix.flowui.component;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValidation;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 /**

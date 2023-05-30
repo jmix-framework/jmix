@@ -74,7 +74,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -748,6 +748,9 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         }
 
         DataContext dataContext = loggedEntityDl.getDataContext();
+        if (dataContext == null) {
+            throw new RuntimeException("DataContext is null");
+        }
         selectedEntity = dataContext.merge(selectedEntity);
         Set<LoggedAttribute> enabledAttributes = selectedEntity.getAttributes() != null ?
                 selectedEntity.getAttributes() : new HashSet<>();

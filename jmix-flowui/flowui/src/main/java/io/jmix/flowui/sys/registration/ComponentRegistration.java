@@ -19,7 +19,7 @@ package io.jmix.flowui.sys.registration;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Registers new component loader or override a UI component in the framework. For instance:

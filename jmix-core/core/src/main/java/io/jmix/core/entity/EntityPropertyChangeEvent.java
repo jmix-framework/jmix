@@ -16,7 +16,7 @@
 
 package io.jmix.core.entity;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Event object for {@link EntityPropertyChangeListener}.

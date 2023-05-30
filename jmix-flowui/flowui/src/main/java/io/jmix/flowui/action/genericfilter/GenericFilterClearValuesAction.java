@@ -24,6 +24,7 @@ import io.jmix.flowui.component.filer.FilterComponent;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.lang.Nullable;
 import java.util.List;
 
 @ActionType(GenericFilterClearValuesAction.ID)

@@ -47,7 +47,7 @@ Jmix 是一个库和工具的集合，可以加快以数据为中心的 Spring B
     git clone https://github.com/jmix-framework/jmix.git
     ```
 
-- 安装 JDK 8 。
+- 安装 JDK 17 。
 
 - 构建并发布框架模块到本地 Maven :
 

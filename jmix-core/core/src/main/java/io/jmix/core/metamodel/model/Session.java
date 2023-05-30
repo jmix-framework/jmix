@@ -16,7 +16,7 @@
 
 package io.jmix.core.metamodel.model;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 
 /**

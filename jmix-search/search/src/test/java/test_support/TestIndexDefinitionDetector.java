@@ -20,7 +20,7 @@ import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import org.springframework.core.type.classreading.MetadataReader;
 
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Detects only specified Index Definition classes/packages

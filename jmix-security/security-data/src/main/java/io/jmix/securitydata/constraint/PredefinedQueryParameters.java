@@ -22,7 +22,7 @@ import io.jmix.data.impl.SessionQueryParamValueProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * @deprecated

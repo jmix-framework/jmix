@@ -19,7 +19,7 @@ package io.jmix.multitenancy.core;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaProperty;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Internal
 public interface TenantEntityOperation {

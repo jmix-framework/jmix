@@ -16,7 +16,7 @@
 
 package io.jmix.securityflowui.authentication;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Locale;
 import java.util.TimeZone;
 

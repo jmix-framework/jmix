@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.servlet.ServletContext;
 
 @Component("flowui_LogoutSupport")

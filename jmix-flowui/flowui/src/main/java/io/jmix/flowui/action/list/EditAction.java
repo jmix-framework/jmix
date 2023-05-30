@@ -40,7 +40,7 @@ import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 

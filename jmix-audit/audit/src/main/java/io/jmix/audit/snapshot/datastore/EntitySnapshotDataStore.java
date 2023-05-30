@@ -19,7 +19,7 @@ package io.jmix.audit.snapshot.datastore;
 import io.jmix.audit.snapshot.model.EntitySnapshotModel;
 import io.jmix.core.metamodel.model.MetaClass;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.List;
 

@@ -36,7 +36,7 @@ import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.sql.Time;
 import java.time.*;
 import java.util.Date;

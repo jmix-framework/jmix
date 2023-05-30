@@ -50,6 +50,7 @@ public interface StudioElementsGroups {
             name = "Items",
             elementClassFqn = "io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem",
             xmlElement = "items",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
                     "io.jmix.flowui.kit.component.combobutton.ComboButton"}
     )
@@ -59,6 +60,7 @@ public interface StudioElementsGroups {
             name = "ResponsiveSteps",
             elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveSteps",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"com.vaadin.flow.component.formlayout.FormLayout"}
     )
     void formLayoutResponsiveSteps();
@@ -67,6 +69,7 @@ public interface StudioElementsGroups {
             name = "ResponsiveSteps",
             elementClassFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
             xmlElement = "responsiveSteps",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.component.SupportsResponsiveSteps"}
     )
     void responsiveSteps();

@@ -46,6 +46,14 @@ public interface Metadata extends Session {
     <T> T create(Class<T> entityClass);
 
     /**
+     * Instantiate an entity with provided id, taking into account extended entities.
+     * @param entityClass   entity class
+     * @param id            entity id
+     * @return              entity instance
+     */
+    <T> T create(Class<T> entityClass, Object id);
+
+    /**
      * Instantiate an entity, taking into account extended entities.
      * @param metaClass     entity MetaClass
      * @return              entity instance
@@ -53,9 +61,25 @@ public interface Metadata extends Session {
     Object create(MetaClass metaClass);
 
     /**
+     * Instantiate an entity with provided id, taking into account extended entities.
+     * @param metaClass     entity MetaClass
+     * @param id            entity id
+     * @return              entity instance
+     */
+    Object create(MetaClass metaClass, Object id);
+
+    /**
      * Instantiate an entity, taking into account extended entities.
      * @param entityName    entity name
      * @return              entity instance
      */
     Object create(String entityName);
+
+    /**
+     * Instantiate an entity with provided id, taking into account extended entities.
+     * @param entityName    entity name
+     * @param id            entity id
+     * @return              entity instance
+     */
+    Object create(String entityName, Object id);
 }

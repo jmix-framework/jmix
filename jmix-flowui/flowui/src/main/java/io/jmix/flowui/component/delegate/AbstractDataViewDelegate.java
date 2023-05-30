@@ -36,7 +36,7 @@ import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.data.items.EnumDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 

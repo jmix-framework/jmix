@@ -18,7 +18,6 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.core.Metadata;
 import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
-import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 
 public class MultiSelectComboBoxPickerLoader extends AbstractMultiSelectComboBoxLoader<JmixMultiSelectComboBoxPicker<?>> {
@@ -43,16 +42,6 @@ public class MultiSelectComboBoxPickerLoader extends AbstractMultiSelectComboBox
 
         if (resultComponent.getValueSource() == null) {
             loadMetaClass();
-
-            if (resultComponent.getMetaClass() == null) {
-                String message = String.format(
-                        "%s doesn't have data binding. Set either dataContainer and property or metaClass attribute.",
-                        resultComponent.getClass().getSimpleName()
-                );
-
-                throw new GuiDevelopmentException(message,
-                        context, "Component ID", resultComponent.getId().orElse("null"));
-            }
         }
     }
 

@@ -93,6 +93,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("jpqlFilter", JpqlFilterLoader.class);
         loaders.put("groupFilter", GroupFilterLoader.class);
         loaders.put("genericFilter", GenericFilterLoader.class);
+        loaders.put("codeEditor", CodeEditorLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

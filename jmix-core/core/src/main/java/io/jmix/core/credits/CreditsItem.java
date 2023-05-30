@@ -16,7 +16,7 @@
 
 package io.jmix.core.credits;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Objects;
 
 /**

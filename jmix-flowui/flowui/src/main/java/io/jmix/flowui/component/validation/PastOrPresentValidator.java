@@ -24,7 +24,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Component("flowui_PastOrPresentValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

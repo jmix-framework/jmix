@@ -22,7 +22,7 @@ import org.dom4j.Element;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import static io.jmix.flowui.xml.layout.loader.MainViewLoader.MAIN_VIEW_ROOT;
 import static io.jmix.flowui.xml.layout.loader.ViewLoader.VIEW_ROOT;

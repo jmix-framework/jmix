@@ -22,10 +22,13 @@ import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.flowui.view.navigation.SupportsAfterViewNavigationHandler.AfterViewNavigationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractNavigationProcessor<N extends ViewNavigator> {
+import java.util.Optional;
+
+public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigator> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNavigationProcessor.class);
 
@@ -51,11 +54,24 @@ public abstract class AbstractNavigationProcessor<N extends ViewNavigator> {
             UI.getCurrent().getPage().fetchCurrentURL(url -> {
                 log.trace("Fetched URL: {}", url.toString());
 
-                navigationSupport.navigate(viewClass, routeParameters, queryParameters);
-                viewSupport.registerBackwardNavigation(viewClass, url);
+                Optional<View> view = navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+                if (view.isPresent()) {
+                    viewSupport.registerBackwardNavigation(viewClass, url);
+                    fireAfterViewNavigation(navigator, view.get());
+                }
             });
         } else {
-            navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+            Optional<View> view = navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+            view.ifPresent(value ->
+                    fireAfterViewNavigation(navigator, value));
+        }
+    }
+
+    protected void fireAfterViewNavigation(N navigator, View<?> value) {
+        if (navigator instanceof SupportsAfterViewNavigationHandler) {
+            ((SupportsAfterViewNavigationHandler<?>) navigator)
+                    .getAfterNavigationHandler().ifPresent(handler ->
+                            handler.accept(new AfterViewNavigationEvent(this, value)));
         }
     }
 

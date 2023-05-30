@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

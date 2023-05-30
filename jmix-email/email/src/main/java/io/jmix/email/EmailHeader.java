@@ -16,7 +16,7 @@
 
 package io.jmix.email;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.io.Serializable;
 
 /**

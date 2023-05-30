@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -296,7 +296,7 @@ public class MessageTools {
         String notNullMessage = (String) metaProperty.getAnnotations()
                 .get(NotNull.class.getName() + "_notnull_message");
         if (notNullMessage != null
-                && !"{javax.validation.constraints.NotNull.message}".equals(notNullMessage)) {
+                && !"{jakarta.validation.constraints.NotNull.message}".equals(notNullMessage)) {
             if (notNullMessage.startsWith("{") && notNullMessage.endsWith("}")) {
                 notNullMessage = notNullMessage.substring(1, notNullMessage.length() - 1);
                 if (isMessageKey(notNullMessage)) {

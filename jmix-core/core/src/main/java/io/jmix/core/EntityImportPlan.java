@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;

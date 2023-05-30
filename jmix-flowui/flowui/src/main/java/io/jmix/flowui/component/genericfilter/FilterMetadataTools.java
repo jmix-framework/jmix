@@ -29,7 +29,7 @@ import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;

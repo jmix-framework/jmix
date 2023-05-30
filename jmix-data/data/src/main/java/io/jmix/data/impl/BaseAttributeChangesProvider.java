@@ -29,7 +29,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.AttributeChangesProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;

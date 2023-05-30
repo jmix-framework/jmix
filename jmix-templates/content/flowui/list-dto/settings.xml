@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+          icon="resource://template/template_browse.svg"
+          name="DTO entity list view"
+          order="31">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>DTO</tag>
+    </tags>
+    <description>
+        <![CDATA[<html>DTO entity list view. Displays a list of entities in the DataGrid component.</html>]]>
+    </description>
+    <locMessages key="viewTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.title">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
+        </message>
+    </locMessages>
+
+    <steps>
+        <step name="Entity list view" order="0"/>
+    </steps>
+
+    <property caption="Entity"
+              code="entity"
+              propertyType="ENTITY"
+              required="true"/>
+    <property caption="Table type"
+              code="tableType"
+              propertyType="FLOW_TABLE_TYPE"
+              relatedProperty="entity"
+              required="true"/>
+    <property caption="Table actions"
+              code="tableActions"
+              defaultValue="create,edit,remove"
+              propertyType="MULTI_OPTION"
+              preferences="true"
+              optionsString="${actionSearch.getWizardTableActions()}"/>
+    <property caption="Multiselect"
+              code="multiselect"
+              propertyType="BOOLEAN"
+              preferences="true"/>
+
+    <property caption="Descriptor name"
+              code="viewDescriptorName"
+              propertyType="DESCRIPTOR_NAME"
+              advanced="true"
+              dynamic="true"
+              sourceName="descriptor"
+              required="true"
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-list-view">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Controller name"
+              code="viewControllerName"
+              propertyType="CLASS_NAME"
+              advanced="true"
+              dynamic="true"
+              sourceName="controller"
+              required="true"
+              valueTemplate="${entity.className}ListView">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="View id"
+              code="viewId"
+              propertyType="SCREEN_ID"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.list">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="View route"
+              code="listRoute"
+              propertyType="STRING"
+              advanced="true"
+              dynamic="true"
+              required="true"
+              valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Parent menu item"
+              code="menuItem"
+              propertyType="FLOW_MENU_ITEM"/>
+
+    <source fileExt="xml"
+            name="descriptor"/>
+    <source fileExt="java"
+            name="controller"/>
+</template>

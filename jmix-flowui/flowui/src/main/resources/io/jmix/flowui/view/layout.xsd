@@ -790,6 +790,242 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="codeEditorTheme">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AMBIANCE"/>
+            <xs:enumeration value="CHAOS"/>
+            <xs:enumeration value="CHROME"/>
+            <xs:enumeration value="CLOUD_9_DAY"/>
+            <xs:enumeration value="CLOUD_9_NIGHT"/>
+            <xs:enumeration value="CLOUD_9_NIGHT_LOW_COLOR"/>
+            <xs:enumeration value="CLOUDS"/>
+            <xs:enumeration value="CLOUDS_MIDNIGHT"/>
+            <xs:enumeration value="COBALT"/>
+            <xs:enumeration value="CRIMSON_EDITOR"/>
+            <xs:enumeration value="DAWN"/>
+            <xs:enumeration value="DRACULA"/>
+            <xs:enumeration value="DREAMWEAVER"/>
+            <xs:enumeration value="ECLIPSE"/>
+            <xs:enumeration value="GITHUB"/>
+            <xs:enumeration value="GOB"/>
+            <xs:enumeration value="GRUVBOX"/>
+            <xs:enumeration value="GRUVBOX_DARK_HARD"/>
+            <xs:enumeration value="GRUVBOX_LIGHT_HARD"/>
+            <xs:enumeration value="IDLE_FINGERS"/>
+            <xs:enumeration value="IPLASTIC"/>
+            <xs:enumeration value="KATZENMILCH"/>
+            <xs:enumeration value="KR_THEME"/>
+            <xs:enumeration value="KUROIR"/>
+            <xs:enumeration value="MERBIVORE"/>
+            <xs:enumeration value="MERBIVORE_SOFT"/>
+            <xs:enumeration value="MONO_INDUSTRIAL"/>
+            <xs:enumeration value="MONOKAI"/>
+            <xs:enumeration value="NORD_DARK"/>
+            <xs:enumeration value="ONE_DARK"/>
+            <xs:enumeration value="PASTEL_ON_DARK"/>
+            <xs:enumeration value="SOLARIZED_DARK"/>
+            <xs:enumeration value="SOLARIZED_LIGHT"/>
+            <xs:enumeration value="SQLSERVER"/>
+            <xs:enumeration value="TERMINAL"/>
+            <xs:enumeration value="TEXTMATE"/>
+            <xs:enumeration value="TOMORROW"/>
+            <xs:enumeration value="TOMORROW_NIGHT"/>
+            <xs:enumeration value="TOMORROW_NIGHT_BLUE"/>
+            <xs:enumeration value="TOMORROW_NIGHT_BRIGHT"/>
+            <xs:enumeration value="TOMORROW_NIGHT_EIGHTIES"/>
+            <xs:enumeration value="TWILIGHT"/>
+            <xs:enumeration value="VIBRANT_INK"/>
+            <xs:enumeration value="XCODE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="codeEditorMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ABAP"/>
+            <xs:enumeration value="ABC"/>
+            <xs:enumeration value="ACTIONSCRIPT"/>
+            <xs:enumeration value="ADA"/>
+            <xs:enumeration value="ALDA"/>
+            <xs:enumeration value="APACHE_CONF"/>
+            <xs:enumeration value="APEX"/>
+            <xs:enumeration value="APPLESCRIPT"/>
+            <xs:enumeration value="AQL"/>
+            <xs:enumeration value="ASCIIDOC"/>
+            <xs:enumeration value="ASL"/>
+            <xs:enumeration value="ASSEMBLY_X_86"/>
+            <xs:enumeration value="AUTOHOTKEY"/>
+            <xs:enumeration value="BATCHFILE"/>
+            <xs:enumeration value="BIBTEX"/>
+            <xs:enumeration value="C_9_SEARCH"/>
+            <xs:enumeration value="C_CPP"/>
+            <xs:enumeration value="CIRRU"/>
+            <xs:enumeration value="CLOJURE"/>
+            <xs:enumeration value="COBOL"/>
+            <xs:enumeration value="COFFEE"/>
+            <xs:enumeration value="COLDFUSION"/>
+            <xs:enumeration value="CRYSTAL"/>
+            <xs:enumeration value="CSHARP"/>
+            <xs:enumeration value="CSOUND_DOCUMENT"/>
+            <xs:enumeration value="CSOUND_ORCHESTRA"/>
+            <xs:enumeration value="CSOUND_SCORE"/>
+            <xs:enumeration value="CSP"/>
+            <xs:enumeration value="CSS"/>
+            <xs:enumeration value="CURLY"/>
+            <xs:enumeration value="D"/>
+            <xs:enumeration value="DART"/>
+            <xs:enumeration value="DIFF"/>
+            <xs:enumeration value="DJANGO"/>
+            <xs:enumeration value="DOCKERFILE"/>
+            <xs:enumeration value="DOT"/>
+            <xs:enumeration value="DROOLS"/>
+            <xs:enumeration value="EDIFACT"/>
+            <xs:enumeration value="EIFFEL"/>
+            <xs:enumeration value="EJS"/>
+            <xs:enumeration value="ELIXIR"/>
+            <xs:enumeration value="ELM"/>
+            <xs:enumeration value="ERLANG"/>
+            <xs:enumeration value="FORTH"/>
+            <xs:enumeration value="FORTRAN"/>
+            <xs:enumeration value="FSHARP"/>
+            <xs:enumeration value="FSL"/>
+            <xs:enumeration value="FTL"/>
+            <xs:enumeration value="GCODE"/>
+            <xs:enumeration value="GHERKIN"/>
+            <xs:enumeration value="GITIGNORE"/>
+            <xs:enumeration value="GLSL"/>
+            <xs:enumeration value="GOBSTONES"/>
+            <xs:enumeration value="GOLANG"/>
+            <xs:enumeration value="GRAPHQLSCHEMA"/>
+            <xs:enumeration value="GROOVY"/>
+            <xs:enumeration value="HAML"/>
+            <xs:enumeration value="HANDLEBARS"/>
+            <xs:enumeration value="HASKELL"/>
+            <xs:enumeration value="HASKELL_CABAL"/>
+            <xs:enumeration value="HAXE"/>
+            <xs:enumeration value="HJSON"/>
+            <xs:enumeration value="HTML"/>
+            <xs:enumeration value="HTML_ELIXIR"/>
+            <xs:enumeration value="HTML_RUBY"/>
+            <xs:enumeration value="INI"/>
+            <xs:enumeration value="IO"/>
+            <xs:enumeration value="ION"/>
+            <xs:enumeration value="JACK"/>
+            <xs:enumeration value="JADE"/>
+            <xs:enumeration value="JAVA"/>
+            <xs:enumeration value="JAVASCRIPT"/>
+            <xs:enumeration value="JEXL"/>
+            <xs:enumeration value="JSON"/>
+            <xs:enumeration value="JSON_5"/>
+            <xs:enumeration value="JSONIQ"/>
+            <xs:enumeration value="JSP"/>
+            <xs:enumeration value="JSSM"/>
+            <xs:enumeration value="JSX"/>
+            <xs:enumeration value="JULIA"/>
+            <xs:enumeration value="KOTLIN"/>
+            <xs:enumeration value="LATEX"/>
+            <xs:enumeration value="LATTE"/>
+            <xs:enumeration value="LESS"/>
+            <xs:enumeration value="LIQUID"/>
+            <xs:enumeration value="LISP"/>
+            <xs:enumeration value="LIVESCRIPT"/>
+            <xs:enumeration value="LOGIQL"/>
+            <xs:enumeration value="LOGTALK"/>
+            <xs:enumeration value="LSL"/>
+            <xs:enumeration value="LUA"/>
+            <xs:enumeration value="LUAPAGE"/>
+            <xs:enumeration value="LUCENE"/>
+            <xs:enumeration value="MAKEFILE"/>
+            <xs:enumeration value="MARKDOWN"/>
+            <xs:enumeration value="MASK"/>
+            <xs:enumeration value="MATLAB"/>
+            <xs:enumeration value="MAZE"/>
+            <xs:enumeration value="MEDIAWIKI"/>
+            <xs:enumeration value="MEL"/>
+            <xs:enumeration value="MIPS"/>
+            <xs:enumeration value="MIXAL"/>
+            <xs:enumeration value="MUSHCODE"/>
+            <xs:enumeration value="MYSQL"/>
+            <xs:enumeration value="NGINX"/>
+            <xs:enumeration value="NIM"/>
+            <xs:enumeration value="NIX"/>
+            <xs:enumeration value="NSIS"/>
+            <xs:enumeration value="NUNJUCKS"/>
+            <xs:enumeration value="OBJECTIVEC"/>
+            <xs:enumeration value="OCAML"/>
+            <xs:enumeration value="PARTIQL"/>
+            <xs:enumeration value="PASCAL"/>
+            <xs:enumeration value="PERL"/>
+            <xs:enumeration value="PGSQL"/>
+            <xs:enumeration value="PHP"/>
+            <xs:enumeration value="PHP_LARAVEL_BLADE"/>
+            <xs:enumeration value="PIG"/>
+            <xs:enumeration value="PLAIN_TEXT"/>
+            <xs:enumeration value="PLSQL"/>
+            <xs:enumeration value="POWERSHELL"/>
+            <xs:enumeration value="PRAAT"/>
+            <xs:enumeration value="PRISMA"/>
+            <xs:enumeration value="PROLOG"/>
+            <xs:enumeration value="PROPERTIES"/>
+            <xs:enumeration value="PROTOBUF"/>
+            <xs:enumeration value="PUPPET"/>
+            <xs:enumeration value="PYTHON"/>
+            <xs:enumeration value="QML"/>
+            <xs:enumeration value="R"/>
+            <xs:enumeration value="RAKU"/>
+            <xs:enumeration value="RAZOR"/>
+            <xs:enumeration value="RDOC"/>
+            <xs:enumeration value="RED"/>
+            <xs:enumeration value="REDSHIFT"/>
+            <xs:enumeration value="RHTML"/>
+            <xs:enumeration value="ROBOT"/>
+            <xs:enumeration value="RST"/>
+            <xs:enumeration value="RUBY"/>
+            <xs:enumeration value="RUST"/>
+            <xs:enumeration value="SAC"/>
+            <xs:enumeration value="SASS"/>
+            <xs:enumeration value="SCAD"/>
+            <xs:enumeration value="SCALA"/>
+            <xs:enumeration value="SCHEME"/>
+            <xs:enumeration value="SCRYPT"/>
+            <xs:enumeration value="SCSS"/>
+            <xs:enumeration value="SH"/>
+            <xs:enumeration value="SJS"/>
+            <xs:enumeration value="SLIM"/>
+            <xs:enumeration value="SMARTY"/>
+            <xs:enumeration value="SMITHY"/>
+            <xs:enumeration value="SNIPPETS"/>
+            <xs:enumeration value="SOY_TEMPLATE"/>
+            <xs:enumeration value="SPACE"/>
+            <xs:enumeration value="SPARQL"/>
+            <xs:enumeration value="SQL"/>
+            <xs:enumeration value="SQLSERVER"/>
+            <xs:enumeration value="STYLUS"/>
+            <xs:enumeration value="SVG"/>
+            <xs:enumeration value="SWIFT"/>
+            <xs:enumeration value="TCL"/>
+            <xs:enumeration value="TERRAFORM"/>
+            <xs:enumeration value="TEX"/>
+            <xs:enumeration value="TEXT"/>
+            <xs:enumeration value="TEXTILE"/>
+            <xs:enumeration value="TOML"/>
+            <xs:enumeration value="TSX"/>
+            <xs:enumeration value="TURTLE"/>
+            <xs:enumeration value="TWIG"/>
+            <xs:enumeration value="TYPESCRIPT"/>
+            <xs:enumeration value="VALA"/>
+            <xs:enumeration value="VBSCRIPT"/>
+            <xs:enumeration value="VELOCITY"/>
+            <xs:enumeration value="VERILOG"/>
+            <xs:enumeration value="VHDL"/>
+            <xs:enumeration value="VISUALFORCE"/>
+            <xs:enumeration value="WOLLOK"/>
+            <xs:enumeration value="XML"/>
+            <xs:enumeration value="XQUERY"/>
+            <xs:enumeration value="YAML"/>
+            <xs:enumeration value="ZEEK"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="fieldDatatypeEnum">
         <xs:union>
             <xs:simpleType>
@@ -3174,6 +3410,40 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- CodeEditor -->
+    <xs:complexType name="codeEditorComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
+                    <xs:element name="validators" type="constraintValidatorType"  minOccurs="0" />
+                </xs:sequence>
+
+                <xs:attribute name="highlightActiveLine" type="xs:boolean"/>
+                <xs:attribute name="showGutter" type="xs:boolean"/>
+                <xs:attribute name="showLineNumbers" type="xs:boolean"/>
+                <xs:attribute name="showPrintMargin" type="xs:boolean"/>
+                <xs:attribute name="printMarginColumn" type="xs:integer"/>
+                <xs:attribute name="fontSize" type="xs:string"/>
+
+                <xs:attribute name="mode" type="codeEditorMode"/>
+                <xs:attribute name="theme" type="codeEditorTheme"/>
+
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasValidation"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!--    HTML-->
     <!-- Anchor-->
     <xs:complexType name="anchor">
@@ -3515,6 +3785,7 @@
                 <xs:element name="upload" type="uploadComponent"/>
                 <xs:element name="propertyFilter" type="propertyFilterComponent"/>
                 <xs:element name="genericFilter" type="genericFilterComponent"/>
+                <xs:element name="codeEditor" type="codeEditorComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

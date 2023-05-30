@@ -23,6 +23,7 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.model.DataComponents;
+import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
 import io.jmix.reports.ReportsConfiguration;
@@ -45,12 +46,12 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.reportsflowui", value = "classpath:/io/jmix/reportsflowui/module.properties")
 public class ReportsFlowuiConfiguration {
 
-    @Bean("reportflowui_DataSetFactory")
+    @Bean("reports_DataSetFactory")
     public DataSetFactory dataSetFactory() {
         return new DataSetFactory();
     }
 
-    @Bean("report_CrossTabOrientationDataGridDecorator")
+    @Bean("reports_CrossTabOrientationDataGridDecorator")
     public CrossTabDataGridDecorator crossTabDataGridDecorator(DataSetFactory dataSetFactory, UiComponents uiComponents,
                                                                SecureOperations secureOperations,
                                                                PolicyStore policyStore, Metadata metadata,
@@ -59,12 +60,20 @@ public class ReportsFlowuiConfiguration {
                 dataComponents, messages);
     }
 
-    @Bean("flowui_ReportsControllersConfiguration")
+    @Bean("reports_ReportsControllersConfiguration")
     public ViewControllersConfiguration views(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ViewControllersConfiguration viewControllers
                 = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
         viewControllers.setBasePackages(Collections.singletonList("io.jmix.reportsflowui.view"));
         return viewControllers;
+    }
+
+    @Bean("reports_ReportActions")
+    public ActionsConfiguration actions(ApplicationContext applicationContext,
+                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.reportsflowui.action"));
+        return actionsConfiguration;
     }
 }

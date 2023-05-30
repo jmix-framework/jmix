@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.action.list;
+package io.jmix.reportsflowui.action;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
@@ -41,6 +42,7 @@ import io.jmix.reports.app.ParameterPrototype;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,27 +56,25 @@ import java.util.Set;
  * If only one report is available as a result of selection, it is invoked immediately.
  * If several reports are available, their list is offered to the user for selection.
  */
-//todo
-//@StudioAction(
-//        target = "io.jmix.ui.component.ListComponent",
-//        description = "Prints the reports for a list of entity instances associated with a list component")
-@ActionType(ListPrintFormAction.ID)
-public class ListPrintFormAction<E> extends ListDataComponentAction<ListPrintFormAction<E>, E>
+@ActionType(RunListEntityReportAction.ID)
+public class RunListEntityReportAction<E> extends ListDataComponentAction<RunListEntityReportAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
-    //listViewPrint
-    public static final String ID = "listPrintForm";
+    public static final String ID = "reports_runListEntityReport";
 
     protected Dialogs dialogs;
     protected Messages messages;
+    protected Metadata metadata;
     protected Notifications notifications;
-    protected PrintFormReport printFormReport;
+    protected ReportsActionHelper reportsActionHelper;
 
-    public ListPrintFormAction() {
+    protected String reportOutputName;
+
+    public RunListEntityReportAction() {
         this(ID);
     }
 
-    public ListPrintFormAction(String id) {
+    public RunListEntityReportAction(String id) {
         super(id);
     }
 
@@ -82,7 +82,7 @@ public class ListPrintFormAction<E> extends ListDataComponentAction<ListPrintFor
     public void setMessages(Messages messages) {
         this.messages = messages;
 
-        this.text = messages.getMessage(ListPrintFormAction.class, "actions.ListPrintForm");
+        this.text = messages.getMessage(RunListEntityReportAction.class, "actions.ListPrintForm");
     }
 
     @Autowired
@@ -96,8 +96,17 @@ public class ListPrintFormAction<E> extends ListDataComponentAction<ListPrintFor
     }
 
     @Autowired
-    public void setPrintReport(PrintFormReport printFormReport) {
-        this.printFormReport = printFormReport;
+    public void setPrintReport(ReportsActionHelper reportsActionHelper) {
+        this.reportsActionHelper = reportsActionHelper;
+    }
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    public void setReportOutputName(@Nullable String reportOutputName) {
+        this.reportOutputName = reportOutputName;
     }
 
     @Override
@@ -116,7 +125,7 @@ public class ListPrintFormAction<E> extends ListDataComponentAction<ListPrintFor
         InstanceContainer container = unit.getContainer();
         MetaClass metaClass = container.getEntityMetaClass();
 
-        printFormReport.openRunReportScreen(findParent(), selected, metaClass);
+        reportsActionHelper.openRunReportScreen(findParent(), selected, metaClass);
     }
 
     protected void printAll() {
@@ -146,14 +155,14 @@ public class ListPrintFormAction<E> extends ListDataComponentAction<ListPrintFor
             parameterPrototype.setFetchPlan(loadContext.getFetchPlan());
         }
 
-        printFormReport.openRunReportScreen(findParent(), parameterPrototype, metaClass);
+        reportsActionHelper.openRunReportScreen(findParent(), parameterPrototype, metaClass);
     }
 
     @Override
     public void execute() {
         DialogAction cancelAction = new DialogAction(DialogAction.Type.CANCEL);
 
-        Set selected = target.getSelectedItems();
+        Set<E> selected = target.getSelectedItems();
         if (CollectionUtils.isNotEmpty(selected)) {
             if (selected.size() > 1) {
                 Action printSelectedAction = new BaseAction("actions.printSelected")

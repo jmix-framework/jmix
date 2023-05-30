@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.action.list;
+package io.jmix.reportsflowui.action;
 
 import io.jmix.reportsflowui.view.history.ReportExecutionDialog;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
-import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.Views;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -34,7 +32,7 @@ import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.Report;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -47,20 +45,18 @@ import java.util.Collection;
  * Should be defined in the screen that is associated with {@link Report}. Should be defined for a {@code Button}
  * or a list component ({@code Table}, {@code DataGrid}, etc.).
  */
-//todo
-//@StudioAction(target = "io.jmix.ui.component.ListComponent", description = "Shows the report execution history")
-@ActionType(ExecutionHistoryAction.ID)
-public class ExecutionHistoryAction extends ListDataComponentAction {
+@ActionType(ShowExecutionReportHistoryAction.ID)
+public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction<ShowExecutionReportHistoryAction<E>, E> {
 
-    public static final String ID = "executionHistory";
+    public static final String ID = "reports_showExecutionReportHistory";
 
     protected DialogWindows dialogWindows;
 
-    public ExecutionHistoryAction() {
+    public ShowExecutionReportHistoryAction() {
         this(ID);
     }
 
-    public ExecutionHistoryAction(String id) {
+    public ShowExecutionReportHistoryAction(String id) {
         super(id);
     }
 

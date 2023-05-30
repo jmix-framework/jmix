@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.action.list;
+package io.jmix.reportsflowui.action;
 
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
@@ -36,7 +36,7 @@ import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.Report;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -52,13 +52,11 @@ import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredBy
  * Should be defined in the screen that is associated with {@link Report}. Should be defined for a {@code Button}
  * or a list component ({@code Table}, {@code DataGrid}, etc.).
  */
-//@StudioAction(
-//        target = "io.jmix.ui.component.ListComponent",
-//        description = "Runs the reports associated with current screen or list component")
 @ActionType(RunReportAction.ID)
-public class RunReportAction extends ListDataComponentAction {
+public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<E>, E> {
 
-    public static final String ID = "runReport";
+    public static final String ID = "reports_runReport";
+
     public static final String DEFAULT_SINGLE_ENTITY_ALIAS = "entity";
     public static final String DEFAULT_LIST_OF_ENTITIES_ALIAS = "entities";
 
@@ -109,10 +107,6 @@ public class RunReportAction extends ListDataComponentAction {
     public void execute() {
         if (target != null) {
             openLookup(findParent());
-            //todo
-//        } else if (component instanceof Component.BelongToFrame) {
-//            FrameOwner screen = ComponentsHelper.getWindowNN((Component.BelongToFrame) component).getFrameOwner();
-//            openLookup(screen);
         } else {
             throw new IllegalStateException("No target screen or component found for 'RunReportAction'");
         }

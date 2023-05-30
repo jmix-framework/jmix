@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.action.list;
+package io.jmix.reportsflowui.action;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -31,22 +31,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
-@ActionType(EditorPrintFormAction.ID)
-public class EditorPrintFormAction<E> extends OperationResultViewAction<DetailCloseAction<E>, StandardDetailView<E>> {
+@ActionType(RunSingleEntityReportAction.ID)
+public class RunSingleEntityReportAction<E> extends OperationResultViewAction<DetailCloseAction<E>, StandardDetailView<E>> {
 
-    public static final String ID = "editorPrintForm";
+    public static final String ID = "reports_runSingleEntityReport";
 
     protected String reportOutputName;
     protected Metadata metadata;
     protected Messages messages;
     protected Notifications notifications;
-    protected PrintFormReport printFormReport;
+    protected ReportsActionHelper reportsActionHelper;
 
-    public EditorPrintFormAction() {
+    public RunSingleEntityReportAction() {
         this(ID);
     }
 
-    public EditorPrintFormAction(String id) {
+    public RunSingleEntityReportAction(String id) {
         super(id);
 
         this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PRINT);
@@ -69,8 +69,8 @@ public class EditorPrintFormAction<E> extends OperationResultViewAction<DetailCl
     }
 
     @Autowired
-    public void setPrintReport(PrintFormReport printFormReport) {
-        this.printFormReport = printFormReport;
+    public void setPrintReport(ReportsActionHelper reportsActionHelper) {
+        this.reportsActionHelper = reportsActionHelper;
     }
 
     public void setReportOutputName(@Nullable String reportOutputName) {
@@ -82,7 +82,7 @@ public class EditorPrintFormAction<E> extends OperationResultViewAction<DetailCl
         Object entity = target.getEditedEntity();
         if (entity != null) {
             MetaClass metaClass = metadata.getClass(entity);
-            printFormReport.openRunReportScreen(target, entity, metaClass, reportOutputName);
+            reportsActionHelper.openRunReportScreen(target, entity, metaClass, reportOutputName);
         } else {
             notifications.create(messages.getMessage(getClass(), "notifications.noSelectedEntity"))
                     .withType(Notifications.Type.DEFAULT)

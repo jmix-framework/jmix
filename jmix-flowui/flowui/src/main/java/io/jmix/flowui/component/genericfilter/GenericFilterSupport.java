@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSet;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterClearValuesAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterCopyAction;
@@ -200,7 +201,8 @@ public class GenericFilterSupport {
 
     protected GenericFilterAction<?> createFilterAction(Class<? extends GenericFilterAction<?>> filterActionClass,
                                                         GenericFilter filter) {
-        GenericFilterAction<?> filterAction = actions.create(filterActionClass);
+        String id = filterActionClass.getAnnotation(ActionType.class).value();
+        GenericFilterAction<?> filterAction = actions.create(id);
         filterAction.setTarget(filter);
         return filterAction;
     }

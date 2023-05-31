@@ -125,7 +125,7 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         ValuesPicker valuesPicker = uiComponents.create(ValuesPicker.class);
         setValueSource(valuesPicker, cfContext);
 
-        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.class);
+        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.ID);
 
         if (Entity.class.isAssignableFrom(parameterClass)) {
             MetaClass metaClass = metadata.getClass(cfContext.getParameterClass());
@@ -138,7 +138,7 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         }
         valuesPicker.addAction(selectAction);
 
-        ValueClearAction valueClearAction = actions.create(ValueClearAction.class);
+        ValueClearAction valueClearAction = actions.create(ValueClearAction.ID);
         valuesPicker.addAction(valueClearAction);
 
         return valuesPicker;
@@ -151,7 +151,7 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         MetaClass metaClass = metadata.getClass(cfContext.getParameterClass());
         field.setMetaClass(metaClass);
 
-        EntityLookupAction<?> lookupAction = (EntityLookupAction<?>) actions.create(EntityLookupAction.ID);
+        EntityLookupAction<?> lookupAction = actions.create(EntityLookupAction.ID);
         lookupAction.setOpenMode(OpenMode.DIALOG);
         field.addAction(lookupAction);
         field.addAction(actions.create(EntityClearAction.ID));

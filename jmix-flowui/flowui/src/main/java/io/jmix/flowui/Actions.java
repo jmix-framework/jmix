@@ -26,13 +26,19 @@ import io.jmix.flowui.kit.action.Action;
  */
 public interface Actions {
 
-    Action create(String actionTypeId);
+    <T extends Action> T create(String actionTypeId);
 
-    Action create(String actionTypeId, String id);
+    <T extends Action> T create(String actionTypeId, String id);
 
+    /**
+     * @deprecated Use {@link Actions#create(java.lang.String)} instead
+     */
     @Deprecated
     <T extends Action> T create(Class<T> actionTypeClass);
 
+    /**
+     * @deprecated Use {@link Actions#create(String, String)} instead
+     */
     @Deprecated
     <T extends Action> T create(Class<T> actionTypeClass, String id);
 }

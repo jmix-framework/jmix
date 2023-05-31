@@ -39,21 +39,21 @@ public class GenericFilterSupport {
 
     public List<GenericFilterAction<?>> getDefaultFilterActions(GenericFilter filter) {
         List<GenericFilterAction<?>> filterActions = new ArrayList<>();
-        for (Class<? extends GenericFilterAction<?>> actionClass : getDefaultFilterActionClasses()) {
-            filterActions.add(createFilterAction(actionClass, filter));
+        for (String actionId : getDefaultFilterActionIds()) {
+            filterActions.add(createFilterAction(actionId, filter));
         }
         return filterActions;
     }
 
-    protected Set<Class<? extends GenericFilterAction<?>>> getDefaultFilterActionClasses() {
+    protected Set<String> getDefaultFilterActionIds() {
         return ImmutableSet.of(
-                GenericFilterClearValuesAction.class
+                GenericFilterClearValuesAction.ID
         );
     }
 
-    protected GenericFilterAction<?> createFilterAction(Class<? extends GenericFilterAction<?>> filterActionClass,
+    protected GenericFilterAction<?> createFilterAction(String filterActionId,
                                                         GenericFilter filter) {
-        GenericFilterAction<?> filterAction = actions.create(filterActionClass);
+        GenericFilterAction<?> filterAction = actions.create(filterActionId);
         filterAction.setTarget(filter);
         return filterAction;
     }

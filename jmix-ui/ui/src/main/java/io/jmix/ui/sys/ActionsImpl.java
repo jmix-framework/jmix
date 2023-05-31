@@ -54,24 +54,26 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
 
     protected Map<String, Class<? extends Action>> classes = new HashMap<>();
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Action create(String actionTypeId) {
+    public <T extends Action> T create(String actionTypeId) {
         Class<? extends Action> actionClass = classes.get(actionTypeId);
         if (actionClass == null) {
             throw new IllegalArgumentException("Unable to find action type: " + actionTypeId);
         }
 
-        return createAction(actionClass);
+        return (T) createAction(actionClass);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Action create(String actionTypeId, String id) {
+    public <T extends Action> T create(String actionTypeId, String id) {
         Class<? extends Action> actionClass = classes.get(actionTypeId);
         if (actionClass == null) {
             throw new IllegalArgumentException("Unable to find action type: " + actionTypeId);
         }
 
-        return createAction(actionClass, id);
+        return (T) createAction(actionClass, id);
     }
 
     @SuppressWarnings("unchecked")

@@ -224,10 +224,10 @@ public class AppSettingsGridLayoutBuilder {
 
     protected EntityPicker createEntityPickerField() {
         EntityPicker pickerField = uiComponents.create(EntityPicker.class);
-        EntityLookupAction lookupAction = actions.create(EntityLookupAction.class);
+        EntityLookupAction lookupAction = actions.create(EntityLookupAction.ID);
         lookupAction.setOpenMode(OpenMode.THIS_TAB);
         pickerField.addAction(lookupAction);
-        pickerField.addAction(actions.create(EntityClearAction.class));
+        pickerField.addAction(actions.create(EntityClearAction.ID));
         return pickerField;
     }
 

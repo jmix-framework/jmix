@@ -177,7 +177,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         setValidators(valuesPicker, attribute);
         setValueSource(valuesPicker, context);
 
-        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.class);
+        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.ID);
         initValuesSelectActionByAttribute(selectAction, attribute);
 
         if (valuesPicker.getValueSource() instanceof ContainerValueSource && attribute.getConfiguration().isLookup()) {
@@ -187,7 +187,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
         valuesPicker.addAction(selectAction);
 
-        ValueClearAction valueClearAction = actions.create(ValueClearAction.class);
+        ValueClearAction valueClearAction = actions.create(ValueClearAction.ID);
         valuesPicker.addAction(valueClearAction);
 
         return valuesPicker;
@@ -278,12 +278,12 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         } else {
             EntityPicker entityPicker = uiComponents.create(EntityPicker.class);
 
-            EntityLookupAction lookupAction = actions.create(EntityLookupAction.class);
+            EntityLookupAction lookupAction = actions.create(EntityLookupAction.ID);
 
             setLookupActionScreen(lookupAction, attribute);
 
             entityPicker.addAction(lookupAction);
-            entityPicker.addAction(actions.create(EntityClearAction.class));
+            entityPicker.addAction(actions.create(EntityClearAction.ID));
 
             setValueSource(entityPicker, context);
             setValidators(entityPicker, attribute);

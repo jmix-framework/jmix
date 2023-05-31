@@ -44,10 +44,10 @@ class DataGridTest extends FlowuiTestSpecification {
     def "Add actions without text"() {
         def dataGrid = uiComponents.create(DataGrid)
 
-        def createAction = actions.create(CreateAction)
-        def editAction = actions.create(EditAction)
+        def createAction = actions.create(CreateAction.ID)
+        def editAction = actions.create(EditAction.ID)
         def notTextAction = new BaseAction("noText")
-        def removeAction = actions.create(RemoveAction)
+        def removeAction = actions.create(RemoveAction.ID)
 
         when:
         dataGrid.addAction(createAction)

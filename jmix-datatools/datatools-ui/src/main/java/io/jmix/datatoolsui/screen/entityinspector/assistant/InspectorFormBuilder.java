@@ -225,14 +225,14 @@ public class InspectorFormBuilder {
         if (range.isClass()) {
             EntityPicker pickerField = uiComponents.create(EntityPicker.class);
 
-            EntityLookupAction lookupAction = actions.create(EntityLookupAction.class);
+            EntityLookupAction lookupAction = actions.create(EntityLookupAction.ID);
             lookupAction.setScreenClass(EntityInspectorBrowser.class);
             lookupAction.setScreenOptionsSupplier(() -> new MapScreenOptions(
                     ParamsMap.of("entity", metaProperty.getRange().asClass().getName())));
             lookupAction.setOpenMode(OpenMode.THIS_TAB);
 
             pickerField.addAction(lookupAction);
-            pickerField.addAction(actions.create(EntityClearAction.class));
+            pickerField.addAction(actions.create(EntityClearAction.ID));
 
             field = pickerField;
         }

@@ -87,7 +87,7 @@ public class EmailTemplateAttachmentsFragment extends ScreenFragment {
 
     @Subscribe
     public void onAttachEvent(AttachEvent e) {
-        Action downloadAction = actions.create(ItemTrackingAction.class, "download")
+        Action downloadAction = ((ItemTrackingAction) actions.create(ItemTrackingAction.ID, "download"))
                 .withHandler(event -> downloadAttachment());
         filesTable.addAction(downloadAction);
 

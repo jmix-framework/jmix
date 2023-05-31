@@ -435,31 +435,31 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     }
 
     private ExcelExportAction createExcelExportAction(Table table) {
-        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.class);
+        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
         excelExportAction.setTarget(table);
         return excelExportAction;
     }
 
     private ShowEntityInfoAction createShowEntityInfoAction(Table table) {
-        ShowEntityInfoAction showEntityInfoAction = actions.create(ShowEntityInfoAction.class);
+        ShowEntityInfoAction showEntityInfoAction = actions.create(ShowEntityInfoAction.ID);
         showEntityInfoAction.setTarget(table);
         return showEntityInfoAction;
     }
 
     private RefreshAction createRefreshAction(Table table) {
-        RefreshAction refreshAction = actions.create(RefreshAction.class);
+        RefreshAction refreshAction = actions.create(RefreshAction.ID);
         refreshAction.setTarget(table);
         return refreshAction;
     }
 
     private RemoveAction createRemoveAction(Table table) {
-        RemoveAction removeAction = actions.create(RemoveAction.class);
+        RemoveAction removeAction = actions.create(RemoveAction.ID);
         removeAction.setTarget(table);
         return removeAction;
     }
 
     private CreateAction createCreateAction(Table table) {
-        CreateAction createAction = actions.create(CreateAction.class);
+        CreateAction createAction = actions.create(CreateAction.ID);
         createAction.setOpenMode(OpenMode.THIS_TAB);
         createAction.setTarget(table);
         createAction.setScreenClass(EntityInspectorEditor.class);
@@ -473,7 +473,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     }
 
     private EditAction createEditAction(Table table) {
-        EditAction editAction = actions.create(EditAction.class);
+        EditAction editAction = actions.create(EditAction.ID);
         editAction.setOpenMode(OpenMode.THIS_TAB);
         editAction.setTarget(table);
         editAction.setScreenClass(EntityInspectorEditor.class);
@@ -484,7 +484,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     }
 
     private BulkEditAction createBulkEditAction(Table table) {
-        BulkEditAction bulkEditAction = actions.create(BulkEditAction.class);
+        BulkEditAction bulkEditAction = actions.create(BulkEditAction.ID);
         bulkEditAction.setOpenMode(OpenMode.THIS_TAB);
         bulkEditAction.setTarget(table);
         bulkEditAction.addEnabledRule(() -> table.getSelected().size() > 1);

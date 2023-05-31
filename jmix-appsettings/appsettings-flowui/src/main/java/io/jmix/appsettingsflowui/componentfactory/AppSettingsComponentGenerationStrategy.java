@@ -113,9 +113,9 @@ public class AppSettingsComponentGenerationStrategy
 
     protected EntityPicker<?> createEntityPickerField() {
         EntityPicker<?> pickerField = uiComponents.create(EntityPicker.class);
-        EntityLookupAction<?> lookupAction = actions.create(EntityLookupAction.class);
+        EntityLookupAction<?> lookupAction = actions.create(EntityLookupAction.ID);
         pickerField.addAction(lookupAction);
-        pickerField.addAction(actions.create(EntityClearAction.class));
+        pickerField.addAction(actions.create(EntityClearAction.ID));
 
         return pickerField;
     }

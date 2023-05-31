@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableSet;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterClearValuesAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterCopyAction;
@@ -51,8 +50,8 @@ public class GenericFilterSupport {
 
     public List<GenericFilterAction<?>> getDefaultFilterActions(GenericFilter filter) {
         List<GenericFilterAction<?>> filterActions = new ArrayList<>();
-        for (Class<? extends GenericFilterAction<?>> actionClass : getDefaultFilterActionClasses()) {
-            filterActions.add(createFilterAction(actionClass, filter));
+        for (String actionId : getDefaultFilterActionIds()) {
+            filterActions.add(createFilterAction(actionId, filter));
         }
         return filterActions;
     }
@@ -187,11 +186,11 @@ public class GenericFilterSupport {
         }
     }
 
-    protected Set<Class<? extends GenericFilterAction<?>>> getDefaultFilterActionClasses() {
+    protected Set<String> getDefaultFilterActionIds() {
         return ImmutableSet.of(
-                GenericFilterEditAction.class,
-                GenericFilterCopyAction.class,
-                GenericFilterClearValuesAction.class
+                GenericFilterEditAction.ID,
+                GenericFilterCopyAction.ID,
+                GenericFilterClearValuesAction.ID
         );
     }
 
@@ -199,10 +198,9 @@ public class GenericFilterSupport {
         return Collections.emptyMap();
     }
 
-    protected GenericFilterAction<?> createFilterAction(Class<? extends GenericFilterAction<?>> filterActionClass,
+    protected GenericFilterAction<?> createFilterAction(String filterActionId,
                                                         GenericFilter filter) {
-        String id = filterActionClass.getAnnotation(ActionType.class).value();
-        GenericFilterAction<?> filterAction = actions.create(id);
+        GenericFilterAction<?> filterAction = actions.create(filterActionId);
         filterAction.setTarget(filter);
         return filterAction;
     }

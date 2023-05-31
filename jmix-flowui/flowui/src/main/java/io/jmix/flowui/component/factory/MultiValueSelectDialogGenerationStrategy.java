@@ -166,7 +166,7 @@ public class MultiValueSelectDialogGenerationStrategy<E> extends AbstractCompone
         EntityPicker<E> entityPicker = uiComponents.create(EntityPicker.class);
         entityPicker.setMetaClass(metaClass);
 
-        EntityLookupAction<E> lookupAction = (EntityLookupAction<E>) actions.create(EntityLookupAction.ID);
+        EntityLookupAction<E> lookupAction = actions.create(EntityLookupAction.ID);
 
         lookupAction.addActionPerformedListener(context.getEntityPickerActionPerformedEventHandler());
         lookupAction.setTarget(entityPicker);

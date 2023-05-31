@@ -18,8 +18,6 @@ package io.jmix.authserver.introspection;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
@@ -38,8 +36,8 @@ import java.util.Collection;
  * principal authorities with proper roles depending on authorization grant type:
  *
  * <ul>
- *     <li>For AUTHORIZATION_CODE grant type roles of authenticated user are used</li>
- *     <li>For CLIENT_CREDENTIALS grant type roles of the user with the name equal to the client id are used</li>
+ *     <li>For AUTHORIZATION_CODE grant type, roles of authenticated user are used</li>
+ *     <li>For CLIENT_CREDENTIALS grant type, roles specified for the client in the properties file are used</li>
  * </ul>
  *
  *
@@ -48,11 +46,11 @@ public class AuthorizationServiceOpaqueTokenIntrospector implements OpaqueTokenI
 
     private OAuth2AuthorizationService authorizationService;
 
-    private UserDetailsService userDetailsService;
+    private TokenIntrospectorRolesHelper introspectorRolesHelper;
 
-    public AuthorizationServiceOpaqueTokenIntrospector(OAuth2AuthorizationService authorizationService, UserDetailsService userDetailsService) {
+    public AuthorizationServiceOpaqueTokenIntrospector(OAuth2AuthorizationService authorizationService, TokenIntrospectorRolesHelper introspectorRolesHelper) {
         this.authorizationService = authorizationService;
-        this.userDetailsService = userDetailsService;
+        this.introspectorRolesHelper = introspectorRolesHelper;
     }
 
     @Override
@@ -72,8 +70,7 @@ public class AuthorizationServiceOpaqueTokenIntrospector implements OpaqueTokenI
         } else if  (authorization.getAuthorizationGrantType() == AuthorizationGrantType.CLIENT_CREDENTIALS) {
             principalName = authorization.getPrincipalName();
             try {
-                UserDetails user = userDetailsService.loadUserByUsername(principalName);
-                authorities.addAll(user.getAuthorities());
+                authorities.addAll(introspectorRolesHelper.getClientGrantedAuthorities(principalName));
             } catch (UsernameNotFoundException e) {
                 throw new BadOpaqueTokenException("User " + principalName + " not found");
             }

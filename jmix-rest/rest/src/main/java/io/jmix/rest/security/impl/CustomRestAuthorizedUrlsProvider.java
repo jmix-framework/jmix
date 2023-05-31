@@ -26,8 +26,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component("rest_RestAuthorizedUrlsProvider")
-public class RestAuthorizedUrlsProvider implements AuthorizedUrlsProvider {
+@Component("rest_CustomRestAuthorizedUrlsProvider")
+public class CustomRestAuthorizedUrlsProvider implements AuthorizedUrlsProvider {
     @Autowired
     private JmixModules jmixModules;
 

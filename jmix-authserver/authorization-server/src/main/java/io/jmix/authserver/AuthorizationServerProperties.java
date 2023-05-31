@@ -19,20 +19,57 @@ package io.jmix.authserver;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @ConfigurationProperties(prefix = "jmix.authorization-server")
 public class AuthorizationServerProperties {
 
     /**
-     * Where a default auto-configuration should be applied
+     * Whether a default auto-configuration should be applied
      */
     boolean useDefaultConfiguration;
 
+    /**
+     * A list of jmix-specific client configurations
+     */
+    Map<String, JmixAuthorizationServerClient> client;
+
     public AuthorizationServerProperties(
-            @DefaultValue("true") boolean useDefaultConfiguration) {
+            @DefaultValue("true") boolean useDefaultConfiguration,
+            Map<String, JmixAuthorizationServerClient> client) {
         this.useDefaultConfiguration = useDefaultConfiguration;
+        this.client = client;
     }
 
     public boolean isUseDefaultConfiguration() {
         return useDefaultConfiguration;
+    }
+
+    public Map<String, JmixAuthorizationServerClient> getClient() {
+        return client;
+    }
+
+    /**
+     * Class stores Jmix-specific settings of Authorization Server client.
+     */
+    public static class JmixAuthorizationServerClient {
+        List<String> resourceRoles;
+        List<String> rowLevelRoles;
+
+        public JmixAuthorizationServerClient(@DefaultValue List<String> resourceRoles,
+                                             @DefaultValue List<String> rowLevelRoles) {
+            this.resourceRoles = resourceRoles;
+            this.rowLevelRoles = rowLevelRoles;
+        }
+
+        public List<String> getResourceRoles() {
+            return resourceRoles;
+        }
+
+        public List<String> getRowLevelRoles() {
+            return rowLevelRoles;
+        }
     }
 }

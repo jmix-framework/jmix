@@ -17,10 +17,8 @@
 package io.jmix.autoconfigure.authserver;
 
 import io.jmix.authserver.AuthorizationServerConfiguration;
-import io.jmix.authserver.DefaultRegisteredClientProperties;
-import io.jmix.authserver.client.RegisteredClientProvider;
-import io.jmix.authserver.client.impl.DefaultRegisteredClientProvider;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
+import io.jmix.authserver.introspection.TokenIntrospectorRolesHelper;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.security.SecurityConfigurers;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -31,12 +29,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
@@ -45,10 +39,6 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @AutoConfiguration
 @Import({AuthorizationServerConfiguration.class})
@@ -106,20 +96,7 @@ public class AuthorizationServerAutoConfiguration {
         }
 
         @Bean
-        public DefaultRegisteredClientProvider defaultRegisteredClientProvider(DefaultRegisteredClientProperties defaultClientProperties) {
-            return new DefaultRegisteredClientProvider(defaultClientProperties);
-        }
-
-        @Bean
         @ConditionalOnMissingBean
-        public RegisteredClientRepository registeredClientRepository(Collection<RegisteredClientProvider> clientProviders) {
-            List<RegisteredClient> clients = clientProviders.stream()
-                    .flatMap(provider -> provider.getRegisteredClients().stream())
-                    .collect(Collectors.toList());
-            return new InMemoryRegisteredClientRepository(clients);
-        }
-
-        @Bean
         public OAuth2AuthorizationService oAuth2AuthorizationService() {
             return new InMemoryOAuth2AuthorizationService();
         }
@@ -141,9 +118,6 @@ public class AuthorizationServerAutoConfiguration {
                                                                      OpaqueTokenIntrospector opaqueTokenIntrospector) throws Exception {
             http.apply(SecurityConfigurers.apiSecurity());
             http
-                    .authorizeHttpRequests(authorize -> {
-                        authorize.anyRequest().authenticated();
-                    })
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .opaqueToken(opaqueToken -> opaqueToken
                                     .introspector(opaqueTokenIntrospector)));
@@ -154,8 +128,8 @@ public class AuthorizationServerAutoConfiguration {
         @ConditionalOnMissingBean
         @Bean("authsr_OpaqueTokenIntrospector")
         public OpaqueTokenIntrospector opaqueTokenIntrospector(OAuth2AuthorizationService authorizationService,
-                                                               UserDetailsService userDetailsService) {
-            return new AuthorizationServiceOpaqueTokenIntrospector(authorizationService, userDetailsService);
+                                                               TokenIntrospectorRolesHelper tokenIntrospectorRolesHelper) {
+            return new AuthorizationServiceOpaqueTokenIntrospector(authorizationService, tokenIntrospectorRolesHelper);
         }
     }
 }

@@ -53,7 +53,7 @@ import java.util.function.Predicate;
 public class GenericFilterAddConditionAction extends GenericFilterAction<GenericFilterAddConditionAction>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "filter_addCondition";
+    public static final String ID = "genericFilter_addCondition";
 
     protected Messages messages;
     protected DialogWindows dialogWindows;
@@ -182,8 +182,8 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
                     }
 
                     FilterComponent filterComponent = converter.convertToComponent(selectedCondition);
-                    currentConfiguration.getRootLogicalFilterComponent().add(filterComponent);
                     currentConfiguration.setFilterComponentModified(filterComponent, true);
+                    currentConfiguration.getRootLogicalFilterComponent().add(filterComponent);
 
                     boolean nonNullDefaultValue = setFilterComponentDefaultValue(filterComponent, currentConfiguration);
                     if (nonNullDefaultValue) {

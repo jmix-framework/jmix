@@ -1549,6 +1549,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="groupFilterOperation">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AND"/>
+            <xs:enumeration value="OR"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="propertyFilterOperation">
         <xs:restriction base="xs:string">
             <xs:enumeration value="EQUAL"/>
@@ -2075,6 +2082,12 @@
     </xs:complexType>
 
     <xs:complexType name="dropdownButtonAction">
+        <xs:complexContent>
+            <xs:extension base="baseAction"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="genericFilterAction">
         <xs:complexContent>
             <xs:extension base="baseAction"/>
         </xs:complexContent>
@@ -3539,8 +3552,29 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
+                    <xs:element name="actions" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice maxOccurs="unbounded">
+                                    <xs:element name="action" type="genericFilterAction"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+
                     <xs:element name="responsiveSteps" type="responsiveStepsType" minOccurs="0"/>
                     <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
+
+                    <xs:element name="conditions" minOccurs="0" type="filterConditions"/>
+                    <xs:element name="configurations" minOccurs="0" type="filterConfigurations"/>
+                    <xs:element name="properties" minOccurs="0">
+                        <xs:complexType>
+                            <xs:attribute name="include" type="xs:string" use="required"/>
+                            <xs:attribute name="exclude" type="xs:string"/>
+                            <xs:attribute name="excludeProperties" type="xs:string"/>
+                            <xs:attribute name="excludeRecursively" type="xs:boolean"/>
+                        </xs:complexType>
+                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="dataLoader" type="xs:string" use="required"/>
@@ -3556,16 +3590,42 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- PropertyFilter -->
-    <xs:complexType name="propertyFilterComponent">
+    <xs:complexType name="filterConditions">
+        <xs:sequence>
+            <xs:element name="groupFilter" type="baseGroupFilterComponent" minOccurs="0"/>
+            <xs:element name="propertyFilter" type="basePropertyFilterComponent" minOccurs="0"/>
+            <xs:element name="jpqlFilter" type="baseJpqlFilterComponent" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="filterConfigurations">
+        <xs:sequence>
+            <xs:element name="configuration" type="filterConfiguration"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="filterConfiguration">
+        <xs:sequence>
+            <xs:element name="groupFilter" type="baseGroupFilterComponent" minOccurs="0"/>
+            <xs:element name="propertyFilter" type="basePropertyFilterComponent" minOccurs="0"/>
+            <xs:element name="jpqlFilter" type="baseJpqlFilterComponent" minOccurs="0"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="resourceString"/>
+        <xs:attribute name="default" type="xs:boolean"/>
+        <xs:attribute name="operation" type="groupFilterOperation"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseSingleFilterComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
                     <xs:group ref="layoutOrComponent"/>
                     <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
                 </xs:sequence>
+                <xs:attribute name="parameterName" type="xs:string"/>
 
-                <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -3575,20 +3635,96 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
 
-                <xs:attribute name="property" type="xs:string" use="required"/>
-                <xs:attribute name="parameterName" type="xs:string"/>
-
-                <xs:attribute name="operation" type="propertyFilterOperation" use="required"/>
-                <xs:attribute name="operationEditable" type="xs:boolean"/>
-                <xs:attribute name="operationTextVisible" type="xs:boolean"/>
-
                 <xs:attribute name="labelVisible" type="xs:boolean"/>
-                <xs:attribute name="labelPosition" type="labelPositionType"/>
-                <xs:attribute name="labelWidth" type="componentSize"/>
 
                 <xs:attribute name="themeNames" type="xs:string"/>
 
                 <xs:attribute name="defaultValue" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- GroupFilter -->
+
+    <xs:complexType name="baseGroupFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="responsiveSteps" type="responsiveStepsType" minOccurs="0"/>
+
+                    <xs:element name="groupFilter" type="baseGroupFilterComponent" minOccurs="0"/>
+                    <xs:element name="propertyFilter" type="basePropertyFilterComponent" minOccurs="0"/>
+                    <xs:element name="jpqlFilter" type="baseJpqlFilterComponent" minOccurs="0"/>
+                </xs:sequence>
+
+                <xs:attribute name="summaryText" type="resourceString"/>
+                <xs:attribute name="operation" type="groupFilterOperation" use="required"/>
+                <xs:attribute name="operationTextVisible" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="groupFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="baseGroupFilterComponent">
+                <xs:attribute name="dataLoader" type="xs:string" use="required"/>
+                <xs:attribute name="autoApply" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- JpqlFilter -->
+
+    <xs:complexType name="baseJpqlFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="baseSingleFilterComponent">
+                <xs:sequence>
+                    <xs:element name="condition" type="conditionType" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+
+                <xs:attribute name="parameterClass" type="xs:string" use="required"/>
+                <xs:attribute name="hasInExpression" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="jpqlFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="baseJpqlFilterComponent">
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attribute name="labelPosition" type="labelPositionType"/>
+                <xs:attribute name="labelWidth" type="componentSize"/>
+
+                <xs:attribute name="dataLoader" type="xs:string" use="required"/>
+                <xs:attribute name="autoApply" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- PropertyFilter -->
+
+    <xs:complexType name="basePropertyFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="baseSingleFilterComponent">
+                <xs:attribute name="property" type="xs:string" use="required"/>
+
+                <xs:attribute name="operation" type="propertyFilterOperation" use="required"/>
+                <xs:attribute name="operationEditable" type="xs:boolean"/>
+                <xs:attribute name="operationTextVisible" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="propertyFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="basePropertyFilterComponent">
+                <xs:attributeGroup ref="hasSize"/>
+
+                <xs:attribute name="labelPosition" type="labelPositionType"/>
+                <xs:attribute name="labelWidth" type="componentSize"/>
 
                 <xs:attribute name="dataLoader" type="xs:string" use="required"/>
                 <xs:attribute name="autoApply" type="xs:boolean"/>
@@ -3784,6 +3920,8 @@
                 <xs:element name="fileStorageUploadField" type="fileStorageUploadFieldComponent"/>
                 <xs:element name="upload" type="uploadComponent"/>
                 <xs:element name="propertyFilter" type="propertyFilterComponent"/>
+                <xs:element name="jpqlFilter" type="jpqlFilterComponent"/>
+                <xs:element name="groupFilter" type="groupFilterComponent"/>
                 <xs:element name="genericFilter" type="genericFilterComponent"/>
                 <xs:element name="codeEditor" type="codeEditorComponent"/>
             </xs:choice>
@@ -3832,6 +3970,12 @@
 
         <xs:attributeGroup ref="hasThemable"/>
         <xs:attributeGroup ref="hasFlexible"/>
+    </xs:complexType>
+
+    <xs:complexType name="conditionType">
+        <xs:sequence>
+            <xs:any namespace="##other" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
     </xs:complexType>
 
 </xs:schema>

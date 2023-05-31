@@ -19,6 +19,7 @@ package io.jmix.flowui;
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.flowui.app.filter.condition.AddConditionView;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -56,6 +57,11 @@ public class FlowuiComponentProperties {
      */
     int filterPropertiesHierarchyDepth;
 
+    /**
+     * Whether field for filter configuration id should be visible in the {@link FilterConfigurationDetail}.
+     */
+    boolean filterShowConfigurationIdField;
+
     public FlowuiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -69,7 +75,8 @@ public class FlowuiComponentProperties {
             String pickerClearShortcut,
             @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageItems,
             @DefaultValue("true") boolean filterAutoApply,
-            @DefaultValue("2") int filterPropertiesHierarchyDepth) {
+            @DefaultValue("2") int filterPropertiesHierarchyDepth,
+            @DefaultValue("false") boolean filterShowConfigurationIdField) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -86,6 +93,7 @@ public class FlowuiComponentProperties {
 
         this.filterAutoApply = filterAutoApply;
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
+        this.filterShowConfigurationIdField = filterShowConfigurationIdField;
     }
 
     public String getGridCreateShortcut() {
@@ -147,5 +155,12 @@ public class FlowuiComponentProperties {
      */
     public int getFilterPropertiesHierarchyDepth() {
         return filterPropertiesHierarchyDepth;
+    }
+
+    /**
+     * @see #filterShowConfigurationIdField
+     */
+    public boolean isFilterShowConfigurationIdField() {
+        return filterShowConfigurationIdField;
     }
 }

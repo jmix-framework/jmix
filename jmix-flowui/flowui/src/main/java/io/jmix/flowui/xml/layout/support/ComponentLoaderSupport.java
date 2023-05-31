@@ -33,6 +33,7 @@ import io.jmix.core.impl.DatatypeRegistryImpl;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsDatatype;
+import io.jmix.flowui.component.SupportsResponsiveSteps;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.formatter.FormatterLoadFactory;
 import io.jmix.flowui.component.validation.Validator;
@@ -55,6 +56,7 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -150,6 +152,40 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
             loaderSupport.loadEnum(tooltipElement, Tooltip.TooltipPosition.class, "position",
                     tooltip::setPosition);
         }
+    }
+
+    public void loadResponsiveSteps(SupportsResponsiveSteps resultComponent, Element element) {
+        //noinspection DuplicatedCode
+        Element responsiveSteps = element.element("responsiveSteps");
+        if (responsiveSteps == null) {
+            return;
+        }
+
+        List<Element> responsiveStepList = responsiveSteps.elements("responsiveStep");
+        if (responsiveStepList.isEmpty()) {
+            throw new GuiDevelopmentException(responsiveSteps.getName() + "can't be empty", context);
+        }
+
+        List<SupportsResponsiveSteps.ResponsiveStep> pendingSetResponsiveSteps = new ArrayList<>();
+        for (Element subElement : responsiveStepList) {
+            pendingSetResponsiveSteps.add(loadResponsiveStep(subElement));
+        }
+
+        resultComponent.setResponsiveSteps(pendingSetResponsiveSteps);
+    }
+
+    protected SupportsResponsiveSteps.ResponsiveStep loadResponsiveStep(Element element) {
+        String minWidth = loaderSupport.loadString(element, "minWidth")
+                .orElseThrow(() -> new GuiDevelopmentException("'minWidth' can't be empty", context));
+        Integer columns = loaderSupport.loadInteger(element, "columns")
+                .orElse(1);
+        SupportsResponsiveSteps.ResponsiveStep.LabelsPosition labelsPosition =
+                loaderSupport.loadEnum(element,
+                                SupportsResponsiveSteps.ResponsiveStep.LabelsPosition.class,
+                                "labelsPosition")
+                        .orElse(null);
+
+        return new SupportsResponsiveSteps.ResponsiveStep(minWidth, columns, labelsPosition);
     }
 
     public void loadAlignItems(FlexComponent component, Element element) {

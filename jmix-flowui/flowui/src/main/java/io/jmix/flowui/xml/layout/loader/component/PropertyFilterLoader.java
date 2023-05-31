@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,17 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
-import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import org.dom4j.Element;
+
+import java.util.List;
 
 import static io.jmix.core.querycondition.PropertyConditionUtils.generateParameterName;
 
-public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<PropertyFilter> {
+public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<PropertyFilter<?>> {
 
     @Override
-    protected PropertyFilter createComponent() {
+    protected PropertyFilter<?> createComponent() {
         return factory.create(PropertyFilter.class);
     }
 
@@ -90,8 +92,19 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
                 .ifPresent(component::setValue);
     }
 
-    protected SingleFilterSupport getSingleFilterSupport() {
-        return applicationContext.getBean(SingleFilterSupport.class);
+    @Override
+    protected Element getValueComponentElement(List<Element> elements) {
+        if (elements.size() > 2) {
+            throw new GuiDevelopmentException("Only one value component can be defined", context);
+        }
+
+        return elements.stream()
+                .filter(this::isValueComponent)
+                .findAny()
+                .orElseThrow(() -> new GuiDevelopmentException(
+                        String.format("Unknown value component for %s", resultComponent.getClass().getSimpleName()),
+                        context)
+                );
     }
 
     protected PropertyFilterSupport getPropertyFilterSupport() {
@@ -100,5 +113,10 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
 
     protected MetadataTools getMetadataTools() {
         return applicationContext.getBean(MetadataTools.class);
+    }
+
+    @Override
+    protected boolean isValueComponent(Element subElement) {
+        return !"tooltip".equals(subElement.getName());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,22 @@
 
 package io.jmix.flowui.app.filter.condition;
 
+import com.google.common.collect.Lists;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.LoadContext;
-import io.jmix.core.Messages;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.accesscontext.FlowuiFilterModifyJpqlConditionContext;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.builder.PropertyConditionBuilder;
+import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.entity.filter.FilterCondition;
-import io.jmix.flowui.entity.filter.HeaderFilterCondition;
+import io.jmix.flowui.entity.filter.*;
+import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
@@ -51,8 +56,21 @@ public class AddConditionView extends StandardListView<FilterCondition> {
     @ViewComponent
     protected CollectionLoader<FilterCondition> filterConditionsDl;
 
+    @ViewComponent
+    protected DropdownButton createConditionBtn;
+
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected FilterComponents filterComponents;
+    @Autowired
+    protected AccessManager accessManager;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected MessageTools messageTools;
+    @Autowired
+    protected DialogWindows dialogWindows;
 
     protected List<FilterCondition> conditions = new ArrayList<>();
     protected List<FilterCondition> rootConditions = new ArrayList<>();
@@ -97,8 +115,9 @@ public class AddConditionView extends StandardListView<FilterCondition> {
     }
 
     @Subscribe
-    protected void onReady(ReadyEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         initFilterConditionsTreeDataGrid();
+        initCreateConditionBtn();
     }
 
     protected void initFilterConditionsTreeDataGrid() {
@@ -109,6 +128,77 @@ public class AddConditionView extends StandardListView<FilterCondition> {
         propertiesHeaderCondition = getHeaderFilterConditionByCaption(propertiesCaption);
         if (propertiesHeaderCondition != null) {
             filterConditionsTreeDataGrid.expand(propertiesHeaderCondition);
+        }
+    }
+
+    protected void initCreateConditionBtn() {
+        for (Class<? extends FilterCondition> modelClass : filterComponents.getRegisteredModelClasses()) {
+            if (JpqlFilterCondition.class.isAssignableFrom(modelClass)) {
+                FlowuiFilterModifyJpqlConditionContext jpqlConditionsContext =
+                        new FlowuiFilterModifyJpqlConditionContext();
+                accessManager.applyRegisteredConstraints(jpqlConditionsContext);
+
+                if (!jpqlConditionsContext.isPermitted()) {
+                    continue;
+                }
+            }
+
+            String detailViewId = filterComponents.getDetailViewId(modelClass);
+            Action dropdownButtonAction = createDropdownButtonAction(detailViewId, modelClass);
+            createConditionBtn.addItem(dropdownButtonAction.getId(), dropdownButtonAction);
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Action createDropdownButtonAction(String detailViewId, Class modelClass) {
+        MetaClass metaClass = metadata.getClass(modelClass);
+        String actionText = messages.formatMessage(getClass(),
+                "addConditionView.createDropdownButton.actionItemText",
+                messageTools.getEntityCaption(metaClass));
+
+        return new BaseAction("genericFilter_create" + detailViewId)
+                .withText(actionText)
+                .withHandler(event -> {
+                    DialogWindow<View<?>> detailView = dialogWindows.detail(this, modelClass)
+                            .withViewId(detailViewId)
+                            .newEntity(createFilterCondition(modelClass))
+                            .build();
+
+                    applyViewConfigurer(detailView.getView());
+                    detailView.addAfterCloseListener(this::onDetailViewAfterClose);
+
+                    detailView.open();
+                });
+    }
+
+    protected FilterCondition createFilterCondition(Class<? extends FilterCondition> modelClass) {
+        FilterCondition newCondition = metadata.create(modelClass);
+
+        if (newCondition instanceof AbstractSingleFilterCondition) {
+            FilterValueComponent filterValueComponent = metadata.create(FilterValueComponent.class);
+            ((AbstractSingleFilterCondition) newCondition).setValueComponent(filterValueComponent);
+        }
+
+        return newCondition;
+    }
+
+    protected void applyViewConfigurer(View<?> detailView) {
+        if (detailView instanceof FilterConditionDetailView) {
+            ((FilterConditionDetailView<?>) detailView).setCurrentConfiguration(getCurrentFilterConfiguration());
+        }
+    }
+
+    protected void onDetailViewAfterClose(DialogWindow.AfterCloseEvent<View<?>> event) {
+        if (event.closedWith(StandardOutcome.SAVE)) {
+            FilterCondition filterCondition = ((FilterConditionDetailView<? extends FilterCondition>) event.getView())
+                    .getInstanceContainer()
+                    .getItem();
+
+            ArrayList<FilterCondition> selectedItems = Lists.newArrayList(filterCondition);
+
+            validateSelectedItems(selectedItems)
+                    .compose(() -> close(StandardOutcome.SELECT))
+                    .compose(() -> doSelect(selectedItems));
         }
     }
 

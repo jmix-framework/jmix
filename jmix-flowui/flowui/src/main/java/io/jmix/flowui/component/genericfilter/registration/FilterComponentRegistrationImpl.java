@@ -17,7 +17,7 @@
 package io.jmix.flowui.component.genericfilter.registration;
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.flowui.component.filer.FilterComponent;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.entity.filter.FilterCondition;
 

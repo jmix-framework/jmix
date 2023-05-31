@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.filer;
+package io.jmix.flowui.component.filter;
 
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.HasEnabled;

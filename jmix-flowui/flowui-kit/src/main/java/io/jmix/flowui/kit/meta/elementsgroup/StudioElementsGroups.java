@@ -102,7 +102,7 @@ public interface StudioElementsGroups {
 
     @StudioElementsGroup(
             name = "Conditions",
-            elementClassFqn = "io.jmix.flowui.component.filer.FilterComponent",
+            elementClassFqn = "io.jmix.flowui.component.filter.FilterComponent",
             xmlElement = "conditions",
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/conditions.svg",
             target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}

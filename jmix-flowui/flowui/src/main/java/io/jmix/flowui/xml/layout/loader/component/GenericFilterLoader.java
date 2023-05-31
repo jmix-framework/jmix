@@ -18,8 +18,8 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.ComponentUtil;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
-import io.jmix.flowui.component.filer.FilterComponent;
-import io.jmix.flowui.component.filer.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;

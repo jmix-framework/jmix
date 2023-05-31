@@ -20,11 +20,10 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.component.filer.FilterComponent;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
 import java.util.List;
 
 @ActionType(GenericFilterClearValuesAction.ID)

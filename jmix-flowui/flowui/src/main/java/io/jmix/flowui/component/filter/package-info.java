@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.flowui.component.filer;
+package io.jmix.flowui.component.filter;
 
 import org.springframework.lang.NonNullApi;

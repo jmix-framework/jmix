@@ -27,7 +27,7 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.component.filer.FilterComponent;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;

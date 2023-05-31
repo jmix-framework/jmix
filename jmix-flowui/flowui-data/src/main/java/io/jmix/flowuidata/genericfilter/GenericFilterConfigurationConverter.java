@@ -17,8 +17,8 @@
 package io.jmix.flowuidata.genericfilter;
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.flowui.component.filer.FilterComponent;
-import io.jmix.flowui.component.filer.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;

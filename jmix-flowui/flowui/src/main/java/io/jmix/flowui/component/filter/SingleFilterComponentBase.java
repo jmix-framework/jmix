@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.filer;
+package io.jmix.flowui.component.filter;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;

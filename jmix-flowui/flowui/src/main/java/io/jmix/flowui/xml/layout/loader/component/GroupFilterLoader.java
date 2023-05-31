@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.filer.FilterComponent;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.logicalfilter.GroupFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.model.DataLoader;

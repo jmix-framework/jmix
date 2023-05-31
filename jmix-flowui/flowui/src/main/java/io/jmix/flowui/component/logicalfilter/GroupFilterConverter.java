@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.component.filer.FilterComponent;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.converter.AbstractFilterComponentConverter;
 import io.jmix.flowui.component.genericfilter.converter.FilterConverter;

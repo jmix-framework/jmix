@@ -23,7 +23,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.flowui.component.filer.FilterComponent;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.model.DataLoader;
 import jakarta.annotation.Nullable;
 

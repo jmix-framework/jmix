@@ -19,7 +19,7 @@ package io.jmix.flowui.component.genericfilter.registration;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.component.filer.FilterComponent;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.converter.AbstractFilterComponentConverter;
 import io.jmix.flowui.component.genericfilter.converter.FilterConverter;

@@ -161,11 +161,17 @@
     <source fileExt="java"
             group="list"
             name="../list-dto/controller"/>
+    <source fileExt="kt"
+            group="list"
+            name="../list-dto/controller"/>
 
     <source fileExt="xml"
             group="detail"
             name="../detail-dto/descriptor"/>
     <source fileExt="java"
+            group="detail"
+            name="../detail-dto/controller"/>
+    <source fileExt="kt"
             group="detail"
             name="../detail-dto/controller"/>
 </template>

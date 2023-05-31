@@ -193,11 +193,17 @@
     <source fileExt="java"
             group="list"
             name="../list/controller"/>
+    <source fileExt="kt"
+            group="list"
+            name="../list/controller"/>
 
     <source fileExt="xml"
             group="detail"
             name="../detail/descriptor"/>
     <source fileExt="java"
+            group="detail"
+            name="../detail/controller"/>
+    <source fileExt="kt"
             group="detail"
             name="../detail/controller"/>
 </template>

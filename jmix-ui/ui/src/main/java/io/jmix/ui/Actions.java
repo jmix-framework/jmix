@@ -30,7 +30,9 @@ public interface Actions {
 
     Action create(String actionTypeId, String id);
 
+    @Deprecated
     <T extends Action> T create(Class<T> actionTypeClass);
 
+    @Deprecated
     <T extends Action> T create(Class<T> actionTypeClass, String id);
 }

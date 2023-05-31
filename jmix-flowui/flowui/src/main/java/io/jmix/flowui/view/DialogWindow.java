@@ -60,6 +60,8 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
     // private, lazily initialized
     private EventHub eventHub = null;
 
+    private boolean readyEventFired = false;
+
     public DialogWindow(V view) {
         this.view = view;
         this.dialog = createDialog();
@@ -218,11 +220,14 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
     }
 
     protected void onDialogOpenedChanged(Dialog.OpenedChangeEvent openedChangeEvent) {
-        if (openedChangeEvent.isOpened()) {
+        if (openedChangeEvent.isOpened() && !readyEventFired) {
             fireViewReadyEvent(view);
 
             AfterOpenEvent<V> event = new AfterOpenEvent<>(this);
             publish(AfterOpenEvent.class, event);
+
+            // temporal workaround for https://github.com/vaadin/flow-components/issues/5103
+            readyEventFired = true;
         }
     }
 

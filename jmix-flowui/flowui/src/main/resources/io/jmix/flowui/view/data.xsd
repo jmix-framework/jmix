@@ -42,7 +42,6 @@
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="class" type="xs:string"/>
         <xs:attribute name="fetchPlan" type="xs:string"/>
-        <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="collectionContainerType">
@@ -55,7 +54,6 @@
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="class" type="xs:string"/>
         <xs:attribute name="fetchPlan" type="xs:string"/>
-        <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="nestedContainerType">
@@ -65,7 +63,6 @@
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="property" type="xs:string" use="required"/>
-        <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="instanceLoaderType">
@@ -74,7 +71,6 @@
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="entityId" type="xs:string"/>
-        <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="collectionLoaderType">
@@ -85,7 +81,6 @@
         <xs:attribute name="firstResult" type="xs:integer"/>
         <xs:attribute name="maxResults" type="xs:integer"/>
         <xs:attribute name="cacheable" type="xs:boolean"/>
-        <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
 
@@ -95,7 +90,6 @@
             <xs:element name="loader" type="keyValueInstanceLoaderType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
-        <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="keyValueInstanceLoaderType">
@@ -104,7 +98,6 @@
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="store" type="xs:string"/>
-        <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="keyValueCollectionContainerType">
@@ -113,7 +106,6 @@
             <xs:element name="loader" type="keyValueCollectionLoaderType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
-        <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="keyValueCollectionLoaderType">
@@ -124,7 +116,6 @@
         <xs:attribute name="firstResult" type="xs:integer"/>
         <xs:attribute name="maxResults" type="xs:integer"/>
         <xs:attribute name="store" type="xs:string"/>
-        <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="keyValueContainerProperties">

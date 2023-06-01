@@ -69,8 +69,6 @@ public interface StudioDataElements {
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
@@ -92,8 +90,6 @@ public interface StudioDataElements {
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "cacheable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
@@ -109,8 +105,6 @@ public interface StudioDataElements {
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE)
             }
     )
@@ -128,8 +122,6 @@ public interface StudioDataElements {
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE)
             }
     )

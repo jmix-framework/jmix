@@ -68,14 +68,20 @@ public class EntityFieldCreationSupport {
 
     public EntityPicker createEntityField(MetaClass metaclass, @Nullable Options options) {
         EntityPicker field = createFieldComponent(metaclass, options);
-        createFieldActions(metaclass, MetaProperty.Type.ASSOCIATION, field);
+        createFieldActions(metaclass, MetaProperty.Type.ASSOCIATION, field, false);
         return field;
     }
 
     public EntityPicker createEntityField(MetaPropertyPath metaPropertyPath, @Nullable Options options) {
+        return createEntityField(metaPropertyPath, options, false);
+    }
+
+    public EntityPicker createEntityField(MetaPropertyPath metaPropertyPath,
+                                          @Nullable Options options,
+                                          boolean considerComposition) {
         MetaClass metaClass = metaPropertyPath.getMetaProperty().getRange().asClass();
         EntityPicker field = createFieldComponent(metaClass, options);
-        createFieldActions(metaClass, metaPropertyPath.getMetaProperty().getType(), field);
+        createFieldActions(metaClass, metaPropertyPath.getMetaProperty().getType(), field, considerComposition);
         return field;
     }
 
@@ -153,12 +159,13 @@ public class EntityFieldCreationSupport {
         return field;
     }
 
-    protected void createFieldActions(MetaClass metaClass, MetaProperty.Type metaPropertyType, EntityPicker field) {
+    protected void createFieldActions(MetaClass metaClass, MetaProperty.Type metaPropertyType,
+                                      EntityPicker field, boolean considerComposition) {
         List<String> actionIds = componentProperties.getEntityFieldActions().get(metaClass.getName());
 
         if (actionIds == null || actionIds.isEmpty()) {
             if (!(field instanceof EntityComboBox)) {
-                if (metaPropertyType == MetaProperty.Type.ASSOCIATION) {
+                if (metaPropertyType == MetaProperty.Type.ASSOCIATION || considerComposition) {
                     field.addAction(actions.create(EntityLookupAction.ID));
                     field.addAction(actions.create(EntityClearAction.ID));
                 } else if (metaPropertyType == MetaProperty.Type.COMPOSITION) {

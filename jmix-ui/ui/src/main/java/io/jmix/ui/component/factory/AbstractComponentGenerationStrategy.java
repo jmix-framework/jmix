@@ -368,7 +368,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         ValuesPicker valuesPicker = uiComponents.create(ValuesPicker.class);
         setValueSource(valuesPicker, context);
 
-        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.class);
+        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.ID);
         Range range = mpp.getRange();
         if (range.isClass()) {
             selectAction.setEntityName(range.asClass().getName());
@@ -379,7 +379,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         }
         valuesPicker.addAction(selectAction);
 
-        ValueClearAction valueClearAction = actions.create(ValueClearAction.class);
+        ValueClearAction valueClearAction = actions.create(ValueClearAction.ID);
         valuesPicker.addAction(valueClearAction);
 
         return valuesPicker;

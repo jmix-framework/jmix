@@ -247,12 +247,12 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
         } else {
             PickerField pickerField = cubaUiComponents.create(PickerField.class);
 
-            LookupAction lookupAction = actions.create(LookupAction.class);
+            LookupAction lookupAction = actions.create(LookupAction.ID);
 
             setLookupActionScreen(lookupAction, attribute);
 
             pickerField.addAction(lookupAction);
-            pickerField.addAction(actions.create(ClearAction.class));
+            pickerField.addAction(actions.create(ClearAction.ID));
 
             setValueSource(pickerField, context);
             setValidators(pickerField, attribute);

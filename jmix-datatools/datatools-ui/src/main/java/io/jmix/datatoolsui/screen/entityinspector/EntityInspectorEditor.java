@@ -292,7 +292,7 @@ public class EntityInspectorEditor extends StandardEditor {
     }
 
     private AddAction createAddAction(Table table, MetaProperty metaProperty) {
-        AddAction addAction = actions.create(AddAction.class);
+        AddAction addAction = actions.create(AddAction.ID);
         addAction.setOpenMode(OpenMode.THIS_TAB);
         addAction.setTarget(table);
         addAction.setScreenClass(EntityInspectorBrowser.class);
@@ -315,7 +315,7 @@ public class EntityInspectorEditor extends StandardEditor {
     }
 
     private CreateAction createCreateAction(Table table, MetaProperty metaProperty) {
-        CreateAction createAction = actions.create(CreateAction.class);
+        CreateAction createAction = actions.create(CreateAction.ID);
         createAction.setOpenMode(OpenMode.THIS_TAB);
         createAction.setTarget(table);
         createAction.setScreenClass(EntityInspectorEditor.class);
@@ -351,7 +351,7 @@ public class EntityInspectorEditor extends StandardEditor {
     }
 
     private EditAction createEditAction(Table table, MetaProperty metaProperty) {
-        EditAction editAction = actions.create(EditAction.class);
+        EditAction editAction = actions.create(EditAction.ID);
         editAction.setOpenMode(OpenMode.THIS_TAB);
         editAction.setTarget(table);
         editAction.setScreenClass(EntityInspectorEditor.class);
@@ -385,11 +385,11 @@ public class EntityInspectorEditor extends StandardEditor {
         Action.HasTarget result;
         switch (metaProperty.getType()) {
             case COMPOSITION:
-                result = actions.create(RemoveAction.class);
+                result = actions.create(RemoveAction.ID);
                 result.setTarget(table);
                 break;
             case ASSOCIATION:
-                result = actions.create(ExcludeAction.class);
+                result = actions.create(ExcludeAction.ID);
                 result.setTarget(table);
                 break;
             default:

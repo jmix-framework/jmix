@@ -25,7 +25,7 @@ import io.jmix.ui.meta.StudioAction;
  * <br>
  * You can use fluent API to create instances of ItemTrackingAction and assign handlers to them:
  * <pre>{@code
- *     Action action = actions.create(ItemTrackingAction.class, "moveToTrash")
+ *     Action action = actions.create(ItemTrackingAction.ID, "moveToTrash")
  *             .withCaption("Move to trash")
  *             .withIcon(JmixIcon.TRASH_O.source())
  *             .withHandler(event -> {

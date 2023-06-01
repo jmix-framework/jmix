@@ -529,7 +529,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     }
 
     protected void initAddConditionButton() {
-        FilterAddConditionAction addConditionAction = actions.create(FilterAddConditionAction.class);
+        FilterAddConditionAction addConditionAction = actions.create(FilterAddConditionAction.ID);
         addConditionAction.setFilter(this);
         addConditionButton.setAction(addConditionAction, false);
         addConditionButton.setIcon(null);

@@ -52,8 +52,8 @@ public class FilterSupport {
 
     public List<FilterAction> getDefaultFilterActions(Filter filter) {
         List<FilterAction> filterActions = new ArrayList<>();
-        for (Class<? extends FilterAction> actionClass : getDefaultFilterActionClasses()) {
-            filterActions.add(createFilterAction(actionClass, filter));
+        for (String actionId : getDefaultFilterActionIds()) {
+            filterActions.add(createFilterAction(actionId, filter));
         }
         return filterActions;
     }
@@ -182,17 +182,17 @@ public class FilterSupport {
         }
     }
 
-    protected Set<Class<? extends FilterAction>> getDefaultFilterActionClasses() {
+    protected Set<String> getDefaultFilterActionIds() {
         return ImmutableSet.of(
-                FilterEditAction.class,
-                FilterCopyAction.class,
-                FilterClearValuesAction.class
+                FilterEditAction.ID,
+                FilterCopyAction.ID,
+                FilterClearValuesAction.ID
         );
     }
 
-    protected FilterAction createFilterAction(Class<? extends FilterAction> filterActionClass,
+    protected FilterAction createFilterAction(String filterActionId,
                                               Filter filter) {
-        FilterAction filterAction = actions.create(filterActionClass);
+        FilterAction filterAction = actions.create(filterActionId);
         filterAction.setFilter(filter);
         return filterAction;
     }

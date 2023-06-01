@@ -319,7 +319,7 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
     }
 
     protected CreateAction<PivotTableProperty> createPropertyCreateAction(PivotTablePropertyType propertyType) {
-        CreateAction<PivotTableProperty> action = actions.create(CreateAction.class, "create_" + propertyType.getId());
+        CreateAction<PivotTableProperty> action = actions.create(CreateAction.ID, "create_" + propertyType.getId());
         action.setOpenMode(OpenMode.THIS_TAB);
         action.setInitializer(property -> property.setType(propertyType));
         action.setCaption(messages.getMessage(propertyType));

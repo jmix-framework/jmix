@@ -130,7 +130,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         doubleClickAction.addEnabledRule(this::isUpdatePermitted);
         entityTree.setItemClickAction(doubleClickAction);
 
-        ListAction addPropertyAction = actions.create(ItemTrackingAction.class, "addItemAction")
+        ListAction addPropertyAction = ((ItemTrackingAction) actions.create(ItemTrackingAction.ID, "addItemAction"))
                 .withHandler(event -> addProperty());
         addPropertyAction.addEnabledRule(this::isUpdatePermitted);
         entityTree.addAction(addPropertyAction);

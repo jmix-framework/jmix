@@ -208,12 +208,12 @@ public class InspectorFormLayoutBuilder {
             MetaClass propertyMetaClass = metaProperty.getRange().asClass();
             pickerField.setValueSource(componentContext.getValueSource());
 
-            EntityInspectorLookupAction lookupAction = actions.create(EntityInspectorLookupAction.class);
+            EntityInspectorLookupAction lookupAction = actions.create(EntityInspectorLookupAction.ID);
             lookupAction.setViewClass(EntityInspectorListView.class);
             lookupAction.setEntityNameParameter(propertyMetaClass.getName());
             lookupAction.setTarget(pickerField);
 
-            EntityClearAction entityClearAction = actions.create(EntityClearAction.class);
+            EntityClearAction entityClearAction = actions.create(EntityClearAction.ID);
             entityClearAction.setTarget(pickerField);
 
             pickerField.addAction(lookupAction);

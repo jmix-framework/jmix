@@ -238,7 +238,7 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
     protected Action createRelatedAction(MetaProperty metaProperty,
                                          @Nullable WindowInfo defaultScreen,
                                          @Nullable PropertyOption propertyOption) {
-        RelatedAction relatedAction = actions.create(RelatedAction.class, "related" + actionOrder.size());
+        RelatedAction relatedAction = actions.create(RelatedAction.ID, "related" + actionOrder.size());
 
         relatedAction.setTarget(listComponent);
         relatedAction.setMetaProperty(metaProperty);

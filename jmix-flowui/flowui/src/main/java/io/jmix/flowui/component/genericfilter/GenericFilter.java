@@ -247,7 +247,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void initAddConditionButton(JmixButton addConditionButton) {
         addConditionButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-        GenericFilterAddConditionAction addConditionAction = actions.create(GenericFilterAddConditionAction.class);
+        GenericFilterAddConditionAction addConditionAction = actions.create(GenericFilterAddConditionAction.ID);
         addConditionAction.setTarget(this);
         addConditionAction.setText(messages.getMessage("genericFilter.addConditionButton.text"));
         addConditionAction.setIcon(null);
@@ -283,7 +283,7 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected Action createResetFilterAction() {
-        GenericFilterResetAction filterResetAction = actions.create(GenericFilterResetAction.class);
+        GenericFilterResetAction filterResetAction = actions.create(GenericFilterResetAction.ID);
         filterResetAction.setTarget(this);
         return filterResetAction;
     }

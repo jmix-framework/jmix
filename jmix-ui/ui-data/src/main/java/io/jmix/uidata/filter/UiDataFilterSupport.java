@@ -160,16 +160,16 @@ public class UiDataFilterSupport extends FilterSupport {
     }
 
     @Override
-    protected Set<Class<? extends FilterAction>> getDefaultFilterActionClasses() {
-        return ImmutableSet.<Class<? extends FilterAction>>builder()
-                .add(FilterSaveAction.class)
-                .add(FilterSaveWithValuesAction.class)
-                .add(FilterSaveAsAction.class)
-                .add(FilterEditAction.class)
-                .add(FilterRemoveAction.class)
-                .add(FilterMakeDefaultAction.class)
-                .add(FilterCopyAction.class)
-                .add(FilterClearValuesAction.class)
+    protected Set<String> getDefaultFilterActionIds() {
+        return ImmutableSet.<String>builder()
+                .add(FilterSaveAction.ID)
+                .add(FilterSaveWithValuesAction.ID)
+                .add(FilterSaveAsAction.ID)
+                .add(FilterEditAction.ID)
+                .add(FilterRemoveAction.ID)
+                .add(FilterMakeDefaultAction.ID)
+                .add(FilterCopyAction.ID)
+                .add(FilterClearValuesAction.ID)
                 .build();
     }
 

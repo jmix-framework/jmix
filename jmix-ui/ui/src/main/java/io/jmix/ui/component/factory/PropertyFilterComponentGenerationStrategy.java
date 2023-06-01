@@ -27,7 +27,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.app.propertyfilter.dateinterval.action.DateIntervalAction;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
@@ -144,7 +143,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
 
     @Override
     protected Component createEntityField(ComponentGenerationContext context, MetaPropertyPath mpp) {
-        return (EntityPicker<?>) entityFieldCreationSupport.createEntityField(mpp, context.getOptions());
+        return (EntityPicker<?>) entityFieldCreationSupport.createEntityField(mpp, context.getOptions(), true);
     }
 
     @Override

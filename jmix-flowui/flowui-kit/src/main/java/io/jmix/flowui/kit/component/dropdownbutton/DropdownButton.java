@@ -64,10 +64,6 @@ public class DropdownButton extends AbstractDropdownButton {
     public void setText(String text) {
         getDropdownItem().setText(text);
 
-        if (!explicitTitle) {
-            setTitleInternal(text);
-        }
-
         updateDropdownIconSlot();
         updateIconSlot();
     }

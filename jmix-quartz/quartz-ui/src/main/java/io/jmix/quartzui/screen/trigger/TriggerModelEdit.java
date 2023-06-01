@@ -7,6 +7,7 @@ import io.jmix.quartz.service.QuartzService;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.screen.*;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -18,6 +19,9 @@ public class TriggerModelEdit extends StandardEditor<TriggerModel> {
 
     @Autowired
     private QuartzService quartzService;
+
+    @Autowired
+    private MessageBundle messageBundle;
 
     @Autowired
     private ComboBox<String> triggerGroupField;
@@ -62,6 +66,17 @@ public class TriggerModelEdit extends StandardEditor<TriggerModel> {
         cronExpressionField.setVisible(!isSimpleTrigger);
         repeatCountField.setVisible(isSimpleTrigger);
         repeatIntervalField.setVisible(isSimpleTrigger);
+    }
+
+    @Subscribe
+    public void onValidation(ValidationEvent event) {
+        if (ScheduleType.SIMPLE.equals(getEditedEntity().getScheduleType())
+                || CronExpression.isValidExpression(getEditedEntity().getCronExpression())) {
+            return;
+        }
+
+        String message = messageBundle.getMessage("invalidCronExpressionValidationMessage");
+        event.getErrors().add(message);
     }
 
 }

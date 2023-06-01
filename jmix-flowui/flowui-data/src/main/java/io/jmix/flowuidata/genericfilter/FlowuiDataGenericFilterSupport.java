@@ -174,15 +174,15 @@ public class FlowuiDataGenericFilterSupport extends GenericFilterSupport {
     }
 
     @Override
-    protected Set<Class<? extends GenericFilterAction<?>>> getDefaultFilterActionClasses() {
+    protected Set<String> getDefaultFilterActionIds() {
         return ImmutableSet.of(
-                GenericFilterSaveAction.class,
-                GenericFilterSaveWithValuesAction.class,
-                GenericFilterSaveAsAction.class,
-                GenericFilterEditAction.class,
-                GenericFilterRemoveAction.class,
-                GenericFilterCopyAction.class,
-                GenericFilterClearValuesAction.class
+                GenericFilterSaveAction.ID,
+                GenericFilterSaveWithValuesAction.ID,
+                GenericFilterSaveAsAction.ID,
+                GenericFilterEditAction.ID,
+                GenericFilterRemoveAction.ID,
+                GenericFilterCopyAction.ID,
+                GenericFilterClearValuesAction.ID
         );
     }
 

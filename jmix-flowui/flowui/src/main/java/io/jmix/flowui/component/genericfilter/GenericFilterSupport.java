@@ -50,8 +50,8 @@ public class GenericFilterSupport {
 
     public List<GenericFilterAction<?>> getDefaultFilterActions(GenericFilter filter) {
         List<GenericFilterAction<?>> filterActions = new ArrayList<>();
-        for (Class<? extends GenericFilterAction<?>> actionClass : getDefaultFilterActionClasses()) {
-            filterActions.add(createFilterAction(actionClass, filter));
+        for (String actionId : getDefaultFilterActionIds()) {
+            filterActions.add(createFilterAction(actionId, filter));
         }
         return filterActions;
     }
@@ -186,11 +186,11 @@ public class GenericFilterSupport {
         }
     }
 
-    protected Set<Class<? extends GenericFilterAction<?>>> getDefaultFilterActionClasses() {
+    protected Set<String> getDefaultFilterActionIds() {
         return ImmutableSet.of(
-                GenericFilterEditAction.class,
-                GenericFilterCopyAction.class,
-                GenericFilterClearValuesAction.class
+                GenericFilterEditAction.ID,
+                GenericFilterCopyAction.ID,
+                GenericFilterClearValuesAction.ID
         );
     }
 
@@ -198,9 +198,9 @@ public class GenericFilterSupport {
         return Collections.emptyMap();
     }
 
-    protected GenericFilterAction<?> createFilterAction(Class<? extends GenericFilterAction<?>> filterActionClass,
+    protected GenericFilterAction<?> createFilterAction(String filterActionId,
                                                         GenericFilter filter) {
-        GenericFilterAction<?> filterAction = actions.create(filterActionClass);
+        GenericFilterAction<?> filterAction = actions.create(filterActionId);
         filterAction.setTarget(filter);
         return filterAction;
     }

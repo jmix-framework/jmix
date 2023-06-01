@@ -23,6 +23,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.sys.ActionDefinition;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.BeanUtil;
+import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -65,38 +65,24 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
         this.applicationContext = applicationContext;
     }
 
-    @Override
-    public Action create(String actionTypeId) {
-        Class<? extends Action> actionClass = classes.get(actionTypeId);
-        if (actionClass == null) {
-            throw new IllegalArgumentException("Unable to find action type: " + actionTypeId);
-        }
-
-        return createAction(actionClass);
-    }
-
-    @Override
-    public Action create(String actionTypeId, String id) {
-        Class<? extends Action> actionClass = classes.get(actionTypeId);
-        if (actionClass == null) {
-            throw new IllegalArgumentException("Unable to find action type: " + actionTypeId);
-        }
-
-        return createAction(actionClass, id);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Action> T create(Class<T> actionTypeClass) {
-        Class<? extends Action> actionClass = resolveActionClass(actionTypeClass);
+    public <T extends Action> T create(String actionTypeId) {
+        Class<? extends Action> actionClass = classes.get(actionTypeId);
+        if (actionClass == null) {
+            throw new IllegalArgumentException("Unable to find action type: " + actionTypeId);
+        }
 
         return (T) createAction(actionClass);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Action> T create(Class<T> actionTypeClass, String id) {
-        Class<? extends Action> actionClass = resolveActionClass(actionTypeClass);
+    public <T extends Action> T create(String actionTypeId, String id) {
+        Class<? extends Action> actionClass = classes.get(actionTypeId);
+        if (actionClass == null) {
+            throw new IllegalArgumentException("Unable to find action type: " + actionTypeId);
+        }
 
         return (T) createAction(actionClass, id);
     }

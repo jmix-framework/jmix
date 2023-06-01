@@ -50,9 +50,15 @@ public class EntityFieldCreationSupport {
         this.metadataTools = metadataTools;
     }
 
-    @SuppressWarnings("unchecked")
     @Nullable
     public com.vaadin.flow.component.Component createEntityField(ComponentGenerationContext context) {
+        return createEntityField(context, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public com.vaadin.flow.component.Component createEntityField(ComponentGenerationContext context,
+                                                                 boolean considerComposition) {
         MetaClass metaClass = context.getMetaClass();
         MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(
                 metaClass,
@@ -81,14 +87,15 @@ public class EntityFieldCreationSupport {
         }
 
         field.setMetaClass(propertyMetaClass);
-        createFieldActions(metaPropertyPath.getMetaProperty().getType(), field);
+        createFieldActions(metaPropertyPath.getMetaProperty().getType(), field, considerComposition);
 
         return (com.vaadin.flow.component.Component) field;
     }
 
-    protected void createFieldActions(MetaProperty.Type metaPropertyType, EntityPickerComponent field) {
+    protected void createFieldActions(MetaProperty.Type metaPropertyType, EntityPickerComponent field,
+                                      boolean considerComposition) {
         if (!(field instanceof EntityComboBox)) {
-            if (metaPropertyType == MetaProperty.Type.ASSOCIATION) {
+            if (metaPropertyType == MetaProperty.Type.ASSOCIATION || considerComposition) {
                 field.addAction(actions.create(EntityLookupAction.ID));
                 field.addAction(actions.create(EntityClearAction.ID));
             } else if (metaPropertyType == MetaProperty.Type.COMPOSITION) {

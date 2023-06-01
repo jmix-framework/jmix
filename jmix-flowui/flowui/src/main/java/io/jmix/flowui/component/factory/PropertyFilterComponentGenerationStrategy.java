@@ -34,6 +34,7 @@ import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
@@ -94,6 +95,19 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         }
 
         return super.createComponentInternal(context);
+    }
+
+    @Nullable
+    @Override
+    protected Component createEntityField(ComponentGenerationContext context) {
+        Component entityComponent = entityFieldCreationSupport.createEntityField(context, true);
+
+        if (entityComponent == null) {
+            return null;
+        }
+
+        setValueSource((SupportsValueSource<?>) entityComponent, context);
+        return entityComponent;
     }
 
     @SuppressWarnings("rawtypes")

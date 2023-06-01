@@ -1,10 +1,8 @@
 package io.jmix.reportsflowui.view.reportwizard;
 
-import io.jmix.reportsflowui.view.reportwizard.template.TemplateGenerator;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.data.impl.JpqlQueryBuilder;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.ReportsSerialization;
@@ -14,6 +12,8 @@ import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.util.ReportsUtils;
+import io.jmix.reportsflowui.view.reportwizard.template.TemplateGenerator;
+import io.jmix.reportsflowui.view.reportwizard.template.query.JpqlQueryBuilder;
 import jakarta.persistence.Temporal;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
@@ -173,11 +173,10 @@ public class ReportWizard {
         DataSet dataSet = dataSetFactory.createEmptyDataSet(dataBand);
         dataSet.setName(messages.getMessage("dataSet"));
         dataSet.setType(DataSetType.JPQL);
-//todo AN implement
-//        String query = new JpqlQueryBuilder(reportData, reportRegion).buildFinalQuery();
-//        dataSet.setText(query);
-//        dataSet.setDataStore(reportData.getDataStore());
-//        dataBand.getDataSets().add(dataSet);
+        String query = new JpqlQueryBuilder(reportData, reportRegion).buildFinalQuery();
+        dataSet.setText(query);
+        dataSet.setDataStore(reportData.getDataStore());
+        dataBand.getDataSets().add(dataSet);
     }
 
     protected void createEntityDataSet(ReportData reportData, ReportRegion reportRegion, BandDefinition dataBand,
@@ -389,7 +388,8 @@ public class ReportWizard {
     /**
      * Search for fetch plan for parent node
      * If does not exists - createDataSet it and add property to parent of parent fetch plan
-     * @param entityTreeNode entity tree node
+     *
+     * @param entityTreeNode     entity tree node
      * @param fetchPlansForNodes fetch plans for previous nodes
      * @return fetch plan builder
      */
@@ -514,7 +514,6 @@ public class ReportWizard {
     }
 
     public EntityTree buildEntityTree(MetaClass metaClass) {
-        //todo implement entity tree
         return entityTreeModelBuilderApiProvider.buildEntityTree(metaClass);
     }
 
@@ -552,7 +551,6 @@ public class ReportWizard {
         }
         return originalMetaClass;
     }
-
 
 
 }

@@ -12,10 +12,11 @@ import io.jmix.reportsflowui.view.EntityTreeFragment;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "entityTree", layout = DefaultMainViewParent.class)
-@ViewController("report_EntityTreeList.list")
+@ViewController("EntityTreeList.lookup")
 @ViewDescriptor("entity-tree-lookup.xml")
+@LookupComponent("entityTree")
 @DialogMode(width = "50em", height = "37.5em")
-public class EntityTreeList extends StandardListView<EntityTreeNode> {
+public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
     @ViewComponent
     private FormLayout treePanel;
     @Autowired
@@ -24,7 +25,6 @@ public class EntityTreeList extends StandardListView<EntityTreeNode> {
     private Notifications notifications;
     @Autowired
     private Messages messages;
-
     protected EntityTreeNode rootEntity;
     protected boolean scalarOnly = false;
     protected boolean collectionsOnly = false;
@@ -38,8 +38,12 @@ public class EntityTreeList extends StandardListView<EntityTreeNode> {
         this.persistentOnly = persistentOnly;
     }
 
-    @Subscribe
-    public void onInit(InitEvent event) {
+    @Override
+    public io.jmix.flowui.component.LookupComponent<EntityTreeNode> getLookupComponent() {
+        return createEntityTree();
+    }
+
+    private TreeDataGrid<EntityTreeNode> createEntityTree() {
         EntityTreeFragment entityTreeFragment = uiComponents.create(EntityTreeFragment.class);
         entityTreeFragment.setVisible(true);
         entityTreeFragment.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
@@ -48,13 +52,13 @@ public class EntityTreeList extends StandardListView<EntityTreeNode> {
 
         setSelectionValidator(validationContext -> {
             if (entityTree.getSingleSelectedItem() == null) {
-                 notifications.create(messages.getMessage(getClass(),"selectItemForContinue"))
+                notifications.create(messages.getMessage(getClass(), "selectItemForContinue"))
                         .withType(Notifications.Type.DEFAULT)
                         .show();
                 return false;
             } else {
                 if (entityTree.getSingleSelectedItem().getParent() == null) {
-                    notifications.create(messages.getMessage(getClass(),"selectNotARoot"))
+                    notifications.create(messages.getMessage(getClass(), "selectNotARoot"))
                             .withType(Notifications.Type.DEFAULT)
                             .show();
                     return false;
@@ -62,7 +66,6 @@ public class EntityTreeList extends StandardListView<EntityTreeNode> {
             }
             return true;
         });
+        return entityTree;
     }
-
-
 }

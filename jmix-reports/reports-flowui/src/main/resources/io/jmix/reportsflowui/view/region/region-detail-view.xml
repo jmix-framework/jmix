@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://testEntityDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="reportRegionDc"
+                  class="io.jmix.reports.entity.wizard.ReportRegion">
+            <collection id="reportRegionPropertiesTableDc" property="regionProperties"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout spacing="true" expand="mainContent">
+                <label id="tipLabel"
+                       classNames="report-wizard-tip-label"
+                       width="100%"/>
+        <hbox id="mainContent" width="100%">
+            <formLayout id="treePanel"/>
+            <vbox id="btnsControlPanel" margin="false" spacing="false" padding="false" width="AUTO">
+                <button id="addItem" icon="ARROW_RIGHT"/>
+                <button id="removeItem" action="propertiesTable.removeItemAction" icon="CLOSE"/>
+                <button id="upItem" enabled="false" action="propertiesTable.upItemAction" icon="CARET_UP"/>
+                <button id="downItem" action="propertiesTable.downItemAction" icon="CARET_DOWN"/>
+            </vbox>
+            <dataGrid id="propertiesTable"
+                      dataContainer="reportRegionPropertiesTableDc"
+                      width="30em" height="100%">
+                <actions>
+                    <action id="removeItemAction" icon="CLOSE" type="itemTracking"/>
+                    <action id="upItemAction" type="itemTracking" icon="ARROW_UP"/>
+                    <action id="downItemAction" type="itemTracking" icon="ARROW_DOWN"/>
+                </actions>
+                <columns>
+                    <column property="hierarchicalLocalizedName"/>
+                </columns>
+            </dataGrid>
+        </hbox>
+        <hbox spacing="true" classNames="jmix-edit-window-actions">
+            <button id="windowCommitAndClose" action="saveAction"/>
+            <button id="windowClose" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

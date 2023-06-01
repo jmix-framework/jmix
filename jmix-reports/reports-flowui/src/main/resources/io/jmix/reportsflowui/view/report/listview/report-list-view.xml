@@ -59,7 +59,7 @@
                   dataContainer="reportsDc">
             <actions>
                 <action id="create" type="create" text="msg://action.create.text"/>
-                <action id="edit" type="edit"/>
+                <action id="edit" type="itemTracking"/>
                 <action id="remove" type="remove"/>
                 <action id="copy" type="itemTracking" icon="COPY" text="msg://action.copy.text"/>
                 <action id="importAction" icon="UPLOAD" description="msg://action.import.description"/>

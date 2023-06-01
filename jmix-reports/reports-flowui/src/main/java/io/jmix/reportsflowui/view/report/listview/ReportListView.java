@@ -213,25 +213,16 @@ public class ReportListView extends StandardListView<Report> {
     }
 
     protected void onDropdownCreateBtnWizardItemWizard(ActionPerformedEvent event) {
-        // todo an wizard
-//     dialogWindows.view(this, ReportWizardCreator.class).build().open();
         DialogWindow<ReportWizardCreator> build = dialogWindows.view(this, ReportWizardCreator.class).build();
         build.addAfterCloseListener(e -> {
             if (e.closedWith(StandardOutcome.SAVE)) {
                 Report item = build.getView().getItem().getGeneratedReport();
                 reportsDc.getMutableItems().add(item);
-//                        reportsTable.setSelected(item);
+                reportsDataGrid.select(item);
                 viewNavigators.detailView(Report.class)
                         .editEntity(reportsDc.getItem())
                         .withViewClass(ReportDetailView.class)
                         .navigate();
-//                        reportEditor.show()
-//                                .addAfterCloseListener(closeEvent -> {
-//                                    if (closeEvent.closedWith(StandardOutcome.COMMIT)) {
-//                                        reportDc.replaceItem(reportEditor.getEditedEntity());
-//                                    }
-//                                    reportsTable.expandPath(reportDc.getItem(reportEditor.getEditedEntity()));
-//                                });
             }
         });
         build.open();

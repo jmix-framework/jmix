@@ -11,6 +11,7 @@ import io.jmix.reportsflowui.view.region.RegionDetailView;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -25,6 +26,7 @@ import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.flowui.*;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -47,8 +49,16 @@ import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
-import io.jmix.reports.exception.ValidationException;
+import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reports.runner.ReportRunner;
+import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.ReportsUiHelper;
+import io.jmix.reportsflowui.runner.FluentUiReportRunner;
+import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.view.entitytreelist.EntityTreeLookupView;
+import io.jmix.reportsflowui.view.region.RegionDetailView;
+import io.jmix.reportsflowui.view.reportwizard.template.query.JpqlQueryBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -60,7 +70,7 @@ import org.springframework.lang.Nullable;
 import java.util.*;
 
 @Route(value = "reportWizard", layout = DefaultMainViewParent.class)
-@ViewController("report_ReportWizardCreator.view")
+@ViewController("ReportWizardCreator")
 @ViewDescriptor("report-wizard.xml")
 public class ReportWizardCreator extends StandardView {
     public static final String FIELD_ICON_SIZE_CLASS_NAME = "reports-field-icon-size";
@@ -146,7 +156,7 @@ public class ReportWizardCreator extends StandardView {
     @Autowired
     protected OutputFormatTools outputFormatTools;
     @Autowired
-    private ObjectToStringConverter objectToStringConverter;
+    private JmixObjectToStringConverter jmixObjectToStringConverter;
     @Autowired
     private ReportsUiHelper reportsUiHelper;
     @Autowired
@@ -248,8 +258,7 @@ public class ReportWizardCreator extends StandardView {
             if (StringUtils.isEmpty(resultQuery) || regenerateQuery) {
                 item.setQuery(String.format("select e from %s e", item.getEntityName()));
                 if (CollectionUtils.isNotEmpty(item.getReportRegions())) {
-                    //todo AN code editor
-//                resultQuery = new JpqlQueryBuilder(item, item.getReportRegions().get(0)).buildInitialQuery();
+                    resultQuery = new JpqlQueryBuilder(item, item.getReportRegions().get(0)).buildInitialQuery();
                 }
                 queryParametersDc.getMutableItems().clear();
                 regenerateQuery = false;
@@ -300,6 +309,9 @@ public class ReportWizardCreator extends StandardView {
                     .show();
             return;
         }
+        if (!validateFragment()) {
+            return;
+        }
 
         if (isNeedUpdateEntityModel()) {
             EntityTree entityTree = reportWizardService.buildEntityTree(metaClass);
@@ -321,44 +333,38 @@ public class ReportWizardCreator extends StandardView {
     protected Div getCurrentFragment() {
         return fragmentsList.get(currentFragmentIdx);
     }
-//todo AN implement validation
-//    public List<String> validateFragment() {
-//        List<String> errors = new ArrayList<>();
-//        for (Component c : getCurrentFragment().getChildren().toList()) {
-//            if (c instanceof Validatable) {
-//                Validatable validatable = (Validatable) c;
-//                try {
-//                    validatable.validate();
-//                } catch (ValidationException e) {
-//                    errors.add(e.getMessage());
-//                }
-//            }
-//        }
-//        return errors;
-//    }
-//    protected boolean validateCurrentFragment() {
-//        List<String> validationErrors = getCurrentStepFragment().validateFragment();
-//        if (!validationErrors.isEmpty()) {
-//            notifications.create(Notifications.NotificationType.TRAY)
-//                    .withHtmlSanitizer(true)
-//                    .withCaption(StringUtils.arrayToDelimitedString(validationErrors.toArray(), "<br/>"))
-//                    .show();
-//            return false;
-//        }
-//        return true;
-//    }
+
+    protected boolean validateFragment() {
+        List<String> validationErrors = validateCurrentFragment();
+        if (!validationErrors.isEmpty()) {
+            notifications.create(org.springframework.util.StringUtils.arrayToDelimitedString(validationErrors.toArray(), "\n"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return false;
+        }
+
+        return true;
+    }
+
+    protected List<String> validateCurrentFragment() {
+        Div currentFragment = getCurrentFragment();
+        List<String> errors = new ArrayList<>();
+        for (Component c : currentFragment.getChildren().toList()) {
+            if (c instanceof SupportsValidation<?>) {
+                SupportsValidation validatable = (SupportsValidation) c;
+                validatable.executeValidators();
+            }
+        }
+        if (currentFragment.equals(regionsDiv)) {
+            if (reportDataDc.getItem().getReportRegions().isEmpty()) {
+                errors.add(messages.getMessage(getClass(), "addRegionsWarn"));
+            }
+        }
+        return errors;
+    }
 
     @Subscribe("saveBtn")
     public void onSaveBtnClick(ClickEvent<Button> event) {
-        try {
-            //todo AN validation
-//            validateCurrentFragment();
-        } catch (ValidationException e) {
-            notifications.create(e.getMessage())
-                    .withType(Notifications.Type.WARNING)
-                    .show();
-            return;
-        }
         if (reportDataDc.getItem().getReportRegions().isEmpty()) {
             dialogs.createOptionDialog()
                     .withHeader(messages.getMessage("dialogs.Confirmation"))
@@ -434,10 +440,6 @@ public class ReportWizardCreator extends StandardView {
             event.preventClose();
         }
     }
-
-
-    ///////////////////////////////////////////////////////DETAILS/////////////////////////////////////////////////////
-
 
     protected void initEntityLookupField() {
         FlowuiComponentUtils.setItemsMap(entityField, MapUtils.invertMap(getAvailableEntities()));
@@ -583,8 +585,6 @@ public class ReportWizardCreator extends StandardView {
         reportData.setQueryParameters(null);
     }
 
-
-    ///////////////////////////////////////////////////////REGIONS////////////////////////////////////////////////////
     protected boolean entityTreeHasSimpleAttrs;
     protected boolean entityTreeHasCollections;
 
@@ -601,6 +601,13 @@ public class ReportWizardCreator extends StandardView {
         return reportDataDc.getItem().getReportTypeGenerate();
     }
 
+    @Subscribe("regionsTable.remove")
+    public void onRegionsTableRemoveItemAction(ActionPerformedEvent event) {
+        for (ReportRegion item : regionsTable.getSelectedItems()) {
+            reportRegionsDc.getMutableItems().remove(item);
+            normalizeRegionPropertiesOrderNum();
+        }
+    }
 
     @Install(to = "regionsTable.down", subject = "enabledRule")
     private boolean regionsTableDownEnabledRule() {
@@ -620,21 +627,9 @@ public class ReportWizardCreator extends StandardView {
         }
         return item.getOrderNum() > 1;
     }
-//todo AN column generator
-//    @Install(to = "regionsTable.attributes", subject = "columnGenerator")
-//    protected Component regionsTableAttributesColumnGenerator(ReportRegion reportRegion) {
-//        String attributes = StringUtils.abbreviate(StringUtils.join(
-//                        CollectionUtils.collect(reportRegion.getRegionProperties(),
-//                                RegionProperty::getHierarchicalLocalizedNameExceptRoot), ", "),
-//                MAX_ATTRS_BTN_CAPTION_WIDTH);
-//        LinkButton linkButton = uiComponents.create(LinkButton.class);
-//        linkButton.setHeight("40px");
-//        linkButton.setCaption(attributes);
-//        linkButton.setWidthFull();
-//        linkButton.addClickListener(event -> editRegion());
-//        return linkButton;
-//    }
 
+    //todo AN return click listener
+    //todo exception NullPointerException: Cannot invoke "io.jmix.reports.entity.wizard.EntityTreeNode.getLocalizedName()" because "this.rootEntity" is null
     protected void editRegion() {
         ReportRegion selectedRegion = regionsTable.getSingleSelectedItem();
         if (selectedRegion != null) {
@@ -642,24 +637,11 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
-
-//todo AN column generator
-//    @Install(to = "regionsTable.name", subject = "columnGenerator")
-//    protected Component regionsTableNameColumnGenerator(ReportRegion reportRegion) {
-//        String messageKey = reportRegion.isTabulatedRegion() ? "ReportRegion.tabulatedName" : "ReportRegion.simpleName";
-//        return new Table.PlainTextCell(messageBundle.formatMessage(messageKey, reportRegion.getOrderNum()));
-//    }
-//
-//    @Install(to = "regionsTable.entity", subject = "columnGenerator")
-//    protected Component regionsTableEntityColumnGenerator(ReportRegion reportRegion) {
-//        MetaClass metaClass = metadata.getClass(reportRegion.getRegionPropertiesRootNode().getMetaClassName());
-//        return new Table.PlainTextCell(messageTools.getEntityCaption(metaClass));
-//    }
-
     @Subscribe("addTabulatedRegionBtn")
     public void onAddTabulatedRegionBtnClick(ClickEvent<Button> event) {
         openTabulatedRegionEditor(createReportRegion(true));
     }
+
     @Subscribe("addSimpleRegionBtn")
     public void onAddSimpleRegionBtnClick(ClickEvent<Button> event) {
         openRegionEditor(createReportRegion(false));
@@ -698,12 +680,12 @@ public class ReportWizardCreator extends StandardView {
     }
 
     protected void openRegionEditorOnlyWithNestedCollections(final ReportRegion item) {//show lookup for choosing parent collection for tabulated region
-
-        DialogWindow<EntityTreeList> entityTreeDialogWindow = dialogWindows.view(this, EntityTreeList.class)
+        DialogWindow<EntityTreeLookupView> entityTreeListDialogWindow = dialogWindows.lookup(this, EntityTreeNode.class)
+                .withViewClass(EntityTreeLookupView.class)
                 .build();
-        EntityTreeList entityTreeList = entityTreeDialogWindow.getView();
-        entityTreeList.setParameters(reportDataDc.getItem().getEntityTreeRootNode(), false, true, false);
-        entityTreeList.setSelectionHandler(items -> {
+        EntityTreeLookupView entityTreeLookupView = entityTreeListDialogWindow.getView();
+        entityTreeLookupView.setParameters(reportDataDc.getItem().getEntityTreeRootNode(), false, true, false);
+        entityTreeLookupView.setSelectionHandler(items -> {
             if (items.size() == 1) {
                 EntityTreeNode regionPropertiesRootNode = IterableUtils.get(items, 0);
 
@@ -712,7 +694,7 @@ public class ReportWizardCreator extends StandardView {
                 showRegionEditor(item, regionPropertiesRootNode, false, true, false);
             }
         });
-        entityTreeDialogWindow.open();
+        entityTreeListDialogWindow.open();
     }
 
     protected void openRegionEditor(ReportRegion item) {
@@ -722,12 +704,14 @@ public class ReportWizardCreator extends StandardView {
     }
 
     protected void showRegionEditor(ReportRegion item, EntityTreeNode rootEntity, boolean scalarOnly, boolean collectionsOnly, boolean persistentOnly) {
-        DialogWindow<RegionDetailView> regionDialogWindow = dialogWindows.view(this, RegionDetailView.class)
+        DialogWindow<RegionDetailView> regionDialogWindow = dialogWindows.detail(this, ReportRegion.class)
+                .withViewClass(RegionDetailView.class)
+                .withContainer(reportRegionsDc)
                 .build();
         RegionDetailView regionDetailView = regionDialogWindow.getView();
         regionDetailView.setEntityToEdit(item);
         regionDetailView.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
-
+        regionDetailView.setShowSaveNotification(false);
         regionDialogWindow.open();
     }
 
@@ -752,6 +736,11 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
+    @Subscribe("regionsEditBtn")
+    public void onRegionsEditBtnClick(ClickEvent<Button> event) {
+        editRegion();
+    }
+
     @Subscribe("regionsTable.remove")
     public void onRegionsTableRemove(ActionPerformedEvent event) {
         normalizeRegionPropertiesOrderNum();
@@ -765,6 +754,28 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
+    @Subscribe("regionsTable.up")
+    protected void onRegionsTableUp(ActionPerformedEvent event) {
+        replaceParameters(true);
+    }
+
+    @Subscribe("regionsTable.down")
+    protected void onRegionsTableDown(ActionPerformedEvent event) {
+        replaceParameters(false);
+    }
+
+    protected void replaceParameters(boolean up) {
+        if (regionsTable.getSingleSelectedItem() != null) {
+            List<ReportRegion> items = reportRegionsDc.getMutableItems();
+            int currentPosition = items.indexOf(regionsTable.getSingleSelectedItem());
+            if ((up && currentPosition != 0)
+                    || (!up && currentPosition != items.size() - 1)) {
+                int itemToSwapPosition = currentPosition - (up ? 1 : -1);
+
+                Collections.swap(items, itemToSwapPosition, currentPosition);
+            }
+        }
+    }
 
     protected void updateRegionButtons() {
         ReportData item = reportDataDc.getItem();
@@ -788,17 +799,6 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
-// todo AN validation
-//    @Override
-//    public List<String> validateFragment() {
-//        List<String> validationMessages = super.validateFragment();
-//        if (reportRegionsDc.getItems().isEmpty()) {
-//            validationMessages.add(messageBundle.getMessage("addRegionsWarn"));
-//        }
-//        return validationMessages;
-//    }
-
-    ///////////////////////////////////////////////////////SAVE////////////////////////////////////////////////////
     @Subscribe("outputFileName")
     public void onOutputFileNameComponentValueChange(AbstractField.ComponentValueChangeEvent<TextField, String> event) {
         reportDataDc.getItem().setOutputNamePattern(event.getValue());
@@ -852,14 +852,11 @@ public class ReportWizardCreator extends StandardView {
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        //todo
-        regionsTable.addColumn(reportRegion ->
-                        StringUtils.abbreviate(StringUtils.join(
-                                        CollectionUtils.collect(reportRegion.getRegionProperties(),
-                                                RegionProperty::getHierarchicalLocalizedNameExceptRoot), ", "),
-                                MAX_ATTRS_BTN_CAPTION_WIDTH)
-                ).setKey("attributes")
-                .setHeader(messages.getMessage(getClass(), "attributes"))
+        regionsTable.addColumn(reportRegion -> {
+                    String messageKey = reportRegion.isTabulatedRegion() ? "ReportRegion.tabulatedName" : "ReportRegion.simpleName";
+                    return messages.formatMessage(getClass(), messageKey, reportRegion.getOrderNum());
+                }).setKey("name")
+                .setHeader(messages.getMessage(getClass(), "name"))
                 .setSortable(true)
                 .setResizable(true);
         regionsTable.addColumn(reportRegion ->
@@ -868,11 +865,13 @@ public class ReportWizardCreator extends StandardView {
                 .setHeader(messages.getMessage(getClass(), "entity"))
                 .setSortable(true)
                 .setResizable(true);
-        regionsTable.addColumn(reportRegion -> {
-                    String messageKey = reportRegion.isTabulatedRegion() ? "ReportRegion.tabulatedName" : "ReportRegion.simpleName";
-                    return messages.formatMessage(getClass(), messageKey, reportRegion.getOrderNum());
-                }).setKey("name")
-                .setHeader(messages.getMessage(getClass(), "name"))
+        regionsTable.addColumn(reportRegion ->
+                        StringUtils.abbreviate(StringUtils.join(
+                                        CollectionUtils.collect(reportRegion.getRegionProperties(),
+                                                RegionProperty::getHierarchicalLocalizedNameExceptRoot), ", "),
+                                MAX_ATTRS_BTN_CAPTION_WIDTH)
+                ).setKey("attributes")
+                .setHeader(messages.getMessage(getClass(), "attributes"))
                 .setSortable(true)
                 .setResizable(true);
     }
@@ -888,7 +887,7 @@ public class ReportWizardCreator extends StandardView {
         ReportData reportData = reportDataDc.getItem();
         MetaClass entityMetaClass = metadata.findClass(reportData.getEntityName());
         return entityMetaClass != null ?
-                messages.formatMessage("downloadTemplateFileNamePattern", reportData.getName(), fileExtension) :
+                messages.formatMessage(getClass(), "downloadTemplateFileNamePattern", reportData.getName(), fileExtension) :
                 "";
     }
 
@@ -912,7 +911,6 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
-    ///////////////////////////////////////////////////////QUERY/////////////////////////////////////////////////////
 
     @Subscribe("reportParameterTable.generate")
     public void onReportParameterTableGenerate(ActionPerformedEvent event) {
@@ -1047,7 +1045,7 @@ public class ReportWizardCreator extends StandardView {
 
     protected void setDefaultValue(QueryParameter queryParameter) {
         try {
-            Object value = objectToStringConverter.convertFromString(Class.forName(queryParameter.getJavaClassName()), queryParameter.getDefaultValueString());
+            Object value = jmixObjectToStringConverter.convertFromString(Class.forName(queryParameter.getJavaClassName()), queryParameter.getDefaultValueString());
             queryParameter.setDefaultValue(value);
             queryParametersDc.replaceItem(queryParameter);
         } catch (ClassNotFoundException e) {

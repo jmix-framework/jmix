@@ -27,19 +27,15 @@ import io.jmix.reportsflowui.view.EntityTreeFragment;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Route(value = "region/:id", layout = DefaultMainViewParent.class)
-@ViewController("report_Region.detail")
+@ViewController("report_WizardReportRegion.detail")
 @ViewDescriptor("region-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
 public class RegionDetailView extends StandardDetailView<ReportRegion> {
     protected boolean isTabulated;//if true then user perform add tabulated region action
     protected boolean asFetchPlanEditor;
-
     protected boolean updatePermission = true;
     @ViewComponent
     private DataGrid<RegionProperty> propertiesTable;
@@ -76,8 +72,42 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
         this.scalarOnly = scalarOnly;
         this.collectionsOnly = collectionsOnly;
         this.persistentOnly = persistentOnly;
+        initTipLabel();
     }
 
+    @Subscribe("propertiesTable.upItemAction")
+    protected void onPropertiesTableUp(ActionPerformedEvent event) {
+        replaceParameters(true);
+    }
+
+    @Subscribe("propertiesTable.downItemAction")
+    protected void onPropertiesTableDown(ActionPerformedEvent event) {
+        replaceParameters(false);
+    }
+
+    protected void replaceParameters(boolean up) {
+        if (propertiesTable.getSingleSelectedItem() != null) {
+            List<RegionProperty> items = reportRegionPropertiesTableDc.getMutableItems();
+            int currentPosition = items.indexOf(propertiesTable.getSingleSelectedItem());
+            if ((up && currentPosition != 0)
+                    || (!up && currentPosition != items.size() - 1)) {
+                int itemToSwapPosition = currentPosition - (up ? 1 : -1);
+
+                Collections.swap(items, itemToSwapPosition, currentPosition);
+            }
+        }
+    }
+
+    private void initTipLabel() {
+        String messageKey = isTabulated
+                ? "selectEntityPropertiesForTableArea"
+                : "selectEntityProperties";
+        tipLabel.setText(messages.formatMessage(messageKey, rootEntity.getLocalizedName()));
+    }
+
+    public void setContainer(JmixButton downItem) {
+        this.downItem = downItem;
+    }
 
     public void setAsFetchPlanEditor(boolean asFetchPlanEditor) {
         this.asFetchPlanEditor = asFetchPlanEditor;
@@ -87,6 +117,9 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
         this.updatePermission = updatePermission;
     }
 
+    public ReportRegion getReportRegionsItems() {
+        return getEditedEntityContainer().getItem();
+    }
 
     public EntityTreeNode getRootEntity() {
         return rootEntity;
@@ -95,7 +128,6 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         isTabulated = BooleanUtils.toBoolean(getEditedEntity().getIsTabulatedRegion());
-
         if (!asFetchPlanEditor) {
             if (isTabulated) {
                 setTabulatedRegionEditorCaption(rootEntity.getName());
@@ -103,15 +135,7 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
                 setSimpleRegionEditorCaption();
             }
         }
-        String messageKey = isTabulated
-                ? "selectEntityPropertiesForTableArea"
-                : "selectEntityProperties";
-        //todo
-        tipLabel.setText(messages.formatMessage(messageKey, rootEntity.getLocalizedName()));
-//        tipLabel.setHtmlEnabled(true);
         initComponents();
-
-
     }
 
     protected void initComponents() {
@@ -134,6 +158,13 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
                 .withHandler(event -> addProperty());
         doubleClickAction.setEnabled(isUpdatePermitted());
         entityTree.addAction(doubleClickAction);
+        //todo normal double click registration
+        entityTree.addItemClickListener(event -> {
+            if (event.getClickCount() > 1) {
+                entityTree.select(event.getItem());
+                addProperty();
+            }
+        });
 
         ListDataComponentAction addPropertyAction = actions.create(ItemTrackingAction.class, "addItemAction")
                 .withHandler(event -> addProperty());

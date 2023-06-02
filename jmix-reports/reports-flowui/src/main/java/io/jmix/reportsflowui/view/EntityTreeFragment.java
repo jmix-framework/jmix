@@ -40,7 +40,6 @@ import java.util.*;
 
 public class EntityTreeFragment extends Composite<FormLayout>
         implements ApplicationContextAware, HasSize, HasEnabled, InitializingBean {
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(EntityTreeFragment.class);
     private TreeDataGrid<EntityTreeNode> entityTree;
     protected EntityTreeNode rootEntity;
     private UiComponents uiComponents;
@@ -54,7 +53,6 @@ public class EntityTreeFragment extends Composite<FormLayout>
     private Messages messages;
     private Metadata metadata;
     private MessageBundle messageBundle;
-
     protected boolean scalarOnly = false;
     protected boolean collectionsOnly = false;
     protected boolean persistentOnly = false;
@@ -102,10 +100,12 @@ public class EntityTreeFragment extends Composite<FormLayout>
         reportEntityTreeNodeDl.setContainer(reportEntityTreeNodeDc);
         reportEntityTreeNodeDl.setLoadDelegate(loadContext -> {
             List<EntityTreeNode> treeNodes = new ArrayList<>();
-            String searchValue = StringUtils.defaultIfBlank(reportPropertyName.getValue(), "").toLowerCase().trim();
-            fill(rootEntity, searchValue, treeNodes);
-            if (CollectionUtils.isNotEmpty(treeNodes)) { //add root entity only if at least one child is found by search string
-                treeNodes.add(rootEntity);
+            if (rootEntity != null) {
+                String searchValue = StringUtils.defaultIfBlank(reportPropertyName.getValue(), "").toLowerCase().trim();
+                fill(rootEntity, searchValue, treeNodes);
+                if (CollectionUtils.isNotEmpty(treeNodes)) { //add root entity only if at least one child is found by search string
+                    treeNodes.add(rootEntity);
+                }
             }
             return treeNodes;
         });

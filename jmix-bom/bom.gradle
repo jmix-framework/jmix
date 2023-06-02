@@ -109,6 +109,8 @@ dependencies {
 
         api "io.jmix.businesscalendar:jmix-businesscalendar:$premiumVersion"
         api "io.jmix.businesscalendar:jmix-businesscalendar-starter:$premiumVersion"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-flowui:$premiumVersion"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-flowui-starter:$premiumVersion"
 
         api "io.jmix.core:jmix-core:$freeVersion"
         api "io.jmix.core:jmix-core-starter:$freeVersion"

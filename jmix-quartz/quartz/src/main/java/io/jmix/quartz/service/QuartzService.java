@@ -69,6 +69,7 @@ public class QuartzService {
                             triggerModel.setTriggerGroup(trigger.getKey().getGroup());
                             triggerModel.setScheduleType(trigger instanceof SimpleTrigger ? ScheduleType.SIMPLE : ScheduleType.CRON_EXPRESSION);
                             triggerModel.setStartDate(trigger.getStartTime());
+                            triggerModel.setEndDate(trigger.getEndTime());
                             triggerModel.setLastFireDate(trigger.getPreviousFireTime());
                             triggerModel.setNextFireDate(trigger.getNextFireTime());
 

@@ -162,7 +162,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixSelect<Orientation> orientationField;
     @ViewComponent
-    protected JmixSelect<BandDefinition> parentBandField;
+    protected EntityComboBox<BandDefinition> parentBandField;
     @ViewComponent
     protected JmixCheckbox multiDataSetField;
     @ViewComponent
@@ -321,10 +321,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         bandsTreeDataGrid.expand(bandsDc.getItems());
         bandsTreeDataGrid.select(getEditedEntity().getRootBandDefinition());
 
-//        generalFragment.setupDropZoneForTemplate();
         sortBandDefinitionsByPosition();
-
-//        setScreenCaption();
     }
 
     @Subscribe("defaultTemplateField.create")

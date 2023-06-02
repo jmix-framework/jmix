@@ -36,7 +36,7 @@ import java.util.Set;
 @ViewController("report_Region.detail")
 @ViewDescriptor("region-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
-public class RegionDetail extends StandardDetailView<ReportRegion> {
+public class RegionDetailView extends StandardDetailView<ReportRegion> {
     protected boolean isTabulated;//if true then user perform add tabulated region action
     protected boolean asFetchPlanEditor;
 

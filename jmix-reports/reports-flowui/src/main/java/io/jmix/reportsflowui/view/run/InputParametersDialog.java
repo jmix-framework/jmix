@@ -42,6 +42,7 @@ import java.util.Map;
 
 @ViewController("report_InputParametersDialog.view")
 @ViewDescriptor("input-parameters-dialog.xml")
+@DialogMode(width = "30em")
 public class InputParametersDialog extends StandardView {
 
     public static final String INPUT_PARAMETER = "inputParameter";
@@ -127,9 +128,9 @@ public class InputParametersDialog extends StandardView {
     }
 
     @Subscribe("printReportButton")
-    public void onPrintReportButtonClick(ClickEvent event) {
+    public void onPrintReportButtonClick(ClickEvent<Button> event) {
         if (inputParametersFragment.getReport() != null) {
-            ValidationErrors validationErrors = viewValidation.validateUiComponents(this.getContent());
+            ValidationErrors validationErrors = viewValidation.validateUiComponents(inputParametersFragment.getContent());
             crossValidateParameters(validationErrors);
             if (validationErrors.isEmpty()) {
                 ReportTemplate template = inputParametersFragment.getReportTemplate();

@@ -192,10 +192,10 @@ public class UiReportRunnerImpl implements UiReportRunner {
                     public boolean handleException(Exception ex) {
                         if (ex instanceof ReportingException) {
                             if (ex instanceof FailedToConnectToOpenOfficeException) {
-                                String caption = messages.getMessage("io.jmix.reportsui.exception", "reportException.failedConnectToOffice");
+                                String caption = messages.getMessage("io.jmix.reportsflowui.exception", "reportException.failedConnectToOffice");
                                 return showErrorNotification(caption);
                             } else if (ex instanceof NoOpenOfficeFreePortsException) {
-                                String caption = messages.getMessage("io.jmix.reportsui.exception", "reportException.noOpenOfficeFreePorts");
+                                String caption = messages.getMessage("io.jmix.reportsflowui.exception", "reportException.noOpenOfficeFreePorts");
                                 return showErrorNotification(caption);
                             }
                         }
@@ -271,22 +271,6 @@ public class UiReportRunnerImpl implements UiReportRunner {
         String templateCode = getTemplateCode(context);
         Map<String, Object> params = context.getParams();
         ReportOutputType outputType = context.getOutputType();
-        //todo
-//        if (document.getReportOutputType().getId().equals(JmixReportOutputType.chart.getId())) {
-//            ShowChartScreen showChartScreen = (ShowChartScreen) views.create("report_ShowChart.screen", OpenMode.DIALOG);
-//            showChartScreen.setChartJson(new String(document.getContent(), StandardCharsets.UTF_8));
-//            showChartScreen.setReport((Report) document.getReport());
-//            showChartScreen.setTemplateCode(templateCode);
-//            showChartScreen.setReportParameters(params);
-//            showChartScreen.show();
-//        } else if (document.getReportOutputType().getId().equals(JmixReportOutputType.pivot.getId())) {
-//            ShowPivotTableScreen showPivotTableScreen = (ShowPivotTableScreen) views.create("report_ShowPivotTable.screen", OpenMode.DIALOG);
-//            showPivotTableScreen.setPivotTableData(document.getContent());
-//            showPivotTableScreen.setReport((Report) document.getReport());
-//            showPivotTableScreen.setTemplateCode(templateCode);
-//            showPivotTableScreen.setParams(params);
-//            showPivotTableScreen.show();
-//        } else
 
         if (document.getReportOutputType().getId().equals(JmixReportOutputType.table.getId())) {
             DialogWindow<ReportTableView> showReportTableViewDialogWindow = dialogWindows.view(context.getOriginFrameOwner(), ReportTableView.class)

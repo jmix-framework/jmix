@@ -7,7 +7,7 @@ import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.entitytreelist.EntityTreeList;
-import io.jmix.reportsflowui.view.region.RegionDetail;
+import io.jmix.reportsflowui.view.region.RegionDetailView;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -722,11 +722,11 @@ public class ReportWizardCreator extends StandardView {
     }
 
     protected void showRegionEditor(ReportRegion item, EntityTreeNode rootEntity, boolean scalarOnly, boolean collectionsOnly, boolean persistentOnly) {
-        DialogWindow<RegionDetail> regionDialogWindow = dialogWindows.view(this, RegionDetail.class)
+        DialogWindow<RegionDetailView> regionDialogWindow = dialogWindows.view(this, RegionDetailView.class)
                 .build();
-        RegionDetail regionDetail = regionDialogWindow.getView();
-        regionDetail.setEntityToEdit(item);
-        regionDetail.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
+        RegionDetailView regionDetailView = regionDialogWindow.getView();
+        regionDetailView.setEntityToEdit(item);
+        regionDetailView.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
 
         regionDialogWindow.open();
     }

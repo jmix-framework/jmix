@@ -1,8 +1,5 @@
 package io.jmix.reportsflowui.view.parameter;
 
-import io.jmix.reportsflowui.ReportsUiHelper;
-import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
-import io.jmix.reportsflowui.view.run.ParameterFieldCreator;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
@@ -11,11 +8,11 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
@@ -28,6 +25,9 @@ import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.PredefinedTransformation;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
+import io.jmix.reportsflowui.ReportsUiHelper;
+import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
+import io.jmix.reportsflowui.view.run.ParameterFieldCreator;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.BooleanUtils;
@@ -440,11 +440,13 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             });
 
             if (parameter.getParameterClass() != null && parameter.getDefaultValue() != null) {
-                field.setValue(jmixObjectToStringConverter.convertFromString(parameter.getParameterClass(), parameter.getDefaultValue()));
+                Object value = jmixObjectToStringConverter.convertFromString(parameter.getParameterClass(), parameter.getDefaultValue());
+                UiComponentUtils.setValue(field, value);
             }
             field.getElement().setProperty("required", false);
             field.getElement().setProperty("label", messages.getMessage(getClass(), "parameters.defaultValue"));
-            field.getElement().setProperty("width", "100%");
+
+            field.getElement().getStyle().set("width", "100%");
 
             defaultValueBox.add(field);
         }
@@ -495,11 +497,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
         tabsheet.getTabAt((int) tabsheet.getChildren().count() - 1).setVisible(isSingleEntity && Boolean.TRUE.equals(isLookupField.getValue()));
 
-
         screenField.setVisible(isEntity);
-
         enumerationField.setVisible(isEnum);
-
         predefinedTransformationBox.setVisible(isText);
 
         if (!isText) {

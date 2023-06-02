@@ -18,10 +18,8 @@ package io.jmix.reportsflowui.view.run;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasLabel;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.core.*;
@@ -33,25 +31,25 @@ import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
-import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.HasRequired;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
-import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
+import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
-import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBoxPicker;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
-import io.jmix.flowui.xml.layout.loader.component.MultiSelectComboBoxPickerLoader;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.util.ReportsUtils;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,10 +99,10 @@ public class ParameterFieldCreator {
 
     public AbstractField createField(ReportInputParameter parameter) {
         AbstractField field = fieldCreationMapping.get(parameter.getType()).createField(parameter);
-        if (field instanceof HasRequired) {
+        if (field instanceof HasRequired requiredField) {
             String message = messages.formatMessage(this.getClass(), "error.paramIsRequiredButEmpty", metadataTools.getInstanceName(parameter));
-            ((HasRequired) field).setRequiredMessage(message);
-            ((HasRequired) field).setRequired(parameter.getRequired());
+            requiredField.setRequiredMessage(message);
+            requiredField.setRequired(parameter.getRequired());
         }
 
         if (field instanceof HasLabel) {
@@ -118,7 +116,7 @@ public class ParameterFieldCreator {
 
     protected void setCurrentDateAsNow(ReportInputParameter parameter, AbstractField dateField) {
         Date now = reportsUtils.currentDateOrTime(parameter.getType());
-        dateField.setValue(now);
+        UiComponentUtils.setValue(dateField, now);
         parameter.setDefaultValue(objectToStringConverter.convertToString(now.getClass(), now));
     }
 
@@ -129,7 +127,7 @@ public class ParameterFieldCreator {
     protected class DateFieldCreator implements FieldCreator {
         @Override
         public AbstractField createField(ReportInputParameter parameter) {
-            DatePicker dateField = uiComponents.create(DatePicker.class);
+            TypedDatePicker dateField = uiComponents.create(TypedDatePicker.class);
             //todo
 //            dateField.setResolution(DateField.Resolution.DAY);
 //            dateField.setDateFormat(messages.getMessage("dateFormat"));
@@ -160,7 +158,7 @@ public class ParameterFieldCreator {
 
         @Override
         public AbstractField createField(ReportInputParameter parameter) {
-            TimePicker timeField = uiComponents.create(TimePicker.class);
+            TypedTimePicker timeField = uiComponents.create(TypedTimePicker.class);
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, timeField);
             }
@@ -201,7 +199,9 @@ public class ParameterFieldCreator {
 
         @Override
         public AbstractField createField(ReportInputParameter parameter) {
-            JmixComboBox lookupField = uiComponents.create(JmixComboBox.class);
+            JmixSelect select = uiComponents.create(JmixSelect.class);
+            select.setEmptySelectionAllowed(true);
+
             String enumClassName = parameter.getEnumerationClass();
             if (StringUtils.isNotBlank(enumClassName)) {
                 Class enumClass = classManager.findClass(enumClassName);
@@ -211,14 +211,10 @@ public class ParameterFieldCreator {
                     List<Object> optionsList = new ArrayList<>();
                     Collections.addAll(optionsList, constants);
 
-                    lookupField.setItems(optionsList);
-                    if (optionsList.size() < 10) {
-                        //todo
-                        //lookupField.setTextInputAllowed(false);
-                    }
+                    select.setItems(optionsList);
                 }
             }
-            return lookupField;
+            return select;
         }
     }
 

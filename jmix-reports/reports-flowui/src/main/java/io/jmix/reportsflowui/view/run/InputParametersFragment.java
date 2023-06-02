@@ -25,6 +25,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.model.CollectionContainer;
@@ -131,9 +132,13 @@ public class InputParametersFragment extends Composite<FormLayout>
         outputTypeComboBox.setLabel(messages.getMessage(getClass(), "caption.reportOutputType"));
 
         formLayout = uiComponents.create(FormLayout.class);
-        formLayout.setWidth("20em");
         formLayout.add(templateComboBox);
         formLayout.add(outputTypeComboBox);
+        formLayout.setResponsiveSteps(
+                new FormLayout.ResponsiveStep("0", 1),
+                new FormLayout.ResponsiveStep("32em", 2),
+                new FormLayout.ResponsiveStep("50em", 3)
+        );
 
         createTemplateReportDc();
 
@@ -236,7 +241,7 @@ public class InputParametersFragment extends Composite<FormLayout>
         }
 
         if (value != null) {
-            field.setValue(value);
+            UiComponentUtils.setValue(field, value);
         }
 
         //if (BooleanUtils.isTrue(parameter.getValidationOn())) {

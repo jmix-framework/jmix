@@ -6,7 +6,6 @@ import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.entitytreelist.EntityTreeList;
 import io.jmix.reportsflowui.view.region.RegionDetailView;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import com.vaadin.flow.component.AbstractField;

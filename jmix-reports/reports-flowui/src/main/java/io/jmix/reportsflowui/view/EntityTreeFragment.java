@@ -40,6 +40,7 @@ import java.util.*;
 
 public class EntityTreeFragment extends Composite<FormLayout>
         implements ApplicationContextAware, HasSize, HasEnabled, InitializingBean {
+
     private TreeDataGrid<EntityTreeNode> entityTree;
     protected EntityTreeNode rootEntity;
     private UiComponents uiComponents;
@@ -52,7 +53,7 @@ public class EntityTreeFragment extends Composite<FormLayout>
     private FormLayout formLayout;
     private Messages messages;
     private Metadata metadata;
-    private MessageBundle messageBundle;
+
     protected boolean scalarOnly = false;
     protected boolean collectionsOnly = false;
     protected boolean persistentOnly = false;
@@ -91,7 +92,6 @@ public class EntityTreeFragment extends Composite<FormLayout>
         this.messages = applicationContext.getBean(Messages.class);
         this.dataComponents = applicationContext.getBean(DataComponents.class);
         this.metadata = applicationContext.getBean(Metadata.class);
-        this.messageBundle = applicationContext.getBean(MessageBundle.class);
         this.metadataTools = applicationContext.getBean(MetadataTools.class);
 
 

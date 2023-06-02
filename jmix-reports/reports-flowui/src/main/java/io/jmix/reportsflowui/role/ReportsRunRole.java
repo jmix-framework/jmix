@@ -41,9 +41,7 @@ public interface ReportsRunRole {
     @ViewPolicy(viewIds = {
             "report_InputParametersDialog.view",
             "report_ReportRun.view",
-            "report_ReportTable.view",
-//            "report_ShowPivotTable.screen",
-//            "report_ShowChart.screen"
+            "report_ReportTable.view"
     })
     @MenuPolicy(menuIds = {"report_ReportRun.view"})
 

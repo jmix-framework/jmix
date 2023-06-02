@@ -16,7 +16,7 @@
 
 package io.jmix.reportsflowui.view.history;
 
-import io.jmix.core.Messages;
+import io.jmix.flowui.view.MessageBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ import java.util.function.Function;
 public class SecondsToTextFormatter implements Function<Long, String> {
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Override
     @Nullable
@@ -46,11 +46,11 @@ public class SecondsToTextFormatter implements Function<Long, String> {
         long seconds = value % 60;
 
         if (hours != 0) {
-            return messages.formatMessage(getClass(), "duration.format.withHours", hours, minutes, seconds);
+            return messageBundle.formatMessage("duration.format.withHours", hours, minutes, seconds);
         } else if (minutes != 0) {
-            return messages.formatMessage(getClass(), "duration.format.withMinutes", minutes, seconds);
+            return messageBundle.formatMessage("duration.format.withMinutes", minutes, seconds);
         } else {
-            return messages.formatMessage(getClass(), "duration.format.onlySeconds", seconds);
+            return messageBundle.formatMessage("duration.format.onlySeconds", seconds);
         }
     }
 }

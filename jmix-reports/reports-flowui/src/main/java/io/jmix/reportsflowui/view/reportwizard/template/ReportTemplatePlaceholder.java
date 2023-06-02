@@ -45,7 +45,6 @@ public class ReportTemplatePlaceholder {
 
     @Autowired
     protected Metadata metadata;
-
     @Autowired
     protected Messages messages;
 

@@ -16,8 +16,8 @@
 
 package io.jmix.reportsflowui.view.run;
 
-import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
@@ -35,6 +35,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
@@ -53,6 +54,7 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.runner.ReportRunner;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -69,8 +71,6 @@ import java.util.Set;
 public class ReportTableView extends StandardView {
 
     @ViewComponent
-    protected JmixButton printReportBtn;
-    @ViewComponent
     protected HorizontalLayout parametersFrameHolder;
     @ViewComponent
     protected HorizontalLayout reportForm;
@@ -78,6 +78,10 @@ public class ReportTableView extends StandardView {
     protected VerticalLayout tablesVBoxLayout;
     @ViewComponent
     protected Div parametersBox;
+
+    @ViewComponent
+    private CollectionLoader<Report> reportsDl;
+
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
@@ -92,17 +96,16 @@ public class ReportTableView extends StandardView {
     protected Actions actions;
     @Autowired
     protected ReportRunner reportRunner;
+    @Autowired
+    private DataComponents dataComponents;
+    @Autowired
+    private DatatypeRegistry datatypeRegistry;
+
     protected Report report;
     protected String templateCode;
     protected Map<String, Object> reportParameters;
     protected InputParametersFragment inputParametersFrame;
     protected byte[] tableData;
-    @ViewComponent
-    private CollectionLoader<Report> reportsDl;
-    @Autowired
-    private DataComponents dataComponents;
-    @Autowired
-    private DatatypeRegistry datatypeRegistry;
 
     public void setReport(Report report) {
         this.report = report;
@@ -123,7 +126,7 @@ public class ReportTableView extends StandardView {
     @Subscribe("reportEntityComboBox")
     public void onReportEntityComboBoxComponentValueChange(AbstractField.ComponentValueChangeEvent<EntityComboBox<Report>, Report> event) {
         report = event.getValue();
-        printReportBtn.setVisible(report != null);
+
         openReportParameters();
     }
 
@@ -164,11 +167,6 @@ public class ReportTableView extends StandardView {
         }
     }
 
-    @Install(to = "runAction", subject = "enabledRule")
-    protected boolean runActionEnabledRule() {
-        return true;
-    }
-
     @Subscribe("runAction")
     public void onRunAction(ActionPerformedEvent event) {
         if (inputParametersFrame != null && inputParametersFrame.getReport() != null) {
@@ -204,13 +202,9 @@ public class ReportTableView extends StandardView {
         Map<String, Set<JmixTableData.ColumnInfo>> headerMap = dto.getHeaders();
         tablesVBoxLayout.removeAll();
 
-        if (data == null || data.isEmpty())
+        if (data == null || data.isEmpty()) {
             return;
-
-//        Tabs tabs = uiComponents.create(Tabs.class);
-//        tabs.setHeightFull();
-//        tabs.setWidthFull();
-
+        }
 
         JmixTabSheet jmixTabSheet = uiComponents.create(JmixTabSheet.class);
         jmixTabSheet.setWidthFull();
@@ -221,29 +215,17 @@ public class ReportTableView extends StandardView {
                 DataGrid<KeyValueEntity> dataGrid = createTable(dataSetName, container, headerMap);
                 HorizontalLayout buttonsPanel = createButtonsPanel(dataGrid, container);
 
-
-//                Tab tab = uiComponents.create(Tab.class);
-//                tab.setId(dataSetName + "Tab");
-//                tab.setLabel(dataSetName);
-
                 VerticalLayout verticalLayout = uiComponents.create(VerticalLayout.class);
                 verticalLayout.add(buttonsPanel);
                 verticalLayout.add(dataGrid);
 
                 verticalLayout.expand(dataGrid);
                 jmixTabSheet.add(dataSetName, verticalLayout);
-//                tab.add(verticalLayout);
-//                tabs.add(tab);
             }
         });
 
-//        tabs.setAutoselect(true);
-
         tablesVBoxLayout.add(jmixTabSheet);
         tablesVBoxLayout.expand(jmixTabSheet);
-
-//        tablesVBoxLayout.add(tabs);
-//        tablesVBoxLayout.expand(tabs);
     }
 
     private HorizontalLayout createButtonsPanel(DataGrid<KeyValueEntity> dataGrid, KeyValueCollectionContainer container) {
@@ -258,12 +240,6 @@ public class ReportTableView extends StandardView {
         buttonsPanel.add(excelButton);
 
         return buttonsPanel;
-    }
-
-    protected H3 createTitle(String title) {
-        H3 label = uiComponents.create(H3.class);
-        label.setText(title);
-        return label;
     }
 
     protected KeyValueCollectionContainer createContainer(String dataSetName, List<KeyValueEntity> keyValueEntities, Map<String, Set<JmixTableData.ColumnInfo>> headerMap) {

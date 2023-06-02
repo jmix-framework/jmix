@@ -16,10 +16,10 @@
 
 package io.jmix.reportsflowui.view.template;
 
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reportsflowui.ReportsUiHelper;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -30,7 +30,6 @@ import io.jmix.core.Metadata;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
@@ -70,7 +69,7 @@ import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 @ViewController("report_ReportTemplate.detail")
 @ViewDescriptor("report-template-detail-view.xml")
 @EditedEntityContainer("reportTemplateDc")
-@DialogMode(maxWidth = "40em")
+@DialogMode(width = "40em")
 public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate> {
 
     public static final String CUSTOM_DEFINE_BY_PROPERTY = "customDefinedBy";
@@ -239,12 +238,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         tableEditComposite = uiComponents.create(TableEditFragment.class);
         tableEditComposite.setVisible(false);
         tableEditComposite.setPreviewBox(previewBox);
-        Dialog target = UiComponentUtils.findDialog(this);
-        if (target == null) {
-            throw new IllegalStateException(ReportTemplate.class.getSimpleName()
-                    + " detail view must be opened as dialog");
-        }
-        tableEditComposite.setTarget(target);
+
         descriptionEditBox.add(tableEditComposite);
     }
 
@@ -495,8 +489,9 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     protected boolean isContentAttributeUpdatePermitted(ReportTemplate reportTemplate) {
-        return secureOperations.isEntityUpdatePermitted(metadata.getClass(reportTemplate), policyStore)
+        MetaClass templateMetaClass = metadata.getClass(reportTemplate);
+        return secureOperations.isEntityUpdatePermitted(templateMetaClass, policyStore)
                 && secureOperations.isEntityAttrUpdatePermitted(
-                metadata.getClass(reportTemplate).getPropertyPath("content"), policyStore);
+                templateMetaClass.getPropertyPath("content"), policyStore);
     }
 }

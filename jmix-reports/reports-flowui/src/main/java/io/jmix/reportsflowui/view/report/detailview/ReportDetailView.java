@@ -83,6 +83,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     public static final String ROOT_BAND = "Root";
     protected static final String TRANSPARENT_CODE_CLASS_NAME = "reports-dialog-transparent-code";
+
     @Autowired
     protected ReportsPersistence reportsPersistence;
     @Autowired

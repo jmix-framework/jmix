@@ -43,19 +43,14 @@ public class EntityTreeModelBuilder {
 
     @Autowired
     protected MessageTools messageTools;
-
     @Autowired
     protected ReportWizard reportWizard;
-
     @Autowired
     protected ReportsProperties reportsProperties;
-
     @Autowired
     protected Metadata metadata;
-
     @Autowired
     protected ExtendedEntities extendedEntities;
-
     @Autowired
     protected MetadataTools metadataTools;
 

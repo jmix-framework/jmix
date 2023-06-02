@@ -56,13 +56,7 @@ public class InputParametersDialog extends StandardView {
     @Autowired
     protected ReportParameterValidator reportParameterValidator;
     @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected Messages messages;
-    @Autowired
     protected ViewValidation viewValidation;
-    @Autowired
-    protected FlowuiProperties properties;
     @Autowired
     private UiComponents uiComponents;
 

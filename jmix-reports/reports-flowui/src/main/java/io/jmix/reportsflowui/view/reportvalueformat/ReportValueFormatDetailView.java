@@ -10,7 +10,6 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
@@ -36,6 +35,7 @@ import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 @EditedEntityContainer("valuesFormatsDc")
 @DialogMode(width = "30em")
 public class ReportValueFormatDetailView extends StandardDetailView<ReportValueFormat> {
+
     public static final String RETURN_VALUE = "return value";
 
     protected static final String FIELD_ICON_CLASS_NAME = "template-detailview-field-icon";
@@ -58,22 +58,23 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     private JmixComboBox<String> formatField;
     @ViewComponent
     private JmixCheckbox groovyField;
+    @ViewComponent
+    private VerticalLayout groovyVBox;
+    @ViewComponent
+    private JmixTextArea groovyCodeEditor;
+
     @Autowired
     private SecureOperations secureOperations;
     @Autowired
     private Metadata metadata;
     @Autowired
     private PolicyStore policyStore;
-    @ViewComponent
-    private VerticalLayout groovyVBox;
-    @ViewComponent
-    private JmixTextArea groovyCodeEditor;
     @Autowired
     private DialogWindows dialogWindows;
     @Autowired
     private Dialogs dialogs;
     @Autowired
-    private Messages messages;
+    private MessageBundle messageBundle;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -184,8 +185,8 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
 
     protected void onGroovyCodeHelpIconClick(ClickEvent<Icon> event) {
         dialogs.createMessageDialog()
-                .withHeader(messages.getMessage("valuesFormats.groovyScript"))
-                .withContent(new Html(messages.getMessage("valuesFormats.groovyScriptHelpText")))
+                .withHeader(messageBundle.getMessage("valuesFormats.groovyScript"))
+                .withContent(new Html(messageBundle.getMessage("valuesFormats.groovyScriptHelpText")))
                 .withResizable(true)
                 .withModal(false)
                 .withWidth("50em")

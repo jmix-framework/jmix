@@ -49,16 +49,10 @@ public interface ReportsFullAccessRole {
 			"report_InputParametersDialog.view",
 			"report_ReportRun.view",
 			"report_ReportTable.view",
-//			"report_ShowPivotTable.screen",
-//			"report_ShowChart.screen",
 			"report_ReportGroup.list",
 			"report_Report.list",
 			"report_Report.detail",
-//			"report_ChartEdit.fragment",
 			"report_ReportInputParameter.detail",
-//			"report_PivotTableAggregation.edit",
-//			"report_PivotTableEdit.fragment",
-//			"report_PivotTableProperty.edit",
 			"report_ReportImportDialog.view",
 			"report_Region.detail",
 			"report_ReportWizardCreator.view",
@@ -69,7 +63,6 @@ public interface ReportsFullAccessRole {
 			"report_InputParametersDialog.view",
 			"report_ReportTemplate.detail",
 			"report_ReportValueFormat.detail",
-//			"report_TableEdit.fragment",
 			"report_ScriptEditor.view"
 	})
 
@@ -77,12 +70,9 @@ public interface ReportsFullAccessRole {
 			"report_Report.list",
 			"report_ReportGroup.list",
 			"report_ReportRun.view",
-			"report_ReportTable.view",
-//			"report_ShowChart.screen",
-//			"report_ShowPivotTable.screen"
+			"report_ReportTable.view"
 	})
 
-	//@EntityPolicy(entityClass = ResourceRoleModel.class, actions = EntityPolicyAction.READ)
 	@EntityPolicy(entityClass = Report.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportGroup.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportTemplate.class, actions = EntityPolicyAction.ALL)
@@ -105,7 +95,6 @@ public interface ReportsFullAccessRole {
 	@EntityPolicy(entityClass = ReportInputParameter.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportScreen.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportValueFormat.class, actions = EntityPolicyAction.ALL)
-	//@EntityAttributePolicy(entityClass = ResourceRoleModel.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
 	@EntityAttributePolicy(entityClass = Report.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportGroup.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportTemplate.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)

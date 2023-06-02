@@ -81,10 +81,12 @@ public class ReportWizardCreator extends StandardView {
     protected Report lastGeneratedTmpReport;
     private List<Div> fragmentsList;
     protected int currentFragmentIdx = 0;
+
     @ViewComponent
     private InstanceContainer<ReportData> reportDataDc;
     @ViewComponent
     private DataContext dataContext;
+
     @Autowired
     private Messages messages;
     @Autowired

@@ -4,10 +4,10 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout expand="editor" spacing="true">
+    <layout expand="editor">
         <textArea id="editor" width="100%"/>
 
-        <hbox id="editActions" spacing="true">
+        <hbox id="editActions">
             <button id="commitBtn" action="commit"/>
             <button id="cancelBtn" action="cancel"/>
         </hbox>

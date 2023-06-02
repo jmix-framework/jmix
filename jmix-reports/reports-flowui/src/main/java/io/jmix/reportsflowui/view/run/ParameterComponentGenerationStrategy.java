@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
-import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -37,6 +36,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -57,8 +57,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component("report_ParameterFieldCreator")
-public class ParameterFieldCreator {
+@Component("report_ParameterComponentGenerationStrategy")
+public class ParameterComponentGenerationStrategy {
 
     @Autowired
     protected UiComponents uiComponents;
@@ -85,7 +85,7 @@ public class ParameterFieldCreator {
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
 
-    protected Map<ParameterType, FieldCreator> fieldCreationMapping = new ImmutableMap.Builder<ParameterType, FieldCreator>()
+    protected Map<ParameterType, FieldCreator<?>> fieldCreationMapping = new ImmutableMap.Builder<ParameterType, FieldCreator<?>>()
             .put(ParameterType.BOOLEAN, new CheckBoxCreator())
             .put(ParameterType.DATE, new DateFieldCreator())
             .put(ParameterType.ENTITY, new SingleFieldCreator())
@@ -100,7 +100,8 @@ public class ParameterFieldCreator {
     public AbstractField createField(ReportInputParameter parameter) {
         AbstractField field = fieldCreationMapping.get(parameter.getType()).createField(parameter);
         if (field instanceof HasRequired requiredField) {
-            String message = messages.formatMessage(this.getClass(), "error.paramIsRequiredButEmpty", metadataTools.getInstanceName(parameter));
+            String message = messages.formatMessage(getClass(),
+                    "error.paramIsRequiredButEmpty", metadataTools.getInstanceName(parameter));
             requiredField.setRequiredMessage(message);
             requiredField.setRequired(parameter.getRequired());
         }
@@ -120,17 +121,14 @@ public class ParameterFieldCreator {
         parameter.setDefaultValue(objectToStringConverter.convertToString(now.getClass(), now));
     }
 
-    protected interface FieldCreator {
-        AbstractField createField(ReportInputParameter parameter);
+    protected interface FieldCreator<T extends AbstractField> {
+        T createField(ReportInputParameter parameter);
     }
 
-    protected class DateFieldCreator implements FieldCreator {
+    protected class DateFieldCreator implements FieldCreator<TypedDatePicker<?>> {
         @Override
-        public AbstractField createField(ReportInputParameter parameter) {
-            TypedDatePicker dateField = uiComponents.create(TypedDatePicker.class);
-            //todo
-//            dateField.setResolution(DateField.Resolution.DAY);
-//            dateField.setDateFormat(messages.getMessage("dateFormat"));
+        public TypedDatePicker<?> createField(ReportInputParameter parameter) {
+            TypedDatePicker<?> dateField = uiComponents.create(TypedDatePicker.class);
 
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, dateField);
@@ -139,13 +137,10 @@ public class ParameterFieldCreator {
         }
     }
 
-    protected class DateTimeFieldCreator implements FieldCreator {
+    protected class DateTimeFieldCreator implements FieldCreator<TypedDateTimePicker<?>> {
         @Override
-        public AbstractField createField(ReportInputParameter parameter) {
-            DateTimePicker dateField = uiComponents.create(DateTimePicker.class);
-            //todo
-//            dateField.setResolution(DateField.Resolution.MIN);
-//            dateField.setDateFormat(messages.getMessage("dateTimeFormat"));
+        public TypedDateTimePicker<?> createField(ReportInputParameter parameter) {
+            TypedDateTimePicker<?> dateField = uiComponents.create(TypedDateTimePicker.class);
 
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, dateField);
@@ -154,52 +149,49 @@ public class ParameterFieldCreator {
         }
     }
 
-    protected class TimeFieldCreator implements FieldCreator {
+    protected class TimeFieldCreator implements FieldCreator<TypedTimePicker<?>> {
 
         @Override
-        public AbstractField createField(ReportInputParameter parameter) {
-            TypedTimePicker timeField = uiComponents.create(TypedTimePicker.class);
+        public TypedTimePicker<?> createField(ReportInputParameter parameter) {
+            TypedTimePicker<?> timeField = uiComponents.create(TypedTimePicker.class);
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, timeField);
             }
-            return uiComponents.create(TimePicker.class);
+            return timeField;
         }
     }
 
-    protected class CheckBoxCreator implements FieldCreator {
+    protected class CheckBoxCreator implements FieldCreator<JmixCheckbox> {
 
         @Override
-        public AbstractField createField(ReportInputParameter parameter) {
-            JmixCheckbox checkBox = uiComponents.create(JmixCheckbox.class);
-            //todo
-            //checkBox.set(Component.Alignment.MIDDLE_LEFT);
-            return checkBox;
+        public JmixCheckbox createField(ReportInputParameter parameter) {
+            return uiComponents.create(JmixCheckbox.class);
         }
     }
 
-    protected class TextFieldCreator implements FieldCreator {
+    protected class TextFieldCreator implements FieldCreator<TypedTextField<?>> {
 
         @Override
-        public AbstractField createField(ReportInputParameter parameter) {
+        public TypedTextField<?> createField(ReportInputParameter parameter) {
             return uiComponents.create(TypedTextField.class);
         }
     }
 
-    protected class NumericFieldCreator implements FieldCreator {
+    protected class NumericFieldCreator implements FieldCreator<TypedTextField<Double>> {
 
         @Override
-        public AbstractField createField(ReportInputParameter parameter) {
+        public TypedTextField<Double> createField(ReportInputParameter parameter) {
             TypedTextField<Double> textField = uiComponents.create(TypedTextField.class);
             textField.setDatatype(datatypeRegistry.get(Double.class));
             return textField;
         }
     }
 
-    protected class EnumFieldCreator implements FieldCreator {
+    protected class EnumFieldCreator implements FieldCreator<JmixSelect<?>> {
 
         @Override
-        public AbstractField createField(ReportInputParameter parameter) {
-            JmixSelect select = uiComponents.create(JmixSelect.class);
+        public JmixSelect<?> createField(ReportInputParameter parameter) {
+            JmixSelect<Object> select = uiComponents.create(JmixSelect.class);
             select.setEmptySelectionAllowed(true);
 
             String enumClassName = parameter.getEnumerationClass();
@@ -218,7 +210,7 @@ public class ParameterFieldCreator {
         }
     }
 
-    protected class SingleFieldCreator implements FieldCreator {
+    protected class SingleFieldCreator implements FieldCreator<AbstractField> {
         @Override
         public AbstractField createField(ReportInputParameter parameter) {
             boolean isLookup = Boolean.TRUE.equals(parameter.getLookup());
@@ -229,11 +221,11 @@ public class ParameterFieldCreator {
                     : createEntityPicker(entityMetaClass, parameter);
         }
 
-        protected EntityPicker createEntityPicker(MetaClass entityMetaClass, ReportInputParameter parameter) {
-            EntityPicker entityPicker = uiComponents.create(EntityPicker.class);
+        protected EntityPicker<?> createEntityPicker(MetaClass entityMetaClass, ReportInputParameter parameter) {
+            EntityPicker<?> entityPicker = uiComponents.create(EntityPicker.class);
             entityPicker.setMetaClass(entityMetaClass);
 
-            EntityLookupAction pickerLookupAction = createLookupAction(parameter);
+            EntityLookupAction<?> pickerLookupAction = createLookupAction(parameter);
             entityPicker.addAction(pickerLookupAction);
 
             Action entityClearAction = createClearAction();
@@ -241,14 +233,14 @@ public class ParameterFieldCreator {
             return entityPicker;
         }
 
-        protected EntityComboBox createEntityComboBox(MetaClass entityMetaClass, ReportInputParameter parameter) {
-            EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.class);
+        protected EntityComboBox<?> createEntityComboBox(MetaClass entityMetaClass, ReportInputParameter parameter) {
+            EntityComboBox<?> entityComboBox = uiComponents.create(EntityComboBox.class);
             entityComboBox.setMetaClass(entityMetaClass);
 
             CollectionContainer collectionContainer = getCollectionContainer(parameter, entityMetaClass);
             entityComboBox.setItems(collectionContainer);
 
-            EntityLookupAction pickerLookupAction = createLookupAction(parameter);
+            EntityLookupAction<?> pickerLookupAction = createLookupAction(parameter);
             entityComboBox.addAction(pickerLookupAction);
 
             Action entityClearAction = createClearAction();
@@ -256,8 +248,8 @@ public class ParameterFieldCreator {
             return entityComboBox;
         }
 
-        private EntityLookupAction createLookupAction(ReportInputParameter parameter) {
-            EntityLookupAction pickerLookupAction = (EntityLookupAction) actions.create(EntityLookupAction.ID);
+        private EntityLookupAction<?> createLookupAction(ReportInputParameter parameter) {
+            EntityLookupAction<?> pickerLookupAction = actions.create(EntityLookupAction.class);
 
             String parameterScreen = parameter.getScreen();
             if (StringUtils.isNotEmpty(parameterScreen)) {
@@ -270,17 +262,18 @@ public class ParameterFieldCreator {
             return actions.create(EntityClearAction.ID);
         }
 
-        protected CollectionContainer getCollectionContainer(ReportInputParameter parameter, MetaClass entityMetaClass) {
+        protected CollectionContainer<?> getCollectionContainer(ReportInputParameter parameter, MetaClass entityMetaClass) {
             FetchPlan fetchPlan = fetchPlans.builder(entityMetaClass.getJavaClass())
                     .addFetchPlan(FetchPlan.INSTANCE_NAME)
                     .build();
 
-            CollectionContainer collectionContainer = dataComponents.createCollectionContainer(entityMetaClass.getJavaClass());
+            String query = createQueryString(entityMetaClass, parameter);
+
+            CollectionContainer<?> collectionContainer = dataComponents.createCollectionContainer(entityMetaClass.getJavaClass());
             collectionContainer.setFetchPlan(fetchPlan);
 
             CollectionLoader loader = dataComponents.createCollectionLoader();
 
-            String query = createQueryString(entityMetaClass, parameter);
             loader.setQuery(query);
             loader.setContainer(collectionContainer);
             loader.load();
@@ -306,37 +299,36 @@ public class ParameterFieldCreator {
         }
     }
 
-    protected class MultiFieldCreator implements FieldCreator {
+    protected class MultiFieldCreator implements FieldCreator<JmixMultiSelectComboBoxPicker<?>> {
 
         @Override
-        public AbstractField createField(final ReportInputParameter parameter) {
-            JmixMultiSelectComboBoxPicker multiComboBoxPicker = uiComponents.create(JmixMultiSelectComboBoxPicker.class);
+        public JmixMultiSelectComboBoxPicker<?> createField(final ReportInputParameter parameter) {
+            JmixMultiSelectComboBoxPicker<?> multiComboBoxPicker = uiComponents.create(JmixMultiSelectComboBoxPicker.class);
             MetaClass entityMetaClass = metadata.getClass(parameter.getEntityMetaClass());
             multiComboBoxPicker.setMetaClass(entityMetaClass);
 
             CollectionContainer collectionContainer = createCollectionContainer(entityMetaClass);
             multiComboBoxPicker.setItems(collectionContainer.getItems());
 
-            EntityLookupAction pickerLookupAction = (EntityLookupAction) actions.create(EntityLookupAction.ID);
+            EntityLookupAction<?> pickerLookupAction = (EntityLookupAction) actions.create(EntityLookupAction.ID);
             String screen = parameter.getScreen();
             if (StringUtils.isNotEmpty(screen)) {
                 pickerLookupAction.setViewId(screen);
             }
             multiComboBoxPicker.addAction(pickerLookupAction);
 
-            ValueClearAction valueClearAction = createValueClearAction();
+            ValueClearAction<?> valueClearAction = createValueClearAction();
             multiComboBoxPicker.addAction(valueClearAction);
 
             return multiComboBoxPicker;
         }
 
-        protected ValueClearAction createValueClearAction() {
-            ValueClearAction valueClearAction = (ValueClearAction) actions.create(ValueClearAction.ID);
-            return valueClearAction;
+        protected ValueClearAction<?> createValueClearAction() {
+            return actions.create(ValueClearAction.class);
         }
 
-        protected CollectionContainer createCollectionContainer(MetaClass entityMetaClass) {
-            CollectionContainer collectionContainer = dataComponents.createCollectionContainer(entityMetaClass.getJavaClass());
+        protected CollectionContainer<?> createCollectionContainer(MetaClass entityMetaClass) {
+            CollectionContainer<?> collectionContainer = dataComponents.createCollectionContainer(entityMetaClass.getJavaClass());
             FetchPlan fetchPlan = fetchPlans.builder(entityMetaClass.getJavaClass())
                     .addFetchPlan(FetchPlan.LOCAL)
                     .build();

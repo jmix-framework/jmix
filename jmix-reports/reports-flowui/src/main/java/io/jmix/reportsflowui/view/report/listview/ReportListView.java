@@ -98,8 +98,6 @@ public class ReportListView extends StandardListView<Report> {
 
     @Subscribe
     protected void onInit(InitEvent event) {
-
-
         reportsDataGridCreate.setIcon(null);
 
         ActionItem wizardItem = (ActionItem) dropdownCreateBtn.getItem("wizardItem");

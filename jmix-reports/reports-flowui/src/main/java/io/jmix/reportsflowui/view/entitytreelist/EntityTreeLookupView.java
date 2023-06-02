@@ -2,7 +2,6 @@ package io.jmix.reportsflowui.view.entitytreelist;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.TreeDataGrid;
@@ -17,14 +16,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 @LookupComponent("entityTree")
 @DialogMode(width = "50em", height = "37.5em")
 public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
+
     @ViewComponent
     private FormLayout treePanel;
+
     @Autowired
     private UiComponents uiComponents;
     @Autowired
     private Notifications notifications;
     @Autowired
-    private Messages messages;
+    private MessageBundle messageBundle;
+
     protected EntityTreeNode rootEntity;
     protected boolean scalarOnly = false;
     protected boolean collectionsOnly = false;
@@ -52,13 +54,13 @@ public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
 
         setSelectionValidator(validationContext -> {
             if (entityTree.getSingleSelectedItem() == null) {
-                notifications.create(messages.getMessage(getClass(), "selectItemForContinue"))
+                notifications.create(messageBundle.getMessage("selectItemForContinue"))
                         .withType(Notifications.Type.DEFAULT)
                         .show();
                 return false;
             } else {
                 if (entityTree.getSingleSelectedItem().getParent() == null) {
-                    notifications.create(messages.getMessage(getClass(), "selectNotARoot"))
+                    notifications.create(messageBundle.getMessage("selectNotARoot"))
                             .withType(Notifications.Type.DEFAULT)
                             .show();
                     return false;

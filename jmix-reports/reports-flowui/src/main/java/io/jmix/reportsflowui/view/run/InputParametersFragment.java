@@ -71,7 +71,7 @@ public class InputParametersFragment extends Composite<FormLayout>
     private UiComponents uiComponents;
     private Messages messages;
     private Metadata metadata;
-    private ParameterFieldCreator parameterFieldCreator;
+    private ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
     private ParameterClassResolver parameterClassResolver;
     private ObjectToStringConverter objectToStringConverter;
     private DataComponents dataComponents;
@@ -81,7 +81,7 @@ public class InputParametersFragment extends Composite<FormLayout>
         this.uiComponents = applicationContext.getBean(UiComponents.class);
         this.messages = applicationContext.getBean(Messages.class);
         this.reportsUtils = applicationContext.getBean(ReportsUtils.class);
-        this.parameterFieldCreator = applicationContext.getBean(ParameterFieldCreator.class);
+        this.parameterComponentGenerationStrategy = applicationContext.getBean(ParameterComponentGenerationStrategy.class);
         this.parameterClassResolver = applicationContext.getBean(ParameterClassResolver.class);
         this.objectToStringConverter = applicationContext.getBean(ObjectToStringConverter.class);
         this.dataComponents = applicationContext.getBean(DataComponents.class);
@@ -230,7 +230,7 @@ public class InputParametersFragment extends Composite<FormLayout>
     }
 
     protected void createComponent(ReportInputParameter parameter, boolean visible) {
-        AbstractField field = parameterFieldCreator.createField(parameter);
+        AbstractField field = parameterComponentGenerationStrategy.createField(parameter);
 
         Object value = parameters.get(parameter.getAlias());
         if (value == null && parameter.getDefaultValue() != null) {

@@ -114,8 +114,7 @@
                                 <!--Movable layout-->
                                 <div id="dataSetTypeLayout" width="100%" height="100%">
                                     <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptField"
-                                          height="100%"
-                                          spacing="true">
+                                          height="100%">
                                         <textArea id="dataSetScriptField" dataContainer="dataSetsDc" property="text"
                                                   label="msg://bandsTab.dataSetTypeLayout.dataSetScriptField.label"
                                                   width="100%"/>

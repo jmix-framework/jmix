@@ -41,37 +41,26 @@ public class ReportWizard {
 
     @Autowired
     protected Metadata metadata;
-
     @Autowired
     protected ReportsPersistence reportsPersistence;
-
     @Autowired
     protected ReportsUtils reportsUtils;
-
     @Autowired
     protected ReportsSerialization reportsSerialization;
-
     @Autowired
     protected ReportsProperties reportsProperties;
-
     @Autowired
     protected ExtendedEntities extendedEntities;
-
     @Autowired
     protected DataSetFactory dataSetFactory;
-
     @Autowired
     protected Messages messages;
-
     @Autowired
     protected MetadataTools metadataTools;
-
     @Autowired
     protected TemplateGenerator templateGenerator;
-
     @Autowired
     protected EntityTreeModelBuilder entityTreeModelBuilderApiProvider;
-
     @Autowired
     protected FetchPlans fetchPlans;
 

@@ -143,6 +143,7 @@ public class TableEditFragmentContent extends VerticalLayout {
     protected FlexLayout createDataGridsBox() {
         FlexLayout layout = uiComponents.create(FlexLayout.class);
         layout.setId("tableEditDataGridsBox");
+        layout.setWidth("100%");
         layout.setClassName(DATA_GRIDS_BOX_CLASS_NAME);
         layout.setFlexWrap(FlexLayout.FlexWrap.WRAP);
         layout.addClassName(LumoUtility.Gap.MEDIUM);
@@ -282,7 +283,7 @@ public class TableEditFragmentContent extends VerticalLayout {
         }
 
         JmixButton button = uiComponents.create(JmixButton.class);
-        button.setAction(action, false);
+        button.setAction(action, true);
         button.setIcon(icon.create());
         return button;
     }

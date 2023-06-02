@@ -38,7 +38,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
 
-    <layout expand="reportsDataGrid" spacing="true">
+    <layout expand="reportsDataGrid">
         <formLayout id="gridFilter">
             <responsiveSteps>
                 <responsiveStep minWidth="0" columns="1"/>
@@ -55,7 +55,7 @@
                             metaClass="report_ReportGroup"/>
             <datePicker id="filterUpdatedDate"
                         label="msg://io.jmix.reportsflowui.view.run/report.reportRunFilterUpdatedDate"/>
-            <hbox margin="true">
+            <hbox>
                 <button id="applyFilterBtn"
                         text="msg://io.jmix.reportsflowui.view.run/report.reportFilterButton"
                         themeNames="primary"

@@ -34,38 +34,43 @@ import java.util.*;
 @ViewDescriptor("region-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
 public class RegionDetailView extends StandardDetailView<ReportRegion> {
+
     protected boolean isTabulated;//if true then user perform add tabulated region action
     protected boolean asFetchPlanEditor;
     protected boolean updatePermission = true;
+
     @ViewComponent
     private DataGrid<RegionProperty> propertiesTable;
-    @ViewComponent
-    private CollectionPropertyContainer<RegionProperty> reportRegionPropertiesTableDc;
-    @Autowired
-    private Notifications notifications;
-    @Autowired
-    private Messages messages;
     @ViewComponent
     private JmixButton upItem;
     @ViewComponent
     private JmixButton downItem;
-    @Autowired
-    private Metadata metadata;
-    @Autowired
-    private Actions actions;
     @ViewComponent
     private JmixButton addItem;
     @ViewComponent
     private Label tipLabel;
-    protected TreeDataGrid<EntityTreeNode> entityTree;
+    @ViewComponent
+    private FormLayout treePanel;
+
+    @ViewComponent
+    private CollectionPropertyContainer<RegionProperty> reportRegionPropertiesTableDc;
+
     @Autowired
     private UiComponents uiComponents;
+    @Autowired
+    private Notifications notifications;
+    @Autowired
+    private Messages messages;
+    @Autowired
+    private Metadata metadata;
+    @Autowired
+    private Actions actions;
+
+    protected TreeDataGrid<EntityTreeNode> entityTree;
     protected EntityTreeNode rootEntity;
     protected boolean scalarOnly = false;
     protected boolean collectionsOnly = false;
     protected boolean persistentOnly = false;
-    @ViewComponent
-    private FormLayout treePanel;
 
     public void setParameters(EntityTreeNode rootEntity, boolean scalarOnly, boolean collectionsOnly, boolean persistentOnly) {
         this.rootEntity = rootEntity;

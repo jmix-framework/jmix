@@ -38,7 +38,7 @@
         </queryParameters>
     </facets>
 
-    <layout spacing="true" expand="executionsDataGrid">
+    <layout>
         <genericFilter id="genericFilter" dataLoader="executionsDl" opened="false"/>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="excel" action="executionsDataGrid.excel"/>

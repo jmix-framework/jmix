@@ -56,7 +56,7 @@
                         <responsiveStep minWidth="0" columns="1"/>
                     </responsiveSteps>
                 </formLayout>
-                <hbox id="descriptionEditBox">
+                <hbox id="descriptionEditBox" width="100%">
                 </hbox>
             </vbox>
             <vbox id="previewBox" visible="false">

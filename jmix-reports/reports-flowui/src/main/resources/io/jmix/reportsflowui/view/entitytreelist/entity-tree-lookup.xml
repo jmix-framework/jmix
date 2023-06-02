@@ -22,7 +22,7 @@
     </actions>
     <layout expand="treePanel">
         <formLayout id="treePanel"/>
-        <hbox id="lookupActions" spacing="true">
+        <hbox id="lookupActions">
             <button action="selectAction"/>
             <button action="discardAction"/>
         </hbox>

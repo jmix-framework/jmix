@@ -30,7 +30,7 @@ public abstract class AbstractDescriptionEditFragment<C extends Component> exten
 
     protected ReportTemplate reportTemplate;
     protected VerticalLayout previewBox;
-    protected Dialog target;
+    //protected Dialog target;
 
     @Nullable
     public ReportTemplate getReportTemplate() {
@@ -41,14 +41,14 @@ public abstract class AbstractDescriptionEditFragment<C extends Component> exten
         this.reportTemplate = reportTemplate;
     }
 
-    public Dialog getTarget() {
-        return target;
-    }
-
-    public void setTarget(Dialog target) {
-        Preconditions.checkNotNullArgument(target);
-        this.target = target;
-    }
+//    public Dialog getTarget() {
+//        return target;
+//    }
+//
+//    public void setTarget(Dialog target) {
+//        Preconditions.checkNotNullArgument(target);
+//        this.target = target;
+//    }
 
     public VerticalLayout getPreviewBox() {
         return previewBox;
@@ -64,9 +64,8 @@ public abstract class AbstractDescriptionEditFragment<C extends Component> exten
         previewBox.setSizeFull();
         previewBox.removeAll();
 
-        target.setResizable(true);
-        target.setWidth("80em");
-//        target.center();
+//        target.setResizable(true);
+//        target.setWidth("80em");
 
         initPreviewContent(previewBox);
     }
@@ -75,9 +74,8 @@ public abstract class AbstractDescriptionEditFragment<C extends Component> exten
         previewBox.setVisible(false);
         previewBox.removeAll();
 
-        target.setSizeUndefined();
-        target.setResizable(false);
-//        parent.center();
+//        target.setSizeUndefined();
+//        target.setResizable(false);
     }
 
     public abstract boolean isSupportPreview();

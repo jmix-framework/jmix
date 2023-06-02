@@ -113,7 +113,8 @@ public class TableEditFragment extends AbstractDescriptionEditFragment<TableEdit
     protected void initBands() {
         content.getBandsDataGrid().addSelectionListener(this::onBandDataGridSelection);
         content.getDataGridAction(TableEditFragmentContent.CREATE_BAND_ID)
-                .ifPresent(action -> action.addActionPerformedListener(this::onBandCreateActionPerformed));
+                .ifPresent(action ->
+                        action.addActionPerformedListener(this::onBandCreateActionPerformed));
         content.getDataGridAction(TableEditFragmentContent.REMOVE_BAND_ID)
                 .ifPresent(action -> ((RemoveAction<TemplateTableBand>) action)
                         .setAfterActionPerformedHandler(this::onBandRemoveAfterActionPerformed));

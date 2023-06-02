@@ -61,6 +61,7 @@ import java.util.stream.Collectors;
 @ViewDescriptor("query-parameter-detail-view.xml")
 @EditedEntityContainer("queryParameterDc")
 public class QueryParameterDetailView extends StandardDetailView<QueryParameter> {
+
     @ViewComponent
     private JmixComboBox<MetaClass> entityMetaClassField;
     @ViewComponent

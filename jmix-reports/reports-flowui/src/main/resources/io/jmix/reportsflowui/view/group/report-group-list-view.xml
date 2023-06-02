@@ -41,7 +41,7 @@
         </queryParameters>
     </facets>
 
-    <layout spacing="true" expand="reportGroupsDataGrid">
+    <layout>
         <genericFilter id="genericFilter" dataLoader="groupsDl" opened="false"/>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button action="reportGroupsDataGrid.create"/>

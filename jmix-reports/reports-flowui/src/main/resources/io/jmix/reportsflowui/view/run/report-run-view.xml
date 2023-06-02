@@ -56,7 +56,7 @@
                             label="msg://report.reportRunFilterGroup"/>
             <textField id="codeFilter" label="msg://report.reportRunFilterCode"/>
             <datePicker id="updatedDateFilter" label="msg://report.reportRunFilterUpdatedDate"/>
-            <hbox margin="true">
+            <hbox>
                 <button id="searchBtn"
                         text="msg://report.reportFilterButton"
                         icon="SEARCH"/>

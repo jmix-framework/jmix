@@ -94,8 +94,7 @@
             </formLayout>
         </div>
         <div id="regionsDiv">
-            <hbox spacing="true"
-                  width="100%">
+            <hbox width="100%">
                 <hbox id="buttonsBox">
                     <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
                     <button id="addSimpleRegionBtn"

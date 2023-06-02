@@ -31,7 +31,7 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout spacing="true" expand="mainContent">
+    <layout expand="mainContent">
                 <label id="tipLabel"
                        classNames="report-wizard-tip-label"
                        width="100%"/>
@@ -56,7 +56,7 @@
                 </columns>
             </dataGrid>
         </hbox>
-        <hbox spacing="true" classNames="jmix-edit-window-actions">
+        <hbox classNames="jmix-edit-window-actions">
             <button id="windowCommitAndClose" action="saveAction"/>
             <button id="windowClose" action="closeAction"/>
         </hbox>

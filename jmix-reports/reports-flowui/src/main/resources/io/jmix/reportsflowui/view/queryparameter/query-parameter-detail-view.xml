@@ -44,7 +44,7 @@
             <comboBox id="entityMetaClassField" label="msg://queryParameter.entity" width="100%" required="true"/>
             <comboBox id="enumerationField" label="msg://queryParameter.enum" width="100%" required="true"/>
             <hbox id="defaultValueBox" width="100%"/>
-            <hbox spacing="true" classNames="jmix-edit-window-actions">
+            <hbox classNames="jmix-edit-window-actions">
                 <button id="windowCommitAndClose" action="saveAction"/>
                 <button id="windowClose" action="closeAction"/>
             </hbox>

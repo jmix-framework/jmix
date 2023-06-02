@@ -34,7 +34,6 @@ public class ReportParamAliasValidator extends AbstractValidator<String> {
         this.messages = messages;
     }
 
-
     @Override
     public void accept(String value) {
         if (StringUtils.isNotEmpty(value)) {

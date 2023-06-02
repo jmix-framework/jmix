@@ -27,7 +27,7 @@ import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsUiHelper;
 import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
-import io.jmix.reportsflowui.view.run.ParameterFieldCreator;
+import io.jmix.reportsflowui.view.run.ParameterComponentGenerationStrategy;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.BooleanUtils;
@@ -107,7 +107,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @Autowired
     private JmixObjectToStringConverter jmixObjectToStringConverter;
     @Autowired
-    private ParameterFieldCreator parameterFieldCreator;
+    private ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -426,9 +426,9 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 entityParam.setScreen(parameter.getScreen());
                 entityParam.setAlias(parameter.getAlias());
                 entityParam.setRequired(parameter.getRequired());
-                field = parameterFieldCreator.createField(entityParam);
+                field = parameterComponentGenerationStrategy.createField(entityParam);
             } else {
-                field = parameterFieldCreator.createField(parameter);
+                field = parameterComponentGenerationStrategy.createField(parameter);
             }
 
             field.addValueChangeListener(e -> {

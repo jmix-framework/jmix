@@ -42,7 +42,7 @@
         </hbox>
         <div id="parametersBox" visible="false">
             <h3 text="msg://caption.parameters"/>
-            <hbox id="parametersFrameHolder" padding="false"/>
+            <hbox id="parametersFrameHolder" alignItems="BASELINE" padding="false"/>
         </div>
         <vbox id="tablesVBoxLayout" padding="false"/>
     </layout>

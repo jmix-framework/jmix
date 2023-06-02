@@ -29,7 +29,7 @@ import io.jmix.flowui.data.binding.DataViewBinding;
 import io.jmix.flowui.data.binding.SuspendableBinding;
 import io.jmix.flowui.data.binding.SuspendableBindingAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.List;

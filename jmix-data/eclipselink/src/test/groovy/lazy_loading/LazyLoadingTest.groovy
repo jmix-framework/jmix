@@ -16,14 +16,13 @@
 
 package lazy_loading
 
-import io.jmix.core.DataManager
-import io.jmix.core.FetchPlanRepository
-import io.jmix.core.LoadContext
-import io.jmix.core.Metadata
+import io.jmix.core.*
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.entity_extension.Address
 import test_support.entity.lazyloading.*
+import test_support.entity.lazyloading.self_ref_in_param.A
+import test_support.entity.lazyloading.self_ref_in_param.B
 
 class LazyLoadingTest extends DataSpec {
 
@@ -274,6 +273,34 @@ class LazyLoadingTest extends DataSpec {
         cleanup:
         if (worker != null) dataManager.remove(worker)
         if (supervisor != null) dataManager.remove(supervisor)
+    }
+
+    def "AbstractValueHolder should not throw exception when entity passed as self-reference parameter in query"() {
+        setup:
+
+        def a0 = dataManager.create(A)
+
+        def a = dataManager.create(A)
+        def b = dataManager.create(B)
+        a.b = b
+
+        dataManager.save(a0, a, b)
+
+        when:
+        def reloadedA = dataManager.load(Id.of(a)).one();
+
+        //AbstractSingleValueHolder#getRow() invoked for reloadedA instance when it passed as parameter
+        def reloadedAWithParam = dataManager.load(A)
+                .query("select e from test_ll_A e where e.b.a = :param")
+                .parameter("param", reloadedA)
+                .one()
+
+        then:
+        reloadedA == reloadedAWithParam
+
+        cleanup:
+        jdbc.update("delete from TEST_LL_A")
+        jdbc.update("delete from TEST_LL_B")
     }
 
     boolean checkManyToManyDuplicate(ManyToManySecondEntity entity) {

@@ -21,7 +21,7 @@ import com.google.common.cache.CacheBuilder;
 import org.dom4j.Document;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Component("flowui_ViewXmlDocumentCache")
 public class ViewXmlDocumentCache {

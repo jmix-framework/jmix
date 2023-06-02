@@ -71,11 +71,6 @@ public class ComboButton extends AbstractDropdownButton
     @Override
     public void setText(String text) {
         getButtonItem().setText(text);
-
-        if (!explicitTitle) {
-            setTitleInternal(text);
-        }
-
         updateIconSlot();
     }
 

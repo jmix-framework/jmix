@@ -461,39 +461,39 @@ public class EntityInspectorListView extends StandardListView<Object> {
     }
 
     protected LookupSelectAction createLookupSelectAction(DataGrid<Object> dataGrid) {
-        LookupSelectAction lookupSelectAction = actions.create(LookupSelectAction.class);
+        LookupSelectAction lookupSelectAction = actions.create(LookupSelectAction.ID);
         lookupSelectAction.setTarget(this);
         return lookupSelectAction;
     }
 
     protected ExcelExportAction createExcelExportAction(DataGrid<Object> dataGrid) {
-        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.class);
+        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
         excelExportAction.setTarget(dataGrid);
 
         return excelExportAction;
     }
 
     protected ShowEntityInfoAction createShowEntityInfoAction(DataGrid<Object> dataGrid) {
-        ShowEntityInfoAction showEntityInfoAction = actions.create(ShowEntityInfoAction.class);
+        ShowEntityInfoAction showEntityInfoAction = actions.create(ShowEntityInfoAction.ID);
         showEntityInfoAction.setTarget(dataGrid);
         showEntityInfoAction.addEnabledRule(() -> dataGrid.getSelectedItems().size() == 1);
         return showEntityInfoAction;
     }
 
     protected RefreshAction createRefreshAction(DataGrid<Object> dataGrid) {
-        RefreshAction refreshAction = actions.create(RefreshAction.class);
+        RefreshAction refreshAction = actions.create(RefreshAction.ID);
         refreshAction.setTarget(dataGrid);
         return refreshAction;
     }
 
     protected RemoveAction createRemoveAction(DataGrid<Object> dataGrid) {
-        RemoveAction removeAction = actions.create(RemoveAction.class);
+        RemoveAction removeAction = actions.create(RemoveAction.ID);
         removeAction.setTarget(dataGrid);
         return removeAction;
     }
 
     protected CreateAction createCreateAction(DataGrid<Object> dataGrid) {
-        CreateAction createAction = actions.create(CreateAction.class);
+        CreateAction createAction = actions.create(CreateAction.ID);
         createAction.setOpenMode(OpenMode.NAVIGATION);
         createAction.setTarget(dataGrid);
         createAction.setRouteParametersProvider(() -> {
@@ -513,7 +513,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
     }
 
     protected EditAction createEditAction(DataGrid<Object> dataGrid) {
-        EditAction editAction = actions.create(EditAction.class);
+        EditAction editAction = actions.create(EditAction.ID);
         editAction.setOpenMode(OpenMode.NAVIGATION);
         editAction.setTarget(dataGrid);
 
@@ -541,7 +541,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     protected JmixButton createRestoreButton(DataGrid<Object> dataGrid) {
         JmixButton restoreButton = uiComponents.create(JmixButton.class);
-        ItemTrackingAction restoreAction = actions.create(ItemTrackingAction.class, RESTORE_ACTION_ID);
+        ItemTrackingAction restoreAction = actions.create(ItemTrackingAction.ID, RESTORE_ACTION_ID);
 
         restoreAction.setText(messages.getMessage(EntityInspectorListView.class, "restore"));
         restoreAction.addActionPerformedListener(event -> showRestoreDialog());
@@ -555,7 +555,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     protected JmixButton createWipeOutButton(DataGrid<?> dataGrid) {
         JmixButton wipeOutButton = uiComponents.create(JmixButton.class);
-        ItemTrackingAction wipeOutAction = actions.create(ItemTrackingAction.class, WIPE_OUT_ACTION_ID);
+        ItemTrackingAction wipeOutAction = actions.create(ItemTrackingAction.ID, WIPE_OUT_ACTION_ID);
 
         wipeOutAction.setText(messages.getMessage(EntityInspectorListView.class, "wipeOut"));
         wipeOutAction.addActionPerformedListener(event -> showWipeOutDialog());

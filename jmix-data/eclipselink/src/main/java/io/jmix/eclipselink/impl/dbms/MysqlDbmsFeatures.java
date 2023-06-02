@@ -19,7 +19,7 @@ package io.jmix.eclipselink.impl.dbms;
 import io.jmix.data.persistence.DbmsFeatures;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 

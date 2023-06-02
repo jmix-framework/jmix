@@ -33,8 +33,7 @@ public interface StudioDataComponents {
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS, required = true),
-                    @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
+                    @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
             }
     )
     void collection();
@@ -48,8 +47,7 @@ public interface StudioDataComponents {
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS, required = true),
-                    @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
+                    @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
             }
     )
     void instance();
@@ -61,8 +59,7 @@ public interface StudioDataComponents {
             xmlElement = "keyValueInstance",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueInstance.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }
     )
     void keyValueInstance();
@@ -74,8 +71,7 @@ public interface StudioDataComponents {
             xmlElement = "keyValueCollection",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueCollection.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }
     )
     void keyValueCollection();

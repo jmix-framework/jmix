@@ -13,6 +13,16 @@ build/
 *.iml
 *.ipr
 out/
+/target/
 
 ### VS Code ###
 .vscode/
+
+# The following files are generated/updated by vaadin-gradle-plugin
+node_modules/
+frontend/generated/
+pnpmfile.js
+vite.generated.ts
+webpack.generated.js
+
+.DS_Store

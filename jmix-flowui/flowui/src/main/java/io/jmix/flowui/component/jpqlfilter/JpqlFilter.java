@@ -20,11 +20,11 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.querycondition.JpqlCondition;
-import io.jmix.flowui.component.filer.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.model.DataLoader;
 import org.apache.commons.lang3.StringUtils;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkState;

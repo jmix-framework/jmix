@@ -2,6 +2,7 @@ package io.jmix.appsettings;
 
 
 import io.jmix.appsettings.test_entity.TestAppSettingsEntity;
+import io.jmix.core.Metadata;
 import io.jmix.core.UnconstrainedDataManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,9 @@ class AppSettingsTest {
 
     @Autowired
     private UnconstrainedDataManager dataManager;
+
+    @Autowired
+    private Metadata metadata;
 
     @Test
     void testGetDefaultValuesForAppSettings() {
@@ -71,7 +75,7 @@ class AppSettingsTest {
         Assertions.assertEquals("defVal", testAppSettingsEntity.getTestStringValue());
 
         //ensure that only one record can exist for each application settings
-        TestAppSettingsEntity createdTestAppSettingsEntity = dataManager.create(TestAppSettingsEntity.class);
+        TestAppSettingsEntity createdTestAppSettingsEntity = metadata.create(TestAppSettingsEntity.class, 1);
         createdTestAppSettingsEntity.setTestBooleanValue(true);
         createdTestAppSettingsEntity.setTestLongValue(333L);
         createdTestAppSettingsEntity.setTestDoubleValue(6.626);

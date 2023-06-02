@@ -20,7 +20,7 @@ import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;

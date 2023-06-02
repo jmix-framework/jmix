@@ -17,13 +17,12 @@
 package io.jmix.core.security;
 
 import io.jmix.core.CoreProperties;
-import io.jmix.core.JmixOrder;
+import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationProvider;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -56,7 +55,7 @@ import java.util.List;
 public class CoreSecurityConfiguration {
 
     @Bean("core_SecurityFilterChain")
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
+    @Order(JmixSecurityFilterChainOrder.CORE_SECURITY)
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    UserRepository userRepository,
                                                    CoreProperties coreProperties) throws Exception {

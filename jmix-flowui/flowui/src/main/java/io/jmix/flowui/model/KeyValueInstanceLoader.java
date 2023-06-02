@@ -21,7 +21,7 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.flowui.view.Subscribe;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 import java.util.function.Function;

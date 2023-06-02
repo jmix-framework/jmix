@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.CoreProperties;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.annotation.NumberFormat;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -25,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -40,6 +42,8 @@ public class BigDecimalDatatype extends NumberDatatype implements Datatype<BigDe
 
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
+    @Autowired
+    protected CoreProperties coreProperties;
 
     @Override
     protected java.text.NumberFormat createFormat() {
@@ -95,6 +99,16 @@ public class BigDecimalDatatype extends NumberDatatype implements Datatype<BigDe
         DecimalFormat format = new DecimalFormat(formatStrings.getDecimalFormat(), formatSymbols);
         format.setParseBigDecimal(true);
         return (BigDecimal) parse(value, format);
+    }
+
+    protected Number parse(String value, java.text.NumberFormat format) throws ParseException {
+        BigDecimal result = (BigDecimal) super.parse(value, format);
+        if (coreProperties.isRoundDecimalValueByFormat()) {
+            int maximumFractionDigits = format.getMaximumFractionDigits();
+            RoundingMode roundingMode = format.getRoundingMode();
+            result = result.setScale(maximumFractionDigits, roundingMode);
+        }
+        return result;
     }
 
     @Override

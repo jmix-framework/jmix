@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  ~ Copyright 2022 Haulmont.
+  ~ Copyright 2023 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://addConditionView.title"
-      focusComponent="categoriesTable">
+      focusComponent="filterConditionsTreeDataGrid">
     <data readOnly="true">
         <collection id="filterConditionsDc"
                     class="io.jmix.flowui.entity.filter.FilterCondition">
@@ -36,9 +36,10 @@
     </actions>
     <layout>
         <textField id="conditionFilterField"
-                   placeholder="msg://conditionFilterField.placeholder"
+                   placeholder="msg://addConditionView.conditionFilterField.placeholder"
                    width="100%"/>
-
+        <dropdownButton id="createConditionBtn" themeNames="primary"
+                        icon="PLUS" text="msg:///actions.Create"/>
         <treeDataGrid id="filterConditionsTreeDataGrid"
                       dataContainer="filterConditionsDc"
                       hierarchyProperty="parent"

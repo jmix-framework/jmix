@@ -16,10 +16,10 @@ import io.jmix.core.metamodel.model.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.List;
@@ -48,7 +48,7 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
         //only one record for T can exist at the same time in database with default identifier
         return dataManager.load(clazz)
                 .id(Id.of(1, clazz))
-                .optional().orElse(dataManager.create(clazz));
+                .optional().orElse(metadata.create(clazz, 1));
     }
 
     @Override
@@ -87,7 +87,10 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
                         throw new IllegalStateException("Primary pk property for metaClass " + metaClass + " cannot be determined");
                     }
 
-                    Object pkValue = Objects.requireNonNull(primaryKeyProperty.getRange().asDatatype().parse(annotationValue));
+                    Object pkValue = primaryKeyProperty.getRange().asDatatype().parse(annotationValue);
+                    if (pkValue == null) {
+                        throw new RuntimeException("Primary key property value cannot be null");
+                    }
                     return dataManager.load(metaClass.getJavaClass())
                             .id(pkValue)
                             .optional().orElse(null);

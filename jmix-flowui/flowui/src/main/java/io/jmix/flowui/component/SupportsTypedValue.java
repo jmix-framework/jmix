@@ -22,13 +22,15 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
 
-import jakarta.annotation.Nullable;
+import io.jmix.flowui.kit.meta.StudioIgnore;
+import org.springframework.lang.Nullable;
 
 public interface SupportsTypedValue<C extends Component, E extends HasValue.ValueChangeEvent<P>, V, P> extends HasValue<E, P> {
 
     @Nullable
     V getTypedValue();
 
+    @StudioIgnore
     void setTypedValue(@Nullable V value);
 
     Registration addTypedValueChangeListener(ComponentEventListener<TypedValueChangeEvent<C, V>> listener);

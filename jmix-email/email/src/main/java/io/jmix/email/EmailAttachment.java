@@ -15,7 +15,7 @@
  */
 package io.jmix.email;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.mail.Part;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;

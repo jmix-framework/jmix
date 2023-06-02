@@ -19,7 +19,7 @@ package io.jmix.core.querycondition;
 import com.google.common.base.Strings;
 import org.apache.commons.collections4.CollectionUtils;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;

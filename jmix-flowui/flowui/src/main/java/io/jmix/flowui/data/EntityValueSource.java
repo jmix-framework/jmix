@@ -19,7 +19,7 @@ package io.jmix.flowui.data;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 

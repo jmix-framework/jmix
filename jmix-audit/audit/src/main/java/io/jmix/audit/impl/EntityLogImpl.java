@@ -49,7 +49,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.*;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 //todo SB3 restore GuardedBy annotation
 //import jakarta.annotation.concurrent.GuardedBy;
 import jakarta.persistence.EntityManager;

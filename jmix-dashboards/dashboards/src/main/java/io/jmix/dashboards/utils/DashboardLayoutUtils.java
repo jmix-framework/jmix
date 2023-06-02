@@ -18,7 +18,7 @@ package io.jmix.dashboards.utils;
 
 import io.jmix.dashboards.model.visualmodel.*;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.SupportsDatatype;
-import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -37,7 +36,7 @@ import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.sql.Time;
 import java.time.*;
 import java.util.Date;
@@ -225,7 +224,8 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
 
     protected Component createVoidField(ComponentGenerationContext context) {
         // TODO: gg, check box, really?
-        return uiComponents.create(JmixCheckbox.class);
+        //  kd, by now - select with yes/no seems much better
+        return createBooleanField(context);
     }
 
     @Override

@@ -18,7 +18,7 @@ package io.jmix.security.role;
 
 import io.jmix.security.model.BaseRole;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 
 public interface RoleRepository<T extends BaseRole> {

@@ -42,7 +42,6 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
 
-    protected boolean explicitTitle = false;
     protected List<HasMenuItem> items = new ArrayList<>();
 
     protected JmixMenuItem dropdownItem;
@@ -242,17 +241,6 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     @Override
     public Registration addDetachListener(ComponentEventListener<DetachEvent> listener) {
         return getContent().addDetachListener(listener);
-    }
-
-    @Override
-    public void setTitle(@Nullable String title) {
-        explicitTitle = true;
-
-        setTitleInternal(title);
-    }
-
-    protected void setTitleInternal(@Nullable String title) {
-        HasTitle.super.setTitle(title);
     }
 
     @Nullable

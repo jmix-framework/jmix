@@ -62,7 +62,7 @@ public class User implements JmixUserDetails, HasTimeZone {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(final UUID id) {
         this.id = id;
     }
 
@@ -70,7 +70,7 @@ public class User implements JmixUserDetails, HasTimeZone {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(final Integer version) {
         this.version = version;
     }
 
@@ -83,7 +83,7 @@ public class User implements JmixUserDetails, HasTimeZone {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -91,11 +91,11 @@ public class User implements JmixUserDetails, HasTimeZone {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(final Boolean active) {
         this.active = active;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -103,7 +103,7 @@ public class User implements JmixUserDetails, HasTimeZone {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -111,7 +111,7 @@ public class User implements JmixUserDetails, HasTimeZone {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
@@ -119,7 +119,7 @@ public class User implements JmixUserDetails, HasTimeZone {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(final String lastName) {
         this.lastName = lastName;
     }
 
@@ -129,7 +129,7 @@ public class User implements JmixUserDetails, HasTimeZone {
     }
 
     @Override
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+    public void setAuthorities(final Collection<? extends GrantedAuthority> authorities) {
         this.authorities = authorities;
     }
 
@@ -165,7 +165,7 @@ public class User implements JmixUserDetails, HasTimeZone {
         return timeZoneId;
     }
 
-    public void setTimeZoneId(String timeZoneId) {
+    public void setTimeZoneId(final String timeZoneId) {
         this.timeZoneId = timeZoneId;
     }
 }

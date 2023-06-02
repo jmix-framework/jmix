@@ -17,29 +17,22 @@
 package io.jmix.ldap;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.security.AddonAuthenticationManagerSupplier;
 import io.jmix.core.security.event.PreAuthenticationCheckEvent;
+import io.jmix.ldap.authentication.LdapAuthenticationManagerSupplier;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
-import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
+import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.authentication.*;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.List;
-
-import static io.jmix.security.SecurityConfigurers.uiSecurity;
 
 public class LdapSecurityConfiguration {
-
-    public static final String SECURITY_CONFIGURER_QUALIFIER = "ldap";
 
     @Autowired
     protected LdapProperties ldapProperties;
@@ -56,42 +49,17 @@ public class LdapSecurityConfiguration {
     @Autowired
     protected JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper;
 
-    @Bean("ldap_SecurityFilterChain")
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.apply(uiSecurity());
-        http.logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/"));
-        return http.build();
-    }
-
-    @Bean("ldap_AuthenticationManager")
-    public AuthenticationManager ldapAuthenticationManager(StandardAuthenticationProvidersProducer providersProducer,
-                                                           AuthenticationEventPublisher authenticationEventPublisher) {
-        LdapBindAuthenticationManagerFactory factory = new LdapBindAuthenticationManagerFactory(ldapContextSource);
-        factory.setUserSearchBase(ldapProperties.getUserSearchBase());
-        factory.setUserSearchFilter(ldapProperties.getUserSearchFilter());
-        factory.setLdapAuthoritiesPopulator(ldapAuthoritiesPopulator);
-        factory.setUserDetailsContextMapper(ldapUserDetailsContextMapper);
-        factory.setAuthoritiesMapper(grantedAuthoritiesMapper);
-
-        List<AuthenticationProvider> providers = providersProducer.getStandardProviders();
-
-        AuthenticationManager authenticationManager = factory.createAuthenticationManager();
-        if (authenticationManager instanceof ProviderManager) {
-            providers.addAll(((ProviderManager) authenticationManager).getProviders());
-        } else {
-            throw new IllegalStateException("Cannot get providers from default LDAP authentication manager");
-        }
-        ProviderManager providerManager = new ProviderManager(providers);
-        providerManager.setAuthenticationEventPublisher(authenticationEventPublisher);
-        return providerManager;
-    }
-
-    @Bean("ldap_AuthenticationEventPublisher")
-    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher publisher) {
-        return new DefaultAuthenticationEventPublisher(publisher);
+    @Bean("ldap_LdapAuthenticationManagerSupplier")
+    @Order(100)
+    public AddonAuthenticationManagerSupplier ldapAuthenticationManagerSupplier(StandardAuthenticationProvidersProducer providersProducer,
+                                                                                ApplicationEventPublisher publisher,
+                                                                                LdapProperties ldapProperties,
+                                                                                LdapContextSource ldapContextSource,
+                                                                                UserDetailsContextMapper ldapUserDetailsContextMapper,
+                                                                                JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper,
+                                                                                LdapAuthoritiesPopulator ldapAuthoritiesPopulator) {
+        return new LdapAuthenticationManagerSupplier(providersProducer, publisher, ldapProperties, ldapContextSource,
+                ldapUserDetailsContextMapper, grantedAuthoritiesMapper, ldapAuthoritiesPopulator);
     }
 
     @EventListener

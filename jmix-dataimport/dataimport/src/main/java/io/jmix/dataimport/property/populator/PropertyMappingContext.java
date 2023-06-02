@@ -22,7 +22,7 @@ import io.jmix.dataimport.configuration.ImportConfiguration;
 import io.jmix.dataimport.configuration.mapping.PropertyMapping;
 import io.jmix.dataimport.extractor.data.RawValuesSource;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * An object that contains info to get a result value of an entity property from the raw value

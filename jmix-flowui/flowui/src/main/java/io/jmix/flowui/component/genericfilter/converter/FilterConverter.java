@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.component.genericfilter.converter;
 
-import io.jmix.flowui.component.filer.FilterComponent;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.entity.filter.FilterCondition;
 
 public interface FilterConverter<C extends FilterComponent, M extends FilterCondition> {

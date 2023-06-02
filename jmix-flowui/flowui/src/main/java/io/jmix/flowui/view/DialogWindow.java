@@ -42,7 +42,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.EventObject;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -59,6 +59,8 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
 
     // private, lazily initialized
     private EventHub eventHub = null;
+
+    private boolean readyEventFired = false;
 
     public DialogWindow(V view) {
         this.view = view;
@@ -218,11 +220,14 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
     }
 
     protected void onDialogOpenedChanged(Dialog.OpenedChangeEvent openedChangeEvent) {
-        if (openedChangeEvent.isOpened()) {
+        if (openedChangeEvent.isOpened() && !readyEventFired) {
             fireViewReadyEvent(view);
 
             AfterOpenEvent<V> event = new AfterOpenEvent<>(this);
             publish(AfterOpenEvent.class, event);
+
+            // temporal workaround for https://github.com/vaadin/flow-components/issues/5103
+            readyEventFired = true;
         }
     }
 

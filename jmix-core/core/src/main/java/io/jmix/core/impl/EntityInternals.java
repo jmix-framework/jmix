@@ -23,7 +23,7 @@ import io.jmix.core.entity.BaseEntityEntry;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.persistence.Embeddable;
 import java.io.IOException;
 import java.io.ObjectInputStream;

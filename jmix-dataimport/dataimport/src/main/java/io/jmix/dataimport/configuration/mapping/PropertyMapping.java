@@ -16,7 +16,7 @@
 
 package io.jmix.dataimport.configuration.mapping;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Property mapping describes how to map a field from input data with entity property.

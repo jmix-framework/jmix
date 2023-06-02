@@ -24,7 +24,7 @@
             <jpqlQueryParameter code="query" classCode="entityClass" paramsCode="params" text="JPQL Query"/>
 
             <text language="java">
-                ${entityClass} entity = dataManager.load(${entityClass}.class)
+                ${IS_FINAL}${entityClass} entity = dataManager.load(${entityClass}.class)
                 .query(${query})
                 &lt;% params.eachWithIndex{ param, i -> println '.parameter("' + param + '", paramValue' + (i == 0 ? '' : i) + ')'} %&gt;.one();
             </text>
@@ -48,7 +48,7 @@
             <jpqlQueryParameter code="query" classCode="entityClass" paramsCode="params" text="JPQL Query"/>
 
             <text language="java">
-                java.util.Optional&lt;${entityClass}&gt; entity = dataManager.load(${entityClass}.class)
+                ${IS_FINAL}java.util.Optional&lt;${entityClass}&gt; entity = dataManager.load(${entityClass}.class)
                 .query(${query})
                 &lt;% params.eachWithIndex{ param, i -> println '.parameter("' + param + '", paramValue' + (i == 0 ? '' : i) + ')'} %&gt;.optional();
             </text>
@@ -72,7 +72,7 @@
             <jpqlQueryParameter code="query" classCode="entityClass" paramsCode="params" text="JPQL Query"/>
 
             <text language="java">
-                java.util.List&lt;${entityClass}&gt; myEntityList = dataManager.load(${entityClass}.class)
+                ${IS_FINAL}java.util.List&lt;${entityClass}&gt; myEntityList = dataManager.load(${entityClass}.class)
                 .query(${query})
                 &lt;% params.eachWithIndex{ param, i -> println '.parameter("' + param + '", paramValue' + (i == 0 ? '' : i) + ')'} %&gt;.list();
             </text>
@@ -94,7 +94,7 @@
             <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
 
             <text language="java">
-                List&lt;io.jmix.core.entity.KeyValueEntity&gt; values = dataManager.loadValues("select e.firstName, e.lastName from User e")
+                ${IS_FINAL}List&lt;io.jmix.core.entity.KeyValueEntity&gt; values = dataManager.loadValues("select e.firstName, e.lastName from User e")
                 .properties("firstName", "lastName")
                 .list();
             </text>
@@ -116,7 +116,7 @@
             <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
 
             <text language="java">
-                Long userCount = dataManager.loadValue("select count(e) from User e", Long.class).one();
+                ${IS_FINAL}Long userCount = dataManager.loadValue("select count(e) from User e", Long.class).one();
             </text>
             <text language="kotlin">
                 val userCount = dataManager.loadValue("select count(e) from User e", Long::class.java).one()

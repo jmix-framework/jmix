@@ -47,11 +47,11 @@ spring.security.oauth2.authorizationserver.client.myapp.registration.client-id=m
 spring.security.oauth2.authorizationserver.client.myapp.registration.client-secret={noop}mysecret
 spring.security.oauth2.authorizationserver.client.myapp.registration.client-authentication_methods=client_secret_basic
 spring.security.oauth2.authorizationserver.client.myapp.registration.authorization-grant-types=authorization_code,refresh_token
-# we use Postman for testing. Use redirect URI of your client application here
+# replace with redirect URI of your client application here
 spring.security.oauth2.authorizationserver.client.myapp.registration.redirect-uris=https://oauth.pstmn.io/v1/callback
 # use opaque tokens instead of JWT
 spring.security.oauth2.authorizationserver.client.myapp.token.access-token-format=reference
-# use PKCE when performing the Authorization Code Grant flow
+# whether to use PKCE when performing the Authorization Code Grant flow
 spring.security.oauth2.authorizationserver.client.myapp.require-proof-key=true
 ```
 

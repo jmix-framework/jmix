@@ -20,7 +20,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.HashMap;
 import java.util.List;

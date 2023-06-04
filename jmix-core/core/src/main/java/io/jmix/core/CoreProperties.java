@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -98,6 +98,12 @@ public class CoreProperties {
      */
     PessimisticLock pessimisticLock;
 
+    /**
+     * Whether BigDecimalDatatype, DoubleDatatype and FloatDatatype should round the actual parsed value
+     * according to format settings.
+     */
+    boolean roundDecimalValueByFormat;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -117,7 +123,8 @@ public class CoreProperties {
             @DefaultValue("false") boolean legacyFetchPlanSerializationAttributeName,
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
-            @DefaultValue PessimisticLock pessimisticLock) {
+            @DefaultValue PessimisticLock pessimisticLock,
+            @DefaultValue("true") boolean roundDecimalValueByFormat) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -146,6 +153,7 @@ public class CoreProperties {
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.pessimisticLock = pessimisticLock;
+        this.roundDecimalValueByFormat = roundDecimalValueByFormat;
     }
 
     public String getWebHostName() {
@@ -278,5 +286,12 @@ public class CoreProperties {
             return useDefaultQuartzConfiguration;
         }
 
+    }
+
+    /**
+     * @see #roundDecimalValueByFormat
+     */
+    public boolean isRoundDecimalValueByFormat() {
+        return roundDecimalValueByFormat;
     }
 }

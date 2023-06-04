@@ -24,7 +24,7 @@ import io.jmix.reports.entity.Report;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public abstract class AbstractEntityDataLoader implements ReportDataLoader {
 

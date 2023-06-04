@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
 import io.jmix.flowui.component.SupportsLabelPosition;
-import io.jmix.flowui.component.filer.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
+import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -28,7 +29,7 @@ import org.dom4j.Element;
 
 import java.util.List;
 
-public abstract class AbstractSingleFilterComponentLoader<C extends SingleFilterComponentBase>
+public abstract class AbstractSingleFilterComponentLoader<C extends SingleFilterComponentBase<?>>
         extends AbstractComponentLoader<C> {
 
     @Override
@@ -71,10 +72,11 @@ public abstract class AbstractSingleFilterComponentLoader<C extends SingleFilter
     protected void loadValueComponent(C resultComponent, Element element) {
         Component valueComponent;
 
-        if (!element.elements().isEmpty()) {
-            valueComponent = createValueComponent(element.elements());
-        } else {
+        if (element.elements().isEmpty()
+                || element.elements().stream().noneMatch(this::isValueComponent)) {
             valueComponent = generateValueComponent();
+        } else {
+            valueComponent = createValueComponent(element.elements());
         }
 
         if (!(valueComponent instanceof HasValueAndElement)) {
@@ -82,15 +84,13 @@ public abstract class AbstractSingleFilterComponentLoader<C extends SingleFilter
                     HasValueAndElement.class.getSimpleName(), context);
         }
 
-        resultComponent.setValueComponent(((HasValueAndElement<?, ?>) valueComponent));
+        //noinspection unchecked,rawtypes
+        resultComponent.setValueComponent(((HasValueAndElement) valueComponent));
     }
 
     protected Component createValueComponent(List<Element> elements) {
-        if (elements.size() > 1) {
-            throw new GuiDevelopmentException("Only one value component can be defined", context);
-        }
+        Element valueComponentElement = getValueComponentElement(elements);
 
-        Element valueComponentElement = elements.get(0);
         ComponentLoader<?> valueComponentLoader = getLayoutLoader().createComponentLoader(valueComponentElement);
         valueComponentLoader.initComponent();
         valueComponentLoader.loadComponent();
@@ -99,4 +99,12 @@ public abstract class AbstractSingleFilterComponentLoader<C extends SingleFilter
     }
 
     protected abstract Component generateValueComponent();
+
+    protected abstract Element getValueComponentElement(List<Element> elements);
+
+    protected abstract boolean isValueComponent(Element element);
+
+    protected SingleFilterSupport getSingleFilterSupport() {
+        return applicationContext.getBean(SingleFilterSupport.class);
+    }
 }

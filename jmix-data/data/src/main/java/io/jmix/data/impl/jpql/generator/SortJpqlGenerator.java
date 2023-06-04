@@ -28,7 +28,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

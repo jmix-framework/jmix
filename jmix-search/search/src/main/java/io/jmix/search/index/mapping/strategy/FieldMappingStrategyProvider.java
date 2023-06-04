@@ -19,7 +19,7 @@ package io.jmix.search.index.mapping.strategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

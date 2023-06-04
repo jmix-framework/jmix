@@ -32,7 +32,7 @@ import org.springframework.context.event.GenericApplicationListenerAdapter;
 import org.springframework.core.ResolvableType;
 import org.springframework.web.context.annotation.SessionScope;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;

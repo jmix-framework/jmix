@@ -22,7 +22,7 @@ import io.jmix.flowui.entity.filter.FilterCondition;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,8 +71,12 @@ public class LogicalFilterSupport {
             }
 
             if (condition instanceof LogicalFilterCondition) {
-                return findSelectedConditionFromRootFilterCondition(
+                FilterCondition foundCondition = findSelectedConditionFromRootFilterCondition(
                         (LogicalFilterCondition) condition, selectedCondition);
+
+                if (foundCondition != null) {
+                    return foundCondition;
+                }
             }
         }
 

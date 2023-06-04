@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,19 @@ package io.jmix.flowui.action.genericfilter;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.view.View;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -37,6 +41,9 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
     protected GenericFilter target;
 
     protected boolean visibleBySpecificUiPermission = true;
+
+    protected Registration configurationChangeRegistration;
+    protected Registration filterComponentsChangeRegistration;
 
     public GenericFilterAction(String id) {
         super(id);
@@ -64,6 +71,11 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
 
     protected void setTargetInternal(@Nullable GenericFilter target) {
         this.target = target;
+
+        if (target != null) {
+            unbindListeners();
+            bindListeners(target);
+        }
     }
 
     @Override
@@ -91,6 +103,44 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
     public boolean isVisibleByUiPermissions() {
         return visibleBySpecificUiPermission
                 && super.isVisibleByUiPermissions();
+    }
+
+    protected void bindListeners(GenericFilter target) {
+        configurationChangeRegistration = target.addConfigurationChangeListener(this::onConfigurationChanged);
+        bindFilterComponentsChangeListener(target);
+    }
+
+    protected void bindFilterComponentsChangeListener(GenericFilter target) {
+        LogicalFilterComponent<?> rootLogicalFilterComponent = target.getCurrentConfiguration()
+                .getRootLogicalFilterComponent();
+        filterComponentsChangeRegistration = rootLogicalFilterComponent
+                .addFilterComponentsChangeListener(this::onFilterComponentsChanged);
+    }
+
+    protected void unbindListeners() {
+        if (configurationChangeRegistration != null) {
+            configurationChangeRegistration.remove();
+            configurationChangeRegistration = null;
+        }
+
+        unbindFilterComponentsChange();
+    }
+
+    protected void unbindFilterComponentsChange() {
+        if (filterComponentsChangeRegistration != null) {
+            filterComponentsChangeRegistration.remove();
+            filterComponentsChangeRegistration = null;
+        }
+    }
+
+    protected void onConfigurationChanged(GenericFilter.ConfigurationChangeEvent event) {
+        unbindFilterComponentsChange();
+        bindFilterComponentsChangeListener(event.getSource());
+        refreshState();
+    }
+
+    protected void onFilterComponentsChanged(LogicalFilterComponent.FilterComponentsChangeEvent<?> event) {
+        refreshState();
     }
 
     @SuppressWarnings("unchecked")
@@ -169,5 +219,10 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
         if (target == null) {
             throw new IllegalStateException(String.format("%s target is not set", getClass().getSimpleName()));
         }
+    }
+
+    @Nullable
+    protected View<?> findParentView() {
+        return UiComponentUtils.findView(target);
     }
 }

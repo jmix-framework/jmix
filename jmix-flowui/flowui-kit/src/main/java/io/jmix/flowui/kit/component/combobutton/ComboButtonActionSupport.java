@@ -24,7 +24,6 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
-import org.apache.commons.lang3.StringUtils;
 
 import jakarta.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
@@ -118,7 +117,7 @@ public class ComboButtonActionSupport {
     }
 
     protected void updateText(boolean overrideComponentProperties) {
-        if (StringUtils.isEmpty(comboButton.getText()) || overrideComponentProperties) {
+        if (Strings.isNullOrEmpty(comboButton.getText()) || overrideComponentProperties) {
             comboButton.setText(action.getText());
         }
     }
@@ -144,25 +143,8 @@ public class ComboButtonActionSupport {
     }
 
     protected void updateTitle(boolean overrideComponentProperties) {
-        if (StringUtils.isEmpty(comboButton.getTitle()) || overrideComponentProperties) {
-            String description = action.getDescription();
-            if (StringUtils.isNotEmpty(description)) {
-                comboButton.setTitle(description);
-            } else {
-                String text = action.getText();
-                String shortcutCombination = action.getShortcutCombination() != null
-                        ? action.getShortcutCombination().format()
-                        : null;
-
-                if (!Strings.isNullOrEmpty(text)
-                        && !Strings.isNullOrEmpty(shortcutCombination)) {
-                    comboButton.setTitle(String.format("%s (%s)", text, shortcutCombination));
-                } else if (!Strings.isNullOrEmpty(text)) {
-                    comboButton.setTitle(text);
-                } else if (!Strings.isNullOrEmpty(shortcutCombination)) {
-                    comboButton.setTitle(shortcutCombination);
-                }
-            }
+        if (Strings.isNullOrEmpty(comboButton.getTitle()) || overrideComponentProperties) {
+            comboButton.setTitle(action.getDescription());
         }
     }
 

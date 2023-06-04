@@ -24,7 +24,7 @@ import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;

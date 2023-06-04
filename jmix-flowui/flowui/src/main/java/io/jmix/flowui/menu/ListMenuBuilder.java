@@ -34,7 +34,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -153,7 +153,7 @@ public class ListMenuBuilder {
                 .withTitle(menuConfig.getItemTitle(menuItem))
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
-                .withQueryParameters(menuItem.getQueryParameters())
+                .withUrlQueryParameters(menuItem.getUrlQueryParameters())
                 .withRouteParameters(menuItem.getRouteParameters())
                 .withShortcutCombination(menuItem.getShortcutCombination());
 

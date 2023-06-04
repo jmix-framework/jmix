@@ -26,8 +26,8 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.app.filter.condition.AddConditionView;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.filer.FilterComponent;
-import io.jmix.flowui.component.filer.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.builder.GenericFilterConditionsBuilder;
@@ -43,7 +43,7 @@ import io.jmix.flowui.view.LookupView.ValidationContext;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -53,7 +53,7 @@ import java.util.function.Predicate;
 public class GenericFilterAddConditionAction extends GenericFilterAction<GenericFilterAddConditionAction>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "filter_addCondition";
+    public static final String ID = "genericFilter_addCondition";
 
     protected Messages messages;
     protected DialogWindows dialogWindows;
@@ -182,8 +182,8 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
                     }
 
                     FilterComponent filterComponent = converter.convertToComponent(selectedCondition);
-                    currentConfiguration.getRootLogicalFilterComponent().add(filterComponent);
                     currentConfiguration.setFilterComponentModified(filterComponent, true);
+                    currentConfiguration.getRootLogicalFilterComponent().add(filterComponent);
 
                     boolean nonNullDefaultValue = setFilterComponentDefaultValue(filterComponent, currentConfiguration);
                     if (nonNullDefaultValue) {

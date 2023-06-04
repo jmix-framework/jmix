@@ -63,7 +63,7 @@ class ViewDataTest extends DataContextSpec {
 
         when:
 
-        viewDataLoader.load(viewData, document.rootElement, null)
+        viewDataLoader.load(viewData, document.rootElement)
         DataContext dataContext = viewData.dataContext
         InstanceContainer<User> userCont = viewData.getContainer('userCont')
         CollectionContainer<User> usersCont = viewData.getContainer('usersCont')
@@ -142,7 +142,7 @@ class ViewDataTest extends DataContextSpec {
 
         when:
 
-        viewDataLoader.load(viewData, document.rootElement, null)
+        viewDataLoader.load(viewData, document.rootElement)
         DataContext dataContext = viewData.dataContext
         InstanceContainer<User> userCont = viewData.getContainer('userCont')
         InstanceLoader<User> userLoader = viewData.getLoader('userLoader')
@@ -244,7 +244,7 @@ class ViewDataTest extends DataContextSpec {
 
         when:
 
-        viewDataLoader.load(viewData, document.rootElement, null)
+        viewDataLoader.load(viewData, document.rootElement)
         InstanceLoader<User> userLoader = viewData.getLoader('userLoader')
         CollectionLoader<User> usersLoader = viewData.getLoader('usersLoader')
         KeyValueCollectionLoader userInfoLoader = viewData.getLoader('userInfoLoader')
@@ -299,7 +299,7 @@ class ViewDataTest extends DataContextSpec {
 
         when:
 
-        viewDataLoader.load(viewData, document.rootElement, null)
+        viewDataLoader.load(viewData, document.rootElement)
         InstanceContainer<Order> orderCont = viewData.getContainer('orderCont')
         CollectionContainer<OrderLine> linesCont = viewData.getContainer('linesCont')
         InstanceContainer<Product> productCont = viewData.getContainer('productCont')
@@ -359,7 +359,7 @@ class ViewDataTest extends DataContextSpec {
 
         when:
 
-        viewDataLoader.load(viewData, document.rootElement, null)
+        viewDataLoader.load(viewData, document.rootElement)
         CollectionContainer<Order> ordersCont = viewData.getContainer('ordersCont')
         CollectionContainer<OrderLine> linesCont = viewData.getContainer('linesCont')
 
@@ -392,109 +392,11 @@ class ViewDataTest extends DataContextSpec {
 
         when:
 
-        viewDataLoader.load(viewData, document.rootElement, null)
+        viewDataLoader.load(viewData, document.rootElement)
         DataContext dataContext = viewData.dataContext
 
         then:
 
         dataContext instanceof NoopDataContext
-    }
-
-    def "containers in fragments"() {
-
-        def xml = '''
-            <data>
-                <instance id="orderCont"
-                          class="test_support.entity.sales.Order">
-                          
-                    <collection id="linesCont" property="orderLines">
-                        <instance id="productCont" property="product">
-                            <collection id="tagsCont" property="tags"/>
-                        </instance>
-                    </collection>
-                </instance>
-                
-                <collection id="ordersCont" class="test_support.entity.sales.Order" fetchPlan="_local">
-                    <loader id="ordersLd"/>
-                </collection>
-            </data>
-            '''
-
-        def xmlA = '''
-            <data>
-                <instance id="orderCont" provided="true"
-                          class="test_support.entity.sales.Order">
-                          
-                    <collection id="linesCont" property="orderLines" provided="true">
-                        <instance id="productCont" property="product" provided="true"/>
-                    </collection>
-                </instance>
-                
-                <collection id="tagsCont" class="test_support.entity.sales.ProductTag" fetchPlan="_local"/>
-                
-                <instance id="orderContA" class="test_support.entity.sales.Order">
-                    <collection id="linesContA" class="" property="orderLines">
-                        <instance id="productContA" property="product">
-                            <collection id="tagsContA" property="tags"/>
-                        </instance>
-                    </collection>
-                </instance>
-
-                <collection id="ordersCont" class="test_support.entity.sales.Order" fetchPlan="_local"
-                            provided="true">
-                    <loader id="ordersLd" provided="true"/>
-                </collection>
-            </data>
-            '''
-
-        when:
-
-        ViewData viewData = new ViewDataImpl()
-        viewDataLoader.load(viewData, Dom4j.readDocument(xml).rootElement, null)
-        InstanceContainer<Order> orderCont = viewData.getContainer('orderCont')
-        CollectionContainer<OrderLine> linesCont = viewData.getContainer('linesCont')
-        InstanceContainer<Product> productCont = viewData.getContainer('productCont')
-        CollectionContainer<ProductTag> tagsCont = viewData.getContainer('tagsCont')
-        CollectionLoader<Order> ordersLd = viewData.getLoader("ordersLd")
-
-        then:
-
-        orderCont != null
-        linesCont != null
-        productCont != null
-        tagsCont != null
-        ordersLd != null
-
-        when:
-
-        ViewData screenDataA = new ViewDataImpl()
-        viewDataLoader.load(screenDataA, Dom4j.readDocument(xmlA).rootElement, viewData)
-
-        InstanceContainer<Order> orderCont1 = screenDataA.getContainer('orderCont')
-        CollectionContainer<OrderLine> linesCont1 = screenDataA.getContainer('linesCont')
-        InstanceContainer<Product> productCont1 = screenDataA.getContainer('productCont')
-
-        CollectionContainer<ProductTag> tagsCont1 = screenDataA.getContainer('tagsCont')
-
-        CollectionLoader<Order> ordersLd1 = screenDataA.getLoader("ordersLd")
-
-        InstanceContainer<Order> orderContA = screenDataA.getContainer('orderContA')
-        CollectionContainer<OrderLine> linesContA = screenDataA.getContainer('linesContA')
-        InstanceContainer<Product> productContA = screenDataA.getContainer('productContA')
-        CollectionContainer<ProductTag> tagsContA = screenDataA.getContainer('tagsContA')
-
-        then:
-
-        orderCont1.is(orderCont)
-        linesCont1.is(linesCont)
-        productCont1.is(productCont)
-        ordersLd1.is(ordersLd)
-
-        !tagsCont1.is(tagsCont)
-
-        !orderContA.is(orderCont)
-        !linesContA.is(linesCont)
-        !productContA.is(productCont)
-        !tagsContA.is(tagsCont)
     }
 }

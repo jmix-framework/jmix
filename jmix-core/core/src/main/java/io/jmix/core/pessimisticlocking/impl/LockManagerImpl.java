@@ -30,7 +30,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.*;

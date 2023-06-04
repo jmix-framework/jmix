@@ -42,7 +42,7 @@ public class RestBeforeResourceServerApiInvocationEventListener {
     @Autowired
     protected AccessManager accessManager;
     @Autowired
-    protected RestAuthorizedUrlsProvider restAuthorizedUrlsProvider;
+    protected CustomRestAuthorizedUrlsProvider restAuthorizedUrlsProvider;
     @Autowired
     protected Messages messages;
 

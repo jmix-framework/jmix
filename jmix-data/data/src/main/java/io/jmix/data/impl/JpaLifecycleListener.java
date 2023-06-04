@@ -19,7 +19,7 @@ package io.jmix.data.impl;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.security.EntityOp;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Beans implementing this interface are notified by JPA implementation on their

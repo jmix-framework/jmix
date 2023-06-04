@@ -69,8 +69,6 @@ public interface StudioDataElements {
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
@@ -92,8 +90,6 @@ public interface StudioDataElements {
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "cacheable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
@@ -103,13 +99,12 @@ public interface StudioDataElements {
             name = "Loader",
             classFqn = "io.jmix.flowui.model.KeyValueInstanceLoader",
             xmlElement = "loader",
+            icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueLoader.svg",
             target = "io.jmix.flowui.model.KeyValueContainer",
             unsupportedTarget = {"io.jmix.flowui.model.CollectionContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE)
             }
     )
@@ -119,6 +114,7 @@ public interface StudioDataElements {
             name = "Loader",
             classFqn = "io.jmix.flowui.model.KeyValueCollectionLoader",
             xmlElement = "loader",
+            icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueLoader.svg",
             target = "io.jmix.flowui.model.KeyValueCollectionContainer",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -126,8 +122,6 @@ public interface StudioDataElements {
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE)
             }
     )

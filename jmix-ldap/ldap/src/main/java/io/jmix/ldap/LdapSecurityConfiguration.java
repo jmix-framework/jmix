@@ -17,7 +17,6 @@
 package io.jmix.ldap;
 
 import io.jmix.core.JmixOrder;
-import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.core.security.AddonAuthenticationManagerSupplier;
 import io.jmix.core.security.event.PreAuthenticationCheckEvent;
 import io.jmix.ldap.authentication.LdapAuthenticationManagerSupplier;
@@ -29,17 +28,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.authentication.*;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-import org.springframework.security.web.SecurityFilterChain;
-
-import static io.jmix.security.SecurityConfigurers.uiSecurity;
 
 public class LdapSecurityConfiguration {
-
-    public static final String SECURITY_CONFIGURER_QUALIFIER = "ldap";
 
     @Autowired
     protected LdapProperties ldapProperties;
@@ -55,16 +48,6 @@ public class LdapSecurityConfiguration {
 
     @Autowired
     protected JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper;
-
-    @Bean("ldap_SecurityFilterChain")
-    @Order(JmixSecurityFilterChainOrder.LDAP)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.apply(uiSecurity());
-        http.logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/"));
-        return http.build();
-    }
 
     @Bean("ldap_LdapAuthenticationManagerSupplier")
     @Order(100)

@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.CoreProperties;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -23,6 +24,8 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -37,8 +40,13 @@ import java.util.Locale;
 )
 public class DoubleDatatype extends NumberDatatype implements Datatype<Double> {
 
+    private static final BigDecimal DOUBLE_MIN_VALUE = BigDecimal.valueOf(-Double.MAX_VALUE);
+    private static final BigDecimal DOUBLE_MAX_VALUE = BigDecimal.valueOf(Double.MAX_VALUE);
+
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
+    @Autowired
+    protected CoreProperties coreProperties;
 
     @Override
     public String format(Object value) {
@@ -82,8 +90,37 @@ public class DoubleDatatype extends NumberDatatype implements Datatype<Double> {
         }
 
         DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
-        NumberFormat format = new DecimalFormat(formatStrings.getDoubleFormat(), formatSymbols);
+        DecimalFormat format = new DecimalFormat(formatStrings.getDoubleFormat(), formatSymbols);
+        format.setParseBigDecimal(true);
         return parse(value, format).doubleValue();
+    }
+
+    protected Number parse(String value, NumberFormat format) throws ParseException {
+        BigDecimal result = (BigDecimal) super.parse(value, format);
+        if (coreProperties.isRoundDecimalValueByFormat()) {
+            int maximumFractionDigits = format.getMaximumFractionDigits();
+            RoundingMode roundingMode = format.getRoundingMode();
+            result = result.setScale(maximumFractionDigits, roundingMode);
+        }
+
+        if (!isInDoubleRange(result)) {
+            throw new ParseException(String.format("The value is out of Double datatype range: \"%s\"", value), 0);
+        }
+
+        return result;
+    }
+
+    @Override
+    protected java.text.NumberFormat createFormat() {
+        java.text.NumberFormat format = super.createFormat();
+        if (format instanceof DecimalFormat) {
+            ((DecimalFormat) format).setParseBigDecimal(true);
+        }
+        return format;
+    }
+
+    protected boolean isInDoubleRange(BigDecimal result) {
+        return result.compareTo(DOUBLE_MAX_VALUE) <= 0 && result.compareTo(DOUBLE_MIN_VALUE) >= 0;
     }
 
     @Override

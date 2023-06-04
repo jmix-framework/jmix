@@ -37,6 +37,7 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.component.accordion.AccordionPanel",
             target = {"com.vaadin.flow.component.accordion.Accordion"},
             xmlElement = "accordionPanel",
+            icon = "io/jmix/flowui/kit/meta/icon/element/tab.svg",
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
@@ -62,6 +63,7 @@ public interface StudioElements {
             name = "ActionItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ActionItem",
             xmlElement = "actionItem",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
@@ -73,6 +75,7 @@ public interface StudioElements {
             name = "AdditionalInformation",
             xmlElement = "additionalInformation",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING)
             }
@@ -115,6 +118,7 @@ public interface StudioElements {
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = "componentItem",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }
@@ -125,6 +129,7 @@ public interface StudioElements {
             name = "ErrorMessage",
             classFqn = "com.vaadin.flow.component.login.LoginI18n.ErrorMessage",
             xmlElement = "errorMessage",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
@@ -137,6 +142,7 @@ public interface StudioElements {
             name = "Form",
             classFqn = "io.jmix.flowui.kit.component.loginform.JmixLoginI18n.JmixForm",
             xmlElement = "form",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
             properties = {
                     @StudioProperty(xmlAttribute = "forgotPassword", type = StudioPropertyType.LOCALIZED_STRING),
@@ -154,6 +160,7 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.GenericFilterQueryParametersBinder",
             xmlElement = "genericFilter",
             target = {"io.jmix.flowui.facet.QueryParametersFacet"},
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -167,6 +174,7 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.component.tabs.Tab",
             target = {"com.vaadin.flow.component.tabs.Tabs", "io.jmix.flowui.component.tabsheet.JmixTabSheet"},
             xmlElement = "tab",
+            icon = "io/jmix/flowui/kit/meta/icon/element/tab.svg",
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
@@ -187,6 +195,7 @@ public interface StudioElements {
             name = "TextItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.TextItem",
             xmlElement = "textItem",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
@@ -203,6 +212,7 @@ public interface StudioElements {
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
                     "io.jmix.flowui.component.checkbox.JmixCheckbox",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.kit.component.combobox.ComboBoxPicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -231,6 +241,7 @@ public interface StudioElements {
                     "io.jmix.flowui.component.details.JmixDetails",
                     "io.jmix.flowui.component.genericfilter.GenericFilter",
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
+                    "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
                     "com.vaadin.flow.component.tabs.Tab"},
             properties = {
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.STRING, required = true),
@@ -251,6 +262,7 @@ public interface StudioElements {
             name = "Pagination",
             classFqn = "io.jmix.flowui.facet.queryparameters.PaginationQueryParametersBinder",
             xmlElement = "pagination",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.facet.QueryParametersFacet"},
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
@@ -266,18 +278,20 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.PropertyFilterQueryParametersBinder",
             xmlElement = "propertyFilter",
             target = {"io.jmix.flowui.facet.QueryParametersFacet"},
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
             }
     )
-    void propertyFilter();
+    void facetPropertyFilter();
 
     @StudioElement(
             name = "ResponsiveStep",
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveStep",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE, required = true),
                     @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
@@ -286,5 +300,173 @@ public interface StudioElements {
                             options = {"ASIDE", "TOP"})
             }
     )
-    FormLayout.ResponsiveStep responsiveStep();
+    FormLayout.ResponsiveStep formLayoutResponsiveStep();
+
+    @StudioElement(
+            name = "ResponsiveStep",
+            classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
+            xmlElement = "responsiveStep",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE, required = true),
+                    @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
+                    @StudioProperty(xmlAttribute = "labelsPosition", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps$ResponsiveStep$LabelsPosition",
+                            options = {"ASIDE", "TOP"})
+            }
+    )
+    void responsiveStep();
+
+    @StudioElement(
+            name = "PropertyFilter",
+            classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter",
+            xmlElement = "propertyFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            target = {
+                    "io.jmix.flowui.component.logicalfilter.GroupFilter",
+                    "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "defaultValue", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "operation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter$Operation",
+                            options = {"EQUAL", "NOT_EQUAL", "GREATER",
+                                    "GREATER_OR_EQUAL", "LESS", "LESS_OR_EQUAL", "CONTAINS", "NOT_CONTAINS",
+                                    "STARTS_WITH", "ENDS_WITH", "IS_SET"}, required = true),
+                    @StudioProperty(xmlAttribute = "operationEditable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "operationTextVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "parameterName", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF,
+                            typeParameter = "V", required = true),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+    )
+    void propertyFilter();
+
+    @StudioElement(
+            name = "JpqlFilter",
+            classFqn = "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
+            xmlElement = "jpqlFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            target = {
+                    "io.jmix.flowui.component.logicalfilter.GroupFilter",
+                    "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "defaultValue", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "hasInExpression", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "parameterClass", type = StudioPropertyType.STRING,
+                            typeParameter = "V", required = true),
+                    @StudioProperty(xmlAttribute = "parameterName", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    void jpqlFilter();
+
+    @StudioElement(
+            name = "GroupFilter",
+            classFqn = "io.jmix.flowui.component.logicalfilter.GroupFilter",
+            xmlElement = "groupFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            target = {
+                    "io.jmix.flowui.component.logicalfilter.GroupFilter",
+                    "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "operation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.logicalfilter.LogicalFilterComponent$Operation",
+                            options = {"AND", "OR"}, required = true),
+                    @StudioProperty(xmlAttribute = "operationTextVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "summaryText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+            }
+    )
+    void groupFilter();
+
+    @StudioElement(
+            name = "Configuration",
+            classFqn = "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration",
+            xmlElement = "configuration",
+            icon = "io/jmix/flowui/kit/meta/icon/element/configuration.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "default", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "operation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.logicalfilter.LogicalFilterComponent$Operation",
+                            options = {"AND", "OR"}, defaultValue = "AND"),
+            }
+    )
+    void configuration();
+
+    @StudioElement(
+            name = "Properties",
+            classFqn = "io.jmix.flowui.component.genericfilter.inspector.FilterPropertiesInspector",
+            xmlElement = "properties",
+            icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
+            target = {"io.jmix.flowui.component.genericfilter.GenericFilter"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "include", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "excludeProperties", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "excludeRecursively", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false")
+            }
+    )
+    void properties();
 }

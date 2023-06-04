@@ -60,7 +60,7 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.0.3'
+def vaadinFlowVersion = '24.0.5'
 
 javaPlatform {
     allowDependencies()
@@ -109,12 +109,11 @@ dependencies {
 
         api "io.jmix.businesscalendar:jmix-businesscalendar:$premiumVersion"
         api "io.jmix.businesscalendar:jmix-businesscalendar-starter:$premiumVersion"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-flowui:$premiumVersion"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-flowui-starter:$premiumVersion"
 
         api "io.jmix.core:jmix-core:$freeVersion"
         api "io.jmix.core:jmix-core-starter:$freeVersion"
-
-//        api "io.jmix.cuba:jmix-cuba:$freeVersion"
-//        api "io.jmix.cuba:jmix-cuba-starter:$freeVersion"
 
         api "io.jmix.dashboards:jmix-dashboards:$freeVersion"
         api "io.jmix.dashboards:jmix-dashboards-starter:$freeVersion"

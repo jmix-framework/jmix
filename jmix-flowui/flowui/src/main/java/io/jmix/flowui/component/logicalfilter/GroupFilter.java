@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.logicalfilter;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -30,9 +31,9 @@ import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsResponsiveSteps;
 import io.jmix.flowui.component.WrapperUtils;
-import io.jmix.flowui.component.filer.FilterComponent;
-import io.jmix.flowui.component.filer.SingleFilterComponent;
-import io.jmix.flowui.component.filer.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.model.DataLoader;
@@ -41,7 +42,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -103,7 +104,6 @@ public class GroupFilter extends Composite<VerticalLayout>
 
         root.setClassName(GROUP_FILTER_CLASS_NAME);
         root.setWidthFull();
-        root.setPadding(false);
 
         return root;
     }
@@ -143,6 +143,10 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     protected void addFilterComponentToConditionsLayout(FormLayout conditionsLayout,
                                                         FilterComponent filterComponent) {
+        if (!((Component) filterComponent).isVisible()) {
+            return;
+        }
+
         if (filterComponent instanceof SingleFilterComponentBase) {
             SingleFilterComponentBase<?> singleFilterComponent = ((SingleFilterComponentBase<?>) filterComponent);
 
@@ -154,8 +158,9 @@ public class GroupFilter extends Composite<VerticalLayout>
             registerFilterComponentFormItem(filterComponent, formItem);
 
             singleFilterComponent.setLabelDelegate(label::setText);
-        } else {
-            // TODO: gg, support for LogicalFilterComponent
+        } else if (filterComponent instanceof GroupFilter) {
+            GroupFilter groupFilter = (GroupFilter) filterComponent;
+            conditionsLayout.add(groupFilter, 3);
         }
     }
 
@@ -293,14 +298,18 @@ public class GroupFilter extends Composite<VerticalLayout>
                 ownFilterComponentsOrder = null;
             }
 
+            FormLayout.FormItem formItem = null;
             if (filterComponent instanceof SingleFilterComponent) {
                 getDataLoader().removeParameter(((SingleFilterComponent<?>) filterComponent).getParameterName());
+                formItem = filterComponentFormItemMap.remove(filterComponent);
             }
 
-            FormLayout.FormItem formItem = filterComponentFormItemMap.remove(filterComponent);
             if (formItem != null) {
                 conditionsLayout.remove(formItem);
+            } else {
+                conditionsLayout.remove((Component) filterComponent);
             }
+
             updateConditionsLayout();
 
             if (!isConditionModificationDelegated()) {
@@ -326,6 +335,11 @@ public class GroupFilter extends Composite<VerticalLayout>
         }
 
         fireFilterComponentsChanged();
+    }
+
+    @Nullable
+    protected Label getSummaryComponent() {
+        return summaryComponent;
     }
 
     @Nullable

@@ -20,7 +20,7 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.io.File;
 import java.io.InputStream;
 import java.util.UUID;

@@ -27,7 +27,7 @@ import io.jmix.securityflowui.model.RoleModelConverter;
 import io.jmix.securityflowui.model.RowLevelRoleModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

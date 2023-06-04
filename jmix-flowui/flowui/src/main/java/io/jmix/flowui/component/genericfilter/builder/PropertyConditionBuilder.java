@@ -37,7 +37,7 @@ import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 

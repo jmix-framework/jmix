@@ -16,14 +16,17 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.CoreProperties;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
-import jakarta.annotation.Nullable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -38,8 +41,13 @@ import java.util.Locale;
 )
 public class FloatDatatype extends NumberDatatype implements Datatype<Float> {
 
+    private static final BigDecimal FLOAT_MIN_VALUE = BigDecimal.valueOf(-Float.MAX_VALUE);
+    private static final BigDecimal FLOAT_MAX_VALUE = BigDecimal.valueOf(Float.MAX_VALUE);
+
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
+    @Autowired
+    protected CoreProperties coreProperties;
 
     @Override
     public String format(@Nullable Object value) {
@@ -83,36 +91,38 @@ public class FloatDatatype extends NumberDatatype implements Datatype<Float> {
         }
 
         DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
-        NumberFormat format = new DecimalFormat(formatStrings.getDoubleFormat(), formatSymbols);
+        DecimalFormat format = new DecimalFormat(formatStrings.getDoubleFormat(), formatSymbols);
+        format.setParseBigDecimal(true);
         return parse(value, format).floatValue();
     }
 
     @Override
     protected Number parse(String value, NumberFormat format) throws ParseException {
-        Number result = super.parse(value, format);
-        if (!hasValidFloatRange(result)) {
-            throw new ParseException(String.format("Float range exceeded: \"%s\"", value), 0);
+        BigDecimal result = (BigDecimal) super.parse(value, format);
+        if (coreProperties.isRoundDecimalValueByFormat()) {
+            int maximumFractionDigits = format.getMaximumFractionDigits();
+            RoundingMode roundingMode = format.getRoundingMode();
+            result = result.setScale(maximumFractionDigits, roundingMode);
+        }
+
+        if (!isInFloatRange(result)) {
+            throw new ParseException(String.format("The value is out of Float datatype range: \"%s\"", value), 0);
         }
 
         return result;
     }
 
-    protected boolean hasValidFloatRange(Number result) {
-        if (result instanceof Long) {
-            Long longResult = (Long) result;
-
-            if (longResult > Float.MAX_VALUE || longResult < Float.MIN_VALUE) {
-                return false;
-            }
-        } else {
-            Double doubleResult = (Double) result;
-
-            if (doubleResult > Float.MAX_VALUE || doubleResult < Float.MIN_VALUE) {
-                return false;
-            }
+    @Override
+    protected java.text.NumberFormat createFormat() {
+        java.text.NumberFormat format = super.createFormat();
+        if (format instanceof DecimalFormat) {
+            ((DecimalFormat) format).setParseBigDecimal(true);
         }
+        return format;
+    }
 
-        return true;
+    protected boolean isInFloatRange(BigDecimal result) {
+        return result.compareTo(FLOAT_MAX_VALUE) <= 0 && result.compareTo(FLOAT_MIN_VALUE) >= 0;
     }
 
     @Override

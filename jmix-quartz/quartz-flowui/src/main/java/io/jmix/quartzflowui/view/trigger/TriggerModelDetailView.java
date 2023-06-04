@@ -34,6 +34,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.ScheduleType;
 import io.jmix.quartz.model.TriggerModel;
 import io.jmix.quartz.service.QuartzService;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -123,6 +124,17 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         cronExpressionField.setVisible(!isSimpleTrigger);
         repeatCountField.setVisible(isSimpleTrigger);
         repeatIntervalField.setVisible(isSimpleTrigger);
+    }
+
+    @Subscribe
+    public void onValidation(ValidationEvent event) {
+        if (ScheduleType.SIMPLE.equals(getEditedEntity().getScheduleType())
+                || CronExpression.isValidExpression(getEditedEntity().getCronExpression())) {
+            return;
+        }
+
+        String message = messageBundle.getMessage("invalidCronExpressionValidationMessage");
+        event.getErrors().add(message);
     }
 
 }

@@ -18,7 +18,7 @@ package io.jmix.core;
 
 import org.springframework.core.io.ResourceLoader;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.io.InputStream;
 
 /**

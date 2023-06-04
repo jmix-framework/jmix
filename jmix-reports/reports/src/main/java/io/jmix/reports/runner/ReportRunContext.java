@@ -20,7 +20,7 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 

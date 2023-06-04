@@ -51,7 +51,7 @@ import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;

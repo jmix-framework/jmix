@@ -18,7 +18,7 @@ package io.jmix.flowui.data;
 
 import com.vaadin.flow.data.provider.DataProvider;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public interface SupportsDataProvider<V> {
 

@@ -42,7 +42,7 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 import io.jmix.flowui.model.CollectionContainer;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

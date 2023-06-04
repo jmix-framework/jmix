@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition">
+    <data>
+        <collection id="ordersDc"
+                    class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="ordersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <layout>
+        <genericFilter id="genericFilterId"
+                       dataLoader="ordersDl"
+                       autoApply="true"
+                       classNames="cssClassName1, cssClassName2"
+                       enabled="false"
+                       height="50px"
+                       maxHeight="55px"
+                       maxWidth="120px"
+                       minHeight="40px"
+                       minWidth="80px"
+                       opened="false"
+                       summaryText="summaryTextString"
+                       themeNames="small, filled"
+                       visible="true"
+                       width="100px"
+        />
+
+        <genericFilter id="genericFilterWithInnerElementsId" dataLoader="ordersDl">
+            <properties include=".*" excludeProperties="time, date"/>
+            <responsiveSteps>
+                <responsiveStep
+                        columns="5"
+                        labelsPosition="TOP"
+                        minWidth="100px"
+                />
+            </responsiveSteps>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+            <actions>
+                <action id="genericFilter_copy" type="genericFilter_copy"/>
+            </actions>
+        </genericFilter>
+
+        <genericFilter id="genericFilterWithConditionsId" dataLoader="ordersDl">
+            <conditions>
+                <propertyFilter property="number" operation="EQUAL" defaultValue="1337"/>
+                <jpqlFilter parameterClass="java.lang.Void">
+                    <condition>
+                        <c:jpql>
+                            <c:where>{E}.number = '1337'</c:where>
+                        </c:jpql>
+                    </condition>
+                </jpqlFilter>
+                <groupFilter id="groupFilterId"
+                             operation="OR">
+                    <jpqlFilter parameterClass="java.lang.String"
+                                parameterName="parameterNameAsds"
+                                defaultValue="1337">
+                        <condition>
+                            <c:jpql>
+                                <c:where>{E}.number = ?</c:where>
+                            </c:jpql>
+                        </condition>
+                    </jpqlFilter>
+                </groupFilter>
+            </conditions>
+        </genericFilter>
+
+        <genericFilter id="genericFilterWithConfigurationsId"
+                       dataLoader="ordersDl">
+            <configurations>
+                <configuration id="firstConfig" name="firstConfigName" default="true" operation="OR">
+                    <propertyFilter property="number" operation="EQUAL" defaultValue="1337"/>
+                    <jpqlFilter parameterClass="java.lang.Void">
+                        <condition>
+                            <c:jpql>
+                                <c:where>{E}.number = '1337'</c:where>
+                            </c:jpql>
+                        </condition>
+                    </jpqlFilter>
+                </configuration>
+                <configuration id="secondConfig" name="secondConfigName" operation="AND">
+                    <groupFilter id="groupFilterId"
+                                 operation="OR">
+                        <jpqlFilter parameterClass="java.lang.String"
+                                    parameterName="parameterNameAsds"
+                                    defaultValue="1337">
+                            <condition>
+                                <c:jpql>
+                                    <c:where>{E}.number = ?</c:where>
+                                </c:jpql>
+                            </condition>
+                        </jpqlFilter>
+                    </groupFilter>
+                </configuration>
+            </configurations>
+        </genericFilter>
+    </layout>
+</view>

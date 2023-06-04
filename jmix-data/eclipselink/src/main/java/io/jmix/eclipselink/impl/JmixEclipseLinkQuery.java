@@ -36,7 +36,7 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
 import io.jmix.eclipselink.impl.entitycache.QueryKey;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.persistence.*;
 import org.eclipse.persistence.config.CascadePolicy;
 import org.eclipse.persistence.config.HintValues;

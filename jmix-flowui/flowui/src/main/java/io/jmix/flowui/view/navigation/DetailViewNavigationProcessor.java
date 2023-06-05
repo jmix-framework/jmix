@@ -18,9 +18,12 @@ package io.jmix.flowui.view.navigation;
 
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.sys.ViewSupport;
+import io.jmix.flowui.view.DetailView;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
@@ -35,14 +38,20 @@ import static java.util.Objects.requireNonNull;
 public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<DetailViewNavigator<?>> {
 
     protected RouteSupport routeSupport;
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
 
     public DetailViewNavigationProcessor(ViewSupport viewSupport,
                                          ViewRegistry viewRegistry,
                                          ViewNavigationSupport navigationSupport,
-                                         RouteSupport routeSupport) {
+                                         RouteSupport routeSupport,
+                                         Metadata metadata,
+                                         MetadataTools metadataTools) {
         super(viewSupport, viewRegistry, navigationSupport);
 
         this.routeSupport = routeSupport;
+        this.metadata = metadata;
+        this.metadataTools = metadataTools;
     }
 
     @Override
@@ -64,15 +73,37 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
     @Override
     protected RouteParameters getRouteParameters(DetailViewNavigator<?> navigator) {
         return navigator.getRouteParameters().orElseGet(() -> {
-            switch (navigator.getMode()) {
-                case CREATE:
-                    return generateNewEntityRouteParameters(navigator);
-                case EDIT:
-                    return generateEditEntityRouteParameters(navigator);
-                default:
-                    throw new IllegalStateException("Unknown detail view mode: " + navigator.getMode());
+            if (metadataTools.isJpaEntity(navigator.getEntityClass())) {
+                return switch (navigator.getMode()) {
+                    case CREATE -> generateNewEntityRouteParameters(navigator);
+                    case EDIT -> generateEditEntityRouteParameters(navigator);
+                };
+            } else {
+                return RouteParameters.empty();
             }
         });
+    }
+
+    @Override
+    protected void fireAfterViewNavigation(DetailViewNavigator<?> navigator, View<?> view) {
+        if (navigator instanceof SupportsAfterViewNavigationHandler<?>
+                && ((SupportsAfterViewNavigationHandler<?>) navigator).getAfterNavigationHandler().isPresent()) {
+            super.fireAfterViewNavigation(navigator, view);
+        } else if (!metadataTools.isJpaEntity(navigator.getEntityClass())
+                && view instanceof DetailView) {
+            Object entityToEdit = getEntityToEdit(navigator);
+            ((DetailView) view).setEntityToEdit(entityToEdit);
+        }
+    }
+
+    protected Object getEntityToEdit(DetailViewNavigator<?> navigator) {
+        return switch (navigator.getMode()) {
+            case CREATE -> metadata.create(navigator.getEntityClass());
+            case EDIT -> navigator.getEditedEntity().orElseThrow(() ->
+                    new IllegalStateException(String.format(
+                            "Detail View of %s cannot be open with mode EDIT, entity is not set",
+                            navigator.getEntityClass())));
+        };
     }
 
     protected RouteParameters generateNewEntityRouteParameters(DetailViewNavigator<?> navigator) {

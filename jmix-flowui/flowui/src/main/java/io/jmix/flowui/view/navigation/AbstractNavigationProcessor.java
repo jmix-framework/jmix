@@ -67,11 +67,11 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         }
     }
 
-    protected void fireAfterViewNavigation(N navigator, View<?> value) {
+    protected void fireAfterViewNavigation(N navigator, View<?> view) {
         if (navigator instanceof SupportsAfterViewNavigationHandler) {
             ((SupportsAfterViewNavigationHandler<?>) navigator)
                     .getAfterNavigationHandler().ifPresent(handler ->
-                            handler.accept(new AfterViewNavigationEvent(this, value)));
+                            handler.accept(new AfterViewNavigationEvent(this, view)));
         }
     }
 

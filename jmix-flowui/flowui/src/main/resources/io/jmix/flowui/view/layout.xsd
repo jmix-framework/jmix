@@ -3825,6 +3825,7 @@
     <xs:complexType name="genericFilterUrlQueryParametersType">
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="component" type="xs:string" use="required"/>
+        <xs:attribute name="configurationParam" type="xs:string"/>
         <xs:attribute name="conditionParam" type="xs:string"/>
     </xs:complexType>
 

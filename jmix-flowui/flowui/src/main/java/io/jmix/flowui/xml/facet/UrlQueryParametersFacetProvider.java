@@ -122,10 +122,11 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
                                                           Element element, ComponentContext context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
+        String configurationParam = loadAttribute(element, "configurationParam");
         String conditionParam = loadAttribute(element, "conditionParam");
 
         context.addPreInitTask(new GenericFilterQueryParametersBinderInitTask(
-                facet, componentId, binderId, conditionParam, urlParamSerializer, applicationContext
+                facet, componentId, binderId, configurationParam, conditionParam, urlParamSerializer, applicationContext
         ));
     }
 
@@ -244,6 +245,7 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         protected final UrlQueryParametersFacet facet;
         protected final String binderId;
         protected final String componentId;
+        protected final String configurationParam;
         protected final String conditionParam;
         protected final UrlParamSerializer urlParamSerializer;
         protected final ApplicationContext applicationContext;
@@ -251,12 +253,14 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         public GenericFilterQueryParametersBinderInitTask(UrlQueryParametersFacet facet,
                                                           String componentId,
                                                           @Nullable String binderId,
+                                                          @Nullable String configurationParam,
                                                           @Nullable String conditionParam,
                                                           UrlParamSerializer urlParamSerializer,
                                                           ApplicationContext applicationContext) {
             this.facet = facet;
             this.binderId = binderId;
             this.componentId = componentId;
+            this.configurationParam = configurationParam;
             this.conditionParam = conditionParam;
             this.urlParamSerializer = urlParamSerializer;
             this.applicationContext = applicationContext;
@@ -276,6 +280,7 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
                             urlParamSerializer, applicationContext);
 
             binder.setId(binderId);
+            binder.setConfigurationParam(configurationParam);
             binder.setConditionParam(conditionParam);
 
             facet.registerBinder(binder);

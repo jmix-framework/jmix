@@ -27,10 +27,14 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
+import io.jmix.flowui.component.jpqlfilter.JpqlFilter;
+import io.jmix.flowui.component.logicalfilter.GroupFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent.FilterComponentsChangeEvent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
@@ -40,26 +44,29 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.KeyValueCollectionLoader;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.lang.Nullable;
-import java.util.ArrayList;
-import java.util.EventObject;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 import static java.util.Objects.requireNonNull;
 
 public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
 
+    private static final Logger log = LoggerFactory.getLogger(GenericFilterUrlQueryParametersBinder.class);
+
     public static final String NAME = "genericFilter";
 
     public static final String PROPERTY_CONDITION_PREFIX = "property:";
+    public static final String DEFAULT_CONFIGURATION_PARAM = "genericFilterConfiguration";
     public static final String DEFAULT_CONDITION_PARAM = "genericFilterCondition";
 
     protected GenericFilter filter;
 
+    protected String configurationParam;
     protected String conditionParam;
 
     protected ApplicationContext applicationContext;
@@ -121,16 +128,33 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         LogicalCondition queryCondition = currentConfiguration.getQueryCondition();
 
         List<Condition> conditions = queryCondition.getConditions();
-        List<String> params = new ArrayList<>(conditions.size());
+        List<String> conditionParams = new ArrayList<>(conditions.size());
+        List<String> configurationParam;
+
+        if (currentConfiguration != filter.getEmptyConfiguration()) {
+            configurationParam = Collections.singletonList(serializeConfigurationId(currentConfiguration));
+        } else {
+            configurationParam = Collections.emptyList();
+        }
+
         for (Condition condition : conditions) {
             if (condition instanceof PropertyCondition) {
-                params.add(serializePropertyCondition(((PropertyCondition) condition)));
+                conditionParams.add(serializePropertyCondition(((PropertyCondition) condition)));
             }
         }
 
+        ImmutableMap<String, List<String>> parametersMap = ImmutableMap.of(
+                getConfigurationParam(), configurationParam,
+                getConditionParam(), conditionParams
+        );
+
         QueryParameters queryParameters =
-                new QueryParameters(ImmutableMap.of(getConditionParam(), params));
+                new QueryParameters(parametersMap);
         fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
+    }
+
+    protected String serializeConfigurationId(Configuration configuration) {
+        return urlParamSerializer.serialize(configuration.getId());
     }
 
     protected String serializePropertyCondition(PropertyCondition condition) {
@@ -150,8 +174,24 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     @Override
     public void updateState(QueryParameters queryParameters) {
         Map<String, List<String>> parameters = queryParameters.getParameters();
-        if (parameters.containsKey(getConditionParam())) {
-            List<String> conditionParams = queryParameters.getParameters().get(getConditionParam());
+
+        if (parameters.containsKey(getConfigurationParam())) {
+            List<String> configurationParam = parameters.get(getConfigurationParam());
+            String configurationId = deserializeConfigurationId(configurationParam.get(0));
+            Optional<Configuration> currentConfiguration = filter.getConfigurations().stream()
+                    .filter(configuration -> configurationId.equals(configuration.getId()))
+                    .findAny();
+
+            currentConfiguration.ifPresent(configuration -> {
+                if (parameters.containsKey(getConditionParam())) {
+                    List<String> conditionParams = parameters.get(getConditionParam());
+                    updateConfigurationConditions(configuration, conditionParams);
+                }
+
+                FilterUtils.setCurrentConfiguration(filter, configuration, true);
+            });
+        } else if (parameters.containsKey(getConditionParam())) {
+            List<String> conditionParams = parameters.get(getConditionParam());
 
             Configuration currentConfiguration = filter.getCurrentConfiguration();
             LogicalFilterComponent<?> rootLogicalFilterComponent = currentConfiguration.getRootLogicalFilterComponent();
@@ -167,6 +207,10 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         }
     }
 
+    protected String deserializeConfigurationId(String configurationParam) {
+        return urlParamSerializer.deserialize(String.class, configurationParam);
+    }
+
     protected List<FilterComponent> deserializeConditions(List<String> conditionParams, DataLoader dataLoader) {
         List<FilterComponent> conditions = new ArrayList<>(conditionParams.size());
         for (String conditionString : conditionParams) {
@@ -174,6 +218,73 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         }
 
         return conditions;
+    }
+
+    protected void updateConfigurationConditions(Configuration currentConfiguration, List<String> conditionParams) {
+        LogicalFilterComponent<?> rootLogicalFilterComponent = currentConfiguration.getRootLogicalFilterComponent();
+
+        List<FilterComponent> conditions = deserializeConditions(conditionParams,
+                rootLogicalFilterComponent.getDataLoader());
+        List<FilterComponent> configurationComponents = rootLogicalFilterComponent.getFilterComponents();
+
+        for (FilterComponent filterComponent : conditions) {
+            FilterComponent usedFilterComponent = null;
+
+            for (int i = 0; i < configurationComponents.size() && usedFilterComponent == null; ++i) {
+                FilterComponent configurationComponent = configurationComponents.get(i);
+
+                usedFilterComponent = updateFilterComponent(configurationComponent, filterComponent);
+            }
+
+            if (usedFilterComponent != null) {
+                configurationComponents.remove(usedFilterComponent);
+            }
+
+            if (currentConfiguration instanceof RunTimeConfiguration && usedFilterComponent == null) {
+                currentConfiguration.setFilterComponentModified(filterComponent, true);
+                rootLogicalFilterComponent.add(filterComponent);
+            } else {
+                log.debug("Can't add filterComponent to Design-Time Configuration");
+            }
+        }
+    }
+
+    @Nullable
+    protected FilterComponent updateFilterComponent(FilterComponent configurationComponent,
+                                                    FilterComponent filterComponent) {
+        if (configurationComponent instanceof PropertyFilter<?> configurationPropertyFilter
+                && filterComponent instanceof PropertyFilter<?> propertyFilter) {
+            return updatePropertyCondition(configurationPropertyFilter, propertyFilter);
+        } else if (configurationComponent instanceof JpqlFilter<?> configurationJpqlFilter
+                && filterComponent instanceof JpqlFilter<?> jpqlFilter) {
+            //TODO: kremnevda, implement 02.06.2023
+        } else if (configurationComponent instanceof GroupFilter configurationGroupFilter
+                && filterComponent instanceof GroupFilter groupFilter) {
+            //TODO: kremnevda, implement 02.06.2023
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Nullable
+    protected FilterComponent updatePropertyCondition(PropertyFilter configurationComponent,
+                                                      PropertyFilter filterComponent) {
+        if (isPropertyMatched(configurationComponent, filterComponent)) {
+            if (configurationComponent.isOperationEditable()) {
+                configurationComponent.setOperation(filterComponent.getOperation());
+            }
+
+            if (isOperationMatched(configurationComponent, filterComponent)) {
+                if (filterComponent.getValue() != null) {
+                    UiComponentUtils.setValue(configurationComponent, filterComponent.getValue());
+                }
+
+                return configurationComponent;
+            }
+        }
+
+        return null;
     }
 
     protected FilterComponent parseCondition(String conditionString, DataLoader dataLoader) {
@@ -249,12 +360,28 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         }
     }
 
+    public String getConfigurationParam() {
+        return Strings.isNullOrEmpty(configurationParam) ? DEFAULT_CONFIGURATION_PARAM : configurationParam;
+    }
+
     public String getConditionParam() {
         return Strings.isNullOrEmpty(conditionParam) ? DEFAULT_CONDITION_PARAM : conditionParam;
     }
 
+    public void setConfigurationParam(@Nullable String conditionParam) {
+        this.conditionParam = conditionParam;
+    }
+
     public void setConditionParam(@Nullable String conditionParam) {
         this.conditionParam = conditionParam;
+    }
+
+    protected boolean isPropertyMatched(PropertyFilter<?> propertyFilter, PropertyFilter<?> anotherPropertyFilter) {
+        return Objects.equals(propertyFilter.getProperty(), anotherPropertyFilter.getProperty());
+    }
+
+    protected boolean isOperationMatched(PropertyFilter<?> propertyFilter, PropertyFilter<?> anotherPropertyFilter) {
+        return Objects.equals(propertyFilter.getOperation(), anotherPropertyFilter.getOperation());
     }
 
     protected SingleFilterSupport getSingleFilterSupport() {

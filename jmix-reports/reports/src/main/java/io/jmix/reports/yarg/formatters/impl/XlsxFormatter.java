@@ -33,7 +33,7 @@ import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.docx4j.XmlUtils;
@@ -1009,7 +1009,7 @@ public class XlsxFormatter extends AbstractFormatter {
                 newCell.setV(String.valueOf(value));
             } else if (value instanceof Date) {
                 newCell.setT(STCellType.N);
-                newCell.setV(String.valueOf(HSSFDateUtil.getExcelDate((Date) value)));
+                newCell.setV(String.valueOf(DateUtil.getExcelDate((Date) value)));
             } else {
                 newCell.setT(STCellType.STR);
                 newCell.setV(formatValue(value, parameterName, fullParameterName));

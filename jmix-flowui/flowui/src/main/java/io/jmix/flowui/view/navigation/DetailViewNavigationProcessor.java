@@ -89,11 +89,16 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
         if (navigator instanceof SupportsAfterViewNavigationHandler<?>
                 && ((SupportsAfterViewNavigationHandler<?>) navigator).getAfterNavigationHandler().isPresent()) {
             super.fireAfterViewNavigation(navigator, view);
-        } else if (!metadataTools.isJpaEntity(navigator.getEntityClass())
-                && view instanceof DetailView) {
+        } else if (isNeedToSetEntityToEdit(navigator, view)) {
             Object entityToEdit = getEntityToEdit(navigator);
             ((DetailView) view).setEntityToEdit(entityToEdit);
         }
+    }
+
+    protected boolean isNeedToSetEntityToEdit(DetailViewNavigator<?> navigator, View<?> view) {
+        return !metadataTools.isJpaEntity(navigator.getEntityClass())
+                && view instanceof DetailView
+                && navigator.getRouteParameters().isEmpty();
     }
 
     protected Object getEntityToEdit(DetailViewNavigator<?> navigator) {

@@ -17,6 +17,6 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
 
     @Override
     protected void findEntityId(BeforeEnterEvent event) {
-        // do nothing
+        // Because DTO entity cannot be loaded by Id, we need to prevent Id parsing from route parameters
     }
 }

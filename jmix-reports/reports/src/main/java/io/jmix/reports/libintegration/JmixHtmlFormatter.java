@@ -22,7 +22,7 @@ import io.jmix.reports.yarg.formatters.impl.HtmlFormatter;
 import io.jmix.reports.yarg.formatters.impl.pdf.HtmlToPdfConverter;
 import io.jmix.reports.yarg.formatters.impl.pdf.ITextPdfConverter;
 import io.jmix.reports.yarg.structure.BandData;
-import com.lowagie.text.Image;
+import com.itextpdf.text.Image;
 import freemarker.ext.util.WrapperTemplateModel;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;

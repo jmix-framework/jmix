@@ -50,18 +50,18 @@ public final class HSSFRangeHelper {
     }
 
     public static AreaReference getAreaForRange(HSSFWorkbook workbook, String rangeName) {
-        int rangeNameIdx = workbook.getNameIndex(rangeName);
-        if (rangeNameIdx == -1) return null;
-
-        HSSFName aNamedRange = workbook.getNameAt(rangeNameIdx);
+        HSSFName aNamedRange = workbook.getName(rangeName);
+        if (aNamedRange == null) {
+            return null;
+        }
         return new AreaReference(aNamedRange.getRefersToFormula(), SpreadsheetVersion.EXCEL97);
     }
 
     public static HSSFSheet getTemplateSheetForRangeName(HSSFWorkbook workbook, String rangeName) {
-        int rangeNameIdx = workbook.getNameIndex(rangeName);
-        if (rangeNameIdx == -1) return null;
-
-        HSSFName aNamedRange = workbook.getNameAt(rangeNameIdx);
+        HSSFName aNamedRange = workbook.getName(rangeName);
+        if (aNamedRange == null) {
+            return null;
+        }
         String sheetName = aNamedRange.getSheetName();
         return workbook.getSheet(sheetName);
     }

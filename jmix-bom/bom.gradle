@@ -249,8 +249,7 @@ dependencies {
 
         api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.1'
 
-        //todo SB3 jakarta.xml.bind-api:2.3.3 -> 4.0.0
-        api 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
+        api 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
         //todo SB3 org.glassfish.jaxb:jaxb-runtime:2.3.6 -> 4.0.2
         api 'org.glassfish.jaxb:jaxb-runtime:2.3.6'
 
@@ -287,14 +286,77 @@ dependencies {
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        def yargVersion = '2.2-SNAPSHOT'
-        api "com.haulmont.yarg:yarg-api:$yargVersion"
-        api "com.haulmont.yarg:yarg:$yargVersion"
+        api 'org.apache.httpcomponents:httpclient:4.5.14'
+
+        api 'commons-logging:commons-logging:1.2'
+        api 'org.apache.commons:commons-lang3:3.9'
+        api 'commons-io:commons-io:2.6'
+        api 'org.dom4j:dom4j:2.1.3'
+        api 'com.google.guava:guava:28.0-jre'
+        api 'org.slf4j:slf4j-api:1.7.26'
+        api 'org.codehaus.groovy:groovy-all:2.4.12'
+        api 'org.freemarker:freemarker:2.3.32'
+
+        def openOficeVersion = '4.1.2'
+        api "org.openoffice:juh:$openOficeVersion"
+        api "org.openoffice:ridl:$openOficeVersion"
+        api "org.openoffice:unoil:$openOficeVersion"
+
+        def avalonVersion = '4.3.1'
+        api "org.apache.avalon.framework:avalon-framework-api:$avalonVersion"
+        api "org.apache.avalon.framework:avalon-framework-impl:$avalonVersion"
+
+        api 'javax.media.jai:com.springsource.javax.media.jai.core:1.1.3'
+
+        api 'org.apache.xmlgraphics:fop:2.8'
+        api 'org.apache.xmlgraphics:xmlgraphics-commons:2.8'
+
+        def batikVersion = '1.16'
+        api "org.apache.xmlgraphics:batik-bridge:$batikVersion"
+        api "org.apache.xmlgraphics:batik-svggen:$batikVersion"
+        api "org.apache.xmlgraphics:batik-awt-util:$batikVersion"
+        api "org.apache.xmlgraphics:batik-css:$batikVersion"
+
+        def plutextVersion = '11.4.0'
+        api "org.plutext:jaxb-svg11:$plutextVersion"
+        api "org.plutext:jaxb-xslfo:$plutextVersion"
+
+        api 'org.plutext:jaxb-xmldsig-core:1.0.0'
+
+        api 'xalan:xalan:2.7.3'
+        api 'xalan:serializer:2.7.3'
+
+        api('com.lowagie:itext:4.2.2')
+
+        def poiVersion = '5.2.3'
+        api "org.apache.poi:poi:$poiVersion"
+        api "org.apache.poi:poi-ooxml:$poiVersion"
+        api "org.apache.poi:poi-scratchpad:$poiVersion"
+
+        def xhtmlrendererVersion = '9.1.22'
+        api "org.xhtmlrenderer:flying-saucer-core:$xhtmlrendererVersion"
+        api "org.xhtmlrenderer:flying-saucer-pdf-itext5:$xhtmlrendererVersion"
+
+        def openhtmltopdfVersion = '1.0.10'
+        api "com.openhtmltopdf:openhtmltopdf-core:$openhtmltopdfVersion"
+        api "com.openhtmltopdf:openhtmltopdf-rtl-support:$openhtmltopdfVersion"
+        api "com.openhtmltopdf:openhtmltopdf-pdfbox:$openhtmltopdfVersion"
+
+        api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.4.9'
+        api 'org.docx4j:docx4j-ImportXHTML:11.4.8'
+        api 'org.docx4j:docx4j-export-fo:11.4.9'
+
+        api 'org.jsoup:jsoup:1.16.1'
+        api 'com.jayway.jsonpath:json-path:2.8.0'
+        api 'com.opencsv:opencsv:5.7.1'
+        api 'org.olap4j:olap4j:1.2.0'
+
+        def jasperVersion = '6.20.5'
+        api "net.sf.jasperreports:jasperreports:$jasperVersion"
+        api "net.sf.jasperreports:jasperreports-fonts:$jasperVersion"
 
         api 'org.jsoup:jsoup:1.14.3'
 
-        api 'org.apache.poi:poi:4.1.2'
-        api 'org.apache.poi:poi-ooxml:4.1.2'
         api 'org.apache.tika:tika-parsers:1.27'
 
         //todo SB3 Update flowable 7.0 to production version
@@ -311,7 +373,7 @@ dependencies {
         api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
 
         //todo remove strict version after jmix-graphql is reworked
-        api ('com.graphql-java:graphql-java') {
+        api('com.graphql-java:graphql-java') {
             version {
                 strictly '16.2'
             }

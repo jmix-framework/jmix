@@ -63,6 +63,20 @@ public class JmixPasswordField extends PasswordField implements SupportsValueSou
         return applicationContext.getBean(FieldDelegate.class, this);
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {

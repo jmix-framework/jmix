@@ -99,6 +99,20 @@ public class EntityPicker<V> extends ValuePickerBase<EntityPicker<V>, V>
         fieldDelegate.setStatusChangeHandler(handler);
     }
 
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {

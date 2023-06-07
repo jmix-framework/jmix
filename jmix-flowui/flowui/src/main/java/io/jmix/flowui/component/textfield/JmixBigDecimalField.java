@@ -75,7 +75,16 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
 
     @Override
     public void setRequired(boolean required) {
-        super.setRequired(required);
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
     }
 
     @Nullable

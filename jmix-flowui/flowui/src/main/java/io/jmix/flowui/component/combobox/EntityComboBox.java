@@ -139,6 +139,20 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
     }
 
     @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
     public Registration addValidator(Validator<? super V> validator) {
         return fieldDelegate.addValidator(validator);
     }

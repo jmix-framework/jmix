@@ -146,6 +146,15 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
     @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
     }
 
     @Override

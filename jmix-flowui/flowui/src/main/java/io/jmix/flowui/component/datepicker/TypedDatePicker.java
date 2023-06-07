@@ -207,6 +207,20 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
         fieldDelegate.setStatusChangeHandler(handler);
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean required) {
+        super.setRequiredIndicatorVisible(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {

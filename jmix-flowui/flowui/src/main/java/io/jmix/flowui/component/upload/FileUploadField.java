@@ -116,6 +116,20 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
         return fieldDelegate.isInvalid();
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {

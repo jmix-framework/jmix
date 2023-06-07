@@ -134,6 +134,20 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
         fieldDelegate.setDatatype(datatype);
     }
 
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {

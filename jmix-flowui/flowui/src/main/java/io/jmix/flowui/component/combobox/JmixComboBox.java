@@ -105,6 +105,25 @@ public class JmixComboBox<V> extends ComboBox<V>
         fieldDelegate.setValueSource(valueSource);
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    protected void validate() {
+        isInvalid();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {

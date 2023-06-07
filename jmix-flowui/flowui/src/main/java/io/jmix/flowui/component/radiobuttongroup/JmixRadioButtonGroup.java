@@ -71,6 +71,20 @@ public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements Supp
         addValueChangeListener(e -> validate());
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {

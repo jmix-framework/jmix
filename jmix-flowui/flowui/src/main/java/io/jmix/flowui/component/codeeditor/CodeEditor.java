@@ -125,6 +125,21 @@ public class CodeEditor extends JmixCodeEditor
         super.setValue(Strings.nullToEmpty(value));
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean required) {
+        super.setRequiredIndicatorVisible(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+
     @SuppressWarnings("unchecked")
     protected FieldDelegate<CodeEditor, String, String> createFieldDelegate() {
         return applicationContext.getBean(FieldDelegate.class, this);

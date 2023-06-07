@@ -27,6 +27,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+/**
+ * Handles ConstraintViolationException that can be thrown by bean validation on persistence layer.
+ * Displays violation messages as screen notifications.
+ */
 @Component
 public class ConstraintViolationExceptionHandler extends AbstractUiExceptionHandler {
 

@@ -93,14 +93,14 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
     public void setRequired(boolean required) {
         super.setRequired(required);
 
-        fieldDelegate.updateRequiredState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
-        fieldDelegate.updateRequiredState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable
@@ -126,7 +126,7 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
 
     @Override
     protected void validate() {
-        isInvalid();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override

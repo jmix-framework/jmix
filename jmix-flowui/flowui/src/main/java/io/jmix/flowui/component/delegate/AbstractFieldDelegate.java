@@ -209,17 +209,11 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         return errorMessage;
     }
 
-    public void updateRequiredState() {
-        updateInvalidState();
-    }
-
     public void setStatusChangeHandler(@Nullable Consumer<StatusContext<C>> statusChangeHandler) {
         this.statusChangeHandler = statusChangeHandler;
     }
 
     public boolean isInvalid() {
-        updateInvalidState();
-
         return isInvalidInternal();
     }
 
@@ -235,7 +229,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         updateInvalidState();
     }
 
-    protected void updateInvalidState() {
+    public void updateInvalidState() {
         boolean invalid = explicitlyInvalid || conversionInvalid || !validatorsPassed();
 
         setInvalidInternal(invalid);

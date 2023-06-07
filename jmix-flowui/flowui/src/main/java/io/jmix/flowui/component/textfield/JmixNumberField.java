@@ -82,6 +82,11 @@ public class JmixNumberField extends NumberField implements SupportsValueSource<
         fieldDelegate.executeValidators();
     }
 
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
+    }
+
     @Nullable
     @Override
     public String getErrorMessage() {
@@ -113,14 +118,14 @@ public class JmixNumberField extends NumberField implements SupportsValueSource<
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
-        fieldDelegate.updateRequiredState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
 
-        fieldDelegate.updateRequiredState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override

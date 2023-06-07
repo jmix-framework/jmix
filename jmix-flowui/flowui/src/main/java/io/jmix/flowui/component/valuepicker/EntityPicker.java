@@ -17,7 +17,8 @@
 package io.jmix.flowui.component.valuepicker;
 
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.*;
@@ -39,7 +40,7 @@ import java.util.function.Consumer;
 
 public class EntityPicker<V> extends ValuePickerBase<EntityPicker<V>, V>
         implements EntityPickerComponent<V>, LookupComponent<V>, SupportsValidation<V>,
-        SupportsStatusChangeHandler<EntityPicker<V>>, HasRequired, HasPrefixAndSuffix,
+        SupportsStatusChangeHandler<EntityPicker<V>>, HasRequired, HasPrefix, HasSuffix,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -103,14 +104,14 @@ public class EntityPicker<V> extends ValuePickerBase<EntityPicker<V>, V>
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
-        fieldDelegate.updateRequiredState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
 
-        fieldDelegate.updateRequiredState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable
@@ -132,6 +133,11 @@ public class EntityPicker<V> extends ValuePickerBase<EntityPicker<V>, V>
     @Override
     public void executeValidators() throws ValidationException {
         fieldDelegate.executeValidators();
+    }
+
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

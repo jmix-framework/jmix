@@ -125,14 +125,14 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
 
-        fieldDelegate.updateRequiredState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
-        fieldDelegate.updateRequiredState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable
@@ -158,7 +158,12 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
     @Override
     public void setInvalid(boolean invalid) {
+        validate();
         fieldDelegate.setInvalid(invalid);
+    }
+
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

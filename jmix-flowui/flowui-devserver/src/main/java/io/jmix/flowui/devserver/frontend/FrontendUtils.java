@@ -51,6 +51,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -1453,5 +1454,19 @@ public class FrontendUtils {
     public static InputStream getResourceAsStream(String name) {
         final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
         return FrontendUtils.class.getClassLoader().getResourceAsStream(devServerResourcesBaseDir + name);
+    }
+
+    public static int findFreePort(int rangeStart, int rangeEnd) {
+        for (int port = rangeStart; port <= rangeEnd; port++) {
+            try (ServerSocket socket = new ServerSocket(port)) {
+                return port;
+            } catch (IOException ignored) {
+            }
+        }
+
+        throw new RuntimeException(
+                "Free port not found in range " +
+                        "[" + rangeStart + ":" + rangeEnd + "]"
+        );
     }
 }

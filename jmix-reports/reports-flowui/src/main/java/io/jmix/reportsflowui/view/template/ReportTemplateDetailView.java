@@ -65,7 +65,7 @@ import java.util.List;
 import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_CLASS_NAME;
 import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 
-@Route(value = "reportTemplate/:id", layout = DefaultMainViewParent.class)
+@Route(value = "reports/templates/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportTemplate.detail")
 @ViewDescriptor("report-template-detail-view.xml")
 @EditedEntityContainer("reportTemplateDc")

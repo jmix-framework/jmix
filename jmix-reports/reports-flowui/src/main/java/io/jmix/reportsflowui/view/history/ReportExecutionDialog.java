@@ -17,6 +17,7 @@
 package io.jmix.reportsflowui.view.history;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
@@ -95,16 +96,16 @@ public class ReportExecutionDialog extends StandardListView<Report> {
     }
 
     @Subscribe("clearFilterBtn")
-    protected void onClearFilterBtnClick(ClickEvent event) {
-        filterName.setValue(null);
-        filterCode.setValue(null);
-        filterUpdatedDate.setValue(null);
-        filterGroup.setValue(null);
+    protected void onClearFilterBtnClick(ClickEvent<Button> event) {
+        filterName.clear();
+        filterCode.clear();
+        filterUpdatedDate.clear();
+        filterGroup.clear();
         filterReports();
     }
 
     @Subscribe("applyFilterBtn")
-    protected void onApplyFilterBtnClick(ClickEvent event) {
+    protected void onApplyFilterBtnClick(ClickEvent<Button> event) {
         filterReports();
     }
 

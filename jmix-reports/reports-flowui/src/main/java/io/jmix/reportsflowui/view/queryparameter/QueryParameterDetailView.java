@@ -56,7 +56,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-@Route(value = "queryParameter/:id", layout = DefaultMainViewParent.class)
+@Route(value = "reports/queryParameters/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_QueryParameter.detail")
 @ViewDescriptor("query-parameter-detail-view.xml")
 @EditedEntityContainer("queryParameterDc")

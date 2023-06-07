@@ -153,15 +153,17 @@ public class ReportTableView extends StandardView {
             inputParametersFrame.setReport(report);
             inputParametersFrame.setParameters(reportParameters);
             //todo
-            //inputParametersFrame.setInputParameter(inputParameter);
+//            inputParametersFrame.setInputParameter(inputParameter);
 //            inputParametersFrame.setBulkPrint(bulkPrint);
             //inputParametersFrame.initContent();
             //inputParametersFrame.initTemplateAndOutputSelect();
 
             parametersFrameHolder.add(inputParametersFrame);
 
-            //todo hidden parameters
-            parametersBox.setVisible(!report.getInputParameters().isEmpty());
+            boolean isParameterBoxVisible = report.getInputParameters().stream()
+                            .anyMatch(param -> param.getHidden() == null || !param.getHidden());
+
+            parametersBox.setVisible(isParameterBoxVisible);
         } else {
             parametersBox.setVisible(false);
         }

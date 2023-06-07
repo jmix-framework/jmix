@@ -16,7 +16,7 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://reportRunView.title"
-      focusComponent="reportsTable">
+      focusComponent="reportDataGrid">
 
     <data>
         <collection id="reportsDc"
@@ -44,7 +44,7 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
 
-    <layout expand="reportsTable">
+    <layout expand="reportDataGrid">
         <formLayout id="filterPanel">
             <responsiveSteps>
                 <responsiveStep minWidth="0" columns="1"/>
@@ -68,9 +68,9 @@
         </formLayout>
 
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="runReport" action="reportsTable.runReport"/>
+            <button id="runReport" action="reportDataGrid.runReport"/>
         </hbox>
-        <dataGrid id="reportsTable"
+        <dataGrid id="reportDataGrid"
                   width="100%"
                   dataContainer="reportsDc">
             <actions>

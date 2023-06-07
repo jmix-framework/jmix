@@ -110,11 +110,11 @@ public class InputParametersFragment extends Composite<FormLayout>
                 }
                 outputTypeComboBox.setVisible(true);
             } else {
-                outputTypeComboBox.setValue(null);
+                outputTypeComboBox.clear();
                 outputTypeComboBox.setVisible(false);
             }
         } else {
-            outputTypeComboBox.setValue(null);
+            outputTypeComboBox.clear();
             outputTypeComboBox.setVisible(false);
         }
     }

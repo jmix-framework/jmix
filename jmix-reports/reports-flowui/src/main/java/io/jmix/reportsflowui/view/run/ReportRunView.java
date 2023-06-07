@@ -52,12 +52,12 @@ import java.util.Objects;
 @Route(value = "reports/run", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportRun.view")
 @ViewDescriptor("report-run-view.xml")
-@LookupComponent("reportsTable")
+@LookupComponent("reportDataGrid")
 @DialogMode(width = "80em", resizable = true)
 public class ReportRunView extends StandardListView<Report> {
 
     @ViewComponent
-    protected DataGrid<Report> reportsTable;
+    protected DataGrid<Report> reportDataGrid;
     @ViewComponent
     protected CollectionContainer<Report> reportsDc;
     @ViewComponent
@@ -104,20 +104,20 @@ public class ReportRunView extends StandardListView<Report> {
 
     @Subscribe
     public void onInit(InitEvent event) {
-        reportsTable.addColumn(report -> metadataTools.getInstanceName(report))
+        reportDataGrid.addColumn(report -> metadataTools.getInstanceName(report))
                 .setKey("name")
                 .setHeader(messageBundle.getMessage("name"))
                 .setSortable(true)
                 .setResizable(true);
 
         List<Grid.Column<Report>> columnsOrder = Arrays.asList(
-                reportsTable.getColumnByKey("name"),
-                reportsTable.getColumnByKey("group"),
-                reportsTable.getColumnByKey("description"),
-                reportsTable.getColumnByKey("code"),
-                reportsTable.getColumnByKey("updateTs")
+                reportDataGrid.getColumnByKey("name"),
+                reportDataGrid.getColumnByKey("group"),
+                reportDataGrid.getColumnByKey("description"),
+                reportDataGrid.getColumnByKey("code"),
+                reportDataGrid.getColumnByKey("updateTs")
         );
-        reportsTable.setColumnOrder(columnsOrder);
+        reportDataGrid.setColumnOrder(columnsOrder);
     }
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
@@ -132,9 +132,9 @@ public class ReportRunView extends StandardListView<Report> {
         }
     }
 
-    @Subscribe("reportsTable.runReport")
-    protected void onReportsTableRunReport(ActionPerformedEvent event) {
-        Report report = reportsTable.getSingleSelectedItem();
+    @Subscribe("reportDataGrid.runReport")
+    protected void onreportDataGridRunReport(ActionPerformedEvent event) {
+        Report report = reportDataGrid.getSingleSelectedItem();
         if (report != null) {
             report = dataManager.load(Id.of(report))
                     .fetchPlan("report.edit")
@@ -207,10 +207,10 @@ public class ReportRunView extends StandardListView<Report> {
         }
 
         //todo
-//        Table.SortInfo sortInfo = reportsTable.getSortInfo();
+//        Table.SortInfo sortInfo = reportDataGrid.getSortInfo();
 //        if (sortInfo != null) {
 //            Table.SortDirection direction = sortInfo.getAscending() ? Table.SortDirection.ASCENDING : Table.SortDirection.DESCENDING;
-//            reportsTable.sort(sortInfo.getPropertyId().toString(), direction);
+//            reportDataGrid.sort(sortInfo.getPropertyId().toString(), direction);
 //        }
     }
 }

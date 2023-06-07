@@ -30,7 +30,7 @@ import java.util.List;
 
 import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 
-@Route(value = "ReportValueFormatDetailView/:id", layout = DefaultMainViewParent.class)
+@Route(value = "reports/valueFormats/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportValueFormat.detail")
 @ViewDescriptor("report-value-format-detail-view.xml")
 @EditedEntityContainer("valuesFormatsDc")

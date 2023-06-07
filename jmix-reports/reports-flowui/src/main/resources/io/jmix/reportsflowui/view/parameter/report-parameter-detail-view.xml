@@ -46,8 +46,7 @@
                     <comboBox id="enumerationField" width="100%" label="msg://parameters.enum"
                               property="enumerationClass"
                               requiredMessage="msg://parameters.requiredEnumClass" required="true"/>
-                    <comboBox id="screenField" width="100%" label="msg://parameters.screen"
-                              property="screen"/>
+                    <comboBox id="screenField" width="100%" label="msg://parameters.screen"/>
                     <hbox id="defaultValueBox" width="100%"/>
                     <checkbox id="isDefaultDateIsCurrentField" label="msg://parameters.defaultDateIsCurrent"
                               property="defaultDateIsCurrent"/>

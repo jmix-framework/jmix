@@ -1,6 +1,7 @@
 package io.jmix.reportsflowui.view.parameter;
 
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -37,7 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-@Route(value = "parameter/:id", layout = DefaultMainViewParent.class)
+@Route(value = "reports/parameters/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportInputParameter.detail")
 @ViewDescriptor("report-parameter-detail-view.xml")
 @EditedEntityContainer("parameterDc")
@@ -125,7 +126,19 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @Override
     public void setEntityToEdit(ReportInputParameter entity) {
         super.setEntityToEdit(entity);
-        initScreensLookup();
+
+        if (getEditedEntity().getScreen() != null) {
+            initScreensLookup();
+            screenField.setValue(getEditedEntity().getScreen());
+        }
+    }
+
+    @Subscribe("screenField")
+    public void onScreenFieldAttach(final AttachEvent event) {
+        if (getEditedEntity().getScreen() != null) {
+            initScreensLookup();
+            screenField.setValue(getEditedEntity().getScreen());
+        }
     }
 
     @Subscribe
@@ -136,24 +149,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             editedParam.setParameterClass(parameterClassResolver.resolveClass(editedParam));
         }
     }
-
-    //todo AN fix exception screenfield items should be set before setting value on init
-//    @Override
-//    public void setEntityToEdit(ReportInputParameter entity) {
-//        super.setEntityToEdit(entity);
-//        if (getEditedEntity().getScreen() != null) {
-//            initScreensLookup();
-//            screenField.setValue(getEditedEntity().getScreen());
-//        }
-//    }
-//
-//    @Subscribe("screenField")
-//    public void onScreenFieldAttach(AttachEvent event) {
-//        if (getEditedEntity().getScreen() != null) {
-//            initScreensLookup();
-//            screenField.setValue(getEditedEntity().getScreen());
-//        }
-//    }
 
     protected void initLocaleField() {
         Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
@@ -402,8 +397,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @Subscribe
     public void onBeforeSave(BeforeSaveEvent event) {
         if (!(getEditedEntity().getType() == ParameterType.ENTITY && Boolean.TRUE.equals(isLookupField.getValue()))) {
-            lookupWhere.setValue(null);
-            lookupJoin.setValue(null);
+            lookupWhere.clear();
+            lookupJoin.clear();
         }
     }
 

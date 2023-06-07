@@ -1,16 +1,9 @@
 package io.jmix.reportsflowui.view.reportwizard;
 
 
-import io.jmix.reportsflowui.ReportsUiHelper;
-import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.runner.FluentUiReportRunner;
-import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
-import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.region.RegionDetailView;
-import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
+import com.google.common.collect.Lists;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -20,10 +13,16 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
+import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
-import io.jmix.flowui.*;
+import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.combobox.EntityComboBox;
@@ -38,7 +37,6 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.app.EntityTree;
@@ -56,167 +54,163 @@ import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.entitytreelist.EntityTreeLookupView;
-import io.jmix.reportsflowui.view.region.RegionDetailView;
+import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
 import io.jmix.reportsflowui.view.reportwizard.template.query.JpqlQueryBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
 
-@Route(value = "reportWizard", layout = DefaultMainViewParent.class)
-@ViewController("ReportWizardCreator")
-@ViewDescriptor("report-wizard.xml")
-public class ReportWizardCreator extends StandardView {
-    public static final String FIELD_ICON_SIZE_CLASS_NAME = "reports-field-icon-size";
+@Route(value = "reportwizard", layout = DefaultMainViewParent.class)
+@ViewController("report_ReportWizardCreatorView")
+@ViewDescriptor("report-wizard-creator-view.xml")
+public class ReportWizardCreatorView extends StandardView {
+    protected static final String FIELD_ICON_SIZE_CLASS_NAME = "reports-field-icon-size";
     protected static final String FIELD_ICON_CLASS_NAME = "template-detailview-field-icon";
-
     protected static final int MAX_ATTRS_BTN_CAPTION_WIDTH = 135;
-    protected boolean regenerateQuery = false;
-    protected boolean needUpdateEntityModel = false;
-    protected Report lastGeneratedTmpReport;
-    private List<Div> fragmentsList;
-    protected int currentFragmentIdx = 0;
+
+    //todo review: все вот это надо отсортировать по конвенции:
+    // сначала static
+    // пустая строка
+    // потом все с аннотациями @ViewComponent
+    // пустая строка
+    // потом все с аннотациями @Autowired
+    // пустая строка
+    // потом обычные переменные класса
+    // для всего использлвать protected, в flowui private используется
+    // только для каких-то сугубо кекьюрных целей
 
     @ViewComponent
-    private InstanceContainer<ReportData> reportDataDc;
+    protected InstanceContainer<ReportData> reportDataDc;
     @ViewComponent
     private DataContext dataContext;
 
     @Autowired
     private Messages messages;
     @Autowired
+    private MessageBundle messageBundle;
+    @Autowired
     private Dialogs dialogs;
     @ViewComponent
-    private CollectionPropertyContainer<ReportRegion> reportRegionsDc;
+    protected JmixComboBox<TemplateFileType> templateFileTypeField;
     @ViewComponent
-    private JmixButton nextBtn;
+    protected JmixComboBox<ReportOutputType> outputFileFormat;
     @ViewComponent
-    private JmixButton saveBtn;
+    protected TypedTextField<String> outputFileName;
     @ViewComponent
-    private JmixButton backBtn;
-    @Autowired
-    private Notifications notifications;
-    @Autowired
-    private MessageTools messageTools;
-    @Autowired
-    private MetadataTools metadataTools;
-    @Autowired
-    private ExtendedEntities extendedEntities;
-    @Autowired
-    private Metadata metadata;
+    protected JmixButton downloadTemplateFile;
+    @ViewComponent
+    protected Div detailsDiv;
+    @ViewComponent
+    protected Div saveDiv;
+    @ViewComponent
+    protected Div queryDiv;
+    @ViewComponent
+    protected DataGrid<ReportRegion> regionsTable;
+    @ViewComponent
+    protected DataGrid<QueryParameter> reportParameterTable;
+    @ViewComponent
+    protected JmixButton regionsRunBtn;
+    @ViewComponent
+    protected HorizontalLayout buttonsBox;
+    @ViewComponent
+    protected JmixButton addRegionDisabledBtn;
+    @ViewComponent
+    protected JmixRadioButtonGroup<ReportTypeGenerate> reportTypeGenerateField;
+    @ViewComponent
+    protected JmixTextArea reportQueryCodeEditor;
+    @ViewComponent
+    protected CollectionPropertyContainer<QueryParameter> queryParametersDc;
+    @ViewComponent
+    protected Div regionsDiv;
+    @ViewComponent
+    protected JmixButton addTabulatedRegionBtn;
+    @ViewComponent
+    protected JmixButton addSimpleRegionBtn;
+    @ViewComponent
+    protected CollectionPropertyContainer<ReportRegion> reportRegionsDc;
+    @ViewComponent
+    protected JmixButton nextBtn;
+    @ViewComponent
+    protected JmixButton backBtn;
+    @ViewComponent
+    protected JmixButton saveBtn;
     @ViewComponent
     private JmixComboBox entityField;
     @Autowired
-    private ReportWizard reportWizardService;
-    @ViewComponent
-    private JmixComboBox<TemplateFileType> templateFileTypeField;
-    @ViewComponent
-    private JmixComboBox<ReportOutputType> outputFileFormat;
-    @ViewComponent
-    private TypedTextField<String> outputFileName;
-    @ViewComponent
-    private JmixButton downloadTemplateFile;
+    protected Notifications notifications;
     @Autowired
-    private FlowuiProperties flowuiProperties;
+    protected MessageTools messageTools;
     @Autowired
-    private CoreProperties coreProperties;
-    @ViewComponent
-    private Div detailsDiv;
-    @ViewComponent
-    private Div saveDiv;
-    @ViewComponent
-    private Div queryDiv;
-
-    @ViewComponent
-    private DataGrid<ReportRegion> regionsTable;
-    @ViewComponent
-    private JmixButton regionsRunBtn;
-    @ViewComponent
-    private HorizontalLayout buttonsBox;
-    @ViewComponent
-    private JmixButton addRegionDisabledBtn;
-    @ViewComponent
-    private JmixRadioButtonGroup<ReportTypeGenerate> reportTypeGenerateField;
-    @ViewComponent
-    private JmixTextArea reportQueryCodeEditor;
-    @ViewComponent
-    private CollectionPropertyContainer<QueryParameter> queryParametersDc;
-    @ViewComponent
-    private Div regionsDiv;
+    protected ExtendedEntities extendedEntities;
     @Autowired
-    private ReportRunner reportRunner;
+    protected Metadata metadata;
     @Autowired
-    private QueryTransformerFactory queryTransformerFactory;
+    protected ReportWizard reportWizardService;
+    @Autowired
+    protected FlowuiProperties flowuiProperties;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected ReportRunner reportRunner;
+    @Autowired
+    protected QueryTransformerFactory queryTransformerFactory;
     @Autowired
     protected Downloader downloader;
     @Autowired
     protected OutputFormatTools outputFormatTools;
     @Autowired
-    private JmixObjectToStringConverter jmixObjectToStringConverter;
+    protected JmixObjectToStringConverter jmixObjectToStringConverter;
     @Autowired
-    private ReportsUiHelper reportsUiHelper;
+    protected ReportsUiHelper reportsUiHelper;
     @Autowired
-    private UiReportRunner uiReportRunner;
+    protected UiReportRunner uiReportRunner;
     @Autowired
-    private ReportsClientProperties reportsClientProperties;
+    protected ReportsClientProperties reportsClientProperties;
     @Autowired
-    private DialogWindows dialogWindows;
+    protected MetadataTools metadataTools;
     @Autowired
-    private UiComponents uiComponents;
-    @ViewComponent
-    private JmixButton addTabulatedRegionBtn;
-    @ViewComponent
-    private DropdownButton addRegionPopupBtn;
-    @ViewComponent
-    private JmixButton addSimpleRegionBtn;
+    protected DialogWindows dialogWindows;
+    @Autowired
+    private FormatStringsRegistry formatStringsRegistry;
+    @Autowired
+    private CurrentAuthentication currentAuthentication;
+
+    protected boolean regenerateQuery = false;
+    protected boolean needUpdateEntityModel = false;
+    protected int currentFragmentIdx = 0;
+    protected Report lastGeneratedTmpReport;
+    protected List<Div> fragmentsList;
+    protected boolean entityTreeHasSimpleAttrs;
+    protected boolean entityTreeHasCollections;
 
     @Subscribe
     public void onInit(InitEvent event) {
-        reportDataDc.setItem(dataContext.create(ReportData.class));
-
+        initItem();
         initFragments();
-        fragmentsList = getFragmentsList();
-        //details step
         initReportTypeOptionGroup();
         initTemplateFormatLookupField();
         initEntityLookupField();
-
-        //save step
-
-        //query step
         //todo AN
 //        initQueryReportSourceCode();
         initReportQueryCodeEditorScript();
     }
 
-    @Subscribe(id = "reportDataDc", target = Target.DATA_CONTAINER)
-    public void onReportDataDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<ReportData> event) {
-        if (event.getProperty().equals("reportTypeGenerate")) {
-            List<Div> stepFragments = new ArrayList<>(getFragmentsList());
-            if (Objects.equals(event.getValue(), ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY)) {
-                stepFragments.add(2, queryDiv);
-            }
-
-            fragmentsList = stepFragments;
-        }
-//SAVE STEP
-        if (event.getProperty().equals("entityName") || event.getProperty().equals("templateFileType")) {
-            updateCorrectReportOutputType();
-            updateDownloadTemplateFile();
-        }
+    protected void initItem() {
+        reportDataDc.setItem(dataContext.create(ReportData.class));
     }
 
-    protected ArrayList<Div> getFragmentsList() {
-        ArrayList<Div> fragments = new ArrayList<>();
-        fragments.add(detailsDiv);
-        fragments.add(regionsDiv);
-        fragments.add(saveDiv);
-        return fragments;
+    protected List<Div> getFragmentsList() {
+        return Lists.newArrayList(detailsDiv,
+                regionsDiv,
+                saveDiv
+        );
     }
 
     protected void initFragments() {
@@ -224,29 +218,15 @@ public class ReportWizardCreator extends StandardView {
         saveDiv.setVisible(false);
         regionsDiv.setVisible(false);
         queryDiv.setVisible(false);
-    }
-
-    protected void nextFragment() {
-        if (currentFragmentIdx < fragmentsList.size() - 1) {
-            fragmentsList.get(currentFragmentIdx).setVisible(false);
-            currentFragmentIdx++;
-            beforeShowFragments();
-            fragmentsList.get(currentFragmentIdx).setVisible(true);
-        }
-        updateButtons();
+        fragmentsList = getFragmentsList();
     }
 
     protected void beforeShowFragments() {
         Div div = fragmentsList.get(currentFragmentIdx);
-
-        if (div.equals(detailsDiv)) {
-
-        } else if (div.equals(regionsDiv)) {
+        if (div.equals(regionsDiv)) {
             updateRegionButtons();
             showAddRegion();
-
             updateButtons();
-
             regionsRunBtn.setVisible(getReportTypeGenerate() != ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
         } else if (div.equals(saveDiv)) {
             if (StringUtils.isEmpty(outputFileName.getValue())) {
@@ -268,36 +248,19 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
-    protected void updateButtons() {
-        if (currentFragmentIdx == 0) {
-            backBtn.setVisible(false);
-            saveBtn.setVisible(false);
-        } else if (currentFragmentIdx == fragmentsList.size() - 1) {
-            saveBtn.setVisible(true);
-            nextBtn.setVisible(false);
-        } else {
-            backBtn.setVisible(true);
-            nextBtn.setVisible(true);
-            saveBtn.setVisible(false);
+    @Subscribe(id = "reportDataDc", target = Target.DATA_CONTAINER)
+    public void onReportDataDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<ReportData> event) {
+        if ("reportTypeGenerate".equals(event.getProperty())) {
+            List<Div> stepFragments = getFragmentsList();
+            if (Objects.equals(event.getValue(), ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY)) {
+                stepFragments.add(2, queryDiv);
+            }
+            fragmentsList = stepFragments;
         }
-    }
-
-    protected void prevFragment() {
-        if (currentFragmentIdx > 0) {
-            fragmentsList.get(currentFragmentIdx).setVisible(false);
-            currentFragmentIdx--;
-            beforeShowFragments();
-            fragmentsList.get(currentFragmentIdx).setVisible(true);
+        if ("entityName".equals(event.getProperty()) || "templateFileType".equals(event.getProperty())) {
+            updateCorrectReportOutputType();
+            updateDownloadTemplateFile();
         }
-        updateButtons();
-    }
-
-    public boolean isNeedUpdateEntityModel() {
-        return needUpdateEntityModel;
-    }
-
-    public void setNeedUpdateEntityModel(boolean needUpdateEntityModel) {
-        this.needUpdateEntityModel = needUpdateEntityModel;
     }
 
     @Subscribe("nextBtn")
@@ -331,6 +294,48 @@ public class ReportWizardCreator extends StandardView {
         prevFragment();
     }
 
+    protected void updateButtons() {
+        if (currentFragmentIdx == 0) {
+            backBtn.setVisible(false);
+            saveBtn.setVisible(false);
+        } else if (currentFragmentIdx == fragmentsList.size() - 1) {
+            saveBtn.setVisible(true);
+            nextBtn.setVisible(false);
+        } else {
+            backBtn.setVisible(true);
+            nextBtn.setVisible(true);
+            saveBtn.setVisible(false);
+        }
+    }
+
+    protected void nextFragment() {
+        if (currentFragmentIdx < fragmentsList.size() - 1) {
+            fragmentsList.get(currentFragmentIdx).setVisible(false);
+            currentFragmentIdx++;
+            beforeShowFragments();
+            fragmentsList.get(currentFragmentIdx).setVisible(true);
+        }
+        updateButtons();
+    }
+
+    protected void prevFragment() {
+        if (currentFragmentIdx > 0) {
+            fragmentsList.get(currentFragmentIdx).setVisible(false);
+            currentFragmentIdx--;
+            beforeShowFragments();
+            fragmentsList.get(currentFragmentIdx).setVisible(true);
+        }
+        updateButtons();
+    }
+
+    public boolean isNeedUpdateEntityModel() {
+        return needUpdateEntityModel;
+    }
+
+    public void setNeedUpdateEntityModel(boolean needUpdateEntityModel) {
+        this.needUpdateEntityModel = needUpdateEntityModel;
+    }
+
     protected Div getCurrentFragment() {
         return fragmentsList.get(currentFragmentIdx);
     }
@@ -350,12 +355,12 @@ public class ReportWizardCreator extends StandardView {
     protected List<String> validateCurrentFragment() {
         Div currentFragment = getCurrentFragment();
         List<String> errors = new ArrayList<>();
-        for (Component c : currentFragment.getChildren().toList()) {
-            if (c instanceof SupportsValidation<?>) {
-                SupportsValidation validatable = (SupportsValidation) c;
-                validatable.executeValidators();
+
+        currentFragment.getChildren().forEach(component -> {
+            if (component instanceof SupportsValidation<?>) {
+                ((SupportsValidation<?>) component).executeValidators();
             }
-        }
+        });
         if (currentFragment.equals(regionsDiv)) {
             if (reportDataDc.getItem().getReportRegions().isEmpty()) {
                 errors.add(messages.getMessage(getClass(), "addRegionsWarn"));
@@ -397,7 +402,7 @@ public class ReportWizardCreator extends StandardView {
             byte[] templateByteArray = reportWizardService.generateTemplate(reportData, reportData.getTemplateFileType());
             reportData.setTemplateContent(templateByteArray);
         } catch (TemplateGenerationException e) {
-            notifications.create(messages.getMessage(ReportWizardCreator.class, "templateGenerationException"))
+            notifications.create(messages.getMessage(ReportWizardCreatorView.class, "templateGenerationException"))
                     .withType(Notifications.Type.WARNING)
                     .show();
             return null;
@@ -419,7 +424,6 @@ public class ReportWizardCreator extends StandardView {
     public ReportData getItem() {
         return reportDataDc.getItem();
     }
-
 
     @Subscribe
     public void onBeforeClose(BeforeCloseEvent event) {
@@ -529,42 +533,24 @@ public class ReportWizardCreator extends StandardView {
 
     protected void initReportTypeOptionGroup() {
         reportTypeGenerateField.setItems(ReportTypeGenerate.SINGLE_ENTITY, ReportTypeGenerate.LIST_OF_ENTITIES, ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
-        reportTypeGenerateField.setItemLabelGenerator(item -> {
-            switch (item) {
-                case SINGLE_ENTITY -> {
-                    return messages.getMessage(getClass(), "singleEntityReport");
-                }
-                case LIST_OF_ENTITIES -> {
-                    return messages.getMessage(getClass(), "listOfEntitiesReport");
-                }
-                case LIST_OF_ENTITIES_WITH_QUERY -> {
-                    return messages.getMessage(getClass(), "listOfEntitiesReportWithQuery");
-                }
-                default -> {
-                    return "";
-                }
-            }
-        });
+        reportTypeGenerateField.setItemLabelGenerator(this::itemLabelGenerator);
         reportTypeGenerateField.setValue(ReportTypeGenerate.SINGLE_ENTITY);
     }
 
-    protected Map<String, ReportTypeGenerate> getListedReportOptionsMap() {
-        Map<String, ReportTypeGenerate> result = new LinkedHashMap<>(3);
-        result.put(messages.getMessage(getClass(), "singleEntityReport"), ReportTypeGenerate.SINGLE_ENTITY);
-        result.put(messages.getMessage(getClass(), "listOfEntitiesReport"), ReportTypeGenerate.LIST_OF_ENTITIES);
-        result.put(messages.getMessage(getClass(), "listOfEntitiesReportWithQuery"), ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
-        return result;
+    private String itemLabelGenerator(ReportTypeGenerate reportTypeGenerate) {
+        return switch (reportTypeGenerate) {
+            case SINGLE_ENTITY -> messages.getMessage(getClass(), "singleEntityReport");
+            case LIST_OF_ENTITIES -> messages.getMessage(getClass(), "listOfEntitiesReport");
+            case LIST_OF_ENTITIES_WITH_QUERY -> messages.getMessage(getClass(), "listOfEntitiesReportWithQuery");
+        };
     }
 
     protected Map<TemplateFileType, String> getAvailableTemplateFormats() {
-        Map<TemplateFileType, String> result = new LinkedHashMap<>(4);
-        result.put(TemplateFileType.XLSX, messages.getMessage(TemplateFileType.XLSX));
-        result.put(TemplateFileType.DOCX, messages.getMessage(TemplateFileType.DOCX));
-        result.put(TemplateFileType.HTML, messages.getMessage(TemplateFileType.HTML));
-        result.put(TemplateFileType.CSV, messages.getMessage(TemplateFileType.CSV));
-        result.put(TemplateFileType.TABLE, messages.getMessage(TemplateFileType.TABLE));
-
-        return result;
+        return Map.of(TemplateFileType.XLSX, messages.getMessage(TemplateFileType.XLSX),
+                TemplateFileType.DOCX, messages.getMessage(TemplateFileType.DOCX),
+                TemplateFileType.HTML, messages.getMessage(TemplateFileType.HTML),
+                TemplateFileType.CSV, messages.getMessage(TemplateFileType.CSV),
+                TemplateFileType.TABLE, messages.getMessage(TemplateFileType.TABLE));
     }
 
     protected Map<String, MetaClass> getAvailableEntities() {
@@ -575,7 +561,8 @@ public class ReportWizardCreator extends StandardView {
             if (!reportWizardService.isEntityAllowedForReportWizard(effectiveMetaClass)) {
                 continue;
             }
-            result.put(messageTools.getEntityCaption(effectiveMetaClass) + " (" + effectiveMetaClass.getName() + ")", effectiveMetaClass);
+            result.put(messageTools.getEntityCaption(effectiveMetaClass) + " (" + effectiveMetaClass.getName() + ")",
+                    effectiveMetaClass);
         }
         return result;
     }
@@ -585,9 +572,6 @@ public class ReportWizardCreator extends StandardView {
         reportData.setQuery(null);
         reportData.setQueryParameters(null);
     }
-
-    protected boolean entityTreeHasSimpleAttrs;
-    protected boolean entityTreeHasCollections;
 
     public void setEntityTreeHasCollections(boolean entityTreeHasCollections) {
         this.entityTreeHasCollections = entityTreeHasCollections;
@@ -610,15 +594,26 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
-    @Install(to = "regionsTable.down", subject = "enabledRule")
-    private boolean regionsTableDownEnabledRule() {
-        ReportRegion item = regionsTable.getSingleSelectedItem();
-        if (item == null) {
-            return false;
+    @Subscribe("regionsRunBtn")
+    public void onRegionsRunBtnClick(ClickEvent<Button> event) {
+        if (reportDataDc.getItem().getReportRegions().isEmpty()) {
+            notifications.create(messages.getMessage(getClass(), "addRegionsWarn"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
         }
-        return item.getOrderNum() < reportRegionsDc.getItems().size();
-    }
 
+        lastGeneratedTmpReport = buildReport(true);
+
+        if (lastGeneratedTmpReport != null) {
+            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(lastGeneratedTmpReport)
+                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
+            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
+                fluentRunner.inBackground(this);
+            }
+            fluentRunner.runAndShow();
+        }
+    }
 
     @Install(to = "regionsTable.up", subject = "enabledRule")
     private boolean regionsTableUpEnabledRule() {
@@ -629,8 +624,6 @@ public class ReportWizardCreator extends StandardView {
         return item.getOrderNum() > 1;
     }
 
-    //todo AN return click listener
-    //todo exception NullPointerException: Cannot invoke "io.jmix.reports.entity.wizard.EntityTreeNode.getLocalizedName()" because "this.rootEntity" is null
     protected void editRegion() {
         ReportRegion selectedRegion = regionsTable.getSingleSelectedItem();
         if (selectedRegion != null) {
@@ -680,12 +673,15 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
-    protected void openRegionEditorOnlyWithNestedCollections(final ReportRegion item) {//show lookup for choosing parent collection for tabulated region
-        DialogWindow<EntityTreeLookupView> entityTreeListDialogWindow = dialogWindows.lookup(this, EntityTreeNode.class)
+    protected void openRegionEditorOnlyWithNestedCollections(final ReportRegion item) {
+        //show lookup for choosing parent collection for tabulated region
+        DialogWindow<EntityTreeLookupView> entityTreeListDialogWindow = dialogWindows
+                .lookup(this, EntityTreeNode.class)
                 .withViewClass(EntityTreeLookupView.class)
                 .build();
         EntityTreeLookupView entityTreeLookupView = entityTreeListDialogWindow.getView();
-        entityTreeLookupView.setParameters(reportDataDc.getItem().getEntityTreeRootNode(), false, true, false);
+        entityTreeLookupView.setParameters(
+                reportDataDc.getItem().getEntityTreeRootNode(), false, true, false);
         entityTreeLookupView.setSelectionHandler(items -> {
             if (items.size() == 1) {
                 EntityTreeNode regionPropertiesRootNode = IterableUtils.get(items, 0);
@@ -701,50 +697,21 @@ public class ReportWizardCreator extends StandardView {
     protected void openRegionEditor(ReportRegion item) {
         item.setRegionPropertiesRootNode(reportDataDc.getItem().getEntityTreeRootNode());
 
-        showRegionEditor(item, reportDataDc.getItem().getEntityTreeRootNode(), true, false, ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY == getReportTypeGenerate());
+        showRegionEditor(item, reportDataDc.getItem().getEntityTreeRootNode(), true, false,
+                ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY == getReportTypeGenerate());
     }
 
     protected void showRegionEditor(ReportRegion item, EntityTreeNode rootEntity, boolean scalarOnly, boolean collectionsOnly, boolean persistentOnly) {
-        DialogWindow<RegionDetailView> regionDialogWindow = dialogWindows.detail(this, ReportRegion.class)
-                .withViewClass(RegionDetailView.class)
+        DialogWindow<ReportRegionWizardDetailView> regionDialogWindow = dialogWindows.detail(this, ReportRegion.class)
+                .withViewClass(ReportRegionWizardDetailView.class)
                 .withContainer(reportRegionsDc)
                 .build();
-        RegionDetailView regionDetailView = regionDialogWindow.getView();
-        regionDetailView.setEntityToEdit(item);
-        regionDetailView.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
-        regionDetailView.setShowSaveNotification(false);
+
+        ReportRegionWizardDetailView reportRegionWizardDetailView = regionDialogWindow.getView();
+        reportRegionWizardDetailView.setEntityToEdit(item);
+        reportRegionWizardDetailView.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
+        reportRegionWizardDetailView.setShowSaveNotification(false);
         regionDialogWindow.open();
-    }
-
-    @Subscribe("regionsRunBtn")
-    public void onRegionsRunBtnClick(ClickEvent<Button> event) {
-        if (reportDataDc.getItem().getReportRegions().isEmpty()) {
-            notifications.create(messages.getMessage(getClass(), "addRegionsWarn"))
-                    .withType(Notifications.Type.WARNING)
-                    .show();
-            return;
-        }
-
-        lastGeneratedTmpReport = buildReport(true);
-
-        if (lastGeneratedTmpReport != null) {
-            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(lastGeneratedTmpReport)
-                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-                fluentRunner.inBackground(this);
-            }
-            fluentRunner.runAndShow();
-        }
-    }
-
-    @Subscribe("regionsEditBtn")
-    public void onRegionsEditBtnClick(ClickEvent<Button> event) {
-        editRegion();
-    }
-
-    @Subscribe("regionsTable.remove")
-    public void onRegionsTableRemove(ActionPerformedEvent event) {
-        normalizeRegionPropertiesOrderNum();
     }
 
     protected void normalizeRegionPropertiesOrderNum() {
@@ -754,7 +721,6 @@ public class ReportWizardCreator extends StandardView {
             item.setOrderNum(++normalizedIdx); //first must be 1
         }
     }
-
     @Subscribe("regionsTable.up")
     protected void onRegionsTableUp(ActionPerformedEvent event) {
         replaceParameters(true);
@@ -805,7 +771,7 @@ public class ReportWizardCreator extends StandardView {
         reportDataDc.getItem().setOutputNamePattern(event.getValue());
     }
 
-    //todo AN
+    //todo AN code editor
 //    @Install(to = "outputFileName", subject = "contextHelpIconClickHandler")
 //    protected void outputFileNameContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
 //        dialogs.createMessageDialog()
@@ -842,10 +808,13 @@ public class ReportWizardCreator extends StandardView {
         ReportData reportData = reportDataDc.getItem();
         if (StringUtils.isBlank(reportData.getName())) {
             MetaClass entityMetaClass = metadata.findClass(reportData.getEntityName());
-            return entityMetaClass != null ?
-                    messages.formatMessage(getClass(),
-                            "downloadOutputFileNamePattern", messageTools.getEntityCaption(entityMetaClass), fileExtension) :
-                    "";
+            if (entityMetaClass != null) {
+                return messages.formatMessage(getClass(),
+                        "downloadOutputFileNamePattern",
+                        messageTools.getEntityCaption(entityMetaClass), fileExtension);
+            } else {
+                return Strings.EMPTY;
+            }
         } else {
             return reportData.getName() + "." + fileExtension;
         }
@@ -853,6 +822,10 @@ public class ReportWizardCreator extends StandardView {
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
+        initRegionsTable();
+    }
+
+    protected void initRegionsTable() {
         regionsTable.addColumn(reportRegion -> {
                     String messageKey = reportRegion.isTabulatedRegion() ? "ReportRegion.tabulatedName" : "ReportRegion.simpleName";
                     return messages.formatMessage(getClass(), messageKey, reportRegion.getOrderNum());
@@ -860,12 +833,14 @@ public class ReportWizardCreator extends StandardView {
                 .setHeader(messages.getMessage(getClass(), "name"))
                 .setSortable(true)
                 .setResizable(true);
+
         regionsTable.addColumn(reportRegion ->
                         messageTools.getEntityCaption(metadata.getClass(reportRegion.getRegionPropertiesRootNode().getMetaClassName()))
                 ).setKey("entity")
                 .setHeader(messages.getMessage(getClass(), "entity"))
                 .setSortable(true)
                 .setResizable(true);
+
         regionsTable.addColumn(reportRegion ->
                         StringUtils.abbreviate(StringUtils.join(
                                         CollectionUtils.collect(reportRegion.getRegionProperties(),
@@ -887,9 +862,55 @@ public class ReportWizardCreator extends StandardView {
     public String generateTemplateFileName(String fileExtension) {
         ReportData reportData = reportDataDc.getItem();
         MetaClass entityMetaClass = metadata.findClass(reportData.getEntityName());
-        return entityMetaClass != null ?
-                messages.formatMessage(getClass(), "downloadTemplateFileNamePattern", reportData.getName(), fileExtension) :
-                "";
+
+        if (entityMetaClass != null) {
+            return messages.formatMessage(getClass(),
+                    "downloadTemplateFileNamePattern", reportData.getName(), fileExtension);
+        } else {
+            return Strings.EMPTY;
+        }
+    }
+
+    @Subscribe("reportParameterTable.generate")
+    public void onReportParameterTableGenerate(ActionPerformedEvent event) {
+        if (!queryParametersDc.getItems().isEmpty()) {
+            dialogs.createOptionDialog()
+                    .withHeader(messages.getMessage("dialogs.Confirmation"))
+                    .withText(messageBundle.getMessage("clearQueryParameterConfirm"))
+                    .withActions(
+                            new DialogAction(DialogAction.Type.OK).withHandler(e -> generateQueryParameters()),
+                            new DialogAction(DialogAction.Type.CANCEL))
+                    .open();
+        } else {
+            generateQueryParameters();
+        }
+    }
+
+    protected void generateQueryParameters() {
+        List<QueryParameter> queryParameterList = queryParametersDc.getMutableItems();
+        queryParameterList.clear();
+
+        String query = reportDataDc.getItem().getQuery();
+
+        if (query != null) {
+            QueryParser queryParser = queryTransformerFactory.parser(query);
+            Set<String> paramNames = queryParser.getParamNames();
+
+            for (String paramName : paramNames) {
+                QueryParameter queryParameter = createQueryParameter(paramName);
+                queryParameterList.add(queryParameter);
+            }
+        }
+    }
+
+    protected QueryParameter createQueryParameter(String name) {
+        QueryParameter queryParameter = metadata.create(QueryParameter.class);
+        queryParameter.setName(name);
+        queryParameter.setParameterType(ParameterType.TEXT);
+        queryParameter.setJavaClassName(String.class.getName());
+        queryParameter.setDefaultValueString(null);
+
+        return queryParameter;
     }
 
     @Subscribe("downloadTemplateFile")
@@ -912,12 +933,6 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
-
-    @Subscribe("reportParameterTable.generate")
-    public void onReportParameterTableGenerate(ActionPerformedEvent event) {
-
-    }
-
     @Subscribe(id = "reportRegionsDc", target = Target.DATA_CONTAINER)
     public void onReportRegionsDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportData> event) {
         regenerateQuery = event.getChangeType() == CollectionChangeType.ADD_ITEMS;
@@ -928,56 +943,21 @@ public class ReportWizardCreator extends StandardView {
         regenerateQuery = true;
     }
 
-//    @Subscribe("queryRunBtn")
-//    public void onQueryRunBtnClick(ClickEvent<Button> event) {
-//        lastGeneratedTmpReport = this.buildReport(true);
-//
-//        if (lastGeneratedTmpReport != null) {
-//            FluentReportRunner fluentReportRunner = reportRunner.byReportEntity(lastGeneratedTmpReport)
-//                    .withParams();
-//            FluentUiReportRunner fluentRunner =  fluentReportRunner
-//                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-//            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-//                fluentReportRunner.inBackground(getFragment().getFrameOwner());
-//            }
-//            fluentReportRunner.run();
-//        }
-//    }
+    @Subscribe("queryRunBtn")
+    public void onQueryRunBtnClick(ClickEvent<Button> event) {
+        lastGeneratedTmpReport = buildReport(true);
 
-    protected void generateQueryParameters() {
-        List<QueryParameter> queryParameterList = queryParametersDc.getMutableItems();
-        queryParameterList.clear();
-
-        String query = reportDataDc.getItem().getQuery();
-
-        if (query != null) {
-            QueryParser queryParser = queryTransformerFactory.parser(query);
-            Set<String> paramNames = queryParser.getParamNames();
-
-            for (String paramName : paramNames) {
-                QueryParameter queryParameter = createQueryParameter(paramName);
-                queryParameterList.add(queryParameter);
+        if (lastGeneratedTmpReport != null) {
+            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(lastGeneratedTmpReport)
+                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
+            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
+                fluentRunner.inBackground(this);
             }
+            fluentRunner.runAndShow();
         }
     }
 
 
-    private QueryParameter createQueryParameter(String name) {
-        QueryParameter queryParameter = metadata.create(QueryParameter.class);
-        queryParameter.setName(name);
-        queryParameter.setParameterType(ParameterType.TEXT);
-        queryParameter.setJavaClassName(String.class.getName());
-        queryParameter.setDefaultValueString(null);
-
-        return queryParameter;
-    }
-//todo AN
-//    protected void initQueryReportSourceCode() {
-//        reportQueryCodeEditor.setHighlightActiveLine(false);
-//        reportQueryCodeEditor.setShowGutter(false);
-//        reportQueryCodeEditor.setMode(SourceCodeEditor.Mode.SQL);
-//        reportQueryCodeEditor.setSuggester(this);
-//    }
 //todo AN code editor
 //    @Install(to = "reportQueryCodeEditor", subject = "contextHelpIconClickHandler")
 //    private void reportQueryCodeEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
@@ -1001,7 +981,6 @@ public class ReportWizardCreator extends StandardView {
 
         reportQueryCodeEditor.setSuffixComponent(new Div(expandIcon, helpIcon));
     }
-
 
     protected void onReportQueryCodeEditorHelpIconClick(ClickEvent<Icon> event) {
         dialogs.createMessageDialog()
@@ -1054,34 +1033,35 @@ public class ReportWizardCreator extends StandardView {
         }
     }
 
-//todo AN
-//    @Override
-//    public List<Suggestion> getSuggestions(AutoCompleteSupport source, String text, int cursorPosition) {
-//        if (StringUtils.isBlank(text)) {
-//            return Collections.emptyList();
+    protected void initReportParameterDataGrid() {
+        MetaPropertyPath nameMetaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(QueryParameter.class), "name");
+        MetaPropertyPath parameterTypeMetaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(QueryParameter.class), "parameterType");
+        MetaPropertyPath defaultValueStringMetaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(QueryParameter.class), "defaultValueString");
+        reportParameterTable.addColumn(nameMetaPropertyPath);
+        reportParameterTable.addColumn(parameterTypeMetaPropertyPath);
+    }
+    //todo AN value provider
+//    @Install(to = "reportParameterTable.defaultValueString", subject = "valueProvider")
+//    protected Object reportParameterTableDefaultStringValueProvider(QueryParameter queryParameter) {
+//        Object defaultValue = queryParameter.getDefaultValue();
+//        if (defaultValue != null) {
+//            ParameterType parameterType = queryParameter.getParameterType();
+//            switch (parameterType) {
+//                case DATE -> {
+//                    String dateFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateFormat();
+//                    return new SimpleDateFormat(dateFormat).format(defaultValue);
+//                }
+//                case TIME -> {
+//                    String timeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getTimeFormat();
+//                    return new SimpleDateFormat(timeFormat).format(defaultValue);
+//                }
+//                default -> {
+//                    return defaultValue;
+//                }
+//            }
 //        }
-//        int queryPosition = cursorPosition - 1;
 //
-//        return jpqlUiSuggestionProvider.getSuggestions(text, queryPosition, source);
+//        return StringUtils.EMPTY;
 //    }
-//@Install(to = "reportParameterTable.defaultValueString", subject = "valueProvider")
-//protected Object reportParameterTableDefaultStringValueProvider(QueryParameter queryParameter) {
-//    Object defaultValue = queryParameter.getDefaultValue();
-//    if (defaultValue != null) {
-//        ParameterType parameterType = queryParameter.getParameterType();
-//        switch (parameterType) {
-//            case DATE:
-//                String dateFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateFormat();
-//                return new SimpleDateFormat(dateFormat).format(defaultValue);
-//            case TIME:
-//                String timeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getTimeFormat();
-//                return new SimpleDateFormat(timeFormat).format(defaultValue);
-//            default:
-//                return defaultValue;
-//        }
-//    }
-//
-//    return StringUtils.EMPTY;
-//}
 
 }

@@ -23,48 +23,46 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportRegion;
-import io.jmix.reportsflowui.view.EntityTreeFragment;
-import org.apache.commons.lang3.BooleanUtils;
+import io.jmix.reportsflowui.view.EntityTreeComposite;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-@Route(value = "region/:id", layout = DefaultMainViewParent.class)
-@ViewController("report_WizardReportRegion.detail")
-@ViewDescriptor("region-detail-view.xml")
+@Route(value = "reportregion/:id", layout = DefaultMainViewParent.class)
+@ViewController("report_ReportRegionWizard.detail")
+@ViewDescriptor("report-region-wizard-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
-public class RegionDetailView extends StandardDetailView<ReportRegion> {
+public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegion> {
 
     protected boolean isTabulated;//if true then user perform add tabulated region action
     protected boolean asFetchPlanEditor;
     protected boolean updatePermission = true;
 
     @ViewComponent
-    private DataGrid<RegionProperty> propertiesTable;
+    protected Label tipLabel;
     @ViewComponent
-    private JmixButton upItem;
+    protected JmixButton upItem;
     @ViewComponent
-    private JmixButton downItem;
+    protected JmixButton downItem;
     @ViewComponent
-    private JmixButton addItem;
+    protected JmixButton addItem;
     @ViewComponent
-    private Label tipLabel;
+    protected CollectionPropertyContainer<RegionProperty> reportRegionPropertiesTableDc;
     @ViewComponent
-    private FormLayout treePanel;
-
+    protected FormLayout treePanel;
     @ViewComponent
-    private CollectionPropertyContainer<RegionProperty> reportRegionPropertiesTableDc;
+    protected DataGrid<RegionProperty> propertiesTable;
 
     @Autowired
     private UiComponents uiComponents;
     @Autowired
-    private Notifications notifications;
+    protected Messages messages;
     @Autowired
-    private Messages messages;
+    protected Notifications notifications;
     @Autowired
-    private Metadata metadata;
+    protected Actions actions;
     @Autowired
-    private Actions actions;
+    protected Metadata metadata;
 
     protected TreeDataGrid<EntityTreeNode> entityTree;
     protected EntityTreeNode rootEntity;
@@ -78,6 +76,22 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
         this.collectionsOnly = collectionsOnly;
         this.persistentOnly = persistentOnly;
         initTipLabel();
+    }
+
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
+        initComponents();
+    }
+
+    @Install(to = "propertiesTable.upItemAction", subject = "enabledRule")
+    protected boolean propertiesTableUpEnabledRule() {
+        RegionProperty selectedItem = propertiesTable.getSingleSelectedItem();
+        return selectedItem != null && selectedItem.getOrderNum() > 1 && isUpdatePermitted();
+    }
+    @Install(to = "propertiesTable.downItemAction", subject = "enabledRule")
+    protected boolean propertiesTableDownEnabledRule() {
+        RegionProperty selectedItem = propertiesTable.getSingleSelectedItem();
+        return selectedItem != null && selectedItem.getOrderNum() < reportRegionPropertiesTableDc.getItems().size() && isUpdatePermitted();
     }
 
     @Subscribe("propertiesTable.upItemAction")
@@ -103,60 +117,23 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
         }
     }
 
-    private void initTipLabel() {
+    protected void initTipLabel() {
         String messageKey = isTabulated
                 ? "selectEntityPropertiesForTableArea"
                 : "selectEntityProperties";
         tipLabel.setText(messages.formatMessage(messageKey, rootEntity.getLocalizedName()));
     }
 
-    public void setContainer(JmixButton downItem) {
-        this.downItem = downItem;
-    }
-
-    public void setAsFetchPlanEditor(boolean asFetchPlanEditor) {
-        this.asFetchPlanEditor = asFetchPlanEditor;
-    }
-
-    public void setUpdatePermission(boolean updatePermission) {
-        this.updatePermission = updatePermission;
-    }
-
-    public ReportRegion getReportRegionsItems() {
-        return getEditedEntityContainer().getItem();
-    }
-
-    public EntityTreeNode getRootEntity() {
-        return rootEntity;
-    }
-
-    @Subscribe
-    public void onBeforeShow(BeforeShowEvent event) {
-        isTabulated = BooleanUtils.toBoolean(getEditedEntity().getIsTabulatedRegion());
-        if (!asFetchPlanEditor) {
-            if (isTabulated) {
-                setTabulatedRegionEditorCaption(rootEntity.getName());
-            } else {
-                setSimpleRegionEditorCaption();
-            }
-        }
-        initComponents();
-    }
-
     protected void initComponents() {
-        if (asFetchPlanEditor) {
-            initAsFetchPlanEditor();
-        }
-
         initEntityTree();
     }
 
     protected void initEntityTree() {
-        EntityTreeFragment entityTreeFragment = uiComponents.create(EntityTreeFragment.class);
-        entityTreeFragment.setVisible(true);
-        entityTreeFragment.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
+        EntityTreeComposite entityTreeComposite = uiComponents.create(EntityTreeComposite.class);
+        entityTreeComposite.setVisible(true);
+        entityTreeComposite.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
 
-        entityTree = entityTreeFragment.getEntityTree();
+        entityTree = entityTreeComposite.getEntityTree();
         entityTree.expand(rootEntity);
 
         BaseAction doubleClickAction = new BaseAction("doubleClick")
@@ -171,17 +148,16 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
             }
         });
 
-        ListDataComponentAction addPropertyAction = actions.create(ItemTrackingAction.class, "addItemAction")
-                .withHandler(event -> addProperty());
+        ListDataComponentAction addPropertyAction = actions.create(ItemTrackingAction.ID, "addItemAction");
+        addPropertyAction.addActionPerformedListener(event -> addProperty());
         addPropertyAction.addEnabledRule(this::isUpdatePermitted);
         entityTree.addAction(addPropertyAction);
         addItem.setAction(addPropertyAction);
         addItem.setIcon(VaadinIcon.ARROW_RIGHT.create());
-        treePanel.add(entityTreeFragment);
+        treePanel.add(entityTreeComposite);
     }
 
     protected void addProperty() {
-        @SuppressWarnings("unchecked")
         List<EntityTreeNode> nodesList = reportRegionPropertiesTableDc.getItems()
                 .stream()
                 .map(RegionProperty::getEntityTreeNode).toList();
@@ -199,7 +175,8 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
             if (!alreadyAddedNodes.contains(entityTreeNode)) {
                 RegionProperty regionProperty = metadata.create(RegionProperty.class);
                 regionProperty.setEntityTreeNode(entityTreeNode);
-                regionProperty.setOrderNum((long) reportRegionPropertiesTableDc.getItems().size() + 1); //first element must be not zero cause later we do sorting by multiplying that values
+                regionProperty.setOrderNum((long) reportRegionPropertiesTableDc.getItems().size() + 1);
+                //first element must be not zero cause later we do sorting by multiplying that values
                 reportRegionPropertiesTableDc.getMutableItems().add(regionProperty);
                 addedItems.add(regionProperty);
             } else {
@@ -225,32 +202,13 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
         }
     }
 
-    protected void initAsFetchPlanEditor() {
-        //todo
-//        if (isTabulated) {
-//            getWindow().setCaption(messages.getMessage(getClass(), "singleEntityDataSetFetchPlanEditor"));
-//        } else {
-//            getWindow().setCaption(messages.getMessage(getClass(), "multiEntityDataSetFetchPlanEditor"));
-//        }
+    @Install(to = "propertiesTable.removeItemAction", subject = "enabledRule")
+    private boolean propertiesTableRemoveItemActionEnabledRule() {
+        return isUpdatePermitted();
     }
 
     protected boolean isUpdatePermitted() {
         return updatePermission;
-    }
-
-    protected void setTabulatedRegionEditorCaption(String collectionEntityName) {
-        //todo
-//        getWindow().setCaption(messages.getMessage(getClass(), "tabulatedRegionEditor"));
-    }
-
-    protected void setSimpleRegionEditorCaption() {
-        //todo
-//        getWindow().setCaption(messages.getMessage(getClass(), "simpleRegionEditor"));
-    }
-
-    @Install(to = "propertiesTable.removeItemAction", subject = "enabledRule")
-    private boolean propertiesTableRemoveItemActionEnabledRule() {
-        return isUpdatePermitted();
     }
 
     @Subscribe("propertiesTable.removeItemAction")
@@ -258,6 +216,14 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
         for (RegionProperty item : propertiesTable.getSelectedItems()) {
             reportRegionPropertiesTableDc.getMutableItems().remove(item);
             normalizeRegionPropertiesOrderNum();
+        }
+    }
+
+    protected void normalizeRegionPropertiesOrderNum() {
+        long normalizedIdx = 0;
+        List<RegionProperty> allItems = new ArrayList<>(reportRegionPropertiesTableDc.getItems());
+        for (RegionProperty item : allItems) {
+            item.setOrderNum(++normalizedIdx); //first must be 1
         }
     }
 
@@ -282,25 +248,6 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
         }
     }
 
-    @Install(to = "propertiesTable.upItemAction", subject = "enabledRule")
-    private boolean propertiesTableUpItemActionEnabledRule() {
-        return isUpdatePermitted();
-    }
-
-    @Install(to = "propertiesTable.downItemAction", subject = "enabledRule")
-    private boolean propertiesTableDownItemActionEnabledRule() {
-        return isUpdatePermitted();
-    }
-
-
-    protected void normalizeRegionPropertiesOrderNum() {
-        long normalizedIdx = 0;
-        List<RegionProperty> allItems = new ArrayList<>(reportRegionPropertiesTableDc.getItems());
-        for (RegionProperty item : allItems) {
-            item.setOrderNum(++normalizedIdx); //first must be 1
-        }
-    }
-
     @Subscribe
     public void onBeforeSave(BeforeSaveEvent event) {
         if (reportRegionPropertiesTableDc.getItems().isEmpty()) {
@@ -311,5 +258,13 @@ public class RegionDetailView extends StandardDetailView<ReportRegion> {
         }
     }
 
+    @Install(to = "propertiesTable.upItemAction", subject = "enabledRule")
+    private boolean propertiesTableUpItemActionEnabledRule() {
+        return isUpdatePermitted();
+    }
 
+    @Install(to = "propertiesTable.downItemAction", subject = "enabledRule")
+    private boolean propertiesTableDownItemActionEnabledRule() {
+        return isUpdatePermitted();
+    }
 }

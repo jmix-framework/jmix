@@ -25,9 +25,9 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
         <!-- todo rp screenSettings -->
-        <queryParameters>
+        <urlQueryParameters>
             <pagination component="pagination"/>
-        </queryParameters>
+        </urlQueryParameters>
     </facets>
     <actions>
         <action id="selectAction" type="lookup_select"/>

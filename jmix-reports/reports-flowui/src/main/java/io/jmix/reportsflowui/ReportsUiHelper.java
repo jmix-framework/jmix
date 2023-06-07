@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.Messages;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,8 @@ public class ReportsUiHelper {
         this.messages = messages;
     }
 
-    public void showScriptEditorDialog(String headerText, String value,
+    public void showScriptEditorDialog(String headerText,
+                                       String value,
                                        Consumer<String> okButtonClickHandler,
                                        @Nullable ComponentEventListener<ClickEvent<Icon>> helpIconClickListener) {
         Dialog dialog = uiComponents.create(Dialog.class);
@@ -49,19 +51,19 @@ public class ReportsUiHelper {
         layout.setPadding(false);
 
         // todo SourceCodeEditor
-        JmixTextArea textArea = uiComponents.create(JmixTextArea.class);
-        textArea.setValue(value);
-        textArea.setWidthFull();
-        textArea.setHeightFull();
+        CodeEditor codeEditor = uiComponents.create(CodeEditor.class);
+        codeEditor.setValue(value);
+        codeEditor.setWidthFull();
+        codeEditor.setHeightFull();
 
         if (helpIconClickListener != null) {
             Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
             icon.addClassName(FIELD_ICON_CLASS_NAME);
             icon.addClickListener(helpIconClickListener);
-            textArea.setSuffixComponent(icon);
+//            codeEditor.setSuffixComponent(icon);
         }
 
-        layout.add(textArea);
+        layout.add(codeEditor);
 
         HorizontalLayout actionsLayout = uiComponents.create(HorizontalLayout.class);
         actionsLayout.setWidthFull();
@@ -73,7 +75,7 @@ public class ReportsUiHelper {
         okBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         okBtn.addClickListener(okClickEvent -> {
             dialog.close();
-            okButtonClickHandler.accept(textArea.getValue());
+            okButtonClickHandler.accept(codeEditor.getValue());
         });
         Button cancelBtn = uiComponents.create(Button.class);
         cancelBtn.setText(messages.getMessage("scriptEditorDialog.cancelButton.text"));

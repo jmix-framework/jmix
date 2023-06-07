@@ -7,7 +7,7 @@ import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import io.jmix.reportsflowui.view.importdialog.ReportImportView;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
-import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreator;
+import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
@@ -211,7 +211,7 @@ public class ReportListView extends StandardListView<Report> {
     }
 
     protected void onDropdownCreateBtnWizardItemWizard(ActionPerformedEvent event) {
-        DialogWindow<ReportWizardCreator> build = dialogWindows.view(this, ReportWizardCreator.class).build();
+        DialogWindow<ReportWizardCreatorView> build = dialogWindows.view(this, ReportWizardCreatorView.class).build();
         build.addAfterCloseListener(e -> {
             if (e.closedWith(StandardOutcome.SAVE)) {
                 Report item = build.getView().getItem().getGeneratedReport();

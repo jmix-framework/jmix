@@ -5,7 +5,7 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout expand="editor">
-        <textArea id="editor" width="100%"/>
+        <codeEditor id="editor" width="100%"/>
 
         <hbox id="editActions">
             <button id="commitBtn" action="commit"/>

@@ -1,23 +1,24 @@
 package io.jmix.reportsflowui.view.reportvalueformat;
 
-import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import io.jmix.reportsflowui.view.scripteditor.ScriptEditorView;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.component.textarea.JmixTextArea;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.ReportValueFormat;
+import io.jmix.reportsflowui.ReportsUiHelper;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +37,9 @@ import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 @DialogMode(width = "30em")
 public class ReportValueFormatDetailView extends StandardDetailView<ReportValueFormat> {
 
-    public static final String RETURN_VALUE = "return value";
-
+    protected static final String RETURN_VALUE = "return value";
     protected static final String FIELD_ICON_CLASS_NAME = "template-detailview-field-icon";
-
-    protected String[] defaultFormats = new String[]{
+    protected static final String[] defaultFormats = new String[]{
             "#,##0",
             "##,##0",
             "#,##0.###",
@@ -59,9 +58,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     @ViewComponent
     private JmixCheckbox groovyField;
     @ViewComponent
-    private VerticalLayout groovyVBox;
-    @ViewComponent
-    private JmixTextArea groovyCodeEditor;
+    private CodeEditor groovyCodeEditor;
 
     @Autowired
     private SecureOperations secureOperations;
@@ -75,6 +72,12 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     private Dialogs dialogs;
     @Autowired
     private MessageBundle messageBundle;
+    @Autowired
+    private UiComponents uiComponents;
+    @Autowired
+    private ReportsUiHelper reportsUiHelper;
+    @ViewComponent
+    private InstanceContainer<ReportValueFormat> valuesFormatsDc;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -103,9 +106,19 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
         getEditedEntity().setFormatString(formatField.getValue());
     }
 
+    @Subscribe("groovyFullScreenButton")
+    public void onGroovyFullScreenButton(ClickEvent<Button> event) {
+
+    }
 
     protected void onGroovyCodeExpandIconClick(ClickEvent<Icon> event) {
-        DialogWindow<ScriptEditorView> editorDialog = dialogWindows.view(this, ScriptEditorView.class).open();
+        //todo AN
+//        reportsUiHelper.showScriptEditorDialog(
+//                getScriptEditorDialogCaption(),
+//                valuesFormatsDc.getItem().getFormatString(),
+//                value -> valuesFormatsDc.getItem().setFormatString(value),
+//                this::onTransformationScriptHelpIconClick
+//        );
 //todo an return with code editor
 //        editorDialog.addAfterCloseListener();
 //
@@ -152,13 +165,13 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
         if (Boolean.FALSE.equals(visible)) {
             formatField.clear();
         }
-        groovyVBox.setVisible(Boolean.TRUE.equals(visible));
+        groovyCodeEditor.setVisible(Boolean.TRUE.equals(visible));
         formatField.setVisible(Boolean.FALSE.equals(visible));
 
     }
 
 
-    //todo an
+    //todo AN code editor
 //    @Install(to = "groovyField", subject = "contextHelpIconClickHandler")
 //    protected void groovyCheckBoxContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent
 //                                                                     contextHelpIconClickEvent) {
@@ -178,8 +191,8 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
         Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
         helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
         helpIcon.addClickListener(this::onGroovyCodeHelpIconClick);
-
-        groovyCodeEditor.setSuffixComponent(new Div(expandIcon, helpIcon));
+//todo AN return
+//        groovyCodeEditor.setSuffixComponent(new Div(expandIcon, helpIcon));
     }
 
 

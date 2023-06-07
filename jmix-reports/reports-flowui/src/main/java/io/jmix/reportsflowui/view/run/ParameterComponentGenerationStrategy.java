@@ -249,7 +249,7 @@ public class ParameterComponentGenerationStrategy {
         }
 
         private EntityLookupAction<?> createLookupAction(ReportInputParameter parameter) {
-            EntityLookupAction<?> pickerLookupAction = actions.create(EntityLookupAction.class);
+            EntityLookupAction<?> pickerLookupAction = actions.create(EntityLookupAction.ID);
 
             String parameterScreen = parameter.getScreen();
             if (StringUtils.isNotEmpty(parameterScreen)) {
@@ -324,7 +324,7 @@ public class ParameterComponentGenerationStrategy {
         }
 
         protected ValueClearAction<?> createValueClearAction() {
-            return actions.create(ValueClearAction.class);
+            return actions.create(ValueClearAction.ID);
         }
 
         protected CollectionContainer<?> createCollectionContainer(MetaClass entityMetaClass) {

@@ -1,16 +1,14 @@
 package io.jmix.reportsflowui.view.entitytreelist;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.router.Route;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
-import io.jmix.reportsflowui.view.EntityTreeFragment;
+import io.jmix.reportsflowui.view.EntityTreeComposite;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "entityTree", layout = DefaultMainViewParent.class)
 @ViewController("EntityTreeList.lookup")
 @ViewDescriptor("entity-tree-lookup.xml")
 @LookupComponent("entityTree")
@@ -42,15 +40,18 @@ public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
 
     @Override
     public io.jmix.flowui.component.LookupComponent<EntityTreeNode> getLookupComponent() {
-        return createEntityTree();
+        if (entityTree == null) {
+            createEntityTree();
+        }
+        return entityTree;
     }
 
     private TreeDataGrid<EntityTreeNode> createEntityTree() {
-        EntityTreeFragment entityTreeFragment = uiComponents.create(EntityTreeFragment.class);
-        entityTreeFragment.setVisible(true);
-        entityTreeFragment.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
-        entityTree = entityTreeFragment.getEntityTree();
-        treePanel.add(entityTreeFragment);
+        EntityTreeComposite entityTreeComposite = uiComponents.create(EntityTreeComposite.class);
+        entityTreeComposite.setVisible(true);
+        entityTreeComposite.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
+        entityTree = entityTreeComposite.getEntityTree();
+        treePanel.add(entityTreeComposite);
 
         setSelectionValidator(validationContext -> {
             if (entityTree.getSingleSelectedItem() == null) {
@@ -68,6 +69,7 @@ public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
             }
             return true;
         });
+
         return entityTree;
     }
 }

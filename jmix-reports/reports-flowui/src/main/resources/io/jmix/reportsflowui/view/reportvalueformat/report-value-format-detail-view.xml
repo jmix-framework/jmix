@@ -16,6 +16,9 @@
     </actions>
     <layout>
         <formLayout dataContainer="valuesFormatsDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0em" columns="1"/>
+            </responsiveSteps>
             <textField id="valueNameField" property="valueName" required="true" width="100%"
                        requiredMessage="msg://valueNameMsg"/>
             <comboBox id="formatField" required="true"
@@ -25,15 +28,17 @@
                       requiredMessage="msg://formatStringMsg"/>
             <checkbox id="groovyField" dataContainer="valuesFormatsDc" property="groovyScript"
                       label="msg://valuesFormats.groovyScript"/>
-            <vbox id="groovyVBox"
-                  visible="false"
-                  padding="false">
-                <textArea id="groovyCodeEditor" height="200px" width="100%"
-                          required="true"
-                          requiredMessage="msg://groovyScriptMsg"
-                          dataContainer="valuesFormatsDc"
-                          property="formatString"/>
-            </vbox>
+            <button id="groovyFullScreenButton"
+                    classNames="link"
+                    text="msg://fullScreen"/>
+            <codeEditor id="groovyCodeEditor"
+                        dataContainer="valuesFormatsDc"
+                        height="30em"
+                        width="100%"
+                        property="formatString"
+                        mode="GROOVY"
+                        required="true"
+                        requiredMessage="msg://groovyScriptMsg"/>
         </formLayout>
         <hbox id="detailActions" width="100%">
             <button id="saveAndCloseBtn" action="saveCloseAction"/>

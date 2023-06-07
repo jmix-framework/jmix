@@ -44,68 +44,66 @@ import java.util.*;
 @DialogMode(width = "40em")
 public class ReportParameterDetailView extends StandardDetailView<ReportInputParameter> {
 
-    public static final String FIELD_ICON_SIZE_CLASS_NAME = "reports-field-icon-size";
+    protected static final String FIELD_ICON_SIZE_CLASS_NAME = "reports-field-icon-size";
     protected static final String FIELD_ICON_CLASS_NAME = "template-detailview-field-icon";
 
     @ViewComponent
-    private JmixComboBox<ParameterType> parameterTypeField;
+    protected JmixComboBox<ParameterType> parameterTypeField;
     @ViewComponent
-    private JmixTabSheet tabsheet;
+    protected JmixTabSheet tabsheet;
     @ViewComponent
-    private JmixComboBox<String> screenField;
+    protected JmixComboBox<String> screenField;
     @ViewComponent
-    private JmixComboBox<String> enumerationField;
+    protected JmixComboBox<String> enumerationField;
     @ViewComponent
-    private JmixComboBox<String> metaClassField;
+    protected JmixComboBox<String> metaClassField;
     @ViewComponent
-    private JmixCheckbox isLookupField;
+    protected JmixCheckbox isLookupField;
     @ViewComponent
-    private JmixCheckbox isDefaultDateIsCurrentField;
+    protected JmixCheckbox isDefaultDateIsCurrentField;
     @ViewComponent
-    private JmixComboBox<PredefinedTransformation> wildcardsField;
+    protected JmixComboBox<PredefinedTransformation> wildcardsField;
     @ViewComponent
-    private Div predefinedTransformationBox;
+    protected Div predefinedTransformationBox;
     @ViewComponent
-    private JmixTextArea localeField;
+    protected JmixTextArea localeField;
     @ViewComponent
-    private JmixTextArea transformationScript;
+    protected JmixTextArea transformationScript;
     @ViewComponent
-    private JmixTextArea validationScript;
+    protected JmixTextArea validationScript;
     @ViewComponent
-    private JmixTextArea lookupJoin;
+    protected JmixTextArea lookupJoin;
     @ViewComponent
-    private JmixTextArea lookupWhere;
+    protected JmixTextArea lookupWhere;
     @ViewComponent
-    private HorizontalLayout defaultValueBox;
+    protected HorizontalLayout defaultValueBox;
     @ViewComponent
-    private JmixCheckbox isPredefinedTransformationField;
-
+    protected JmixCheckbox isPredefinedTransformationField;
     @ViewComponent
-    private InstanceContainer<ReportInputParameter> parameterDc;
-
+    protected InstanceContainer<ReportInputParameter> parameterDc;
 
     @Autowired
-    private ParameterClassResolver parameterClassResolver;
+    protected ParameterClassResolver parameterClassResolver;
     @Autowired
-    private MetadataTools metadataTools;
+    protected MetadataTools metadataTools;
     @Autowired
-    private Messages messages;
+    protected Messages messages;
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
     @Autowired
-    private MessageTools messageTools;
+    protected MessageTools messageTools;
     @Autowired
-    private ViewRegistry viewRegistry;
+    protected ViewRegistry viewRegistry;
     @Autowired
-    private SecureOperations secureOperations;
+    protected SecureOperations secureOperations;
     @Autowired
-    private PolicyStore policyStore;
+    protected PolicyStore policyStore;
     @Autowired
-    private Dialogs dialogs;
+    protected Dialogs dialogs;
     @Autowired
-    private ReportsUiHelper reportsUiHelper;
+    protected ReportsUiHelper reportsUiHelper;
     @Autowired
-    private JmixObjectToStringConverter jmixObjectToStringConverter;
+    protected JmixObjectToStringConverter jmixObjectToStringConverter;
     @Autowired
     private ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
 
@@ -138,6 +136,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             editedParam.setParameterClass(parameterClassResolver.resolveClass(editedParam));
         }
     }
+
     //todo AN fix exception screenfield items should be set before setting value on init
 //    @Override
 //    public void setEntityToEdit(ReportInputParameter entity) {
@@ -199,7 +198,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
         transformationScript.setSuffixComponent(new Div(expandIcon, helpIcon));
     }
-
 
     protected void onTransformationScriptHelpIconClick(ClickEvent<Icon> event) {
         dialogs.createMessageDialog()
@@ -284,7 +282,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         );
     }
 
-
     protected void initLookupWhere() {
         Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
         expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
@@ -296,7 +293,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
         lookupWhere.setSuffixComponent(new Div(expandIcon, helpIcon));
     }
-
 
     protected void onLookupWhereHelpIconClick(ClickEvent<Icon> event) {
         dialogs.createMessageDialog()
@@ -316,7 +312,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 this::onLookupWhereHelpIconClick
         );
     }
-
 
     protected String getScriptEditorDialogCaption() {
         String reportName = parameterDc.getItem().getName();
@@ -374,7 +369,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         if (parameter.getType() == ParameterType.ENTITY || parameter.getType() == ParameterType.ENTITY_LIST) {
             Class clazz = parameterClassResolver.resolveClass(parameter);
             if (clazz != null) {
-                //todo AN fix exception screenfield items should be set before setting value on init
                 String availableListViewId = viewRegistry.getAvailableListViewId(metadata.findClass(clazz));
                 screenField.setItems(availableListViewId);
 
@@ -539,7 +533,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                                 ParameterType.TIME.equals(parameter.getType()))
                 .orElse(false);
     }
-//todo an return with code editor
+//todo an return with code editor suggestions
 //    protected List<SourceCodeAnalysis.Suggestion> requestHint(SourceCodeEditor sender, int senderCursorPosition) {
 
 //        String joinStr = lookupJoin.getValue();

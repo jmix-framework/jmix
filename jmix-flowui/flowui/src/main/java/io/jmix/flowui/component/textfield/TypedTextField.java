@@ -241,6 +241,20 @@ public class TypedTextField<V> extends TextField
         fieldDelegate.setPattern(pattern);
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {
         fireTextFieldValueChangeEvent(oldValue, isFromClient);
         fireTypedValueChangeEvent(value, oldValue, isFromClient);

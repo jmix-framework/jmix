@@ -29,6 +29,7 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -69,6 +70,20 @@ public class JmixMultiValuePicker<V> extends MultiValuePicker<V>
     @Override
     public void setInvalid(boolean invalid) {
         fieldDelegate.setInvalid(invalid);
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
     }
 
     @Nullable
@@ -132,5 +147,10 @@ public class JmixMultiValuePicker<V> extends MultiValuePicker<V>
     @Override
     protected ValuePickerActionSupport createActionsSupport() {
         return new JmixValuePickerActionSupport(this);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty() || CollectionUtils.isEmpty(getValue());
     }
 }

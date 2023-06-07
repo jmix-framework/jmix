@@ -97,6 +97,15 @@ public class JmixEmailField extends EmailField implements SupportsValueSource<St
     @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
     }
 
     @Override

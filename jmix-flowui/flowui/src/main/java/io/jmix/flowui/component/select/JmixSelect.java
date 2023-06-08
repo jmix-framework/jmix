@@ -30,6 +30,7 @@ import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
+import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
@@ -67,12 +68,6 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
                 dataViewDelegate.valueBindingChanged(event));
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
-
-        attachValueChangeListener();
-    }
-
-    protected void attachValueChangeListener() {
-        addValueChangeListener(e -> validate());
     }
 
     @Nullable
@@ -157,8 +152,9 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
 
     @Override
     public SelectDataView<V> setItems(InMemoryDataProvider<V> inMemoryDataProvider) {
-        bindDataProvider(inMemoryDataProvider);
-        return super.setItems(inMemoryDataProvider);
+        // Override Vaadin implementation, so we will have access to the original DataProvider
+        InMemoryDataProviderWrapper<V> wrapper = new InMemoryDataProviderWrapper<>(inMemoryDataProvider);
+        return setItems(wrapper);
     }
 
     protected void bindDataProvider(DataProvider<V, ?> dataProvider) {

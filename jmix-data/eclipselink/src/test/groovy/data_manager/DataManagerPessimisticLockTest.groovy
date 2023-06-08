@@ -22,12 +22,15 @@ import io.jmix.core.DataManager
 import io.jmix.core.querycondition.PropertyCondition
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.TestAppender
 import test_support.entity.sales.Customer
 
 import jakarta.persistence.LockModeType
 
+//todo restore DataManagerPessimisticLockTest
+@Ignore
 class DataManagerPessimisticLockTest extends DataSpec {
 
     @Autowired

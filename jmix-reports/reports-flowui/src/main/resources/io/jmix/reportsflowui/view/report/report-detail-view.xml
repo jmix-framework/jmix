@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://reportDetailView.title">
     <data>
@@ -38,7 +54,7 @@
     <layout>
         <tabSheet id="mainTabSheet" width="100%" height="100%" minHeight="0">
             <tab id="detailsTab" label="msg://mainTabSheet.detailsTab.label">
-                <vbox id="detailsTabContent">
+                <vbox id="detailsTabContent" padding="false">
                     <formLayout id="reportForm" dataContainer="reportDc">
                         <textField id="nameField" property="name"
                                    requiredMessage="msg://detailsTab.nameField.requiredMessage"/>
@@ -69,7 +85,7 @@
             </tab>
             <tab id="bandsTab" label="msg://mainTabSheet.bandsTab.label">
                 <div id="bandsTabContent" width="100%" height="100%" classNames="reports-flex-layout">
-                    <vbox id="bandsLayout" classNames="bands-layout">
+                    <vbox id="bandsLayout" classNames="bands-layout" padding="false">
                         <hbox id="bandsButtonsLayout">
                             <button id="createBandBtn" action="bandsTreeDataGrid.create"/>
                             <button id="removeBandBtn" action="bandsTreeDataGrid.remove"/>
@@ -233,7 +249,7 @@
             </tab>
             <tab id="parametersTab" label="msg://mainTabSheet.parametersTab.label">
                 <div classNames="reports-flex-layout" width="100%" height="100%">
-                    <vbox classNames="parameters-layout">
+                    <vbox classNames="parameters-layout" padding="false">
                         <hbox>
                             <button action="inputParametersTable.createParameter"/>
                             <button action="inputParametersTable.editParameter"/>
@@ -264,7 +280,7 @@
                             </columns>
                         </dataGrid>
                     </vbox>
-                    <vbox classNames="parameters-validate-layout">
+                    <vbox classNames="parameters-validate-layout" padding="false">
                         <h2 text="msg://report.crossParametersValidation"/>
                         <checkbox id="validationOnCheckBox"
                                   label="msg://parameters.validationOn"
@@ -279,7 +295,7 @@
                 </div>
             </tab>
             <tab id="valuesFormatsTab" label="msg://mainTabSheet.valuesFormats.label">
-                <vbox id="valuesFormatsVBox" height="100%">
+                <vbox id="valuesFormatsVBox" height="100%" padding="false">
                     <hbox>
                         <button action="valuesFormatsTable.createValueFormat"/>
                         <button action="valuesFormatsTable.editValueFormat"/>
@@ -309,7 +325,7 @@
                 </vbox>
             </tab>
             <tab id="templatesTab" label="msg://mainTabSheet.templatesTab.label">
-                <vbox id="templatesTabContent" height="100%">
+                <vbox id="templatesTabContent" height="100%" padding="false">
                     <hbox>
                         <button action="templatesTable.create"/>
                         <button action="templatesTable.edit"/>
@@ -338,7 +354,7 @@
             </tab>
             <tab id="securityTab" label="msg://mainTabSheet.securityTab.label">
                 <div id="securityTabContent" width="100%" height="100%" classNames="reports-flex-layout">
-                    <vbox classNames="roles-layout" expand="rolesTable">
+                    <vbox classNames="roles-layout" expand="rolesTable" padding="false">
                         <h2 text="msg://securityFrame.roles"/>
                         <hbox id="addRoleGroupBox" expand="rolesField" width="100%">
                             <comboBox id="rolesField"/>
@@ -360,7 +376,7 @@
                             </columns>
                         </dataGrid>
                     </vbox>
-                    <vbox classNames="views-layout" expand="screenTable">
+                    <vbox classNames="views-layout" expand="screenTable" padding="false">
                         <h2 text="msg://securityFrame.screens"/>
                         <hbox id="addScreenGroupBox" expand="screenIdField" width="100%">
                             <comboBox id="screenIdField"/>

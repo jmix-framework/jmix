@@ -32,12 +32,12 @@
 
 .bands-layout {
     flex-grow: 1;
-    flex-basis: 30%;
+    flex-basis: 20em;
 }
 
 .bands-details-layout {
     flex-grow: 1;
-    flex-basis: 70%;
+    flex-basis: 30em;
 }
 
 .data-sets-data-grid-layout {
@@ -53,6 +53,7 @@
 .reports-flex-layout {
     display: flex;
     flex-wrap: wrap;
+    gap: 1em;
 }
 
 .multi-data-set-layout.reports-flex-layout {

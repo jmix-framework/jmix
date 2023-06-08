@@ -26,20 +26,29 @@
                       property="formatString"
                       label="msg://formatStringMsg"
                       requiredMessage="msg://formatStringMsg"/>
-            <checkbox id="groovyField" dataContainer="valuesFormatsDc" property="groovyScript"
+            <checkbox id="groovyField" property="groovyScript"
                       label="msg://valuesFormats.groovyScript"/>
-            <button id="groovyFullScreenButton"
-                    themeNames="tertiary-inline"
-                    text="msg://fullScreen"/>
-            <codeEditor id="groovyCodeEditor"
-                        dataContainer="valuesFormatsDc"
-                        height="30em"
-                        width="100%"
-                        property="formatString"
-                        mode="GROOVY"
-                        required="true"
-                        requiredMessage="msg://groovyScriptMsg"/>
         </formLayout>
+        <div id="groovyCodeEditorBox" visible="false" width="100%">
+            <div classNames="flex, justify-between">
+                <label text="msg://valuesFormats.groovyScript"/>
+                <button id="fullScreenTransformationBtn" text="msg:///fullScreenBtn.title"
+                        themeNames="tertiary-inline"/>
+            </div>
+            <div classNames="flex, items-start">
+                <codeEditor id="groovyCodeEditor"
+                            dataContainer="valuesFormatsDc"
+                            height="20em"
+                            width="100%"
+                            property="formatString"
+                            mode="GROOVY"
+                            required="true"
+                            requiredMessage="msg://groovyScriptMsg"/>
+                <button id="groovyCodeEditorHelpBtn"
+                        themeNames="icon, tertiary-inline"
+                        icon="QUESTION_CIRCLE"/>
+            </div>
+        </div>
         <hbox id="detailActions" width="100%">
             <button id="saveAndCloseBtn" action="saveCloseAction"/>
             <button id="closeBtn" action="closeAction"/>

@@ -235,8 +235,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         reportsUiHelper.showScriptEditorDialog(
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getLookupJoin(),
-                CodeEditorMode.GROOVY,
                 value -> parameterDc.getItem().setLookupJoin(value),
+                CodeEditorMode.GROOVY,
                 icon -> onLookupJoinHelpIconClick()
         );
     }
@@ -247,6 +247,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getLookupWhere(),
                 value -> parameterDc.getItem().setLookupWhere(value),
+                CodeEditorMode.GROOVY,
                 icon -> onLookupWhereHelpIconClick()
         );
     }

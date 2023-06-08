@@ -93,9 +93,9 @@ public class TriggerModelEdit extends StandardEditor<TriggerModel> {
     private void initRepeatModeSelectorValue() {
         Integer repeatCount = repeatCountField.getValue();
         if(repeatCount == null || repeatCount < 0) {
-            repeatModeSelector.setValue(RepeatMode.INFINITE_REPEATS);
+            repeatModeSelector.setValue(RepeatMode.EXECUTE_FOREVER);
         } else if(repeatCount == 0) {
-            repeatModeSelector.setValue(RepeatMode.NO_REPEATS);
+            repeatModeSelector.setValue(RepeatMode.EXECUTE_ONCE);
         } else {
             repeatModeSelector.setValue(RepeatMode.FINITE_REPEATS);
         }
@@ -119,11 +119,11 @@ public class TriggerModelEdit extends StandardEditor<TriggerModel> {
                 return;
             }
             switch (currentRepeatMode) {
-                case NO_REPEATS:
+                case EXECUTE_ONCE:
                     repeatCountField.setVisible(false);
                     repeatIntervalField.setVisible(false);
                     break;
-                case INFINITE_REPEATS:
+                case EXECUTE_FOREVER:
                     repeatCountField.setVisible(false);
                     repeatIntervalField.setVisible(true);
                     break;
@@ -137,11 +137,11 @@ public class TriggerModelEdit extends StandardEditor<TriggerModel> {
 
     private void initRepeatFieldsValues(RepeatMode currentRepeatMode) {
         switch (currentRepeatMode) {
-            case NO_REPEATS:
+            case EXECUTE_ONCE:
                 repeatCountField.setValue(0);
                 repeatIntervalField.setValue(0L);
                 break;
-            case INFINITE_REPEATS:
+            case EXECUTE_FOREVER:
                 repeatCountField.setValue(-1);
                 initDefaultRepeatInterval();
                 break;

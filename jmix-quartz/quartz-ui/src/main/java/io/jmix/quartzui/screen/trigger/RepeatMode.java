@@ -25,17 +25,17 @@ import javax.annotation.Nullable;
  */
 public enum RepeatMode implements EnumClass<String> {
     /**
-     * No additional executions besides very first
+     * Execute once without any repeats
      */
-    NO_REPEATS("no_repeats"),
+    EXECUTE_ONCE("execute_once"),
     /**
-     * Performs N additional executions.
+     * Performs N additional executions besides the first one.
      */
     FINITE_REPEATS("finite_repeats"),
     /**
      * Performs infinite additional executions
      */
-    INFINITE_REPEATS("infinite_repeats");
+    EXECUTE_FOREVER("execute_forever");
 
     private final String id;
 

@@ -51,7 +51,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.ServerSocket;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -1458,7 +1459,10 @@ public class FrontendUtils {
 
     public static int findFreePort(int rangeStart, int rangeEnd) {
         for (int port = rangeStart; port <= rangeEnd; port++) {
-            try (ServerSocket socket = new ServerSocket(port)) {
+            try {
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress("localhost", port), 500);
+                socket.close();
                 return port;
             } catch (IOException ignored) {
             }

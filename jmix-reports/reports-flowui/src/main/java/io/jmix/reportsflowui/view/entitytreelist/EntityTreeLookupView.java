@@ -11,19 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ViewController("EntityTreeList.lookup")
 @ViewDescriptor("entity-tree-lookup.xml")
-@LookupComponent("entityTree")
+@LookupComponent("treePanel.treeDataGrid")
 @DialogMode(width = "50em", height = "37.5em")
 public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
 
     @ViewComponent
-    private FormLayout treePanel;
+    protected FormLayout treePanel;
 
     @Autowired
-    private UiComponents uiComponents;
+    protected UiComponents uiComponents;
     @Autowired
-    private Notifications notifications;
+    protected Notifications notifications;
     @Autowired
-    private MessageBundle messageBundle;
+    protected MessageBundle messageBundle;
 
     protected EntityTreeNode rootEntity;
     protected boolean scalarOnly = false;
@@ -46,8 +46,9 @@ public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
         return entityTree;
     }
 
-    private TreeDataGrid<EntityTreeNode> createEntityTree() {
+    protected TreeDataGrid<EntityTreeNode> createEntityTree() {
         EntityTreeComposite entityTreeComposite = uiComponents.create(EntityTreeComposite.class);
+        entityTreeComposite.setId("entityTreeComposite");
         entityTreeComposite.setVisible(true);
         entityTreeComposite.setParameters(rootEntity, scalarOnly, collectionsOnly, persistentOnly);
         entityTree = entityTreeComposite.getEntityTree();

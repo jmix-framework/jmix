@@ -44,6 +44,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
@@ -1289,7 +1290,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
         reportsUiHelper.showScriptEditorDialog(
                 getScriptEditorDialogCaption(),
                 dataSetsDc.getItem().getText(),
-                value -> dataSetsDc.getItem().setText(value), helpIconClickListener);
+                value -> dataSetsDc.getItem().setText(value),
+                CodeEditorMode.GROOVY,
+                helpIconClickListener);
     }
 
     protected void onDataSetScriptFieldHelpIconClick(ClickEvent<Icon> event) {
@@ -1348,6 +1351,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 getScriptEditorDialogCaption(),
                 dataSetsDc.getItem().getJsonSourceText(),
                 value -> dataSetsDc.getItem().setJsonSourceText(value),
+                CodeEditorMode.GROOVY,
                 this::onJsonGroovyCodeEditorHelpIconClick
         );
     }

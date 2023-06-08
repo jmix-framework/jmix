@@ -8,14 +8,12 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
@@ -25,11 +23,11 @@ import io.jmix.flowui.FlowuiProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
-import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
@@ -37,6 +35,7 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.app.EntityTree;
@@ -65,6 +64,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Route(value = "reportwizard", layout = DefaultMainViewParent.class)
@@ -89,14 +89,14 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected InstanceContainer<ReportData> reportDataDc;
     @ViewComponent
-    private DataContext dataContext;
+    protected DataContext dataContext;
 
     @Autowired
-    private Messages messages;
+    protected Messages messages;
     @Autowired
-    private MessageBundle messageBundle;
+    protected MessageBundle messageBundle;
     @Autowired
-    private Dialogs dialogs;
+    protected Dialogs dialogs;
     @ViewComponent
     protected JmixComboBox<TemplateFileType> templateFileTypeField;
     @ViewComponent
@@ -112,9 +112,9 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected Div queryDiv;
     @ViewComponent
-    protected DataGrid<ReportRegion> regionsTable;
+    protected DataGrid<ReportRegion> regionDataGrid;
     @ViewComponent
-    protected DataGrid<QueryParameter> reportParameterTable;
+    protected DataGrid<QueryParameter> reportParameterDataGrid;
     @ViewComponent
     protected JmixButton regionsRunBtn;
     @ViewComponent
@@ -124,7 +124,7 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected JmixRadioButtonGroup<ReportTypeGenerate> reportTypeGenerateField;
     @ViewComponent
-    protected JmixTextArea reportQueryCodeEditor;
+    protected CodeEditor reportQueryCodeEditor;
     @ViewComponent
     protected CollectionPropertyContainer<QueryParameter> queryParametersDc;
     @ViewComponent
@@ -142,7 +142,7 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected JmixButton saveBtn;
     @ViewComponent
-    private JmixComboBox entityField;
+    protected JmixComboBox entityField;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -178,9 +178,9 @@ public class ReportWizardCreatorView extends StandardView {
     @Autowired
     protected DialogWindows dialogWindows;
     @Autowired
-    private FormatStringsRegistry formatStringsRegistry;
+    protected FormatStringsRegistry formatStringsRegistry;
     @Autowired
-    private CurrentAuthentication currentAuthentication;
+    protected CurrentAuthentication currentAuthentication;
 
     protected boolean regenerateQuery = false;
     protected boolean needUpdateEntityModel = false;
@@ -197,9 +197,8 @@ public class ReportWizardCreatorView extends StandardView {
         initReportTypeOptionGroup();
         initTemplateFormatLookupField();
         initEntityLookupField();
-        //todo AN
-//        initQueryReportSourceCode();
-        initReportQueryCodeEditorScript();
+        initReportParameterDataGrid();
+        updateButtons();
     }
 
     protected void initItem() {
@@ -537,12 +536,13 @@ public class ReportWizardCreatorView extends StandardView {
         reportTypeGenerateField.setValue(ReportTypeGenerate.SINGLE_ENTITY);
     }
 
-    private String itemLabelGenerator(ReportTypeGenerate reportTypeGenerate) {
+    protected String itemLabelGenerator(ReportTypeGenerate reportTypeGenerate) {
         return switch (reportTypeGenerate) {
             case SINGLE_ENTITY -> messages.getMessage(getClass(), "singleEntityReport");
             case LIST_OF_ENTITIES -> messages.getMessage(getClass(), "listOfEntitiesReport");
             case LIST_OF_ENTITIES_WITH_QUERY -> messages.getMessage(getClass(), "listOfEntitiesReportWithQuery");
         };
+
     }
 
     protected Map<TemplateFileType, String> getAvailableTemplateFormats() {
@@ -586,9 +586,9 @@ public class ReportWizardCreatorView extends StandardView {
         return reportDataDc.getItem().getReportTypeGenerate();
     }
 
-    @Subscribe("regionsTable.remove")
-    public void onRegionsTableRemoveItemAction(ActionPerformedEvent event) {
-        for (ReportRegion item : regionsTable.getSelectedItems()) {
+    @Subscribe("regionDataGrid.remove")
+    public void onRegionDataGridRemoveItemAction(ActionPerformedEvent event) {
+        for (ReportRegion item : regionDataGrid.getSelectedItems()) {
             reportRegionsDc.getMutableItems().remove(item);
             normalizeRegionPropertiesOrderNum();
         }
@@ -615,9 +615,9 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
-    @Install(to = "regionsTable.up", subject = "enabledRule")
-    private boolean regionsTableUpEnabledRule() {
-        ReportRegion item = regionsTable.getSingleSelectedItem();
+    @Install(to = "regionDataGrid.up", subject = "enabledRule")
+    protected boolean regionDataGridUpEnabledRule() {
+        ReportRegion item = regionDataGrid.getSingleSelectedItem();
         if (item == null) {
             return false;
         }
@@ -625,7 +625,7 @@ public class ReportWizardCreatorView extends StandardView {
     }
 
     protected void editRegion() {
-        ReportRegion selectedRegion = regionsTable.getSingleSelectedItem();
+        ReportRegion selectedRegion = regionDataGrid.getSingleSelectedItem();
         if (selectedRegion != null) {
             showRegionEditor(selectedRegion, selectedRegion.getRegionPropertiesRootNode(), true, false, ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY == getReportTypeGenerate());
         }
@@ -688,7 +688,7 @@ public class ReportWizardCreatorView extends StandardView {
 
                 item.setRegionPropertiesRootNode(regionPropertiesRootNode);
 
-                showRegionEditor(item, regionPropertiesRootNode, false, true, false);
+                showRegionEditor(item, regionPropertiesRootNode, true, false, false);
             }
         });
         entityTreeListDialogWindow.open();
@@ -721,20 +721,21 @@ public class ReportWizardCreatorView extends StandardView {
             item.setOrderNum(++normalizedIdx); //first must be 1
         }
     }
-    @Subscribe("regionsTable.up")
-    protected void onRegionsTableUp(ActionPerformedEvent event) {
+
+    @Subscribe("regionDataGrid.up")
+    protected void onRegionDataGridUp(ActionPerformedEvent event) {
         replaceParameters(true);
     }
 
-    @Subscribe("regionsTable.down")
-    protected void onRegionsTableDown(ActionPerformedEvent event) {
+    @Subscribe("regionDataGrid.down")
+    protected void onRegionDataGridDown(ActionPerformedEvent event) {
         replaceParameters(false);
     }
 
     protected void replaceParameters(boolean up) {
-        if (regionsTable.getSingleSelectedItem() != null) {
+        if (regionDataGrid.getSingleSelectedItem() != null) {
             List<ReportRegion> items = reportRegionsDc.getMutableItems();
-            int currentPosition = items.indexOf(regionsTable.getSingleSelectedItem());
+            int currentPosition = items.indexOf(regionDataGrid.getSingleSelectedItem());
             if ((up && currentPosition != 0)
                     || (!up && currentPosition != items.size() - 1)) {
                 int itemToSwapPosition = currentPosition - (up ? 1 : -1);
@@ -752,8 +753,6 @@ public class ReportWizardCreatorView extends StandardView {
             buttonsBox.add(addTabulatedRegionBtn);
         } else {
             if (entityTreeHasSimpleAttrs && entityTreeHasCollections) {
-                //todo AN return dropdown button
-//                buttonsBox.add(addRegionPopupBtn);
                 buttonsBox.add(addSimpleRegionBtn);
                 buttonsBox.add(addTabulatedRegionBtn);
             } else if (entityTreeHasSimpleAttrs) {
@@ -770,19 +769,6 @@ public class ReportWizardCreatorView extends StandardView {
     public void onOutputFileNameComponentValueChange(AbstractField.ComponentValueChangeEvent<TextField, String> event) {
         reportDataDc.getItem().setOutputNamePattern(event.getValue());
     }
-
-    //todo AN code editor
-//    @Install(to = "outputFileName", subject = "contextHelpIconClickHandler")
-//    protected void outputFileNameContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
-//        dialogs.createMessageDialog()
-//                .withCaption(messages.getMessage("template.namePatternText"))
-//                .withMessage(messages.getMessage("template.namePatternTextHelp"))
-//                .withContentMode(ContentMode.HTML)
-//                .withModal(false)
-//                .withWidth("560px")
-//                .show();
-//    }
-
 
     protected void updateCorrectReportOutputType() {
         ReportOutputType outputFileFormatPrevValue = outputFileFormat.getValue();
@@ -822,11 +808,11 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        initRegionsTable();
+        initRegionsDataGrid();
     }
 
-    protected void initRegionsTable() {
-        regionsTable.addColumn(reportRegion -> {
+    protected void initRegionsDataGrid() {
+        regionDataGrid.addColumn(reportRegion -> {
                     String messageKey = reportRegion.isTabulatedRegion() ? "ReportRegion.tabulatedName" : "ReportRegion.simpleName";
                     return messages.formatMessage(getClass(), messageKey, reportRegion.getOrderNum());
                 }).setKey("name")
@@ -834,14 +820,14 @@ public class ReportWizardCreatorView extends StandardView {
                 .setSortable(true)
                 .setResizable(true);
 
-        regionsTable.addColumn(reportRegion ->
+        regionDataGrid.addColumn(reportRegion ->
                         messageTools.getEntityCaption(metadata.getClass(reportRegion.getRegionPropertiesRootNode().getMetaClassName()))
                 ).setKey("entity")
                 .setHeader(messages.getMessage(getClass(), "entity"))
                 .setSortable(true)
                 .setResizable(true);
 
-        regionsTable.addColumn(reportRegion ->
+        regionDataGrid.addColumn(reportRegion ->
                         StringUtils.abbreviate(StringUtils.join(
                                         CollectionUtils.collect(reportRegion.getRegionProperties(),
                                                 RegionProperty::getHierarchicalLocalizedNameExceptRoot), ", "),
@@ -871,8 +857,8 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
-    @Subscribe("reportParameterTable.generate")
-    public void onReportParameterTableGenerate(ActionPerformedEvent event) {
+    @Subscribe("reportParameterDataGrid.generate")
+    public void onReportParameterDataGridGenerate(ActionPerformedEvent event) {
         if (!queryParametersDc.getItems().isEmpty()) {
             dialogs.createOptionDialog()
                     .withHeader(messages.getMessage("dialogs.Confirmation"))
@@ -957,32 +943,19 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
-
-//todo AN code editor
-//    @Install(to = "reportQueryCodeEditor", subject = "contextHelpIconClickHandler")
-//    private void reportQueryCodeEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
-//        dialogs.createMessageDialog()
-//                .withHeader(messages.getMessage("reportQueryHelpCaption"))
-//                .withContent(messages.getMessage("reportQueryHelp"))
-//                .withResizable(true)
-//                .withModal(false)
-//                .withWidth("50em")
-//                .open();
-//    }
-
-    protected void initReportQueryCodeEditorScript() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onReportQueryCodeEditorExpandIconClick);
-
-        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(this::onReportQueryCodeEditorHelpIconClick);
-
-        reportQueryCodeEditor.setSuffixComponent(new Div(expandIcon, helpIcon));
+    @Subscribe("queryCodeEditorExpandButton")
+    protected void onQueryCodeEditorExpandButtonClick(ClickEvent<Icon> event) {
+        reportsUiHelper.showScriptEditorDialog(
+                getScriptEditorDialogCaption(),
+                reportDataDc.getItem().getQuery(),
+                value -> reportDataDc.getItem().setQuery(value),
+                CodeEditorMode.SQL,
+                this::onQueryCodeEditorHelpIconClick
+        );
     }
 
-    protected void onReportQueryCodeEditorHelpIconClick(ClickEvent<Icon> event) {
+    @Subscribe("queryCodeEditorHelpIcon")
+    protected void onQueryCodeEditorHelpIconClick(ClickEvent<Icon> event) {
         dialogs.createMessageDialog()
                 .withHeader(messages.getMessage(getClass(), "reportQueryHelpCaption"))
                 .withContent(new Html(messages.getMessage(getClass(), "reportQueryHelp")))
@@ -992,14 +965,6 @@ public class ReportWizardCreatorView extends StandardView {
                 .open();
     }
 
-    protected void onReportQueryCodeEditorExpandIconClick(ClickEvent<Icon> event) {
-        reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
-                reportDataDc.getItem().getQuery(),
-                value -> reportDataDc.getItem().setQuery(value),
-                this::onReportQueryCodeEditorHelpIconClick
-        );
-    }
 
     protected String getScriptEditorDialogCaption() {
         String reportName = reportDataDc.getItem().getName();
@@ -1012,13 +977,13 @@ public class ReportWizardCreatorView extends StandardView {
         return StringUtils.EMPTY;
     }
 
-    @Install(to = "reportParameterTable.edit", subject = "afterSaveHandler")
-    private void reportParameterTableEditAfterSaveHandler(QueryParameter queryParameter) {
+    @Install(to = "reportParameterDataGrid.edit", subject = "afterSaveHandler")
+    protected void reportParameterDataGridEditAfterSaveHandler(QueryParameter queryParameter) {
         setDefaultValue(queryParameter);
     }
 
-    @Install(to = "reportParameterTable.create", subject = "afterSaveHandler")
-    private void reportParameterTableCreateAfterSaveHandler(QueryParameter queryParameter) {
+    @Install(to = "reportParameterDataGrid.create", subject = "afterSaveHandler")
+    protected void reportParameterDataGridCreateAfterSaveHandler(QueryParameter queryParameter) {
         setDefaultValue(queryParameter);
     }
 
@@ -1034,34 +999,28 @@ public class ReportWizardCreatorView extends StandardView {
     }
 
     protected void initReportParameterDataGrid() {
-        MetaPropertyPath nameMetaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(QueryParameter.class), "name");
-        MetaPropertyPath parameterTypeMetaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(QueryParameter.class), "parameterType");
-        MetaPropertyPath defaultValueStringMetaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(QueryParameter.class), "defaultValueString");
-        reportParameterTable.addColumn(nameMetaPropertyPath);
-        reportParameterTable.addColumn(parameterTypeMetaPropertyPath);
+        reportParameterDataGrid.addColumn(queryParameter -> {
+                    Object defaultValue = queryParameter.getDefaultValue();
+                    if (defaultValue != null) {
+                        ParameterType parameterType = queryParameter.getParameterType();
+                        switch (parameterType) {
+                            case DATE -> {
+                                String dateFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateFormat();
+                                return new SimpleDateFormat(dateFormat).format(defaultValue);
+                            }
+                            case TIME -> {
+                                String timeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getTimeFormat();
+                                return new SimpleDateFormat(timeFormat).format(defaultValue);
+                            }
+                            default -> {
+                                return defaultValue;
+                            }
+                        }
+                    }
+                    return defaultValue;
+                }).setHeader(messageBundle.getMessage("defaultValueString"))
+                .setKey("defaultValueString")
+                .setResizable(true)
+                .setSortable(true);
     }
-    //todo AN value provider
-//    @Install(to = "reportParameterTable.defaultValueString", subject = "valueProvider")
-//    protected Object reportParameterTableDefaultStringValueProvider(QueryParameter queryParameter) {
-//        Object defaultValue = queryParameter.getDefaultValue();
-//        if (defaultValue != null) {
-//            ParameterType parameterType = queryParameter.getParameterType();
-//            switch (parameterType) {
-//                case DATE -> {
-//                    String dateFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateFormat();
-//                    return new SimpleDateFormat(dateFormat).format(defaultValue);
-//                }
-//                case TIME -> {
-//                    String timeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getTimeFormat();
-//                    return new SimpleDateFormat(timeFormat).format(defaultValue);
-//                }
-//                default -> {
-//                    return defaultValue;
-//                }
-//            }
-//        }
-//
-//        return StringUtils.EMPTY;
-//    }
-
 }

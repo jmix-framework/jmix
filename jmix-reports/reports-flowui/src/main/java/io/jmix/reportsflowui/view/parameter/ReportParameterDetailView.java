@@ -19,6 +19,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ParameterClassResolver;
@@ -178,6 +179,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getTransformationScript(),
                 value -> parameterDc.getItem().setTransformationScript(value),
+                CodeEditorMode.GROOVY,
                 this::onLocaleFieldHelpIconClick
         );
     }
@@ -209,6 +211,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getTransformationScript(),
                 value -> parameterDc.getItem().setTransformationScript(value),
+                CodeEditorMode.GROOVY,
                 this::onTransformationScriptHelpIconClick
         );
     }
@@ -241,6 +244,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getValidationScript(),
                 value -> parameterDc.getItem().setValidationScript(value),
+                CodeEditorMode.GROOVY,
                 this::onValidationScriptHelpIconClick
         );
     }
@@ -273,6 +277,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getLookupJoin(),
                 value -> parameterDc.getItem().setLookupJoin(value),
+                CodeEditorMode.GROOVY,
                 this::onLookupJoinHelpIconClick
         );
     }
@@ -304,6 +309,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getLookupWhere(),
                 value -> parameterDc.getItem().setLookupWhere(value),
+                CodeEditorMode.GROOVY,
                 this::onLookupWhereHelpIconClick
         );
     }

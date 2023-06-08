@@ -13,7 +13,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.Messages;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
-import io.jmix.flowui.component.textarea.JmixTextArea;
+import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -36,6 +36,7 @@ public class ReportsUiHelper {
     public void showScriptEditorDialog(String headerText,
                                        String value,
                                        Consumer<String> okButtonClickHandler,
+                                       CodeEditorMode mode,
                                        @Nullable ComponentEventListener<ClickEvent<Icon>> helpIconClickListener) {
         Dialog dialog = uiComponents.create(Dialog.class);
         dialog.setHeaderTitle(headerText);
@@ -50,19 +51,21 @@ public class ReportsUiHelper {
         layout.setHeightFull();
         layout.setPadding(false);
 
-        // todo SourceCodeEditor
         CodeEditor codeEditor = uiComponents.create(CodeEditor.class);
         codeEditor.setValue(value);
         codeEditor.setWidthFull();
         codeEditor.setHeightFull();
 
+        if (mode != null) {
+            codeEditor.setMode(mode);
+        }
+
         if (helpIconClickListener != null) {
             Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
             icon.addClassName(FIELD_ICON_CLASS_NAME);
             icon.addClickListener(helpIconClickListener);
-//            codeEditor.setSuffixComponent(icon);
+            layout.add(icon);
         }
-
         layout.add(codeEditor);
 
         HorizontalLayout actionsLayout = uiComponents.create(HorizontalLayout.class);

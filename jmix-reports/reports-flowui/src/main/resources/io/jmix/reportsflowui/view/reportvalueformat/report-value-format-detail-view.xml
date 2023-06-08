@@ -29,7 +29,7 @@
             <checkbox id="groovyField" dataContainer="valuesFormatsDc" property="groovyScript"
                       label="msg://valuesFormats.groovyScript"/>
             <button id="groovyFullScreenButton"
-                    classNames="link"
+                    themeNames="tertiary-inline"
                     text="msg://fullScreen"/>
             <codeEditor id="groovyCodeEditor"
                         dataContainer="valuesFormatsDc"

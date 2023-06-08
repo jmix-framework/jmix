@@ -26,7 +26,7 @@
     </actions>
     <layout>
         <div id="detailsDiv">
-            <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="25em">
+            <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
                 <responsiveSteps>
                     <responsiveStep minWidth="0" columns="1"/>
                 </responsiveSteps>
@@ -51,11 +51,8 @@
                                 metaClass="report_ReportGroup"
                                 width="100%"
                                 itemsContainer="groupsDc"/>
-                <vbox>
-                    <radioButtonGroup id="reportTypeGenerateField"
-                                      label="msg://reportBuildType"/>
-                </vbox>
-                <label id="spacer"/>
+                <radioButtonGroup id="reportTypeGenerateField"
+                                  label="msg://reportBuildType"/>
             </formLayout>
         </div>
         <div id="saveDiv">
@@ -97,25 +94,14 @@
                             text="msg://simpleRegion"/>
                     <button id="addTabulatedRegionBtn"
                             text="msg://tabulatedRegion"/>
-                    <!--                    todo return buttons?-->
-                    <!--                    <dropdownButton id="addRegionPopupBtn" text="msg://add">-->
-                    <!--                        <items>-->
-                    <!--                            <actionItem id="addSimpleRegionItem">-->
-                    <!--                                <action id="addSimpleRegion"/>-->
-                    <!--                            </actionItem>-->
-                    <!--                            <actionItem id="addTabulatedRegionItem">-->
-                    <!--                                <action id="addTabulatedRegion"/>-->
-                    <!--                            </actionItem>-->
-                    <!--                        </items>-->
-                    <!--                    </dropdownButton>-->
                 </hbox>
                 <button id="regionsRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
-                <button id="regionsEditBtn" action="regionsTable.edit" text="msg://editRegion" icon="EDIT"/>
-                <button id="moveUpBtn" action="regionsTable.up" icon="CARET_UP"/>
-                <button id="moveDownBtn" action="regionsTable.down" icon="CARET_DOWN"/>
-                <button id="removeBtn" action="regionsTable.remove" icon="CLOSE"/>
+                <button id="regionsEditBtn" action="regionDataGrid.edit" text="msg://editRegion" icon="EDIT"/>
+                <button id="moveUpBtn" action="regionDataGrid.up" icon="CARET_UP"/>
+                <button id="moveDownBtn" action="regionDataGrid.down" icon="CARET_DOWN"/>
+                <button id="removeBtn" action="regionDataGrid.remove" icon="CLOSE"/>
             </hbox>
-            <dataGrid id="regionsTable" dataContainer="reportRegionsDc"
+            <dataGrid id="regionDataGrid" dataContainer="reportRegionsDc"
                       columnReorderingAllowed="false"
                       height="30em" width="100%">
                 <actions>
@@ -126,20 +112,14 @@
                 </actions>
             </dataGrid>
         </div>
-        <div id="queryDiv">
-            <formLayout id="queryBox" maxWidth="45em">
-                <responsiveSteps>
-                    <responsiveStep minWidth="0em" columns="1"/>
-                </responsiveSteps>
-                <button id="queryRunBtn" title="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
-                <textArea id="reportQueryCodeEditor"
-                          width="100%"
-                          height="15em"
-                          required="true"
-                          label="msg://reportQuery"
-                          property="query"
-                          dataContainer="reportDataDc"/>
-                <codeEditor id="reportQueryCodeEditor2"
+        <div id="queryDiv" width="40em">
+                <hbox alignItems="BASELINE" expand="spacer">
+                    <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+                    <label id="spacer"/>
+                    <button id="queryCodeEditorExpandButton" text="msg://fullScreen" classNames="link"/>
+                    <icon id="queryCodeEditorHelpIcon" icon="QUESTION_CIRCLE" classNames="reports-field-icon"/>
+                </hbox>
+                <codeEditor id="reportQueryCodeEditor"
                             title="msg://reportQuery"
                             width="100%"
                             height="15em"
@@ -150,14 +130,14 @@
                             dataContainer="reportDataDc"
                             property="query"/>
                 <hbox>
-                    <button id="generateParameters" action="reportParameterTable.generate"/>
-                    <button id="createParameterBtn" action="reportParameterTable.create"/>
-                    <button id="editParameterBtn" action="reportParameterTable.edit"/>
-                    <button id="removeParameterBtn" action="reportParameterTable.remove"/>
+                    <button id="generateParameters" action="reportParameterDataGrid.generate"/>
+                    <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
+                    <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>
+                    <button id="removeParameterBtn" action="reportParameterDataGrid.remove"/>
                 </hbox>
-                <dataGrid id="reportParameterTable"
+                <dataGrid id="reportParameterDataGrid"
                           dataContainer="queryParametersDc"
-                          height="250px"
+                          height="20em"
                           width="100%">
                     <actions>
                         <action id="generate" text="msg://generateParameters"/>
@@ -168,10 +148,8 @@
                     <columns>
                         <column property="name"/>
                         <column property="parameterType"/>
-                        <column property="defaultValueString"/>
                     </columns>
                 </dataGrid>
-            </formLayout>
         </div>
         <hbox id="navBtnsPanel">
             <button id="backBtn" action="back"/>

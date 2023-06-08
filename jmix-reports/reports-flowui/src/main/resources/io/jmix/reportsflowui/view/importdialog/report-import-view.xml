@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://reportImportDialog.caption">
+      title="msg://reportImportDialogView.title">
 
     <layout>
         <label text="msg://uploadDescription"/>

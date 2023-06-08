@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://reportParameterDetailView.title"
-      focusComponent="form">
+      focusComponent="formLayout">
     <data>
         <instance id="parameterDc"
                   class="io.jmix.reports.entity.ReportInputParameter">
@@ -18,17 +18,13 @@
     <layout expand="tabsheet">
         <tabSheet id="tabsheet" width="100%">
             <tab id="optionsTab" label="msg://parameters.optionsTab">
-                <formLayout dataContainer="parameterDc" width="100%">
+                <formLayout id="formLayout" dataContainer="parameterDc" width="100%">
                     <textField id="name" label="msg://parameters.caption"
                                property="name" required="true"
                                width="100%" requiredMessage="msg://parameters.nameMsg"/>
                     <textField id="alias" label="msg://parameters.alias"
                                property="alias" required="true"
-                               width="100%" requiredMessage="msg://parameters.aliasMsg">
-                        <!--                                <todo validators>-->
-                        <!--                                    <custom bean="report_ReportParamAliasValidator"/>-->
-                        <!--                                </validators>-->
-                    </textField>
+                               width="100%" requiredMessage="msg://parameters.aliasMsg"/>
                     <comboBox id="parameterTypeField" property="type"
                               required="true"
                               label="msg://parameters.type"
@@ -63,19 +59,34 @@
             </tab>
             <tab id="processParamTab" label="msg://parameters.transformationTab">
                 <div id="predefinedTransformationBox">
-                    <checkbox id="isPredefinedTransformationField"
-                              label="msg://parameters.predefinedTransformation"/>
-                    <comboBox id="wildcardsField"
-                              label="msg://parameters.wildcards"
-                              dataContainer="parameterDc"
-                              property="predefinedTransformation"
-                              width="200px"/>
-                    <textArea id="transformationScript"
-                              label="msg://parameters.groovyScript"
-                              width="100%"
-                              height="15em"
-                              property="transformationScript"
-                              dataContainer="parameterDc"/>
+                    <vbox padding="false" spacing="false">
+                        <checkbox id="isPredefinedTransformationField"
+                                  value="false"
+                                  label="msg://parameters.predefinedTransformation"/>
+                        <comboBox id="wildcardsField"
+                                  label="msg://parameters.wildcards"
+                                  dataContainer="parameterDc"
+                                  property="predefinedTransformation"
+                                  width="100%"/>
+                    </vbox>
+                    <div id="transformationEditorBox">
+                        <div classNames="flex, justify-between">
+                            <label text="msg://parameters.groovyScript"/>
+                            <button id="fullScreenTransformationBtn" text="msg:///fullScreenBtn.title"
+                                    themeNames="tertiary-inline"/>
+                        </div>
+                        <div classNames="flex, items-start">
+                            <codeEditor id="transformationScript"
+                                        width="100%"
+                                        height="15em"
+                                        mode="GROOVY"
+                                        property="transformationScript"
+                                        dataContainer="parameterDc"/>
+                            <button id="transformationScriptHelpBtn"
+                                    themeNames="icon, tertiary-inline"
+                                    icon="QUESTION_CIRCLE"/>
+                        </div>
+                    </div>
                 </div>
             </tab>
             <tab id="validationTab" label="msg://parameters.validationTab">
@@ -83,28 +94,56 @@
                     <checkbox id="includeValidation" dataContainer="parameterDc"
                               label="msg://parameters.validateFields"
                               property="validationOn"/>
-                    <textArea id="validationScript"
-                              label="msg://parameters.groovyScript"
-                              width="100%"
-                              height="15em"
-                              property="validationScript"
-                              dataContainer="parameterDc"/>
+                    <div classNames="flex, justify-between">
+                        <label text="msg://parameters.groovyScript"/>
+                        <button id="fullScreenValidationBtn" text="msg:///fullScreenBtn.title"
+                                themeNames="tertiary-inline"/>
+                    </div>
+                    <div classNames="flex, items-start">
+                        <codeEditor id="validationScript"
+                                    width="100%"
+                                    height="15em"
+                                    mode="GROOVY"
+                                    property="validationScript"
+                                    dataContainer="parameterDc"/>
+                        <button id="validationScriptHelpBtn"
+                                themeNames="icon, tertiary-inline"
+                                icon="QUESTION_CIRCLE"/>
+                    </div>
                 </div>
             </tab>
             <tab id="lookupSettingsTab" label="msg://parameters.dropdownSettingsTab">
                 <div id="lookupSettingsBox" width="100%">
-                    <textArea id="lookupJoin"
-                              height="15em"
-                              width="100%"
-                              property="lookupJoin"
-                              label="msg://lookupJoin"
-                              dataContainer="parameterDc"/>
-                    <textArea id="lookupWhere"
-                              height="15em"
-                              width="100%"
-                              label="msg://lookupWhere"
-                              property="lookupWhere"
-                              dataContainer="parameterDc"/>
+                    <div classNames="flex, justify-between">
+                        <label text="msg://lookupJoin"/>
+                        <button id="lookupJoinFullScreenBtn" text="msg:///fullScreenBtn.title"
+                                themeNames="tertiary-inline"/>
+                    </div>
+                    <div classNames="flex, items-start">
+                        <codeEditor id="lookupJoinCodeEditor"
+                                    height="15em"
+                                    width="100%"
+                                    property="lookupJoin"
+                                    dataContainer="parameterDc"/>
+                        <button id="lookupJoinHelpBtn"
+                                themeNames="icon, tertiary-inline"
+                                icon="QUESTION_CIRCLE"/>
+                    </div>
+                    <div classNames="flex, justify-between">
+                        <label text="msg://lookupWhere"/>
+                        <button id="lookupWhereFullScreenBtn" text="msg:///fullScreenBtn.title"
+                                themeNames="tertiary-inline"/>
+                    </div>
+                    <div classNames="flex, items-start">
+                        <codeEditor id="lookupWhereCodeEditor"
+                                    height="15em"
+                                    width="100%"
+                                    property="lookupWhere"
+                                    dataContainer="parameterDc"/>
+                        <button id="lookupWhereHelpBtn"
+                                themeNames="icon, tertiary-inline"
+                                icon="QUESTION_CIRCLE"/>
+                    </div>
                 </div>
             </tab>
         </tabSheet>

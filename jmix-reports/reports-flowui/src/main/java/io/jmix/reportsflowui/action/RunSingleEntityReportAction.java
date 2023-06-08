@@ -85,7 +85,6 @@ public class RunSingleEntityReportAction<E> extends OperationResultViewAction<De
             reportsActionHelper.openRunReportScreen(target, entity, metaClass, reportOutputName);
         } else {
             notifications.create(messages.getMessage(getClass(), "notifications.noSelectedEntity"))
-                    .withType(Notifications.Type.DEFAULT)
                     .show();
         }
     }

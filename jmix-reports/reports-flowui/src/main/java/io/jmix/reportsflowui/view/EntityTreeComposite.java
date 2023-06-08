@@ -101,7 +101,6 @@ public class EntityTreeComposite extends Composite<FormLayout>
             reportEntityTreeNodeDl.load();
             if (reportEntityTreeNodeDc.getItems().isEmpty()) {
                 notifications.create(messages.getMessage(getClass(), "valueNotFound"))
-                        .withType(Notifications.Type.DEFAULT)
                         .show();
             } else {
                 if (StringUtils.isEmpty(reportPropertyName.getValue())) {

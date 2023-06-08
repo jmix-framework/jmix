@@ -197,7 +197,6 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
                         .open();
             } else {
                 notifications.create(messages.getMessage(getClass(), "notifications.noSelectedEntity"))
-                        .withType(Notifications.Type.DEFAULT)
                         .show();
             }
 

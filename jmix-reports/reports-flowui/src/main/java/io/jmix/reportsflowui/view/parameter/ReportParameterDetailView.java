@@ -4,6 +4,7 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
@@ -15,6 +16,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
@@ -29,6 +31,7 @@ import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsUiHelper;
 import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
 import io.jmix.reportsflowui.view.run.ParameterComponentGenerationStrategy;
+import io.jmix.reportsflowui.view.validators.ReportParamAliasValidator;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.BooleanUtils;
@@ -69,17 +72,16 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @ViewComponent
     protected JmixTextArea localeField;
     @ViewComponent
-    protected JmixTextArea transformationScript;
+    protected CodeEditor lookupJoinCodeEditor;
     @ViewComponent
-    protected JmixTextArea validationScript;
-    @ViewComponent
-    protected JmixTextArea lookupJoin;
-    @ViewComponent
-    protected JmixTextArea lookupWhere;
+    protected CodeEditor lookupWhereCodeEditor;
     @ViewComponent
     protected HorizontalLayout defaultValueBox;
     @ViewComponent
     protected JmixCheckbox isPredefinedTransformationField;
+    @ViewComponent
+    private Div transformationEditorBox;
+
     @ViewComponent
     protected InstanceContainer<ReportInputParameter> parameterDc;
 
@@ -107,20 +109,31 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     protected JmixObjectToStringConverter jmixObjectToStringConverter;
     @Autowired
     private ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
+    @Autowired
+    private ReportParamAliasValidator reportParamAliasValidator;
 
     @Subscribe
     public void onInit(InitEvent event) {
-        parameterTypeField.setItems(Arrays.asList(ParameterType.TEXT, ParameterType.NUMERIC, ParameterType.BOOLEAN, ParameterType.ENUMERATION,
-                ParameterType.DATE, ParameterType.TIME, ParameterType.DATETIME, ParameterType.ENTITY, ParameterType.ENTITY_LIST));
+        initParameterTypeField();
         initMetaClassLookup();
         initEnumsLookup();
         initLocaleField();
-        //todo AN squeeze code editor methods
-        initTransformationScript();
-        initValidationScript();
-        initLookupJoin();
-        initLookupWhere();
+    }
 
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
+        ReportInputParameter editedParam = getEditedEntity();
+        if (editedParam.getParameterClass() == null) {
+            editedParam.setType(parameterTypeField.getValue());
+            editedParam.setParameterClass(parameterClassResolver.resolveClass(editedParam));
+        }
+        enableControlsByParamType(editedParam.getType());
+        initScreensLookup();
+        //initTransformations();
+    }
+
+    private void initParameterTypeField() {
+        parameterTypeField.setItems(ParameterType.values());
     }
 
     @Override
@@ -141,27 +154,18 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         }
     }
 
-    @Subscribe
-    public void onBeforeShow(BeforeShowEvent event) {
-        ReportInputParameter editedParam = getEditedEntity();
-        if (editedParam.getParameterClass() == null) {
-            editedParam.setType(parameterTypeField.getValue());
-            editedParam.setParameterClass(parameterClassResolver.resolveClass(editedParam));
-        }
+    @Install(to = "alias", subject = "validator")
+    private void aliasValidator(final String value) {
+        reportParamAliasValidator.accept(value);
     }
 
     protected void initLocaleField() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onLocaleFieldExpandIconClick);
-
         Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
         helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
         helpIcon.addClickListener(this::onLocaleFieldHelpIconClick);
 
-        localeField.setSuffixComponent(new Div(expandIcon, helpIcon));
+        localeField.setSuffixComponent(helpIcon);
     }
-
 
     protected void onLocaleFieldHelpIconClick(ClickEvent<Icon> event) {
         dialogs.createMessageDialog()
@@ -173,28 +177,17 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 .open();
     }
 
-    protected void onLocaleFieldExpandIconClick(ClickEvent<Icon> event) {
+    @Subscribe("fullScreenTransformationBtn")
+    public void onFullScreenTransformationBtnClick(final ClickEvent<Button> event) {
         reportsUiHelper.showScriptEditorDialog(
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getTransformationScript(),
                 value -> parameterDc.getItem().setTransformationScript(value),
-                this::onLocaleFieldHelpIconClick
+                icon -> onTransformationScriptHelpIconClick()
         );
     }
 
-    protected void initTransformationScript() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onTransformationScriptExpandIconClick);
-
-        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(this::onTransformationScriptHelpIconClick);
-
-        transformationScript.setSuffixComponent(new Div(expandIcon, helpIcon));
-    }
-
-    protected void onTransformationScriptHelpIconClick(ClickEvent<Icon> event) {
+    public void onTransformationScriptHelpIconClick() {
         dialogs.createMessageDialog()
                 .withHeader(messages.getMessage(getClass(), "parameters.transformationScriptHelp.header"))
                 .withContent(new Html(messages.getMessage(getClass(), "parameters.transformationScriptHelp.text")))
@@ -204,29 +197,27 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 .open();
     }
 
-    protected void onTransformationScriptExpandIconClick(ClickEvent<Icon> event) {
+    @Subscribe("transformationScriptHelpBtn")
+    public void onTransformationScriptHelpBtnClick(final ClickEvent<Button> event) {
+        onTransformationScriptHelpIconClick();
+    }
+
+    @Subscribe("fullScreenValidationBtn")
+    public void onFullScreenValidationBtnClick(final ClickEvent<Button> event) {
         reportsUiHelper.showScriptEditorDialog(
                 getScriptEditorDialogCaption(),
-                parameterDc.getItem().getTransformationScript(),
-                value -> parameterDc.getItem().setTransformationScript(value),
-                this::onTransformationScriptHelpIconClick
+                parameterDc.getItem().getValidationScript(),
+                value -> parameterDc.getItem().setValidationScript(value),
+                icon -> onValidationScriptHelpIconClick()
         );
     }
 
-    protected void initValidationScript() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onValidationScriptExpandIconClick);
-
-        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(this::onValidationScriptHelpIconClick);
-
-        validationScript.setSuffixComponent(new Div(expandIcon, helpIcon));
+    @Subscribe("validationScriptHelpBtn")
+    public void onValidationScriptHelpBtnClick(final ClickEvent<Button> event) {
+        onValidationScriptHelpIconClick();
     }
 
-
-    protected void onValidationScriptHelpIconClick(ClickEvent<Icon> event) {
+    protected void onValidationScriptHelpIconClick() {
         dialogs.createMessageDialog()
                 .withHeader(messages.getMessage(ReportDetailView.class, "parametersTab.validationFieldHelp.header"))
                 .withContent(new Html(messages.getMessage(ReportDetailView.class, "parametersTab.validationFieldHelp.text")))
@@ -236,29 +227,37 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 .open();
     }
 
-    protected void onValidationScriptExpandIconClick(ClickEvent<Icon> event) {
+    @Subscribe("lookupWhereFullScreenBtn")
+    public void onLookupWhereFullScreenBtnClick(final ClickEvent<Button> event) {
         reportsUiHelper.showScriptEditorDialog(
                 getScriptEditorDialogCaption(),
-                parameterDc.getItem().getValidationScript(),
-                value -> parameterDc.getItem().setValidationScript(value),
-                this::onValidationScriptHelpIconClick
+                parameterDc.getItem().getLookupJoin(),
+                value -> parameterDc.getItem().setLookupJoin(value),
+                icon -> onLookupJoinHelpIconClick()
         );
     }
 
-    protected void initLookupJoin() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onLookupJoinExpandIconClick);
-
-        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(this::onLookupJoinHelpIconClick);
-
-        lookupJoin.setSuffixComponent(new Div(expandIcon, helpIcon));
+    @Subscribe("lookupJoinFullScreenBtn")
+    public void onLookupJoinFullScreenBtnClick(final ClickEvent<Button> event) {
+        reportsUiHelper.showScriptEditorDialog(
+                getScriptEditorDialogCaption(),
+                parameterDc.getItem().getLookupWhere(),
+                value -> parameterDc.getItem().setLookupWhere(value),
+                icon -> onLookupWhereHelpIconClick()
+        );
     }
 
+    @Subscribe("lookupJoinHelpBtn")
+    public void onLookupJoinHelpBtnClick(final ClickEvent<Button> event) {
+        onLookupJoinHelpIconClick();
+    }
 
-    protected void onLookupJoinHelpIconClick(ClickEvent<Icon> event) {
+    @Subscribe("lookupWhereHelpBtn")
+    public void onLookupWhereHelpBtnClick(final ClickEvent<Button> event) {
+        onLookupWhereHelpIconClick();
+    }
+
+    protected void onLookupJoinHelpIconClick() {
         dialogs.createMessageDialog()
                 .withHeader(messages.getMessage(getClass(), "parameters.lookupJoinHelp.header"))
                 .withContent(new Html(messages.getMessage(getClass(), "parameters.lookupJoinHelp.text")))
@@ -268,28 +267,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 .open();
     }
 
-    protected void onLookupJoinExpandIconClick(ClickEvent<Icon> event) {
-        reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
-                parameterDc.getItem().getLookupJoin(),
-                value -> parameterDc.getItem().setLookupJoin(value),
-                this::onLookupJoinHelpIconClick
-        );
-    }
-
-    protected void initLookupWhere() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onLookupWhereExpandIconClick);
-
-        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(this::onLookupWhereHelpIconClick);
-
-        lookupWhere.setSuffixComponent(new Div(expandIcon, helpIcon));
-    }
-
-    protected void onLookupWhereHelpIconClick(ClickEvent<Icon> event) {
+    protected void onLookupWhereHelpIconClick() {
         dialogs.createMessageDialog()
                 .withHeader(messages.getMessage(getClass(), "parameters.lookupWhereHelp.header"))
                 .withContent(new Html(messages.getMessage(getClass(), "parameters.lookupWhereHelp.text")))
@@ -297,15 +275,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 .withModal(false)
                 .withWidth("50em")
                 .open();
-    }
-
-    protected void onLookupWhereExpandIconClick(ClickEvent<Icon> event) {
-        reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
-                parameterDc.getItem().getLookupWhere(),
-                value -> parameterDc.getItem().setLookupWhere(value),
-                this::onLookupWhereHelpIconClick
-        );
     }
 
     protected String getScriptEditorDialogCaption() {
@@ -366,7 +335,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             if (clazz != null) {
                 String availableListViewId = viewRegistry.getAvailableListViewId(metadata.findClass(clazz));
                 screenField.setItems(availableListViewId);
-
             }
         }
     }
@@ -397,8 +365,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @Subscribe
     public void onBeforeSave(BeforeSaveEvent event) {
         if (!(getEditedEntity().getType() == ParameterType.ENTITY && Boolean.TRUE.equals(isLookupField.getValue()))) {
-            lookupWhere.clear();
-            lookupJoin.clear();
+            lookupWhereCodeEditor.clear();
+            lookupJoinCodeEditor.clear();
         }
     }
 
@@ -442,21 +410,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         defaultValueBox.setEnabled(secureOperations.isEntityUpdatePermitted(metadata.getClass(ReportInputParameter.class), policyStore));
     }
 
-    @Subscribe(id = "parameterDc", target = Target.DATA_CONTAINER)
-    public void onParameterDcItemChange(InstanceContainer.ItemChangeEvent<ReportInputParameter> event) {
-        ReportInputParameter reportInputParameter = event.getItem();
-        ReportInputParameter newParameter = metadata.create(reportInputParameter.getClass());
-        metadataTools.copy(reportInputParameter, newParameter);
-        newParameter.setId((UUID) Id.of(reportInputParameter).getValue());
-        if (newParameter.getParameterClass() == null) {
-            newParameter.setParameterClass(parameterClassResolver.resolveClass(newParameter));
-        }
-
-        enableControlsByParamType(newParameter.getType());
-        initScreensLookup();
-        initTransformations();
-    }
-
     protected void initCurrentDateTimeField() {
         boolean parameterDateOrTime = isParameterDateOrTime();
         isDefaultDateIsCurrentField.setVisible(parameterDateOrTime);
@@ -484,7 +437,9 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         metaClassField.setVisible(isEntity);
         isLookupField.setVisible(isSingleEntity);
 
-        tabsheet.getTabAt((int) tabsheet.getChildren().count() - 1).setVisible(isSingleEntity && Boolean.TRUE.equals(isLookupField.getValue()));
+        boolean isTabVisible = isSingleEntity && Boolean.TRUE.equals(isLookupField.getValue());
+        tabsheet.getTabAt((int) tabsheet.getChildren().count() - 1)
+                .setVisible(isTabVisible);
 
         screenField.setVisible(isEntity);
         enumerationField.setVisible(isEnum);
@@ -497,25 +452,30 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         initCurrentDateTimeField();
     }
 
+    @Subscribe("isPredefinedTransformationField")
+    public void onIsPredefinedTransformationFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<Checkbox, Boolean> event) {
+        ReportInputParameter parameter = getEditedEntity();
+        boolean hasPredefinedTransformation = event.getValue() != null && event.getValue();
+
+        enableControlsByTransformationType(hasPredefinedTransformation);
+        if (hasPredefinedTransformation) {
+            parameter.setTransformationScript(null);
+        } else {
+            parameter.setPredefinedTransformation(null);
+        }
+    }
+
     protected void initTransformations() {
         ReportInputParameter parameter = getEditedEntity();
         isPredefinedTransformationField.setValue(parameter.getPredefinedTransformation() != null);
         enableControlsByTransformationType(parameter.getPredefinedTransformation() != null);
-        isPredefinedTransformationField.addValueChangeListener(e -> {
-            boolean hasPredefinedTransformation = e.getValue() != null && e.getValue();
 
-            enableControlsByTransformationType(hasPredefinedTransformation);
-            if (hasPredefinedTransformation) {
-                parameter.setTransformationScript(null);
-            } else {
-                parameter.setPredefinedTransformation(null);
-            }
-        });
-        isPredefinedTransformationField.setReadOnly(secureOperations.isEntityUpdatePermitted(metadata.getClass(ReportInputParameter.class), policyStore));
+        //todo
+//        isPredefinedTransformationField.setReadOnly(secureOperations.isEntityUpdatePermitted(metadata.getClass(ReportInputParameter.class), policyStore));
     }
 
     protected void enableControlsByTransformationType(boolean hasPredefinedTransformation) {
-        transformationScript.setVisible(!hasPredefinedTransformation);
+        transformationEditorBox.setVisible(!hasPredefinedTransformation);
         wildcardsField.setVisible(hasPredefinedTransformation);
     }
 
@@ -528,44 +488,4 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                                 ParameterType.TIME.equals(parameter.getType()))
                 .orElse(false);
     }
-//todo an return with code editor suggestions
-//    protected List<SourceCodeAnalysis.Suggestion> requestHint(SourceCodeEditor sender, int senderCursorPosition) {
-
-//        String joinStr = lookupJoin.getValue();
-//        String whereStr = lookupWhere.getValue();
-//
-//        // CAUTION: the magic entity name!  The length is three character to match "{E}" length in query
-//        String entityAlias = "a39";
-//
-//        int queryPosition = -1;
-//        Class javaClassForEntity = getEditedEntity().getParameterClass();
-//        if (javaClassForEntity == null) {
-//            return new ArrayList<>();
-//        }
-//
-//        String queryStart = String.format("select %s from %s %s ", entityAlias, metadata.getClass(javaClassForEntity), entityAlias);
-//
-//        StringBuilder queryBuilder = new StringBuilder(queryStart);
-//        if (StringUtils.isNotEmpty(joinStr)) {
-//            if (sender == lookupJoin) {
-//                queryPosition = queryBuilder.length() + senderCursorPosition - 1;
-//            }
-//            if (!StringUtils.containsIgnoreCase(joinStr, "join") && !StringUtils.contains(joinStr, ",")) {
-//                queryBuilder.append("join ").append(joinStr);
-//                queryPosition += "join ".length();
-//            } else {
-//                queryBuilder.append(joinStr);
-//            }
-//        }
-//        if (StringUtils.isNotEmpty(whereStr)) {
-//            if (sender == lookupWhere) {
-//                queryPosition = queryBuilder.length() + WHERE.length() + senderCursorPosition - 1;
-//            }
-//            queryBuilder.append(WHERE).append(whereStr);
-//        }
-//        String query = queryBuilder.toString();
-//        query = query.replace("{E}", entityAlias);
-//
-//        return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
-//    }
 }

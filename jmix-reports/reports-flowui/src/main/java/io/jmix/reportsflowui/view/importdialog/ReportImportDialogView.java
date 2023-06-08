@@ -32,9 +32,9 @@ import java.util.EnumSet;
 @ViewController("report_ReportImportDialog.view")
 @ViewDescriptor("report-import-view.xml")
 @DialogMode(width = "30em")
-public class ReportImportView extends StandardView {
+public class ReportImportDialogView extends StandardView {
 
-    private static final Logger log = LoggerFactory.getLogger(ReportImportView.class);
+    private static final Logger log = LoggerFactory.getLogger(ReportImportDialogView.class);
 
     @ViewComponent
     protected JmixCheckbox importRoles;

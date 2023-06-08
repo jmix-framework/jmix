@@ -15,7 +15,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-        title="msg://reportGroupBrowser"
+        title="msg://reportGroupListView.title"
         focusComponent="reportGroupsDataGrid">
 
     <data>

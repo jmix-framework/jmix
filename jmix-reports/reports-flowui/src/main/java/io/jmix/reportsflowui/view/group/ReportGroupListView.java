@@ -2,7 +2,10 @@ package io.jmix.reportsflowui.view.group;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.list.RemoveAction;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Route(value = "reports/groups", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportGroup.list")
@@ -56,7 +60,7 @@ public class ReportGroupListView extends StandardListView<ReportGroup> {
     }
 
     @Subscribe("reportGroupsDataGrid.remove")
-    public void onReportGroupsDataGridRemove(ActionPerformedEvent event) {
+    public void onReportGroupsDataGridRemove(final ActionPerformedEvent event) {
         if (!event.getSource().isEnabled()) {
             return;
         }
@@ -68,15 +72,13 @@ public class ReportGroupListView extends StandardListView<ReportGroup> {
                         .withType(Notifications.Type.WARNING)
                         .show();
             } else {
-                LoadContext<Report> loadContext = new LoadContext<>(metadata.getClass(Report.class));
-                loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(Report.class, "report.view"));
-                LoadContext.Query query = new LoadContext.Query("select r from report_Report r where r.group.id = :groupId");
-                query.setMaxResults(1);
-                query.setParameter("groupId", group.getId());
-                loadContext.setQuery(query);
+                Optional<Report> report = dataManager.load(Report.class)
+                        .query("select r from report_Report r where r.group.id = :groupId")
+                        .parameter("groupId", group.getId())
+                        .fetchPlan("report.view")
+                        .optional();
 
-                Report report = dataManager.load(loadContext);
-                if (report != null) {
+                if (report.isPresent()) {
                     notifications.create(messageBundle.getMessage("unableToDeleteNotEmptyReportGroup"))
                             .withType(Notifications.Type.WARNING)
                             .show();

@@ -1,5 +1,5 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://reportGroupEditor"
+      title="msg://reportGroupDetailView.title"
       focusComponent="groupProps">
 
     <data>
@@ -24,8 +24,8 @@
             <textField id="title" property="title" required="true"/>
             <textField id="code" property="code"/>
         </formLayout>
-        <label text="msg://groupLocaleCaption"/>
         <textArea id="localeTextField"
+                  label="msg://groupLocaleCaption"
                   dataContainer="groupDc" property="localeNames"
                   width="100%" height="9.5em"/>
         <hbox id="detailActions">

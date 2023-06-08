@@ -186,15 +186,12 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         if (addedItems.isEmpty()) {
             if (alreadyAdded) {
                 notifications.create(messages.getMessage(getClass(), "elementsAlreadyAdded"))
-                        .withType(Notifications.Type.DEFAULT)
                         .show();
             } else if (selectedItems.size() != 0) {
                 notifications.create(messages.getMessage(getClass(), "selectPropertyFromEntity"))
-                        .withType(Notifications.Type.DEFAULT)
                         .show();
             } else {
                 notifications.create(messages.getMessage(getClass(), "elementsWasNotAdded"))
-                        .withType(Notifications.Type.DEFAULT)
                         .show();
             }
         } else {
@@ -252,7 +249,6 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     public void onBeforeSave(BeforeSaveEvent event) {
         if (reportRegionPropertiesTableDc.getItems().isEmpty()) {
             notifications.create(messages.getMessage("selectAtLeastOneProp"))
-                    .withType(Notifications.Type.DEFAULT)
                     .show();
             event.preventSave();
         }

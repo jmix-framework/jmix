@@ -15,7 +15,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://history.dialog.title">
+      title="msg://io.jmix.reportsflowui.view.history/ReportExecutionDialogView.title">
     <data>
         <collection id="reportsDc"
                     class="io.jmix.reports.entity.Report"

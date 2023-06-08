@@ -16,7 +16,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-        title="msg://history.title"
+        title="msg://ReportExecutionListView.title"
         focusComponent="executionsDataGrid">
     <data>
         <collection id="executionsDc"

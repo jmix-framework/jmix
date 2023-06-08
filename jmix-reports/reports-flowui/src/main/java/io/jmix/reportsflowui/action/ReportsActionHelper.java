@@ -113,7 +113,6 @@ public class ReportsActionHelper {
             runReport(report, view, selectedValue, inputValueMetaClass, outputFileName);
         } else {
             notifications.create(messages.getMessage(getClass(), "report.notFoundReports"))
-                    .withType(Notifications.Type.DEFAULT)
                     .show();
         }
     }

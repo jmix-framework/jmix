@@ -56,13 +56,11 @@ public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
         setSelectionValidator(validationContext -> {
             if (entityTree.getSingleSelectedItem() == null) {
                 notifications.create(messageBundle.getMessage("selectItemForContinue"))
-                        .withType(Notifications.Type.DEFAULT)
                         .show();
                 return false;
             } else {
                 if (entityTree.getSingleSelectedItem().getParent() == null) {
                     notifications.create(messageBundle.getMessage("selectNotARoot"))
-                            .withType(Notifications.Type.DEFAULT)
                             .show();
                     return false;
                 }

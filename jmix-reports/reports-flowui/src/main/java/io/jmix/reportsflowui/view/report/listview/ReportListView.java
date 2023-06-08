@@ -4,7 +4,7 @@ import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
-import io.jmix.reportsflowui.view.importdialog.ReportImportView;
+import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
@@ -136,7 +136,7 @@ public class ReportListView extends StandardListView<Report> {
 
     @Subscribe("reportsDataGrid.importAction")
     public void onReportsDataGridImportAction(ActionPerformedEvent event) {
-        dialogWindows.view(this, ReportImportView.class)
+        dialogWindows.view(this, ReportImportDialogView.class)
                 .withAfterCloseListener(e -> {
                     if (e.closedWith(StandardOutcome.SAVE)) {
                         reportsDl.load();

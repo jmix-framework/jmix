@@ -21,7 +21,7 @@
     <data>
         <instance id="reportRegionDc"
                   class="io.jmix.reports.entity.wizard.ReportRegion">
-            <collection id="reportRegionPropertiesTableDc" property="regionProperties"/>
+            <collection id="reportRegionPropertiesDataGridDc" property="regionProperties"/>
         </instance>
     </data>
     <facets>
@@ -39,12 +39,12 @@
             <formLayout id="treePanel"/>
             <vbox id="btnsControlPanel" margin="false" spacing="false" padding="false" width="AUTO">
                 <button id="addItem" icon="ARROW_RIGHT"/>
-                <button id="removeItem" action="propertiesTable.removeItemAction" icon="CLOSE"/>
-                <button id="upItem" action="propertiesTable.upItemAction" icon="CARET_UP"/>
-                <button id="downItem" action="propertiesTable.downItemAction" icon="CARET_DOWN"/>
+                <button id="removeItem" action="propertiesDataGrid.removeItemAction" icon="CLOSE"/>
+                <button id="upItem" action="propertiesDataGrid.upItemAction" icon="CARET_UP"/>
+                <button id="downItem" action="propertiesDataGrid.downItemAction" icon="CARET_DOWN"/>
             </vbox>
-            <dataGrid id="propertiesTable"
-                      dataContainer="reportRegionPropertiesTableDc"
+            <dataGrid id="propertiesDataGrid"
+                      dataContainer="reportRegionPropertiesDataGridDc"
                       width="30em" height="100%">
                 <actions>
                     <action id="removeItemAction" icon="CLOSE" type="itemTracking"/>

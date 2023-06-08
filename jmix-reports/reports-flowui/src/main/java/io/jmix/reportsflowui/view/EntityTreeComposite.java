@@ -1,6 +1,7 @@
 package io.jmix.reportsflowui.view;
 
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -38,7 +39,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class EntityTreeComposite extends Composite<FormLayout>
-        implements ApplicationContextAware, HasSize, HasEnabled, InitializingBean {
+        implements ApplicationContextAware, HasSize, HasEnabled, InitializingBean, HasComponents {
 
     protected TreeDataGrid<EntityTreeNode> entityTree;
     protected EntityTreeNode rootEntity;
@@ -57,6 +58,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
     protected boolean collectionsOnly = false;
     protected boolean persistentOnly = false;
     protected CollectionContainer<EntityTreeNode> reportEntityTreeNodeDc;
+
     protected Comparator<EntityTreeNode> nodeComparator = (o1, o2) -> {
         Collator collator = Collator.getInstance();
         return collator.compare(o1.getHierarchicalLocalizedNameExceptRoot(), o2.getHierarchicalLocalizedNameExceptRoot());
@@ -124,6 +126,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
         entityTree.setId("treeDataGrid");
 
         formLayout = uiComponents.create(FormLayout.class);
+        formLayout.setId("entityTreeFormLayout");
         formLayout.setWidth("30em");
         formLayout.setHeightFull();
         formLayout.add(reportPropertyHBox);
@@ -137,7 +140,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
         initComponent();
     }
 
-    private void initComponent() {
+    protected void initComponent() {
         this.uiComponents = applicationContext.getBean(UiComponents.class);
         this.messages = applicationContext.getBean(Messages.class);
         this.dataComponents = applicationContext.getBean(DataComponents.class);

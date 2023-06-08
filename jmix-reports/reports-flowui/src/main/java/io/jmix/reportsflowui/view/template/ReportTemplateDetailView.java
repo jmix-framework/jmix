@@ -16,8 +16,6 @@
 
 package io.jmix.reportsflowui.view.template;
 
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.reportsflowui.ReportsUiHelper;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.Div;
@@ -26,7 +24,9 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.Route;
 import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
@@ -37,18 +37,18 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFailedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadStartedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.entity.CustomTemplateDefinedBy;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-
-import com.vaadin.flow.router.Route;
-import io.jmix.flowui.view.*;
+import io.jmix.reportsflowui.ReportsUiHelper;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.io.FilenameUtils;
@@ -273,7 +273,9 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         reportsUiHelper.showScriptEditorDialog(
                 messageBundle.getMessage("customDefinitionField.label"),
                 getEditedEntity().getCustomDefinition(),
-                result -> getEditedEntity().setCustomDefinition(result), null);
+                result -> getEditedEntity().setCustomDefinition(result),
+                CodeEditorMode.GROOVY,
+                null);
     }
 
     protected void initUploadField() {

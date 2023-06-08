@@ -34,10 +34,6 @@ import java.util.*;
 @EditedEntityContainer("reportRegionDc")
 public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegion> {
 
-    protected boolean isTabulated;//if true then user perform add tabulated region action
-    protected boolean asFetchPlanEditor;
-    protected boolean updatePermission = true;
-
     @ViewComponent
     protected Label tipLabel;
     @ViewComponent
@@ -47,14 +43,14 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @ViewComponent
     protected JmixButton addItem;
     @ViewComponent
-    protected CollectionPropertyContainer<RegionProperty> reportRegionPropertiesTableDc;
+    protected CollectionPropertyContainer<RegionProperty> reportRegionPropertiesDataGridDc;
     @ViewComponent
     protected FormLayout treePanel;
     @ViewComponent
-    protected DataGrid<RegionProperty> propertiesTable;
+    protected DataGrid<RegionProperty> propertiesDataGrid;
 
     @Autowired
-    private UiComponents uiComponents;
+    protected UiComponents uiComponents;
     @Autowired
     protected Messages messages;
     @Autowired
@@ -69,6 +65,8 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     protected boolean scalarOnly = false;
     protected boolean collectionsOnly = false;
     protected boolean persistentOnly = false;
+    protected boolean isTabulated;//if true then user perform add tabulated region action
+    protected boolean updatePermission = true;
 
     public void setParameters(EntityTreeNode rootEntity, boolean scalarOnly, boolean collectionsOnly, boolean persistentOnly) {
         this.rootEntity = rootEntity;
@@ -83,31 +81,32 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         initComponents();
     }
 
-    @Install(to = "propertiesTable.upItemAction", subject = "enabledRule")
-    protected boolean propertiesTableUpEnabledRule() {
-        RegionProperty selectedItem = propertiesTable.getSingleSelectedItem();
+    @Install(to = "propertiesDataGrid.upItemAction", subject = "enabledRule")
+    protected boolean propertiesDataGridUpEnabledRule() {
+        RegionProperty selectedItem = propertiesDataGrid.getSingleSelectedItem();
         return selectedItem != null && selectedItem.getOrderNum() > 1 && isUpdatePermitted();
     }
-    @Install(to = "propertiesTable.downItemAction", subject = "enabledRule")
-    protected boolean propertiesTableDownEnabledRule() {
-        RegionProperty selectedItem = propertiesTable.getSingleSelectedItem();
-        return selectedItem != null && selectedItem.getOrderNum() < reportRegionPropertiesTableDc.getItems().size() && isUpdatePermitted();
+
+    @Install(to = "propertiesDataGrid.downItemAction", subject = "enabledRule")
+    protected boolean propertiesDataGridDownEnabledRule() {
+        RegionProperty selectedItem = propertiesDataGrid.getSingleSelectedItem();
+        return selectedItem != null && selectedItem.getOrderNum() < reportRegionPropertiesDataGridDc.getItems().size() && isUpdatePermitted();
     }
 
-    @Subscribe("propertiesTable.upItemAction")
-    protected void onPropertiesTableUp(ActionPerformedEvent event) {
+    @Subscribe("propertiesDataGrid.upItemAction")
+    protected void onpropertiesDataGridUp(ActionPerformedEvent event) {
         replaceParameters(true);
     }
 
-    @Subscribe("propertiesTable.downItemAction")
-    protected void onPropertiesTableDown(ActionPerformedEvent event) {
+    @Subscribe("propertiesDataGrid.downItemAction")
+    protected void onpropertiesDataGridDown(ActionPerformedEvent event) {
         replaceParameters(false);
     }
 
     protected void replaceParameters(boolean up) {
-        if (propertiesTable.getSingleSelectedItem() != null) {
-            List<RegionProperty> items = reportRegionPropertiesTableDc.getMutableItems();
-            int currentPosition = items.indexOf(propertiesTable.getSingleSelectedItem());
+        if (propertiesDataGrid.getSingleSelectedItem() != null) {
+            List<RegionProperty> items = reportRegionPropertiesDataGridDc.getMutableItems();
+            int currentPosition = items.indexOf(propertiesDataGrid.getSingleSelectedItem());
             if ((up && currentPosition != 0)
                     || (!up && currentPosition != items.size() - 1)) {
                 int itemToSwapPosition = currentPosition - (up ? 1 : -1);
@@ -158,7 +157,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     }
 
     protected void addProperty() {
-        List<EntityTreeNode> nodesList = reportRegionPropertiesTableDc.getItems()
+        List<EntityTreeNode> nodesList = reportRegionPropertiesDataGridDc.getItems()
                 .stream()
                 .map(RegionProperty::getEntityTreeNode).toList();
 
@@ -175,9 +174,9 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
             if (!alreadyAddedNodes.contains(entityTreeNode)) {
                 RegionProperty regionProperty = metadata.create(RegionProperty.class);
                 regionProperty.setEntityTreeNode(entityTreeNode);
-                regionProperty.setOrderNum((long) reportRegionPropertiesTableDc.getItems().size() + 1);
+                regionProperty.setOrderNum((long) reportRegionPropertiesDataGridDc.getItems().size() + 1);
                 //first element must be not zero cause later we do sorting by multiplying that values
-                reportRegionPropertiesTableDc.getMutableItems().add(regionProperty);
+                reportRegionPropertiesDataGridDc.getMutableItems().add(regionProperty);
                 addedItems.add(regionProperty);
             } else {
                 alreadyAdded = true;
@@ -195,12 +194,12 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
                         .show();
             }
         } else {
-            propertiesTable.select(addedItems);
+            propertiesDataGrid.select(addedItems);
         }
     }
 
-    @Install(to = "propertiesTable.removeItemAction", subject = "enabledRule")
-    private boolean propertiesTableRemoveItemActionEnabledRule() {
+    @Install(to = "propertiesDataGrid.removeItemAction", subject = "enabledRule")
+    protected boolean propertiesDataGridRemoveItemActionEnabledRule() {
         return isUpdatePermitted();
     }
 
@@ -208,35 +207,35 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         return updatePermission;
     }
 
-    @Subscribe("propertiesTable.removeItemAction")
-    public void onPropertiesTableRemoveItemAction(ActionPerformedEvent event) {
-        for (RegionProperty item : propertiesTable.getSelectedItems()) {
-            reportRegionPropertiesTableDc.getMutableItems().remove(item);
+    @Subscribe("propertiesDataGrid.removeItemAction")
+    public void onpropertiesDataGridRemoveItemAction(ActionPerformedEvent event) {
+        for (RegionProperty item : propertiesDataGrid.getSelectedItems()) {
+            reportRegionPropertiesDataGridDc.getMutableItems().remove(item);
             normalizeRegionPropertiesOrderNum();
         }
     }
 
     protected void normalizeRegionPropertiesOrderNum() {
         long normalizedIdx = 0;
-        List<RegionProperty> allItems = new ArrayList<>(reportRegionPropertiesTableDc.getItems());
+        List<RegionProperty> allItems = new ArrayList<>(reportRegionPropertiesDataGridDc.getItems());
         for (RegionProperty item : allItems) {
             item.setOrderNum(++normalizedIdx); //first must be 1
         }
     }
 
-    @Subscribe(id = "reportRegionPropertiesTableDc", target = Target.DATA_CONTAINER)
-    public void onReportRegionPropertiesTableDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportRegion> event) {
+    @Subscribe(id = "reportRegionPropertiesDataGridDc", target = Target.DATA_CONTAINER)
+    public void onReportRegionPropertiesDataGridDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportRegion> event) {
         showOrHideSortBtns();
     }
 
-    @Subscribe(id = "reportRegionPropertiesTableDc", target = Target.DATA_CONTAINER)
-    public void onReportRegionPropertiesTableDcItemChange(InstanceContainer.ItemChangeEvent<ReportRegion> event) {
+    @Subscribe(id = "reportRegionPropertiesDataGridDc", target = Target.DATA_CONTAINER)
+    public void onReportRegionPropertiesDataGridDcItemChange(InstanceContainer.ItemChangeEvent<ReportRegion> event) {
         showOrHideSortBtns();
     }
 
     protected void showOrHideSortBtns() {
-        if (propertiesTable.getSelectedItems().size() == reportRegionPropertiesTableDc.getItems().size() ||
-                propertiesTable.getSelectedItems().size() == 0) {
+        if (propertiesDataGrid.getSelectedItems().size() == reportRegionPropertiesDataGridDc.getItems().size() ||
+                propertiesDataGrid.getSelectedItems().size() == 0) {
             upItem.setEnabled(false);
             downItem.setEnabled(false);
         } else {
@@ -247,20 +246,20 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
 
     @Subscribe
     public void onBeforeSave(BeforeSaveEvent event) {
-        if (reportRegionPropertiesTableDc.getItems().isEmpty()) {
+        if (reportRegionPropertiesDataGridDc.getItems().isEmpty()) {
             notifications.create(messages.getMessage("selectAtLeastOneProp"))
                     .show();
             event.preventSave();
         }
     }
 
-    @Install(to = "propertiesTable.upItemAction", subject = "enabledRule")
-    private boolean propertiesTableUpItemActionEnabledRule() {
+    @Install(to = "propertiesDataGrid.upItemAction", subject = "enabledRule")
+    protected boolean propertiesDataGridUpItemActionEnabledRule() {
         return isUpdatePermitted();
     }
 
-    @Install(to = "propertiesTable.downItemAction", subject = "enabledRule")
-    private boolean propertiesTableDownItemActionEnabledRule() {
+    @Install(to = "propertiesDataGrid.downItemAction", subject = "enabledRule")
+    protected boolean propertiesDataGridDownItemActionEnabledRule() {
         return isUpdatePermitted();
     }
 }

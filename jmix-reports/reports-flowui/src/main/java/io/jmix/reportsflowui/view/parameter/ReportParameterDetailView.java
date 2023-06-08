@@ -21,6 +21,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ParameterClassResolver;
@@ -183,6 +184,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getTransformationScript(),
                 value -> parameterDc.getItem().setTransformationScript(value),
+                CodeEditorMode.GROOVY,
                 icon -> onTransformationScriptHelpIconClick()
         );
     }
@@ -208,6 +210,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getValidationScript(),
                 value -> parameterDc.getItem().setValidationScript(value),
+                CodeEditorMode.GROOVY,
                 icon -> onValidationScriptHelpIconClick()
         );
     }
@@ -232,6 +235,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         reportsUiHelper.showScriptEditorDialog(
                 getScriptEditorDialogCaption(),
                 parameterDc.getItem().getLookupJoin(),
+                CodeEditorMode.GROOVY,
                 value -> parameterDc.getItem().setLookupJoin(value),
                 icon -> onLookupJoinHelpIconClick()
         );

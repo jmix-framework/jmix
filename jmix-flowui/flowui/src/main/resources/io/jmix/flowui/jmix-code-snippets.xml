@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<jmixCodeSnippets xmlns="http://jmix.io/schema/core/code-snippets">
+
+    <category name="Localization">
+
+        <codeSnippet name="Get localized message" contextTypes="controller" expressionResultType="String">
+            <inject variable="messageBundle" classQualifiedName="io.jmix.flowui.view.MessageBundle"/>
+
+            <messageKeyInputParameter code="key" text="Message key" optional="true"/>
+
+            <text language="java">
+                messageBundle.getMessage("${key}");
+            </text>
+            <text language="kotlin">
+                messageBundle.getMessage("${key}")
+            </text>
+
+            <description>
+                <![CDATA[
+                Get a localized message from the message bundle by key.<br>
+                <a href="https://docs.jmix.io/jmix/localization/message-bundles.html#using-messages-in-ui">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+    </category>
+
+    <category name="Web">
+
+        <codeSnippet name="Open web page" contextTypes="service,controller">
+            <text language="java">
+                com.vaadin.flow.component.UI.getCurrent().getPage().open("https://jmix.io");
+            </text>
+            <text language="kotlin">
+                com.vaadin.flow.component.UI.getCurrent().getPage().open("https://jmix.io");
+            </text>
+
+            <description>
+                Open a web page in a new browser tab
+            </description>
+        </codeSnippet>
+
+    </category>
+
+</jmixCodeSnippets>

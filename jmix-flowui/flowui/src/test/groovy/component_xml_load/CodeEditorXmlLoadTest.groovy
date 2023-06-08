@@ -54,14 +54,15 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
     def "Load codeEditor component from XML"() {
         when: "Open the ComponentView"
         def componentView = navigateToView(ComponentView.class)
+        componentView.loadData()
 
         then: "CodeEditor attributes will be loaded"
         verifyAll(componentView.codeEditorId) {
-            id.get() == "textFieldId"
+            id.get() == "codeEditorId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             enabled
             errorMessage == "errorMessageString"
-            fontSize == 20
+            fontSize == "20"
             height == "50px"
             helperText == "helperTextString"
             !invalid
@@ -82,7 +83,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             tabIndex == 3
             theme == CodeEditorTheme.TERMINAL
             title == "titleString"
-            visible
+            !visible
             width == "100px"
 
             tooltip.text == "tooltipText"

@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 
@@ -25,6 +26,7 @@ import java.time.format.FormatStyle;
 import java.time.temporal.TemporalQuery;
 import java.util.Locale;
 
+@Internal
 @DatatypeDef(id = "localTime", javaClass = LocalTime.class, defaultForClass = true, value = "core_LocalTimeDatatype")
 public class LocalTimeDatatype extends AbstractTemporalDatatype<LocalTime> {
 

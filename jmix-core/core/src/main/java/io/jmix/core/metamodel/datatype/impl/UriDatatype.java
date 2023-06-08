@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 
@@ -25,6 +26,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Locale;
 
+@Internal
 @DatatypeDef(id = "uri", javaClass = URI.class, defaultForClass = true, value = "core_UriDatatype")
 public class UriDatatype implements Datatype<URI> {
 

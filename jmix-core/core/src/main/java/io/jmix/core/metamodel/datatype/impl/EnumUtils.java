@@ -16,12 +16,15 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
+
 import javax.annotation.Nullable;
 
 /**
  * A helper class to be used in {@link EnumClass} implementations to convert identifiers to enum values.
  *
  */
+@Internal
 public class EnumUtils {
 
     /**

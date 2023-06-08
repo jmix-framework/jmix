@@ -16,9 +16,11 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 
+@Internal
 public class DatatypeDefUtils {
 
     public static boolean isDefaultForClass(Datatype datatype) {

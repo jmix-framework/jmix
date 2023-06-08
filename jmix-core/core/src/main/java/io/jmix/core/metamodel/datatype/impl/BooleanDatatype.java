@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -27,6 +28,7 @@ import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.util.Locale;
 
+@Internal
 @DatatypeDef(id = "boolean", javaClass = Boolean.class, defaultForClass = true, value = "core_BooleanDatatype")
 public class BooleanDatatype implements Datatype<Boolean> {
 

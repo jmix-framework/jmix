@@ -16,7 +16,6 @@
 
 package ${packageName};
 
-
 <%if (!api.jmixProjectModule.isApplication()) {%>
 import io.jmix.flowui.view.DefaultMainViewParent;
 <%} else {%>

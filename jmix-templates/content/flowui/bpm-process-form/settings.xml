@@ -20,6 +20,7 @@
           order="1000"
           name="Bpm process form">
     <tags>
+        <tag>BPM</tag>
         <tag>addon:io.jmix.bpmflowui.BpmFlowUiConfiguration</tag>
     </tags>
     <description>
@@ -36,7 +37,7 @@
               defaultValue="bpm-process-form"
               propertyType="DESCRIPTOR_NAME"
               required="true"
-
+              focused="true"
               sourceName="descriptor"/>
 
     <property caption="Controller name"

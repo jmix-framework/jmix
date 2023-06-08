@@ -19,6 +19,7 @@ package io.jmix.core.metamodel.datatype.impl;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
+@Internal
 @Component("core_FormatStringsLoader")
 public class FormatStringsLoader {
 

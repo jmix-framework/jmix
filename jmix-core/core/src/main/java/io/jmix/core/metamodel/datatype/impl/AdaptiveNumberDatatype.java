@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.NumberFormat;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -32,6 +33,7 @@ import java.util.Locale;
 /**
  * A number format that is used when the entity attribute has the {@link NumberFormat} annotation.
  */
+@Internal
 public class AdaptiveNumberDatatype extends NumberDatatype implements Datatype<Number> {
 
     protected Class<?> type;

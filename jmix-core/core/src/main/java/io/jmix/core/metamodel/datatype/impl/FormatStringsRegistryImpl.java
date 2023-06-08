@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+@Internal
 @Component("core_FormatStringsRegistry")
 public class FormatStringsRegistryImpl implements FormatStringsRegistry {
 

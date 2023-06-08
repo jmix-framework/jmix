@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -41,6 +42,7 @@ import java.util.Map;
  * <code>DateDatatype</code> works with <code>java.<b>sql</b>.Date</code> but is parameterized with
  * <code>java.<b>util</b>.Date</code> to avoid problems with casting.
  */
+@Internal
 @DatatypeDef(id = "date", javaClass = java.sql.Date.class, defaultForClass = true, value = "core_DateDatatype")
 public class DateDatatype implements Datatype<Date>, ParameterizedDatatype {
 

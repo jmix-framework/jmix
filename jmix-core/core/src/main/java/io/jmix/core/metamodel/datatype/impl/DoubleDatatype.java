@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -29,6 +30,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
+@Internal
 @DatatypeDef(id = "double", javaClass = Double.class, defaultForClass = true, value = "core_DoubleDatatype")
 @io.jmix.core.metamodel.annotation.NumberFormat(
         pattern = "0.###",

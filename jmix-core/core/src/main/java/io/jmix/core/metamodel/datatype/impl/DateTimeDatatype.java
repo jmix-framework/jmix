@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.*;
@@ -35,6 +36,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+@Internal
 @DatatypeDef(id = "dateTime", javaClass = Date.class, defaultForClass = true, value = "core_DateTimeDatatype")
 public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, TimeZoneAwareDatatype {
 

@@ -15,6 +15,7 @@
  */
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.datatype.Enumeration;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+@Internal
 public class EnumerationImpl<T extends Enum> implements Enumeration<T> {
 
     private Class<T> javaClass;

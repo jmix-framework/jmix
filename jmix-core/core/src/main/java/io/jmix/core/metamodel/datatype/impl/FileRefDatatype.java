@@ -17,6 +17,7 @@
 package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.FileRef;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.util.Locale;
 
+@Internal
 @DatatypeDef(id = "fileRef", javaClass = FileRef.class, defaultForClass = true, value = "core_FileRefDatatype")
 public class FileRefDatatype implements Datatype<FileRef> {
 

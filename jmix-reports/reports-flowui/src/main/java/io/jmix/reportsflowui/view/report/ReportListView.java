@@ -1,4 +1,20 @@
-package io.jmix.reportsflowui.view.report.listview;
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.reportsflowui.view.report;
 
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
@@ -6,7 +22,7 @@ import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
+import io.jmix.reportsflowui.view.report.ReportDetailView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;

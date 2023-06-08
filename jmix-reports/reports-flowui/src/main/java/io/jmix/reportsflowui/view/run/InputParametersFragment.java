@@ -25,6 +25,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -39,6 +40,8 @@ import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reportsflowui.view.validators.ReportCollectionValidator;
+import io.jmix.reportsflowui.view.validators.ReportParamFieldValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.BeansException;
@@ -181,19 +184,7 @@ public class InputParametersFragment extends Composite<FormLayout>
         this.inputParameter = inputParameter;
     }
 
-
     protected void onInit() {
-//        ScreenOptions options = event.getOptions();
-//
-//        if (options instanceof MapScreenOptions) {
-//            MapScreenOptions mapScreenOptions = (MapScreenOptions) options;
-//
-//            report = (Report) mapScreenOptions.getParams().get(REPORT_PARAMETER);
-//            parameters = (Map<String, Object>) mapScreenOptions.getParams().get(PARAMETERS_PARAMETER);
-//            bulkPrint = BooleanUtils.isTrue((Boolean) mapScreenOptions.getParams().get(BULK_PRINT));
-//            inputParameter = (ReportInputParameter) mapScreenOptions.getParams().get(INPUT_PARAMETER);
-//        }
-
         initLayout();
     }
 
@@ -244,24 +235,18 @@ public class InputParametersFragment extends Composite<FormLayout>
             UiComponentUtils.setValue(field, value);
         }
 
-        //if (BooleanUtils.isTrue(parameter.getValidationOn())) {
-        //field.addValidator(applicationContext.getBean(ReportParamFieldValidator.class, parameter));
-        //}
+        if (BooleanUtils.isTrue(parameter.getValidationOn())) {
+            ((SupportsValidation) field).addValidator(
+                    applicationContext.getBean(ReportParamFieldValidator.class, parameter)
+            );
+        }
 
-        //if (BooleanUtils.isTrue(field.isRequired())) {
-        //field.addValidator(applicationContext.getBean(ReportCollectionValidator.class, field));
-        //}
+        if (BooleanUtils.isTrue(parameter.getRequired())) {
+            ((SupportsValidation) field).addValidator(
+                    applicationContext.getBean(ReportCollectionValidator.class, field)
+            );
+        }
 
-//        Label label = parameterFieldCreator.createLabel(parameter, field);
-//        label.setClassName("jmix-report-parameter-caption");
-
-//        if (currentGridRow == 2) {
-//            if (field instanceof Component.Focusable) {
-//                ((Component.Focusable) field).focus();
-//            }
-//        }
-
-//        label.setVisible(visible);
         field.setVisible(visible);
 
         parameterComponents.put(parameter.getAlias(), field);
@@ -278,7 +263,6 @@ public class InputParametersFragment extends Composite<FormLayout>
             updateOutputTypes();
         }
     }
-
 
     public Report getReport() {
         return report;

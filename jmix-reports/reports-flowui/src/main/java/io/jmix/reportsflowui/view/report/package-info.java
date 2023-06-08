@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.reportsflowui.view.report.detailview;
+package io.jmix.reportsflowui.view.report;
 
 import org.springframework.lang.NonNullApi;

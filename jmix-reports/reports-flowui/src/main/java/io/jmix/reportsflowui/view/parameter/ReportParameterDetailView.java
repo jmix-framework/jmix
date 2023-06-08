@@ -11,7 +11,10 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.*;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -30,17 +33,19 @@ import io.jmix.reports.entity.PredefinedTransformation;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsUiHelper;
-import io.jmix.reportsflowui.view.report.detailview.ReportDetailView;
+import io.jmix.reportsflowui.view.report.ReportDetailView;
 import io.jmix.reportsflowui.view.run.ParameterComponentGenerationStrategy;
 import io.jmix.reportsflowui.view.validators.ReportParamAliasValidator;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 
 @Route(value = "reports/parameters/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportInputParameter.detail")
@@ -81,11 +86,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @ViewComponent
     protected JmixCheckbox isPredefinedTransformationField;
     @ViewComponent
-    private Div transformationEditorBox;
-
-    @ViewComponent
     protected InstanceContainer<ReportInputParameter> parameterDc;
-
     @Autowired
     protected ParameterClassResolver parameterClassResolver;
     @Autowired
@@ -108,6 +109,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     protected ReportsUiHelper reportsUiHelper;
     @Autowired
     protected JmixObjectToStringConverter jmixObjectToStringConverter;
+    @ViewComponent
+    private Div transformationEditorBox;
     @Autowired
     private ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
     @Autowired
@@ -130,7 +133,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         }
         enableControlsByParamType(editedParam.getType());
         initScreensLookup();
-        //initTransformations();
+        initTransformations();
     }
 
     private void initParameterTypeField() {
@@ -181,7 +184,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @Subscribe("fullScreenTransformationBtn")
     public void onFullScreenTransformationBtnClick(final ClickEvent<Button> event) {
         reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
+                messages.getMessage("fullScreenBtn.title"),
                 parameterDc.getItem().getTransformationScript(),
                 value -> parameterDc.getItem().setTransformationScript(value),
                 CodeEditorMode.GROOVY,
@@ -207,7 +210,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @Subscribe("fullScreenValidationBtn")
     public void onFullScreenValidationBtnClick(final ClickEvent<Button> event) {
         reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
+                messages.getMessage("fullScreenBtn.title"),
                 parameterDc.getItem().getValidationScript(),
                 value -> parameterDc.getItem().setValidationScript(value),
                 CodeEditorMode.GROOVY,
@@ -233,7 +236,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @Subscribe("lookupWhereFullScreenBtn")
     public void onLookupWhereFullScreenBtnClick(final ClickEvent<Button> event) {
         reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
+                messages.getMessage("fullScreenBtn.title"),
                 parameterDc.getItem().getLookupJoin(),
                 value -> parameterDc.getItem().setLookupJoin(value),
                 CodeEditorMode.GROOVY,
@@ -244,7 +247,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @Subscribe("lookupJoinFullScreenBtn")
     public void onLookupJoinFullScreenBtnClick(final ClickEvent<Button> event) {
         reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
+                messages.getMessage("fullScreenBtn.title"),
                 parameterDc.getItem().getLookupWhere(),
                 value -> parameterDc.getItem().setLookupWhere(value),
                 CodeEditorMode.GROOVY,
@@ -280,17 +283,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                 .withModal(false)
                 .withWidth("50em")
                 .open();
-    }
-
-    protected String getScriptEditorDialogCaption() {
-        String reportName = parameterDc.getItem().getName();
-        String bandName = parameterDc.getItem().getName();
-
-        if (ObjectUtils.isNotEmpty(bandName) && ObjectUtils.isNotEmpty(reportName)) {
-            return messages.formatMessage(
-                    "bandsTab.dataSetTypeLayout.jsonGroovyCodeEditor.expandIcon.dialog.header", reportName, bandName);
-        }
-        return StringUtils.EMPTY;
     }
 
     @Subscribe("parameterTypeField")
@@ -472,7 +464,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     protected void initTransformations() {
         ReportInputParameter parameter = getEditedEntity();
-        isPredefinedTransformationField.setValue(parameter.getPredefinedTransformation() != null);
+        UiComponentUtils.setValue(isPredefinedTransformationField, parameter.getPredefinedTransformation() != null);
         enableControlsByTransformationType(parameter.getPredefinedTransformation() != null);
 
         //todo

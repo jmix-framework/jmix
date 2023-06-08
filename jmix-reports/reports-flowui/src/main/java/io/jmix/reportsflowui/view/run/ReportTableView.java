@@ -126,7 +126,6 @@ public class ReportTableView extends StandardView {
     @Subscribe("reportEntityComboBox")
     public void onReportEntityComboBoxComponentValueChange(AbstractField.ComponentValueChangeEvent<EntityComboBox<Report>, Report> event) {
         report = event.getValue();
-
         openReportParameters();
     }
 
@@ -172,7 +171,7 @@ public class ReportTableView extends StandardView {
     @Subscribe("runAction")
     public void onRunAction(ActionPerformedEvent event) {
         if (inputParametersFrame != null && inputParametersFrame.getReport() != null) {
-            ValidationErrors validationErrors = viewValidation.validateUiComponents(this.getContent());
+            ValidationErrors validationErrors = viewValidation.validateUiComponents(inputParametersFrame.getContent());
             if (validationErrors.isEmpty()) {
                 Map<String, Object> parameters = inputParametersFrame.collectParameters();
                 Report report = inputParametersFrame.getReport();
@@ -215,9 +214,10 @@ public class ReportTableView extends StandardView {
             if (CollectionUtils.isNotEmpty(keyValueEntities)) {
                 KeyValueCollectionContainer container = createContainer(dataSetName, keyValueEntities, headerMap);
                 DataGrid<KeyValueEntity> dataGrid = createTable(dataSetName, container, headerMap);
-                HorizontalLayout buttonsPanel = createButtonsPanel(dataGrid, container);
+                HorizontalLayout buttonsPanel = createButtonsPanel(dataGrid);
 
                 VerticalLayout verticalLayout = uiComponents.create(VerticalLayout.class);
+                verticalLayout.setPadding(false);
                 verticalLayout.add(buttonsPanel);
                 verticalLayout.add(dataGrid);
 
@@ -230,7 +230,7 @@ public class ReportTableView extends StandardView {
         tablesVBoxLayout.expand(jmixTabSheet);
     }
 
-    private HorizontalLayout createButtonsPanel(DataGrid<KeyValueEntity> dataGrid, KeyValueCollectionContainer container) {
+    private HorizontalLayout createButtonsPanel(DataGrid<KeyValueEntity> dataGrid) {
         Action excelExportAction = actions.create(ExcelExportAction.ID);
         dataGrid.addAction(excelExportAction);
 

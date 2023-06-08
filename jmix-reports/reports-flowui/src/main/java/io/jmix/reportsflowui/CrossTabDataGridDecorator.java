@@ -81,7 +81,7 @@ public class CrossTabDataGridDecorator {
             field.setValueSource(new ContainerValueSource<>(instanceContainer, "name"));
             field.setReadOnly(isVerticalOrHorizontalCrossField(bandDefinitionDc, entity) || !isUpdatePermitted());
             return field;
-        }).setHeader(messages.getMessage("io.jmix.reportsflowui.view.report.detailview",
+        }).setHeader(messages.getMessage("io.jmix.reportsflowui.view.report",
                 "bandsTab.dataSetsDataGrid.nameColumn.header"));
 
         bandDefinitionDc.addItemPropertyChangeListener(e ->

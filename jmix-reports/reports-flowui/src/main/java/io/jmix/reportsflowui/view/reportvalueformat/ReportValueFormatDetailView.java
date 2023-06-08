@@ -5,8 +5,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.DialogWindows;
@@ -15,6 +14,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.ReportValueFormat;
@@ -28,17 +28,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
-
 @Route(value = "reports/valueFormats/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportValueFormat.detail")
 @ViewDescriptor("report-value-format-detail-view.xml")
 @EditedEntityContainer("valuesFormatsDc")
-@DialogMode(width = "30em")
+@DialogMode(width = "40em")
 public class ReportValueFormatDetailView extends StandardDetailView<ReportValueFormat> {
 
     protected static final String RETURN_VALUE = "return value";
-    protected static final String FIELD_ICON_CLASS_NAME = "template-detailview-field-icon";
+
     protected static final String[] defaultFormats = new String[]{
             "#,##0",
             "##,##0",
@@ -59,6 +57,11 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     private JmixCheckbox groovyField;
     @ViewComponent
     private CodeEditor groovyCodeEditor;
+    @ViewComponent
+    private Div groovyCodeEditorBox;
+
+    @ViewComponent
+    private InstanceContainer<ReportValueFormat> valuesFormatsDc;
 
     @Autowired
     private SecureOperations secureOperations;
@@ -67,22 +70,15 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     @Autowired
     private PolicyStore policyStore;
     @Autowired
-    private DialogWindows dialogWindows;
-    @Autowired
     private Dialogs dialogs;
     @Autowired
     private MessageBundle messageBundle;
     @Autowired
-    private UiComponents uiComponents;
-    @Autowired
     private ReportsUiHelper reportsUiHelper;
-    @ViewComponent
-    private InstanceContainer<ReportValueFormat> valuesFormatsDc;
 
     @Subscribe
     public void onInit(InitEvent event) {
         initFormatComboBox();
-        initGroovyCodeEditor();
     }
 
     @Subscribe
@@ -92,7 +88,6 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
             List<String> optionsList = formatField.getListDataView().getItems()
                     .toList();
 
-
             if (!optionsList.contains(value) && Boolean.FALSE.equals(groovyField.getValue())) {
                 addFormatItem(value);
             }
@@ -100,60 +95,13 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
         }
     }
 
-
     @Subscribe
     public void onBeforeSave(BeforeSaveEvent event) {
         getEditedEntity().setFormatString(formatField.getValue());
     }
 
-    @Subscribe("groovyFullScreenButton")
-    public void onGroovyFullScreenButton(ClickEvent<Button> event) {
-
-    }
-
-    protected void onGroovyCodeExpandIconClick(ClickEvent<Icon> event) {
-        //todo AN
-//        reportsUiHelper.showScriptEditorDialog(
-//                getScriptEditorDialogCaption(),
-//                valuesFormatsDc.getItem().getFormatString(),
-//                value -> valuesFormatsDc.getItem().setFormatString(value),
-//                this::onTransformationScriptHelpIconClick
-//        );
-//todo an return with code editor
-//        editorDialog.addAfterCloseListener();
-//
-//                .withAfterCloseListener(actionId-> {
-//                    StandardCloseAction closeAction = (StandardCloseAction) actionId.getCloseAction();
-//                    if (COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-//                        groovyCodeEditor.setValue(editorDialog.getValue());
-//                    }
-//                })
-// поменять на code editor когда его доделают
-//        String reportName = document.getDocumentName();
-//        ScriptEditorDialog editorDialog = screenBuilders.screen(this)
-//                .withScreenClass(ScriptEditorDialog.class)
-//                .withOpenMode(OpenMode.DIALOG)
-//                .withOptions(new MapScreenOptions(ParamsMap.of(
-//                        "mode", groovyScriptFieldMode,
-//                        "suggester", groovyCodeEditor.getSuggester(),
-//                        "scriptValue", groovyCodeEditor.getValue(),
-//                        "helpVisible", groovyCodeEditor.isVisible(),
-//                        "helpMsgKey", "valuesFormats.groovyScriptHelpText"
-//                )))
-//                .build();
-//        editorDialog.addAfterCloseListener(actionId -> {
-//            StandardCloseAction closeAction = (StandardCloseAction) actionId.getCloseAction();
-//            closeAction
-//            if (.equals(closeAction.getActionId())) {
-//                groovyCodeEditor.setValue(editorDialog.getValue());
-//            }
-//        });
-//        editorDialog.show();
-    }
-
     @Subscribe("groovyField")
-    public void onGroovyFieldComponentValueChange
-            (AbstractField.ComponentValueChangeEvent<Checkbox, Boolean> event) {
+    public void onGroovyFieldComponentValueChange(AbstractField.ComponentValueChangeEvent<Checkbox, Boolean> event) {
         Boolean visible = event.getValue();
         Boolean prevVisible = event.getOldValue();
 
@@ -165,38 +113,27 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
         if (Boolean.FALSE.equals(visible)) {
             formatField.clear();
         }
-        groovyCodeEditor.setVisible(Boolean.TRUE.equals(visible));
+        groovyCodeEditorBox.setVisible(Boolean.TRUE.equals(visible));
         formatField.setVisible(Boolean.FALSE.equals(visible));
-
     }
 
-
-    //todo AN code editor
-//    @Install(to = "groovyField", subject = "contextHelpIconClickHandler")
-//    protected void groovyCheckBoxContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent
-//                                                                     contextHelpIconClickEvent) {
-//        dialogs.createMessageDialog()
-//                .withHeader(messages.getMessage("valuesFormats.groovyScript"))
-//                .withText(messages.getMessage("valuesFormats.groovyScriptHelpText"))
-//                .withModal(false)
-//                .withWidth("700px")
-//                .open();
-//    }
-
-    protected void initGroovyCodeEditor() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onGroovyCodeExpandIconClick);
-
-        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(this::onGroovyCodeHelpIconClick);
-//todo AN return
-//        groovyCodeEditor.setSuffixComponent(new Div(expandIcon, helpIcon));
+    @Subscribe("groovyCodeEditorHelpBtn")
+    public void onGroovyCodeEditorHelpBtnClick(final ClickEvent<Button> event) {
+        onGroovyCodeHelpIconClick();
     }
 
+    @Subscribe("fullScreenTransformationBtn")
+    public void onFullScreenTransformationBtnClick(final ClickEvent<Button> event) {
+        reportsUiHelper.showScriptEditorDialog(
+                messageBundle.getMessage("fullScreenBtn.title"),
+                valuesFormatsDc.getItem().getFormatString(),
+                value -> valuesFormatsDc.getItem().setFormatString(value),
+                CodeEditorMode.GROOVY,
+                icon -> onGroovyCodeHelpIconClick()
+        );
+    }
 
-    protected void onGroovyCodeHelpIconClick(ClickEvent<Icon> event) {
+    protected void onGroovyCodeHelpIconClick() {
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage("valuesFormats.groovyScript"))
                 .withContent(new Html(messageBundle.getMessage("valuesFormats.groovyScriptHelpText")))
@@ -208,6 +145,12 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
 
     protected void initFormatComboBox() {
         formatField.setItems(Arrays.asList(defaultFormats));
+
+        formatField.addCustomValueSetListener(event -> {
+            String text = event.getDetail();
+            addFormatItem(text);
+            formatField.setValue(text);
+        });
 
         formatField.setEnabled(secureOperations.isEntityUpdatePermitted(metadata.getClass(ReportValueFormat.class), policyStore));
     }

@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 @Route(value = "reports/executions", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportExecution.list")
 @ViewDescriptor("report-execution-list-view.xml")
+@LookupComponent("executionsDataGrid")
 @DialogMode(width = "80em", height = "65em", resizable = true)
 public class ReportExecutionListView extends StandardListView<ReportExecution> {
 

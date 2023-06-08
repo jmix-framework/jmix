@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.core.metamodel.datatype.impl;
+package io.jmix.core.metamodel.datatype;
 
 /**
  * Interface to be implemented by enums that serve as entity attribute types.

@@ -17,7 +17,7 @@
 package io.jmix.audit.snapshot.model;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 import java.util.Collection;
 

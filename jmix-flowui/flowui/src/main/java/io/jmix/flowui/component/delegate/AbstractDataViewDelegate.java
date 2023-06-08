@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.HasDataView;
 import com.vaadin.flow.data.provider.HasListDataView;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;

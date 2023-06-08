@@ -15,7 +15,7 @@
  */
 package io.jmix.reports.entity;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum ReportType implements EnumClass<Integer> {
     SIMPLE(10),

@@ -16,7 +16,7 @@
 
 package test_support.entity.sales;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 import org.springframework.lang.Nullable;
 

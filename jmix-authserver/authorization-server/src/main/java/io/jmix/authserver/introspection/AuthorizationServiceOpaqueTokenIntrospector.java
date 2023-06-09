@@ -19,8 +19,7 @@ package io.jmix.authserver.introspection;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.security.oauth2.core.*;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
@@ -58,6 +57,10 @@ public class AuthorizationServiceOpaqueTokenIntrospector implements OpaqueTokenI
         OAuth2Authorization authorization = authorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
         if (authorization == null) {
             throw new BadOpaqueTokenException("Authorization for provided access token not found");
+        }
+        OAuth2Authorization.Token<OAuth2Token> accessToken = authorization.getToken(token);
+        if (accessToken == null || !accessToken.isActive()) {
+            throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_TOKEN);
         }
         String principalName = authorization.getPrincipalName();
         Collection<GrantedAuthority> authorities = new ArrayList<>();

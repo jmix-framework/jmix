@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.component.valuepicker;
 
-import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.PickerComponent;
@@ -37,7 +36,7 @@ import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public class JmixValuePicker<V> extends ValuePicker<V>
-        implements PickerComponent<V>, SupportsValidation<V>, HasRequired, HasPrefixAndSuffix,
+        implements PickerComponent<V>, SupportsValidation<V>, HasRequired,
         SupportsStatusChangeHandler<JmixValuePicker<V>>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -69,6 +68,20 @@ public class JmixValuePicker<V> extends ValuePicker<V>
         fieldDelegate.setInvalid(invalid);
     }
 
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {
@@ -88,6 +101,11 @@ public class JmixValuePicker<V> extends ValuePicker<V>
     @Override
     public void executeValidators() throws ValidationException {
         fieldDelegate.executeValidators();
+    }
+
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

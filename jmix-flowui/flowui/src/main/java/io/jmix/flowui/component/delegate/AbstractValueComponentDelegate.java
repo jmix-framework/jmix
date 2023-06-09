@@ -57,9 +57,6 @@ public abstract class AbstractValueComponentDelegate<C extends Component & HasVa
         if (valueSource != null) {
             valueBinding = createValueBinding(valueSource);
             valueBinding.bind();
-
-            valueBinding.activate();
-
         }
 
         valueBindingChanged(valueBinding);
@@ -68,6 +65,16 @@ public abstract class AbstractValueComponentDelegate<C extends Component & HasVa
     protected void valueBindingChanged(@Nullable ValueBinding<T> valueBinding) {
         ValueBindingChangeEvent<T> event = new ValueBindingChangeEvent<>(this, valueBinding);
         getEventBus().fireEvent(event);
+
+        // Activate after ValueBindingChangeEvent is fired, because event handlers
+        // will set Enum items, if related property is enum, so we don't need to do
+        // it manually. But Vaadin components clear they value, if items provider has
+        // been changed, as a result, if a related container already had an item, i.e.
+        // it is activated and no StateChange event will be fired to inform a binding
+        // that it is needed to set a value to a component, we do it here.
+        if (valueBinding != null) {
+            valueBinding.activate();
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -1,12 +1,16 @@
+// NOTE: do not change the file, it will be overwritten by the Studio
+
 import { UserConfigFn } from 'vite';
 import { overrideVaadinConfig } from './vite.generated';
 
+let hmrPort = 60001;
+
 const customConfig: UserConfigFn = (env) => ({
-    // Here you can add custom Vite parameters
-    // https://vitejs.dev/config/
     server: {
-        fs: {
-            strict: false
+        hmr: {
+            protocol: 'ws',
+            host: 'localhost',
+            port: hmrPort
         }
     }
 });

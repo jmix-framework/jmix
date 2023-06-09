@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+          icon="resource://template/browser_and_editor.svg"
+          name="DTO entity list and detail views"
+          order="33">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>DTO</tag>
+    </tags>
+    <description>
+        <![CDATA[<html>DTO list and detail views created at once.</html>]]>
+    </description>
+    <locMessages key="viewTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.title">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
+        </message>
+    </locMessages>
+    <locMessages key="detailTitle" expressionKey="${studioUtils.decapitalize(detailControllerName)}.title">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeNaturalMessage(entity.className)}]]>
+        </message>
+    </locMessages>
+
+    <steps>
+        <step name="Entity list and detail views" order="0"/>
+        <step name="Entity list and detail views" order="1"/>
+    </steps>
+
+    <!--properties-->
+    <property caption="Entity"
+              code="entity"
+              propertyType="ENTITY"
+              required="true"/>
+    <property caption="Table type"
+              step="1"
+              code="tableType"
+              propertyType="FLOW_TABLE_TYPE"
+              relatedProperty="entity"
+              required="true"/>
+    <property caption="Multiselect"
+              code="multiselect"
+              step="1"
+              propertyType="BOOLEAN"/>
+    <property caption="Table actions"
+              step="1"
+              code="tableActions"
+              defaultValue="create,edit,remove"
+              propertyType="MULTI_OPTION"
+              optionsString="${actionSearch.getWizardTableActions()}"/>
+
+    <property caption="List view descriptor name"
+              code="viewDescriptorName"
+              propertyType="DESCRIPTOR_NAME"
+              group="list"
+              advanced="true"
+              dynamic="true"
+              sourceName="descriptor"
+              required="true"
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-list-view">
+        <dependency code="entity"/>
+    </property>
+    <property caption="List view controller name"
+              code="viewControllerName"
+              propertyType="CLASS_NAME"
+              group="list"
+              advanced="true"
+              dynamic="true"
+              sourceName="controller"
+              required="true"
+              valueTemplate="${entity.className}ListView">
+        <dependency code="entity"/>
+    </property>
+    <property caption="List view id"
+              code="viewId"
+              propertyType="SCREEN_ID"
+              group="list"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.list">
+        <dependency code="entity"/>
+    </property>
+    <property caption="List view route"
+              code="listRoute"
+              propertyType="STRING"
+              group="list"
+              advanced="true"
+              dynamic="true"
+              required="true"
+              valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Detail view descriptor name"
+              code="detailDescriptorName"
+              propertyType="DESCRIPTOR_NAME"
+              sourceName="descriptor"
+              group="detail"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-detail-view">
+        <dependency code="entity"/>
+    </property>
+    <property caption="Detail view controller name"
+              code="detailControllerName"
+              propertyType="CLASS_NAME"
+              sourceName="controller"
+              group="detail"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${entity.className}DetailView">
+        <dependency code="entity"/>
+    </property>
+    <property caption="Detail view Id"
+              code="detailId"
+              propertyType="SCREEN_ID"
+              group="detail"
+              advanced="true"
+              dynamic="true"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.detail"
+              required="true">
+        <dependency code="entity"/>
+    </property>
+    <property caption="Detail view route"
+              code="detailRoute"
+              propertyType="STRING"
+              group="detail"
+              advanced="true"
+              dynamic="true"
+              required="true"
+              valueTemplate="${entity.uncapitalizedClassName}/detail">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Parent menu item"
+              code="menuItem"
+              propertyType="FLOW_MENU_ITEM"/>
+
+    <!--sources-->
+    <source fileExt="xml"
+            group="list"
+            name="../list-dto/descriptor"/>
+    <source fileExt="java"
+            group="list"
+            name="../list-dto/controller"/>
+    <source fileExt="kt"
+            group="list"
+            name="../list-dto/controller"/>
+
+    <source fileExt="xml"
+            group="detail"
+            name="../detail-dto/descriptor"/>
+    <source fileExt="java"
+            group="detail"
+            name="../detail-dto/controller"/>
+    <source fileExt="kt"
+            group="detail"
+            name="../detail-dto/controller"/>
+</template>

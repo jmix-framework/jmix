@@ -16,7 +16,7 @@
 
 package io.jmix.reports.entity.charts;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum SeriesType implements EnumClass<String> {
     LINE("line"), COLUMN("column"), STEP("step"), SMOOTHED_LINE("smoothedLine");

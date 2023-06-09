@@ -107,8 +107,8 @@ public class TypedTextField<V> extends TextField
     }
 
     @Override
-    public void validate() {
-        isInvalid();
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
@@ -239,6 +239,20 @@ public class TypedTextField<V> extends TextField
         super.setPattern(pattern);
 
         fieldDelegate.setPattern(pattern);
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
     }
 
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {

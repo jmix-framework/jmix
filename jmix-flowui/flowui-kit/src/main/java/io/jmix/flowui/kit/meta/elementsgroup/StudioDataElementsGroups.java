@@ -43,7 +43,10 @@ public interface StudioDataElementsGroups {
             xmlElement = "properties",
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
             target = {"io.jmix.flowui.model.KeyValueContainer",
-                    "io.jmix.flowui.model.KeyValueCollectionLoader"}
+                    "io.jmix.flowui.model.KeyValueCollectionLoader"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "idProperty", type = StudioPropertyType.STRING)
+            }
     )
     void properties();
 }

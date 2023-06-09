@@ -374,26 +374,6 @@
                 ]]>
             </description>
         </codeSnippet>
-
-        <codeSnippet name="Get localized message" contextTypes="controller" expressionResultType="String">
-            <inject variable="messageBundle" classQualifiedName="io.jmix.ui.screen.MessageBundle"/>
-
-            <messageKeyInputParameter code="key" text="Message key" optional="true"/>
-
-            <text language="java">
-                messageBundle.getMessage("${key}");
-            </text>
-            <text language="kotlin">
-                messageBundle.getMessage("${key}")
-            </text>
-
-            <description>
-                <![CDATA[
-                Get a localized message from the message bundle by key.<br>
-                <a href="https://docs.jmix.io/jmix/localization/message-bundles.html#using-messages-in-ui">Jmix Documentation</a>
-                ]]>
-            </description>
-        </codeSnippet>
     </category>
 
     <category name="Files">
@@ -515,36 +495,6 @@
 
 
     <category name="Web">
-        <codeSnippet name="Open web page" contextTypes="service">
-            <inject variable="webBrowserToolsProvider" classQualifiedName="org.springframework.beans.factory.ObjectProvider&lt;io.jmix.ui.WebBrowserTools&gt;"/>
-
-            <text language="java">
-                webBrowserToolsProvider.getObject().showWebPage("https://jmix.io", io.jmix.core.common.util.ParamsMap.of("target", "_blank"));
-            </text>
-            <text language="kotlin">
-                webBrowserToolsProvider.getObject().showWebPage("https://jmix.io", mapOf("target" to "_blank"))
-            </text>
-
-            <description>
-                Open a web page in a browser tab
-            </description>
-        </codeSnippet>
-
-
-        <codeSnippet name="Open web page" contextTypes="controller">
-            <inject variable="webBrowserTools" classQualifiedName="io.jmix.ui.WebBrowserTools"/>
-
-            <text language="java">
-                webBrowserTools.showWebPage("https://jmix.io", io.jmix.core.common.util.ParamsMap.of("target", "_blank"));
-            </text>
-            <text language="kotlin">
-                webBrowserTools.showWebPage("https://jmix.io", mapOf("target" to "_blank"))
-            </text>
-
-            <description>
-                Open a web page in a browser tab
-            </description>
-        </codeSnippet>
 
         <codeSnippet name="Call GET web service" contextTypes="service,controller" minJavaVersion="11">
             <urlInputParameter code="url" text="URL"/>

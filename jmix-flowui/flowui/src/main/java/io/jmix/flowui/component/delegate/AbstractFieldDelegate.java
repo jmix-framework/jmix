@@ -158,8 +158,8 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
                 try {
                     validator.accept(value);
                 } catch (ValidationException e) {
-                    setInvalidInternal(true);
                     setErrorMessage(e.getDetailsMessage());
+                    setInvalidInternal(true);
                     throw new ComponentValidationException(e.getDetailsMessage(), component, e);
                 }
             }
@@ -214,8 +214,6 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     }
 
     public boolean isInvalid() {
-        updateInvalidState();
-
         return isInvalidInternal();
     }
 
@@ -231,7 +229,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         updateInvalidState();
     }
 
-    protected void updateInvalidState() {
+    public void updateInvalidState() {
         boolean invalid = explicitlyInvalid || conversionInvalid || !validatorsPassed();
 
         setInvalidInternal(invalid);

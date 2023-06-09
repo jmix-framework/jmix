@@ -51,7 +51,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -1453,5 +1457,36 @@ public class FrontendUtils {
     public static InputStream getResourceAsStream(String name) {
         final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
         return FrontendUtils.class.getClassLoader().getResourceAsStream(devServerResourcesBaseDir + name);
+    }
+
+    public static int findFreePort(int rangeStart, int rangeEnd) {
+        final String host = "localhost";
+        try {
+            InetAddress ipV4Host = InetAddress.getByName(host);
+            InetAddress ipV6Host = InetAddress.getByName("::1");
+            for (int port = rangeStart; port <= rangeEnd; port++) {
+                if (isPortAvailable(port, ipV4Host)
+                        && isPortAvailable(port, ipV6Host)) {
+                    return port;
+                }
+            }
+
+            throw new RuntimeException(
+                    "Free port not found in range " +
+                            "[" + rangeStart + ":" + rangeEnd + "]"
+            );
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static boolean isPortAvailable(int port, InetAddress address) {
+        try (Socket socket = new Socket()) {
+            InetSocketAddress socketAddress = new InetSocketAddress(address, port);
+            socket.connect(socketAddress, 1000);
+            return false;
+        } catch (Exception e) {
+            return true; // Port is available
+        }
     }
 }

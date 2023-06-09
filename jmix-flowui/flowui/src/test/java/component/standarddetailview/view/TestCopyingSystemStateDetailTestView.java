@@ -16,6 +16,7 @@
 
 package component.standarddetailview.view;
 
+import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.EditedEntityContainer;
 import io.jmix.flowui.view.StandardDetailView;
@@ -23,9 +24,14 @@ import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.TestCopyingSystemStateEntity;
 
-@Route(value = "TestCopyingSystemStateDetailTestView/:id")
+@Route(value = "TestCopyingSystemStateDetailTestView/detail")
 @ViewController("TestCopyingSystemStateDetailTestView")
 @ViewDescriptor("test-copying-system-state-detail-test-view.xml")
 @EditedEntityContainer("testCopyingSystemStateDc")
 public class TestCopyingSystemStateDetailTestView extends StandardDetailView<TestCopyingSystemStateEntity> {
+
+    @Override
+    protected void findEntityId(BeforeEnterEvent event) {
+        // Because DTO entity cannot be loaded by Id, we need to prevent Id parsing from route parameters
+    }
 }

@@ -20,6 +20,8 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.component.shared.HasValidationProperties;
+import com.vaadin.flow.component.shared.ValidationUtil;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
@@ -38,7 +40,7 @@ import static com.vaadin.flow.data.value.ValueChangeMode.eventForMode;
 @JsModule("./src/value-picker/jmix-value-picker.js")
 public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
         extends AbstractField<C, V>
-        implements SupportsFormatter<V>, SupportsUserAction<V>,
+        implements SupportsFormatter<V>, SupportsUserAction<V>, HasValidationProperties,
         HasLabel, HasHelper, HasStyle, HasTheme, HasSize, HasPlaceholder,
         HasTitle, HasAutofocus, HasActions, Focusable<C>, HasTooltip {
 
@@ -54,10 +56,8 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
 
         initComponent();
 
-        // TODO: gg, move to delegate
-//        addValueChangeListener(e -> validate());
+        addValueChangeListener(e -> validate());
     }
-
 
     protected void initComponent() {
         setAllowCustomValue(false);
@@ -98,6 +98,15 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
     public void setValueFromClient(@Nullable V value) {
         setModelValue(value, true);
         setPresentationValue(value);
+    }
+
+    protected void validate() {
+        boolean isRequired = this.isRequiredIndicatorVisible();
+        boolean isInvalid = ValidationUtil
+                .checkRequired(isRequired, getValue(), getEmptyValue())
+                .isError();
+
+        setInvalid(isInvalid);
     }
 
     @Override

@@ -53,6 +53,8 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     private TypedTextField<Integer> repeatCountField;
     @ViewComponent
     private TypedTextField<Long> repeatIntervalField;
+    @ViewComponent
+    private Select<ScheduleType> scheduleTypeField;
 
     @Autowired
     private QuartzService quartzService;
@@ -71,14 +73,13 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         initCronHelperButton();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Subscribe
     public void onReady(ReadyEvent event) {
         initFieldVisibility();
-    }
-
-    @Subscribe
-    public void onInitEntity(InitEntityEvent<TriggerModel> event) {
-        event.getEntity().setScheduleType(ScheduleType.CRON_EXPRESSION);
+        if (getEditedEntity().getScheduleType() == null) {
+            scheduleTypeField.setValue(ScheduleType.CRON_EXPRESSION);
+        }
     }
 
     private void initCronHelperButton() {

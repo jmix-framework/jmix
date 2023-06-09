@@ -82,6 +82,11 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
         fieldDelegate.executeValidators();
     }
 
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
+    }
+
     @Nullable
     @Override
     public ValueSource<Integer> getValueSource() {
@@ -96,6 +101,15 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
     @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
     }
 
     @Override

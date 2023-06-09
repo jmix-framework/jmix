@@ -1,0 +1,34 @@
+<%
+dcId = "${entity.uncapitalizedClassName}Dc"
+dlId = "${entity.uncapitalizedClassName}Dl"
+
+def formXml = api.processSnippet('dto_form.xml',
+        ['entity': entity,
+        'api': api,
+        'dcId': dcId,
+        'formId': 'form'])
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="${messageKeys['detailTitle']}"
+      focusComponent="form">
+    <data>
+        <instance id="${dcId}"
+                  class="${entity.fqn}">
+            <loader id="${dlId}"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        ${formXml}
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

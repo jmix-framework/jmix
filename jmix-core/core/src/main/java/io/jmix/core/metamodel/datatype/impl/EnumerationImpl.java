@@ -15,6 +15,7 @@
  */
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.datatype.Enumeration;
 import org.apache.commons.lang3.StringUtils;
 

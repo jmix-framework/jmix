@@ -156,6 +156,20 @@ public class TypedTimePicker<V extends Comparable> extends TimePicker implements
         fieldDelegate.setStatusChangeHandler(handler);
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {
@@ -228,8 +242,8 @@ public class TypedTimePicker<V extends Comparable> extends TimePicker implements
     }
 
     @Override
-    public void validate() {
-        isInvalid();
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Override

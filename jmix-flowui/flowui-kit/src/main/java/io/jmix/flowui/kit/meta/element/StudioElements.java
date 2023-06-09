@@ -164,6 +164,7 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "configurationParam", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "conditionParam", type = StudioPropertyType.STRING)
             }
     )

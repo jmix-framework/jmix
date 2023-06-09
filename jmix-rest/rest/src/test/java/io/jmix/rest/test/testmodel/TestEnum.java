@@ -17,7 +17,7 @@
 package io.jmix.rest.test.testmodel;
 
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 /**
  */

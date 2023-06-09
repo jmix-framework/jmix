@@ -15,11 +15,10 @@
  */
 package io.jmix.reports.entity;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.reports.yarg.structure.BandOrientation;
+import io.jmix.core.metamodel.datatype.EnumClass;
+import com.haulmont.yarg.structure.BandOrientation;
 
 public enum Orientation implements EnumClass<Integer> {
-
     HORIZONTAL(0, BandOrientation.HORIZONTAL),
     VERTICAL(1, BandOrientation.VERTICAL),
     CROSS(2, BandOrientation.CROSS);

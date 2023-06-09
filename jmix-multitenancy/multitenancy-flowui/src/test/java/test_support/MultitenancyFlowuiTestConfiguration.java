@@ -59,7 +59,7 @@ import javax.sql.DataSource;
 })
 @JmixModule(dependsOn = {MultitenancyConfiguration.class, MultitenancyFlowuiConfiguration.class})
 @EnableWebSecurity
-public class MultitenancyFlowuiTestConfiguration extends CoreSecurityConfiguration {
+public class MultitenancyFlowuiTestConfiguration {
 
     @Bean
     DataSource dataSource() {

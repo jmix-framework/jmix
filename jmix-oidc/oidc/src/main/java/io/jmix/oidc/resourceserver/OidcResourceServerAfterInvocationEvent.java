@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.securityoauth2.event;
+package io.jmix.oidc.resourceserver;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.Authentication;
@@ -23,17 +23,17 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 
 /**
- * Event fired after an API controller call.
+ * Event fired after OIDC resource server API call.
  */
-public class AfterInvocationEvent extends ApplicationEvent {
+public class OidcResourceServerAfterInvocationEvent extends ApplicationEvent {
     private static final long serialVersionUID = -882211503453490505L;
 
     private final ServletRequest request;
     private final ServletResponse response;
     private final boolean invocationPrevented;
 
-    public AfterInvocationEvent(Authentication authentication,
-                                ServletRequest request, ServletResponse response, boolean invocationPrevented) {
+    public OidcResourceServerAfterInvocationEvent(Authentication authentication, ServletRequest request,
+                                                  ServletResponse response, boolean invocationPrevented) {
         super(authentication);
         this.request = request;
         this.response = response;

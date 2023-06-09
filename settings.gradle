@@ -115,11 +115,9 @@ includeProject('security-data', 'jmix-security/security-data')
 includeProject('security-data-starter', 'jmix-security/security-data-starter')
 includeProject('security-flowui', 'jmix-security/security-flowui')
 includeProject('security-flowui-starter', 'jmix-security/security-flowui-starter')
-includeProject('security-oauth2', 'jmix-security/security-oauth2')
-includeProject('security-oauth2-starter', 'jmix-security/security-oauth2-starter')
 
-includeProject('sessions', 'jmix-sessions/sessions')
-includeProject('sessions-starter', 'jmix-sessions/sessions-starter')
+//includeProject('sessions', 'jmix-sessions/sessions')
+//includeProject('sessions-starter', 'jmix-sessions/sessions-starter')
 
 void includeProject(String name, String path, boolean changeBuildFileName = true) {
     include ":$name"

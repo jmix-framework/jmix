@@ -23,7 +23,7 @@ archivesBaseName = 'jmix-reports-rest'
 dependencies {
     api project(':reports')
 
-    compileOnly project(':security-oauth2')
+    compileOnly project(':authorization-server')
     compileOnly project(':oidc')
 
     api ('com.haulmont.yarg:yarg-api') {

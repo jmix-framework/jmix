@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.oidc.resourceserver;
-
-import org.springframework.context.ApplicationEvent;
-import org.springframework.security.core.Authentication;
+package io.jmix.authserver.event;
 
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.security.core.Authentication;
 
 /**
- * A copy of io.jmix.securityoauth2.event.BeforeInvocationEvent. Event fired before API call. Event listeners can
- * prevent a controller invocation using {@link #preventInvocation()} method.
+ * Event fired before resource server (registered by Authorization Server add-on) API call.
+ * Event listeners can prevent a controller invocation using {@link #preventInvocation()} method.
  */
-public class BeforeResourceServerApiInvocationEvent extends ApplicationEvent {
+public class AsResourceServerBeforeInvocationEvent extends ApplicationEvent {
     private static final long serialVersionUID = 5865129356260466774L;
 
     private final ServletRequest request;
@@ -35,9 +34,9 @@ public class BeforeResourceServerApiInvocationEvent extends ApplicationEvent {
     private int errorCode;
     private String errorMessage;
 
-    public BeforeResourceServerApiInvocationEvent(Authentication authentication,
-                                                  ServletRequest request,
-                                                  ServletResponse response) {
+    public AsResourceServerBeforeInvocationEvent(Authentication authentication,
+                                                 ServletRequest request,
+                                                 ServletResponse response) {
         super(authentication);
         this.request = request;
         this.response = response;

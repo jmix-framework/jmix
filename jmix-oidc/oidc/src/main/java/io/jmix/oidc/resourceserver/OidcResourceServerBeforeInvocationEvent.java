@@ -23,21 +23,24 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 
 /**
- * A copy of io.jmix.securityoauth2.event.AfterInvocationEvent. Event fired after API call.
+ * Event is fired before OIDC resource server API call. Event listeners can prevent a controller invocation using
+ * {@link #preventInvocation()} method.
  */
-public class AfterResourceServerApiInvocationEvent extends ApplicationEvent {
-    private static final long serialVersionUID = -882211503453490505L;
+public class OidcResourceServerBeforeInvocationEvent extends ApplicationEvent {
+    private static final long serialVersionUID = 5865129356260466774L;
 
     private final ServletRequest request;
     private final ServletResponse response;
-    private final boolean invocationPrevented;
+    private boolean invocationPrevented = false;
+    private int errorCode;
+    private String errorMessage;
 
-    public AfterResourceServerApiInvocationEvent(Authentication authentication, ServletRequest request,
-                                                 ServletResponse response, boolean invocationPrevented) {
+    public OidcResourceServerBeforeInvocationEvent(Authentication authentication,
+                                                   ServletRequest request,
+                                                   ServletResponse response) {
         super(authentication);
         this.request = request;
         this.response = response;
-        this.invocationPrevented = invocationPrevented;
     }
 
     @Override
@@ -59,5 +62,25 @@ public class AfterResourceServerApiInvocationEvent extends ApplicationEvent {
 
     public boolean isInvocationPrevented() {
         return invocationPrevented;
+    }
+
+    public void preventInvocation() {
+        this.invocationPrevented = true;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

@@ -17,6 +17,7 @@
 package io.jmix.autoconfigure.authserver;
 
 import io.jmix.authserver.AuthorizationServerConfiguration;
+import io.jmix.authserver.filter.AsResourceServerEventSecurityFilter;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
 import io.jmix.authserver.introspection.TokenIntrospectorRolesHelper;
 import io.jmix.core.JmixSecurityFilterChainOrder;
@@ -24,6 +25,7 @@ import io.jmix.security.SecurityConfigurers;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -35,6 +37,7 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -115,12 +118,15 @@ public class AuthorizationServerAutoConfiguration {
         @Bean("authsr_ResourceServerSecurityFilterChain")
         @Order(JmixSecurityFilterChainOrder.AUTHSERVER_RESOURCE_SERVER)
         public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
-                                                                     OpaqueTokenIntrospector opaqueTokenIntrospector) throws Exception {
+                                                                     OpaqueTokenIntrospector opaqueTokenIntrospector,
+                                                                     ApplicationEventPublisher applicationEventPublisher) throws Exception {
             http.apply(SecurityConfigurers.apiSecurity());
             http
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .opaqueToken(opaqueToken -> opaqueToken
                                     .introspector(opaqueTokenIntrospector)));
+            AsResourceServerEventSecurityFilter asResourceServerEventSecurityFilter = new AsResourceServerEventSecurityFilter(applicationEventPublisher);
+            http.addFilterBefore(asResourceServerEventSecurityFilter, AuthorizationFilter.class);
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }

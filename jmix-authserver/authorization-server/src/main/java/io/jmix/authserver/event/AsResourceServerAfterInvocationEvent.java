@@ -14,33 +14,29 @@
  * limitations under the License.
  */
 
-package io.jmix.securityoauth2.event;
-
-import org.springframework.context.ApplicationEvent;
-import org.springframework.security.core.Authentication;
+package io.jmix.authserver.event;
 
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.security.core.Authentication;
 
 /**
- * Event fired before an API call.
- * Event listeners can prevent a controller invocation using {@link #preventInvocation()} method.
+ * Event fired after resource server (registered by Authorization Server add-on) API controller call.
  */
-public class BeforeInvocationEvent extends ApplicationEvent {
-    private static final long serialVersionUID = 5865129356260466774L;
+public class AsResourceServerAfterInvocationEvent extends ApplicationEvent {
+    private static final long serialVersionUID = -882211503453490505L;
 
     private final ServletRequest request;
     private final ServletResponse response;
-    private boolean invocationPrevented = false;
-    private int errorCode;
-    private String errorMessage;
+    private final boolean invocationPrevented;
 
-    public BeforeInvocationEvent(Authentication authentication,
-                                 ServletRequest request,
-                                 ServletResponse response) {
+    public AsResourceServerAfterInvocationEvent(Authentication authentication,
+                                                ServletRequest request, ServletResponse response, boolean invocationPrevented) {
         super(authentication);
         this.request = request;
         this.response = response;
+        this.invocationPrevented = invocationPrevented;
     }
 
     @Override
@@ -62,25 +58,5 @@ public class BeforeInvocationEvent extends ApplicationEvent {
 
     public boolean isInvocationPrevented() {
         return invocationPrevented;
-    }
-
-    public void preventInvocation() {
-        this.invocationPrevented = true;
-    }
-
-    public int getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(int errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
     }
 }

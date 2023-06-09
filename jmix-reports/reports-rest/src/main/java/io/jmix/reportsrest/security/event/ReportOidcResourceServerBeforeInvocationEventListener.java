@@ -18,8 +18,8 @@ package io.jmix.reportsrest.security.event;
 
 import io.jmix.core.AccessManager;
 import io.jmix.core.security.SecurityContextHelper;
+import io.jmix.oidc.resourceserver.OidcResourceServerBeforeInvocationEvent;
 import io.jmix.reportsrest.security.accesscontext.ReportRestAccessContext;
-import io.jmix.securityoauth2.event.BeforeInvocationEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
@@ -29,15 +29,20 @@ import org.springframework.util.AntPathMatcher;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
-public class ReportBeforeInvocationEventListener {
+/**
+ * A copy of {@link ReportAsResourceServerBeforeInvocationEventListener} that works with OIDC add-on events.
+ *
+ * TODO get rid of code duplication
+ */
+public class ReportOidcResourceServerBeforeInvocationEventListener {
 
     private static final String REPORT_AUTHORIZED_URL = "/rest/reports/**";
 
     @Autowired
     protected AccessManager accessManager;
 
-    @EventListener(BeforeInvocationEvent.class)
-    public void doListen(BeforeInvocationEvent event) {
+    @EventListener(OidcResourceServerBeforeInvocationEvent.class)
+    public void doListen(OidcResourceServerBeforeInvocationEvent event) {
         if (shouldCheckRequest(event.getRequest())) {
             ReportRestAccessContext reportRestAccessContext = new ReportRestAccessContext();
             Authentication currentAuthentication = SecurityContextHelper.getAuthentication();

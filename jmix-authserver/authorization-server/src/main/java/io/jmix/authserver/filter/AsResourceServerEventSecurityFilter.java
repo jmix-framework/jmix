@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,58 +14,58 @@
  * limitations under the License.
  */
 
-package io.jmix.oidc.resourceserver;
+package io.jmix.authserver.filter;
 
 import com.google.common.base.Strings;
+import io.jmix.authserver.event.AsResourceServerAfterInvocationEvent;
+import io.jmix.authserver.event.AsResourceServerBeforeInvocationEvent;
 import io.jmix.core.security.AccessDeniedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * A copy of io.jmix.securityoauth2.impl.LastSecurityFilter. It's purpose is to throw before- and after- events for
- * resource server API invocations. These events are used for checking security constraints and preventing API access
- * for users with insufficient permissions.
- *
- * TODO get rid of code duplication
+ * The purpose of the filter is to throw before- and after- events for resource server API invocations. These events are
+ * used for checking security constraints and preventing API access for users with insufficient permissions.
  */
-public class OidcResourceServerLastSecurityFilter extends OncePerRequestFilter {
+public class AsResourceServerEventSecurityFilter extends OncePerRequestFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(OidcResourceServerLastSecurityFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(AsResourceServerEventSecurityFilter.class);
 
     protected ApplicationEventPublisher applicationEventPublisher;
 
-    public OidcResourceServerLastSecurityFilter(ApplicationEventPublisher applicationEventPublisher) {
+    public AsResourceServerEventSecurityFilter(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+        //todo enable REST request logging and locale parsing
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (applicationEventPublisher != null && authentication != null) {
-                BeforeResourceServerApiInvocationEvent beforeInvocationEvent = new BeforeResourceServerApiInvocationEvent(authentication, request, response);
-                applicationEventPublisher.publishEvent(beforeInvocationEvent);
+                AsResourceServerBeforeInvocationEvent asResourceServerBeforeInvocationEvent = new AsResourceServerBeforeInvocationEvent(authentication, request, response);
+                applicationEventPublisher.publishEvent(asResourceServerBeforeInvocationEvent);
 
-                boolean invocationPrevented = beforeInvocationEvent.isInvocationPrevented();
+                boolean invocationPrevented = asResourceServerBeforeInvocationEvent.isInvocationPrevented();
 
                 try {
                     if (!invocationPrevented) {
                         filterChain.doFilter(request, response);
                     } else {
                         log.debug("Request invocation prevented by BeforeInvocationEvent handler");
-                        int errorCode = beforeInvocationEvent.getErrorCode();
+                        int errorCode = asResourceServerBeforeInvocationEvent.getErrorCode();
                         if (errorCode > 0) {
-                            String errorMessage = beforeInvocationEvent.getErrorMessage();
+                            String errorMessage = asResourceServerBeforeInvocationEvent.getErrorMessage();
                             if (Strings.isNullOrEmpty(errorMessage)) {
                                 log.warn("Send an error response with error code: {}", errorCode);
                                 response.sendError(errorCode);
@@ -76,7 +76,7 @@ public class OidcResourceServerLastSecurityFilter extends OncePerRequestFilter {
                         }
                     }
                 } finally {
-                    applicationEventPublisher.publishEvent(new AfterResourceServerApiInvocationEvent(authentication, request, response, invocationPrevented));
+                    applicationEventPublisher.publishEvent(new AsResourceServerAfterInvocationEvent(authentication, request, response, invocationPrevented));
                 }
             } else {
                 filterChain.doFilter(request, response);
@@ -88,6 +88,5 @@ public class OidcResourceServerLastSecurityFilter extends OncePerRequestFilter {
             log.error("Error during API call", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-
     }
 }

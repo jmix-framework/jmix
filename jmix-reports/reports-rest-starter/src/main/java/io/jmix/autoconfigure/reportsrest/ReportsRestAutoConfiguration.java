@@ -16,12 +16,14 @@
 
 package io.jmix.autoconfigure.reportsrest;
 
+import io.jmix.authserver.AuthorizationServerConfiguration;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
+import io.jmix.oidc.OidcConfiguration;
 import io.jmix.reports.ReportsConfiguration;
 import io.jmix.reportsrest.ReportsRestConfiguration;
-import io.jmix.reportsrest.security.event.ReportBeforeInvocationEventListener;
-import io.jmix.reportsrest.security.event.ReportBeforeResourceServerApiInvocationEventListener;
+import io.jmix.reportsrest.security.event.ReportAsResourceServerBeforeInvocationEventListener;
+import io.jmix.reportsrest.security.event.ReportOidcResourceServerBeforeInvocationEventListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -32,14 +34,14 @@ import org.springframework.context.annotation.Import;
 public class ReportsRestAutoConfiguration {
 
     @Bean
-    @ConditionalOnClass(name = "io.jmix.securityoauth2.SecurityOAuth2Configuration")
-    protected ReportBeforeInvocationEventListener reportBeforeInvocationEventListener() {
-        return new ReportBeforeInvocationEventListener();
+    @ConditionalOnClass(AuthorizationServerConfiguration.class)
+    protected ReportAsResourceServerBeforeInvocationEventListener reportBeforeInvocationEventListener() {
+        return new ReportAsResourceServerBeforeInvocationEventListener();
     }
 
     @Bean
-    @ConditionalOnClass(name = "io.jmix.oidc.OidcConfiguration")
-    protected ReportBeforeResourceServerApiInvocationEventListener reportBeforeResourceServerApiInvocationEventListener() {
-        return new ReportBeforeResourceServerApiInvocationEventListener();
+    @ConditionalOnClass(OidcConfiguration.class)
+    protected ReportOidcResourceServerBeforeInvocationEventListener reportBeforeResourceServerApiInvocationEventListener() {
+        return new ReportOidcResourceServerBeforeInvocationEventListener();
     }
 }

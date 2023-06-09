@@ -16,33 +16,32 @@
 
 package io.jmix.reportsrest.security.event;
 
+import io.jmix.authserver.event.AsResourceServerBeforeInvocationEvent;
 import io.jmix.core.AccessManager;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.oidc.resourceserver.BeforeResourceServerApiInvocationEvent;
 import io.jmix.reportsrest.security.accesscontext.ReportRestAccessContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.AntPathMatcher;
 
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
- * A copy of {@link ReportBeforeResourceServerApiInvocationEventListener} that works with OIDC add-on events.
- *
- * TODO get rid of code duplication
+ * A listener for {@link AsResourceServerBeforeInvocationEvent} that checks "reports.rest.enabled" specific policy
+ * for /rest/reports/** requests, managed by resource server of the Authorization Server add-on. If the current user
+ * doesn't have this policy then the FORBIDDEN error is thrown.
  */
-public class ReportBeforeResourceServerApiInvocationEventListener {
+public class ReportAsResourceServerBeforeInvocationEventListener {
 
     private static final String REPORT_AUTHORIZED_URL = "/rest/reports/**";
 
     @Autowired
     protected AccessManager accessManager;
 
-    @EventListener(BeforeResourceServerApiInvocationEvent.class)
-    public void doListen(BeforeResourceServerApiInvocationEvent event) {
+    @EventListener(AsResourceServerBeforeInvocationEvent.class)
+    public void doListen(AsResourceServerBeforeInvocationEvent event) {
         if (shouldCheckRequest(event.getRequest())) {
             ReportRestAccessContext reportRestAccessContext = new ReportRestAccessContext();
             Authentication currentAuthentication = SecurityContextHelper.getAuthentication();

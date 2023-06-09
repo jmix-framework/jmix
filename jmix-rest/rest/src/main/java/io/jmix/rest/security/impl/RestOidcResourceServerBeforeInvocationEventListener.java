@@ -19,8 +19,8 @@ package io.jmix.rest.security.impl;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.security.SecurityContextHelper;
+import io.jmix.oidc.resourceserver.OidcResourceServerBeforeInvocationEvent;
 import io.jmix.rest.accesscontext.RestAccessContext;
-import io.jmix.securityoauth2.event.BeforeInvocationEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class RestBeforeInvocationEventListener {
+/**
+ * A copy of {@link RestAsResourceServerBeforeInvocationEventListener} that works with OIDC add-on events.
+ *
+ * @see RestAsResourceServerBeforeInvocationEventListener
+ *
+ * TODO get rid of code duplication
+ */
+public class RestOidcResourceServerBeforeInvocationEventListener {
+
     @Autowired
     protected AccessManager accessManager;
     @Autowired
@@ -45,8 +53,8 @@ public class RestBeforeInvocationEventListener {
             "/rest/messages/**", "/rest/metadata/**", "/rest/files/**",
             "/rest/userInfo", "/rest/permissions", "/rest/user-session/locale");
 
-    @EventListener(BeforeInvocationEvent.class)
-    public void doListen(BeforeInvocationEvent event) {
+    @EventListener(OidcResourceServerBeforeInvocationEvent.class)
+    public void doListen(OidcResourceServerBeforeInvocationEvent event) {
         if (shouldCheckRequest(event.getRequest())) {
             RestAccessContext restAccessContext = new RestAccessContext();
             Authentication currentAuthentication = SecurityContextHelper.getAuthentication();

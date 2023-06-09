@@ -8,9 +8,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Metadata;
-import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -18,7 +16,7 @@ import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.ReportValueFormat;
-import io.jmix.reportsflowui.ReportsUiHelper;
+import io.jmix.reportsflowui.helper.ReportsUiHelper;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,13 +122,13 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
 
     @Subscribe("fullScreenTransformationBtn")
     public void onFullScreenTransformationBtnClick(final ClickEvent<Button> event) {
-        reportsUiHelper.showScriptEditorDialog(
-                messageBundle.getMessage("fullScreenBtn.title"),
-                valuesFormatsDc.getItem().getFormatString(),
-                value -> valuesFormatsDc.getItem().setFormatString(value),
-                CodeEditorMode.GROOVY,
-                icon -> onGroovyCodeHelpIconClick()
-        );
+        reportsUiHelper.showScriptEditorDialog(this)
+                .withTitle(messageBundle.getMessage("fullScreenBtn.title"))
+                .withValue(valuesFormatsDc.getItem().getFormatString())
+                .withEditorMode(CodeEditorMode.GROOVY)
+                .withCloseOnClick(value -> valuesFormatsDc.getItem().setFormatString(value))
+                .withHelpOnClick(this::onGroovyCodeHelpIconClick)
+                .open();
     }
 
     protected void onGroovyCodeHelpIconClick() {

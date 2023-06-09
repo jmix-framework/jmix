@@ -231,8 +231,8 @@ public class UiReportRunnerImpl implements UiReportRunner {
     }
 
     protected <T> void showDialog(BackgroundTask<Integer, T> task) {
-        String header = messages.getMessage(UiReportRunner.class, "runReportBackgroundTitle");
-        String text = messages.getMessage(UiReportRunner.class, "runReportBackgroundMessage");
+        String header = messages.getMessage(UiReportRunner.class, "runReportBackground.header");
+        String text = messages.getMessage(UiReportRunner.class, "runReportBackground.text");
 
         dialogs.createBackgroundTaskDialog(task)
                 .withHeader(header)

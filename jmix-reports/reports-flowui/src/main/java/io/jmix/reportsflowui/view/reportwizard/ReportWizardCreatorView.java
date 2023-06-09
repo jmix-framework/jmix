@@ -47,7 +47,7 @@ import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.ReportsUiHelper;
+import io.jmix.reportsflowui.helper.ReportsUiHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
@@ -942,17 +942,21 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe("fullScreenTransformationBtn")
     protected void onFullScreenTransformationBtnClick(ClickEvent<Icon> event) {
-        reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
-                reportDataDc.getItem().getQuery(),
-                value -> reportDataDc.getItem().setQuery(value),
-                CodeEditorMode.SQL,
-                this::onQueryCodeEditorHelpIconClick
-        );
+        reportsUiHelper.showScriptEditorDialog(this)
+                .withTitle(getScriptEditorDialogCaption())
+                .withValue(reportDataDc.getItem().getQuery())
+                .withEditorMode(CodeEditorMode.SQL)
+                .withCloseOnClick(value -> reportDataDc.getItem().setQuery(value))
+                .withHelpOnClick(this::openCodeEditorHelp)
+                .open();
     }
 
     @Subscribe("queryCodeEditorHelpIcon")
     protected void onQueryCodeEditorHelpIconClick(ClickEvent<Icon> event) {
+        openCodeEditorHelp();
+    }
+
+    protected void openCodeEditorHelp() {
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage("queryCodeEditor.dialog.title"))
                 .withContent(new Html(messageBundle.getMessage("queryCodeEditor.dialog.content")))

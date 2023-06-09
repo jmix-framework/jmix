@@ -48,7 +48,7 @@ import io.jmix.reports.entity.CustomTemplateDefinedBy;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reportsflowui.ReportsUiHelper;
+import io.jmix.reportsflowui.helper.ReportsUiHelper;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.io.FilenameUtils;
@@ -62,8 +62,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_CLASS_NAME;
-import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
+import static io.jmix.reportsflowui.helper.ReportsUiHelper.FIELD_ICON_CLASS_NAME;
+import static io.jmix.reportsflowui.helper.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 
 @Route(value = "reports/templates/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportTemplate.detail")
@@ -270,12 +270,12 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     protected void onExpandCustomDefinitionExpandIconClick(ClickEvent<Icon> event) {
-        reportsUiHelper.showScriptEditorDialog(
-                messageBundle.getMessage("customDefinitionField.label"),
-                getEditedEntity().getCustomDefinition(),
-                result -> getEditedEntity().setCustomDefinition(result),
-                CodeEditorMode.GROOVY,
-                null);
+        reportsUiHelper.showScriptEditorDialog(this)
+                .withTitle(messageBundle.getMessage("customDefinitionField.label"))
+                .withValue(getEditedEntity().getCustomDefinition())
+                .withEditorMode(CodeEditorMode.GROOVY)
+                .withCloseOnClick(value -> getEditedEntity().setCustomDefinition(value))
+                .open();
     }
 
     protected void initUploadField() {

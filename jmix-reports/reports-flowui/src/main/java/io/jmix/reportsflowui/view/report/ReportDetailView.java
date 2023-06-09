@@ -72,7 +72,7 @@ import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reportsflowui.CrossTabDataGridDecorator;
 import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.ReportsUiHelper;
+import io.jmix.reportsflowui.helper.ReportsUiHelper;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
 import io.jmix.security.constraint.PolicyStore;
@@ -89,8 +89,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_CLASS_NAME;
-import static io.jmix.reportsflowui.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
+import static io.jmix.reportsflowui.helper.ReportsUiHelper.FIELD_ICON_CLASS_NAME;
+import static io.jmix.reportsflowui.helper.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 
 @Route(value = "reports/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.detail")
@@ -1300,21 +1300,15 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void onDataSetScriptFieldExpandIconClick(ClickEvent<Icon> event) {
-        ComponentEventListener<ClickEvent<Icon>> helpIconClickListener = null;
-        if (dataSetScriptField.getSuffixComponent() instanceof Div) {
-            helpIconClickListener = this::onDataSetScriptFieldHelpIconClick;
-        }
-        reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
-                dataSetsDc.getItem().getText(),
-                value -> dataSetsDc.getItem().setText(value),
-                CodeEditorMode.GROOVY,
-                helpIconClickListener);
+        reportsUiHelper.showScriptEditorDialog(this)
+                .withTitle(getScriptEditorDialogCaption())
+                .withValue(dataSetsDc.getItem().getText())
+                .withEditorMode(CodeEditorMode.GROOVY)
+                .withCloseOnClick(value -> dataSetsDc.getItem().setText(value))
+                .withHelpOnClick(() -> onJsonGroovyCodeEditorHelpIconClick())
+                .open();
     }
 
-    protected void onDataSetScriptFieldHelpIconClick(ClickEvent<Icon> event) {
-        onJsonGroovyCodeEditorHelpIconClick(event);
-    }
 
     protected void setupExpandAndHelpIconsToDataSetScriptField() {
         Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
@@ -1323,7 +1317,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
         helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(this::onDataSetScriptFieldHelpIconClick);
+        helpIcon.addClickListener(icon -> onJsonGroovyCodeEditorHelpIconClick());
 
         dataSetScriptField.setSuffixComponent(new Div(expandIcon, helpIcon));
     }
@@ -1358,19 +1352,19 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
         helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(this::onJsonGroovyCodeEditorHelpIconClick);
+        helpIcon.addClickListener(event -> onJsonGroovyCodeEditorHelpIconClick());
 
         jsonGroovyCodeEditor.setSuffixComponent(new Div(expandIcon, helpIcon));
     }
 
     protected void onJsonGroovyCodeEditorExpandIconClick(ClickEvent<Icon> event) {
-        reportsUiHelper.showScriptEditorDialog(
-                getScriptEditorDialogCaption(),
-                dataSetsDc.getItem().getJsonSourceText(),
-                value -> dataSetsDc.getItem().setJsonSourceText(value),
-                CodeEditorMode.GROOVY,
-                this::onJsonGroovyCodeEditorHelpIconClick
-        );
+        reportsUiHelper.showScriptEditorDialog(this)
+                .withTitle(getScriptEditorDialogCaption())
+                .withValue(dataSetsDc.getItem().getJsonSourceText())
+                .withEditorMode(CodeEditorMode.GROOVY)
+                .withCloseOnClick(value -> dataSetsDc.getItem().setJsonSourceText(value))
+                .withHelpOnClick(() -> onJsonGroovyCodeEditorHelpIconClick())
+                .open();
     }
 
     protected String getScriptEditorDialogCaption() {
@@ -1384,7 +1378,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return StringUtils.EMPTY;
     }
 
-    protected void onJsonGroovyCodeEditorHelpIconClick(ClickEvent<Icon> event) {
+    protected void onJsonGroovyCodeEditorHelpIconClick() {
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage(
                         "bandsTab.dataSetTypeLayout.jsonGroovyCodeEditor.helpIcon.dialog.header"))

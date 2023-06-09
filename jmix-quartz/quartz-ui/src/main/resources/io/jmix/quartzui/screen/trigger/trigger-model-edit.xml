@@ -27,7 +27,11 @@
                 <comboBox id="scheduleTypeField" property="scheduleType" required="true" nullOptionVisible="false"/>
                 <textField id="cronExpressionField" property="cronExpression" required="true" visible="false"
                            contextHelpTextHtmlEnabled="true" contextHelpText="msg://cronExpressionHelpText"/>
-                <textField id="repeatCountField" property="repeatCount" visible="false"/>
+                <radioButtonGroup id="repeatModeSelector" optionsEnum="io.jmix.quartzui.screen.trigger.RepeatMode"
+                                  visible="false" caption="msg://triggerRepeatMode"
+                                  contextHelpText="msg://triggerRepeatModeHelpText" contextHelpTextHtmlEnabled="true"/>
+                <textField id="repeatCountField" property="repeatCount" visible="false"
+                           contextHelpText="msg://repeatCountHelpText"/>
                 <textField id="repeatIntervalField" property="repeatInterval" required="true" visible="false"/>
                 <dateField id="startDateField" property="startDate" datatype="dateTime"/>
                 <dateField id="endDateField" property="endDate" datatype="dateTime"/>

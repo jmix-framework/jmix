@@ -73,26 +73,19 @@ public class QuartzService {
                             triggerModel.setLastFireDate(trigger.getPreviousFireTime());
                             triggerModel.setNextFireDate(trigger.getNextFireTime());
 
-                            boolean isTriggeredNow = false;
                             if (trigger instanceof CronTrigger) {
                                 triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
                             } else if (trigger instanceof SimpleTrigger) {
                                 SimpleTrigger simpleTrigger = (SimpleTrigger) trigger;
-                                if (simpleTrigger.getRepeatCount() > 0) {
-                                    //because org.quartz.SimpleScheduleBuilder.withRepeatCount
-                                    triggerModel.setRepeatCount(simpleTrigger.getRepeatCount() + 1);
-                                }
+                                triggerModel.setRepeatCount(simpleTrigger.getRepeatCount());
                                 triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());
-
-                                isTriggeredNow = simpleTrigger.getRepeatCount() == 0 && simpleTrigger.getRepeatInterval() == 0L;
                             }
 
-                            if (!isTriggeredNow) {
-                                triggerModels.add(triggerModel);
-                                if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL &&
-                                        scheduler.isStarted() && !scheduler.isInStandbyMode()) {
-                                    isActive = true;
-                                }
+                            triggerModels.add(triggerModel);
+                            if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL
+                                    && scheduler.isStarted()
+                                    && !scheduler.isInStandbyMode()) {
+                                isActive = true;
                             }
                         }
 
@@ -245,9 +238,13 @@ public class QuartzService {
         } else {
             SimpleScheduleBuilder simpleScheduleBuilder = simpleSchedule()
                     .withIntervalInMilliseconds(triggerModel.getRepeatInterval());
-            if (Objects.nonNull(triggerModel.getRepeatCount()) && triggerModel.getRepeatCount() > 0) {
-                //required trick because actual number of firing will be + 1, see org.quartz.SimpleScheduleBuilder.withRepeatCount
-                simpleScheduleBuilder.withRepeatCount(triggerModel.getRepeatCount() - 1);
+            Integer repeatCount = triggerModel.getRepeatCount();
+            if (Objects.isNull(repeatCount)) {
+                // Infinite executions
+                repeatCount = -1;
+            }
+            if (repeatCount >= 0) {
+                simpleScheduleBuilder.withRepeatCount(repeatCount);
             } else {
                 simpleScheduleBuilder.repeatForever();
             }

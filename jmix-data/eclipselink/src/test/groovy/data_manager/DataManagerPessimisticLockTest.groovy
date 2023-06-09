@@ -16,21 +16,19 @@
 
 package data_manager
 
+import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import io.jmix.core.DataManager
 import io.jmix.core.querycondition.PropertyCondition
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.TestAppender
 import test_support.entity.sales.Customer
 
 import jakarta.persistence.LockModeType
 
-//todo restore DataManagerPessimisticLockTest
-@Ignore
 class DataManagerPessimisticLockTest extends DataSpec {
 
     @Autowired
@@ -51,6 +49,7 @@ class DataManagerPessimisticLockTest extends DataSpec {
         appender.start()
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory()
         logger = context.getLogger("eclipselink.logging.sql")
+        logger.setLevel(Level.DEBUG)
         logger.addAppender(appender)
     }
 

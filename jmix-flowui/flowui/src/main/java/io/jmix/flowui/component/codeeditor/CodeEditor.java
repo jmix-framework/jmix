@@ -63,8 +63,8 @@ public class CodeEditor extends JmixCodeEditor
     }
 
     @Override
-    public void validate() {
-        isInvalid();
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
@@ -124,6 +124,21 @@ public class CodeEditor extends JmixCodeEditor
     public void setValue(String value) {
         super.setValue(Strings.nullToEmpty(value));
     }
+
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean required) {
+        super.setRequiredIndicatorVisible(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
 
     @SuppressWarnings("unchecked")
     protected FieldDelegate<CodeEditor, String, String> createFieldDelegate() {

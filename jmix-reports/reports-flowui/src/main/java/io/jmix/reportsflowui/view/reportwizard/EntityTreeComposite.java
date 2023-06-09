@@ -1,4 +1,20 @@
-package io.jmix.reportsflowui.view;
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.reportsflowui.view.reportwizard;
 
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.HasComponents;
@@ -22,6 +38,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
+import io.jmix.flowui.view.MessageBundle;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.Target;
 import io.jmix.flowui.view.View;
@@ -51,13 +68,14 @@ public class EntityTreeComposite extends Composite<FormLayout>
     protected Notifications notifications;
     protected MetadataTools metadataTools;
     protected FormLayout formLayout;
+    protected MessageBundle messageBundle;
     protected Messages messages;
     protected Metadata metadata;
+    protected CollectionContainer<EntityTreeNode> reportEntityTreeNodeDc;
 
     protected boolean scalarOnly = false;
     protected boolean collectionsOnly = false;
     protected boolean persistentOnly = false;
-    protected CollectionContainer<EntityTreeNode> reportEntityTreeNodeDc;
 
     protected Comparator<EntityTreeNode> nodeComparator = (o1, o2) -> {
         Collator collator = Collator.getInstance();
@@ -102,7 +120,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
         reportPropertyNameSearchButton.addClickListener(event -> {
             reportEntityTreeNodeDl.load();
             if (reportEntityTreeNodeDc.getItems().isEmpty()) {
-                notifications.create(messages.getMessage(getClass(), "valueNotFound"))
+                notifications.create(messageBundle.getMessage("valueNotFound"))
                         .show();
             } else {
                 if (StringUtils.isEmpty(reportPropertyName.getValue())) {
@@ -122,9 +140,9 @@ public class EntityTreeComposite extends Composite<FormLayout>
         entityTree = uiComponents.create(TreeDataGrid.class);
         entityTree.setDataProvider(new ContainerTreeDataGridItems<EntityTreeNode>(reportEntityTreeNodeDc, "parent"));
         MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metadata.getClass(EntityTreeNode.class), "name");
-        entityTree.addHierarchyColumn("name", metaPropertyPath);
+        entityTree.addHierarchyColumn("name", metaPropertyPath)
+                .setHeader(messages.getMessage(getClass(), "entityTreeNode.name.header"));
         entityTree.setId("treeDataGrid");
-
         formLayout = uiComponents.create(FormLayout.class);
         formLayout.setId("entityTreeFormLayout");
         formLayout.setWidth("30em");
@@ -142,6 +160,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
 
     protected void initComponent() {
         this.uiComponents = applicationContext.getBean(UiComponents.class);
+        this.messageBundle = applicationContext.getBean(MessageBundle.class);
         this.messages = applicationContext.getBean(Messages.class);
         this.dataComponents = applicationContext.getBean(DataComponents.class);
         this.metadata = applicationContext.getBean(Metadata.class);

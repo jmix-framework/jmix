@@ -342,6 +342,7 @@
         </details>
 
         <numberField id="numberFieldId"
+		             allowedCharPattern="charPattern"
                      autocapitalize="SENTENCES"
                      autocomplete="ADDITIONAL_NAME"
                      autocorrect="true"
@@ -877,7 +878,7 @@
 
         <upload id="uploadId"
                 acceptedFileTypes=".jpg"
-                autoUpload="true"
+                autoUpload="false"
                 classNames="cssClassName1, cssClassName2"
                 dropAllowed="true"
                 dropLabel="dropLabelString"

@@ -268,15 +268,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.uploadId) {
             id.get() == "uploadId"
             acceptedFileTypes.containsAll([".jpg"])
-
-            // CAUTION
-            // Vaadin Bug
-            // See com.vaadin.flow.component.upload.Upload.isAutoUpload
-            //     com.vaadin.flow.component.upload.Upload#setAutoUpload
-            // fixed in https://github.com/vaadin/flow/issues/15847
-            // waiting for Vaadin 24.0
             !autoUpload
-
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             dropAllowed
             (dropLabel as Label).getText() == "dropLabelString"

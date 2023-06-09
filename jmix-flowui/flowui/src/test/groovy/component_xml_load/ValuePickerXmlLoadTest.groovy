@@ -230,7 +230,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             pageSize == 20
             pattern == "patternString"
             placeholder == "placeholderString"
-            preventInvalidInput
             readOnly
             required
             requiredIndicatorVisible
@@ -281,7 +280,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             pageSize == 20
             pattern == "patternString"
             placeholder == "placeholderString"
-            preventInvalidInput
             readOnly
             required
             requiredIndicatorVisible

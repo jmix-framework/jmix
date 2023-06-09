@@ -1,0 +1,40 @@
+<%def isEmbedded(attr) {
+        return attr.hasAnnotation('Embedded') || attr.hasAnnotation('EmbeddedId')
+}
+
+def columns = []
+
+entity.attributes.each { attr ->
+    if (attr == null || !attr.allowPutToDataAware()) {
+        return
+    }
+    if (!isEmbedded(attr)
+        && !attr.hasAnnotation('OneToMany')
+        && !attr.hasAnnotation('ManyToMany')
+        && !columns.contains(attr.name)
+        && !attr.isDeepInheritor('java.net.URI')) {
+        columns << attr.name
+    }
+}
+
+%>
+<hbox id="buttonsPanel" classNames="buttons-panel">
+<%tableActions.each { action ->%>
+<button id="${action}Btn" action="${tableId}.${action}"/>
+<%}%>
+<simplePagination id="pagination" dataLoader="${tableDl}"/>
+</hbox>
+<${tableType.xmlName} id="${tableId}"
+        width="100%"
+        minHeight="20em"
+        dataContainer="${tableDc}"<%
+        if (multiselect) {%>\n selectionMode="MULTI"<%}%>>
+<actions><%tableActions.each { action ->%>
+<action id="${action}" type="${action}"/>
+<%}%>
+</actions>
+<columns><%columns.each {column ->%>
+<column property="${column}"/>
+<%}%>
+</columns>
+</${tableType.xmlName}>

@@ -77,7 +77,7 @@ public class DateTimeRangeValidator<T extends Comparable> extends AbstractValida
 
         if (max != null && value.compareTo(max) > 0) {
             Datatype<?> datatype = datatypeRegistry.get(max.getClass());
-            String formatted = datatype.format(min, currentAuthentication.getLocale());
+            String formatted = datatype.format(max, currentAuthentication.getLocale());
 
             this.defaultMessage = messages.getMessage("validation.constraints.dateTimeRangeMaxExceeded");
 

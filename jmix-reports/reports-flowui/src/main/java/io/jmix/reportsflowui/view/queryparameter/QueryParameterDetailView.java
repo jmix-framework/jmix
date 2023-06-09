@@ -21,7 +21,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.MessageTools;
@@ -67,7 +67,7 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
     @ViewComponent
     protected ComboBox<Class> enumerationField;
     @ViewComponent
-    protected HorizontalLayout defaultValueBox;
+    protected FormLayout queryParameterFormLayout;
 
     @Autowired
     protected JmixObjectToStringConverter jmixObjectToStringConverter;
@@ -82,9 +82,13 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
     @Autowired
     protected Messages messages;
     @Autowired
+    protected MessageBundle messageBundle;
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
     @Autowired
     protected Actions actions;
+
+    protected AbstractField defaultValueField;
 
 
     @Subscribe
@@ -167,8 +171,10 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
     }
 
     protected void initDefaultValueField() {
-        defaultValueBox.removeAll();
-        AbstractField defaultValueField = createDefaultValueField();
+        if (defaultValueField != null){
+            queryParameterFormLayout.remove(defaultValueField);
+        }
+        defaultValueField = createDefaultValueField();
         if (defaultValueField != null) {
             if (StringUtils.isNotEmpty(getEditedEntity().getJavaClassName()) && StringUtils.isNotEmpty(getEditedEntity().getDefaultValueString())) {
                 try {
@@ -180,7 +186,7 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
             }
             defaultValueField.getElement().setProperty("required", false);
             defaultValueField.getElement().setProperty("width", "100%");
-            defaultValueField.getElement().setProperty("label", messages.getMessage(getClass(), "parameters.defaultValue"));
+            defaultValueField.getElement().setProperty("label", messageBundle.getMessage("parameters.defaultValue"));
             defaultValueField.addValueChangeListener(e -> {
                 if (e.getValue() != null) {
                     getEditedEntity().setDefaultValueString(jmixObjectToStringConverter.convertToString(e.getValue().getClass(), e.getValue()));
@@ -188,7 +194,7 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
                     getEditedEntity().setDefaultValueString(null);
                 }
             });
-            defaultValueBox.add(defaultValueField);
+            queryParameterFormLayout.add(defaultValueField);
         }
     }
 

@@ -16,7 +16,7 @@
 
 package test_support.app.entity;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum PetType implements EnumClass<String> {
 

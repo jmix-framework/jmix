@@ -183,7 +183,7 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
         try {
             TestServletContext servletContext = new TestServletContext();
             servletContext.setAttribute(ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
-            servletContext.setInitParameter(InitParameters.SERVLET_PARAMETER_ENABLE_DEV_SERVER, "false");
+            servletContext.setInitParameter(InitParameters.SERVLET_PARAMETER_PRODUCTION_MODE, "true");
 
             MockServletConfig mockServletConfig = new MockServletConfig(servletContext);
 

@@ -16,7 +16,7 @@
 
 package io.jmix.imap.entity;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.imap.events.*;
 
 import org.springframework.lang.Nullable;

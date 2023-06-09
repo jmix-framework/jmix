@@ -16,7 +16,7 @@
 
 package io.jmix.reports.entity.charts;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum StackType implements EnumClass<String> {
     NONE("none"), REGULAR("regular"), HUNDRED_PERCENTS("100%"), THREE_D("3d");

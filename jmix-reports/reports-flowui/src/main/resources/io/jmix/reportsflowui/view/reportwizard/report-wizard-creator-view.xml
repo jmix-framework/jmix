@@ -32,7 +32,7 @@
                 </responsiveSteps>
                 <comboBox id="entityField"
                           label="msg://entity"
-                          required="true" requiredMessage="msg://fillEntityMsg"
+                          required="true" requiredMessage="msg://dialog.fillEntityMsg.text"
                           helperText="msg://entityHintMsg" width="100%"/>
                 <comboBox id="templateFileTypeField"
                           property="templateFileType"
@@ -55,37 +55,6 @@
                                   label="msg://reportBuildType"/>
             </formLayout>
         </div>
-        <div id="saveDiv">
-            <formLayout id="saveBox" width="100%">
-                <vbox id="props" expand="chartPreviewBox">
-                    <vbox width="100%">
-                        <hbox width="100%">
-                            <label text="msg://template"/>
-                            <button id="downloadTemplateFile" classNames="link"
-                                    title="msg://templateHintMsg"/>
-                        </hbox>
-                        <textField id="outputFileName" width="100%"
-                                   required="true"
-                                   label="msg://outputFileName"
-                                   dataContainer="reportDataDc" property="outputNamePattern"
-                                   helperText="msg://outputFileNameHintMsg" maxLength="255">
-                            <validators>
-                                <custom bean="reportflowui_OutputFileNameValidator"/>
-                            </validators>
-                        </textField>
-                        <comboBox id="outputFileFormat" required="true" width="100%"
-                                  label="msg://outputFileFormat"
-                                  dataContainer="reportDataDc" property="outputFileType"
-                                  helperText="msg://outputFileTypeHintMsg"/>
-                        <comboBox id="diagramType" required="true" width="100%" visible="false"
-                                  label="msg://diagramType"
-                                  itemsEnum="io.jmix.reports.entity.charts.ChartType"/>
-                    </vbox>
-                    <vbox id="chartPreviewBox" visible="false" width="100%">
-                    </vbox>
-                </vbox>
-            </formLayout>
-        </div>
         <div id="regionsDiv">
             <hbox width="100%">
                 <hbox id="buttonsBox">
@@ -95,11 +64,11 @@
                     <button id="addTabulatedRegionBtn"
                             text="msg://tabulatedRegion"/>
                 </hbox>
-                <button id="regionsRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
-                <button id="regionsEditBtn" action="regionDataGrid.edit" text="msg://editRegion" icon="EDIT"/>
-                <button id="moveUpBtn" action="regionDataGrid.up" icon="CARET_UP"/>
-                <button id="moveDownBtn" action="regionDataGrid.down" icon="CARET_DOWN"/>
-                <button id="removeBtn" action="regionDataGrid.remove" icon="CLOSE"/>
+                <button id="regionsRunBtn" text="msg://runReport"/>
+                <button id="regionsEditBtn" action="regionDataGrid.edit" text="msg://editRegion"/>
+                <button id="moveUpBtn" action="regionDataGrid.up"/>
+                <button id="moveDownBtn" action="regionDataGrid.down"/>
+                <button id="removeBtn" action="regionDataGrid.remove"/>
             </hbox>
             <dataGrid id="regionDataGrid" dataContainer="reportRegionsDc"
                       columnReorderingAllowed="false"
@@ -108,17 +77,38 @@
                     <action id="up" type="itemTracking" icon="ARROW_UP"/>
                     <action id="down" type="itemTracking" icon="ARROW_DOWN"/>
                     <action id="remove" type="remove"/>
-                    <action id="edit" type="edit"/>
+                    <action id="edit" text="msg://editRegion" icon="EDIT"/>
                 </actions>
             </dataGrid>
         </div>
-        <div id="queryDiv" width="40em">
-                <hbox alignItems="BASELINE" expand="spacer">
-                    <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
-                    <label id="spacer"/>
-                    <button id="queryCodeEditorExpandButton" text="msg://fullScreen" classNames="link"/>
-                    <icon id="queryCodeEditorHelpIcon" icon="QUESTION_CIRCLE" classNames="reports-field-icon"/>
-                </hbox>
+        <div id="saveDiv" width="30em">
+            <button id="downloadTemplateFile"
+                    classNames="link"
+                    themeNames="icon, tertiary-inline"
+                    title="msg://templateHintMsg"/>
+            <textField id="outputFileName" width="100%"
+                       required="true"
+                       label="msg://outputFileName"
+                       dataContainer="reportDataDc" property="outputNamePattern"
+                       helperText="msg://outputFileNameHintMsg" maxLength="255">
+                <validators>
+                    <custom bean="reportflowui_OutputFileNameValidator"/>
+                </validators>
+            </textField>
+            <comboBox id="outputFileFormat" required="true" width="100%"
+                      label="msg://outputFileFormat"
+                      dataContainer="reportDataDc" property="outputFileType"
+                      helperText="msg://outputFileTypeHintMsg"/>
+        </div>
+        <div id="queryDiv" width="30em">
+            <div classNames="flex, justify-between">
+                <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+                <button id="fullScreenTransformationBtn"
+                        text="msg://fullScreen.title"
+                        classNames="link"
+                        themeNames="icon, tertiary-inline"/>
+            </div>
+            <div classNames="flex, items-start">
                 <codeEditor id="reportQueryCodeEditor"
                             title="msg://reportQuery"
                             width="100%"
@@ -129,32 +119,36 @@
                             mode="SQL"
                             dataContainer="reportDataDc"
                             property="query"/>
-                <hbox>
-                    <button id="generateParameters" action="reportParameterDataGrid.generate"/>
-                    <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
-                    <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>
-                    <button id="removeParameterBtn" action="reportParameterDataGrid.remove"/>
-                </hbox>
-                <dataGrid id="reportParameterDataGrid"
-                          dataContainer="queryParametersDc"
-                          height="20em"
-                          width="100%">
-                    <actions>
-                        <action id="generate" text="msg://generateParameters"/>
-                        <action id="create" type="create"/>
-                        <action id="edit" type="edit"/>
-                        <action id="remove" type="remove"/>
-                    </actions>
-                    <columns>
-                        <column property="name"/>
-                        <column property="parameterType"/>
-                    </columns>
-                </dataGrid>
+                <button id="queryCodeEditorHelpIcon"
+                        themeNames="icon, tertiary-inline"
+                        icon="QUESTION_CIRCLE"/>
+            </div>
+            <hbox>
+                <button id="generateParameters" action="reportParameterDataGrid.generate"/>
+                <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
+                <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>
+                <button id="removeParameterBtn" action="reportParameterDataGrid.remove"/>
+            </hbox>
+            <dataGrid id="reportParameterDataGrid"
+                      dataContainer="queryParametersDc"
+                      height="20em"
+                      width="100%">
+                <actions>
+                    <action id="generate" text="msg://generateParameters.text"/>
+                    <action id="create" type="create"/>
+                    <action id="edit" type="edit"/>
+                    <action id="remove" type="remove"/>
+                </actions>
+                <columns>
+                    <column property="name"/>
+                    <column property="parameterType"/>
+                </columns>
+            </dataGrid>
         </div>
         <hbox id="navBtnsPanel">
-            <button id="backBtn" action="back"/>
+            <button id="backBtn" visible="false" action="back"/>
             <button id="nextBtn" action="next"/>
-            <button id="saveBtn" action="save"/>
+            <button id="saveBtn" visible="false" action="save"/>
         </hbox>
     </layout>
 </view>

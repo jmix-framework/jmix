@@ -1,0 +1,116 @@
+<%
+class Form {
+    def dcId
+    def fields = [:]
+}
+
+class Field {
+    def tag = "textField"
+    def attrs = [:]
+	def text = null
+
+    def printAttrs() {
+
+        return attrs.findAll {it.key != 'tag'}.toSorted {a, b ->
+			if (a.key == "id")
+				return -1
+			else return a.key <=> b.key
+		}.collect {it -> return "${it.key}=\"${it.value}\""}.join(" ")
+    }
+}
+
+def initDefaultFieldAttrs(attr) {
+    def field = new Field()
+
+	def fieldAttrs = [property: attr.name]
+
+    if ((attr.isDeepInheritor('java.lang.String') || attr.isDeepInheritor('java.net.URI'))
+		&& attr.hasAnnotation('Lob')) {
+		fieldAttrs['height'] = '9.5em'
+        field.tag = 'textArea'
+    }
+
+	def isDatePicker = ['java.util.Date', 'java.time.LocalDate'].collect {
+		attr.isDeepInheritor(it)
+	}.any()
+    if (isDatePicker) {
+        field.tag = 'datePicker'
+    }
+
+	def isTimePicker = ['java.sql.Time', 'java.time.LocalTime', 'java.time.OffsetTime'].collect {
+		attr.isDeepInheritor(it)
+	}.any() || attr.getAnnotation('Temporal')?.params?.get('value')?.endsWith('TIME')
+	if(isTimePicker) {
+		field.tag = 'timePicker'
+	}
+
+    def isDateTimePicker = ['java.time.LocalDateTime', 'java.time.OffsetDateTime'].collect {
+        attr.isDeepInheritor(it)
+    }.any() || (isDatePicker && attr.getAnnotation('Temporal')?.params?.get('value')?.endsWith('TIMESTAMP'))
+    if (isDateTimePicker) {
+        field.tag = 'dateTimePicker'
+    }
+
+	def lookupActions = false
+
+	if (attr.isEntityType()) {
+		field.tag = 'entityPicker'
+		lookupActions = true
+	}
+
+	if(attr.isEnumType()) {
+		field.tag = 'comboBox'
+	}
+
+    if (attr.isDeepInheritor('java.lang.Boolean')) {
+		field.tag = 'checkbox'
+	}
+
+	if(lookupActions) {
+		def actions = attr.getLookupActions()
+		if(!actions.isEmpty()) {
+			StringBuilder builder = new StringBuilder()
+			builder.append("<actions>")
+			for(String action: attr.getLookupActions()) {
+				if (['entity_open', 'entity_lookup', 'entity_clear', 'entity_openComposition'].contains(action)) {
+					builder.append("<action id=\"${api.camelCase(action)}\" type=\"$action\"/>")
+				}
+			}
+			builder.append("</actions>")
+            field.text = builder.toString()
+		}
+	}
+
+	fieldAttrs['id'] = attr.name + "Field"
+
+	field.attrs = fieldAttrs
+
+    return field
+}
+
+def mainFields = [:]
+
+def allForms = [:]
+Form mainForm = new Form()
+mainForm.dcId = dcId
+mainForm.fields = mainFields
+allForms[formId] = mainForm
+
+
+entity.attributes.each { attr ->
+	if (attr != null
+		&& attr.allowPutToDataAware(true)
+		&& !attr.hasAnnotation('Embedded')
+		&& !attr.hasAnnotation('EmbeddedId')) {
+			mainFields[attr.name + "Field"] = initDefaultFieldAttrs(attr)
+	}
+}%>
+<%allForms.each {id, form ->%>
+<formLayout id="${id}" dataContainer="${form.dcId}">
+	<%form.fields.each {fieldId, field -> %>
+	<${field.tag} ${field.printAttrs()}<%if(field.text == null) {%>/><% } else {%>>
+		${field.text}
+	</${field.tag}><%}%>
+	<%}%>
+</formLayout>
+<%}%>

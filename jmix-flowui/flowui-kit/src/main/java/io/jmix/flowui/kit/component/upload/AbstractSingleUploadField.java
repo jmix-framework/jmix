@@ -425,17 +425,14 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     }
 
     /**
-     * Sets the text that should be shown in the upload button. {@code null} value resets the default value.
+     * Sets the text that should be shown in the upload button.
      *
      * @param uploadText text to set
      */
     public void setUploadText(@Nullable String uploadText) {
         this.uploadText = uploadText;
 
-        setComponentText(uploadButton.getUploadButton(),
-                Strings.isNullOrEmpty(uploadText)
-                        ? getDefaultUploadText()
-                        : uploadText);
+        setComponentText(uploadButton.getUploadButton(), uploadText);
     }
 
     /**
@@ -447,7 +444,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     }
 
     /**
-     * Sets text that is shown when file is not uploaded
+     * Sets text that is shown when file is not uploaded.
      *
      * @param fileNotSelectedText text to set
      */

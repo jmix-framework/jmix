@@ -5,6 +5,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -37,7 +38,7 @@ public class ReportsUiHelper {
                                        String value,
                                        Consumer<String> okButtonClickHandler,
                                        CodeEditorMode mode,
-                                       @Nullable ComponentEventListener<ClickEvent<Icon>> helpIconClickListener) {
+                                       @Nullable ComponentEventListener<ClickEvent<Icon>> helpButtonClickListener) {
         Dialog dialog = uiComponents.create(Dialog.class);
         dialog.setHeaderTitle(headerText);
         dialog.setWidth("75em");
@@ -60,14 +61,19 @@ public class ReportsUiHelper {
             codeEditor.setMode(mode);
         }
 
-        if (helpIconClickListener != null) {
-            Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
-            icon.addClassName(FIELD_ICON_CLASS_NAME);
-            icon.addClickListener(helpIconClickListener);
-            layout.add(icon);
-        }
-        layout.add(codeEditor);
+        Div div = uiComponents.create(Div.class);
+        div.setWidthFull();
+        div.setHeightFull();
+        div.addClassNames("flex", "items-start");
+        div.add(codeEditor);
 
+        if (helpButtonClickListener != null) {
+            Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
+            helpIcon.addClassNames("icon", "tertiary-inline");
+            helpIcon.addClickListener(helpButtonClickListener);
+            div.add(helpIcon);
+        }
+        layout.add(div);
         HorizontalLayout actionsLayout = uiComponents.create(HorizontalLayout.class);
         actionsLayout.setWidthFull();
         actionsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);

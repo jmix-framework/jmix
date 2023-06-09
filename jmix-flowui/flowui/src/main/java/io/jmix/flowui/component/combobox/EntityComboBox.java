@@ -139,6 +139,20 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
     }
 
     @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
     public Registration addValidator(Validator<? super V> validator) {
         return fieldDelegate.addValidator(validator);
     }
@@ -146,6 +160,11 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
     @Override
     public void executeValidators() throws ValidationException {
         fieldDelegate.executeValidators();
+    }
+
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

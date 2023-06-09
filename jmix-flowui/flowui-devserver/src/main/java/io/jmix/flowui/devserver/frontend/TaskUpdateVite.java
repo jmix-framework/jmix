@@ -55,25 +55,21 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
     }
 
     private void createConfig() throws IOException {
-        // Only create it if it does not exist
         File configFile = new File(options.getStudioFolder(),
                 FrontendUtils.VITE_CONFIG);
-        if (configFile.exists()) {
-            return;
+
+        if (!configFile.exists()) {
+            configFile.createNewFile();
         }
 
         try (InputStream resource = FrontendUtils.getResourceAsStream(FrontendUtils.VITE_CONFIG)) {
             String template = IOUtils.toString(resource, StandardCharsets.UTF_8);
-
-            if (configFile.exists()
-                    && template.hashCode() == IOUtils.toString(
-                    configFile.toURI(), StandardCharsets.UTF_8).hashCode()
-            ) {
-                return;
-            }
+            template = template.replace("60001", String.valueOf(FrontendUtils.findFreePort(60_000, 65_000)));
 
             FileUtils.write(configFile, template, StandardCharsets.UTF_8);
-            log().debug("Created vite configuration file: '{}'", configFile);
+            String message = String.format("Created vite configuration file: '%s'", configFile);
+            log().debug(message);
+            FrontendUtils.logInFile(message);
         }
     }
 

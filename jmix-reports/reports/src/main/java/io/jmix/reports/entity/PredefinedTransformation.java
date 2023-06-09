@@ -16,7 +16,7 @@
 
 package io.jmix.reports.entity;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum PredefinedTransformation implements EnumClass<Integer> {
     STARTS_WITH(0), CONTAINS(1), ENDS_WITH(2);

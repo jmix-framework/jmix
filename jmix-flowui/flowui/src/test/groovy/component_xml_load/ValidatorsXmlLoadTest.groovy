@@ -370,7 +370,8 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
 
         def notNullField = validatorView.notNullField
 
-        when: "Set null value"
+        when: "Set some value, then null"
+        notNullField.typedValue = new Date() // because null value is equal to initial component's model value
         notNullField.typedValue = null
 
         then: "Component is not valid"

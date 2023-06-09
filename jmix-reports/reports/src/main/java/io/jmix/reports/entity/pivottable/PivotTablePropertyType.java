@@ -16,7 +16,7 @@
 
 package io.jmix.reports.entity.pivottable;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum PivotTablePropertyType implements EnumClass<String> {
     AGGREGATIONS("aggregations"),

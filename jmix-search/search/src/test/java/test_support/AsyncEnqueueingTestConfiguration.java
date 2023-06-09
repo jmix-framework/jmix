@@ -20,7 +20,6 @@ import io.jmix.core.DataManager;
 import io.jmix.core.IdSerialization;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 @Import({BaseSearchTestConfiguration.class})
 @PropertySource("classpath:/test_support/test-async-enqueueing-app.properties")
-public class AsyncEnqueueingTestConfiguration extends CoreSecurityConfiguration {
+public class AsyncEnqueueingTestConfiguration {
 
     @Autowired
     protected AutowireCapableBeanFactory beanFactory;

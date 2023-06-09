@@ -68,7 +68,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             clearButtonVisible
-            element.getProperty("hasControls")
+            stepButtonsVisible
             enabled
             errorMessage == "errorMessageString"
             height == "50px"

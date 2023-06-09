@@ -1,6 +1,6 @@
 package io.jmix.securityflowui.view.resourcepolicy;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum EntityPolicyAction implements EnumClass<String> {
 

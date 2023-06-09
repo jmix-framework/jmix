@@ -20,7 +20,6 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
-import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import liquibase.integration.spring.SpringLiquibase;
@@ -41,7 +40,7 @@ import static org.mockito.Mockito.mock;
 @PropertySource("classpath:/test_support/test-entity-indexing-app.properties")
 @EnableWebSecurity
 @MessageSourceBasenames({"test_support/messages"})
-public class IndexingTestConfiguration extends CoreSecurityConfiguration {
+public class IndexingTestConfiguration {
 
     @Autowired
     protected AutowireCapableBeanFactory beanFactory;

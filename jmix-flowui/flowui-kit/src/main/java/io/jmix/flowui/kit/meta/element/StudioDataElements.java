@@ -105,7 +105,8 @@ public interface StudioDataElements {
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE)
+                    @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
     void keyValueInstanceLoader();
@@ -122,7 +123,8 @@ public interface StudioDataElements {
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE)
+                    @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
     void keyValueCollectionLoader();

@@ -24,6 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static io.jmix.security.SecurityConfigurers.uiSecurity;
 
+//todo MG do we still need this SecurityConfiguration?
 public class StandardSecurityConfiguration {
 
     public static final String SECURITY_CONFIGURER_QUALIFIER = "standard-security";

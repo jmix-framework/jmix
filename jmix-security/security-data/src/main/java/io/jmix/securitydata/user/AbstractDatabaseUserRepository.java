@@ -67,19 +67,19 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     private T anonymousUser;
 
     @Autowired
-    private UnconstrainedDataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
     @Autowired
-    private ResourceRoleRepository resourceRoleRepository;
+    protected ResourceRoleRepository resourceRoleRepository;
     @Autowired
-    private RowLevelRoleRepository rowLevelRoleRepository;
+    protected RowLevelRoleRepository rowLevelRoleRepository;
     @Autowired
-    private RoleAssignmentRepository roleAssignmentRepository;
+    protected RoleAssignmentRepository roleAssignmentRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    protected PasswordEncoder passwordEncoder;
     @Autowired
-    private PersistentTokenRepository tokenRepository;
+    protected PersistentTokenRepository tokenRepository;
     @Autowired
     protected ApplicationEventPublisher eventPublisher;
 
@@ -183,19 +183,23 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
 
     @Override
     public T loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<T> users = dataManager.load(getUserClass())
-                .query("where e.username = :username")
-                .parameter("username", username)
-                .list();
+        List<T> users = loadUsersByUsernameFromDatabase(username);
         if (!users.isEmpty()) {
             T user = users.get(0);
             if (user instanceof AcceptsGrantedAuthorities) {
-                ((AcceptsGrantedAuthorities) user).setAuthorities(createAuthorities(username));
+                ((AcceptsGrantedAuthorities) user).setAuthorities(createAuthorities(user.getUsername()));
             }
             return user;
         } else {
             throw new UsernameNotFoundException("User not found");
         }
+    }
+
+    protected List<T> loadUsersByUsernameFromDatabase(String username) {
+        return dataManager.load(getUserClass())
+                .query("where e.username = :username")
+                .parameter("username", username)
+                .list();
     }
 
     @Override
@@ -245,14 +249,14 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         }
     }
 
-    private Collection<? extends GrantedAuthority> createAuthorities(String username) {
+    protected Collection<? extends GrantedAuthority> createAuthorities(String username) {
         return roleAssignmentRepository.getAssignmentsByUsername(username).stream()
                 .map(this::createAuthority)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
-    private GrantedAuthority createAuthority(RoleAssignment roleAssignment) {
+    protected GrantedAuthority createAuthority(RoleAssignment roleAssignment) {
         GrantedAuthority authority = null;
         if (RoleAssignmentRoleType.RESOURCE.equals(roleAssignment.getRoleType())) {
             ResourceRole role = resourceRoleRepository.findRoleByCode(roleAssignment.getRoleCode());

@@ -55,6 +55,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Component("report_ParameterComponentGenerationStrategy")
@@ -125,10 +128,11 @@ public class ParameterComponentGenerationStrategy {
         T createField(ReportInputParameter parameter);
     }
 
-    protected class DateFieldCreator implements FieldCreator<TypedDatePicker<?>> {
+    protected class DateFieldCreator implements FieldCreator<TypedDatePicker<Date>> {
         @Override
-        public TypedDatePicker<?> createField(ReportInputParameter parameter) {
-            TypedDatePicker<?> dateField = uiComponents.create(TypedDatePicker.class);
+        public TypedDatePicker<Date> createField(ReportInputParameter parameter) {
+            TypedDatePicker<Date> dateField = uiComponents.create(TypedDatePicker.class);
+            dateField.setDatatype(datatypeRegistry.get(Date.class));
 
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, dateField);
@@ -137,10 +141,11 @@ public class ParameterComponentGenerationStrategy {
         }
     }
 
-    protected class DateTimeFieldCreator implements FieldCreator<TypedDateTimePicker<?>> {
+    protected class DateTimeFieldCreator implements FieldCreator<TypedDateTimePicker<Date>> {
         @Override
-        public TypedDateTimePicker<?> createField(ReportInputParameter parameter) {
-            TypedDateTimePicker<?> dateField = uiComponents.create(TypedDateTimePicker.class);
+        public TypedDateTimePicker<Date> createField(ReportInputParameter parameter) {
+            TypedDateTimePicker<Date> dateField = uiComponents.create(TypedDateTimePicker.class);
+            dateField.setDatatype(datatypeRegistry.get(Date.class));
 
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, dateField);
@@ -149,11 +154,13 @@ public class ParameterComponentGenerationStrategy {
         }
     }
 
-    protected class TimeFieldCreator implements FieldCreator<TypedTimePicker<?>> {
+    protected class TimeFieldCreator implements FieldCreator<TypedTimePicker<Date>> {
 
         @Override
-        public TypedTimePicker<?> createField(ReportInputParameter parameter) {
-            TypedTimePicker<?> timeField = uiComponents.create(TypedTimePicker.class);
+        public TypedTimePicker<Date> createField(ReportInputParameter parameter) {
+            TypedTimePicker<Date> timeField = uiComponents.create(TypedTimePicker.class);
+            timeField.setDatatype(datatypeRegistry.get(Date.class));
+
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, timeField);
             }

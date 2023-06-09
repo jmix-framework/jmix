@@ -17,6 +17,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
@@ -389,7 +390,15 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
             field.addValueChangeListener(e -> {
                 if (e.getValue() != null) {
-                    parameter.setDefaultValue(jmixObjectToStringConverter.convertToString(e.getValue().getClass(), e.getValue()));
+                    String value;
+                    if (e.getHasValue() instanceof SupportsTypedValue) {
+                        Object typedValue = ((SupportsTypedValue) e.getHasValue()).getTypedValue();
+                        value = jmixObjectToStringConverter.convertToString(parameter.getParameterClass(), typedValue);
+                    } else {
+                        value = jmixObjectToStringConverter.convertToString(e.getValue().getClass(), e.getValue());
+                    }
+
+                    parameter.setDefaultValue(value);
                 } else {
                     parameter.setDefaultValue(null);
                 }

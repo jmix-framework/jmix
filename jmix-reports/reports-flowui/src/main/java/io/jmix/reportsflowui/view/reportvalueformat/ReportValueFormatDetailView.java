@@ -52,29 +52,29 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     };
 
     @ViewComponent
-    private JmixComboBox<String> formatField;
+    protected JmixComboBox<String> formatField;
     @ViewComponent
-    private JmixCheckbox groovyField;
+    protected JmixCheckbox groovyField;
     @ViewComponent
-    private CodeEditor groovyCodeEditor;
+    protected CodeEditor groovyCodeEditor;
     @ViewComponent
-    private Div groovyCodeEditorBox;
+    protected Div groovyCodeEditorBox;
 
     @ViewComponent
-    private InstanceContainer<ReportValueFormat> valuesFormatsDc;
+    protected InstanceContainer<ReportValueFormat> valuesFormatsDc;
 
     @Autowired
-    private SecureOperations secureOperations;
+    protected SecureOperations secureOperations;
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
     @Autowired
-    private PolicyStore policyStore;
+    protected PolicyStore policyStore;
     @Autowired
-    private Dialogs dialogs;
+    protected Dialogs dialogs;
     @Autowired
-    private MessageBundle messageBundle;
+    protected MessageBundle messageBundle;
     @Autowired
-    private ReportsUiHelper reportsUiHelper;
+    protected ReportsUiHelper reportsUiHelper;
 
     @Subscribe
     public void onInit(InitEvent event) {

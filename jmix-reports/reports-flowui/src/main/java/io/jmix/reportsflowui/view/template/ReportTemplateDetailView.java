@@ -76,51 +76,51 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     public static final String CUSTOM_PROPERTY = "custom";
     public static final String REPORT_OUTPUT_TYPE_PROPERTY = "reportOutputType";
 
+    @ViewComponent
+    protected JmixRadioButtonGroup<Boolean> isGroovyRadioButtonGroup;
+    @ViewComponent
+    protected JmixCheckbox customField;
+    @ViewComponent
+    protected JmixSelect<CustomTemplateDefinedBy> customDefinedByField;
+    @ViewComponent
+    protected JmixTextArea customDefinitionField;
+    @ViewComponent
+    protected JmixCheckbox alterableField;
+    @ViewComponent
+    protected FileUploadField templateUploadField;
+    @ViewComponent
+    protected TypedTextField<String> outputNamePatternField;
+    @ViewComponent
+    protected JmixTextArea templateFileEditor;
+    @ViewComponent
+    protected JmixComboBox<ReportOutputType> outputTypeField;
+    @ViewComponent
+    protected HorizontalLayout descriptionEditBox;
+    @ViewComponent
+    protected VerticalLayout previewBox;
+
+    @ViewComponent
+    protected InstanceContainer<ReportTemplate> reportTemplateDc;
+
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
-    private Dialogs dialogs;
+    protected Dialogs dialogs;
     @Autowired
-    private SecureOperations secureOperations;
+    protected SecureOperations secureOperations;
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
     @Autowired
-    private PolicyStore policyStore;
+    protected PolicyStore policyStore;
     @Autowired
-    private Notifications notifications;
+    protected Notifications notifications;
     @Autowired
-    private UiComponents uiComponents;
+    protected UiComponents uiComponents;
     @Autowired
-    private ReportsUiHelper reportsUiHelper;
-
-    @ViewComponent
-    private InstanceContainer<ReportTemplate> reportTemplateDc;
-    @ViewComponent
-    private JmixRadioButtonGroup<Boolean> isGroovyRadioButtonGroup;
-    @ViewComponent
-    private JmixCheckbox customField;
-    @ViewComponent
-    private JmixSelect<CustomTemplateDefinedBy> customDefinedByField;
-    @ViewComponent
-    private JmixTextArea customDefinitionField;
-    @ViewComponent
-    private JmixCheckbox alterableField;
-    @ViewComponent
-    private FileUploadField templateUploadField;
-    @ViewComponent
-    private TypedTextField<String> outputNamePatternField;
-    @ViewComponent
-    private JmixTextArea templateFileEditor;
-    @ViewComponent
-    private JmixComboBox<ReportOutputType> outputTypeField;
-    @ViewComponent
-    private HorizontalLayout descriptionEditBox;
-    @ViewComponent
-    private VerticalLayout previewBox;
+    protected ReportsUiHelper reportsUiHelper;
 
     protected Icon customDefinitionHelpIcon;
     protected Icon customDefinitionExpandIcon;
-
     protected TableEditFragment tableEditComposite;
 
     @Subscribe

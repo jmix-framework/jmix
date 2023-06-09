@@ -26,12 +26,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JpqlQueryBuilder {
+
+    protected final StringBuilder joinsBuilder = new StringBuilder(" e ");
+    protected final Map<String, String> entityNamesAndAliases = new HashMap<>();
+
     protected ReportData reportData;
     protected ReportRegion reportRegion;
     protected StringBuilder outputFieldsBuilder = new StringBuilder("\n");
-    private final StringBuilder joinsBuilder = new StringBuilder(" e ");
-    private final Map<String, String> entityNamesAndAliases = new HashMap<>();
-    private String result;
+    protected String result;
 
     public JpqlQueryBuilder(ReportData reportData, ReportRegion reportRegion) {
         this.reportData = reportData;

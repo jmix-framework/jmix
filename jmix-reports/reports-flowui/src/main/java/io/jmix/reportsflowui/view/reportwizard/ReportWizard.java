@@ -30,8 +30,8 @@ import java.util.*;
 @Component("report_ReportsWizard")
 public class ReportWizard {
 
-
     public static final String ROOT_BAND_DEFINITION_NAME = "Root";
+
     protected static final String DEFAULT_SINGLE_ENTITY_NAME = "Entity";
     protected static final String DEFAULT_LIST_OF_ENTITIES_NAME = "Entities";
     protected static final String DEFAULT_SINGLE_ENTITY_ALIAS = "entity";//cause Thesis used it for running reports from screens without selection input params

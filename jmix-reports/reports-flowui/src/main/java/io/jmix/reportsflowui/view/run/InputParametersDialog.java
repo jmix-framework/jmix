@@ -49,7 +49,7 @@ public class InputParametersDialog extends StandardView {
     public static final String REPORT_PARAMETER = "report";
 
     @ViewComponent
-    private Div inputParametersLayout;
+    protected Div inputParametersLayout;
 
     @Autowired
     protected UiReportRunner uiReportRunner;
@@ -58,7 +58,7 @@ public class InputParametersDialog extends StandardView {
     @Autowired
     protected ViewValidation viewValidation;
     @Autowired
-    private UiComponents uiComponents;
+    protected UiComponents uiComponents;
 
     protected String templateCode;
     protected String outputFileName;

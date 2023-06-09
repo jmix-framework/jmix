@@ -74,7 +74,7 @@
                   width="100%"
                   dataContainer="reportsDc">
             <actions>
-                <action id="runReport" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"
+                <action id="runReport" text="msg://io.jmix.reportsflowui.view.run/runReport.action.title" icon="ANGLE_DOUBLE_RIGHT"
                         actionVariant="PRIMARY"
                         type="itemTracking"/>
             </actions>

@@ -25,7 +25,7 @@
             <textField id="code" property="code"/>
         </formLayout>
         <textArea id="localeTextField"
-                  label="msg://groupLocaleCaption"
+                  label="msg://io.jmix.reportsflowui.view.group/reportGroupDetailView.locale.title"
                   dataContainer="groupDc" property="localeNames"
                   width="100%" height="9.5em"/>
         <hbox id="detailActions">

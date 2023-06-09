@@ -69,7 +69,7 @@ public class ReportRunView extends StandardListView<Report> {
     @ViewComponent
     protected TypedDatePicker<Date> updatedDateFilter;
     @ViewComponent
-    private FormLayout filterPanel;
+    protected FormLayout filterPanel;
 
     @Autowired
     protected ReportSecurityManager reportSecurityManager;

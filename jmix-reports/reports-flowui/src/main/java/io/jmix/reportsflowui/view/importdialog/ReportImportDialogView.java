@@ -39,7 +39,7 @@ public class ReportImportDialogView extends StandardView {
     @ViewComponent
     protected JmixCheckbox importRoles;
     @ViewComponent
-    private HorizontalLayout uploadBox;
+    protected HorizontalLayout uploadBox;
 
     @Autowired
     protected TemporaryStorage temporaryStorage;
@@ -54,9 +54,9 @@ public class ReportImportDialogView extends StandardView {
     @Autowired
     protected FileStorage fileStorage;
     @Autowired
-    private UiComponents uiComponents;
+    protected UiComponents uiComponents;
 
-    private Upload upload;
+    protected Upload upload;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -65,7 +65,7 @@ public class ReportImportDialogView extends StandardView {
         createUpload();
     }
 
-    private void createUpload() {
+    protected void createUpload() {
         upload = uiComponents.create(Upload.class);
         uploadBox.add(upload);
 

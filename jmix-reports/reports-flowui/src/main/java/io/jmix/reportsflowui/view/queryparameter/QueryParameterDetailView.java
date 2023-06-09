@@ -63,27 +63,28 @@ import java.util.stream.Collectors;
 public class QueryParameterDetailView extends StandardDetailView<QueryParameter> {
 
     @ViewComponent
-    private JmixComboBox<MetaClass> entityMetaClassField;
+    protected JmixComboBox<MetaClass> entityMetaClassField;
     @ViewComponent
     protected ComboBox<Class> enumerationField;
     @ViewComponent
     protected HorizontalLayout defaultValueBox;
+
     @Autowired
-    private JmixObjectToStringConverter jmixObjectToStringConverter;
+    protected JmixObjectToStringConverter jmixObjectToStringConverter;
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
     @Autowired
-    private MetadataTools metadataTools;
+    protected MetadataTools metadataTools;
     @Autowired
-    private MessageTools messageTools;
+    protected MessageTools messageTools;
     @Autowired
-    private UiComponents uiComponents;
+    protected UiComponents uiComponents;
     @Autowired
-    private Messages messages;
+    protected Messages messages;
     @Autowired
-    private DatatypeRegistry datatypeRegistry;
+    protected DatatypeRegistry datatypeRegistry;
     @Autowired
-    private Actions actions;
+    protected Actions actions;
 
 
     @Subscribe

@@ -29,7 +29,7 @@ public class ReportGroupListView extends StandardListView<ReportGroup> {
     @ViewComponent
     protected DataGrid<ReportGroup> reportGroupsDataGrid;
     @ViewComponent("reportGroupsDataGrid.remove")
-    private RemoveAction<ReportGroup> removeAction;
+    protected RemoveAction<ReportGroup> removeAction;
 
     @Autowired
     protected DataManager dataManager;

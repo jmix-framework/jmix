@@ -43,10 +43,9 @@ import java.util.List;
 public class TableGenerator implements Generator {
 
     @Autowired
-    private DataManager dataManager;
-
+    protected DataManager dataManager;
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
 
     @Override
     public byte[] generate(ReportData reportData) {

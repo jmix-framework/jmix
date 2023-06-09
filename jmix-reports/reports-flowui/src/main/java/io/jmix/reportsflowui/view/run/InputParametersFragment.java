@@ -58,27 +58,28 @@ import static io.jmix.reports.util.ReportTemplateUtils.supportAlterableForTempla
 public class InputParametersFragment extends Composite<FormLayout>
         implements ApplicationContextAware, HasSize, HasEnabled, InitializingBean {
 
+    //Components
+    protected CollectionContainer<ReportTemplate> templateReportsDc;
+    protected EntityComboBox<ReportTemplate> templateComboBox;
+    protected JmixComboBox<ReportOutputType> outputTypeComboBox;
+    protected FormLayout formLayout;
+
+    // Autowired
+    private ReportsUtils reportsUtils;
+    protected UiComponents uiComponents;
+    protected Messages messages;
+    protected Metadata metadata;
+    protected ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
+    protected ParameterClassResolver parameterClassResolver;
+    protected ObjectToStringConverter objectToStringConverter;
+    protected DataComponents dataComponents;
+    protected ApplicationContext applicationContext;
+
     protected Report report;
     protected Map<String, Object> parameters;
     protected boolean bulkPrint;
     protected ReportInputParameter inputParameter;
     protected HashMap<String, AbstractField> parameterComponents = new HashMap<>();
-
-    private CollectionContainer<ReportTemplate> templateReportsDc;
-    private EntityComboBox<ReportTemplate> templateComboBox;
-    private JmixComboBox<ReportOutputType> outputTypeComboBox;
-    private FormLayout formLayout;
-
-    // Autowired
-    private ReportsUtils reportsUtils;
-    private UiComponents uiComponents;
-    private Messages messages;
-    private Metadata metadata;
-    private ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
-    private ParameterClassResolver parameterClassResolver;
-    private ObjectToStringConverter objectToStringConverter;
-    private DataComponents dataComponents;
-    private ApplicationContext applicationContext;
 
     private void initComponent() {
         this.uiComponents = applicationContext.getBean(UiComponents.class);
@@ -128,11 +129,11 @@ public class InputParametersFragment extends Composite<FormLayout>
         templateComboBox.setVisible(false);
         templateComboBox.setMetaClass(metadata.getClass(ReportTemplate.class));
         templateComboBox.setItems(report.getTemplates());
-        templateComboBox.setLabel(messages.getMessage(getClass(), "caption.reportTemplate"));
+        templateComboBox.setLabel(messages.getMessage(getClass(), "reportTemplate.label"));
         templateComboBox.addValueChangeListener(e -> updateOutputTypes());
 
         outputTypeComboBox = uiComponents.create(JmixComboBox.class);
-        outputTypeComboBox.setLabel(messages.getMessage(getClass(), "caption.reportOutputType"));
+        outputTypeComboBox.setLabel(messages.getMessage(getClass(), "reportOutputType.label"));
 
         formLayout = uiComponents.create(FormLayout.class);
         formLayout.add(templateComboBox);

@@ -35,7 +35,7 @@ public class ReportParamFieldValidator extends AbstractValidator<Object> {
     @Autowired
     protected ReportParameterValidator reportParameterValidator;
 
-    private final ReportInputParameter inputParameter;
+    protected final ReportInputParameter inputParameter;
 
     public ReportParamFieldValidator(ReportInputParameter inputParameter) {
         if (inputParameter == null) {

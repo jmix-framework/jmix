@@ -10,7 +10,7 @@ import io.jmix.flowui.view.*;
 public class ScriptEditorView extends StandardView {
 
     @ViewComponent
-    private CodeEditor editor;
+    protected CodeEditor editor;
 
     public void setEditorMode(CodeEditorMode mode){
         editor.setMode(mode);

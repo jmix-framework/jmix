@@ -66,6 +66,18 @@ import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredBy
 @DialogMode(width = "60em")
 public class ReportListView extends StandardListView<Report> {
 
+    @ViewComponent
+    protected DataGrid<Report> reportsDataGrid;
+    @ViewComponent("reportsDataGrid.create")
+    protected CreateAction<Report> reportsDataGridCreate;
+    @ViewComponent
+    protected DropdownButton dropdownCreateBtn;
+
+    @ViewComponent
+    protected CollectionLoader<Report> reportsDl;
+    @ViewComponent
+    protected CollectionContainer<Report> reportsDc;
+
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -98,19 +110,8 @@ public class ReportListView extends StandardListView<Report> {
     protected UiReportRunner uiReportRunner;
     @Autowired
     protected ReportsClientProperties reportsClientProperties;
-
-    @ViewComponent
-    private DataGrid<Report> reportsDataGrid;
-    @ViewComponent("reportsDataGrid.create")
-    private CreateAction<Report> reportsDataGridCreate;
-    @ViewComponent
-    private DropdownButton dropdownCreateBtn;
-    @ViewComponent
-    private CollectionLoader<Report> reportsDl;
-    @ViewComponent
-    private CollectionContainer<Report> reportsDc;
     @Autowired
-    private ViewNavigators viewNavigators;
+    protected ViewNavigators viewNavigators;
 
     @Subscribe
     protected void onInit(InitEvent event) {

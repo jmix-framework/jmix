@@ -80,7 +80,7 @@ public class ReportTableView extends StandardView {
     protected Div parametersBox;
 
     @ViewComponent
-    private CollectionLoader<Report> reportsDl;
+    protected CollectionLoader<Report> reportsDl;
 
     @Autowired
     protected UiComponents uiComponents;
@@ -97,9 +97,9 @@ public class ReportTableView extends StandardView {
     @Autowired
     protected ReportRunner reportRunner;
     @Autowired
-    private DataComponents dataComponents;
+    protected DataComponents dataComponents;
     @Autowired
-    private DatatypeRegistry datatypeRegistry;
+    protected DatatypeRegistry datatypeRegistry;
 
     protected Report report;
     protected String templateCode;

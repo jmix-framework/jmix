@@ -86,7 +86,11 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @ViewComponent
     protected JmixCheckbox isPredefinedTransformationField;
     @ViewComponent
+    protected Div transformationEditorBox;
+
+    @ViewComponent
     protected InstanceContainer<ReportInputParameter> parameterDc;
+
     @Autowired
     protected ParameterClassResolver parameterClassResolver;
     @Autowired
@@ -109,12 +113,10 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     protected ReportsUiHelper reportsUiHelper;
     @Autowired
     protected JmixObjectToStringConverter jmixObjectToStringConverter;
-    @ViewComponent
-    private Div transformationEditorBox;
     @Autowired
-    private ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
+    protected ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
     @Autowired
-    private ReportParamAliasValidator reportParamAliasValidator;
+    protected ReportParamAliasValidator reportParamAliasValidator;
 
     @Subscribe
     public void onInit(InitEvent event) {

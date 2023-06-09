@@ -101,55 +101,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     public static final String ROOT_BAND = "Root";
     protected static final String TRANSPARENT_CODE_CLASS_NAME = "reports-dialog-transparent-code";
 
-    @Autowired
-    protected ReportsPersistence reportsPersistence;
-    @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected ViewValidation viewValidation;
-    @Autowired
-    protected ReportsSerialization reportsSerialization;
-    @Autowired
-    protected UiComponents uiComponents;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected DialogWindows dialogWindows;
-    @Autowired
-    protected SecureOperations secureOperations;
-    @Autowired
-    protected PolicyStore policyStore;
-    @Autowired
-    protected Downloader downloader;
-    @Autowired
-    protected FlowuiProperties flowuiProperties;
-    @Autowired
-    protected CoreProperties coreProperties;
-    @Autowired
-    protected EntityStates entityStates;
-    @Autowired
-    protected DataSetFactory dataSetFactory;
-    @Autowired
-    protected FetchPlanRepository fetchPlanRepository;
-    @Autowired
-    protected Stores stores;
-    @Autowired
-    protected ReportsUiHelper reportsUiHelper;
-    @Autowired
-    protected CrossTabDataGridDecorator dataGridDecorator;
-    @Autowired
-    protected ReportsClientProperties reportsClientProperties;
-    @Autowired
-    protected MetadataTools metadataTools;
-    @Autowired
-    protected Dialogs dialogs;
-    @Autowired
-    protected ResourceRoleRepository resourceRoleRepository;
-    @Autowired
-    protected ViewRegistry viewRegistry;
-
     @ViewComponent
     protected DataContext dataContext;
     @ViewComponent
@@ -235,21 +186,71 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected JmixTextArea validationScriptCodeEditor;
     @ViewComponent
     protected FormLayout bandForm;
+    @ViewComponent
+    protected JmixTextArea localeTextField;
+    @ViewComponent
+    protected JmixComboBox<String> screenIdField;
+    @ViewComponent
+    protected CollectionPropertyContainer<ReportScreen> reportScreensDc;
+    @ViewComponent
+    protected JmixComboBox<BaseRole> rolesField;
+    @ViewComponent
+    protected CollectionPropertyContainer<ReportRole> reportRolesDc;
+    @ViewComponent
+    protected DataGrid<ReportInputParameter> inputParametersTable;
+
+    @Autowired
+    protected ReportsPersistence reportsPersistence;
+    @Autowired
+    protected MessageBundle messageBundle;
+    @Autowired
+    protected Notifications notifications;
+    @Autowired
+    protected ViewValidation viewValidation;
+    @Autowired
+    protected ReportsSerialization reportsSerialization;
+    @Autowired
+    protected UiComponents uiComponents;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected DialogWindows dialogWindows;
+    @Autowired
+    protected SecureOperations secureOperations;
+    @Autowired
+    protected PolicyStore policyStore;
+    @Autowired
+    protected Downloader downloader;
+    @Autowired
+    protected FlowuiProperties flowuiProperties;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected EntityStates entityStates;
+    @Autowired
+    protected DataSetFactory dataSetFactory;
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+    @Autowired
+    protected Stores stores;
+    @Autowired
+    protected ReportsUiHelper reportsUiHelper;
+    @Autowired
+    protected CrossTabDataGridDecorator dataGridDecorator;
+    @Autowired
+    protected ReportsClientProperties reportsClientProperties;
+    @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected Dialogs dialogs;
+    @Autowired
+    protected ResourceRoleRepository resourceRoleRepository;
+    @Autowired
+    protected ViewRegistry viewRegistry;
+
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
     protected JmixComboBoxBinder<String> fetchPlanNameFieldBinder;
-    @ViewComponent
-    private JmixTextArea localeTextField;
-    @ViewComponent
-    private JmixComboBox<String> screenIdField;
-    @ViewComponent
-    private CollectionPropertyContainer<ReportScreen> reportScreensDc;
-    @ViewComponent
-    private JmixComboBox<BaseRole> rolesField;
-    @ViewComponent
-    private CollectionPropertyContainer<ReportRole> reportRolesDc;
-    @ViewComponent
-    private DataGrid<ReportInputParameter> inputParametersTable;
 
     @Subscribe
     public void onInit(InitEvent event) {

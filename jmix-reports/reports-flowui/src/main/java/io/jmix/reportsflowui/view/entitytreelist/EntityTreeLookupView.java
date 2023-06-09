@@ -6,13 +6,13 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
-import io.jmix.reportsflowui.view.EntityTreeComposite;
+import io.jmix.reportsflowui.view.reportwizard.EntityTreeComposite;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ViewController("EntityTreeList.lookup")
 @ViewDescriptor("entity-tree-lookup.xml")
 @LookupComponent("treePanel.treeDataGrid")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(height = "37.5em")
 public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
 
     @ViewComponent

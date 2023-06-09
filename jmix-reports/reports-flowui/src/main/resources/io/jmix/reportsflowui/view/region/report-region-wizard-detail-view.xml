@@ -31,10 +31,10 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout expand="mainContent">
-                <label id="tipLabel"
-                       classNames="report-wizard-tip-label"
-                       width="100%"/>
+    <layout expand="mainContent" width="40em">
+        <label id="tipLabel"
+               classNames="report-wizard-tip-label"
+               width="100%"/>
         <hbox id="mainContent" width="100%">
             <formLayout id="treePanel"/>
             <vbox id="btnsControlPanel" margin="false" spacing="false" padding="false" width="AUTO">
@@ -52,7 +52,7 @@
                     <action id="downItemAction" type="itemTracking" icon="ARROW_DOWN"/>
                 </actions>
                 <columns>
-                    <column property="hierarchicalLocalizedName"/>
+                    <column property="hierarchicalLocalizedName" header="msg://hierarchicalLocalizedName.header"/>
                 </columns>
             </dataGrid>
         </hbox>

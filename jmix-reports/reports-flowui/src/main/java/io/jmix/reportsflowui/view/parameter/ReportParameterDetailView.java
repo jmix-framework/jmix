@@ -112,7 +112,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @ViewComponent
     private Div transformationEditorBox;
     @Autowired
-    private ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
+    protected ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
     @Autowired
     private ReportParamAliasValidator reportParamAliasValidator;
 

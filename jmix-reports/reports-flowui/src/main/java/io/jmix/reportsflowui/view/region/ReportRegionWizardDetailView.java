@@ -4,7 +4,6 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Notifications;
@@ -23,13 +22,13 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportRegion;
-import io.jmix.reportsflowui.view.EntityTreeComposite;
+import io.jmix.reportsflowui.view.reportwizard.EntityTreeComposite;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-@Route(value = "reportregion/:id", layout = DefaultMainViewParent.class)
-@ViewController("report_ReportRegionWizard.detail")
+@Route(value = "reports/region/:id", layout = DefaultMainViewParent.class)
+@ViewController("report_WizardReportRegion.detail")
 @ViewDescriptor("report-region-wizard-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
 public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegion> {
@@ -52,7 +51,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -120,7 +119,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         String messageKey = isTabulated
                 ? "selectEntityPropertiesForTableArea"
                 : "selectEntityProperties";
-        tipLabel.setText(messages.formatMessage(messageKey, rootEntity.getLocalizedName()));
+        tipLabel.setText(messageBundle.formatMessage(messageKey, rootEntity.getLocalizedName()));
     }
 
     protected void initComponents() {
@@ -139,7 +138,6 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
                 .withHandler(event -> addProperty());
         doubleClickAction.setEnabled(isUpdatePermitted());
         entityTree.addAction(doubleClickAction);
-        //todo normal double click registration
         entityTree.addItemClickListener(event -> {
             if (event.getClickCount() > 1) {
                 entityTree.select(event.getItem());
@@ -160,7 +158,6 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         List<EntityTreeNode> nodesList = reportRegionPropertiesDataGridDc.getItems()
                 .stream()
                 .map(RegionProperty::getEntityTreeNode).toList();
-
 
         Set<EntityTreeNode> alreadyAddedNodes = new HashSet<>(nodesList);
 
@@ -184,13 +181,13 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         }
         if (addedItems.isEmpty()) {
             if (alreadyAdded) {
-                notifications.create(messages.getMessage(getClass(), "elementsAlreadyAdded"))
+                notifications.create(messageBundle.getMessage("elementsAlreadyAdded"))
                         .show();
             } else if (selectedItems.size() != 0) {
-                notifications.create(messages.getMessage(getClass(), "selectPropertyFromEntity"))
+                notifications.create(messageBundle.getMessage("selectPropertyFromEntity"))
                         .show();
             } else {
-                notifications.create(messages.getMessage(getClass(), "elementsWasNotAdded"))
+                notifications.create(messageBundle.getMessage("elementsWasNotAdded"))
                         .show();
             }
         } else {
@@ -239,27 +236,17 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
             upItem.setEnabled(false);
             downItem.setEnabled(false);
         } else {
-            upItem.setEnabled(isUpdatePermitted());
-            downItem.setEnabled(isUpdatePermitted());
+            upItem.setEnabled(propertiesDataGridUpEnabledRule());
+            downItem.setEnabled(propertiesDataGridDownEnabledRule());
         }
     }
 
     @Subscribe
     public void onBeforeSave(BeforeSaveEvent event) {
         if (reportRegionPropertiesDataGridDc.getItems().isEmpty()) {
-            notifications.create(messages.getMessage("selectAtLeastOneProp"))
+            notifications.create(messageBundle.getMessage("selectAtLeastOneProp"))
                     .show();
             event.preventSave();
         }
-    }
-
-    @Install(to = "propertiesDataGrid.upItemAction", subject = "enabledRule")
-    protected boolean propertiesDataGridUpItemActionEnabledRule() {
-        return isUpdatePermitted();
-    }
-
-    @Install(to = "propertiesDataGrid.downItemAction", subject = "enabledRule")
-    protected boolean propertiesDataGridDownItemActionEnabledRule() {
-        return isUpdatePermitted();
     }
 }

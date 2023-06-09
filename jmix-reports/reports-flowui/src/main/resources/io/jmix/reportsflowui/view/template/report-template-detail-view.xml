@@ -44,14 +44,12 @@
                     <select id="customDefinedByField" property="customDefinedBy"
                               label="msg://customDefinedByField.label"
                               requiredMessage="msg://customDefinedByField.requiredMessage" width="100%"/>
-
                     <vbox id="customDefinitionBox" spacing="false" padding="false" width="100%" alignItems="END">
                         <textArea id="customDefinitionField" property="customDefinition"
                                   label="msg://customDefinitionField.label"
                                   height="6em"
                                   requiredMessage="msg://customDefinitionField.requiredMessage" width="100%"/>
                     </vbox>
-
                     <responsiveSteps>
                         <responsiveStep minWidth="0" columns="1"/>
                     </responsiveSteps>

@@ -30,24 +30,23 @@
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
-        <formLayout dataContainer="queryParameterDc" width="100%" maxWidth="25em" height="100%">
-            <responsiveSteps >
+        <formLayout id="queryParameterFormLayout" dataContainer="queryParameterDc" width="100%" maxWidth="25em" height="100%">
+            <responsiveSteps>
                 <responsiveStep minWidth="0em" columns="1"/>
             </responsiveSteps>
-            <textField id="alias" label="msg://queryParameter.name" property="name"
+            <textField id="alias" property="name"
                        required="true"
                        width="100%"/>
             <comboBox id="parameterTypeField" property="parameterType"
-                      required="true" label="msg://queryParameter.type"
+                      required="true"
                       allowCustomValue="false"
                       width="100%"/>
-            <comboBox id="entityMetaClassField" label="msg://queryParameter.entity" width="100%" required="true"/>
-            <comboBox id="enumerationField" label="msg://queryParameter.enum" width="100%" required="true"/>
-            <hbox id="defaultValueBox" width="100%"/>
-            <hbox classNames="jmix-edit-window-actions">
-                <button id="windowCommitAndClose" action="saveAction"/>
-                <button id="windowClose" action="closeAction"/>
-            </hbox>
+            <comboBox id="entityMetaClassField" width="100%" required="true"/>
+            <comboBox id="enumerationField" width="100%" required="true"/>
         </formLayout>
+        <hbox classNames="jmix-edit-window-actions">
+            <button id="windowCommitAndClose" action="saveAction"/>
+            <button id="windowClose" action="closeAction"/>
+        </hbox>
     </layout>
 </view>

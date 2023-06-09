@@ -55,7 +55,7 @@
                 <textArea id="localeField"
                           dataContainer="parameterDc"
                           property="localeNames"
-                          width="100%" height="240px"/>
+                          width="100%" height="20em"/>
             </tab>
             <tab id="processParamTab" label="msg://parameters.transformationTab">
                 <div id="predefinedTransformationBox">

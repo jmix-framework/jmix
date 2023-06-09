@@ -48,7 +48,7 @@ import java.util.function.Function;
 public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
-    public static final String ID = "edit";
+    public static final String ID = "list_edit";
 
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;

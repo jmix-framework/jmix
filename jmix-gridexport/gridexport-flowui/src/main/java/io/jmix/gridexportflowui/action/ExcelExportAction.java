@@ -30,7 +30,7 @@ import org.springframework.context.ApplicationContext;
 @ActionType(ExcelExportAction.ID)
 public class ExcelExportAction extends ExportAction {
 
-    public static final String ID = "excelExport";
+    public static final String ID = "grdexp_excelExport";
 
     public ExcelExportAction() {
         this(ID);

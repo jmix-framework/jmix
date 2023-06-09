@@ -34,7 +34,7 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
         extends SecuredListDataComponentAction<ShowRoleAssignmentsAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "showRoleAssignments";
+    public static final String ID = "sec_showRoleAssignments";
 
     protected ViewNavigators viewNavigators;
     protected RouteSupport routeSupport;

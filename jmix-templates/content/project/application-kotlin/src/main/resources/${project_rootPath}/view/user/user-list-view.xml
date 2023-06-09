@@ -46,12 +46,12 @@
                   minHeight="20em"
                   dataContainer="usersDc">
             <actions>
-                <action id="create" type="create"/>
-                <action id="edit" type="edit"/>
-                <action id="remove" type="remove"/>
-                <action id="showRoleAssignments" type="showRoleAssignments"/>
-                <action id="changePassword" type="changePassword"/>
-                <action id="resetPassword" type="resetPassword"/>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="remove" type="list_remove"/>
+                <action id="showRoleAssignments" type="sec_showRoleAssignments"/>
+                <action id="changePassword" type="sec_changePassword"/>
+                <action id="resetPassword" type="sec_resetPassword"/>
             </actions>
             <columns>
                 <column property="username"/>

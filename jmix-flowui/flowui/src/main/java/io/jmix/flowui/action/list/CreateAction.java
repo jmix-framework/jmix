@@ -51,7 +51,7 @@ import static io.jmix.flowui.component.UiComponentUtils.isComponentAttachedToDia
 public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
-    public static final String ID = "create";
+    public static final String ID = "list_create";
 
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;

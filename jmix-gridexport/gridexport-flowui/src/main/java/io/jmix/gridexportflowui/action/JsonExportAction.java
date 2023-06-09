@@ -30,7 +30,7 @@ import org.springframework.context.ApplicationContext;
 @ActionType(JsonExportAction.ID)
 public class JsonExportAction extends ExportAction {
 
-    public static final String ID = "jsonExport";
+    public static final String ID = "grdexp_jsonExport";
 
     public JsonExportAction() {
         this(ID);

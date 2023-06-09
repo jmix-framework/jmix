@@ -50,7 +50,7 @@ import java.util.function.Predicate;
 public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
-    public static final String ID = "add";
+    public static final String ID = "list_add";
 
     protected DialogWindows dialogWindows;
     protected AccessManager accessManager;

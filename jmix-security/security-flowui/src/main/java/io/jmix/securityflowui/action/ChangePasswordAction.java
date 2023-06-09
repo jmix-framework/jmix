@@ -38,7 +38,7 @@ public class ChangePasswordAction<E extends UserDetails>
         extends SecuredListDataComponentAction<ChangePasswordAction<E>, E>
         implements ExecutableAction, AdjustWhenViewReadOnly {
 
-    public static final String ID = "changePassword";
+    public static final String ID = "sec_changePassword";
 
     protected boolean currentPasswordRequired = false;
     protected DialogWindows dialogWindows;

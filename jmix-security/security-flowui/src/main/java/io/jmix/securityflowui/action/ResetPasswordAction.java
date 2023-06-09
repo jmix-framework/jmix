@@ -40,7 +40,7 @@ public class ResetPasswordAction<E extends UserDetails>
         extends SecuredListDataComponentAction<ResetPasswordAction<E>, E>
         implements ExecutableAction, AdjustWhenViewReadOnly {
 
-    public static final String ID = "resetPassword";
+    public static final String ID = "sec_resetPassword";
 
     protected DialogWindows dialogWindows;
 

@@ -76,7 +76,7 @@ open class LoginView : StandardView(), LocaleChangeObserver {
                             .withRememberMe(login.isRememberMe)
             )
         } catch (e: Exception) {
-            log.info("Login failed", e)
+            log.warn("Login failed for user '{}': {}", event.username, e.toString())
             event.source.isError = true
         }
     }

@@ -82,7 +82,7 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
                             .withRememberMe(login.isRememberMe())
             );
         } catch (final BadCredentialsException | DisabledException | LockedException | AccessDeniedException e) {
-            log.info("Login failed", e);
+            log.warn("Login failed for user '{}': {}", event.getUsername(), e.toString());
             event.getSource().setError(true);
         }
     }

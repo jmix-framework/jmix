@@ -20,6 +20,7 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>

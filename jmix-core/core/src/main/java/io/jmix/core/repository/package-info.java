@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 @NonNullApi
-@Experimental
 package io.jmix.core.repository;
 
-import io.jmix.core.annotation.Experimental;
 import org.springframework.lang.NonNullApi;

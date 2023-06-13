@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 public class AssignToUsersAction<E extends BaseRoleModel>
         extends SecuredListDataComponentAction<AssignToUsersAction<E>, E> {
 
-    public static final String ID = "assignToUsers";
+    public static final String ID = "sec_assignToUsers";
 
     protected static final String ROLE_CODE_PROPERTY = "roleCode";
     protected static final String USERNAME_PROPERTY = "username";

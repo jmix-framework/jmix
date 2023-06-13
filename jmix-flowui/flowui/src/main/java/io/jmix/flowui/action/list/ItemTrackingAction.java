@@ -21,7 +21,7 @@ import io.jmix.flowui.action.ActionType;
 @ActionType(ItemTrackingAction.ID)
 public class ItemTrackingAction<E> extends SecuredListDataComponentAction<ItemTrackingAction<E>, E> {
 
-    public static final String ID = "itemTracking";
+    public static final String ID = "list_itemTracking";
 
     public ItemTrackingAction() {
         this(ID);

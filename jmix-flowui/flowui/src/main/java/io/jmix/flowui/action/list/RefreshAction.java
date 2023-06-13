@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(RefreshAction.ID)
 public class RefreshAction<E> extends ListDataComponentAction<RefreshAction<E>, E> {
 
-    public static final String ID = "refresh";
+    public static final String ID = "list_refresh";
 
     private static final Logger log = LoggerFactory.getLogger(RefreshAction.class);
 

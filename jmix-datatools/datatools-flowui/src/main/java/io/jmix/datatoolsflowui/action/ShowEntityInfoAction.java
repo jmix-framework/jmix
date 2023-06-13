@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEntityInfoAction, Object>
         implements ExecutableAction {
 
-    public static final String ID = "show_entity_info";
+    public static final String ID = "datatl_showEntityInfo";
 
     protected boolean visibleBySpecificUiPermission = true;
     protected Views views;

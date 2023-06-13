@@ -45,7 +45,7 @@ import java.util.function.Function;
 public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>, E>
         implements ViewOpeningAction {
 
-    public static final String ID = "read";
+    public static final String ID = "list_read";
 
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;

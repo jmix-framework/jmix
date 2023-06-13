@@ -43,7 +43,7 @@ import java.util.function.Consumer;
 public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "remove";
+    public static final String ID = "list_remove";
 
     protected RemoveOperation removeOperation;
 

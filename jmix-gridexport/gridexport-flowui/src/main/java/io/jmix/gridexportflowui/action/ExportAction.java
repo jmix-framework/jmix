@@ -47,7 +47,7 @@ import java.util.function.Function;
 @ActionType(ExportAction.ID)
 public class ExportAction extends ListDataComponentAction<ExportAction, Object> implements ApplicationContextAware {
 
-    public static final String ID = "export";
+    public static final String ID = "grdexp_export";
 
     protected ApplicationContext applicationContext;
 

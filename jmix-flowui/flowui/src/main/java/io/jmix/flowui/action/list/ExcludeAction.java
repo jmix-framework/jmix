@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "exclude";
+    public static final String ID = "list_exclude";
 
     protected RemoveOperation removeOperation;
 

@@ -251,13 +251,13 @@
                 <div classNames="reports-flex-layout" width="100%" height="100%">
                     <vbox classNames="parameters-layout" padding="false">
                         <hbox>
-                            <button action="inputParametersTable.createParameter"/>
-                            <button action="inputParametersTable.editParameter"/>
-                            <button action="inputParametersTable.removeParameter"/>
-                            <button id="upButton" action="inputParametersTable.up"/>
-                            <button id="downButton" action="inputParametersTable.down"/>
+                            <button action="inputParametersDataGrid.createParameter"/>
+                            <button action="inputParametersDataGrid.editParameter"/>
+                            <button action="inputParametersDataGrid.removeParameter"/>
+                            <button id="upButton" action="inputParametersDataGrid.up"/>
+                            <button id="downButton" action="inputParametersDataGrid.down"/>
                         </hbox>
-                        <dataGrid id="inputParametersTable" multiSort="true" dataContainer="parametersDc">
+                        <dataGrid id="inputParametersDataGrid" multiSort="true" dataContainer="parametersDc">
                             <actions>
                                 <action id="createParameter" type="create">
                                     <properties>
@@ -297,11 +297,11 @@
             <tab id="valuesFormatsTab" label="msg://mainTabSheet.valuesFormats.label">
                 <vbox id="valuesFormatsVBox" height="100%" padding="false">
                     <hbox>
-                        <button action="valuesFormatsTable.createValueFormat"/>
-                        <button action="valuesFormatsTable.editValueFormat"/>
-                        <button action="valuesFormatsTable.removeValueFormat"/>
+                        <button action="valuesFormatsDataGrid.createValueFormat"/>
+                        <button action="valuesFormatsDataGrid.editValueFormat"/>
+                        <button action="valuesFormatsDataGrid.removeValueFormat"/>
                     </hbox>
-                    <dataGrid id="valuesFormatsTable" width="100%"
+                    <dataGrid id="valuesFormatsDataGrid" width="100%"
                               dataContainer="valuesFormatsDc"
                               columnReorderingAllowed="false">
                         <actions>
@@ -327,13 +327,13 @@
             <tab id="templatesTab" label="msg://mainTabSheet.templatesTab.label">
                 <vbox id="templatesTabContent" height="100%" padding="false">
                     <hbox>
-                        <button action="templatesTable.create"/>
-                        <button action="templatesTable.edit"/>
-                        <button action="templatesTable.remove"/>
-                        <button action="templatesTable.defaultAction"/>
-                        <button action="templatesTable.copy"/>
+                        <button action="templatesDataGrid.create"/>
+                        <button action="templatesDataGrid.edit"/>
+                        <button action="templatesDataGrid.remove"/>
+                        <button action="templatesDataGrid.defaultAction"/>
+                        <button action="templatesDataGrid.copy"/>
                     </hbox>
-                    <dataGrid id="templatesTable" width="100%" dataContainer="templatesDc"
+                    <dataGrid id="templatesDataGrid" width="100%" dataContainer="templatesDc"
                               columnReorderingAllowed="false" detailsVisibleOnClick="false">
                         <actions>
                             <action id="create" type="create"/>
@@ -354,16 +354,16 @@
             </tab>
             <tab id="securityTab" label="msg://mainTabSheet.securityTab.label">
                 <div id="securityTabContent" width="100%" height="100%" classNames="reports-flex-layout">
-                    <vbox classNames="roles-layout" expand="rolesTable" padding="false">
+                    <vbox classNames="roles-layout" expand="rolesDataGrid" padding="false">
                         <h2 text="msg://io.jmix.reportsflowui.view.report/securityTab.roles.title"/>
                         <hbox id="addRoleGroupBox" expand="rolesField" width="100%">
                             <comboBox id="rolesField"/>
-                            <button id="addRoleBtn" text="msg://roles.add" action="rolesTable.add"/>
+                            <button id="addRoleBtn" text="msg://roles.add" action="rolesDataGrid.add"/>
                         </hbox>
                         <hbox>
-                            <button action="rolesTable.exclude" text="msg://roles.removeRole"/>
+                            <button action="rolesDataGrid.exclude" text="msg://roles.removeRole"/>
                         </hbox>
-                        <dataGrid id="rolesTable" dataContainer="reportRolesDc"
+                        <dataGrid id="rolesDataGrid" dataContainer="reportRolesDc"
                                   columnReorderingAllowed="false" detailsVisibleOnClick="false">
                             <actions>
                                 <action id="add" type="add"/>
@@ -376,15 +376,15 @@
                             </columns>
                         </dataGrid>
                     </vbox>
-                    <vbox classNames="views-layout" expand="screenTable" padding="false">
+                    <vbox classNames="views-layout" expand="screenDataGrid" padding="false">
                         <h2 text="msg://io.jmix.reportsflowui.view.report/securityTab.views.title"/>
                         <hbox id="addScreenGroupBox" expand="screenIdField" width="100%">
                             <comboBox id="screenIdField"/>
-                            <button id="addReportScreenBtn" action="screenTable.add"
+                            <button id="addReportScreenBtn" action="screenDataGrid.add"
                                     text="msg://screens.add"/>
                         </hbox>
-                        <button action="screenTable.remove" icon="font-icon:REMOVE"/>
-                        <dataGrid id="screenTable"
+                        <button action="screenDataGrid.remove" icon="font-icon:REMOVE"/>
+                        <dataGrid id="screenDataGrid"
                                   dataContainer="reportScreensDc"
                                   columnReorderingAllowed="false" detailsVisibleOnClick="false">
                             <actions>

@@ -24,7 +24,6 @@ import com.google.common.collect.Multimap;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
@@ -181,11 +180,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixTextArea jsonGroovyCodeEditor;
     @ViewComponent
-    protected DataGrid<ReportTemplate> templatesTable;
+    protected DataGrid<ReportTemplate> templatesDataGrid;
     @ViewComponent
     protected JmixTextArea validationScriptCodeEditor;
-    @ViewComponent
-    protected FormLayout bandForm;
     @ViewComponent
     protected JmixTextArea localeTextField;
     @ViewComponent
@@ -197,7 +194,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected CollectionPropertyContainer<ReportRole> reportRolesDc;
     @ViewComponent
-    protected DataGrid<ReportInputParameter> inputParametersTable;
+    protected DataGrid<ReportInputParameter> inputParametersDataGrid;
 
     @Autowired
     protected ReportsPersistence reportsPersistence;
@@ -285,27 +282,27 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     private void initTemplateDataGrid() {
-        templatesTable.addComponentColumn(template -> createCheckbox(template.getAlterable()))
-                .setHeader(messageBundle.getMessage("templatesTab.templatesTable.alterable"))
+        templatesDataGrid.addComponentColumn(template -> createCheckbox(template.getAlterable()))
+                .setHeader(messageBundle.getMessage("templatesTab.templatesDataGrid.alterable"))
                 .setKey("alterable")
                 .setSortable(false)
                 .setResizable(true);
 
-        templatesTable.addComponentColumn(template -> createCheckbox(template.equals(reportDc.getItem().getDefaultTemplate())))
-                .setHeader(messageBundle.getMessage("templatesTab.templatesTable.default"))
+        templatesDataGrid.addComponentColumn(template -> createCheckbox(template.equals(reportDc.getItem().getDefaultTemplate())))
+                .setHeader(messageBundle.getMessage("templatesTab.templatesDataGrid.default"))
                 .setKey("default")
                 .setSortable(false)
                 .setResizable(true);
     }
 
     protected void initParametersDataGrid() {
-        inputParametersTable.addComponentColumn(parameter -> createCheckbox(parameter.getRequired()))
+        inputParametersDataGrid.addComponentColumn(parameter -> createCheckbox(parameter.getRequired()))
                 .setHeader(messageBundle.getMessage("parametersTab.inputParameterDataGrid.required"))
                 .setKey("required")
                 .setResizable(true)
                 .setSortable(true);
 
-        inputParametersTable.addComponentColumn(parameter -> createCheckbox(parameter.getValidationOn()))
+        inputParametersDataGrid.addComponentColumn(parameter -> createCheckbox(parameter.getValidationOn()))
                 .setHeader(messageBundle.getMessage("parametersTab.inputParameterDataGrid.validationOn"))
                 .setKey("validationOn")
                 .setResizable(true)
@@ -1395,15 +1392,15 @@ public class ReportDetailView extends StandardDetailView<Report> {
         entitiesParamField.setVisible(visibleEntitiesGrid);
     }
 //todo AN implement value provider
-//    @Install(to = "inputParametersTable.name", subject = "valueProvider")
-//    protected String inputParametersTableNameValueProvider(ReportInputParameter parameter) {
+//    @Install(to = "inputParametersDataGrid.name", subject = "valueProvider")
+//    protected String inputParametersDataGridNameValueProvider(ReportInputParameter parameter) {
 //        return metadataTools.getInstanceName(parameter);
 //    }
 
-    @Install(to = "inputParametersTable.up", subject = "enabledRule")
-    protected boolean inputParametersTableUpEnabledRule() {
-        if (inputParametersTable != null) {
-            ReportInputParameter item = inputParametersTable.getSingleSelectedItem();
+    @Install(to = "inputParametersDataGrid.up", subject = "enabledRule")
+    protected boolean inputParametersDataGridUpEnabledRule() {
+        if (inputParametersDataGrid != null) {
+            ReportInputParameter item = inputParametersDataGrid.getSingleSelectedItem();
             if (item != null) {
                 return item.getPosition() > 0 && isUpdatePermitted();
             }
@@ -1412,15 +1409,15 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return false;
     }
 
-    @Subscribe("inputParametersTable.up")
-    protected void onInputParametersTableUp(ActionPerformedEvent event) {
+    @Subscribe("inputParametersDataGrid.up")
+    protected void oninputParametersDataGridUp(ActionPerformedEvent event) {
         replaceParameters(true);
     }
 
-    @Install(to = "inputParametersTable.down", subject = "enabledRule")
-    protected boolean inputParametersTableDownEnabledRule() {
-        if (inputParametersTable != null) {
-            ReportInputParameter item = inputParametersTable.getSingleSelectedItem();
+    @Install(to = "inputParametersDataGrid.down", subject = "enabledRule")
+    protected boolean inputParametersDataGridDownEnabledRule() {
+        if (inputParametersDataGrid != null) {
+            ReportInputParameter item = inputParametersDataGrid.getSingleSelectedItem();
             if (item != null) {
                 parametersDc.getItems();
                 return item.getPosition() < parametersDc.getItems().size() - 1 && isUpdatePermitted();
@@ -1430,20 +1427,20 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return false;
     }
 
-    @Subscribe("inputParametersTable.down")
-    protected void onInputParametersTableDown(ActionPerformedEvent event) {
+    @Subscribe("inputParametersDataGrid.down")
+    protected void oninputParametersDataGridDown(ActionPerformedEvent event) {
         replaceParameters(false);
     }
 
-    @Install(to = "inputParametersTable.createParameter", subject = "initializer")
-    protected void inputParametersTableCreateInitializer(ReportInputParameter reportInputParameter) {
+    @Install(to = "inputParametersDataGrid.createParameter", subject = "initializer")
+    protected void inputParametersDataGridCreateInitializer(ReportInputParameter reportInputParameter) {
         reportInputParameter.setReport(reportDc.getItem());
         reportInputParameter.setPosition(parametersDc.getItems().size());
     }
 
 
-    @Install(to = "inputParametersTable.removeParameter", subject = "afterActionPerformedHandler")
-    private void inputParametersTableRemoveParameterAfterActionPerformedHandler(RemoveOperation.AfterActionPerformedEvent<ReportInputParameter> afterActionPerformedEvent) {
+    @Install(to = "inputParametersDataGrid.removeParameter", subject = "afterActionPerformedHandler")
+    private void inputParametersDataGridRemoveParameterAfterActionPerformedHandler(RemoveOperation.AfterActionPerformedEvent<ReportInputParameter> afterActionPerformedEvent) {
         orderParameters();
     }
 
@@ -1476,8 +1473,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     }
 
-    @Install(to = "valuesFormatsTable.createValueFormat", subject = "initializer")
-    protected void valuesFormatsTableCreateInitializer(ReportValueFormat reportValueFormat) {
+    @Install(to = "valuesFormatsDataGrid.createValueFormat", subject = "initializer")
+    protected void valuesFormatsDataGridCreateInitializer(ReportValueFormat reportValueFormat) {
         reportValueFormat.setReport(reportDc.getItem());
     }
 
@@ -1538,18 +1535,18 @@ public class ReportDetailView extends StandardDetailView<Report> {
         FlowuiComponentUtils.setItemsMap(rolesField, roles);
     }
 
-    @Install(to = "rolesTable.exclude", subject = "enabledRule")
-    protected boolean rolesTableExcludeEnabledRule() {
+    @Install(to = "rolesDataGrid.exclude", subject = "enabledRule")
+    protected boolean rolesDataGridExcludeEnabledRule() {
         return isUpdatePermitted();
     }
 
-    @Install(to = "rolesTable.add", subject = "enabledRule")
-    protected boolean rolesTableAddEnabledRule() {
+    @Install(to = "rolesDataGrid.add", subject = "enabledRule")
+    protected boolean rolesDataGridAddEnabledRule() {
         return isUpdatePermitted();
     }
 
-    @Subscribe("rolesTable.add")
-    public void onRolesTableAdd(ActionPerformedEvent event) {
+    @Subscribe("rolesDataGrid.add")
+    public void onrolesDataGridAdd(ActionPerformedEvent event) {
         if (rolesField.getValue() != null) {
             BaseRole role = rolesField.getValue();
 
@@ -1567,8 +1564,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
 
-    @Subscribe("screenTable.add")
-    public void onScreenTableAdd(ActionPerformedEvent event) {
+    @Subscribe("screenDataGrid.add")
+    public void onscreenDataGridAdd(ActionPerformedEvent event) {
         if (screenIdField.getValue() != null) {
             String screenId = screenIdField.getValue();
 
@@ -1584,8 +1581,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
     }
 
-    @Subscribe("templatesTable.create")
-    protected void onTemplatesTableCreate(ActionPerformedEvent event) {
+    @Subscribe("templatesDataGrid.create")
+    protected void ontemplatesDataGridCreate(ActionPerformedEvent event) {
         View<?> view = UiComponentUtils.findView(this);
         if (view == null) {
             throw new IllegalStateException(this.getClass().getSimpleName() + " is not attached to View");
@@ -1598,12 +1595,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
                     Report report = reportDc.getItem();
                     item.setReport(report);
                 })
-                .withAfterCloseListener(this::templatesTableCreateAfterSaveHandler)
+                .withAfterCloseListener(this::templatesDataGridCreateAfterSaveHandler)
                 .build();
         templateDetailViewDialog.open();
     }
 
-    protected void templatesTableCreateAfterSaveHandler(DialogWindow.AfterCloseEvent<ReportTemplateDetailView> event) {
+    protected void templatesDataGridCreateAfterSaveHandler(DialogWindow.AfterCloseEvent<ReportTemplateDetailView> event) {
         Report report = reportDc.getItem();
         ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
         if (defaultTemplate == null) {
@@ -1611,13 +1608,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
     }
 
-    @Subscribe("templatesTable.edit")
-    protected void onTemplatesTableEdit(ActionPerformedEvent event) {
+    @Subscribe("templatesDataGrid.edit")
+    protected void onTemplatesDataGridEdit(ActionPerformedEvent event) {
         View<?> view = UiComponentUtils.findView(this);
         if (view == null) {
             throw new IllegalStateException(this.getClass().getSimpleName() + " is not attached to a View");
         }
-        ReportTemplate selectedTemplate = templatesTable.getSingleSelectedItem();
+        ReportTemplate selectedTemplate = templatesDataGrid.getSingleSelectedItem();
         if (selectedTemplate == null) {
             return;
         }
@@ -1629,19 +1626,19 @@ public class ReportDetailView extends StandardDetailView<Report> {
         templateDetailViewDialog.open();
     }
 
-    @Install(to = "templatesTable.copy", subject = "enabledRule")
-    protected boolean templatesTableCopyEnabledRule() {
-        if (templatesTable != null) {
-            Object selectedItem = templatesTable.getSingleSelectedItem();
+    @Install(to = "templatesDataGrid.copy", subject = "enabledRule")
+    protected boolean templatesDataGridCopyEnabledRule() {
+        if (templatesDataGrid != null) {
+            Object selectedItem = templatesDataGrid.getSingleSelectedItem();
             return selectedItem != null && isUpdatePermitted();
 
         }
         return false;
     }
 
-    @Subscribe("templatesTable.copy")
-    protected void onTemplatesTableCopy(ActionPerformedEvent event) {
-        ReportTemplate template = templatesTable.getSingleSelectedItem();
+    @Subscribe("templatesDataGrid.copy")
+    protected void ontemplatesDataGridCopy(ActionPerformedEvent event) {
+        ReportTemplate template = templatesDataGrid.getSingleSelectedItem();
         if (template != null) {
 
             ReportTemplate copy = metadataTools.copy(template);
@@ -1673,10 +1670,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
 
-    @Install(to = "templatesTable.defaultAction", subject = "enabledRule")
-    protected boolean templatesTableDefaultEnabledRule() {
-        if (templatesTable != null) {
-            ReportTemplate selectedItem = templatesTable.getSingleSelectedItem();
+    @Install(to = "templatesDataGrid.defaultAction", subject = "enabledRule")
+    protected boolean templatesDataGridDefaultEnabledRule() {
+        if (templatesDataGrid != null) {
+            ReportTemplate selectedItem = templatesDataGrid.getSingleSelectedItem();
             if (selectedItem != null) {
                 return !Objects.equals(reportDc.getItem().getDefaultTemplate(), selectedItem) && isUpdatePermitted();
             }
@@ -1685,16 +1682,16 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return false;
     }
 
-    @Subscribe("templatesTable.defaultAction")
-    protected void onTemplatesTableDefault(ActionPerformedEvent event) {
-        ReportTemplate template = templatesTable.getSingleSelectedItem();
+    @Subscribe("templatesDataGrid.defaultAction")
+    protected void ontemplatesDataGridDefault(ActionPerformedEvent event) {
+        ReportTemplate template = templatesDataGrid.getSingleSelectedItem();
         if (template != null) {
             reportDc.getItem().setDefaultTemplate(template);
         }
         event.getSource().refreshState();
 
-        templatesTable.focus();
-        templatesTable.getDataProvider().refreshAll();
+        templatesDataGrid.focus();
+        templatesDataGrid.getDataProvider().refreshAll();
     }
 
     protected void setupEntityParamFieldValue(DataSet dataSet) {

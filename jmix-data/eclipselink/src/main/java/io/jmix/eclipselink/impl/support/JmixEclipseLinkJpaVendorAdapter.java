@@ -83,7 +83,7 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
         map.put("eclipselink.flush-clear.cache", "Merge");
         map.put("eclipselink.cache.shared.default", "false");
 
-        map.put("jakarta.persistence.validation.mode", "NONE");
+        map.put("jakarta.persistence.validation.mode", "AUTO");
         map.put("jakarta.persistence.validation.factory", validatorFactory);
 
         map.put("eclipselink.session.customizer", new JmixEclipseLinkSessionCustomizer());

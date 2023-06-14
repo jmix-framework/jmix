@@ -332,7 +332,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autofocus", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "autoOpen", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),

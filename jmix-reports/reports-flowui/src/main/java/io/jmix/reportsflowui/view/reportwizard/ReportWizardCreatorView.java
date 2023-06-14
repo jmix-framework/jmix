@@ -85,6 +85,10 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected JmixButton downloadTemplateFile;
     @ViewComponent
+    protected JmixButton moveUpBtn;
+    @ViewComponent
+    protected JmixButton moveDownBtn;
+    @ViewComponent
     protected Div detailsDiv;
     @ViewComponent
     protected Div saveDiv;
@@ -181,6 +185,7 @@ public class ReportWizardCreatorView extends StandardView {
         initReportTypeOptionGroup();
         initTemplateFormatLookupField();
         initEntityLookupField();
+        initRegionDataGrid();
         initReportParameterDataGrid();
         updateButtons();
     }
@@ -215,7 +220,7 @@ public class ReportWizardCreatorView extends StandardView {
             if (StringUtils.isEmpty(outputFileName.getValue())) {
                 ReportData reportData = reportDataDc.getItem();
                 outputFileName.setValue(generateOutputFileName(reportData.getTemplateFileType().toString().toLowerCase()));
-                     }
+            }
         } else if (div.equals(queryDiv)) {
             ReportData item = reportDataDc.getItem();
             String resultQuery = item.getQuery();
@@ -251,7 +256,7 @@ public class ReportWizardCreatorView extends StandardView {
         MetaClass metaClass = metadata.findClass(getItem().getEntityName());
 
         if (metaClass == null) {
-            notifications.create(messageBundle.getMessage("nextBtn.dialog.fillEntityMsg.text"))
+            notifications.create(messageBundle.getMessage("metaClassNotFoundDialog.message"))
                     .withType(Notifications.Type.WARNING)
                     .show();
             return;
@@ -346,7 +351,7 @@ public class ReportWizardCreatorView extends StandardView {
         });
         if (currentFragment.equals(regionsDiv)) {
             if (reportDataDc.getItem().getReportRegions().isEmpty()) {
-                errors.add(messageBundle.getMessage("addRegionsWarn"));
+                errors.add(messageBundle.getMessage("addRegionsWarn.message"));
             }
         }
         return errors;
@@ -385,7 +390,7 @@ public class ReportWizardCreatorView extends StandardView {
             byte[] templateByteArray = reportWizardService.generateTemplate(reportData, reportData.getTemplateFileType());
             reportData.setTemplateContent(templateByteArray);
         } catch (TemplateGenerationException e) {
-            notifications.create(messageBundle.getMessage("templateGenerationException"))
+            notifications.create(messageBundle.getMessage("templateGenerationException.message"))
                     .withType(Notifications.Type.WARNING)
                     .show();
             return null;
@@ -418,7 +423,7 @@ public class ReportWizardCreatorView extends StandardView {
                 && CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
             dialogs.createOptionDialog()
                     .withHeader(messageBundle.getMessage("dialogs.Confirmation"))
-                    .withText(messageBundle.getMessage("interruptConfirm"))
+                    .withText(messageBundle.getMessage("dialogs.interruptConfirm"))
                     .withActions(
                             new DialogAction(DialogAction.Type.OK).withHandler(handle ->
                                     close(StandardOutcome.DISCARD)
@@ -480,7 +485,7 @@ public class ReportWizardCreatorView extends StandardView {
     protected void setReportName(ReportData reportData, @Nullable MetaClass prevValue, MetaClass value) {
         String oldName = reportData.getName();
         if (StringUtils.isBlank(oldName)) {
-            reportData.setName(messageBundle.formatMessage("reportNamePattern", messageTools.getEntityCaption(value)));
+            reportData.setName(messageBundle.formatMessage("reportData.reportNamePattern", messageTools.getEntityCaption(value)));
         } else {
             if (prevValue != null) {
                 //if old text contains MetaClass name substring, just replace it
@@ -496,9 +501,9 @@ public class ReportWizardCreatorView extends StandardView {
                     }
 
                     reportData.setName(newName);
-                    if (!oldName.equals(messageBundle.formatMessage("reportNamePattern", prevEntityCaption))) {
+                    if (!oldName.equals(messageBundle.formatMessage("reportData.reportNamePattern", prevEntityCaption))) {
                         //if user changed auto generated report name and we have changed it, we show message to him
-                        notifications.create(messageBundle.getMessage("reportNameChanged"))
+                        notifications.create(messageBundle.getMessage("reportData.reportNameChanged.message"))
                                 .withType(Notifications.Type.WARNING)
                                 .show();
                     }
@@ -587,7 +592,7 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe("regionsRunBtn")
     public void onRegionsRunBtnClick(ClickEvent<Button> event) {
         if (reportDataDc.getItem().getReportRegions().isEmpty()) {
-            notifications.create(messageBundle.getMessage("addRegionsWarn"))
+            notifications.create(messageBundle.getMessage("addRegionsWarn.message"))
                     .withType(Notifications.Type.WARNING)
                     .show();
             return;
@@ -612,7 +617,9 @@ public class ReportWizardCreatorView extends StandardView {
             return false;
         }
         return item.getOrderNum() > 1;
-    } @Install(to = "regionDataGrid.down", subject = "enabledRule")
+    }
+
+    @Install(to = "regionDataGrid.down", subject = "enabledRule")
     protected boolean regionDataGridDownEnabledRule() {
         ReportRegion item = regionDataGrid.getSingleSelectedItem();
         if (item == null) {
@@ -713,7 +720,7 @@ public class ReportWizardCreatorView extends StandardView {
 
     protected void normalizeRegionPropertiesOrderNum() {
         long normalizedIdx = 0;
-        List<ReportRegion> allItems = new ArrayList<>(reportRegionsDc.getItems());
+        List<ReportRegion> allItems = reportRegionsDc.getMutableItems();
         for (ReportRegion item : allItems) {
             item.setOrderNum(++normalizedIdx); //first must be 1
         }
@@ -721,23 +728,30 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe("regionDataGrid.up")
     protected void onRegionDataGridUp(ActionPerformedEvent event) {
-        replaceParameters(true);
+        swapItems(true);
     }
 
     @Subscribe("regionDataGrid.down")
     protected void onRegionDataGridDown(ActionPerformedEvent event) {
-        replaceParameters(false);
+        swapItems(false);
     }
 
-    protected void replaceParameters(boolean up) {
+    protected void swapItems(boolean up) {
         if (regionDataGrid.getSingleSelectedItem() != null) {
             List<ReportRegion> items = reportRegionsDc.getMutableItems();
-            int currentPosition = items.indexOf(regionDataGrid.getSingleSelectedItem());
-            if ((up && currentPosition != 0)
-                    || (!up && currentPosition != items.size() - 1)) {
-                int itemToSwapPosition = currentPosition - (up ? 1 : -1);
+            ReportRegion currentItem = regionDataGrid.getSingleSelectedItem();
+            if ((up && currentItem.getOrderNum() != 1) ||
+                    (!up && currentItem.getOrderNum() != items.size())) {
+                ReportRegion itemToSwap = IterableUtils.find(items,
+                        e -> e.getOrderNum().equals(currentItem.getOrderNum() - (up ? 1 : -1)));
+                long currentPosition = currentItem.getOrderNum();
 
-                Collections.swap(items, itemToSwapPosition, currentPosition);
+                currentItem.setOrderNum(itemToSwap.getOrderNum());
+                itemToSwap.setOrderNum(currentPosition);
+
+                Collections.swap(items,
+                        currentItem.getOrderNum().intValue() - 1, itemToSwap.getOrderNum().intValue() - 1);
+
             }
         }
     }
@@ -910,7 +924,7 @@ public class ReportWizardCreatorView extends StandardView {
                     downloadTemplateFile.getText(),
                     DownloadFormat.getByExtension(templateFileType.toString().toLowerCase()));
         } catch (TemplateGenerationException e) {
-            notifications.create(messageBundle.getMessage("templateGenerationException"))
+            notifications.create(messageBundle.getMessage("templateGenerationException.message"))
                     .withType(Notifications.Type.WARNING)
                     .show();
         }
@@ -918,7 +932,13 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe(id = "reportRegionsDc", target = Target.DATA_CONTAINER)
     public void onReportRegionsDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportData> event) {
+        updateMoveButtons();
         regenerateQuery = event.getChangeType() == CollectionChangeType.ADD_ITEMS;
+    }
+
+    protected void updateMoveButtons() {
+        moveUpBtn.setEnabled(regionDataGridUpEnabledRule());
+        moveDownBtn.setEnabled(regionDataGridDownEnabledRule());
     }
 
     @Subscribe(id = "regionPropertiesDc", target = Target.DATA_CONTAINER)
@@ -993,6 +1013,10 @@ public class ReportWizardCreatorView extends StandardView {
         Object value = jmixObjectToStringConverter.convertFromString(Class.forName(queryParameter.getJavaClassName()), queryParameter.getDefaultValueString());
         queryParameter.setDefaultValue(value);
         queryParametersDc.replaceItem(queryParameter);
+    }
+
+    protected void initRegionDataGrid() {
+        regionDataGrid.addSelectionListener(selectionEvent -> updateMoveButtons());
     }
 
     protected void initReportParameterDataGrid() {

@@ -23,6 +23,7 @@ import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reportsflowui.view.reportwizard.EntityTreeComposite;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -93,24 +94,31 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     }
 
     @Subscribe("propertiesDataGrid.upItemAction")
-    protected void onpropertiesDataGridUp(ActionPerformedEvent event) {
-        replaceParameters(true);
+    protected void onPropertiesDataGridUp(ActionPerformedEvent event) {
+        swapItems(true);
     }
 
     @Subscribe("propertiesDataGrid.downItemAction")
-    protected void onpropertiesDataGridDown(ActionPerformedEvent event) {
-        replaceParameters(false);
+    protected void onPropertiesDataGridDown(ActionPerformedEvent event) {
+        swapItems(false);
     }
 
-    protected void replaceParameters(boolean up) {
+    protected void swapItems(boolean up) {
         if (propertiesDataGrid.getSingleSelectedItem() != null) {
             List<RegionProperty> items = reportRegionPropertiesDataGridDc.getMutableItems();
-            int currentPosition = items.indexOf(propertiesDataGrid.getSingleSelectedItem());
-            if ((up && currentPosition != 0)
-                    || (!up && currentPosition != items.size() - 1)) {
-                int itemToSwapPosition = currentPosition - (up ? 1 : -1);
+            RegionProperty currentItem = propertiesDataGrid.getSingleSelectedItem();
+            if ((up && currentItem.getOrderNum() != 1) ||
+                    (!up && currentItem.getOrderNum() != items.size())) {
+                RegionProperty itemToSwap = IterableUtils.find(items,
+                        e -> e.getOrderNum().equals(currentItem.getOrderNum() - (up ? 1 : -1)));
+                long currentPosition = currentItem.getOrderNum();
 
-                Collections.swap(items, itemToSwapPosition, currentPosition);
+                currentItem.setOrderNum(itemToSwap.getOrderNum());
+                itemToSwap.setOrderNum(currentPosition);
+
+                Collections.swap(items,
+                        currentItem.getOrderNum().intValue() - 1, itemToSwap.getOrderNum().intValue() - 1);
+
             }
         }
     }
@@ -214,7 +222,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
 
     protected void normalizeRegionPropertiesOrderNum() {
         long normalizedIdx = 0;
-        List<RegionProperty> allItems = new ArrayList<>(reportRegionPropertiesDataGridDc.getItems());
+        List<RegionProperty> allItems = reportRegionPropertiesDataGridDc.getMutableItems();
         for (RegionProperty item : allItems) {
             item.setOrderNum(++normalizedIdx); //first must be 1
         }

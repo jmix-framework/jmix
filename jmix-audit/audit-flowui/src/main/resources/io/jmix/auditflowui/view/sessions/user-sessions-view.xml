@@ -56,7 +56,7 @@
                   dataContainer="userSessionsDc"
                   selectionMode="MULTI">
             <actions>
-                <action id="refresh" type="refresh"/>
+                <action id="refresh" type="list_refresh"/>
                 <action id="expire" text="msg://expire" icon="BAN"/>
             </actions>
             <columns>

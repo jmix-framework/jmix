@@ -62,22 +62,22 @@
                       minHeight="20em"
                       width="100%">
                 <actions>
-                    <action id="create" type="create">
+                    <action id="create" type="list_create">
                         <properties>
                             <property name="openMode" value="DIALOG"/>
                         </properties>
                     </action>
-                    <action id="edit" type="edit">
+                    <action id="edit" type="list_edit">
                         <properties>
                             <property name="openMode" value="DIALOG"/>
                         </properties>
                     </action>
-                    <action id="read" type="read">
+                    <action id="read" type="list_read">
                         <properties>
                             <property name="openMode" value="DIALOG"/>
                         </properties>
                     </action>
-                    <action id="remove" type="remove"/>
+                    <action id="remove" type="list_remove"/>
                 </actions>
                 <columns>
                     <column property="type"/>
@@ -100,8 +100,8 @@
                       minHeight="20em"
                       width="100%">
                 <actions>
-                    <action id="add" type="add"/>
-                    <action id="remove" type="remove">
+                    <action id="add" type="list_add"/>
+                    <action id="remove" type="list_remove">
                         <properties>
                             <property name="confirmation" value="false"/>
                         </properties>

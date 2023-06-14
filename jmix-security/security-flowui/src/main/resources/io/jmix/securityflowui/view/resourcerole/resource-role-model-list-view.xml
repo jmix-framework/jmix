@@ -48,10 +48,10 @@
                   dataContainer="roleModelsDc"
                   width="100%">
             <actions>
-                <action id="create" type="create"/>
-                <action id="edit" type="edit"/>
-                <action id="remove" type="remove"/>
-                <action id="assignToUsers" type="assignToUsers"/>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="remove" type="list_remove"/>
+                <action id="assignToUsers" type="sec_assignToUsers"/>
                 <action id="exportJSON" text="msg://actions.exportJSON"/>
                 <action id="exportZIP" text="msg://actions.exportZIP"/>
             </actions>

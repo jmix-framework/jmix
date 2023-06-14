@@ -39,10 +39,10 @@
                               dataContainer="triggerModelDc"
                               width="100%" minHeight="20em">
                         <actions>
-                            <action id="create" type="create"/>
-                            <action id="edit" type="edit"/>
-                            <action id="read" type="read"/>
-                            <action id="remove" type="remove"/>
+                            <action id="create" type="list_create"/>
+                            <action id="edit" type="list_edit"/>
+                            <action id="read" type="list_read"/>
+                            <action id="remove" type="list_remove"/>
                         </actions>
                         <columns>
                             <column property="triggerName"/>
@@ -73,7 +73,7 @@
                             <action id="addNewDataParam"
                                     text="msg://addNewDataParamCaption"
                                     icon="PLUS"/>
-                            <action id="remove" type="remove"/>
+                            <action id="remove" type="list_remove"/>
                         </actions>
                         <columns>
                             <column property="key" editable="true"/>

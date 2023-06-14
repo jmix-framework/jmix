@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://UserListView.title"
-      focusComponent="usersTable">
+      focusComponent="usersDataGrid">
     <data readOnly="true">
         <collection id="usersDc"
                     class="${project_rootPackage}.entity.User">
@@ -30,19 +30,19 @@
             <properties include=".*"/>
         </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createBtn" action="usersTable.create"/>
-            <button id="editBtn" action="usersTable.edit"/>
-            <button id="removeBtn" action="usersTable.remove"/>
-            <button id="showRoleAssignmentsBtn" action="usersTable.showRoleAssignments"/>
+            <button id="createBtn" action="usersDataGrid.create"/>
+            <button id="editBtn" action="usersDataGrid.edit"/>
+            <button id="removeBtn" action="usersDataGrid.remove"/>
+            <button id="showRoleAssignmentsBtn" action="usersDataGrid.showRoleAssignments"/>
             <dropdownButton id="additionalBtn" text="msg://additionalMenu" icon="COG">
                 <items>
-                    <actionItem id="changePasswordItem" ref="usersTable.changePassword"/>
-                    <actionItem id="resetPasswordItem" ref="usersTable.resetPassword"/>
+                    <actionItem id="changePasswordItem" ref="usersDataGrid.changePassword"/>
+                    <actionItem id="resetPasswordItem" ref="usersDataGrid.resetPassword"/>
                 </items>
             </dropdownButton>
             <simplePagination id="pagination" dataLoader="usersDl"/>
         </hbox>
-        <dataGrid id="usersTable"
+        <dataGrid id="usersDataGrid"
                   width="100%"
                   minHeight="20em"
                   dataContainer="usersDc">

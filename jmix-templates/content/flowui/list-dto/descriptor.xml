@@ -1,6 +1,6 @@
 <%
 def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
-tableId = "${pluralForm}Table"
+tableId = "${pluralForm}DataGrid"
 def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
 tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 

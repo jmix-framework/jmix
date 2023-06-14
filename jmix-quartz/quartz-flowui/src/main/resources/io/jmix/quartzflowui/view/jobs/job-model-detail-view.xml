@@ -45,13 +45,10 @@
                             <action id="remove" type="list_remove"/>
                         </actions>
                         <columns>
-                            <column property="triggerName"/>
-                            <column property="triggerGroup"/>
-                            <column property="scheduleType"/>
-                            <column property="scheduleDescription"/>
-                            <column property="startDate"/>
-                            <column property="lastFireDate"/>
-                            <column property="nextFireDate"/>
+                            <column property="triggerName" resizable="true"/>
+                            <column property="triggerGroup" resizable="true"/>
+                            <column property="scheduleType" resizable="true"/>
+                            <column property="scheduleDescription" resizable="true"/>
                         </columns>
                     </dataGrid>
                 </vbox>

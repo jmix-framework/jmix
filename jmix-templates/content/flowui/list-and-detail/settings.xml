@@ -64,7 +64,7 @@
     <property caption="Table actions"
               step="1"
               code="tableActions"
-              defaultValue="create,edit,remove"
+              defaultValue="list_create,list_edit,list_remove"
               propertyType="MULTI_OPTION"
               optionsString="${actionSearch.getWizardTableActions()}"/>
     <property caption="Create generic filter"

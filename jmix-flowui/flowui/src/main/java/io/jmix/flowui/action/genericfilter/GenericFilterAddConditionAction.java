@@ -21,7 +21,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.accesscontext.FlowuiFilterModifyConfigurationContext;
+import io.jmix.flowui.accesscontext.UiFilterModifyConfigurationContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.app.filter.condition.AddConditionView;
@@ -37,7 +37,7 @@ import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.entity.filter.FilterCondition;
 import io.jmix.flowui.entity.filter.HeaderFilterCondition;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.LookupView.ValidationContext;
 import io.jmix.flowui.view.View;
@@ -76,7 +76,7 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PLUS);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PLUS);
 
         initDefaultSelectValidator();
         initDefaultSelectHandler();
@@ -110,7 +110,7 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
 
     @Autowired
     protected void setAccessManager(AccessManager accessManager) {
-        FlowuiFilterModifyConfigurationContext context = new FlowuiFilterModifyConfigurationContext();
+        UiFilterModifyConfigurationContext context = new UiFilterModifyConfigurationContext();
         accessManager.applyRegisteredConstraints(context);
         visibleBySpecificUiPermission = context.isPermitted();
     }

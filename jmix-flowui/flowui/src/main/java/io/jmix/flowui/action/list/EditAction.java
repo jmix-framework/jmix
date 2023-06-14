@@ -23,15 +23,15 @@ import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
@@ -75,7 +75,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         super.initAction();
 
         setConstraintEntityOp(EntityOp.UPDATE);
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PENCIL);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PENCIL);
     }
 
     @Nullable
@@ -196,8 +196,8 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridEditShortcut());
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridEditShortcut());
     }
 
     @Autowired
@@ -229,7 +229,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
             return true;
         }
 
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
         InMemoryCrudEntityContext inMemoryCrudEntityContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
         accessManager.applyRegisteredConstraints(inMemoryCrudEntityContext);
@@ -256,7 +256,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
             MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
 
             if (metaClass != null) {
-                FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+                UiEntityContext entityContext = new UiEntityContext(metaClass);
                 accessManager.applyRegisteredConstraints(entityContext);
                 InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
                 accessManager.applyRegisteredConstraints(inMemoryContext);
@@ -284,7 +284,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
             // Even though the screen is read-only, this edit action may remain active
             // because the related entity cannot be edited and the corresponding edit screen
             // will be opened in read-only mode either.
-            FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+            UiEntityContext entityContext = new UiEntityContext(metaClass);
             accessManager.applyRegisteredConstraints(entityContext);
 
             return entityContext.isEditPermitted();

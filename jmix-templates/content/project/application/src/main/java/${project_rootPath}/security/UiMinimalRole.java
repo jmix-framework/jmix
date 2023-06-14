@@ -19,7 +19,7 @@ public interface UiMinimalRole {
     void main();
 
     @ViewPolicy(viewIds = "${normalizedPrefix_underscore}LoginView")
-    @SpecificPolicy(resources = "flowui.loginToUi")
+    @SpecificPolicy(resources = "ui.loginToUi")
     void login();
 
     @EntityPolicy(entityClass = KeyValueEntity.class, actions = EntityPolicyAction.READ)

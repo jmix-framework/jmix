@@ -21,12 +21,12 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
@@ -67,7 +67,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
     }
 
     @Autowired
@@ -81,8 +81,8 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getPickerLookupShortcut());
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerLookupShortcut());
     }
 
     public void setSelectValidator(Predicate<LookupView.ValidationContext<E>> selectValidator) {

@@ -30,8 +30,8 @@ import io.jmix.datatoolsflowui.view.entityinspector.EntityFormLayoutUtils;
 import io.jmix.datatoolsflowui.view.entityinspector.EntityInspectorListView;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.UiComponentsGenerator;
@@ -178,15 +178,15 @@ public class InspectorFormLayoutBuilder {
 
         boolean isRequired = EntityFormLayoutUtils.isRequired(metaProperty);
 
-        FlowuiEntityAttributeContext attributeContext =
-                new FlowuiEntityAttributeContext(metaClass, metaProperty.getName());
+        UiEntityAttributeContext attributeContext =
+                new UiEntityAttributeContext(metaClass, metaProperty.getName());
         accessManager.applyRegisteredConstraints(attributeContext);
 
         if (!attributeContext.canView())
             return;
 
         if (range.isClass()) {
-            FlowuiEntityContext entityContext = new FlowuiEntityContext(range.asClass());
+            UiEntityContext entityContext = new UiEntityContext(range.asClass());
             accessManager.applyRegisteredConstraints(entityContext);
             if (!entityContext.isViewPermitted()) {
                 return;

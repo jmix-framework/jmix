@@ -31,7 +31,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.data.binding.SuspendableBinding;
 import io.jmix.flowui.data.binding.ValueBinding;
 import io.jmix.flowui.data.BindingState;
@@ -146,7 +146,7 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
             }
 
             if (((EntityValueSource<?, V>) valueSource).isDataModelSecurityEnabled()) {
-                FlowuiEntityAttributeContext attributeContext = new FlowuiEntityAttributeContext(metaPropertyPath);
+                UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaPropertyPath);
                 accessManager.applyRegisteredConstraints(attributeContext);
 
                 MetaClass metaClass = entityValueSource.getEntityMetaClass();
@@ -157,8 +157,8 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
                         String embeddedProperty = ((Nested) container).getProperty();
                         MetaClass masterMetaClass = ((Nested) container).getMaster().getEntityMetaClass();
 
-                        FlowuiEntityAttributeContext embeddedAttributeContext =
-                                new FlowuiEntityAttributeContext(masterMetaClass, embeddedProperty);
+                        UiEntityAttributeContext embeddedAttributeContext =
+                                new UiEntityAttributeContext(masterMetaClass, embeddedProperty);
                         accessManager.applyRegisteredConstraints(embeddedAttributeContext);
 
                         permittedIfEmbedded = embeddedAttributeContext.canModify();
@@ -169,8 +169,8 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
                                 continue;
                             }
 
-                            FlowuiEntityAttributeContext childAttributeContext =
-                                    new FlowuiEntityAttributeContext(property.getDomain(), property.getName());
+                            UiEntityAttributeContext childAttributeContext =
+                                    new UiEntityAttributeContext(property.getDomain(), property.getName());
                             accessManager.applyRegisteredConstraints(childAttributeContext);
 
                             if (!childAttributeContext.canModify()) {

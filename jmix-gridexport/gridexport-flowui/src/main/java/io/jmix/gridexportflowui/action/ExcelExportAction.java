@@ -18,7 +18,7 @@ package io.jmix.gridexportflowui.action;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.gridexportflowui.exporter.excel.ExcelExporter;
 import org.springframework.context.ApplicationContext;
 
@@ -42,7 +42,7 @@ public class ExcelExportAction extends ExportAction {
 
     @Override
     protected void initAction() {
-        icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.FILE_TABLE);
+        icon = ComponentUtils.convertToIcon(VaadinIcon.FILE_TABLE);
     }
 
     @Override

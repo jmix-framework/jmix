@@ -19,7 +19,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.google.common.base.Splitter;
 import com.vaadin.flow.component.upload.UploadI18N;
 import io.jmix.flowui.data.SupportsValueSource;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.upload.AbstractSingleUploadField;
 import io.jmix.flowui.kit.component.upload.JmixUploadI18N;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -58,7 +58,7 @@ public abstract class AbstractUploadFieldLoader<C extends AbstractSingleUploadFi
         getLoaderSupport().loadBoolean(element, "dropAllowed", resultComponent::setDropAllowed);
 
         getLoaderSupport().loadString(element, "uploadIcon")
-                .map(FlowuiComponentUtils::parseIcon)
+                .map(ComponentUtils::parseIcon)
                 .ifPresent(resultComponent::setUploadIcon);
 
         getLoaderSupport().loadResourceString(element, "uploadText", context.getMessageGroup(),

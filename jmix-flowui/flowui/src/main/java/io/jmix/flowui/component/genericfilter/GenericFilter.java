@@ -35,9 +35,9 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.accesscontext.FlowuiFilterModifyConfigurationContext;
+import io.jmix.flowui.accesscontext.UiFilterModifyConfigurationContext;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterAddConditionAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterResetAction;
@@ -149,7 +149,7 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void initComponent() {
-        this.autoApply = applicationContext.getBean(FlowuiComponentProperties.class).isFilterAutoApply();
+        this.autoApply = applicationContext.getBean(UiComponentProperties.class).isFilterAutoApply();
 
         initDefaultResponsiveSteps();
         initEmptyConfiguration();
@@ -307,7 +307,7 @@ public class GenericFilter extends Composite<JmixDetails>
             settingsButton.addItem(filterAction.getId(), filterAction);
         }
 
-        FlowuiFilterModifyConfigurationContext context = new FlowuiFilterModifyConfigurationContext();
+        UiFilterModifyConfigurationContext context = new UiFilterModifyConfigurationContext();
         applicationContext.getBean(AccessManager.class).applyRegisteredConstraints(context);
         configurationModifyPermitted = context.isPermitted();
         settingsButton.setVisible(configurationModifyPermitted);

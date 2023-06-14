@@ -21,14 +21,14 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
-import io.jmix.flowui.FlowuiComponentProperties;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.UiComponentProperties;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.util.RemoveOperation;
@@ -68,7 +68,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
         setConstraintEntityOp(EntityOp.DELETE);
 
         variant = ActionVariant.DANGER;
-        icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.TRASH);
+        icon = ComponentUtils.convertToIcon(VaadinIcon.TRASH);
     }
 
     @Autowired
@@ -82,8 +82,8 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridRemoveShortcut());
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridRemoveShortcut());
     }
 
     /**
@@ -163,7 +163,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
             return false;
         }
 
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
 
         if (!entityContext.isDeletePermitted()) {
@@ -176,8 +176,8 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
             MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
-            FlowuiEntityAttributeContext entityAttributeContext =
-                    new FlowuiEntityAttributeContext(masterMetaClass, metaProperty.getName());
+            UiEntityAttributeContext entityAttributeContext =
+                    new UiEntityAttributeContext(masterMetaClass, metaProperty.getName());
             accessManager.applyRegisteredConstraints(entityAttributeContext);
 
             if (!entityAttributeContext.canModify()) {

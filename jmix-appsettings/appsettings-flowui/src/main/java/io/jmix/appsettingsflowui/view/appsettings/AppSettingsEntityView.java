@@ -40,8 +40,8 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.PersistenceHints;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.UiComponentsGenerator;
@@ -240,7 +240,7 @@ public class AppSettingsEntityView extends StandardView {
     }
 
     protected boolean readPermitted(MetaClass metaClass) {
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
         return entityContext.isViewPermitted();
     }
@@ -322,7 +322,7 @@ public class AppSettingsEntityView extends StandardView {
         MetaClass metaClass = container.getEntityMetaClass();
         Range range = metaProperty.getRange();
 
-        FlowuiEntityAttributeContext attributeContext = new FlowuiEntityAttributeContext(metaClass,
+        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaClass,
                 metaProperty.getName());
         accessManager.applyRegisteredConstraints(attributeContext);
         if (!attributeContext.canView()) {
@@ -330,7 +330,7 @@ public class AppSettingsEntityView extends StandardView {
         }
 
         if (range.isClass()) {
-            FlowuiEntityContext entityContext = new FlowuiEntityContext(range.asClass());
+            UiEntityContext entityContext = new UiEntityContext(range.asClass());
             accessManager.applyRegisteredConstraints(entityContext);
             if (!entityContext.isViewPermitted()) {
                 return;

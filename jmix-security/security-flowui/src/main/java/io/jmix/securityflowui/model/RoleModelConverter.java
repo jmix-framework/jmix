@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * into non-persistent {@link ResourceRoleModel}, {@link RowLevelRoleModel} entities which may be
  * displayed in UI
  */
-@Component("sec_FlowuiRoleModelConverter")
+@Component("sec_UiRoleModelConverter")
 public class RoleModelConverter {
 
     @Autowired

@@ -24,7 +24,7 @@ import io.jmix.data.impl.jpql.JpqlSyntaxException;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
@@ -91,7 +91,7 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
 
     @Subscribe
     public void onInit(InitEvent event) {
-        FlowuiComponentUtils.setItemsMap(entityNameField, getEntityOptionsMap());
+        ComponentUtils.setItemsMap(entityNameField, getEntityOptionsMap());
         docsLink.getStyle().set("margin-inline-start", "auto");
         detailActions.setAlignSelf(Alignment.CENTER, docsLink);
     }

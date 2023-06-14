@@ -26,7 +26,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.Resources;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.sys.*;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class ViewRegistry implements ApplicationContextAware {
     protected Metadata metadata;
     protected Resources resources;
     protected ClassManager classManager;
-    protected FlowuiProperties properties;
+    protected UiProperties properties;
     protected ExtendedEntities extendedEntities;
     protected ApplicationContext applicationContext;
     protected AnnotationScanMetadataReaderFactory metadataReaderFactory;
@@ -107,7 +107,7 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     @Autowired
-    public void setProperties(FlowuiProperties properties) {
+    public void setProperties(UiProperties properties) {
         this.properties = properties;
     }
 

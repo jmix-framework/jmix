@@ -57,7 +57,7 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.model.CollectionContainer;
@@ -250,7 +250,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
         Map<String, String> entityMetaClassesMap = getEntityMetaClasses();
         entityNameField.setItems(entityMetaClassesMap.values());
-        FlowuiComponentUtils.setItemsMap(changeTypeField, changeTypeMap);
+        ComponentUtils.setItemsMap(changeTypeField, changeTypeMap);
 
         userField.setItems(userRepository.getByUsernameLike("")
                 .stream()

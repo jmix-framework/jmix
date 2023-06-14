@@ -38,8 +38,8 @@ import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorFetchPlan
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorFormLayoutBuilder;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.list.*;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.Action;
@@ -293,12 +293,12 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     protected void addDataGrid(InstanceContainer parent, MetaProperty childMeta) {
         MetaClass meta = childMeta.getRange().asClass();
 
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(meta);
+        UiEntityContext entityContext = new UiEntityContext(meta);
         accessManager.applyRegisteredConstraints(entityContext);
 
 
-        FlowuiEntityAttributeContext attributeContext =
-                new FlowuiEntityAttributeContext(parent.getEntityMetaClass(), childMeta.getName());
+        UiEntityAttributeContext attributeContext =
+                new UiEntityAttributeContext(parent.getEntityMetaClass(), childMeta.getName());
         accessManager.applyRegisteredConstraints(attributeContext);
 
         //don't show empty dataGrid if the user don't have permissions on the attribute or the entity

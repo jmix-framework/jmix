@@ -35,7 +35,7 @@ public interface UiFilterRole {
     String CODE = "flowui-filter";
 
     @ViewPolicy(viewIds = "flowui_AddConditionView")
-    @SpecificPolicy(resources = "flowui.filter.modifyConfiguration")
+    @SpecificPolicy(resources = "ui.filter.modifyConfiguration")
     void configuration();
 
     @EntityPolicy(entityClass = GroupFilterCondition.class, actions = EntityPolicyAction.ALL)
@@ -50,6 +50,6 @@ public interface UiFilterRole {
 
     @EntityPolicy(entityClass = JpqlFilterCondition.class, actions = EntityPolicyAction.ALL)
     @EntityAttributePolicy(entityClass = JpqlFilterCondition.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
-    @SpecificPolicy(resources = "flowui.filter.modifyJpqlCondition")
+    @SpecificPolicy(resources = "ui.filter.modifyJpqlCondition")
     void jpqlFilter();
 }

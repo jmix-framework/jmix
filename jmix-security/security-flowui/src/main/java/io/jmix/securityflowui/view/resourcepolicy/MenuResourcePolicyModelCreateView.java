@@ -24,7 +24,7 @@ import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.menu.MenuItem;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.ResourcePolicy;
@@ -67,7 +67,7 @@ public class MenuResourcePolicyModelCreateView extends MultipleResourcePolicyMod
 
     @Subscribe
     public void onInit(InitEvent event) {
-        FlowuiComponentUtils.setItemsMap(menuItemField, resourcePolicyEditorUtils.getMenuItemOptionsMap());
+        ComponentUtils.setItemsMap(menuItemField, resourcePolicyEditorUtils.getMenuItemOptionsMap());
         menuItemField.addValueChangeListener(this::onMenuItemFieldValueChange);
     }
 

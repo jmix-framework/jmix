@@ -27,7 +27,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsResponsiveSteps;
 import io.jmix.flowui.component.WrapperUtils;
@@ -35,7 +35,7 @@ import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.DataLoader;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -109,7 +109,7 @@ public class GroupFilter extends Composite<VerticalLayout>
     }
 
     protected void initComponent() {
-        this.autoApply = applicationContext.getBean(FlowuiComponentProperties.class).isFilterAutoApply();
+        this.autoApply = applicationContext.getBean(UiComponentProperties.class).isFilterAutoApply();
 
         initDefaultResponsiveSteps();
         initLayout();
@@ -138,7 +138,7 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     protected boolean isAnyFilterComponentVisible() {
         return getOwnFilterComponents().stream()
-                .anyMatch(FlowuiComponentUtils::isVisible);
+                .anyMatch(ComponentUtils::isVisible);
     }
 
     protected void addFilterComponentToConditionsLayout(FormLayout conditionsLayout,

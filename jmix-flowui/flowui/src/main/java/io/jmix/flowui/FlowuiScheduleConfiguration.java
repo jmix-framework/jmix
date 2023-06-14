@@ -17,7 +17,7 @@
 package io.jmix.flowui;
 
 import io.jmix.core.TimeSource;
-import io.jmix.flowui.backgroundtask.FlowuiBackgroundTaskProperties;
+import io.jmix.flowui.backgroundtask.UiBackgroundTaskProperties;
 import io.jmix.flowui.backgroundtask.BackgroundTaskWatchDog;
 import io.jmix.flowui.backgroundtask.impl.BackgroundTaskWatchDogImpl;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +38,7 @@ public class FlowuiScheduleConfiguration {
     }
 
     @Bean("flowui_BackgroundWorkerWatchDog")
-    public BackgroundTaskWatchDog watchDog(FlowuiBackgroundTaskProperties properties, TimeSource timeSource) {
+    public BackgroundTaskWatchDog watchDog(UiBackgroundTaskProperties properties, TimeSource timeSource) {
         return new BackgroundTaskWatchDogImpl(properties, timeSource);
     }
 }

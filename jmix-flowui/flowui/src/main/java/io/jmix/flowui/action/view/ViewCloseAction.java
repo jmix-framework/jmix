@@ -16,12 +16,12 @@
 
 package io.jmix.flowui.action.view;
 
-import io.jmix.flowui.FlowuiViewProperties;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.ActionType;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.StandardOutcome;
@@ -46,7 +46,7 @@ public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, 
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.BAN);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.BAN);
     }
 
     @Autowired
@@ -55,8 +55,8 @@ public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, 
     }
 
     @Autowired
-    protected void setFlowUiViewProperties(FlowuiViewProperties flowUiViewProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiViewProperties.getCloseShortcut());
+    protected void setUiViewProperties(UiViewProperties viewProperties) {
+        this.shortcutCombination = KeyCombination.create(viewProperties.getCloseShortcut());
     }
 
     public void setOutcome(StandardOutcome outcome) {

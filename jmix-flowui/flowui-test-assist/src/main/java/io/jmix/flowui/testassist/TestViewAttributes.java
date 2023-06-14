@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-@NonNullApi
-@Internal
-package io.jmix.flowui.testassist.vaadin;
+package io.jmix.flowui.testassist;
 
-import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import io.jmix.flowui.view.ViewAttributes;
+
+import static io.jmix.flowui.testassist.JmixUiTestExtension.WINDOW_NAME;
+
+public class TestViewAttributes extends ViewAttributes {
+
+    public TestViewAttributes(String viewId) {
+        super(viewId);
+    }
+
+    @Override
+    protected String getWindowName() {
+        return WINDOW_NAME;
+    }
+}

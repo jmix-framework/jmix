@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.testassist;
+@NonNullApi
+@Internal
+package io.jmix.flowui.testassist.navigation;
 
-import io.jmix.flowui.exception.UiExceptionHandler;
-
-public class FlowuiTestAssistExceptionHandler implements UiExceptionHandler {
-
-    @Override
-    public boolean handle(Throwable exception) {
-        // Exception can be thrown while navigation is performing. However,
-        // this exception is not propagated and test considered as passed.
-        // So we should propagate the exception to fail the test.
-        throw (RuntimeException) exception;
-    }
-}
+import org.springframework.lang.NonNullApi;
+import io.jmix.core.annotation.Internal;

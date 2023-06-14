@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-@NonNullApi
-@Internal
-package io.jmix.flowui.testassist.vaadin;
+package navigation.view;
 
-import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.view.*;
+import test_support.entity.sales.Customer;
+
+@Route(value = "customers")
+@ViewController("test_Customer.list")
+@ViewDescriptor("backward-navigation-list-view.xml")
+@LookupComponent("customersTable")
+public class BackwardNavigationListView extends StandardListView<Customer> {
+
+    @ViewComponent
+    public JmixButton createBtn;
+}

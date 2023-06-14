@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package test_support;
+package io.jmix.flowui.testassist;
 
-import io.jmix.flowui.view.ViewAttributes;
+import io.jmix.flowui.exception.UiExceptionHandler;
 
-public class TestViewAttributes extends ViewAttributes {
-
-    public TestViewAttributes(String viewId) {
-        super(viewId);
-    }
+public class PropagationExceptionHandler implements UiExceptionHandler {
 
     @Override
-    protected String getWindowName() {
-        return "windowName";
+    public boolean handle(Throwable exception) {
+        // Exception can be thrown while navigation is performing. However,
+        // this exception is not propagated and test considered as passed.
+        // So we should propagate the exception to fail the test.
+        throw (RuntimeException) exception;
     }
 }

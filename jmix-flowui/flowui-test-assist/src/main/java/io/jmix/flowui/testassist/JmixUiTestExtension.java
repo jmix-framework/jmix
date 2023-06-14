@@ -18,6 +18,7 @@ package io.jmix.flowui.testassist;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.internal.CurrentInstance;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
@@ -40,6 +41,7 @@ import io.jmix.flowui.view.ViewRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -77,7 +79,7 @@ import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APP
  *         viewNavigators.view(UserListView.class)
  *                 .navigate();
  *
- *         UserListView view = ViewsHelper.getCurrentView();
+ *         UserListView view = UiTestUtils.getCurrentView();
  *
  *         CollectionContainer&lt;User&gt; usersDc = ViewControllerUtils.getViewData(view)
  *                 .getContainer("usersDc");
@@ -90,11 +92,9 @@ import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APP
  */
 public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
 
-    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(JmixUiTestExtension.class);
-
     private static final String APP_ID = "testJmixUiAppId";
 
-    public static final String VIEW_PACKAGES = "viewPackages";
+    public static final String WINDOW_NAME = "windowName";
 
     protected String[] viewBasePackages;
 
@@ -168,9 +168,7 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         removeAuthentication(context);
-
-        // Do not remove View configurations from ViewRegistry,
-        // because they are initialized only once.
+        clearViewBasePackages(context);
     }
 
     protected void setupVaadin(ExtensionContext context) {
@@ -181,15 +179,20 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
         VaadinServletContextInitializer contextInitializer =
                 applicationContext.getBean(VaadinServletContextInitializer.class, applicationContext);
         try {
+            // We create custom servlet context to disable dev server via attribute (see DevModeServletContextListener).
+            // Also, custom TestServletContext enables adding ServletContextListener from
+            // VaadinServletContextInitializer.
             TestServletContext servletContext = new TestServletContext();
             servletContext.setAttribute(ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
             servletContext.setInitParameter(InitParameters.SERVLET_PARAMETER_PRODUCTION_MODE, "true");
 
             MockServletConfig mockServletConfig = new MockServletConfig(servletContext);
 
-            // fill servlet context with listeners from VaadinServletContextInitializer
+            // Vaadin adds its own CompositeServletContextListener that contains other listeners:
+            // LookupInitializerListener, RouteServletContextListener, DevModeServletContextListener, etc.
             contextInitializer.onStartup(mockServletConfig.getServletContext());
 
+            // Fire event for composite listener from VaadinServletContextInitializer
             servletContext.fireServletContextInitialized();
 
             springServlet.init(mockServletConfig);
@@ -209,16 +212,18 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
 
         ui = new UI();
         ui.getInternals().setSession(vaadinSession);
+
+        // ExtendedClientDetails is not available since we don't have client-side here.
+        // Mock and stub method to return the same window name (something like a tab's id in browser for Vaadin).
+        ExtendedClientDetails clientDetails = Mockito.mock(ExtendedClientDetails.class);
+        Mockito.when(clientDetails.getWindowName()).thenReturn(WINDOW_NAME);
+        ui.getInternals().setExtendedClientDetails(clientDetails);
+
         ui.doInit(request, 1, APP_ID);
         UI.setCurrent(ui);
     }
 
     protected void registerViewBasePackages(ExtensionContext context) {
-        String[] storedViewBasePackages = getStore(context).get(VIEW_PACKAGES, String[].class);
-        if (ArrayUtils.isNotEmpty(storedViewBasePackages)) {
-            return;
-        }
-
         String[] viewBasePackages = {};
         if (ArrayUtils.isNotEmpty(this.viewBasePackages)) {
             viewBasePackages = this.viewBasePackages;
@@ -265,8 +270,6 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Cannot register view packages", e);
         }
-
-        getStore(context).put(VIEW_PACKAGES, viewBasePackages);
 
         registerViewRoutes(viewBasePackages, context);
     }
@@ -324,6 +327,21 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
         }
     }
 
+    protected void clearViewBasePackages(ExtensionContext context) {
+        try {
+            Field configurationsField = getDeclaredField(ViewRegistry.class,
+                    "configurations", true);
+
+            ViewRegistry viewRegistry = getApplicationContext(context).getBean(ViewRegistry.class);
+            configurationsField.set(viewRegistry, new ArrayList<>());
+
+            getDeclaredField(ViewRegistry.class, "initialized", true)
+                    .set(viewRegistry, false);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot clear view packages", e);
+        }
+    }
+
     @Nullable
     protected UiTestAuthenticator getTestAuthenticatorFromAnnotation(ExtensionContext context) {
         Optional<UiTest> annotationOpt =
@@ -345,10 +363,6 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
             throw new RuntimeException("Cannot instantiate " +
                     UiTestAuthenticator.class.getSimpleName(), e);
         }
-    }
-
-    protected ExtensionContext.Store getStore(ExtensionContext context) {
-        return context.getRoot().getStore(NAMESPACE);
     }
 
     protected ApplicationContext getApplicationContext(ExtensionContext context) {

@@ -33,7 +33,8 @@
     </locMessages>
     <steps>
         <step name="Entity detail view" order="0"/>
-        <step name="Entity detail view fetch plan" order="1"/>
+        <step name="Entity detail view fetch plan" order="1"
+              description="Detail view fetch plan determines entity attributes and associations to be loaded from the database and edited in the view components"/>
     </steps>
     <property caption="Entity"
               code="entity"

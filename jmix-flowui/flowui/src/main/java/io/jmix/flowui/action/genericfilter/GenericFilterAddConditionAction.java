@@ -21,7 +21,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.accesscontext.UiFilterModifyConfigurationContext;
+import io.jmix.flowui.accesscontext.UiGenericFilterModifyConfigurationContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.app.filter.condition.AddConditionView;
@@ -110,7 +110,7 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
 
     @Autowired
     protected void setAccessManager(AccessManager accessManager) {
-        UiFilterModifyConfigurationContext context = new UiFilterModifyConfigurationContext();
+        UiGenericFilterModifyConfigurationContext context = new UiGenericFilterModifyConfigurationContext();
         accessManager.applyRegisteredConstraints(context);
         visibleBySpecificUiPermission = context.isPermitted();
     }

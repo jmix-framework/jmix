@@ -21,7 +21,7 @@ import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.accesscontext.UiFilterModifyJpqlConditionContext;
+import io.jmix.flowui.accesscontext.UiGenericFilterModifyJpqlConditionContext;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.builder.PropertyConditionBuilder;
@@ -134,8 +134,8 @@ public class AddConditionView extends StandardListView<FilterCondition> {
     protected void initCreateConditionBtn() {
         for (Class<? extends FilterCondition> modelClass : filterComponents.getRegisteredModelClasses()) {
             if (JpqlFilterCondition.class.isAssignableFrom(modelClass)) {
-                UiFilterModifyJpqlConditionContext jpqlConditionsContext =
-                        new UiFilterModifyJpqlConditionContext();
+                UiGenericFilterModifyJpqlConditionContext jpqlConditionsContext =
+                        new UiGenericFilterModifyJpqlConditionContext();
                 accessManager.applyRegisteredConstraints(jpqlConditionsContext);
 
                 if (!jpqlConditionsContext.isPermitted()) {

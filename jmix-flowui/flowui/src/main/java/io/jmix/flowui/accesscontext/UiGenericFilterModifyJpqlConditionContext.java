@@ -18,11 +18,11 @@ package io.jmix.flowui.accesscontext;
 
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
-public class UiFilterModifyConfigurationContext extends SpecificOperationAccessContext {
+public class UiGenericFilterModifyJpqlConditionContext extends SpecificOperationAccessContext {
 
-    public static final String NAME = "ui.filter.modifyConfiguration";
+    public static final String NAME = "ui.genericfilter.modifyJpqlCondition";
 
-    public UiFilterModifyConfigurationContext() {
+    public UiGenericFilterModifyJpqlConditionContext() {
         super(NAME);
     }
 }

@@ -176,8 +176,8 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
         jobNameField.setReadOnly(readOnly);
         jobGroupField.setReadOnly(readOnly);
         jobClassField.setReadOnly(readOnly);
-        triggerModelTable.getAction("create").setVisible(!readOnly);
-        triggerModelTable.getAction("edit").setVisible(readOnly);
+        triggerModelTable.getAction("edit").setVisible(!readOnly);
+        triggerModelTable.getAction("read").setVisible(readOnly);
         addDataParamButton.setEnabled(!readOnly);
         jobDataParamsTable.setEnabled(!readOnly);
     }

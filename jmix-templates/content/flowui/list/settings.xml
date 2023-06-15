@@ -57,7 +57,7 @@
               required="false"/>
     <property caption="Table actions"
               code="tableActions"
-              defaultValue="list_create,list_edit,list_remove"
+              defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
               preferences="true"
               optionsString="${actionSearch.getWizardTableActions()}"/>

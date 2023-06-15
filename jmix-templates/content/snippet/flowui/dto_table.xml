@@ -30,7 +30,7 @@ entity.attributes.each { attr ->
         dataContainer="${tableDc}"<%
         if (multiselect) {%>\n selectionMode="MULTI"<%}%>>
 <actions><%tableActions.each { action ->%>
-<action id="${action}" type="${action}"/>
+<action id="${action}" type="list_${action}"/>
 <%}%>
 </actions>
 <columns><%columns.each {column ->%>

@@ -44,7 +44,7 @@ import java.util.Collections;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = CoreConfiguration.class)
-@PropertySource(name = "io.jmix.ui", value = "classpath:/io/jmix/flowui/module.properties")
+@PropertySource(name = "io.jmix.flowui", value = "classpath:/io/jmix/flowui/module.properties")
 public class FlowuiConfiguration {
 
     @Bean("flowui_ViewControllers")

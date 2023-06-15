@@ -38,7 +38,7 @@ import org.springframework.lang.Nullable;
 /**
  * Class is used for getting default policy group for the {@link ResourcePolicy} instance.
  */
-@Component("sec_UiDefaultResourcePolicyGroupResolver")
+@Component("sec_DefaultResourcePolicyGroupResolver")
 public class DefaultResourcePolicyGroupResolver {
 
     private final static Logger log = LoggerFactory.getLogger(DefaultResourcePolicyGroupResolver.class);

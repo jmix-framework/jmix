@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component("sec_UiMenuPolicyExtractor")
+@Component("sec_MenuPolicyExtractor")
 public class MenuPolicyExtractor implements ResourcePolicyExtractor {
 
     @Override

@@ -39,7 +39,7 @@ import java.util.Collections;
 public class AppSettingsFlowUiConfiguration {
 
 
-    @Bean("appset_UiControllersConfiguration")
+    @Bean("appset_ViewControllersConfiguration")
     public ViewControllersConfiguration views(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ViewControllersConfiguration viewControllers

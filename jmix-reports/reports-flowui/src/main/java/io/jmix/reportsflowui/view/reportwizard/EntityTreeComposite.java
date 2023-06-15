@@ -112,6 +112,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
         this.persistentOnly = persistentOnly;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected FormLayout initContent() {
         reportPropertyName = uiComponents.create(TextField.class);
@@ -136,10 +137,11 @@ public class EntityTreeComposite extends Composite<FormLayout>
         reportPropertyHBox.add(reportPropertyName);
         reportPropertyHBox.add(reportPropertyNameSearchButton);
         reportPropertyHBox.setPadding(false);
+        reportPropertyHBox.setClassName("mb-s");
 
         entityTree = uiComponents.create(TreeDataGrid.class);
-        entityTree.setDataProvider(new ContainerTreeDataGridItems<EntityTreeNode>(reportEntityTreeNodeDc, "parent"));
-        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metadata.getClass(EntityTreeNode.class), "name");
+        entityTree.setDataProvider(new ContainerTreeDataGridItems<>(reportEntityTreeNodeDc, "parent"));
+        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(EntityTreeNode.class), "name");
         entityTree.addHierarchyColumn("name", metaPropertyPath)
                 .setHeader(messages.getMessage(getClass(), "entityTreeNode.name.header"));
         entityTree.setId("treeDataGrid");

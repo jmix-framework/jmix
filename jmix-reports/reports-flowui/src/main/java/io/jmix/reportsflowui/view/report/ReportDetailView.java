@@ -44,6 +44,7 @@ import io.jmix.flowui.*;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -148,7 +149,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixSelect<DataSetType> singleDataSetTypeField;
     @ViewComponent
-    protected JmixTextArea dataSetScriptField;
+    protected CodeEditor dataSetScriptCodeEditor;
+    @ViewComponent
+    protected JmixButton dataSetScriptCodeEditorHelpBtn;
     @ViewComponent
     protected JmixSelect<String> dataStoreField;
     @ViewComponent
@@ -182,7 +185,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected DataGrid<ReportTemplate> templatesDataGrid;
     @ViewComponent
-    protected JmixTextArea validationScriptCodeEditor;
+    protected CodeEditor validationScriptCodeEditor;
     @ViewComponent
     protected JmixTextArea localeTextField;
     @ViewComponent
@@ -276,7 +279,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         refreshBandActionStates();
         refreshDataSetsActionStates();
         initLocaleDetailReportTextField();
-        initValidateTextField();
         initRoleField();
         initScreenIdField();
     }
@@ -672,7 +674,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
             updateFetchPlanNameFieldItems(findParameterByAlias(dataSet.getListEntitiesParamName()));
             fetchPlanNameField.setValue(Strings.nullToEmpty(fetchPlanName));
         }
-//            dataSetScriptField.resetEditHistory(); // todo SourceCodeEditor
     }
 
     @Subscribe(id = "dataSetsDc", target = Target.DATA_CONTAINER)
@@ -1136,38 +1137,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
             }
 
             switch (dataSet.getType()) {
-                case SQL:
-                    // todo SourceCodeEditor
-                    /*dataSetScriptFieldMode = SourceCodeEditor.Mode.SQL;
-                    dataSetScriptField.setMode(SourceCodeEditor.Mode.SQL);
-                    dataSetScriptField.setSuggester(null);*/
-                    setupExpandIconToDataSetScriptField();
-                    break;
-
-                case GROOVY:
-                    // todo SourceCodeEditor
-                    /*dataSetScriptFieldMode = SourceCodeEditor.Mode.Groovy;
-                    dataSetScriptField.setSuggester(null);
-                    dataSetScriptField.setMode(SourceCodeEditor.Mode.Groovy);*/
-                    setupExpandAndHelpIconsToDataSetScriptField();
-                    break;
-
-                case JPQL:
-                    // todo SourceCodeEditor
-                    /*dataSetScriptFieldMode = SourceCodeEditor.Mode.Text;
-                    dataSetScriptField.setSuggester(isProcessTemplateField.isChecked() ? null : this);
-                    dataSetScriptField.setMode(SourceCodeEditor.Mode.Text);*/
-                    setupExpandIconToDataSetScriptField();
-                    break;
-
-                default:
-                    // todo SourceCodeEditor
-                    /*dataSetScriptFieldMode = SourceCodeEditor.Mode.Text;
-                    dataSetScriptField.setSuggester(null);
-                    dataSetScriptField.setMode(SourceCodeEditor.Mode.Text);*/
-                    setupExpandIconToDataSetScriptField();
-                    break;
+                case SQL -> dataSetScriptCodeEditor.setMode(CodeEditorMode.SQL);
+                case GROOVY -> dataSetScriptCodeEditor.setMode(CodeEditorMode.GROOVY);
+                default -> dataSetScriptCodeEditor.setMode(CodeEditorMode.TEXT);
             }
+            dataSetScriptCodeEditorHelpBtn.setVisible(CodeEditorMode.GROOVY.equals(dataSetScriptCodeEditor.getMode()));
         }
     }
 
@@ -1288,35 +1262,24 @@ public class ReportDetailView extends StandardDetailView<Report> {
         fetchPlanNameFieldBinder.setValueChangeListener(this::onFetchPlanNameFieldComponentValueChange);
     }
 
-    protected void setupExpandIconToDataSetScriptField() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onDataSetScriptFieldExpandIconClick);
-
-        dataSetScriptField.setSuffixComponent(expandIcon);
+    @Subscribe("dataSetScriptFullScreenBtn")
+    protected void onDataSetScriptFullScreenBtnClick(ClickEvent<Button> event) {
+        onDataSetScriptFieldExpandIconClick();
     }
 
-    protected void onDataSetScriptFieldExpandIconClick(ClickEvent<Icon> event) {
+    @Subscribe("dataSetScriptCodeEditorHelpBtn")
+    protected void onDataSetScriptCodeEditorHelpBtnClick(ClickEvent<Button> event) {
+        onJsonGroovyCodeEditorHelpIconClick();
+    }
+
+    protected void onDataSetScriptFieldExpandIconClick() {
         reportsUiHelper.showScriptEditorDialog(this)
                 .withTitle(getScriptEditorDialogCaption())
                 .withValue(dataSetsDc.getItem().getText())
                 .withEditorMode(CodeEditorMode.GROOVY)
                 .withCloseOnClick(value -> dataSetsDc.getItem().setText(value))
-                .withHelpOnClick(() -> onJsonGroovyCodeEditorHelpIconClick())
+                .withHelpOnClick(this::onJsonGroovyCodeEditorHelpIconClick)
                 .open();
-    }
-
-
-    protected void setupExpandAndHelpIconsToDataSetScriptField() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onDataSetScriptFieldExpandIconClick);
-
-        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(icon -> onJsonGroovyCodeEditorHelpIconClick());
-
-        dataSetScriptField.setSuffixComponent(new Div(expandIcon, helpIcon));
     }
 
     protected void initJsonPathQueryTextAreaField() {
@@ -1360,7 +1323,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 .withValue(dataSetsDc.getItem().getJsonSourceText())
                 .withEditorMode(CodeEditorMode.GROOVY)
                 .withCloseOnClick(value -> dataSetsDc.getItem().setJsonSourceText(value))
-                .withHelpOnClick(() -> onJsonGroovyCodeEditorHelpIconClick())
+                .withHelpOnClick(this::onJsonGroovyCodeEditorHelpIconClick)
                 .open();
     }
 
@@ -1495,15 +1458,23 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 .open();
     }
 
-
-    protected void initValidateTextField() {
-        Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
-        icon.addClickListener(this::onValidateHelpIconClick);
-        icon.addClassName(FIELD_ICON_CLASS_NAME);
-        validationScriptCodeEditor.setSuffixComponent(icon);
+    @Subscribe("validationScriptFullScreenBtn")
+    public void onValidationScriptFullScreenBtnClick(final ClickEvent<Button> event) {
+        reportsUiHelper.showScriptEditorDialog(this)
+                .withTitle(messageBundle.getMessage("fullScreenBtn.title"))
+                .withValue(reportDc.getItem().getValidationScript())
+                .withEditorMode(CodeEditorMode.GROOVY)
+                .withCloseOnClick(value -> reportDc.getItem().setValidationScript(value))
+                .withHelpOnClick(this::onValidationScriptCodeEditorHelpBtnClick)
+                .open();
     }
 
-    protected void onValidateHelpIconClick(ClickEvent<Icon> event) {
+    @Subscribe("validationScriptCodeEditorHelpBtn")
+    protected void onValidationScriptCodeEditorHelpBtnClick(ClickEvent<Button> event) {
+        onValidationScriptCodeEditorHelpBtnClick();
+    }
+
+    protected void onValidationScriptCodeEditorHelpBtnClick() {
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage("parametersTab.validationFieldHelp.header"))
                 .withContent(new Html(messageBundle.getMessage("parametersTab.validationFieldHelp.text")))

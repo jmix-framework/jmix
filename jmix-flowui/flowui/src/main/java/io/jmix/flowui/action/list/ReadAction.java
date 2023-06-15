@@ -22,14 +22,14 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
@@ -72,7 +72,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
         super.initAction();
 
         setConstraintEntityOp(EntityOp.READ);
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.EYE);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.EYE);
     }
 
     @Nullable
@@ -193,8 +193,8 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridReadShortcut());
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridReadShortcut());
     }
 
     @Autowired
@@ -231,7 +231,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
             return true;
         }
 
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
 
         if (!entityContext.isViewPermitted()) {

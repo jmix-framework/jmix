@@ -25,7 +25,7 @@ import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.entity.filter.FilterCondition;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -50,7 +50,7 @@ public class GenericFilterCopyAction extends GenericFilterAction<GenericFilterCo
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.COPY);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.COPY);
     }
 
     @Autowired

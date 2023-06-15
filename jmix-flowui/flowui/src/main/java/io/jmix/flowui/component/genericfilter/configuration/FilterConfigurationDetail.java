@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.component.genericfilter.configuration;
 
-import com.vaadin.flow.component.formlayout.FormLayout;
 import jakarta.annotation.Nullable;
 
 import java.util.Optional;
@@ -50,7 +49,7 @@ public class FilterConfigurationDetail extends AbstractConfigurationDetail {
         String label = messages.getMessage(getClass(), "filterConfigurationDetail.generatedIdField.label");
 
         generatedIdField.setLabel(label);
-        generatedIdField.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
+        generatedIdField.setVisible(uiComponentProperties.isFilterShowConfigurationIdField());
 
         getContent().add(generatedIdField);
     }
@@ -61,7 +60,7 @@ public class FilterConfigurationDetail extends AbstractConfigurationDetail {
 
         configurationIdField.setLabel(label);
         configurationIdField.setEnabled(false);
-        configurationIdField.setVisible(flowuiComponentProperties.isFilterShowConfigurationIdField());
+        configurationIdField.setVisible(uiComponentProperties.isFilterShowConfigurationIdField());
 
         getContent().add(configurationIdField);
     }

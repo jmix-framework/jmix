@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static io.jmix.flowui.kit.component.FlowuiComponentUtils.parseIcon;
+import static io.jmix.flowui.kit.component.ComponentUtils.parseIcon;
 
 @Component("flowui_ActionLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

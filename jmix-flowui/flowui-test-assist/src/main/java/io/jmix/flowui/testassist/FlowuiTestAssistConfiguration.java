@@ -26,7 +26,7 @@ public class FlowuiTestAssistConfiguration {
 
     @Bean("testassist_TestAssistExceptionHandler")
     @Order(JmixOrder.LOWEST_PRECEDENCE - 90)
-    public FlowuiTestAssistExceptionHandler testAssistExceptionHandler() {
-        return new FlowuiTestAssistExceptionHandler();
+    public UiTestAssistExceptionHandler testAssistExceptionHandler() {
+        return new UiTestAssistExceptionHandler();
     }
 }

@@ -34,12 +34,12 @@ import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.sys.AppCookies;
 import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import io.jmix.security.model.SecurityScope;
-import io.jmix.securityflowui.accesscontext.FlowuiLoginToUiContext;
+import io.jmix.securityflowui.accesscontext.UiLoginToUiContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public class LoginViewSupport {
     protected AuthenticationManager authenticationManager;
 
     protected CoreProperties coreProperties;
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
     protected ViewNavigators viewNavigators;
     protected AccessManager accessManager;
     protected Messages messages;
@@ -112,8 +112,8 @@ public class LoginViewSupport {
     }
 
     @Autowired
-    public void setFlowuiProperties(FlowuiProperties flowuiProperties) {
-        this.flowuiProperties = flowuiProperties;
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
     }
 
     @Autowired
@@ -188,7 +188,7 @@ public class LoginViewSupport {
     protected void preventSessionFixation(Authentication authentication) {
         if (authentication.isAuthenticated()
                 && VaadinRequest.getCurrent() != null
-                && flowuiProperties.isUseSessionFixationProtection()) {
+                && uiProperties.isUseSessionFixationProtection()) {
             VaadinService.reinitializeSession(VaadinRequest.getCurrent());
         }
     }
@@ -228,7 +228,7 @@ public class LoginViewSupport {
     protected void checkLoginToUi(AuthDetails authDetails, Authentication authentication) {
         Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
 
-        FlowuiLoginToUiContext loginToUiContext = new FlowuiLoginToUiContext();
+        UiLoginToUiContext loginToUiContext = new UiLoginToUiContext();
         try {
             SecurityContextHelper.setAuthentication(authentication);
             accessManager.applyRegisteredConstraints(loginToUiContext);
@@ -248,7 +248,7 @@ public class LoginViewSupport {
         if (location != null) {
             UI.getCurrent().navigate(location.getPath(), location.getQueryParameters());
         } else {
-            String mainViewId = flowuiProperties.getMainViewId();
+            String mainViewId = uiProperties.getMainViewId();
             viewNavigators.view(mainViewId)
                     .navigate();
         }

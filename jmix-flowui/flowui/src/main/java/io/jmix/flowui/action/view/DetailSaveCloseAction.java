@@ -16,12 +16,12 @@
 
 package io.jmix.flowui.action.view;
 
-import io.jmix.flowui.FlowuiViewProperties;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.ActionType;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.PessimisticLockStatus;
 import io.jmix.flowui.view.StandardDetailView;
@@ -45,7 +45,7 @@ public class DetailSaveCloseAction<E>
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.CHECK);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.CHECK);
         this.variant = ActionVariant.PRIMARY;
     }
 
@@ -55,8 +55,8 @@ public class DetailSaveCloseAction<E>
     }
 
     @Autowired
-    protected void setFlowUiViewProperties(FlowuiViewProperties flowUiViewProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiViewProperties.getSaveShortcut());
+    protected void setUiViewProperties(UiViewProperties uiViewProperties) {
+        this.shortcutCombination = KeyCombination.create(uiViewProperties.getSaveShortcut());
     }
 
     @Override

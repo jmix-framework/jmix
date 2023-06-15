@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.data.grid.EntityDataGridItems;
@@ -46,7 +46,7 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
     protected DatatypeRegistry datatypeRegistry;
     protected Messages messages;
     protected MetadataTools metadataTools;
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
     protected CoreProperties coreProperties;
 
     @Autowired
@@ -70,8 +70,8 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
     }
 
     @Autowired
-    public void setFlowuiProperties(FlowuiProperties flowuiProperties) {
-        this.flowuiProperties = flowuiProperties;
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
     }
 
     @Autowired

@@ -21,7 +21,7 @@ interface UiMinimalRole {
     fun main()
 
     @ViewPolicy(viewIds = ["${normalizedPrefix_underscore}LoginView"])
-    @SpecificPolicy(resources = ["flowui.loginToUi"])
+    @SpecificPolicy(resources = ["ui.loginToUi"])
     fun login()
 
     @EntityPolicy(entityClass = KeyValueEntity::class, actions = [EntityPolicyAction.READ])

@@ -20,7 +20,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 
 import org.springframework.lang.Nullable;
@@ -96,7 +96,7 @@ public class DialogAction extends SecuredBaseAction {
 
     @Override
     public DialogAction withIcon(@Nullable VaadinIcon icon) {
-        setIcon(FlowuiComponentUtils.convertToIcon(icon));
+        setIcon(ComponentUtils.convertToIcon(icon));
         return this;
     }
 

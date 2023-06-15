@@ -23,7 +23,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.main.JmixListMenu;
 import io.jmix.flowui.kit.component.main.ListMenu;
-import io.jmix.flowui.sys.FlowuiAccessChecker;
+import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
@@ -51,20 +51,20 @@ public class ListMenuBuilder {
     protected ViewRegistry viewRegistry;
     protected UiComponents uiComponents;
     protected MessageTools messageTools;
-    protected FlowuiAccessChecker flowuiAccessChecker;
+    protected UiAccessChecker uiAccessChecker;
     protected MenuItemCommands menuItemCommands;
 
     public ListMenuBuilder(MenuConfig menuConfig,
                            ViewRegistry viewRegistry,
                            UiComponents uiComponents,
                            MessageTools messageTools,
-                           FlowuiAccessChecker flowuiAccessChecker,
+                           UiAccessChecker uiAccessChecker,
                            MenuItemCommands menuItemCommands) {
         this.menuConfig = menuConfig;
         this.viewRegistry = viewRegistry;
         this.uiComponents = uiComponents;
         this.messageTools = messageTools;
-        this.flowuiAccessChecker = flowuiAccessChecker;
+        this.uiAccessChecker = uiAccessChecker;
         this.menuItemCommands = menuItemCommands;
     }
 
@@ -211,7 +211,7 @@ public class ListMenuBuilder {
     }
 
     protected boolean isPermitted(MenuItem menuItem) {
-        return flowuiAccessChecker.isMenuPermitted(menuItem);
+        return uiAccessChecker.isMenuPermitted(menuItem);
     }
 
     protected String generateSeparatorId() {

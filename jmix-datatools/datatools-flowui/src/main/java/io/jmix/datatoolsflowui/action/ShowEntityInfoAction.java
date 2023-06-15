@@ -18,7 +18,7 @@ package io.jmix.datatoolsflowui.action;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
-import io.jmix.datatoolsflowui.accesscontext.FlowuiShowEntityInfoContext;
+import io.jmix.datatoolsflowui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.datatoolsflowui.view.entityinfo.EntityInfoView;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Views;
@@ -76,7 +76,7 @@ public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEnt
     protected void setAccessManager(AccessManager accessManager) {
         super.setAccessManager(accessManager);
 
-        FlowuiShowEntityInfoContext context = new FlowuiShowEntityInfoContext();
+        UiShowEntityInfoContext context = new UiShowEntityInfoContext();
         accessManager.applyRegisteredConstraints(context);
 
         visibleBySpecificUiPermission = context.isPermitted();

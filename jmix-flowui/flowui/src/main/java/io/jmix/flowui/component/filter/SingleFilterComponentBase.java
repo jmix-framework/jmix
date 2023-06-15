@@ -27,7 +27,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.validation.Validator;
@@ -91,7 +91,7 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
     }
 
     protected void initComponent() {
-        this.autoApply = applicationContext.getBean(FlowuiComponentProperties.class).isFilterAutoApply();
+        this.autoApply = applicationContext.getBean(UiComponentProperties.class).isFilterAutoApply();
 
         root = createRootComponent();
         initRootComponent(root);

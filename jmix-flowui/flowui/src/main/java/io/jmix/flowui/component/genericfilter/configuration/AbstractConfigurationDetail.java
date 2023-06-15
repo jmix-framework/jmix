@@ -22,7 +22,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.SupportsValidation;
@@ -46,7 +46,7 @@ public abstract class AbstractConfigurationDetail extends Composite<FormLayout>
     protected ApplicationContext applicationContext;
     protected UiComponents uiComponents;
     protected Messages messages;
-    protected FlowuiComponentProperties flowuiComponentProperties;
+    protected UiComponentProperties uiComponentProperties;
 
     protected TypedTextField<String> nameField;
     protected TypedTextField<String> configurationIdField;
@@ -78,7 +78,7 @@ public abstract class AbstractConfigurationDetail extends Composite<FormLayout>
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
         messages = applicationContext.getBean(Messages.class);
-        flowuiComponentProperties = applicationContext.getBean(FlowuiComponentProperties.class);
+        uiComponentProperties = applicationContext.getBean(UiComponentProperties.class);
     }
 
     //hook to be implemented

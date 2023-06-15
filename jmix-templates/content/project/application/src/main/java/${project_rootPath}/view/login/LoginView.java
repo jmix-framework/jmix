@@ -10,7 +10,7 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.component.loginform.JmixLoginForm;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.authentication.AuthDetails;
@@ -57,7 +57,7 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     }
 
     protected void initLocales() {
-        FlowuiComponentUtils.setItemsMap(login,
+        ComponentUtils.setItemsMap(login,
                 MapUtils.invertMap(messageTools.getAvailableLocalesMap()));
 
         login.setSelectedLocale(VaadinSession.getCurrent().getLocale());

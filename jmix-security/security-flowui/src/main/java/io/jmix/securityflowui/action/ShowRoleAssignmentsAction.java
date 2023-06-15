@@ -23,7 +23,7 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.securityflowui.view.roleassignment.RoleAssignmentView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.SHIELD);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.SHIELD);
     }
 
     @Autowired

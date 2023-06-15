@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.action.Action;
 
 import java.util.*;
 
-import static io.jmix.flowui.kit.component.FlowuiComponentUtils.findActionIndexById;
+import static io.jmix.flowui.kit.component.ComponentUtils.findActionIndexById;
 
 public class GridActionsSupport<C extends Grid<T>, T> {
 

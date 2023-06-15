@@ -93,8 +93,8 @@ dependencies {
         api "io.jmix.audit:jmix-audit-starter:$freeVersion"
         api "io.jmix.audit:jmix-audit-flowui-starter:$freeVersion"
 
-        api "io.jmix.authserver:jmix-authorization-server:$freeVersion"
-        api "io.jmix.authserver:jmix-authorization-server-starter:$freeVersion"
+        api "io.jmix.authserver:jmix-authserver:$freeVersion"
+        api "io.jmix.authserver:jmix-authserver-starter:$freeVersion"
 
         api "io.jmix.awsfs:jmix-awsfs:$freeVersion"
         api "io.jmix.awsfs:jmix-awsfs-starter:$freeVersion"

@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import java.time.Duration;
 import java.util.Set;
 
-@ConfigurationProperties(prefix = "jmix.authorization-server.default-client")
+@ConfigurationProperties(prefix = "jmix.authserver.default-client")
 public class DefaultRegisteredClientProperties {
 
     /**

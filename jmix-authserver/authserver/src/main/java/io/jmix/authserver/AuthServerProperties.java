@@ -19,12 +19,11 @@ package io.jmix.authserver;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@ConfigurationProperties(prefix = "jmix.authorization-server")
-public class AuthorizationServerProperties {
+@ConfigurationProperties(prefix = "jmix.authserver")
+public class AuthServerProperties {
 
     /**
      * Whether a default auto-configuration should be applied
@@ -36,7 +35,7 @@ public class AuthorizationServerProperties {
      */
     Map<String, JmixAuthorizationServerClient> client;
 
-    public AuthorizationServerProperties(
+    public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             Map<String, JmixAuthorizationServerClient> client) {
         this.useDefaultConfiguration = useDefaultConfiguration;

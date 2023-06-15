@@ -26,5 +26,5 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class})
-public class AuthorizationServerConfiguration {
+public class AuthServerConfiguration {
 }

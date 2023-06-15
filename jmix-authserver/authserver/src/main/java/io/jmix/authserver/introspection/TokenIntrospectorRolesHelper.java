@@ -16,7 +16,7 @@
 
 package io.jmix.authserver.introspection;
 
-import io.jmix.authserver.AuthorizationServerProperties;
+import io.jmix.authserver.AuthServerProperties;
 import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RowLevelRoleRepository;
@@ -32,23 +32,23 @@ import java.util.List;
  * The class is used for converting a list of role codes specified for the client in properties file into the list of
  * {@link RoleGrantedAuthority}.
  *
- * @see AuthorizationServerProperties
+ * @see AuthServerProperties
  */
 @Component("authsr_TokenIntrospectorRolesHelper")
 public class TokenIntrospectorRolesHelper {
 
     private static final Logger log = LoggerFactory.getLogger(TokenIntrospectorRolesHelper.class);
 
-    private AuthorizationServerProperties authorizationServerProperties;
+    private AuthServerProperties authServerProperties;
 
     private ResourceRoleRepository resourceRoleRepository;
 
     private RowLevelRoleRepository rowLevelRoleRepository;
 
-    public TokenIntrospectorRolesHelper(AuthorizationServerProperties authorizationServerProperties,
+    public TokenIntrospectorRolesHelper(AuthServerProperties authServerProperties,
                                         ResourceRoleRepository resourceRoleRepository,
                                         RowLevelRoleRepository rowLevelRoleRepository) {
-        this.authorizationServerProperties = authorizationServerProperties;
+        this.authServerProperties = authServerProperties;
         this.resourceRoleRepository = resourceRoleRepository;
         this.rowLevelRoleRepository = rowLevelRoleRepository;
     }
@@ -61,7 +61,7 @@ public class TokenIntrospectorRolesHelper {
      * @return a list of RoleGrantedAuthority
      */
     public List<RoleGrantedAuthority> getClientGrantedAuthorities(String clientId) {
-        AuthorizationServerProperties.JmixAuthorizationServerClient client = authorizationServerProperties.getClient().get(clientId);
+        AuthServerProperties.JmixAuthorizationServerClient client = authServerProperties.getClient().get(clientId);
         if (client == null) {
             log.debug("No roles are specified for the client {}", clientId);
             return Collections.emptyList();

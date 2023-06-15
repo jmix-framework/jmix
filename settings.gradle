@@ -20,8 +20,8 @@ includeProject('audit-starter', 'jmix-audit/audit-starter')
 includeProject('audit-flowui', 'jmix-audit/audit-flowui')
 includeProject('audit-flowui-starter', 'jmix-audit/audit-flowui-starter')
 
-includeProject('authorization-server', 'jmix-authserver/authorization-server')
-includeProject('authorization-server-starter', 'jmix-authserver/authorization-server-starter')
+includeProject('authserver', 'jmix-authserver/authserver')
+includeProject('authserver-starter', 'jmix-authserver/authserver-starter')
 
 includeProject('awsfs', 'jmix-awsfs/awsfs')
 includeProject('awsfs-starter', 'jmix-awsfs/awsfs-starter')

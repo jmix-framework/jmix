@@ -15,10 +15,10 @@ The Jmix Authorization Server add-on provides the following features:
 
 ## Adding Add-on to the Application
 
-To add the Jmix Authorization Server add-on to your application, include the jmix-authorization-server-starter dependency:
+To add the Jmix Authorization Server add-on to your application, include the jmix-authserver-starter dependency:
 
 ```groovy
-implementation 'io.jmix.authserver:jmix-authorization-server-starter'
+implementation 'io.jmix.authserver:jmix-authserver-starter'
 ```
 
 ## Auto-Configuration
@@ -33,7 +33,7 @@ When the add-on is included to the application, the auto-configuration performs 
 If you want to completely disable the default auto-configuration and provide your own configuration, set the following application property:
 
 ```properties
-jmix.authorization-server.use-default-configuration=false
+jmix.authserver.use-default-configuration=false
 ```
 
 ## Registering Clients
@@ -116,8 +116,8 @@ There must be Basic authentication on behalf of one of the registered clients (e
 The response will contain an access token. To specify the actions that can be performed in the application using this token, you must assign roles to this client using application properties:
 
 ```properties
-jmix.authorization-server.client.jmix2.resource-roles = resource-role1, resource-role2
-jmix.authorization-server.client.jmix2.row-level-roles = row-level-role1, row-level-role-2
+jmix.authserver.client.jmix2.resource-roles = resource-role1, resource-role2
+jmix.authserver.client.jmix2.row-level-roles = row-level-role1, row-level-role-2
 ```
 
 ### Testing Using Postman

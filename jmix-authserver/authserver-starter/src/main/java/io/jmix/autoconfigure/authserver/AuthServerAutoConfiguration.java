@@ -16,7 +16,7 @@
 
 package io.jmix.autoconfigure.authserver;
 
-import io.jmix.authserver.AuthorizationServerConfiguration;
+import io.jmix.authserver.AuthServerConfiguration;
 import io.jmix.authserver.filter.AsResourceServerEventSecurityFilter;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
 import io.jmix.authserver.introspection.TokenIntrospectorRolesHelper;
@@ -44,9 +44,9 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @AutoConfiguration
-@Import({AuthorizationServerConfiguration.class})
-@ConditionalOnProperty(name = "jmix.authorization-server.use-default-configuration", matchIfMissing = true)
-public class AuthorizationServerAutoConfiguration {
+@Import({AuthServerConfiguration.class})
+@ConditionalOnProperty(name = "jmix.authserver.use-default-configuration", matchIfMissing = true)
+public class AuthServerAutoConfiguration {
 
     @Configuration
     @EnableWebMvc

@@ -16,14 +16,6 @@
 
 package io.jmix.reportsflowui.runner.impl;
 
-import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.runner.FluentUiReportRunner;
-import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
-import io.jmix.reportsflowui.runner.UiReportRunContext;
-import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import io.jmix.reportsflowui.view.run.ReportTableView;
-import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.DialogWindows;
@@ -43,11 +35,18 @@ import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.util.ReportZipUtils;
 import io.jmix.reports.util.ReportsUtils;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.runner.FluentUiReportRunner;
+import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.UiReportRunContext;
+import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.view.run.InputParametersDialog;
+import io.jmix.reportsflowui.view.run.ReportTableView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -60,28 +59,41 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Component("report_UiReportRunner")
 public class UiReportRunnerImpl implements UiReportRunner {
 
-    @Autowired
-    protected ReportRunner reportRunner;
-    @Autowired
-    protected DialogWindows dialogWindows;
-    @Autowired
-    protected Downloader downloader;
-    @Autowired
-    protected MetadataTools metadataTools;
-    @Autowired
-    protected Messages messages;
-    @Autowired
-    protected Dialogs dialogs;
-    @Autowired
-    protected ReportZipUtils reportZipUtils;
-    @Autowired
-    protected ReportsUtils reportsUtils;
-    @Autowired
-    protected ObjectProvider<FluentUiReportRunner> fluentUiReportRunners;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected ReportsClientProperties reportsClientProperties;
+    protected final ReportRunner reportRunner;
+    protected final DialogWindows dialogWindows;
+    protected final Downloader downloader;
+    protected final MetadataTools metadataTools;
+    protected final Messages messages;
+    protected final Dialogs dialogs;
+    protected final ReportZipUtils reportZipUtils;
+    protected final ReportsUtils reportsUtils;
+    protected final ObjectProvider<FluentUiReportRunner> fluentUiReportRunners;
+    protected final Notifications notifications;
+    protected final ReportsClientProperties reportsClientProperties;
+
+    public UiReportRunnerImpl(ReportRunner reportRunner,
+                              DialogWindows dialogWindows,
+                              Downloader downloader,
+                              MetadataTools metadataTools,
+                              Messages messages,
+                              Dialogs dialogs,
+                              ReportZipUtils reportZipUtils,
+                              ReportsUtils reportsUtils,
+                              ObjectProvider<FluentUiReportRunner> fluentUiReportRunners,
+                              Notifications notifications,
+                              ReportsClientProperties reportsClientProperties) {
+        this.reportRunner = reportRunner;
+        this.dialogWindows = dialogWindows;
+        this.downloader = downloader;
+        this.metadataTools = metadataTools;
+        this.messages = messages;
+        this.dialogs = dialogs;
+        this.reportZipUtils = reportZipUtils;
+        this.reportsUtils = reportsUtils;
+        this.fluentUiReportRunners = fluentUiReportRunners;
+        this.notifications = notifications;
+        this.reportsClientProperties = reportsClientProperties;
+    }
 
     @Override
     public void runAndShow(UiReportRunContext context) {
@@ -91,9 +103,9 @@ public class UiReportRunnerImpl implements UiReportRunner {
             return;
         }
 
-        View<?> originFrameOwner = context.getOriginFrameOwner();
-        if (originFrameOwner != null && context.getInBackground()) {
-            runInBackground(context, originFrameOwner);
+        View<?> owner = context.getOwner();
+        if (owner != null && context.getInBackground()) {
+            runInBackground(context, owner);
         } else {
             ReportOutputDocument reportOutputDocument = reportRunner.run(context.getReportRunContext());
             showResult(reportOutputDocument, context);
@@ -109,12 +121,12 @@ public class UiReportRunnerImpl implements UiReportRunner {
             return;
         }
 
-        View<?> originFrameOwner = context.getOriginFrameOwner();
-        if (originFrameOwner != null && context.getInBackground()) {
+        View<?> owner = context.getOwner();
+        if (owner != null && context.getInBackground()) {
             Report targetReport = getReportForPrinting(context.getReport());
             long timeout = reportsClientProperties.getBackgroundReportProcessingTimeoutMs();
             BackgroundTask<Integer, List<ReportOutputDocument>> task =
-                    new BackgroundTask<>(timeout, TimeUnit.MILLISECONDS, originFrameOwner) {
+                    new BackgroundTask<>(timeout, TimeUnit.MILLISECONDS, owner) {
                         @SuppressWarnings("UnnecessaryLocalVariable")
                         @Override
                         public List<ReportOutputDocument> run(TaskLifeCycle<Integer> taskLifeCycle) {
@@ -139,7 +151,8 @@ public class UiReportRunnerImpl implements UiReportRunner {
         downloader.download(zipArchiveContent, "Reports.zip", DownloadFormat.ZIP);
     }
 
-    protected List<ReportOutputDocument> multiRunSync(UiReportRunContext uiReportRunContext, String multiParamName, Collection<Object> multiParamValues) {
+    protected List<ReportOutputDocument> multiRunSync(UiReportRunContext uiReportRunContext, String multiParamName,
+                                                      Collection<Object> multiParamValues) {
         List<ReportOutputDocument> outputDocuments = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(multiParamValues)) {
             multiParamValues.forEach(paramValue -> {
@@ -192,10 +205,12 @@ public class UiReportRunnerImpl implements UiReportRunner {
                     public boolean handleException(Exception ex) {
                         if (ex instanceof ReportingException) {
                             if (ex instanceof FailedToConnectToOpenOfficeException) {
-                                String caption = messages.getMessage("io.jmix.reportsflowui.exception", "reportException.failedConnectToOffice");
+                                String caption = messages.getMessage("io.jmix.reportsflowui.exception",
+                                        "reportException.failedConnectToOffice");
                                 return showErrorNotification(caption);
                             } else if (ex instanceof NoOpenOfficeFreePortsException) {
-                                String caption = messages.getMessage("io.jmix.reportsflowui.exception", "reportException.noOpenOfficeFreePorts");
+                                String caption = messages.getMessage("io.jmix.reportsflowui.exception",
+                                        "reportException.noOpenOfficeFreePorts");
                                 return showErrorNotification(caption);
                             }
                         }
@@ -244,7 +259,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
 
     protected void openReportParamsDialog(UiReportRunContext context, @Nullable ReportInputParameter inputParameter,
                                           boolean bulkPrint) {
-        DialogWindow<InputParametersDialog> inputParametersDialogWindow = dialogWindows.view(context.getOriginFrameOwner(),
+        DialogWindow<InputParametersDialog> inputParametersDialogWindow = dialogWindows.view(context.getOwner(),
                         InputParametersDialog.class)
                 .build();
 
@@ -273,7 +288,8 @@ public class UiReportRunnerImpl implements UiReportRunner {
         ReportOutputType outputType = context.getOutputType();
 
         if (document.getReportOutputType().getId().equals(JmixReportOutputType.table.getId())) {
-            DialogWindow<ReportTableView> showReportTableViewDialogWindow = dialogWindows.view(context.getOriginFrameOwner(), ReportTableView.class)
+            DialogWindow<ReportTableView> showReportTableViewDialogWindow = dialogWindows.view(context.getOwner(),
+                            ReportTableView.class)
                     .build();
 
             ReportTableView reportTableView = showReportTableViewDialogWindow.getView();
@@ -315,7 +331,8 @@ public class UiReportRunnerImpl implements UiReportRunner {
     protected ReportTemplate getDefaultTemplate(Report report) {
         ReportTemplate defaultTemplate = report.getDefaultTemplate();
         if (defaultTemplate == null)
-            throw new ReportingException(String.format("No default template specified for report [%s]", report.getName()));
+            throw new ReportingException(String.format("No default template specified for report [%s]",
+                    report.getName()));
         return defaultTemplate;
     }
 
@@ -338,7 +355,8 @@ public class UiReportRunnerImpl implements UiReportRunner {
                 .findFirst()
                 .orElse(null);
         if (multiParameter == null) {
-            throw new ReportingException(String.format("Unable to find parameter by alias [%s] for report [%s]", multiParamAlias, report.getName()));
+            throw new ReportingException(String.format("Unable to find parameter by alias [%s] for report [%s]",
+                    multiParamAlias, report.getName()));
         }
         return multiParameter;
     }

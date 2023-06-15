@@ -60,13 +60,13 @@ import java.util.Set;
 public class RunListEntityReportAction<E> extends ListDataComponentAction<RunListEntityReportAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "reports_runListEntityReport";
+    public static final String ID = "report_runListEntityReport";
 
     protected Dialogs dialogs;
     protected Messages messages;
     protected Metadata metadata;
     protected Notifications notifications;
-    protected ReportsActionHelper reportsActionHelper;
+    protected ReportActionSupport reportActionSupport;
 
     protected String reportOutputName;
 
@@ -96,8 +96,8 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
     }
 
     @Autowired
-    public void setPrintReport(ReportsActionHelper reportsActionHelper) {
-        this.reportsActionHelper = reportsActionHelper;
+    public void setPrintReport(ReportActionSupport reportActionSupport) {
+        this.reportActionSupport = reportActionSupport;
     }
 
     @Autowired
@@ -115,31 +115,31 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
     }
 
     protected boolean isDataAvailable() {
-        ContainerDataUnit unit = (ContainerDataUnit) target.getItems();
-        CollectionContainer container = unit.getContainer();
+        ContainerDataUnit<?> unit = (ContainerDataUnit<?>) target.getItems();
+        CollectionContainer<?> container = unit.getContainer();
         return container instanceof HasLoader && unit.getState() == BindingState.ACTIVE && !container.getItems().isEmpty();
     }
 
-    protected void printSelected(Set selected) {
-        ContainerDataUnit unit = (ContainerDataUnit) target.getItems();
-        InstanceContainer container = unit.getContainer();
+    protected void printSelected(Set<?> selected) {
+        ContainerDataUnit<?> unit = (ContainerDataUnit<?>) target.getItems();
+        InstanceContainer<?> container = unit.getContainer();
         MetaClass metaClass = container.getEntityMetaClass();
 
-        reportsActionHelper.openRunReportScreen(findParent(), selected, metaClass);
+        reportActionSupport.openRunReportScreen(findParent(), selected, metaClass);
     }
 
     protected void printAll() {
-        ContainerDataUnit unit = (ContainerDataUnit) target.getItems();
-        CollectionContainer container = unit.getContainer();
+        ContainerDataUnit<?> unit = (ContainerDataUnit<?>) target.getItems();
+        CollectionContainer<?> container = unit.getContainer();
         if (container instanceof CollectionPropertyContainer) {
             // as CollectionPropertyContainer does not have loader it always fetches all records,
             // so print these records as selected
             printSelected(new HashSet(container.getMutableItems()));
             return;
         }
-        CollectionLoader loader = (CollectionLoader) ((HasLoader) unit.getContainer()).getLoader();
+        CollectionLoader<?> loader = (CollectionLoader<?>) ((HasLoader) unit.getContainer()).getLoader();
         MetaClass metaClass = container.getEntityMetaClass();
-        LoadContext loadContext = loader.createLoadContext();
+        LoadContext<?> loadContext = loader.createLoadContext();
 
         ParameterPrototype parameterPrototype = new ParameterPrototype(metaClass.getName());
         parameterPrototype.setMetaClassName(metaClass.getName());
@@ -155,11 +155,13 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
             parameterPrototype.setFetchPlan(loadContext.getFetchPlan());
         }
 
-        reportsActionHelper.openRunReportScreen(findParent(), parameterPrototype, metaClass);
+        reportActionSupport.openRunReportScreen(findParent(), parameterPrototype, metaClass);
     }
 
     @Override
     public void execute() {
+        checkTarget();
+
         DialogAction cancelAction = new DialogAction(DialogAction.Type.CANCEL);
 
         Set<E> selected = target.getSelectedItems();

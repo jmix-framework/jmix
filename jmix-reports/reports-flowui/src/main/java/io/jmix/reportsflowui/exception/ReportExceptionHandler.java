@@ -75,13 +75,6 @@ public class ReportExceptionHandler extends AbstractUiExceptionHandler {
             ExceptionDialog exceptionDialog = new ExceptionDialog(rootCause);
             BeanUtil.autowireContext(applicationContext, exceptionDialog);
             exceptionDialog.open();
-
-            //todo
-//            dialogs.createExceptionDialog()
-//                    .withThrowable(throwable)
-//                    .withCaption(messages.getMessage(getClass(), "reportException.message"))
-//                    .withMessage(message)
-//                    .show();
         }
     }
 }

@@ -20,14 +20,17 @@ package io.jmix.reportsflowui.runner;
  * Options that allow to show a dialog to input the report parameters or not.
  */
 public enum ParametersDialogShowMode {
+
     /**
      * Show dialog to input the report parameters
      */
     YES,
+
     /**
      * Not to show dialog to input the report parameters
      */
     NO,
+
     /**
      * Show dialog to input the report parameters in the following cases:
      * <ul>

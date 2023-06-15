@@ -122,7 +122,8 @@ public class ReportRunView extends StandardListView<Report> {
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
     private List<Report> reportsDlLoadDelegate(LoadContext loadContext) {
-        return reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(), metaClassParameter);
+        return reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(),
+                metaClassParameter);
     }
 
     @Subscribe
@@ -133,7 +134,7 @@ public class ReportRunView extends StandardListView<Report> {
     }
 
     @Subscribe("reportDataGrid.runReport")
-    protected void onreportDataGridRunReport(ActionPerformedEvent event) {
+    protected void onReportDataGridRunReport(ActionPerformedEvent event) {
         Report report = reportDataGrid.getSingleSelectedItem();
         if (report != null) {
             report = dataManager.load(Id.of(report))

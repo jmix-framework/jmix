@@ -16,8 +16,6 @@
 
 package io.jmix.reportsflowui.action;
 
-import io.jmix.reportsflowui.view.history.ReportExecutionDialog;
-import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
@@ -32,6 +30,8 @@ import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.Report;
+import io.jmix.reportsflowui.view.history.ReportExecutionDialog;
+import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,7 +48,7 @@ import java.util.Collection;
 @ActionType(ShowExecutionReportHistoryAction.ID)
 public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction<ShowExecutionReportHistoryAction<E>, E> {
 
-    public static final String ID = "reports_showExecutionReportHistory";
+    public static final String ID = "report_showExecutionReportHistory";
 
     protected DialogWindows dialogWindows;
 
@@ -112,16 +112,14 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
 
     @Override
     public void execute() {
-        if (target != null) {
-            MetaClass metaClass = null;
-            DataUnit items = target.getItems();
-            if (items instanceof EntityDataUnit) {
-                metaClass = ((EntityDataUnit) items).getEntityMetaClass();
-            }
+        checkTarget();
 
-            openLookup(metaClass);
-        } else {
-            throw new IllegalStateException("No target screen or component found for 'ExecutionHistoryAction'");
+        MetaClass metaClass = null;
+        DataUnit items = target.getItems();
+        if (items instanceof EntityDataUnit) {
+            metaClass = ((EntityDataUnit) items).getEntityMetaClass();
         }
+
+        openLookup(metaClass);
     }
 }

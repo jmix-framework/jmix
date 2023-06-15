@@ -36,7 +36,6 @@
     <fetchPlan entity="report_ReportExecution"
                name="reportExecution.view"
                extends="_local">
-        <!--        <property name="fileUri" fetchPlan="_instance_name"/>-->
     </fetchPlan>
 
     <fetchPlan entity="report_Report" name="report.edit" extends="_local">

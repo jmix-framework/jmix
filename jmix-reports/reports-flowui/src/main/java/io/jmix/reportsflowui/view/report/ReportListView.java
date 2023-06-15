@@ -16,14 +16,6 @@
 
 package io.jmix.reportsflowui.view.report;
 
-import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.runner.FluentUiReportRunner;
-import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.history.ReportExecutionListView;
-import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
-import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import io.jmix.reportsflowui.view.report.ReportDetailView;
-import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
@@ -50,6 +42,13 @@ import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.util.ReportsUtils;
+import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.runner.FluentUiReportRunner;
+import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.view.history.ReportExecutionListView;
+import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
+import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
+import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -166,16 +165,18 @@ public class ReportListView extends StandardListView<Report> {
     @Subscribe("reportsDataGrid.export")
     public void onReportsDataGridExport(ActionPerformedEvent event) {
         Set<Report> reportsTableSelected = reportsDataGrid.getSelectedItems();
-        if (!reportsTableSelected.isEmpty()) {
-            ByteArrayDownloadDataProvider provider = new ByteArrayDownloadDataProvider(
-                    reportImportExport.exportReports(reportsTableSelected),
-                    flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(),
-                    coreProperties.getTempDir());
-            if (reportsTableSelected.size() > 1) {
-                downloader.download(provider, "Reports", DownloadFormat.ZIP);
-            } else if (reportsTableSelected.size() == 1) {
-                downloader.download(provider, reportsTableSelected.iterator().next().getName(), DownloadFormat.ZIP);
-            }
+        if (reportsTableSelected.isEmpty()) {
+            return;
+        }
+
+        ByteArrayDownloadDataProvider provider = new ByteArrayDownloadDataProvider(
+                reportImportExport.exportReports(reportsTableSelected),
+                flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                coreProperties.getTempDir());
+        if (reportsTableSelected.size() > 1) {
+            downloader.download(provider, "Reports", DownloadFormat.ZIP);
+        } else if (reportsTableSelected.size() == 1) {
+            downloader.download(provider, reportsTableSelected.iterator().next().getName(), DownloadFormat.ZIP);
         }
     }
 
@@ -271,7 +272,6 @@ public class ReportListView extends StandardListView<Report> {
         LoadContext<Report> loadContext = new LoadContext<>(metaClass);
         loadContext.setId(report.getId());
         loadContext.setFetchPlan(fetchPlan);
-        report = dataManager.load(loadContext);
-        return report;
+        return dataManager.load(loadContext);
     }
 }

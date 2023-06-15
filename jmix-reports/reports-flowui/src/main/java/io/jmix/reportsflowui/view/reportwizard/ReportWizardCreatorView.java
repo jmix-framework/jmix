@@ -218,7 +218,7 @@ public class ReportWizardCreatorView extends StandardView {
         } else if (div.equals(saveDiv)) {
             if (StringUtils.isEmpty(outputFileName.getValue())) {
                 ReportData reportData = reportDataDc.getItem();
-                outputFileName.setValue(generateOutputFileName(reportData.getTemplateFileType().toString().toLowerCase()));
+                outputFileName.setTypedValue(generateOutputFileName(reportData.getTemplateFileType().toString().toLowerCase()));
             }
         } else if (div.equals(queryDiv)) {
             ReportData item = reportDataDc.getItem();
@@ -775,10 +775,10 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
-    @Subscribe("outputFileName")
-    public void onOutputFileNameComponentValueChange(AbstractField.ComponentValueChangeEvent<TextField, String> event) {
-        reportDataDc.getItem().setOutputNamePattern(event.getValue());
-    }
+//    @Subscribe("outputFileName")
+//    public void onOutputFileNameComponentValueChange(AbstractField.ComponentValueChangeEvent<TextField, String> event) {
+//        reportDataDc.getItem().setOutputNamePattern(event.getValue());
+//    }
 
     protected void updateCorrectReportOutputType() {
         ReportOutputType outputFileFormatPrevValue = outputFileFormat.getValue();

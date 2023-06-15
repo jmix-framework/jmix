@@ -24,6 +24,7 @@ import io.jmix.reports.runner.ReportRunContext;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+
 /**
  * Class stores the information required for report running from UI. The instance of the class may be created using the
  * constructor or using the {@link FluentUiReportRunner} bean.
@@ -43,7 +44,7 @@ import java.util.Map;
  *  UiReportRunContext context = new UiReportRunContext(report)
  *                 .addParam("customers", customersList)
  *                 .setOutputNamePattern("Customers")
- *                 .setOriginFrameOwner(screen)
+ *                 .setOwner(view)
  *                 .setInBackground(true)
  *                 .setParametersDialogShowMode(ParametersDialogShowMode.NO);
  *
@@ -63,9 +64,10 @@ import java.util.Map;
  * @see ParametersDialogShowMode
  */
 public class UiReportRunContext {
+
     private ReportRunContext reportRunContext = new ReportRunContext();
 
-    private View<?> originFrameOwner;
+    private View<?> owner;
     private boolean inBackground;
     private ParametersDialogShowMode parametersDialogShowMode;
 
@@ -85,12 +87,12 @@ public class UiReportRunContext {
     }
 
     @Nullable
-    public View<?> getOriginFrameOwner() {
-        return originFrameOwner;
+    public View<?> getOwner() {
+        return owner;
     }
 
-    public UiReportRunContext setOriginFrameOwner(View<?> originFrameOwner) {
-        this.originFrameOwner = originFrameOwner;
+    public UiReportRunContext setOwner(View<?> owner) {
+        this.owner = owner;
         return this;
     }
 

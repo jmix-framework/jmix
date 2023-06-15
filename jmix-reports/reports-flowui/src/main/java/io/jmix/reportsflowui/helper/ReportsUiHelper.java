@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
-@Component("reportsflowui_ReportsUiHelper")
+@Component("report_ReportsUiHelper")
 public class ReportsUiHelper {
 
     public static final String FIELD_ICON_CLASS_NAME = "reports-field-icon";
@@ -52,13 +52,12 @@ public class ReportsUiHelper {
 
     public static class Builder {
 
+        private final DialogWindow<ScriptEditorView> scriptEditorViewDialogWindow;
         private String title;
         private String value;
         private CodeEditorMode mode;
         private Consumer<String> closeConsumer;
-        private Procedure helpProcedure;
-
-        private final DialogWindow<ScriptEditorView> scriptEditorViewDialogWindow;
+        private Runnable helpRunnable;
 
         public Builder(DialogWindow<ScriptEditorView> scriptEditorViewDialogWindow) {
             this.scriptEditorViewDialogWindow = scriptEditorViewDialogWindow;
@@ -84,8 +83,8 @@ public class ReportsUiHelper {
             return this;
         }
 
-        public Builder withHelpOnClick(Procedure procedure) {
-            this.helpProcedure =  procedure;
+        public Builder withHelpOnClick(Runnable runnable) {
+            this.helpRunnable = runnable;
             return this;
         }
 
@@ -99,8 +98,8 @@ public class ReportsUiHelper {
                 scriptEditorView.setTitle(title);
             }
 
-            if (helpProcedure != null) {
-                scriptEditorView.setHelpBtnClickListener(event -> helpProcedure.invoke());
+            if (helpRunnable != null) {
+                scriptEditorView.setHelpBtnClickListener(event -> helpRunnable.run());
             }
 
             scriptEditorViewDialogWindow.open();

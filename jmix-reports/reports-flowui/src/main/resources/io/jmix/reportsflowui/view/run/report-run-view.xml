@@ -44,7 +44,7 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
 
-    <layout expand="reportDataGrid">
+    <layout>
         <formLayout id="filterPanel">
             <responsiveSteps>
                 <responsiveStep minWidth="0" columns="1"/>

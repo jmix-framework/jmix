@@ -22,7 +22,6 @@ import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.runner.FluentReportRunner;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -50,18 +49,17 @@ import java.util.Map;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FluentUiReportRunner {
 
-    @Autowired
-    protected ObjectProvider<FluentReportRunner> fluentReportRunners;
+    protected final ObjectProvider<FluentReportRunner> fluentReportRunners;
+    protected final UiReportRunner uiReportRunner;
 
-    private FluentReportRunner fluentReportRunner;
-    private View originFrameOwner;
-    private boolean inBackground;
-    private ParametersDialogShowMode parametersDialogShowMode;
+    protected FluentReportRunner fluentReportRunner;
+    protected View<?> owner;
+    protected boolean inBackground;
+    protected ParametersDialogShowMode parametersDialogShowMode;
 
-    private UiReportRunner uiReportRunner;
-
-    @Autowired
-    public void setUiReportRunner(UiReportRunner uiReportRunner) {
+    public FluentUiReportRunner(ObjectProvider<FluentReportRunner> fluentReportRunners,
+                                UiReportRunner uiReportRunner) {
+        this.fluentReportRunners = fluentReportRunners;
         this.uiReportRunner = uiReportRunner;
     }
 
@@ -145,12 +143,12 @@ public class FluentUiReportRunner {
     /**
      * Sets a property to run a report in the background.
      *
-     * @param originFrameOwner screen or screen fragment from which the report runs
+     * @param owner screen or screen fragment from which the report runs
      * @return current instance of fluent runner
      */
-    public FluentUiReportRunner inBackground(View originFrameOwner) {
+    public FluentUiReportRunner inBackground(View<?> owner) {
         this.inBackground = true;
-        this.originFrameOwner = originFrameOwner;
+        this.owner = owner;
         return this;
     }
 
@@ -174,7 +172,7 @@ public class FluentUiReportRunner {
     public UiReportRunContext buildContext() {
         return new UiReportRunContext()
                 .setReportRunContext(this.fluentReportRunner.buildContext())
-                .setOriginFrameOwner(this.originFrameOwner)
+                .setOwner(this.owner)
                 .setInBackground(this.inBackground)
                 .setParametersDialogShowMode(this.parametersDialogShowMode);
     }
@@ -192,10 +190,10 @@ public class FluentUiReportRunner {
      * If the report has other parameters besides the specified one, values for these parameters are copied for each report run.
      * As result, the ZIP archive with executed reports is downloaded.
      *
-     * @param multiParamAlias alias of the parameter for which a value from the collection is used for report execution
+     * @param multiParamAlias  alias of the parameter for which a value from the collection is used for report execution
      * @param multiParamValues collection of values
      */
-    public void runMultipleReports(String multiParamAlias, Collection multiParamValues) {
+    public void runMultipleReports(String multiParamAlias, Collection<?> multiParamValues) {
         uiReportRunner.runMultipleReports(buildContext(), multiParamAlias, multiParamValues);
     }
 }

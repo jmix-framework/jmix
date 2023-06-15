@@ -35,7 +35,6 @@
 
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <!-- todo rp screenSettings -->
         <urlQueryParameters>
             <pagination component="pagination"/>
         </urlQueryParameters>

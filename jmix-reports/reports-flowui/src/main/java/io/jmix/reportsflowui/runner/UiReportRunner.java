@@ -24,6 +24,7 @@ import java.util.Collection;
  * Interface is used for running reports from UI
  */
 public interface UiReportRunner {
+
     /**
      * Runs the report based on the information from the {@link UiReportRunContext} and shows the result. The run context may be created
      * manually using the constructor or using the {@link FluentUiReportRunner}.
@@ -33,8 +34,10 @@ public interface UiReportRunner {
     void runAndShow(UiReportRunContext context);
 
     /**
-     * Runs a report for each object from the specified collection. Objects in the collection should have the same type as an input parameter with specified alias.
-     * If the report has other parameters besides the specified one, values for these parameters are copied for each report run.
+     * Runs a report for each object from the specified collection. Objects in the collection should have the same type
+     * as an input parameter with specified alias.
+     * If the report has other parameters besides the specified one, values for these parameters are copied
+     * for each report run.
      * As result, the ZIP archive with executed reports is downloaded.
      * <br>
      * For example, a report has an input parameter with alias "name" and the String type:
@@ -43,13 +46,14 @@ public interface UiReportRunner {
      *                              .setOutputType(ReportOutputType.PDF);
      *  uiReportRunner.runMultipleReports(context, "name", namesList);
      * </pre>
-     *  The report will be executed for each string from the "namesList" collection.
+     * The report will be executed for each string from the "namesList" collection.
      *
      * @param context         the object that contains all information required to run the report from UI
      * @param multiParamAlias alias of the parameter for which a value from the collection is used for report execution
      * @param multiParamValue collection of values
      */
-    void runMultipleReports(UiReportRunContext context, String multiParamAlias, Collection multiParamValue);
+    void runMultipleReports(UiReportRunContext context, String multiParamAlias,
+                            Collection<?> multiParamValue);
 
     /**
      * Creates an instance of {@link FluentUiReportRunner} for a report with specified code.

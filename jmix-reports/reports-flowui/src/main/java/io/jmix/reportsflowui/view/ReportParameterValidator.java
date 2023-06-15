@@ -26,7 +26,6 @@ import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reports.exception.ReportingException;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.runtime.MethodClosure;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
@@ -38,16 +37,23 @@ import java.util.Map;
 @Component("report_ReportParameterValidator")
 public class ReportParameterValidator {
 
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected DataManager dataManager;
-    @Autowired
-    protected ScriptEvaluator scripting;
-    @Autowired
-    protected CurrentAuthentication currentAuthentication;
-    @Autowired
-    protected ApplicationContext applicationContext;
+    protected final Metadata metadata;
+    protected final DataManager dataManager;
+    protected final ScriptEvaluator scripting;
+    protected final CurrentAuthentication currentAuthentication;
+    protected final ApplicationContext applicationContext;
+
+    public ReportParameterValidator(Metadata metadata,
+                                    DataManager dataManager,
+                                    ScriptEvaluator scripting,
+                                    CurrentAuthentication currentAuthentication,
+                                    ApplicationContext applicationContext) {
+        this.metadata = metadata;
+        this.dataManager = dataManager;
+        this.scripting = scripting;
+        this.currentAuthentication = currentAuthentication;
+        this.applicationContext = applicationContext;
+    }
 
     /**
      * Checking validation for an input parameter field before running the report.
@@ -80,7 +86,7 @@ public class ReportParameterValidator {
             } catch (ReportParametersValidationException e) {
                 throw e;
             } catch (Exception e) {
-                String message = "Error applying field validation Groovy script. \n" + e.toString();
+                String message = "Error applying field validation Groovy script. \n" + e;
                 throw new ReportingException(message);
             }
         }

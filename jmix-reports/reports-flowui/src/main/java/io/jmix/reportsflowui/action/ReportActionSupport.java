@@ -16,12 +16,6 @@
 
 package io.jmix.reportsflowui.action;
 
-import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.runner.FluentUiReportRunner;
-import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
-import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import io.jmix.reportsflowui.view.run.ReportRunView;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -38,8 +32,13 @@ import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportingException;
+import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.runner.FluentUiReportRunner;
+import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.view.run.InputParametersDialog;
+import io.jmix.reportsflowui.view.run.ReportRunView;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -51,34 +50,47 @@ import java.util.Map;
 import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-@Component("reportsflowui_ReportsActionHelper")
-public class ReportsActionHelper {
+@Component("report_ReportsActionSupport")
+public class ReportActionSupport {
 
-    @Autowired
-    protected ReportSecurityManager reportSecurityManager;
-    @Autowired
-    protected DataManager dataManager;
-    @Autowired
-    protected Messages messages;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected DialogWindows dialogWindows;
-    @Autowired
-    protected FetchPlanRepository fetchPlanRepository;
-    @Autowired
-    protected CurrentUserSubstitution currentUserSubstitution;
-    @Autowired
-    protected UiReportRunner uiReportRunner;
-    @Autowired
-    protected Views views;
-    @Autowired
-    protected PrototypesLoader prototypesLoader;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected ReportsClientProperties reportsClientProperties;
+    protected final ReportSecurityManager reportSecurityManager;
+    protected final DataManager dataManager;
+    protected final Messages messages;
+    protected final Notifications notifications;
+    protected final DialogWindows dialogWindows;
+    protected final FetchPlanRepository fetchPlanRepository;
+    protected final CurrentUserSubstitution currentUserSubstitution;
+    protected final UiReportRunner uiReportRunner;
+    protected final Views views;
+    protected final PrototypesLoader prototypesLoader;
+    protected final Metadata metadata;
+    protected final ReportsClientProperties reportsClientProperties;
 
+    public ReportActionSupport(ReportSecurityManager reportSecurityManager,
+                               DataManager dataManager,
+                               Messages messages,
+                               Notifications notifications,
+                               DialogWindows dialogWindows,
+                               FetchPlanRepository fetchPlanRepository,
+                               CurrentUserSubstitution currentUserSubstitution,
+                               UiReportRunner uiReportRunner,
+                               Views views,
+                               PrototypesLoader prototypesLoader,
+                               Metadata metadata,
+                               ReportsClientProperties reportsClientProperties) {
+        this.reportSecurityManager = reportSecurityManager;
+        this.dataManager = dataManager;
+        this.messages = messages;
+        this.notifications = notifications;
+        this.dialogWindows = dialogWindows;
+        this.fetchPlanRepository = fetchPlanRepository;
+        this.currentUserSubstitution = currentUserSubstitution;
+        this.uiReportRunner = uiReportRunner;
+        this.views = views;
+        this.prototypesLoader = prototypesLoader;
+        this.metadata = metadata;
+        this.reportsClientProperties = reportsClientProperties;
+    }
 
     public void openRunReportScreen(View<?> view, Object selectedValue, MetaClass inputValueMetaClass) {
         openRunReportScreen(view, selectedValue, inputValueMetaClass, null);
@@ -117,7 +129,8 @@ public class ReportsActionHelper {
         }
     }
 
-    public void runReport(Report report, View<?> view, Object selectedValue, MetaClass inputValueMetaClass, @Nullable String outputFileName) {
+    public void runReport(Report report, View<?> view, Object selectedValue, MetaClass inputValueMetaClass,
+                          @Nullable String outputFileName) {
         Report reloadedReport = reloadReport(report);
         ReportInputParameter parameter = getParameterAlias(reloadedReport, inputValueMetaClass);
         if (selectedValue instanceof ParameterPrototype) {
@@ -126,7 +139,8 @@ public class ReportsActionHelper {
         runAndShow(reloadedReport, view, parameter, selectedValue, outputFileName);
     }
 
-    public void runAndShow(Report report, View<?> view, ReportInputParameter reportInputParameter, Object parameterValue, @Nullable String outputFileName) {
+    public void runAndShow(Report report, View<?> view, ReportInputParameter reportInputParameter,
+                           Object parameterValue, @Nullable String outputFileName) {
         List<ReportInputParameter> params = report.getInputParameters();
 
         boolean reportHasMoreThanOneParameter = params != null && params.size() > 1;
@@ -135,12 +149,15 @@ public class ReportsActionHelper {
         Object resultingParamValue = convertParameterIfNecessary(reportInputParameter, parameterValue,
                 reportHasMoreThanOneParameter || inputParametersRequiredByTemplates);
 
-        boolean reportTypeIsSingleEntity = ParameterType.ENTITY == reportInputParameter.getType() && resultingParamValue instanceof Collection;
-        boolean moreThanOneEntitySelected = resultingParamValue instanceof Collection && ((Collection) resultingParamValue).size() > 1;
+        boolean reportTypeIsSingleEntity = ParameterType.ENTITY == reportInputParameter.getType()
+                && resultingParamValue instanceof Collection;
+        boolean moreThanOneEntitySelected = resultingParamValue instanceof Collection
+                && ((Collection) resultingParamValue).size() > 1;
 
         if (reportHasMoreThanOneParameter || inputParametersRequiredByTemplates) {
             boolean bulkPrint = reportTypeIsSingleEntity && moreThanOneEntitySelected;
-            openReportParamsDialog(report, view, ParamsMap.of(reportInputParameter.getAlias(), resultingParamValue), outputFileName, reportInputParameter, bulkPrint);
+            openReportParamsDialog(report, view, ParamsMap.of(reportInputParameter.getAlias(), resultingParamValue),
+                    outputFileName, reportInputParameter, bulkPrint);
         } else {
             FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
                     .withParametersDialogShowMode(ParametersDialogShowMode.NO)
@@ -166,10 +183,11 @@ public class ReportsActionHelper {
     public void openReportParamsDialog(Report report, View view, Map<String, Object> params,
                                        @Nullable String outputNamePattern, ReportInputParameter inputParameter,
                                        boolean bulkPrint) {
-        DialogWindow<InputParametersDialog> inputParametersDialogDialogWindows = dialogWindows.view(view, InputParametersDialog.class)
+        DialogWindow<InputParametersDialog> dialogWindow = dialogWindows.view(view,
+                        InputParametersDialog.class)
                 .build();
 
-        InputParametersDialog inputParametersDialog = inputParametersDialogDialogWindows.getView();
+        InputParametersDialog inputParametersDialog = dialogWindow.getView();
         inputParametersDialog.setReport(report);
         inputParametersDialog.setInputParameter(inputParameter);
         inputParametersDialog.setParameters(params);
@@ -177,7 +195,7 @@ public class ReportsActionHelper {
         inputParametersDialog.setBulkPrint(bulkPrint);
         inputParametersDialog.setInBackground(reportsClientProperties.getUseBackgroundReportProcessing());
 
-        inputParametersDialogDialogWindows.open();
+        dialogWindow.open();
     }
 
     @Nullable
@@ -215,7 +233,8 @@ public class ReportsActionHelper {
         }
 
         if (convertToSingleItem && paramValueWithCollection.size() == 1) {
-            //if the case of several params we can not do bulk print, because the params should be filled, so we get only first object from the list
+            //if the case of several params we can not do bulk print, because the params should be filled,
+            //so we get only first object from the list
             return paramValueWithCollection.iterator().next();
         }
 

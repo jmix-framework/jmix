@@ -23,7 +23,7 @@ public interface StudioReportsActions {
 
 
         @StudioAction(
-                type = "reports_runReport",
+                type = "report_runReport",
                 description = "A standard action that displays the list of all available reports.",
                 classFqn = "io.jmix.reportsflowui.action.RunReportAction",
                 icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -52,7 +52,7 @@ public interface StudioReportsActions {
 
 
     @StudioAction(
-            type = "reports_runSingleEntityReport",
+            type = "report_runSingleEntityReport",
             description = "A standard action for printing reports for entity instance.",
             classFqn = "io.jmix.reportsflowui.action.RunSingleEntityReportAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -81,7 +81,7 @@ public interface StudioReportsActions {
 
 
     @StudioAction(
-            type = "reports_runListEntityReport",
+            type = "report_runListEntityReport",
             description = "A standard action for printing reports for entity instances associated with a list component (Table, DataGrid, etc.).",
             classFqn = "io.jmix.reportsflowui.action.RunListEntityReportAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -109,7 +109,7 @@ public interface StudioReportsActions {
     void runListEntityReportAction();
 
     @StudioAction(
-            type = "reports_showExecutionReportHistory",
+            type = "report_showExecutionReportHistory",
             description = "A standard action for displaying the report execution history.",
             classFqn = "io.jmix.reportsflowui.action.ShowExecutionReportHistoryAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",

@@ -16,7 +16,6 @@
 
 package io.jmix.reportsflowui.action;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -24,7 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.view.DetailCloseAction;
-import io.jmix.flowui.action.view.OperationResultViewAction;
+import io.jmix.flowui.action.view.ViewAction;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +31,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 
 @ActionType(RunSingleEntityReportAction.ID)
-public class RunSingleEntityReportAction<E> extends OperationResultViewAction<DetailCloseAction<E>, StandardDetailView<E>> {
+public class RunSingleEntityReportAction<E> extends ViewAction<DetailCloseAction<E>, StandardDetailView<E>> {
 
-    public static final String ID = "reports_runSingleEntityReport";
+    public static final String ID = "report_runSingleEntityReport";
 
     protected String reportOutputName;
     protected Metadata metadata;
     protected Messages messages;
     protected Notifications notifications;
-    protected ReportsActionHelper reportsActionHelper;
+    protected ReportActionSupport reportActionSupport;
 
     public RunSingleEntityReportAction() {
         this(ID);
@@ -69,8 +68,8 @@ public class RunSingleEntityReportAction<E> extends OperationResultViewAction<De
     }
 
     @Autowired
-    public void setPrintReport(ReportsActionHelper reportsActionHelper) {
-        this.reportsActionHelper = reportsActionHelper;
+    public void setPrintReport(ReportActionSupport reportActionSupport) {
+        this.reportActionSupport = reportActionSupport;
     }
 
     public void setReportOutputName(@Nullable String reportOutputName) {
@@ -78,14 +77,11 @@ public class RunSingleEntityReportAction<E> extends OperationResultViewAction<De
     }
 
     @Override
-    public void actionPerform(Component component) {
+    public void execute() {
+        checkTarget();
+
         Object entity = target.getEditedEntity();
-        if (entity != null) {
-            MetaClass metaClass = metadata.getClass(entity);
-            reportsActionHelper.openRunReportScreen(target, entity, metaClass, reportOutputName);
-        } else {
-            notifications.create(messages.getMessage(getClass(), "notifications.noSelectedEntity"))
-                    .show();
-        }
+        MetaClass metaClass = metadata.getClass(entity);
+        reportActionSupport.openRunReportScreen(target, entity, metaClass, reportOutputName);
     }
 }

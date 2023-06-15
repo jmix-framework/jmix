@@ -55,7 +55,7 @@ import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredBy
 @ActionType(RunReportAction.ID)
 public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<E>, E> {
 
-    public static final String ID = "reports_runReport";
+    public static final String ID = "report_runReport";
 
     public static final String DEFAULT_SINGLE_ENTITY_ALIAS = "entity";
     public static final String DEFAULT_LIST_OF_ENTITIES_ALIAS = "entities";
@@ -105,11 +105,9 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
 
     @Override
     public void execute() {
-        if (target != null) {
-            openLookup(findParent());
-        } else {
-            throw new IllegalStateException("No target screen or component found for 'RunReportAction'");
-        }
+        checkTarget();
+
+        openLookup(findParent());
     }
 
     protected void openLookup(View<?> view) {
@@ -138,7 +136,7 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
             } else {
                 uiReportRunner.runAndShow(new UiReportRunContext(report)
                         .setInBackground(reportsClientProperties.getUseBackgroundReportProcessing())
-                        .setOriginFrameOwner(view)
+                        .setOwner(view)
                         .setParametersDialogShowMode(ParametersDialogShowMode.NO)
                         .setParams(Collections.emptyMap()));
             }

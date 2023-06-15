@@ -16,11 +16,10 @@
 
 package io.jmix.reportsflowui.view.validators;
 
-import io.jmix.core.Messages;
+import com.google.common.base.Strings;
 import io.jmix.flowui.component.validation.AbstractValidator;
 import io.jmix.flowui.exception.ValidationException;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -29,23 +28,20 @@ import org.springframework.stereotype.Component;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReportParamAliasValidator extends AbstractValidator<String> {
 
-    @Autowired
-    protected void setMessages(Messages messages) {
-        this.messages = messages;
-    }
-
     @Override
     public void accept(String value) {
-        if (StringUtils.isNotEmpty(value)) {
-            if (!value.matches("[\\w]*")) {
-                String incorrectParamName = messages.getMessage(ReportParamAliasValidator.class, "incorrectParamAlias");
-                throw new ValidationException(incorrectParamName);
-            }
+        if (Strings.isNullOrEmpty(value)) {
+            return;
+        }
 
-            if (value.equals("_")) {
-                String incorrectParamName = messages.getMessage(ReportParamAliasValidator.class, "notOnlyUnderscore");
-                throw new ValidationException(incorrectParamName);
-            }
+        if (!value.matches("[\\w]*")) {
+            String incorrectParamName = messages.getMessage(ReportParamAliasValidator.class, "incorrectParamAlias");
+            throw new ValidationException(incorrectParamName);
+        }
+
+        if (value.equals("_")) {
+            String incorrectParamName = messages.getMessage(ReportParamAliasValidator.class, "notOnlyUnderscore");
+            throw new ValidationException(incorrectParamName);
         }
     }
 }

@@ -46,12 +46,12 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.reportsflowui", value = "classpath:/io/jmix/reportsflowui/module.properties")
 public class ReportsFlowuiConfiguration {
 
-    @Bean("reports_DataSetFactory")
+    @Bean("report_DataSetFactory")
     public DataSetFactory dataSetFactory() {
         return new DataSetFactory();
     }
 
-    @Bean("reports_CrossTabOrientationDataGridDecorator")
+    @Bean("report_CrossTabOrientationDataGridDecorator")
     public CrossTabDataGridDecorator crossTabDataGridDecorator(DataSetFactory dataSetFactory, UiComponents uiComponents,
                                                                SecureOperations secureOperations,
                                                                PolicyStore policyStore, Metadata metadata,
@@ -60,7 +60,7 @@ public class ReportsFlowuiConfiguration {
                 dataComponents, messages);
     }
 
-    @Bean("reports_ReportsControllersConfiguration")
+    @Bean("report_ReportsControllersConfiguration")
     public ViewControllersConfiguration views(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ViewControllersConfiguration viewControllers
@@ -69,7 +69,7 @@ public class ReportsFlowuiConfiguration {
         return viewControllers;
     }
 
-    @Bean("reports_ReportActions")
+    @Bean("report_ReportActions")
     public ActionsConfiguration actions(ApplicationContext applicationContext,
                                         AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);

@@ -31,6 +31,7 @@ import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.util.DataSetFactory;
+import io.jmix.reportsflowui.view.report.ReportDetailView;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import jakarta.annotation.Nullable;
@@ -81,8 +82,7 @@ public class CrossTabDataGridDecorator {
             field.setValueSource(new ContainerValueSource<>(instanceContainer, "name"));
             field.setReadOnly(isVerticalOrHorizontalCrossField(bandDefinitionDc, entity) || !isUpdatePermitted());
             return field;
-        }).setHeader(messages.getMessage("io.jmix.reportsflowui.view.report",
-                "bandsTab.dataSetsDataGrid.nameColumn.header"));
+        }).setHeader(messages.getMessage(ReportDetailView.class, "bandsTab.dataSetsDataGrid.nameColumn.header"));
 
         bandDefinitionDc.addItemPropertyChangeListener(e ->
                 onBandDefinitionDcItemPropertyChange(e, dataSetsDataGrid, dataSetsDc, bandDefinitionDc));

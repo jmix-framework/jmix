@@ -38,7 +38,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
 
-    <layout expand="reportsDataGrid">
+    <layout>
         <formLayout id="gridFilter">
             <responsiveSteps>
                 <responsiveStep minWidth="0" columns="1"/>

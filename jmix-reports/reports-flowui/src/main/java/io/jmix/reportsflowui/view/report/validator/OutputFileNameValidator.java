@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 
-@Component("reportflowui_OutputFileNameValidator")
+@Component("report_OutputFileNameValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class OutputFileNameValidator extends AbstractValidator<String> {
 

@@ -16,14 +16,13 @@
 
 package io.jmix.reportsflowui.view.validators;
 
-import io.jmix.core.DevelopmentException;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.validation.AbstractValidator;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reports.exception.ValidationException;
 import io.jmix.reportsflowui.view.ReportParameterValidator;
 import jakarta.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -32,17 +31,22 @@ import org.springframework.stereotype.Component;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReportParamFieldValidator extends AbstractValidator<Object> {
 
-    @Autowired
+    protected final ReportInputParameter inputParameter;
     protected ReportParameterValidator reportParameterValidator;
 
-    protected final ReportInputParameter inputParameter;
-
     public ReportParamFieldValidator(ReportInputParameter inputParameter) {
-        if (inputParameter == null) {
-            throw new DevelopmentException("ReportInputParameter is not defined");
-        }
+        Preconditions.checkNotNullArgument(inputParameter, "ReportInputParameter is not defined");
 
         this.inputParameter = inputParameter;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        autowireDependencies();
+    }
+
+    private void autowireDependencies() {
+        this.reportParameterValidator = applicationContext.getBean(ReportParameterValidator.class);
     }
 
     @Override

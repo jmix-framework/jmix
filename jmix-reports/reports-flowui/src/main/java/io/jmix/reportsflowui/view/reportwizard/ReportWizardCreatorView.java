@@ -187,7 +187,6 @@ public class ReportWizardCreatorView extends StandardView {
         initEntityLookupField();
         initRegionDataGrid();
         initReportParameterDataGrid();
-        updateButtons();
     }
 
     protected void initItem() {
@@ -361,8 +360,8 @@ public class ReportWizardCreatorView extends StandardView {
     public void onSaveBtnClick(ClickEvent<Button> event) {
         if (reportDataDc.getItem().getReportRegions().isEmpty()) {
             dialogs.createOptionDialog()
-                    .withHeader(messageBundle.getMessage("dialogs.Confirmation"))
-                    .withText(messageBundle.getMessage("confirmSaveWithoutRegions"))
+                    .withHeader(messageBundle.getMessage("dialogConfirmation.header"))
+                    .withText(messageBundle.getMessage("saveReport.confirmSaveWithoutRegions.text"))
                     .withActions(
                             new DialogAction(DialogAction.Type.OK).withHandler(handle ->
                                     convertToReportAndForceCloseWizard()
@@ -422,8 +421,8 @@ public class ReportWizardCreatorView extends StandardView {
         if (!event.closedWith(StandardOutcome.SAVE) && checkUnsavedChanges
                 && CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
             dialogs.createOptionDialog()
-                    .withHeader(messageBundle.getMessage("dialogs.Confirmation"))
-                    .withText(messageBundle.getMessage("dialogs.interruptConfirm"))
+                    .withHeader(messageBundle.getMessage("dialogConfirmation.header"))
+                    .withText(messageBundle.getMessage("beforeClose.interruptConfirm.text"))
                     .withActions(
                             new DialogAction(DialogAction.Type.OK).withHandler(handle ->
                                     close(StandardOutcome.DISCARD)
@@ -820,6 +819,7 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         initRegionsDataGrid();
+        updateButtons();
     }
 
     protected void initRegionsDataGrid() {
@@ -872,8 +872,8 @@ public class ReportWizardCreatorView extends StandardView {
     public void onReportParameterDataGridGenerate(ActionPerformedEvent event) {
         if (!queryParametersDc.getItems().isEmpty()) {
             dialogs.createOptionDialog()
-                    .withHeader(messageBundle.getMessage("dialogs.Confirmation"))
-                    .withText(messageBundle.getMessage("clearQueryParameterConfirm"))
+                    .withHeader(messageBundle.getMessage("dialogConfirmation.header"))
+                    .withText(messageBundle.getMessage("queryParameterDialog.clearQueryParameterConfirm.text"))
                     .withActions(
                             new DialogAction(DialogAction.Type.OK).withHandler(e -> generateQueryParameters()),
                             new DialogAction(DialogAction.Type.CANCEL))

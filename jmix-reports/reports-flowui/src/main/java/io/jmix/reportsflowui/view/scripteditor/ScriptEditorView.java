@@ -21,7 +21,7 @@ public class ScriptEditorView extends StandardView {
     @ViewComponent
     protected CodeEditor editor;
     @ViewComponent
-    private JmixButton codeEditorHelpBtn;
+    protected JmixButton codeEditorHelpBtn;
 
     protected String title;
     protected String value;

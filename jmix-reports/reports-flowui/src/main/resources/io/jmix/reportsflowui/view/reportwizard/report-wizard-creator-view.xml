@@ -52,6 +52,7 @@
                                 width="100%"
                                 itemsContainer="groupsDc"/>
                 <radioButtonGroup id="reportTypeGenerateField"
+                                  themeNames="vertical"
                                   label="msg://reportBuildType"/>
             </formLayout>
         </div>
@@ -66,9 +67,9 @@
                 </hbox>
                 <button id="regionsRunBtn" text="msg://runReport"/>
                 <button id="regionsEditBtn" action="regionDataGrid.edit" text="msg://editRegion"/>
+                <button id="removeBtn" action="regionDataGrid.remove"/>
                 <button id="moveUpBtn" action="regionDataGrid.up"/>
                 <button id="moveDownBtn" action="regionDataGrid.down"/>
-                <button id="removeBtn" action="regionDataGrid.remove"/>
             </hbox>
             <dataGrid id="regionDataGrid" dataContainer="reportRegionsDc"
                       columnReorderingAllowed="false"
@@ -100,7 +101,7 @@
                       dataContainer="reportDataDc" property="outputFileType"
                       helperText="msg://outputFileTypeHintMsg"/>
         </div>
-        <div id="queryDiv" width="30em">
+        <div id="queryDiv" width="40em">
             <div classNames="flex, justify-between">
                 <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
                 <button id="fullScreenTransformationBtn"

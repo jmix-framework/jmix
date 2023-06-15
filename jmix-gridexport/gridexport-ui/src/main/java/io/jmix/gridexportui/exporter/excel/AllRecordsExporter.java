@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 @Component("grdexp_AllRecordsExporter")
 public class AllRecordsExporter {
 
-    private final String LAST_LOADED_PK_CONDITION_PARAMETER_NAME = "lastLoadedPkValue";
+    private final static String LAST_LOADED_PK_CONDITION_PARAMETER_NAME = "lastLoadedPkValue";
 
     private MetadataTools metadataTools;
 

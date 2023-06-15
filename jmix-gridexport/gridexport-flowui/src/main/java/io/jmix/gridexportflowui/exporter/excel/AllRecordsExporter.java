@@ -17,6 +17,7 @@
 package io.jmix.gridexportflowui.exporter.excel;
 
 import io.jmix.core.*;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -41,6 +42,8 @@ import java.util.function.Predicate;
  */
 @Component("grdexp_AllRecordsExporter")
 public class AllRecordsExporter {
+
+    private final static String LAST_LOADED_PK_CONDITION_PARAMETER_NAME = "lastLoadedPkValue";
 
     protected MetadataTools metadataTools;
 
@@ -73,6 +76,45 @@ public class AllRecordsExporter {
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void exportAll(DataUnit dataUnit, Consumer<RowCreationContext> excelRowCreator,
                              Predicate<Integer> excelRowChecker) {
+        Preconditions.checkNotNullArgument(excelRowCreator, "Cannot export all rows. ExcelRowCreator can't be null");
+        Preconditions.checkNotNullArgument(excelRowChecker, "Cannot export all rows. ExcelRowChecker can't be null");
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        transactionTemplate.executeWithoutResult(transactionStatus -> {
+            long count = dataManager.getCount(generateLoadContext(dataUnit));
+            int loadBatchSize = gridExportProperties.getExportAllBatchSize();
+
+            int rowNumber = 0;
+            boolean initialLoading = true;
+            Object lastLoadedPkValue = null;
+
+            for (int firstResult = 0; firstResult < count && !excelRowChecker.test(rowNumber); firstResult += loadBatchSize) {
+                LoadContext loadContext = generateLoadContext(dataUnit);
+                LoadContext.Query query = loadContext.getQuery();
+
+                if (initialLoading) {
+                    initialLoading = false;
+                } else {
+                    query.setParameter(LAST_LOADED_PK_CONDITION_PARAMETER_NAME, lastLoadedPkValue);
+                }
+                query.setMaxResults(loadBatchSize);
+
+                List entities = dataManager.loadList(loadContext);
+                for (Object entity : entities) {
+                    if (excelRowChecker.test(++rowNumber)) {
+                        break;
+                    }
+
+                    excelRowCreator.accept(new RowCreationContext(entity, rowNumber));
+                }
+                Object lastEntity = entities.get(entities.size() - 1);
+                lastLoadedPkValue = Id.of(lastEntity).getValue();
+            }
+        });
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected LoadContext generateLoadContext(DataUnit dataUnit) {
         if (!(dataUnit instanceof ContainerDataUnit)) {
             throw new RuntimeException("Cannot export all rows. DataUnit must be an instance of ContainerDataUnit.");
         }
@@ -112,39 +154,13 @@ public class AllRecordsExporter {
             //in case there is no filter on the screen a condition in the query may be null
             wrappingCondition.add(condition);
         }
-        String lastLoadedPkConditionParameterName = "lastLoadedPkValue";
+
         PropertyCondition lastPkCondition = PropertyCondition.createWithParameterName(primaryKeyName,
-                PropertyCondition.Operation.GREATER, lastLoadedPkConditionParameterName);
+                PropertyCondition.Operation.GREATER, LAST_LOADED_PK_CONDITION_PARAMETER_NAME);
         wrappingCondition.add(lastPkCondition);
         loadContext.getQuery().setCondition(wrappingCondition);
 
-        int loadBatchSize = gridExportProperties.getExportAllBatchSize();
-        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
-        transactionTemplate.executeWithoutResult(transactionStatus -> {
-            long count = dataManager.getCount(loadContext);
-            int rowNumber = 0;
-            boolean initialLoading = true;
-            Object lastLoadedPkValue = null;
-            for (int firstResult = 0; firstResult < count && !excelRowChecker.test(rowNumber); firstResult += loadBatchSize) {
-                if (initialLoading) {
-                    initialLoading = false;
-                } else {
-                    query.setParameter(lastLoadedPkConditionParameterName, lastLoadedPkValue);
-                }
-                query.setMaxResults(loadBatchSize);
-
-                List entities = dataManager.loadList(loadContext);
-                for (Object entity : entities) {
-                    if (excelRowChecker.test(++rowNumber)) {
-                        break;
-                    }
-
-                    excelRowCreator.accept(new RowCreationContext(entity, rowNumber));
-                }
-                Object lastEntity = entities.get(entities.size() - 1);
-                lastLoadedPkValue = Id.of(lastEntity).getValue();
-            }
-        });
+        return loadContext;
     }
 
     public static class RowCreationContext {

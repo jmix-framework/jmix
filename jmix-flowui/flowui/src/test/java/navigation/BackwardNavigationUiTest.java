@@ -16,6 +16,7 @@
 
 package navigation;
 
+import com.vaadin.flow.router.QueryParameters;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
@@ -41,7 +42,7 @@ public class BackwardNavigationUiTest {
 
     @Test
     @DisplayName("Back to detail-view")
-    public void backToDetailView() {
+    public void backToDetailViewTest() {
         // Navigate to detail-view
         viewNavigators.detailView(Customer.class)
                 .newEntity()
@@ -67,7 +68,7 @@ public class BackwardNavigationUiTest {
 
     @Test
     @DisplayName("Back to standard-view")
-    public void backToStandardView() {
+    public void backToStandardViewTest() {
         // Navigate to standard-view
         viewNavigators.view(BackwardNavigationStandardView.class)
                 .navigate();
@@ -92,7 +93,7 @@ public class BackwardNavigationUiTest {
 
     @Test
     @DisplayName("Create new entity instance using CreateAction and back to list-view")
-    public void createNewEntityInstanceUsingCreateActionAndBackToListView() {
+    public void createNewEntityInstanceUsingCreateActionAndBackToListViewTest() {
         // Navigate to list-view
         viewNavigators.view(BackwardNavigationListView.class)
                 .navigate();
@@ -108,10 +109,41 @@ public class BackwardNavigationUiTest {
         Assertions.assertEquals(detailView.getClass(), BackwardNavigationDetailView.class);
 
         // Close detail view
-        detailView.closeBtn.click();
+        detailView.close(StandardOutcome.CLOSE);
 
         // List-view should be opened
         currentView = UiTestUtils.getCurrentView();
         Assertions.assertEquals(currentView.getClass(), BackwardNavigationListView.class);
+    }
+
+    @Test
+    @DisplayName("Backward navigation with URL query parameters")
+    public void backwardNavigationWithUrlQueryParametersTest() {
+        // Navigate to view with some query parameters
+        viewNavigators.view(BackwardNavigationListView.class)
+                .withQueryParameters(QueryParameters.of("param", "value"))
+                .navigate();
+
+        // View is opened and it handles parameters from URL
+        BackwardNavigationListView currentView = UiTestUtils.getCurrentView();
+        Assertions.assertEquals(BackwardNavigationListView.class, currentView.getClass());
+
+        Assertions.assertEquals("value", currentView.paramValue);
+
+        // Navigate to another view with backward navigation
+        currentView.createBtn.click();
+
+        // Another view is opened
+        BackwardNavigationDetailView secondView = UiTestUtils.getCurrentView();
+        Assertions.assertEquals(BackwardNavigationDetailView.class, secondView.getClass());
+
+        // Close it
+        secondView.close(StandardOutcome.CLOSE);
+
+        // First view should be opened and URL parameters should be handled
+        currentView = UiTestUtils.getCurrentView();
+
+        Assertions.assertEquals(BackwardNavigationListView.class, currentView.getClass());
+        Assertions.assertEquals("value", currentView.paramValue);
     }
 }

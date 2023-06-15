@@ -35,9 +35,6 @@ public class BackwardNavigationDetailView extends StandardDetailView<Customer> {
     private ViewNavigators viewNavigators;
 
     @ViewComponent
-    public JmixButton closeBtn;
-
-    @ViewComponent
     public JmixButton navigateToViewBtn;
 
     @Subscribe("navigateToViewBtn")

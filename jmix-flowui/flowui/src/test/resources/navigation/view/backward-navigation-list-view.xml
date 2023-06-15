@@ -30,6 +30,7 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters id="urlQueryParameters"/>
     </facets>
     <actions>
         <action id="selectAction" type="lookup_select"/>

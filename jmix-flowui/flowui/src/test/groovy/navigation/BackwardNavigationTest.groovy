@@ -17,8 +17,10 @@
 package navigation
 
 import com.vaadin.flow.component.UI
+import com.vaadin.flow.router.QueryParameters
 import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.view.StandardOutcome
+import io.jmix.flowui.view.View
 import navigation.view.BackwardNavigationDetailView
 import navigation.view.BackwardNavigationListView
 import navigation.view.BackwardNavigationStandardView
@@ -57,7 +59,7 @@ class BackwardNavigationTest extends FlowuiTestSpecification {
 
         when: "Close view"
 
-        ((BackwardNavigationStandardView) currentView).close(StandardOutcome.CLOSE)
+        currentView.close(StandardOutcome.CLOSE)
 
         then: "Detail-view should be opened"
 
@@ -83,7 +85,7 @@ class BackwardNavigationTest extends FlowuiTestSpecification {
 
         when: "Close view"
 
-        ((BackwardNavigationListView) currentView).close(StandardOutcome.CLOSE)
+        currentView.close(StandardOutcome.CLOSE)
 
         then: "Standard-view should be opened"
 
@@ -108,14 +110,43 @@ class BackwardNavigationTest extends FlowuiTestSpecification {
 
         when: "Close detail view"
 
-        ((BackwardNavigationDetailView) currentView).closeBtn.click()
+        currentView.close(StandardOutcome.CLOSE)
 
         then: "List-view should be opened"
 
         currentView.getClass() == BackwardNavigationListView
     }
 
-    <T> T getCurrentView() {
+    def "Backward navigation with URL query parameters"() {
+        when: "Navigate to view with some query parameters"
+        viewNavigators.view(BackwardNavigationListView)
+                .withQueryParameters(QueryParameters.of("param", "value"))
+                .navigate()
+
+        then: "View is opened and it handles parameters from URL"
+
+        currentView.getClass() == BackwardNavigationListView
+        ((BackwardNavigationListView) currentView).paramValue == "value"
+
+        when: "Navigate to another view with backward navigation"
+
+        ((BackwardNavigationListView) currentView).createBtn.click()
+
+        then: "Another view is opened"
+
+        currentView.getClass() == BackwardNavigationDetailView
+
+        when: "Close it"
+
+        currentView.close(StandardOutcome.CLOSE)
+
+        then: "First view should be opened and URL parameters should be handled"
+
+        currentView.getClass() == BackwardNavigationListView
+        ((BackwardNavigationListView) currentView).paramValue == "value"
+    }
+
+    <T extends View> T getCurrentView() {
         return UI.getCurrent().getInternals().getActiveRouterTargetsChain()[0] as T
     }
 }

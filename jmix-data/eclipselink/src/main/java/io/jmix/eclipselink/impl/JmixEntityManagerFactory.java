@@ -16,11 +16,15 @@
 
 package io.jmix.eclipselink.impl;
 
-import org.springframework.beans.factory.ListableBeanFactory;
-
+import io.jmix.core.MetadataTools;
+import io.jmix.eclipselink.impl.support.JmixIsNullExpressionOperator;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.metamodel.Metamodel;
+import org.eclipse.persistence.expressions.ExpressionOperator;
+import org.eclipse.persistence.internal.jpa.EntityManagerImpl;
+import org.springframework.beans.factory.ListableBeanFactory;
+
 import java.util.Map;
 
 public class JmixEntityManagerFactory implements EntityManagerFactory {
@@ -29,9 +33,12 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
 
     private ListableBeanFactory beanFactory;
 
-    public JmixEntityManagerFactory(EntityManagerFactory delegate, ListableBeanFactory beanFactory) {
+    private MetadataTools metadataTools;
+
+    public JmixEntityManagerFactory(EntityManagerFactory delegate, ListableBeanFactory beanFactory, MetadataTools metadataTools) {
         this.delegate = delegate;
         this.beanFactory = beanFactory;
+        this.metadataTools = metadataTools;
     }
 
     private EntityManager createJmixEntityManager(EntityManager delegate) {
@@ -40,7 +47,16 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
 
     @Override
     public EntityManager createEntityManager() {
-        return createJmixEntityManager(delegate.createEntityManager());
+        EntityManager entityManager = createJmixEntityManager(delegate.createEntityManager());
+
+        Map<Integer, ExpressionOperator> operators = ((EntityManagerImpl) entityManager.getDelegate()).getSession()
+                .getPlatform().getPlatformOperators();
+
+        if (!(operators.get(ExpressionOperator.IsNull) instanceof JmixIsNullExpressionOperator)) {
+            operators.put(ExpressionOperator.IsNull, new JmixIsNullExpressionOperator(metadataTools));
+        }
+
+        return entityManager;
     }
 
     @Override

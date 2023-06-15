@@ -15,6 +15,7 @@
  */
 import '@vaadin/button/src/vaadin-button.js';
 import '@vaadin/dialog/src/vaadin-dialog.js';
+import {html, render} from 'lit';
 
 import {Upload} from '@vaadin/upload/src/vaadin-upload.js';
 
@@ -49,7 +50,6 @@ class JmixUploadButton extends Upload {
     ready() {
         super.ready();
 
-        this.$.fileList.hidden = true;
         this.$.dropLabelContainer.hidden = true;
 
         this.addEventListener("upload-progress", this._onUploadProgressEvent.bind(this));
@@ -68,6 +68,18 @@ class JmixUploadButton extends Upload {
             '_onEnabledPropertyChanged(enabled)',
             '_onJmixI18nChanged(jmixI18n)',
         ]
+    }
+
+    /**
+     * @private
+     * @override
+     */
+    _renderFileList() {
+        // Disable rendering fileList element
+        // and hide it while file uploading.
+        if (this._fileList) {
+            this._fileList.hidden = true;
+        }
     }
 
     /**
@@ -145,12 +157,16 @@ class JmixUploadButton extends Upload {
         const uploadContext = this;
         return function (root, dialog) {
             if (root.children && root.children.length > 0) {
+                const fileWrapper = root.children[0].children.fileWrapper;
+
+                uploadContext._updateUploadFileElement(uploadContext.file, fileWrapper, uploadContext.jmixI18n);
+
                 const uploadFileElements = root.getElementsByTagName("vaadin-upload-file");
                 if (uploadFileElements.length === 0) {
                     return;
                 }
-                const uploadFile = uploadFileElements[0];
 
+                const uploadFile = uploadFileElements[0];
                 // hide control buttons
                 const uploadFileButtons = uploadFile.shadowRoot.querySelectorAll("button");
                 if (uploadFileButtons.length > 0) {
@@ -158,27 +174,42 @@ class JmixUploadButton extends Upload {
                         btn.hidden = true;
                     }
                 }
-
-                // 'vaadin-upload-file' automatically updates bounded elements,
-                // but using manually approach, it works only after value is unset.
-                // Therefore, firstly unset the file, then set new one.
-                uploadFile.file = {};
-                uploadFile.file = uploadContext.file;
             } else {
-                const content = document.createElement("div");
-                content.className = "jmix-upload-dialog-content"
+                const dialogContent = document.createElement("div");
+                dialogContent.className = "jmix-upload-dialog-content";
 
-                const uploadFile = document.createElement("vaadin-upload-file");
+                const fileWrapper = document.createElement("div");
+                fileWrapper.id = "fileWrapper";
+
+                uploadContext._updateUploadFileElement(uploadContext.file, fileWrapper, uploadContext.jmixI18n);
                 const cancelBtn = uploadContext._createUploadDialogCancelButton();
 
-                uploadFile.file = uploadContext.file;
+                dialogContent.appendChild(fileWrapper);
+                dialogContent.appendChild(cancelBtn);
 
-                content.appendChild(uploadFile);
-                content.appendChild(cancelBtn);
-
-                root.appendChild(content);
+                root.appendChild(dialogContent);
             }
         }
+    }
+
+    _updateUploadFileElement(file, content, i18n) {
+        if (!file) {
+            return;
+        }
+        return render(html`
+            <vaadin-upload-file
+                    .file="${file}"
+                    .complete="${file.complete}"
+                    .errorMessage="${file.error}"
+                    .fileName="${file.name}"
+                    .held="${file.held}"
+                    .indeterminate="${file.indeterminate}"
+                    .progress="${file.progress}"
+                    .status="${file.status}"
+                    .uploading="${file.uploading}"
+                    .i18n="${i18n}"
+            ></vaadin-upload-file>
+        `, content);
     }
 
     _createUploadDialogCancelButton() {

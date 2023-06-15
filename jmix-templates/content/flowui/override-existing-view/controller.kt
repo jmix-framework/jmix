@@ -17,7 +17,7 @@ import io.jmix.flowui.view.ViewDescriptor
 import ${importedClassFqn}
 <%if (classComment) {%>
     ${classComment}<%}%>
-@Route(value = "${viewRoute}", layout = ${overrideView.layoutClassName}::class.java)
-@ViewController("${api.escapeKotlinDollar(screenId)}")
+@Route(value = "${viewRoute}", layout = ${overrideView.layoutClassName}::class)
+@ViewController("${api.escapeKotlinDollar(viewId)}")
 @ViewDescriptor("${descriptorName}.xml")
 class ${controllerName} : ${extendedClassName}()

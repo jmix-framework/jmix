@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.HasDataView;
 import com.vaadin.flow.data.provider.HasListDataView;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
@@ -34,9 +34,9 @@ import io.jmix.flowui.data.binding.SuspendableBindingAware;
 import io.jmix.flowui.data.binding.impl.DataViewBindingImpl;
 import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.data.items.EnumDataProvider;
+import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
 import io.jmix.flowui.model.CollectionContainer;
-
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -58,7 +58,12 @@ public abstract class AbstractDataViewDelegate<C extends Component
         }
 
         if (dataProvider != null) {
-            this.binding = new DataViewBindingImpl<>(component, dataProvider);
+            //noinspection unchecked
+            this.binding = new DataViewBindingImpl<>(component,
+                    dataProvider instanceof InMemoryDataProviderWrapper<?>
+                            ? ((InMemoryDataProviderWrapper<V>) dataProvider).getDataProvider()
+                            : dataProvider
+            );
             this.binding.bind();
         }
     }

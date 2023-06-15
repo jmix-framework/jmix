@@ -31,7 +31,7 @@ import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

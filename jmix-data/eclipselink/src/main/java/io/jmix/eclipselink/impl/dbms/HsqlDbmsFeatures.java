@@ -19,7 +19,7 @@ package io.jmix.eclipselink.impl.dbms;
 import io.jmix.data.persistence.DbmsFeatures;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +52,7 @@ public class HsqlDbmsFeatures implements DbmsFeatures {
 
     @Override
     public String getUniqueConstraintViolationPattern() {
-        return "integrity constraint violation: unique constraint or index violation[:;]? ([^\\s]+)";
+        return "integrity constraint violation: unique constraint or index violation[ :;]* ([^\\s]+)";
     }
 
     @Override

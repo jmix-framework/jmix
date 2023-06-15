@@ -26,7 +26,7 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 public interface StudioListDataComponentActions {
 
     @StudioAction(
-            type = "create",
+            type = "list_create",
             description = "Creates an entity instance using its detail view",
             classFqn = "io.jmix.flowui.action.list.CreateAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -41,8 +41,7 @@ public interface StudioListDataComponentActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "create"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
-                            defaultValue = "CONTROL-BACKSLASH"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.Create"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -61,7 +60,7 @@ public interface StudioListDataComponentActions {
     void createAction();
 
     @StudioAction(
-            type = "edit",
+            type = "list_edit",
             description = "Edits an entity instance using its detail view",
             classFqn = "io.jmix.flowui.action.list.EditAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -99,7 +98,7 @@ public interface StudioListDataComponentActions {
     void editAction();
 
     @StudioAction(
-            type = "remove",
+            type = "list_remove",
             description = "Removes an entity instance from the list and from the database",
             classFqn = "io.jmix.flowui.action.list.RemoveAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -114,8 +113,7 @@ public interface StudioListDataComponentActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "remove"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
-                            defaultValue = "CONTROL-DELETE"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.Remove"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -137,7 +135,7 @@ public interface StudioListDataComponentActions {
     void removeAction();
 
     @StudioAction(
-            type = "add",
+            type = "list_add",
             description = "Adds entities to the list using a lookup view",
             classFqn = "io.jmix.flowui.action.list.AddAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -152,8 +150,7 @@ public interface StudioListDataComponentActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "add"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
-                            defaultValue = "CONTROL-ALT-BACKSLASH"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.Add"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -170,7 +167,7 @@ public interface StudioListDataComponentActions {
     void addAction();
 
     @StudioAction(
-            type = "exclude",
+            type = "list_exclude",
             description = "Excludes entities from the list. The excluded entities are not deleted.",
             classFqn = "io.jmix.flowui.action.list.ExcludeAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -185,8 +182,7 @@ public interface StudioListDataComponentActions {
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
                             initialValue = "exclude"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION,
-                            defaultValue = "CONTROL-DELETE"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.Exclude"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -208,7 +204,7 @@ public interface StudioListDataComponentActions {
     void excludeAction();
 
     @StudioAction(
-            type = "read",
+            type = "list_read",
             description = "Opens a detail view for an entity instance in read-only mode",
             classFqn = "io.jmix.flowui.action.list.ReadAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -246,7 +242,7 @@ public interface StudioListDataComponentActions {
     void readAction();
 
     @StudioAction(
-            type = "refresh",
+            type = "list_refresh",
             description = "Reloads a list of entities from the database",
             classFqn = "io.jmix.flowui.action.list.RefreshAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -275,7 +271,7 @@ public interface StudioListDataComponentActions {
     void refreshAction();
 
     @StudioAction(
-            type = "itemTracking",
+            type = "list_itemTracking",
             description = "Tracks the selected item from the bound ListDataComponent",
             classFqn = "io.jmix.flowui.action.list.ItemTrackingAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -304,33 +300,4 @@ public interface StudioListDataComponentActions {
             }
     )
     void itemTrackingAction();
-
-    @StudioAction(
-            type = "showRoleAssignments",
-            description = "Shows the role assignments for the UserDetails instance",
-            classFqn = "io.jmix.securityflowui.action.ShowRoleAssignmentsAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "SHIELD",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
-                            initialValue = "showRoleAssignments"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.ShowRoleAssignments"),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
-            items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
-            }
-    )
-    void showRoleAssignmentsAction();
 }

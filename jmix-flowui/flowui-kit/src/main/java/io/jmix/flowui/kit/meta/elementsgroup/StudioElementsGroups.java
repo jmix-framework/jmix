@@ -50,6 +50,7 @@ public interface StudioElementsGroups {
             name = "Items",
             elementClassFqn = "io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem",
             xmlElement = "items",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
                     "io.jmix.flowui.kit.component.combobutton.ComboButton"}
     )
@@ -59,8 +60,17 @@ public interface StudioElementsGroups {
             name = "ResponsiveSteps",
             elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveSteps",
-            target = {"com.vaadin.flow.component.formlayout.FormLayout",
-                    "io.jmix.flowui.component.genericfilter.GenericFilter"}
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            target = {"com.vaadin.flow.component.formlayout.FormLayout"}
+    )
+    void formLayoutResponsiveSteps();
+
+    @StudioElementsGroup(
+            name = "ResponsiveSteps",
+            elementClassFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
+            xmlElement = "responsiveSteps",
+            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.flowui.component.SupportsResponsiveSteps"}
     )
     void responsiveSteps();
 
@@ -80,4 +90,22 @@ public interface StudioElementsGroups {
             }
     )
     void validator();
+
+    @StudioElementsGroup(
+            name = "Configurations",
+            elementClassFqn = "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration",
+            xmlElement = "configurations",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/configurations.svg",
+            target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}
+    )
+    void configurations();
+
+    @StudioElementsGroup(
+            name = "Conditions",
+            elementClassFqn = "io.jmix.flowui.component.filter.FilterComponent",
+            xmlElement = "conditions",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/conditions.svg",
+            target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}
+    )
+    void conditions();
 }

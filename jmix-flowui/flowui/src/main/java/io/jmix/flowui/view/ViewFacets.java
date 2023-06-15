@@ -18,7 +18,7 @@ package io.jmix.flowui.view;
 
 import io.jmix.flowui.facet.Facet;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.stream.Stream;
 
 public interface ViewFacets {

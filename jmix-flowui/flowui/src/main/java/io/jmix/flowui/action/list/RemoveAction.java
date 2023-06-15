@@ -36,14 +36,14 @@ import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 @ActionType(RemoveAction.ID)
 public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "remove";
+    public static final String ID = "list_remove";
 
     protected RemoveOperation removeOperation;
 

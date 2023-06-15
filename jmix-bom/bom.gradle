@@ -60,16 +60,14 @@ publishing {
 
 group = 'io.jmix.bom'
 
-//todo SB3 remove vaadin8
-def vaadinVersion = '8.14.3-2-jmix'
-def vaadinFlowVersion = '24.0.3'
+def vaadinFlowVersion = '24.0.5'
 
 javaPlatform {
     allowDependencies()
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.0.5")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.1.0")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -87,20 +85,16 @@ dependencies {
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"
         api "io.jmix.appsettings:jmix-appsettings-starter:$freeVersion"
-        api "io.jmix.appsettings:jmix-appsettings-ui:$freeVersion"
-        api "io.jmix.appsettings:jmix-appsettings-ui-starter:$freeVersion"
         api "io.jmix.appsettings:jmix-appsettings-flowui:$freeVersion"
         api "io.jmix.appsettings:jmix-appsettings-flowui-starter:$freeVersion"
 
         api "io.jmix.audit:jmix-audit:$freeVersion"
-        api "io.jmix.audit:jmix-audit-ui:$freeVersion"
         api "io.jmix.audit:jmix-audit-flowui:$freeVersion"
         api "io.jmix.audit:jmix-audit-starter:$freeVersion"
-        api "io.jmix.audit:jmix-audit-ui-starter:$freeVersion"
         api "io.jmix.audit:jmix-audit-flowui-starter:$freeVersion"
 
-        api "io.jmix.authorizationserver:jmix-authorization-server:$freeVersion"
-        api "io.jmix.authorizationserver:jmix-authorization-server-starter:$freeVersion"
+        api "io.jmix.authserver:jmix-authorization-server:$freeVersion"
+        api "io.jmix.authserver:jmix-authorization-server-starter:$freeVersion"
 
         api "io.jmix.awsfs:jmix-awsfs:$freeVersion"
         api "io.jmix.awsfs:jmix-awsfs-starter:$freeVersion"
@@ -108,28 +102,23 @@ dependencies {
         api "io.jmix.bpm:jmix-bpm:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-modeler:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-starter:$premiumVersion"
-        api "io.jmix.bpm:jmix-bpm-ui:$premiumVersion"
-        api "io.jmix.bpm:jmix-bpm-ui-starter:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-flowui:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-flowui-starter:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-rest:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-rest-starter:$premiumVersion"
 
         api "io.jmix.businesscalendar:jmix-businesscalendar:$premiumVersion"
         api "io.jmix.businesscalendar:jmix-businesscalendar-starter:$premiumVersion"
-        api "io.jmix.businesscalendar:jmix-businesscalendar-ui:$premiumVersion"
-        api "io.jmix.businesscalendar:jmix-businesscalendar-ui-starter:$premiumVersion"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-flowui:$premiumVersion"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-flowui-starter:$premiumVersion"
 
         api "io.jmix.core:jmix-core:$freeVersion"
         api "io.jmix.core:jmix-core-starter:$freeVersion"
-
-        api "io.jmix.cuba:jmix-cuba:$freeVersion"
-        api "io.jmix.cuba:jmix-cuba-starter:$freeVersion"
 
         api "io.jmix.dashboards:jmix-dashboards:$freeVersion"
         api "io.jmix.dashboards:jmix-dashboards-starter:$freeVersion"
         api "io.jmix.dashboards:jmix-dashboards-chart:$freeVersion"
         api "io.jmix.dashboards:jmix-dashboards-chart-starter:$freeVersion"
-        api "io.jmix.dashboards:jmix-dashboards-ui:$freeVersion"
-        api "io.jmix.dashboards:jmix-dashboards-ui-starter:$freeVersion"
 
         api "io.jmix.data:jmix-data:$freeVersion"
         api "io.jmix.data:jmix-data-autoconfigure:$freeVersion"
@@ -141,27 +130,19 @@ dependencies {
 
         api "io.jmix.datatools:jmix-datatools:$freeVersion"
         api "io.jmix.datatools:jmix-datatools-starter:$freeVersion"
-        api "io.jmix.datatools:jmix-datatools-ui:$freeVersion"
-        api "io.jmix.datatools:jmix-datatools-ui-starter:$freeVersion"
         api "io.jmix.datatools:jmix-datatools-flowui:$freeVersion"
         api "io.jmix.datatools:jmix-datatools-flowui-starter:$freeVersion"
 
         api "io.jmix.dynattr:jmix-dynattr:$freeVersion"
-        api "io.jmix.dynattr:jmix-dynattr-ui:$freeVersion"
         api "io.jmix.dynattr:jmix-dynattr-starter:$freeVersion"
-        api "io.jmix.dynattr:jmix-dynattr-ui-starter:$freeVersion"
 
         api "io.jmix.email:jmix-email:$freeVersion"
-        api "io.jmix.email:jmix-email-ui:$freeVersion"
         api "io.jmix.email:jmix-email-flowui:$freeVersion"
         api "io.jmix.email:jmix-email-starter:$freeVersion"
-        api "io.jmix.email:jmix-email-ui-starter:$freeVersion"
         api "io.jmix.email:jmix-email-flowui-starter:$freeVersion"
 
         api "io.jmix.emailtemplates:jmix-emailtemplates:$freeVersion"
-        api "io.jmix.emailtemplates:jmix-emailtemplates-ui:$freeVersion"
         api "io.jmix.emailtemplates:jmix-emailtemplates-starter:$freeVersion"
-        api "io.jmix.emailtemplates:jmix-emailtemplates-ui-starter:$freeVersion"
 
         api "io.jmix.flowui:jmix-flowui:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-starter:$freeVersion"
@@ -172,19 +153,10 @@ dependencies {
         api "io.jmix.flowui:jmix-flowui-devserver:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-test-assist:$freeVersion"
 
-        api "io.jmix.grapesjs:jmix-grapesjs-ui:$freeVersion"
-        api "io.jmix.grapesjs:jmix-grapesjs-ui-starter:$freeVersion"
-
-        api "io.jmix.graphql:jmix-graphql:$freeVersion"
-        api "io.jmix.graphql:jmix-graphql-starter:$freeVersion"
-
-        api "io.jmix.gridexport:jmix-gridexport-ui-starter:$freeVersion"
         api "io.jmix.gridexport:jmix-gridexport-flowui-starter:$freeVersion"
 
         api "io.jmix.imap:jmix-imap:$freeVersion"
-        api "io.jmix.imap:jmix-imap-ui:$freeVersion"
         api "io.jmix.imap:jmix-imap-starter:$freeVersion"
-        api "io.jmix.imap:jmix-imap-ui-starter:$freeVersion"
 
         api "io.jmix.ldap:jmix-ldap:$freeVersion"
         api "io.jmix.ldap:jmix-ldap-starter:$freeVersion"
@@ -193,38 +165,27 @@ dependencies {
         api "io.jmix.localfs:jmix-localfs-starter:$freeVersion"
 
         api "io.jmix.maps:jmix-maps:$premiumVersion"
-        api "io.jmix.maps:jmix-maps-ui:$premiumVersion"
-        api "io.jmix.maps:jmix-maps-ui-widgets:$premiumVersion"
         api "io.jmix.maps:jmix-maps-starter:$premiumVersion"
-        api "io.jmix.maps:jmix-maps-ui-starter:$premiumVersion"
 
         api "io.jmix.multitenancy:jmix-multitenancy:$freeVersion"
-        api "io.jmix.multitenancy:jmix-multitenancy-ui:$freeVersion"
         api "io.jmix.multitenancy:jmix-multitenancy-flowui:$freeVersion"
         api "io.jmix.multitenancy:jmix-multitenancy-starter:$freeVersion"
-        api "io.jmix.multitenancy:jmix-multitenancy-ui-starter:$freeVersion"
         api "io.jmix.multitenancy:jmix-multitenancy-flowui-starter:$freeVersion"
 
         api "io.jmix.notifications:jmix-notifications:$premiumVersion"
-        api "io.jmix.notifications:jmix-notifications-ui:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-starter:$premiumVersion"
-        api "io.jmix.notifications:jmix-notifications-ui-starter:$premiumVersion"
 
         api "io.jmix.oidc:jmix-oidc:$freeVersion"
         api "io.jmix.oidc:jmix-oidc-starter:$freeVersion"
 
         api "io.jmix.quartz:jmix-quartz:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-starter:$freeVersion"
-        api "io.jmix.quartz:jmix-quartz-ui:$freeVersion"
-        api "io.jmix.quartz:jmix-quartz-ui-starter:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-flowui:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-flowui-starter:$freeVersion"
 
         api "io.jmix.reports:jmix-reports:$freeVersion"
-        api "io.jmix.reports:jmix-reports-ui:$freeVersion"
         api "io.jmix.reports:jmix-reports-rest:$freeVersion"
         api "io.jmix.reports:jmix-reports-starter:$freeVersion"
-        api "io.jmix.reports:jmix-reports-ui-starter:$freeVersion"
         api "io.jmix.reports:jmix-reports-rest-starter:$freeVersion"
 
         api "io.jmix.rest:jmix-rest:$freeVersion"
@@ -233,19 +194,13 @@ dependencies {
         api "io.jmix.search:jmix-search:$freeVersion"
         api "io.jmix.search:jmix-search-starter:$freeVersion"
         api "io.jmix.search:jmix-search-aws-starter:$freeVersion"
-        api "io.jmix.search:jmix-search-ui:$freeVersion"
-        api "io.jmix.search:jmix-search-ui-starter:$freeVersion"
 
         api "io.jmix.security:jmix-security:$freeVersion"
         api "io.jmix.security:jmix-security-flowui:$freeVersion"
-        api "io.jmix.security:jmix-security-ui:$freeVersion"
         api "io.jmix.security:jmix-security-data:$freeVersion"
-        api "io.jmix.security:jmix-security-oauth2:$freeVersion"
         api "io.jmix.security:jmix-security-starter:$freeVersion"
         api "io.jmix.security:jmix-security-flowui-starter:$freeVersion"
-        api "io.jmix.security:jmix-security-ui-starter:$freeVersion"
         api "io.jmix.security:jmix-security-data-starter:$freeVersion"
-        api "io.jmix.security:jmix-security-oauth2-starter:$freeVersion"
 
         api "io.jmix.sessions:jmix-sessions:$freeVersion"
         api "io.jmix.sessions:jmix-sessions-starter:$freeVersion"
@@ -262,28 +217,9 @@ dependencies {
         api "io.jmix.translations:jmix-translations-nl:$freeVersion"
         api "io.jmix.translations:jmix-translations-it:$freeVersion"
 
-        api "io.jmix.ui:jmix-ui:$freeVersion"
-        api "io.jmix.ui:jmix-ui-data:$freeVersion"
-        api "io.jmix.ui:jmix-ui-test-assist:$freeVersion"
-        api "io.jmix.ui:jmix-ui-test-assist-spock:$freeVersion"
-        api "io.jmix.ui:jmix-ui-themes:$freeVersion"
-        api "io.jmix.ui:jmix-ui-themes-compiled:$freeVersion"
-        api "io.jmix.ui:jmix-ui-widgets:$freeVersion"
-        api "io.jmix.ui:jmix-ui-widgets-compiled:$freeVersion"
-        api "io.jmix.ui:jmix-ui-starter:$freeVersion"
-        api "io.jmix.ui:jmix-ui-data-starter:$freeVersion"
-        api "io.jmix.ui:jmix-charts:$freeVersion"
-        api "io.jmix.ui:jmix-charts-starter:$freeVersion"
-        api "io.jmix.ui:jmix-charts-widgets:$freeVersion"
-        api "io.jmix.ui:jmix-pivot-table:$freeVersion"
-        api "io.jmix.ui:jmix-pivot-table-starter:$freeVersion"
-        api "io.jmix.ui:jmix-pivot-table-widgets:$freeVersion"
-
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
-        api "io.jmix.webdav:jmix-webdav-ui:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-starter:$premiumVersion"
-        api "io.jmix.webdav:jmix-webdav-ui-starter:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest-starter:$premiumVersion"
 
         api 'com.google.guava:guava:31.1-jre'
@@ -298,14 +234,11 @@ dependencies {
 
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
 
-        //todo SB3 use Jmix fork of eclipselink
-        def eclipselinkVersion = '4.0.1'
+        def eclipselinkOriginalVersion = '4.0.1'
+        def eclipselinkVersion = '4.0.1-15-jmix'
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
-        api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkVersion"
-//        api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.9-6-jmix'
-//        api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix'
-//        api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.9'
+        api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
 
         api 'org.glassfish:jakarta.el:4.0.2'
 
@@ -316,59 +249,15 @@ dependencies {
         //todo SB3 org.glassfish.jaxb:jaxb-runtime:2.3.6 -> 4.0.2
         api 'org.glassfish.jaxb:jaxb-runtime:2.3.6'
 
-        api "com.vaadin:vaadin-server:$vaadinVersion"
-        api "com.vaadin:vaadin-compatibility-server:$vaadinVersion"
-        api "com.vaadin:vaadin-push:$vaadinVersion"
-        api "com.vaadin:vaadin-client:$vaadinVersion"
-        api "com.vaadin:vaadin-client-compiler:$vaadinVersion"
-        api "com.vaadin:vaadin-compatibility-client:$vaadinVersion"
-        api "com.vaadin:vaadin-themes:$vaadinVersion"
-        api 'com.vaadin:vaadin-spring:3.1.1'
-
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
-
-        api 'org.webjars:ace-builds:1.1.9.jmix.1'
-        api 'org.webjars:bootstrap:4.5.3-0-jmix'
-        api 'org.webjars:diff-match-patch:0.1.jmix.1'
-        api 'org.webjars:jquery:3.6.0'
-        api 'org.webjars:jquery-ui:1.13.0'
-        api 'org.webjars.bower:jquery-file-upload:9.22.0.cuba.0'
-        api 'org.webjars.npm:object-fit-images:3.2.3'
-
-        api 'org.webjars.npm:grapesjs:0.16.2'
-        api 'org.webjars.bower:keymaster:1.6.3'
-        api 'org.webjars.npm:babel__runtime:7.9.2'
-        api 'org.webjars.npm:github-com-kenwheeler-cash:2.3.9'
-        api 'org.webjars.npm:grapesjs-plugin-ckeditor:0.0.10'
-        api 'org.webjars.npm:grapesjs-custom-code:0.1.1'
-        api 'org.webjars.npm:grapesjs-tabs:0.1.2'
-        api 'org.webjars.npm:grapesjs-touch:0.1.1'
-        api 'org.webjars.npm:grapesjs-parser-postcss:0.1.1'
-        api 'org.webjars.npm:grapesjs-preset-webpage:0.1.10'
-        api 'org.webjars.npm:github-com-artf-grapesjs-preset-newsletter:0.2.20'
-        api 'org.webjars.npm:grapesjs-blocks-basic:0.1.8'
-        api 'org.webjars.npm:grapesjs-blocks-flexbox:0.1.1'
-        api 'org.webjars.npm:grapesjs-tui-image-editor:0.1.2'
-        api 'org.webjars.npm:grapesjs-plugin-forms:1.0.5'
-        api 'org.webjars.npm:grapesjs-style-filter:0.1.1'
-        api 'org.webjars.npm:grapesjs-tooltip:0.1.5'
-        api 'org.webjars.npm:mime-db:1.51.0'
-
-        api 'org.webjars.bowergithub.mootools:slick:1.1.7'
 
         api 'org.spockframework:spock-core:2.3-groovy-4.0'
         api 'org.spockframework:spock-spring:2.3-groovy-4.0'
 
         api 'io.swagger.core.v3:swagger-models:2.1.11'
         api 'io.swagger.core.v3:swagger-core:2.1.11'
-
-        api 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.6.RELEASE'
-
-        api 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
-
-        api 'org.springframework.security:spring-security-oauth2-authorization-server:1.0.1'
 
         api 'javax.cache:cache-api:1.1.1'
 
@@ -400,10 +289,6 @@ dependencies {
         api 'org.apache.poi:poi-ooxml:4.1.2'
         api 'org.apache.tika:tika-parsers:1.27'
 
-        api 'org.webjars.bower:pivottable:2.21.0.jmix.0'
-        api 'org.webjars:jquery-ui-touch-punch:0.2.3-2'
-        api 'org.webjars:amcharts:3.21.12.jmix.0'
-
         //todo SB3 Update flowable 7.0 to production version
         def flowableVersion = '7.0.0.M1'
         api "org.flowable:flowable-spring-configurator:$flowableVersion"
@@ -413,6 +298,7 @@ dependencies {
         api "org.flowable:flowable-spring-boot-starter-process-rest:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn-rest:$flowableVersion"
 
+        //todo SB3 upgrade graphql dependencies to the latest version
         api 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
         api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
 

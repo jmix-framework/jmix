@@ -27,8 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.lang.Nullable;
 
-import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 
@@ -79,6 +79,11 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
     @Override
     public T getById(ID id, FetchPlan fetchPlan) {
         return idLoader(id).fetchPlan(fetchPlan).one();
+    }
+
+    @Override
+    public T getById(ID id) {
+        return idLoader(id).one();
     }
 
     @Override

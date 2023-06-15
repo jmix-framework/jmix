@@ -84,10 +84,10 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <queryParameters>
+        <urlQueryParameters>
             <pagination component="paginationEntityLog"/>
             <pagination component="paginationLoggedEntity"/>
-        </queryParameters>
+        </urlQueryParameters>
     </facets>
     <layout>
         <tabs id="tabsheet" width="100%">
@@ -182,9 +182,9 @@
                 </hbox>
                 <dataGrid id="loggedEntityTable" minHeight="20em" dataContainer="loggedEntityDc">
                     <actions>
-                        <action id="create" type="create" icon="FILE_O"/>
-                        <action id="edit" type="edit" icon="PENCIL"/>
-                        <action id="remove" type="remove" icon="CLOSE"/>
+                        <action id="create" type="list_create"/>
+                        <action id="edit" type="list_edit"/>
+                        <action id="remove" type="list_remove"/>
                         <action id="exportJSON" text="msg://actions.exportJSON"/>
                         <action id="exportZIP" text="msg://actions.exportZIP"/>
                     </actions>

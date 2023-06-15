@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -71,7 +71,7 @@ public class FrontendWebComponentGenerator implements Serializable {
      *            the theme defined using {@link Theme} or {@code null} if not
      *            defined
      * @return generated files
-     * @throws IllegalStateException
+     * @throws java.lang.IllegalStateException
      *             if {@code finder} cannot locate required classes
      */
     public Set<File> generateWebComponents(File outputDirectory,

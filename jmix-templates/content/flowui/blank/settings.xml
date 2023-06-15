@@ -19,6 +19,9 @@
           icon="resource://template/template_blank.svg"
           order="0"
           name="Blank view">
+    <tags>
+        <tag>BLANK</tag>
+    </tags>
     <description>
         <![CDATA[<html>Blank view not associated with an entity.</html>]]>
     </description>
@@ -33,6 +36,7 @@
               defaultValue="blank-view"
               propertyType="DESCRIPTOR_NAME"
               required="true"
+              focused="true"
               sourceName="descriptor"/>
 
     <property caption="Controller name"
@@ -75,5 +79,8 @@
             name="descriptor"/>
 
     <source fileExt="java"
+            name="controller"/>
+
+    <source fileExt="kt"
             name="controller"/>
 </template>

@@ -32,7 +32,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public class JmixTextArea extends TextArea implements SupportsValueSource<String>, SupportsValidation<String>,
@@ -72,8 +72,8 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
     }
 
     @Override
-    public void validate() {
-        isInvalid();
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
@@ -116,6 +116,20 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
     @Override
     public void setValueSource(@Nullable ValueSource<String> valueSource) {
         fieldDelegate.setValueSource(valueSource);
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

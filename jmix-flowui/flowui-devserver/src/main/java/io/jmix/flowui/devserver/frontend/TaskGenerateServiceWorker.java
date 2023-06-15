@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,39 +31,34 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class TaskGenerateServiceWorker extends AbstractTaskClientGenerator {
 
-    private final File frontendDirectory;
-    private final File outputDirectory;
+    private Options options;
 
     /**
      * Create a task to generate <code>sw.ts</code> if necessary.
      *
-     * @param frontendDirectory frontend directory is to check if the file already exists
-     *                          there.
-     * @param outputDirectory   the output directory of the generated file
+     * @param options the task options
      */
-    TaskGenerateServiceWorker(File frontendDirectory, File outputDirectory) {
-        this.frontendDirectory = frontendDirectory;
-        this.outputDirectory = outputDirectory;
+    TaskGenerateServiceWorker(Options options) {
+        this.options = options;
     }
 
     @Override
     protected String getFileContent() throws IOException {
-        try (InputStream swStream = FrontendUtils.getResourceAsStream(
-                SERVICE_WORKER_SRC, TaskGenerateServiceWorker.class.getClassLoader()
-        )) {
+        try (InputStream swStream = FrontendUtils.getResourceAsStream(SERVICE_WORKER_SRC)) {
             return IOUtils.toString(swStream, UTF_8);
         }
     }
 
     @Override
     protected File getGeneratedFile() {
-        return new File(outputDirectory, SERVICE_WORKER_SRC);
+        return new File(options.getBuildDirectory(), SERVICE_WORKER_SRC);
     }
 
     @Override
     protected boolean shouldGenerate() {
-        File serviceWorker = new File(frontendDirectory, SERVICE_WORKER_SRC);
-        File serviceWorkerJs = new File(frontendDirectory,
+        File serviceWorker = new File(options.getFrontendDirectory(),
+                SERVICE_WORKER_SRC);
+        File serviceWorkerJs = new File(options.getFrontendDirectory(),
                 SERVICE_WORKER_SRC_JS);
         return !serviceWorker.exists() && !serviceWorkerJs.exists();
     }

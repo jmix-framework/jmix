@@ -385,7 +385,8 @@ class ValidatorsTest extends FlowuiTestSpecification {
         dateField.addValidator(notNullValidator)
         dateField.datatype = datatypeRegistry.find(Date)
 
-        when: "Set null value"
+        when: "Set some value, then null"
+        dateField.typedValue = new Date() // because null value is equal to initial component's model value
         dateField.typedValue = null
 
         then: "Component is not valid"

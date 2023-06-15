@@ -8,10 +8,10 @@ import io.jmix.core.metamodel.annotation.DependsOnProperties
 import io.jmix.core.metamodel.annotation.InstanceName
 import io.jmix.core.metamodel.annotation.JmixEntity
 import io.jmix.security.authentication.JmixUserDetails
-import org.springframework.security.core.GrantedAuthority
-import java.util.*
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
+import org.springframework.security.core.GrantedAuthority
+import java.util.*
 
 @JmixEntity
 @Entity<%if(!normalizedPrefix_underscore.isEmpty()) {%>(name = "${normalizedPrefix_underscore}User")<%}%>
@@ -54,7 +54,7 @@ open class User : JmixUserDetails, HasTimeZone {
 
     @Column(name = "TIME_ZONE_ID")
     @get:JvmName("getTimeZoneId_")
-    var timeZoneId: String? = null;
+    var timeZoneId: String? = null
 
     @Transient
     protected var userAuthorities: Collection<GrantedAuthority?>? = null
@@ -64,7 +64,7 @@ open class User : JmixUserDetails, HasTimeZone {
     override fun getUsername(): String? = username
 
     override fun getAuthorities(): Collection<GrantedAuthority?> =
-        userAuthorities ?: emptyList()
+            userAuthorities ?: emptyList()
 
     override fun setAuthorities(authorities: Collection<GrantedAuthority?>) {
         this.userAuthorities = authorities

@@ -30,8 +30,8 @@
 
         <dataGrid id="locksTable" width="100%" minHeight="20em" dataContainer="locksDc">
             <actions>
-                <action id="refresh" type="refresh"/>
-                <action id="unlock" type="itemTracking" text="msg://lockListView.unlock"
+                <action id="refresh" type="list_refresh"/>
+                <action id="unlock" type="list_itemTracking" text="msg://lockListView.unlock"
                         icon="UNLOCK"/>
             </actions>
             <columns>

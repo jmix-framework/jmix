@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,23 +16,22 @@
 
 package io.jmix.flowui.devserver.frontend;
 
-import java.io.File;
-import java.io.IOException;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.internal.Template;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.ExecutionFailedException;
-import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import com.vaadin.flow.server.frontend.FallibleCommand;
+import com.vaadin.flow.server.frontend.scanner.ClassFinder;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copies template files to the target folder so as to be available for parsing
@@ -43,17 +42,11 @@ import com.vaadin.flow.server.frontend.FallibleCommand;
 public class TaskCopyTemplateFiles implements FallibleCommand {
 
     private final ClassFinder classFinder;
-    private final File projectDirectory;
-    private final File resourceOutputDirectory;
+    private final Options options;
 
-    private final File frontendDirectory;
-
-    TaskCopyTemplateFiles(ClassFinder classFinder, File projectDirectory,
-                          File resourceOutputDirectory, File frontendDirectory) {
+    TaskCopyTemplateFiles(ClassFinder classFinder, Options options) {
         this.classFinder = classFinder;
-        this.projectDirectory = projectDirectory;
-        this.resourceOutputDirectory = resourceOutputDirectory;
-        this.frontendDirectory = frontendDirectory;
+        this.options = options;
     }
 
     @Override
@@ -73,13 +66,23 @@ public class TaskCopyTemplateFiles implements FallibleCommand {
                     .getAnnotationsByType(jsModuleAnnotationClass)) {
                 String path = getJsModuleAnnotationValue(jsmAnnotation);
                 File source = FrontendUtils.resolveFrontendPath(
-                        projectDirectory, path, this.frontendDirectory);
+                        options.getStudioFolder(), path,
+                        options.getFrontendDirectory());
                 if (source == null) {
                     throw new ExecutionFailedException(
                             "Unable to locate file " + path);
                 }
-                File templateDirectory = new File(resourceOutputDirectory,
-                        Constants.TEMPLATE_DIRECTORY);
+                File templateDirectory;
+                if (options.isDevBundleBuild()) {
+                    templateDirectory = new File(
+                            FrontendUtils
+                                    .getDevBundleFolder(options.getStudioFolder()),
+                            Constants.TEMPLATE_DIRECTORY);
+                } else {
+                    templateDirectory = new File(
+                            options.getResourceOutputDirectory(),
+                            Constants.TEMPLATE_DIRECTORY);
+                }
                 File target = new File(templateDirectory, path).getParentFile();
                 target.mkdirs();
                 try {

@@ -25,7 +25,7 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 import org.antlr.runtime.tree.TreeVisitor;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.List;
 
 public class JoinVariableNode extends BaseJoinNode {

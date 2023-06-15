@@ -43,7 +43,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public class JmixComboBox<V> extends ComboBox<V>
@@ -139,6 +139,25 @@ public class JmixComboBox<V> extends ComboBox<V>
     @Override
     public void setValueSource(@Nullable ValueSource<V> valueSource) {
         fieldDelegate.setValueSource(valueSource);
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

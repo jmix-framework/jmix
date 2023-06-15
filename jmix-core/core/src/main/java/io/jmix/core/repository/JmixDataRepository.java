@@ -23,8 +23,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.lang.Nullable;
 
-import jakarta.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -65,6 +65,15 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @throws IllegalStateException if nothing was loaded
      */
     T getById(ID id, FetchPlan fetchPlan);
+
+    /**
+     * Loads an entity by its {@code id}
+     *
+     * @param id must not be {@literal null}.
+     * @return the entity with the given id
+     * @throws IllegalStateException if nothing was loaded
+     */
+    T getById(ID id);
 
     /**
      * Returns all instances of the type {@code T} loaded according to {@code fetchPlan}

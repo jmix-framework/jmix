@@ -3,9 +3,9 @@ package ${project_rootPackage};
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.eclipselink.EclipselinkConfiguration;
-import io.jmix.ui.UiConfiguration;
-import io.jmix.ui.sys.ActionsConfiguration;
-import io.jmix.ui.sys.UiControllersConfiguration;
+import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -18,25 +18,25 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {EclipselinkConfiguration.class, UiConfiguration.class})
+@JmixModule(dependsOn = {EclipselinkConfiguration.class, FlowuiConfiguration.class})
 @PropertySource(name = "${project_rootPackage}", value = "classpath:/${project_rootPath}/module.properties")
 public class ${project_id.capitalize()}Configuration {
 
-    @Bean("${project_id}_${project_id.capitalize()}UiControllers")
-    public UiControllersConfiguration screens(ApplicationContext applicationContext,
-                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        UiControllersConfiguration uiControllers =
-                new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        uiControllers.setBasePackages(Collections.singletonList("${project_rootPackage}"));
-        return uiControllers;
+    @Bean("${project_id}_${project_id.capitalize()}ViewControllers")
+    public ViewControllersConfiguration screens(final ApplicationContext applicationContext,
+                                                final AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        final ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(Collections.singletonList("${project_rootPackage}"));
+        return viewControllers;
     }
 
-    @Bean("${project_id}_${project_id.capitalize()}UiActions")
-    public ActionsConfiguration actions(ApplicationContext applicationContext,
-                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        ActionsConfiguration actionsConfiguration =
-                new ActionsConfiguration(applicationContext, metadataReaderFactory);
-        actionsConfiguration.setBasePackages(Collections.singletonList("${project_rootPackage}"));
-        return actionsConfiguration;
+    @Bean("${project_id}_${project_id.capitalize()}Actions")
+    public ActionsConfiguration actions(final ApplicationContext applicationContext,
+                                        final AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        final ActionsConfiguration actions
+                = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actions.setBasePackages(Collections.singletonList("${project_rootPackage}"));
+        return actions;
     }
 }

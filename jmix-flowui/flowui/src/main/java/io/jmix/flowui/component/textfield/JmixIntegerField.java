@@ -32,7 +32,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public class JmixIntegerField extends IntegerField implements SupportsValueSource<Integer>, SupportsValidation<Integer>,
@@ -82,6 +82,11 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
         fieldDelegate.executeValidators();
     }
 
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
+    }
+
     @Nullable
     @Override
     public ValueSource<Integer> getValueSource() {
@@ -96,6 +101,15 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
     @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
     }
 
     @Override

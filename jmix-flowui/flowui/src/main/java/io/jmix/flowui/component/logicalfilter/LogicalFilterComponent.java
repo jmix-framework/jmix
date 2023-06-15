@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,15 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.flowui.component.filer.FilterComponent;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.model.DataLoader;
+import jakarta.annotation.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Component which can contain other filter components and can be used for filtering entities
@@ -101,9 +104,24 @@ public interface LogicalFilterComponent<C extends Component & LogicalFilterCompo
     /**
      * Operation representing corresponding logical filtering condition.
      */
-    enum Operation {
+    enum Operation implements EnumClass<String> {
         AND,
-        OR
+        OR;
+
+        @Nullable
+        public static Operation fromId(String id) {
+            for (Operation operation : Operation.values()) {
+                if (Objects.equals(id, operation.getId())) {
+                    return operation;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String getId() {
+            return name();
+        }
     }
 
     class FilterComponentsChangeEvent<C extends Component & LogicalFilterComponent<C>> extends ComponentEvent<C> {

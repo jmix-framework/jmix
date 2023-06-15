@@ -23,7 +23,7 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.flowui.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;

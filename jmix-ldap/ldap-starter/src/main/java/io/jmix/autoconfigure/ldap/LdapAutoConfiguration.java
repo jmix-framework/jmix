@@ -35,13 +35,13 @@ public class LdapAutoConfiguration {
 
     @EnableWebSecurity
     @Conditional(OnDefaultLdapConfigurationCondition.class)
-    @ConditionalOnMissingBean({StandardSecurityConfiguration.class, LdapSecurityConfiguration.class})
+    @ConditionalOnMissingBean({LdapSecurityConfiguration.class})
     public static class DefaultLdapSecurityConfiguration extends LdapSecurityConfiguration {
     }
 
     @EnableWebSecurity
     @Conditional(OnActiveDirectoryLdapConfigurationCondition.class)
-    @ConditionalOnMissingBean({StandardSecurityConfiguration.class, LdapActiveDirectorySecurityConfiguration.class})
+    @ConditionalOnMissingBean({LdapActiveDirectorySecurityConfiguration.class})
     public static class DefaultLdapActiveDirectorySecurityConfiguration extends LdapActiveDirectorySecurityConfiguration {
     }
 

@@ -17,7 +17,7 @@
 
 package io.jmix.rest.impl.service.filter;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum RestFilterOp implements EnumClass<String> {
     CONTAINS("like"),

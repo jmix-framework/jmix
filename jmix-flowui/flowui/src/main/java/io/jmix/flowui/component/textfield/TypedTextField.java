@@ -43,7 +43,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -107,8 +107,8 @@ public class TypedTextField<V> extends TextField
     }
 
     @Override
-    public void validate() {
-        isInvalid();
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
@@ -239,6 +239,20 @@ public class TypedTextField<V> extends TextField
         super.setPattern(pattern);
 
         fieldDelegate.setPattern(pattern);
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
     }
 
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {

@@ -25,7 +25,7 @@ import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.MergeOptions;
 import org.springframework.context.ApplicationContext;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;

@@ -45,7 +45,7 @@ import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public class FileUploadField extends JmixFileUploadField<FileUploadField> implements SupportsValueSource<byte[]>,
@@ -113,7 +113,26 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
 
     @Override
     public boolean isInvalid() {
+        validate();
         return fieldDelegate.isInvalid();
+    }
+
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

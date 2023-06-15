@@ -57,10 +57,15 @@
               required="false"/>
     <property caption="Table actions"
               code="tableActions"
-              defaultValue="create,edit,remove"
+              defaultValue="list_create,list_edit,list_remove"
               propertyType="MULTI_OPTION"
               preferences="true"
               optionsString="${actionSearch.getWizardTableActions()}"/>
+    <property caption="Create generic filter"
+              code="createGenericFilter"
+              defaultValue="true"
+              propertyType="BOOLEAN"
+              preferences="true"/>
     <property caption="Multiselect"
               code="multiselect"
               propertyType="BOOLEAN"
@@ -116,5 +121,7 @@
     <source fileExt="xml"
             name="descriptor"/>
     <source fileExt="java"
+            name="controller"/>
+    <source fileExt="kt"
             name="controller"/>
 </template>

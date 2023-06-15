@@ -18,7 +18,7 @@ package io.jmix.core.suggestion;
 
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Component("core_DefaultQuerySuggestionProvider")
 public class DefaultQuerySuggestionProvider implements QuerySuggestionProvider {

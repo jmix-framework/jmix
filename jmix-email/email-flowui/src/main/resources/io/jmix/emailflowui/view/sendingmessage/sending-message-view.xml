@@ -63,9 +63,9 @@
                 <dataGrid id="sendingMessageDataGrid" width="100%" dataContainer="sendingMessagesDc">
                     <actions>
                         <action id="downloadAttachment" text="msg://sendingMessageView.downloadAttachments.text"
-                                type="itemTracking" icon="lumo:download"/>
-                        <action id="resendEmail" text="msg://sendingMessageView.resendEmail.text" type="itemTracking"
-                                icon="lumo:reload"/>
+                                type="list_itemTracking" icon="lumo:download"/>
+                        <action id="resendEmail" text="msg://sendingMessageView.resendEmail.text"
+                                type="list_itemTracking" icon="lumo:reload"/>
                     </actions>
                     <columns>
                         <column property="address" sortable="false"/>

@@ -25,12 +25,12 @@ import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
-import org.eclipse.jetty.webapp.Configuration;
+import org.eclipse.jetty.webapp.Configurations;
 import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
+import org.eclipse.jetty.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 
-import javax.servlet.ServletException;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -53,7 +53,7 @@ public class FlowJettyServer extends Server {
         start();
     }
 
-    private void init() throws ServletException {
+    private void init() throws IOException {
         WebAppContext context = createContext();
         this.setHandler(
                 new HandlerList(
@@ -61,22 +61,19 @@ public class FlowJettyServer extends Server {
                         new ShutdownHandler("studio")
                 )
         );
-        this.addLifeCycleListener(
+        this.addEventListener(
                 new JmixSystemPropertiesLifeCycleListener(
                         (String) params.get("ProjectBaseDir"),
                         (String) params.get("IsPnpmEnabled"),
                         (Properties) params.get("Properties")
                 )
         );
-        Configuration.ClassList
+        Configurations
                 .setServerDefault(this)
-                .addBefore(
-                        JettyWebXmlConfiguration.class.getName(),
-                        AnnotationConfiguration.class.getName()
-                );
+                .add(JettyWebXmlConfiguration.class.getName(), AnnotationConfiguration.class.getName());
     }
 
-    private WebAppContext createContext() throws ServletException {
+    private WebAppContext createContext() throws IOException {
         WebAppContext context = new WebAppContext();
         context.setContextPath("/");
         context.setClassLoader(FlowJettyServer.class.getClassLoader());
@@ -86,7 +83,7 @@ public class FlowJettyServer extends Server {
         context.setConfigurationDiscovered(true);
         context.getServletContext().setExtendedListenerTypes(true);
         context.addEventListener(new ServletContextListeners());
-        WebSocketServerContainerInitializer.initialize(context);
+        JakartaWebSocketServletContainerInitializer.configure(context, null);
         context.setErrorHandler(new JmixErrorHandler());
         context.addEventListener(new JmixServletContextListener(params));
         return context;

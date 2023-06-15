@@ -18,7 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaProperty;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Locale;
 
 /**

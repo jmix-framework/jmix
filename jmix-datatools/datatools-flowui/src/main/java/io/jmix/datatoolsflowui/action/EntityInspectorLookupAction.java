@@ -28,7 +28,7 @@ import io.jmix.flowui.view.builder.LookupWindowBuilder;
 @ActionType(EntityInspectorLookupAction.ID)
 public class EntityInspectorLookupAction<E> extends EntityLookupAction<E> {
 
-    public static final String ID = "entity_inspector_lookup";
+    public static final String ID = "datatl_entityInspector_lookup";
 
     protected String entityName;
 

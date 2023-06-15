@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -28,18 +28,20 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 /**
- * Updates the Vite configuration files according to current project settings.
+ * Updates the Vite configuration files according with current project settings.
  */
 public class TaskUpdateVite implements FallibleCommand, Serializable {
 
-    private final File configFolder;
-    private final String buildFolder;
+    private final Options options;
 
-    TaskUpdateVite(File configFolder, String buildFolder) {
-        this.configFolder = configFolder;
-        this.buildFolder = buildFolder;
+    private final Set<String> webComponentTags;
+
+    TaskUpdateVite(Options options, Set<String> webComponentTags) {
+        this.options = options;
+        this.webComponentTags = webComponentTags;
     }
 
     @Override
@@ -53,42 +55,42 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
     }
 
     private void createConfig() throws IOException {
-        // Only create it if it does not exist
-        File configFile = new File(configFolder, FrontendUtils.VITE_CONFIG);
+        File configFile = new File(options.getStudioFolder(),
+                FrontendUtils.VITE_CONFIG);
 
-        InputStream resource;
-        resource = FrontendUtils.getResourceAsStream(
-                FrontendUtils.VITE_CONFIG, TaskUpdateVite.class.getClassLoader()
-        );
-
-        String template = IOUtils.toString(resource, StandardCharsets.UTF_8);
-
-        if (configFile.exists()
-                && template.hashCode() == IOUtils.toString(
-                        configFile.toURI(), StandardCharsets.UTF_8).hashCode()
-        ) {
-            return;
+        if (!configFile.exists()) {
+            configFile.createNewFile();
         }
 
-        FileUtils.write(configFile, template, StandardCharsets.UTF_8);
-        log().debug("Created vite configuration file: '{}'", configFile);
+        try (InputStream resource = FrontendUtils.getResourceAsStream(FrontendUtils.VITE_CONFIG)) {
+            String template = IOUtils.toString(resource, StandardCharsets.UTF_8);
+            template = template.replace("60001", String.valueOf(FrontendUtils.findFreePort(60_000, 65_000)));
 
+            FileUtils.write(configFile, template, StandardCharsets.UTF_8);
+            String message = String.format("Created vite configuration file: '%s'", configFile);
+            log().debug(message);
+            FrontendUtils.logInFile(message);
+        }
     }
 
     private void createGeneratedConfig() throws IOException {
         // Always overwrite this
-        File generatedConfigFile = new File(configFolder, FrontendUtils.VITE_GENERATED_CONFIG);
-        InputStream resource;
-        resource = FrontendUtils.getResourceAsStream(
-                FrontendUtils.VITE_GENERATED_CONFIG, TaskUpdateVite.class.getClassLoader()
-        );
-        String template = IOUtils.toString(resource, StandardCharsets.UTF_8);
-        String relativePath = "./" + buildFolder.substring(buildFolder.indexOf("/build") + 1);
-        template = template
-                .replace("#settingsImport#", relativePath + "/" + TaskUpdateSettingsFile.DEV_SETTINGS_FILE)
-                .replace("#buildFolder#", relativePath);
-        FileUtils.write(generatedConfigFile, template, StandardCharsets.UTF_8);
-        log().debug("Created vite generated configuration file: '{}'", generatedConfigFile);
+        File generatedConfigFile = new File(options.getStudioFolder(), FrontendUtils.VITE_GENERATED_CONFIG);
+        try (InputStream resource = FrontendUtils.getResourceAsStream(
+                FrontendUtils.VITE_GENERATED_CONFIG)) {
+            String buildFolder = options.getBuildDirectoryName();
+            String template = IOUtils.toString(resource, StandardCharsets.UTF_8);
+            String relativePath = "./" + buildFolder.substring(buildFolder.indexOf("/build") + 1);
+            template = template
+                    .replace("#settingsImport#", relativePath + "/" + TaskUpdateSettingsFile.DEV_SETTINGS_FILE)
+                    .replace("#buildFolder#", relativePath)
+                    .replace("#webComponentTags#",
+                            webComponentTags == null || webComponentTags.isEmpty()
+                                    ? ""
+                                    : String.join(";", webComponentTags));
+            FileUtils.write(generatedConfigFile, template, StandardCharsets.UTF_8);
+            log().debug("Created vite generated configuration file: '{}'", generatedConfigFile);
+        }
     }
 
     private Logger log() {

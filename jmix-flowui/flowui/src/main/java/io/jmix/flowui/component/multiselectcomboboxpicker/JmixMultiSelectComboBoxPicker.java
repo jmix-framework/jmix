@@ -47,7 +47,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 
 public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<V>
@@ -93,6 +93,20 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
         attachValueChangeListener();
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {
@@ -112,6 +126,11 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
     @Override
     public void executeValidators() throws ValidationException {
         fieldDelegate.executeValidators();
+    }
+
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Override

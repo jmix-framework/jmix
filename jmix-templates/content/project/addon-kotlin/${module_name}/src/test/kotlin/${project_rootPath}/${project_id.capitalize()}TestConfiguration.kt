@@ -23,8 +23,8 @@ open class ${project_id.capitalize()}TestConfiguration {
     @Primary
     open fun dataSource(): DataSource {
         return EmbeddedDatabaseBuilder()
-            .generateUniqueName(true)
-            .setType(EmbeddedDatabaseType.HSQL)
-            .build();
+                .generateUniqueName(true)
+                .setType(EmbeddedDatabaseType.HSQL)
+                .build();
     }
 }

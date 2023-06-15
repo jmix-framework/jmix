@@ -1,28 +1,16 @@
-/*
- * Copyright 2022 Haulmont.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// NOTE: do not change the file, it will be overwritten by the Studio
 
 import { UserConfigFn } from 'vite';
 import { overrideVaadinConfig } from './vite.generated';
 
+let hmrPort = 60001;
+
 const customConfig: UserConfigFn = (env) => ({
-    // Here you can add custom Vite parameters
-    // https://vitejs.dev/config/
     server: {
-        fs: {
-            strict: false
+        hmr: {
+            protocol: 'ws',
+            host: 'localhost',
+            port: hmrPort
         }
     }
 });

@@ -35,6 +35,7 @@ import io.jmix.flowui.component.delegate.CollectionFieldDelegate;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
+import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
@@ -42,7 +43,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -89,6 +90,20 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
         attachValueChangeListener();
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {
@@ -112,7 +127,7 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
 
     @Override
     protected void validate() {
-        isInvalid();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
@@ -159,8 +174,9 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
 
     @Override
     public CheckboxGroupDataView<V> setItems(InMemoryDataProvider<V> inMemoryDataProvider) {
-        bindDataProvider(inMemoryDataProvider);
-        return super.setItems(inMemoryDataProvider);
+        // Override Vaadin implementation, so we will have access to the original DataProvider
+        InMemoryDataProviderWrapper<V> wrapper = new InMemoryDataProviderWrapper<>(inMemoryDataProvider);
+        return setItems(wrapper);
     }
 
     @Override

@@ -16,7 +16,8 @@
 
 package io.jmix.flowui.component.valuepicker;
 
-import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.PickerComponent;
@@ -29,17 +30,18 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
 public class JmixMultiValuePicker<V> extends MultiValuePicker<V>
         implements PickerComponent<Collection<V>>, SupportsValidation<Collection<V>>,
-        SupportsStatusChangeHandler<JmixMultiValuePicker<V>>, HasRequired, HasPrefixAndSuffix,
+        SupportsStatusChangeHandler<JmixMultiValuePicker<V>>, HasRequired, HasPrefix, HasSuffix,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -71,6 +73,20 @@ public class JmixMultiValuePicker<V> extends MultiValuePicker<V>
         fieldDelegate.setInvalid(invalid);
     }
 
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {
@@ -90,6 +106,11 @@ public class JmixMultiValuePicker<V> extends MultiValuePicker<V>
     @Override
     public void executeValidators() throws ValidationException {
         fieldDelegate.executeValidators();
+    }
+
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable
@@ -132,5 +153,10 @@ public class JmixMultiValuePicker<V> extends MultiValuePicker<V>
     @Override
     protected ValuePickerActionSupport createActionsSupport() {
         return new JmixValuePickerActionSupport(this);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty() || CollectionUtils.isEmpty(getValue());
     }
 }

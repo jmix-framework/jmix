@@ -26,7 +26,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.Enumeration;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Objects;

@@ -15,7 +15,7 @@
  */
 package io.jmix.reports.entity.charts;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum ChartType implements EnumClass<String> {
     PIE("pie"), SERIAL("serial");

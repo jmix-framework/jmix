@@ -42,7 +42,7 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 import io.jmix.flowui.model.CollectionContainer;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -139,6 +139,20 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
     }
 
     @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
     public Registration addValidator(Validator<? super V> validator) {
         return fieldDelegate.addValidator(validator);
     }
@@ -146,6 +160,11 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
     @Override
     public void executeValidators() throws ValidationException {
         fieldDelegate.executeValidators();
+    }
+
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

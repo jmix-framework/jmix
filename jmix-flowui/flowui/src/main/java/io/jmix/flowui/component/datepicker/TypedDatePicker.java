@@ -36,7 +36,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.time.LocalDate;
 import java.util.function.Consumer;
 
@@ -173,7 +173,7 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
 
     @Override
     protected void validate() {
-        isInvalid();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
@@ -205,6 +205,20 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
     @Override
     public void setStatusChangeHandler(@Nullable Consumer<StatusContext<TypedDatePicker<V>>> handler) {
         fieldDelegate.setStatusChangeHandler(handler);
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean required) {
+        super.setRequiredIndicatorVisible(required);
+
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

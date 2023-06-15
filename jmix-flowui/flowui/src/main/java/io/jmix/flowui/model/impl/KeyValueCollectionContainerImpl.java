@@ -25,7 +25,7 @@ import io.jmix.flowui.model.KeyValueCollectionContainer;
 import io.jmix.flowui.model.KeyValueContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.List;
 

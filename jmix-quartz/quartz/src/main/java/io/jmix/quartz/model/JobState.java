@@ -1,8 +1,8 @@
 package io.jmix.quartz.model;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 
 public enum JobState implements EnumClass<String> {

@@ -20,7 +20,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 

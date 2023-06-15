@@ -39,7 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -158,8 +158,8 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
                 try {
                     validator.accept(value);
                 } catch (ValidationException e) {
-                    setInvalidInternal(true);
                     setErrorMessage(e.getDetailsMessage());
+                    setInvalidInternal(true);
                     throw new ComponentValidationException(e.getDetailsMessage(), component, e);
                 }
             }
@@ -214,8 +214,6 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     }
 
     public boolean isInvalid() {
-        updateInvalidState();
-
         return isInvalidInternal();
     }
 
@@ -231,7 +229,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         updateInvalidState();
     }
 
-    protected void updateInvalidState() {
+    public void updateInvalidState() {
         boolean invalid = explicitlyInvalid || conversionInvalid || !validatorsPassed();
 
         setInvalidInternal(invalid);

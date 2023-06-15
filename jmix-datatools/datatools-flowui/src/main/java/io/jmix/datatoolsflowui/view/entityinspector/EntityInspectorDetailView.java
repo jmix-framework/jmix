@@ -49,7 +49,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -166,10 +166,10 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     }
 
     @Override
-    public void setEntityToEdit(Object entity) {
-        super.setEntityToEdit(entity);
-        container = initMainContainer(entity);
-        isNew = entityStates.isNew(entity);
+    protected void setupEntityToEdit(Object entityToEdit) {
+        container = initMainContainer(entityToEdit);
+        isNew = entityStates.isNew(entityToEdit);
+        super.setupEntityToEdit(entityToEdit);
     }
 
     protected InstanceContainer initMainContainer(Object entity) {
@@ -392,7 +392,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     }
 
     protected AddAction createAddAction(DataGrid<?> dataGrid, MetaProperty metaProperty) {
-        EntityInspectorAddAction addAction = actions.create(EntityInspectorAddAction.class);
+        EntityInspectorAddAction addAction = actions.create(EntityInspectorAddAction.ID);
         addAction.setTarget(dataGrid);
         addAction.setViewClass(EntityInspectorListView.class);
         addAction.setEntityNameParameter(getMetaPropertyClass(metaProperty).getName());
@@ -408,7 +408,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     }
 
     protected CreateAction createCreateAction(DataGrid<?> dataGrid, MetaProperty metaProperty) {
-        EntityInspectorCreateAction createAction = actions.create(EntityInspectorCreateAction.class);
+        EntityInspectorCreateAction createAction = actions.create(EntityInspectorCreateAction.ID);
         MetaProperty inverseProperty = metaProperty.getInverse();
 
         createAction.setOpenMode(OpenMode.DIALOG);
@@ -452,7 +452,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     protected EditAction createEditAction(DataGrid<?> dataGrid,
                                           MetaProperty metaProperty,
                                           CollectionContainer dataGridContainer) {
-        EntityInspectorEditAction editAction = actions.create(EntityInspectorEditAction.class);
+        EntityInspectorEditAction editAction = actions.create(EntityInspectorEditAction.ID);
 
         editAction.setTarget(dataGrid);
         editAction.setOpenMode(OpenMode.DIALOG);
@@ -495,11 +495,11 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
         SecuredListDataComponentAction result;
         switch (metaProperty.getType()) {
             case COMPOSITION:
-                result = actions.create(RemoveAction.class);
+                result = actions.create(RemoveAction.ID);
                 result.setTarget(dataGrid);
                 break;
             case ASSOCIATION:
-                result = actions.create(ExcludeAction.class);
+                result = actions.create(ExcludeAction.ID);
                 result.setTarget(dataGrid);
                 break;
             default:

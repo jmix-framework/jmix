@@ -17,14 +17,15 @@
 package io.jmix.flowui.kit.component.valuepicker;
 
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.Collection;
 import java.util.Collections;
 
 public class MultiValuePicker<V> extends ValuePickerBase<MultiValuePicker<V>, Collection<V>>
-        implements HasPrefixAndSuffix {
+        implements HasPrefix, HasSuffix {
 
     public boolean isAllowCustomValue() {
         return super.isAllowCustomValueBoolean();

@@ -151,9 +151,8 @@ public class ViewNavigators {
      *
      * @param viewClass class of the view to navigate to
      */
-    public ViewNavigator view(Class<? extends View> viewClass) {
-        return new ViewNavigator(viewNavigationProcessor::processNavigation)
-                .withViewClass(viewClass);
+    public <V extends View<?>> ViewClassNavigator<V> view(Class<V> viewClass) {
+        return new ViewClassNavigator<>(viewNavigationProcessor::processNavigation, viewClass);
     }
 
     /**

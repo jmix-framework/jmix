@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.devserver.frontend;
 
-import com.vaadin.experimental.FeatureFlags;
 import elemental.json.JsonObject;
 import org.apache.commons.io.FileUtils;
 
@@ -29,17 +28,8 @@ import java.io.UncheckedIOException;
  */
 public class TaskGeneratePackageJson extends NodeUpdater {
 
-    /**
-     * Create an instance of the updater given all configurable parameters.
-     *
-     * @param npmFolder         folder with the `package.json` file.
-     * @param studioFolder      folder with generated `package.json` file.
-     * @param generatedPath     folder where flow generated files will be placed.
-     * @param buildDir          the used build directory
-     */
-    TaskGeneratePackageJson(File npmFolder, File studioFolder, File generatedPath,
-                            String buildDir, FeatureFlags featureFlags) {
-        super(null, null, npmFolder, studioFolder, generatedPath, buildDir, featureFlags);
+    TaskGeneratePackageJson(Options options) {
+        super(null, null, options);
     }
 
     @Override
@@ -47,11 +37,7 @@ public class TaskGeneratePackageJson extends NodeUpdater {
         try {
             modified = false;
             File studioJsonFile = getStudioJsonFile();
-            if (!studioJsonFile.exists()) {
-                studioJsonFile.createNewFile();
-                FileUtils.copyFile(getProjectJsonFile(), studioJsonFile);
-            }
-            JsonObject mainContent = getPackageJson(getStudioJsonFile());
+            JsonObject mainContent = getPackageJson(studioJsonFile);
             modified = updateDefaultDependencies(mainContent);
             if (modified) {
                 writePackageFile(mainContent);

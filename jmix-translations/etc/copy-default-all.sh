@@ -25,6 +25,7 @@
 
 ./copy-default-file.sh jmix-bpm/bpm io/jmix/bpm
 ./copy-default-file.sh jmix-bpm/bpm-ui io/jmix/bpmui
+./copy-default-file.sh jmix-bpm/bpm-flowui io/jmix/bpmflowui
 
 ./copy-default-file.sh jmix-core/core io/jmix/core
 
@@ -53,6 +54,10 @@
 
 ./copy-default-file.sh jmix-imap/imap io/jmix/imap
 ./copy-default-file.sh jmix-imap/imap-ui io/jmix/imapui
+
+./copy-default-file.sh jmix-quartz/quartz io/jmix/quartz
+./copy-default-file.sh jmix-quartz/quartz-ui io/jmix/quartzui
+./copy-default-file.sh jmix-quartz/quartz-flowui io/jmix/quartzflowui
 
 ./copy-default-file.sh jmix-reports/reports io/jmix/reports
 ./copy-default-file.sh jmix-reports/reports-ui io/jmix/reportsui

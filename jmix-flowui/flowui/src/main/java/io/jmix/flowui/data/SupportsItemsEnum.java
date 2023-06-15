@@ -16,10 +16,8 @@
 
 package io.jmix.flowui.data;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.flowui.data.items.ContainerDataProvider;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.flowui.data.items.EnumDataProvider;
-import io.jmix.flowui.model.CollectionContainer;
 
 public interface SupportsItemsEnum<T> {
 

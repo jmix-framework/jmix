@@ -8,12 +8,13 @@ import org.springframework.stereotype.Component
 @Primary
 @Component("${normalizedPrefix_underscore}UserRepository")
 class DatabaseUserRepository : AbstractDatabaseUserRepository<User>() {
+
     override fun getUserClass(): Class<User> = User::class.java
 
     override fun initSystemUser(systemUser: User) {
         val authorities = grantedAuthoritiesBuilder
-            .addResourceRole(FullAccessRole.CODE)
-            .build()
+                .addResourceRole(FullAccessRole.CODE)
+                .build()
         systemUser.authorities = authorities
     }
 

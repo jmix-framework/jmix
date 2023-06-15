@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition">
+    <data>
+        <collection id="ordersDc"
+                    class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="ordersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <layout>
+        <propertyFilter id="propertyFilterId"
+                        property="number" operation="EQUAL" dataLoader="ordersDl"
+                        autoApply="true"
+                        classNames="cssClassName1, cssClassName2"
+                        defaultValue="1337"
+                        enabled="false"
+                        errorMessage="errorMessageString"
+                        height="50px"
+                        helperText="helperTextString"
+                        invalid="false"
+                        label="labelString"
+                        labelPosition="TOP"
+                        labelVisible="true"
+                        maxHeight="55px"
+                        maxWidth="120px"
+                        minHeight="40px"
+                        minWidth="80px"
+                        operationEditable="false"
+                        operationTextVisible="true"
+                        parameterName="parameterNameRcftvgy"
+                        readOnly="false"
+                        required="true"
+                        requiredIndicatorVisible="true"
+                        requiredMessage="requiredMessageString"
+                        tabIndex="3"
+                        themeNames="themeNames1, themeNames2"
+                        visible="true"
+                        width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </propertyFilter>
+
+        <propertyFilter id="propertyFilterWithCustomValueComponentId"
+                        property="number" operation="EQUAL" dataLoader="ordersDl"
+                        defaultValue="1337">
+            <textArea/>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </propertyFilter>
+
+        <jpqlFilter id="jpqlFilterId"
+                    parameterClass="java.lang.Void" dataLoader="ordersDl"
+                    autoApply="true"
+                    classNames="cssClassName1, cssClassName2"
+                    defaultValue="true"
+                    enabled="false"
+                    errorMessage="errorMessageString"
+                    hasInExpression="false"
+                    height="50px"
+                    helperText="helperTextString"
+                    invalid="false"
+                    label="labelString"
+                    labelPosition="TOP"
+                    labelVisible="true"
+                    maxHeight="55px"
+                    maxWidth="120px"
+                    minHeight="40px"
+                    minWidth="80px"
+                    parameterName="parameterNameAsdsd"
+                    readOnly="false"
+                    required="true"
+                    requiredIndicatorVisible="true"
+                    requiredMessage="requiredMessageString"
+                    tabIndex="3"
+                    themeNames="themeNames1, themeNames2"
+                    visible="true"
+                    width="100px">
+            <condition>
+                <c:jpql>
+                    <c:where>{E}.number = '1337'</c:where>
+                </c:jpql>
+            </condition>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </jpqlFilter>
+
+        <jpqlFilter id="jpqlFilterWithCustomValueComponentId"
+                    parameterClass="java.lang.String" dataLoader="ordersDl"
+                    parameterName="parameterNameAsdasda"
+                    defaultValue="1337">
+            <textArea/>
+            <condition>
+                <c:jpql>
+                    <c:where>{E}.number = ?</c:where>
+                </c:jpql>
+            </condition>
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </jpqlFilter>
+
+        <groupFilter id="groupFilterId"
+                     operation="AND" dataLoader="ordersDl"
+                     autoApply="true"
+                     classNames="cssClassName1, cssClassName2"
+                     enabled="false"
+                     operationTextVisible="true"
+                     summaryText="summaryTextString"
+                     visible="true">
+            <propertyFilter property="number" operation="EQUAL" defaultValue="1337"/>
+            <jpqlFilter parameterClass="java.lang.Void">
+                <condition>
+                    <c:jpql>
+                        <c:where>{E}.number = '1337'</c:where>
+                    </c:jpql>
+                </condition>
+            </jpqlFilter>
+
+            <responsiveSteps>
+                <responsiveStep
+                        columns="5"
+                        labelsPosition="TOP"
+                        minWidth="100px"
+                />
+            </responsiveSteps>
+        </groupFilter>
+    </layout>
+</view>

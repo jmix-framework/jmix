@@ -37,7 +37,7 @@ import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
 import io.jmix.core.annotation.TenantId;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -74,7 +74,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -748,6 +748,9 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         }
 
         DataContext dataContext = loggedEntityDl.getDataContext();
+        if (dataContext == null) {
+            throw new RuntimeException("DataContext is null");
+        }
         selectedEntity = dataContext.merge(selectedEntity);
         Set<LoggedAttribute> enabledAttributes = selectedEntity.getAttributes() != null ?
                 selectedEntity.getAttributes() : new HashSet<>();

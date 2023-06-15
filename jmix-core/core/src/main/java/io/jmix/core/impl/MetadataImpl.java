@@ -18,13 +18,14 @@ package io.jmix.core.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasInstanceMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
@@ -63,9 +64,14 @@ public class MetadataImpl implements Metadata {
     }
 
     protected <T> T internalCreate(Class<T> entityClass) {
+        return internalCreate(entityClass, null);
+    }
+
+    protected <T> T internalCreate(Class<T> entityClass, @Nullable Object id) {
         Class<T> extClass = getSession().getClass(entityClass).getJavaClass();
         try {
             T obj = extClass.getDeclaredConstructor().newInstance();
+            EntityValues.setId(obj, id);
 
             if (entityInitializers != null) {
                 for (EntityInitializer initializer : entityInitializers) {
@@ -74,7 +80,8 @@ public class MetadataImpl implements Metadata {
             }
 
             return obj;
-        } catch (InstantiationException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+        } catch (InstantiationException | InvocationTargetException
+                 | IllegalAccessException | NoSuchMethodException e) {
             throw new RuntimeException("Unable to create entity instance", e);
         }
     }
@@ -85,14 +92,30 @@ public class MetadataImpl implements Metadata {
     }
 
     @Override
+    public <T> T create(Class<T> entityClass, Object id) {
+        return internalCreate(entityClass, id);
+    }
+
+    @Override
     public Object create(MetaClass metaClass) {
         return internalCreate(metaClass.getJavaClass());
+    }
+
+    @Override
+    public Object create(MetaClass metaClass, Object id) {
+        return internalCreate(metaClass.getJavaClass(), id);
     }
 
     @Override
     public Object create(String entityName) {
         MetaClass metaClass = getSession().getClass(entityName);
         return internalCreate(metaClass.getJavaClass());
+    }
+
+    @Override
+    public Object create(String entityName, Object id) {
+        MetaClass metaClass = getSession().getClass(entityName);
+        return internalCreate(metaClass.getJavaClass(), id);
     }
 
     @Nullable

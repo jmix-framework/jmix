@@ -1,0 +1,43 @@
+<%
+def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
+tableId = "${pluralForm}DataGrid"
+def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
+tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
+
+def tableXml = api.processSnippet('dto_table.xml',
+        ['entity': entity,
+        'tableDc': tableDc,
+        'tableDl': tableDl,
+        'tableType': tableType,
+        'tableId': tableId,
+        'tableActions': tableActions,
+        'multiselect': multiselect])
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="${messageKeys['viewTitle']}"
+      focusComponent="${tableId}">
+    <data readOnly="true">
+        <collection id="${tableDc}"
+                    class="${entity.fqn}">
+            <loader id="${tableDl}"/>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        ${tableXml}
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

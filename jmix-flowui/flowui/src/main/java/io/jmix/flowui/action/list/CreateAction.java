@@ -39,7 +39,7 @@ import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -51,7 +51,7 @@ import static io.jmix.flowui.component.UiComponentUtils.isComponentAttachedToDia
 public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
-    public static final String ID = "create";
+    public static final String ID = "list_create";
 
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;

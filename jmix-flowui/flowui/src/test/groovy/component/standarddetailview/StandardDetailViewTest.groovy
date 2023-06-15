@@ -16,15 +16,14 @@
 
 package component.standarddetailview
 
+import com.vaadin.flow.component.UI
 import component.standarddetailview.view.BlankTestView
 import component.standarddetailview.view.OrderDetailTestView
 import component.standarddetailview.view.TestCopyingSystemStateDetailTestView
-import component.standarddetailview.view.TestCopyingSystemStateDetailTestViewWithLoadDelegate
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.flowui.DialogWindows
 import io.jmix.flowui.ViewNavigators
-import io.jmix.flowui.exception.GuiDevelopmentException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.entity.TestCopyingSystemStateEntity
@@ -62,33 +61,24 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
 
     def "Edit DTO entity in standard detail view"() {
         when: "Edit DTO entity in standard detail view"
+
+        def entity = metadata.create(TestCopyingSystemStateEntity)
+        entity.setName("test")
+
         navigators.detailView(TestCopyingSystemStateEntity)
-                .editEntity(metadata.create(TestCopyingSystemStateEntity))
+                .editEntity(entity)
                 .withViewClass(TestCopyingSystemStateDetailTestView)
                 .withBackwardNavigation(false)
                 .navigate()
 
         then: """
-              GuiDevelopmentException should be thrown as loader cannot load DTO entity
+              Editor should have the same entity instance
               """
 
-        thrown(GuiDevelopmentException)
-    }
+        TestCopyingSystemStateDetailTestView detailView
+                = UI.getCurrent().getInternals().getActiveRouterTargetsChain().get(0)
 
-    def "Edit DTO entity in standard detail view with loadDelegate"() {
-        when: "Edit DTO entity in standard detail view with loadDelegate"
-
-        navigators.detailView(TestCopyingSystemStateEntity)
-                .editEntity(metadata.create(TestCopyingSystemStateEntity))
-                .withViewClass(TestCopyingSystemStateDetailTestViewWithLoadDelegate)
-                .withBackwardNavigation(false)
-                .navigate()
-
-        then: """
-              No exceptions should be thrown because if loadDelegate is installed
-              it is considered that loader has custom loading logic.
-              """
-        noExceptionThrown()
+        entity.name == detailView.getEditedEntity().name
     }
 
     def "Edit DTO entity in standard detail view with dialog mode"() {
@@ -103,7 +93,7 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
 
         then: """
               No exceptions should be thrown because Dialog sets entity instance
-              as is and does reload it
+              as is and does not reload it
               """
         noExceptionThrown()
     }

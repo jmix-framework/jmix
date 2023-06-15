@@ -16,12 +16,12 @@
 
 package io.jmix.autoconfigure.rest;
 
+import io.jmix.authserver.AuthorizationServerConfiguration;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.oidc.OidcConfiguration;
 import io.jmix.rest.RestConfiguration;
-import io.jmix.rest.security.impl.RestBeforeInvocationEventListener;
-import io.jmix.rest.security.impl.RestBeforeResourceServerApiInvocationEventListener;
-import io.jmix.securityoauth2.SecurityOAuth2Configuration;
+import io.jmix.rest.security.impl.RestAsResourceServerBeforeInvocationEventListener;
+import io.jmix.rest.security.impl.RestOidcResourceServerBeforeInvocationEventListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -30,15 +30,15 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import({CoreConfiguration.class, RestConfiguration.class})
 public class RestAutoConfiguration {
-    @Bean
-    @ConditionalOnClass(SecurityOAuth2Configuration.class)
-    protected RestBeforeInvocationEventListener restBeforeInvocationEventListener() {
-        return new RestBeforeInvocationEventListener();
+    @Bean("rest_RestAsResourceServerBeforeInvocationEventListener")
+    @ConditionalOnClass(AuthorizationServerConfiguration.class)
+    protected RestAsResourceServerBeforeInvocationEventListener restAsResourceServerBeforeInvocationEventListener() {
+        return new RestAsResourceServerBeforeInvocationEventListener();
     }
 
-    @Bean
+    @Bean("rest_RestOidcResourceServerBeforeInvocationEventListener")
     @ConditionalOnClass(OidcConfiguration.class)
-    protected RestBeforeResourceServerApiInvocationEventListener restResourceServerApiBeforeInvocationEventListener() {
-        return new RestBeforeResourceServerApiInvocationEventListener();
+    protected RestOidcResourceServerBeforeInvocationEventListener restOidcResourceServerBeforeInvocationEventListener() {
+        return new RestOidcResourceServerBeforeInvocationEventListener();
     }
 }

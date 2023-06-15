@@ -16,7 +16,7 @@
 
 package test_support.app.entity.sales;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum Status implements EnumClass<String> {
 

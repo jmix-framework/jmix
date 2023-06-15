@@ -32,8 +32,7 @@
 
 package repository
 
-import io.jmix.core.DataManager
-import io.jmix.core.Metadata
+import io.jmix.core.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.data.domain.Page
@@ -56,6 +55,12 @@ class MiscDataRepositoriesTest extends DataSpec {
 
     @Autowired
     EmployeeRepository employeeRepository
+
+    @Autowired
+    private FetchPlanRepository fetchPlanRepository;
+
+    @Autowired
+    private EntityStates entityStates;
 
     @Autowired
     Metadata metadata
@@ -99,6 +104,29 @@ class MiscDataRepositoriesTest extends DataSpec {
         customerRepository.findByName("second").size() == 1
         customerRepository.findByName("second")[0].address.street == "undefined"
         customerRepository.findByName("third").size() == 0
+    }
+
+    void "test obtaining by id"() {
+        setup:
+        Customer first = customerRepository.findByName("first")[0]
+        FetchPlan instanceName = fetchPlanRepository.findFetchPlan(metadata.getClass(Customer), FetchPlan.INSTANCE_NAME)
+
+
+        expect:
+        first != null
+        customerRepository.existsById(first.id)
+
+        customerRepository.findById(first.id).get() == first
+        entityStates.isLoaded(customerRepository.findById(first.id).get(), "address")
+
+        customerRepository.findById(first.id, instanceName).get() == first
+        !entityStates.isLoaded(customerRepository.findById(first.id, instanceName).get(), "address")
+
+        customerRepository.getById(first.id) == first
+        entityStates.isLoaded(customerRepository.getById(first.id), "address")
+
+        customerRepository.getById(first.id, instanceName) == first
+        !entityStates.isLoaded(customerRepository.getById(first.id, instanceName), "address")
     }
 
     void "test remove method"() {

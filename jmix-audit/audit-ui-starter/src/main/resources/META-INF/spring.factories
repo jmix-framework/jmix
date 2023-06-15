@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- io.jmix.autoconfigure.auditui.AuditUiAutoConfiguration,\
- io.jmix.autoconfigure.ui.UiAutoConfiguration,\
- io.jmix.autoconfigure.ui.vaadin.VaadinAutoConfiguration

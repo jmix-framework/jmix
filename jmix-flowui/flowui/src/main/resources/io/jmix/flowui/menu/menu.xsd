@@ -67,7 +67,7 @@
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="properties" type="viewProperties" minOccurs="0"/>
-                <xs:element name="queryParameters" type="parameters" minOccurs="0"/>
+                <xs:element name="urlQueryParameters" type="parameters" minOccurs="0"/>
                 <xs:element name="routeParameters" type="parameters" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>

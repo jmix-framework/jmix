@@ -33,28 +33,6 @@ public class JmixButton extends Button implements HasTitle, HasAction, HasShortc
     protected JmixButtonActionSupport actionSupport;
     protected ShortcutRegistration shortcutRegistration;
 
-    protected boolean explicitTitle = false;
-
-    @Override
-    public void setText(String text) {
-        super.setText(text);
-
-        if (!explicitTitle) {
-            setTitleInternal(text);
-        }
-    }
-
-    @Override
-    public void setTitle(@Nullable String title) {
-        explicitTitle = true;
-
-        setTitleInternal(title);
-    }
-
-    protected void setTitleInternal(@Nullable String title) {
-        HasTitle.super.setTitle(title);
-    }
-
     @Override
     public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
         getActionSupport().setAction(action, overrideComponentProperties);

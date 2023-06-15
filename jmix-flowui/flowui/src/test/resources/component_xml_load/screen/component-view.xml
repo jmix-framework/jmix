@@ -342,6 +342,7 @@
         </details>
 
         <numberField id="numberFieldId"
+		             allowedCharPattern="charPattern"
                      autocapitalize="SENTENCES"
                      autocomplete="ADDITIONAL_NAME"
                      autocorrect="true"
@@ -841,15 +842,6 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
-
-            <tooltip text="tooltipText"
-                     focusDelay="1"
-                     hideDelay="2"
-                     hoverDelay="3"
-                     manual="true"
-                     opened="true"
-                     position="BOTTOM"
-            />
         </dropdownButton>
 
         <comboButton id="comboButtonId"
@@ -882,20 +874,11 @@
                 </componentItem>
                 <textItem id="textItem" text="textItemContent"/>
             </items>
-
-            <tooltip text="tooltipText"
-                     focusDelay="1"
-                     hideDelay="2"
-                     hoverDelay="3"
-                     manual="true"
-                     opened="true"
-                     position="BOTTOM"
-            />
         </comboButton>
 
         <upload id="uploadId"
                 acceptedFileTypes=".jpg"
-                autoUpload="true"
+                autoUpload="false"
                 classNames="cssClassName1, cssClassName2"
                 dropAllowed="true"
                 dropLabel="dropLabelString"
@@ -915,5 +898,45 @@
 
         <upload id="uploadWithReceiverFqn"
                 receiverFqn="io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer"/>
+
+        <codeEditor id="codeEditorId"
+                    classNames="cssClassName1, cssClassName2"
+                    enabled="true"
+                    errorMessage="errorMessageString"
+                    fontSize="20"
+                    height="50px"
+                    helperText="helperTextString"
+                    highlightActiveLine="false"
+                    invalid="false"
+                    label="labelString"
+                    maxHeight="55px"
+                    maxWidth="120px"
+                    minHeight="40px"
+                    minWidth="80px"
+                    mode="SQL"
+                    printMarginColumn="120"
+                    readOnly="true"
+                    required="true"
+                    requiredIndicatorVisible="true"
+                    requiredMessage="requiredMessageString"
+                    showGutter="false"
+                    showLineNumbers="false"
+                    showPrintMargin="false"
+                    tabIndex="3"
+                    theme="TERMINAL"
+                    title="titleString"
+                    visible="false"
+                    width="100px"
+
+                    dataContainer="orderDc" property="number">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </codeEditor>
     </layout>
 </view>

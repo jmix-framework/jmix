@@ -15,10 +15,10 @@
  */
 package io.jmix.reports.entity;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import org.apache.commons.lang3.StringUtils;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public enum ReportOutputType implements EnumClass<Integer> {
     XLS(0, JmixReportOutputType.xls),

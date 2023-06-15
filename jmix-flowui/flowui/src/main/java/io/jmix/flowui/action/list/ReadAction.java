@@ -37,7 +37,7 @@ import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -45,7 +45,7 @@ import java.util.function.Function;
 public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>, E>
         implements ViewOpeningAction {
 
-    public static final String ID = "read";
+    public static final String ID = "list_read";
 
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;

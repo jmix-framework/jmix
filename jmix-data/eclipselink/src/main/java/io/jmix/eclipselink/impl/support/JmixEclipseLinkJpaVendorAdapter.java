@@ -18,8 +18,9 @@ package io.jmix.eclipselink.impl.support;
 import io.jmix.core.EnvironmentUtils;
 import io.jmix.core.MetadataTools;
 import io.jmix.eclipselink.impl.JmixPersistenceProvider;
+import jakarta.persistence.spi.PersistenceProvider;
+import jakarta.validation.ValidatorFactory;
 import org.eclipse.persistence.config.SessionCustomizer;
-import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.coordination.CommandProcessor;
@@ -32,7 +33,6 @@ import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.spi.PersistenceProvider;
 import java.util.Map;
 
 @Component("eclipselink_JmixEclipseLinkJpaVendorAdapter")
@@ -48,20 +48,23 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
 
     protected final ObjectProvider<JmixEclipseLinkTransportManager> transportManagerProvider;
 
+    protected final ValidatorFactory validatorFactory;
+
     @Autowired
     public JmixEclipseLinkJpaVendorAdapter(Environment environment,
                                            JmixEclipseLinkJpaDialect jpaDialect,
                                            JmixEclipseLinkSessionEventListener sessionEventListener,
                                            ObjectProvider<JmixEclipseLinkTransportManager> transportManagerProvider,
                                            ListableBeanFactory beanFactory,
-                                           MetadataTools metadataTools) {
+                                           MetadataTools metadataTools,
+                                           ValidatorFactory validatorFactory) {
         this.environment = environment;
         this.jpaDialect = jpaDialect;
-        this.persistenceProvider = new JmixPersistenceProvider(beanFactory);
+        this.persistenceProvider = new JmixPersistenceProvider(beanFactory, metadataTools);
         this.sessionEventListener = sessionEventListener;
         this.transportManagerProvider = transportManagerProvider;
+        this.validatorFactory = validatorFactory;
 
-        ExpressionOperator.addOperator(new JmixIsNullExpressionOperator(metadataTools));
         setGenerateDdl(false);
         setShowSql(true);
     }
@@ -80,7 +83,8 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
         map.put("eclipselink.flush-clear.cache", "Merge");
         map.put("eclipselink.cache.shared.default", "false");
 
-        map.put("jakarta.persistence.validation.mode", "NONE");
+        map.put("jakarta.persistence.validation.mode", "AUTO");
+        map.put("jakarta.persistence.validation.factory", validatorFactory);
 
         map.put("eclipselink.session.customizer", new JmixEclipseLinkSessionCustomizer());
         map.put("eclipselink.application-id", Integer.toString(System.identityHashCode(this)));

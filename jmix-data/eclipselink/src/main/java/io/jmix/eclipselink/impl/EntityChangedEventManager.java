@@ -24,7 +24,7 @@ import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.impl.EntityChangedEventInfo;
@@ -42,7 +42,7 @@ import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.transaction.support.ResourceHolderSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.*;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;

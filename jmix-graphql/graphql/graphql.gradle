@@ -54,7 +54,7 @@ dependencies {
     testImplementation project(':eclipselink-starter')
     testImplementation project(':security-starter')
     testImplementation project(':security-data-starter')
-    testImplementation project(':security-oauth2-starter')
+//    testImplementation project(':security-oauth2-starter')
 
     testImplementation 'com.google.code.gson:gson:2.8.6'
 

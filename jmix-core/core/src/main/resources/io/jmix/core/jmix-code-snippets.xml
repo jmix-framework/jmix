@@ -43,7 +43,7 @@
             <classInputParameter code="entityClass" text="Entity class" jmixEntity="true"/>
 
             <text language="java">
-                io.jmix.core.FetchPlan fetchPlan = fetchPlans.builder(${entityClass}.class)
+                ${IS_FINAL}io.jmix.core.FetchPlan fetchPlan = fetchPlans.builder(${entityClass}.class)
                 .addFetchPlan(io.jmix.core.FetchPlan.BASE)
                 .add("someReferenceProperty", io.jmix.core.FetchPlan.BASE)
                 .build();
@@ -374,26 +374,6 @@
                 ]]>
             </description>
         </codeSnippet>
-
-        <codeSnippet name="Get localized message" contextTypes="controller" expressionResultType="String">
-            <inject variable="messageBundle" classQualifiedName="io.jmix.ui.screen.MessageBundle"/>
-
-            <messageKeyInputParameter code="key" text="Message key" optional="true"/>
-
-            <text language="java">
-                messageBundle.getMessage("${key}");
-            </text>
-            <text language="kotlin">
-                messageBundle.getMessage("${key}")
-            </text>
-
-            <description>
-                <![CDATA[
-                Get a localized message from the message bundle by key.<br>
-                <a href="https://docs.jmix.io/jmix/localization/message-bundles.html#using-messages-in-ui">Jmix Documentation</a>
-                ]]>
-            </description>
-        </codeSnippet>
     </category>
 
     <category name="Files">
@@ -401,9 +381,9 @@
             <inject variable="fileStorageLocator" classQualifiedName="io.jmix.core.FileStorageLocator"/>
 
             <text language="java">
-                java.io.InputStream inputStream;
-                io.jmix.core.FileStorage fileStorage = fileStorageLocator.getDefault();
-                io.jmix.core.FileRef fileRef = fileStorage.saveStream("fileName.txt", inputStream);
+                ${IS_FINAL}java.io.InputStream inputStream;
+                ${IS_FINAL}io.jmix.core.FileStorage fileStorage = fileStorageLocator.getDefault();
+                ${IS_FINAL}io.jmix.core.FileRef fileRef = fileStorage.saveStream("fileName.txt", inputStream);
             </text>
             <text language="kotlin">
                 val inputStream: java.io.InputStream
@@ -423,9 +403,9 @@
             <inject variable="fileStorageLocator" classQualifiedName="io.jmix.core.FileStorageLocator"/>
 
             <text language="java">
-                io.jmix.core.FileRef fileRef;
-                io.jmix.core.FileStorage fileStorage = fileStorageLocator.getDefault();
-                try (java.io.InputStream inputStream = fileStorage.openStream(fileRef)) {
+                ${IS_FINAL}io.jmix.core.FileRef fileRef;
+                ${IS_FINAL}io.jmix.core.FileStorage fileStorage = fileStorageLocator.getDefault();
+                try (${IS_FINAL}java.io.InputStream inputStream = fileStorage.openStream(fileRef)) {
                 // use the stream
                 }
             </text>
@@ -456,7 +436,7 @@
                                  superClass="org.springframework.context.ApplicationEvent" includeLibraries="true"/>
 
             <text language="java">
-                ${eventClass} event = new ${eventClass}();
+                ${IS_FINAL}${eventClass} event = new ${eventClass}();
                 applicationEventPublisher.publishEvent(event);
             </text>
             <text language="kotlin">
@@ -515,56 +495,26 @@
 
 
     <category name="Web">
-        <codeSnippet name="Open web page" contextTypes="service">
-            <inject variable="webBrowserToolsProvider" classQualifiedName="org.springframework.beans.factory.ObjectProvider&lt;io.jmix.ui.WebBrowserTools&gt;"/>
-
-            <text language="java">
-                webBrowserToolsProvider.getObject().showWebPage("https://jmix.io", io.jmix.core.common.util.ParamsMap.of("target", "_blank"));
-            </text>
-            <text language="kotlin">
-                webBrowserToolsProvider.getObject().showWebPage("https://jmix.io", mapOf("target" to "_blank"))
-            </text>
-
-            <description>
-                Open a web page in a browser tab
-            </description>
-        </codeSnippet>
-
-
-        <codeSnippet name="Open web page" contextTypes="controller">
-            <inject variable="webBrowserTools" classQualifiedName="io.jmix.ui.WebBrowserTools"/>
-
-            <text language="java">
-                webBrowserTools.showWebPage("https://jmix.io", io.jmix.core.common.util.ParamsMap.of("target", "_blank"));
-            </text>
-            <text language="kotlin">
-                webBrowserTools.showWebPage("https://jmix.io", mapOf("target" to "_blank"))
-            </text>
-
-            <description>
-                Open a web page in a browser tab
-            </description>
-        </codeSnippet>
 
         <codeSnippet name="Call GET web service" contextTypes="service,controller" minJavaVersion="11">
             <urlInputParameter code="url" text="URL"/>
             <classInputParameter code="returnType" text="Return type" optional="true"/>
 
             <text language="java">
-                java.net.http.HttpClient client = HttpClient.newHttpClient();
-                java.net.http.HttpRequest request = HttpRequest.newBuilder()
+                ${IS_FINAL}java.net.http.HttpClient client = HttpClient.newHttpClient();
+                ${IS_FINAL}java.net.http.HttpRequest request = HttpRequest.newBuilder()
                 .uri(java.net.URI.create(${url}))
                 .build();
                 try {
-                &lt;% if (returnType == null) print 'java.net.http.HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());' else print 'java.net.http.HttpResponse&lt;java.io.InputStream&gt; response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());' %&gt;
+                ${IS_FINAL}&lt;% if (returnType == null) print 'java.net.http.HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());' else print 'java.net.http.HttpResponse&lt;java.io.InputStream&gt; response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());' %&gt;
                 if (response.statusCode() == org.springframework.http.HttpStatus.OK.value()) {
-                &lt;% if (returnType == null) print 'String responseBody = response.body();' else print returnType + ' responseElement = new com.fasterxml.jackson.databind.ObjectMapper().readValue(response.body(), ' + returnType + '.class);' %&gt;
+                ${IS_FINAL}&lt;% if (returnType == null) print 'String responseBody = response.body();' else print returnType + ' responseElement = new com.fasterxml.jackson.databind.ObjectMapper().readValue(response.body(), ' + returnType + '.class);' %&gt;
                 } else {
                 // process incorrect response
                 }
-                } catch (java.io.IOException e) {
+                } catch (${IS_FINAL}java.io.IOException e) {
                 // process error
-                } catch (InterruptedException e) {
+                } catch (${IS_FINAL}InterruptedException e) {
                 // process error
                 }
             </text>
@@ -597,22 +547,22 @@
             <variableInputParameter code="requestBodyObject" text="Request Body Object" optional="true"/>
 
             <text language="java">
-                String requestBody = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(&lt;% if (requestBodyObject != '') print requestBodyObject else print 'requestBodyObject' %&gt;);
-                java.net.http.HttpClient client = HttpClient.newHttpClient();
-                java.net.http.HttpRequest request = HttpRequest.newBuilder()
+                ${IS_FINAL}String requestBody = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(&lt;% if (requestBodyObject != '') print requestBodyObject else print 'requestBodyObject' %&gt;);
+                ${IS_FINAL}java.net.http.HttpClient client = HttpClient.newHttpClient();
+                ${IS_FINAL}java.net.http.HttpRequest request = HttpRequest.newBuilder()
                 .uri(java.net.URI.create(${url}))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
                 try {
-                java.net.http.HttpResponse&lt;String&gt; response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+                ${IS_FINAL}java.net.http.HttpResponse&lt;String&gt; response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
                 if (response.statusCode() == org.springframework.http.HttpStatus.OK.value()) {
-                String responseBody = response.body();
+                ${IS_FINAL}String responseBody = response.body();
                 } else {
                 // process incorrect response
                 }
-                } catch (java.io.IOException e) {
+                } catch (${IS_FINAL}java.io.IOException e) {
                 // process error
-                } catch (InterruptedException e) {
+                } catch (${IS_FINAL}InterruptedException e) {
                 // process error
                 }
             </text>

@@ -19,7 +19,7 @@ package io.jmix.core.impl.logging;
 import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public class LogMdc {
 

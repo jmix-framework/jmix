@@ -16,6 +16,7 @@
 
 package data_manager
 
+import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import io.jmix.core.DataManager
@@ -48,6 +49,7 @@ class DataManagerPessimisticLockTest extends DataSpec {
         appender.start()
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory()
         logger = context.getLogger("eclipselink.logging.sql")
+        logger.setLevel(Level.DEBUG)
         logger.addAppender(appender)
     }
 

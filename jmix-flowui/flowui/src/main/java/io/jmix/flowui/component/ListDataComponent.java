@@ -18,7 +18,7 @@ package io.jmix.flowui.component;
 
 import io.jmix.flowui.data.DataUnit;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;

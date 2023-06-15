@@ -30,6 +30,7 @@ import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
+import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
@@ -37,7 +38,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements SupportsValueSource<V>,
@@ -67,12 +68,20 @@ public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements Supp
                 dataViewDelegate.valueBindingChanged(event));
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
-
-        attachValueChangeListener();
     }
 
-    protected void attachValueChangeListener() {
-        addValueChangeListener(e -> validate());
+    @Override
+    public void setRequired(boolean required) {
+        super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable
@@ -104,8 +113,9 @@ public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements Supp
 
     @Override
     public RadioButtonGroupDataView<V> setItems(InMemoryDataProvider<V> inMemoryDataProvider) {
-        bindDataProvider(inMemoryDataProvider);
-        return super.setItems(inMemoryDataProvider);
+        // Override Vaadin implementation, so we will have access to the original DataProvider
+        InMemoryDataProviderWrapper<V> wrapper = new InMemoryDataProviderWrapper<>(inMemoryDataProvider);
+        return setItems(wrapper);
     }
 
     @Override
@@ -140,7 +150,7 @@ public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements Supp
 
     @Override
     protected void validate() {
-        isInvalid();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override

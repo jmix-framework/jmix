@@ -1,5 +1,0 @@
-{
-  tabsBlock: {
-    category: 'Extra'
-  }
-}

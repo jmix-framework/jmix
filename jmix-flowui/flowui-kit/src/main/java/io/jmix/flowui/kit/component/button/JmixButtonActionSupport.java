@@ -25,9 +25,8 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
-import org.apache.commons.lang3.StringUtils;
-
 import jakarta.annotation.Nullable;
+
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
@@ -119,7 +118,7 @@ public class JmixButtonActionSupport {
     }
 
     protected void updateText(boolean overrideComponentProperties) {
-        if (StringUtils.isEmpty(button.getText()) || overrideComponentProperties) {
+        if (Strings.isNullOrEmpty(button.getText()) || overrideComponentProperties) {
             button.setText(action.getText());
         }
     }
@@ -145,25 +144,8 @@ public class JmixButtonActionSupport {
     }
 
     protected void updateTitle(boolean overrideComponentProperties) {
-        if (StringUtils.isEmpty(button.getTitle()) || overrideComponentProperties) {
-            String description = action.getDescription();
-            if (StringUtils.isNotEmpty(description)) {
-                button.setTitle(description);
-            } else {
-                String text = action.getText();
-                String shortcutCombination = action.getShortcutCombination() != null
-                        ? action.getShortcutCombination().format()
-                        : null;
-
-                if (!Strings.isNullOrEmpty(text)
-                        && !Strings.isNullOrEmpty(shortcutCombination)) {
-                    button.setTitle(String.format("%s (%s)", text, shortcutCombination));
-                } else if (!Strings.isNullOrEmpty(text)) {
-                    button.setTitle(text);
-                } else if (!Strings.isNullOrEmpty(shortcutCombination)) {
-                    button.setTitle(shortcutCombination);
-                }
-            }
+        if (Strings.isNullOrEmpty(button.getTitle()) || overrideComponentProperties) {
+            button.setTitle(action.getDescription());
         }
     }
 

@@ -39,7 +39,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -50,7 +50,7 @@ import java.util.function.Predicate;
 public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
-    public static final String ID = "add";
+    public static final String ID = "list_add";
 
     protected DialogWindows dialogWindows;
     protected AccessManager accessManager;

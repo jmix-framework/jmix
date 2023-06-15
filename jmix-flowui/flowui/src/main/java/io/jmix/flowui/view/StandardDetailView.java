@@ -48,8 +48,8 @@ import io.jmix.flowui.util.WebBrowserTools;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.lang.Nullable;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -523,15 +523,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     @Override
     public void setEntityToEdit(T entity) {
         this.entityToEdit = entity;
+        setupEntityToEdit(entity);
     }
 
     protected void setupEntityToEdit() {
         if (serializedEntityIdToEdit != null) {
             setupEntityToEdit(serializedEntityIdToEdit);
-        } else if (entityToEdit != null) {
-            setupEntityToEdit(entityToEdit);
-        } else {
-            throw new IllegalStateException("Nether entity nor entity id to edit is defined");
         }
     }
 
@@ -597,6 +594,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         DataContext dataContext = getViewData().getDataContext();
 
         if (getEntityStates().isNew(entityToEdit) || doNotReloadEditedEntity()) {
+            // In case of DTO, this method is called after
+            // Modified Tracking is enabled, so we need to
+            // remember the original state and revert it after
+            // entity is set.
+            boolean modifiedAfterOpen = isModifiedAfterOpen();
+
             T mergedEntity = dataContext.merge(entityToEdit);
 
             DataContext parentDc = dataContext.getParent();
@@ -606,6 +609,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
             InstanceContainer<T> container = getEditedEntityContainer();
             container.setItem(mergedEntity);
+
+            setModifiedAfterOpen(modifiedAfterOpen);
         } else {
             getEditedEntityLoader().setEntityId(requireNonNull(EntityValues.getId(entityToEdit)));
         }

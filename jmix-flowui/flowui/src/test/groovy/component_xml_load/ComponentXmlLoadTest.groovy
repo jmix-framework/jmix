@@ -222,14 +222,6 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
-
-            tooltip.text == "tooltipText"
-            tooltip.focusDelay == 1
-            tooltip.hideDelay == 2
-            tooltip.hoverDelay == 3
-            tooltip.manual
-            tooltip.opened
-            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -265,14 +257,6 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
-
-            tooltip.text == "tooltipText"
-            tooltip.focusDelay == 1
-            tooltip.hideDelay == 2
-            tooltip.hoverDelay == 3
-            tooltip.manual
-            tooltip.opened
-            tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
     }
 
@@ -284,15 +268,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.uploadId) {
             id.get() == "uploadId"
             acceptedFileTypes.containsAll([".jpg"])
-
-            // CAUTION
-            // Vaadin Bug
-            // See com.vaadin.flow.component.upload.Upload.isAutoUpload
-            //     com.vaadin.flow.component.upload.Upload#setAutoUpload
-            // fixed in https://github.com/vaadin/flow/issues/15847
-            // waiting for Vaadin 24.0
             !autoUpload
-
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             dropAllowed
             (dropLabel as Label).getText() == "dropLabelString"

@@ -25,9 +25,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
+import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
 public interface StudioLayouts {
@@ -49,6 +49,8 @@ public interface StudioLayouts {
                     @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "opened", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "summaryText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
                             options = {"filled", "reverse", "small"}),
@@ -234,9 +236,9 @@ public interface StudioLayouts {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                        @StudioProperty(xmlAttribute = "labelsPosition", type = StudioPropertyType.ENUMERATION,
-                        classFqn = "com.vaadin.flow.component.formlayout.FormLayout$ResponsiveStep$LabelsPosition",
-                                options = {"ASIDE", "TOP"}),
+                    @StudioProperty(xmlAttribute = "labelsPosition", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.formlayout.FormLayout$ResponsiveStep$LabelsPosition",
+                            options = {"ASIDE", "TOP"}),
                     @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),

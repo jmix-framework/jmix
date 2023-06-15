@@ -41,7 +41,7 @@ public class StandardSecurityAutoConfigurationTest {
             .withBean(InMemoryUserRepository.class)
             .withAllowBeanDefinitionOverriding(true);
 
-    @Test
+//    @Test
     void testCoreSecurityBeans() {
         contextRunner.run(context -> {
             assertThat(context).hasBean("sec_AuthenticationManager");

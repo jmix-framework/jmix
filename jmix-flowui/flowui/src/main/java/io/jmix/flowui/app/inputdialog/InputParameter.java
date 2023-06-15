@@ -21,10 +21,10 @@ import io.jmix.core.FileRef;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.datatype.impl.OffsetDateTimeDatatype;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.math.BigDecimal;
 import java.time.*;
 import java.util.TimeZone;

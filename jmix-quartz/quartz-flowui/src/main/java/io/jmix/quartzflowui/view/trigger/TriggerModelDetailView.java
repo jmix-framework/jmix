@@ -24,18 +24,23 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBoxBase;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.select.Select;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.ScheduleType;
 import io.jmix.quartz.model.TriggerModel;
 import io.jmix.quartz.service.QuartzService;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @ViewController("quartz_TriggerModel.detail")
@@ -52,6 +57,12 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     private TypedTextField<Integer> repeatCountField;
     @ViewComponent
     private TypedTextField<Long> repeatIntervalField;
+    @ViewComponent
+    private Select<ScheduleType> scheduleTypeField;
+    @ViewComponent
+    private TypedDateTimePicker<Date> startDateTimePicker;
+    @ViewComponent
+    private TypedDateTimePicker<Date> endDateTimePicker;
 
     @Autowired
     private QuartzService quartzService;
@@ -68,16 +79,17 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     public void onInit(InitEvent event) {
         initTriggerGroupNames();
         initCronHelperButton();
+        setupDateTimePickerDefaultTimeListener(startDateTimePicker);
+        setupDateTimePickerDefaultTimeListener(endDateTimePicker);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Subscribe
     public void onReady(ReadyEvent event) {
         initFieldVisibility();
-    }
-
-    @Subscribe
-    public void onInitEntity(InitEntityEvent<TriggerModel> event) {
-        event.getEntity().setScheduleType(ScheduleType.CRON_EXPRESSION);
+        if (getEditedEntity().getScheduleType() == null) {
+            scheduleTypeField.setValue(ScheduleType.CRON_EXPRESSION);
+        }
     }
 
     private void initCronHelperButton() {
@@ -103,6 +115,16 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         initFieldVisibility();
     }
 
+    @Subscribe("startDateTimePicker")
+    public void onStartDateTimePickerComponentValueChange(final AbstractField.ComponentValueChangeEvent<DateTimePicker, LocalDateTime> event) {
+        endDateTimePicker.setMin(event.getValue());
+    }
+
+    @Subscribe("endDateTimePicker")
+    public void onEndDateTimePickerComponentValueChange(final AbstractField.ComponentValueChangeEvent<DateTimePicker, LocalDateTime> event) {
+        startDateTimePicker.setMax(event.getValue());
+    }
+
     private void initTriggerGroupNames() {
         triggerGroupNames = quartzService.getTriggerGroupNames();
         triggerGroupField.setItems(triggerGroupNames);
@@ -125,4 +147,22 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         repeatIntervalField.setVisible(isSimpleTrigger);
     }
 
+    @Subscribe
+    public void onValidation(ValidationEvent event) {
+        if (ScheduleType.SIMPLE.equals(getEditedEntity().getScheduleType())
+                || CronExpression.isValidExpression(getEditedEntity().getCronExpression())) {
+            return;
+        }
+
+        String message = messageBundle.getMessage("invalidCronExpressionValidationMessage");
+        event.getErrors().add(message);
+    }
+
+    protected void setupDateTimePickerDefaultTimeListener(TypedDateTimePicker<?> dateTimePicker) {
+        dateTimePicker.getElement().executeJs(
+                "this.getElementsByTagName(\"vaadin-date-picker\")[0].addEventListener('change', function(){" +
+                        "if (!this.getElementsByTagName(\"vaadin-time-picker\")[0].value) this.getElementsByTagName(\"vaadin-time-picker\")[0].value='00:00';" +
+                        "}.bind(this));"
+        );
+    }
 }

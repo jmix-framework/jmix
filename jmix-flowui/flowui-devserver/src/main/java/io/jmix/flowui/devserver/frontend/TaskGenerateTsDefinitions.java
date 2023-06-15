@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2022 Vaadin Ltd.
+ * Copyright 2000-2023 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,36 +31,32 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class TaskGenerateTsDefinitions extends AbstractTaskClientGenerator {
 
     private static final String TS_DEFINITIONS = "types.d.ts";
-    private final File studioFolder;
+    private Options options;
 
     /**
      * Create a task to generate <code>types.d.ts</code> file.
-     *
-     * @param studioFolder project folder where the file will be generated.
      */
-    TaskGenerateTsDefinitions(File studioFolder) {
-        this.studioFolder = studioFolder;
+    TaskGenerateTsDefinitions(Options options) {
+        this.options = options;
     }
 
     @Override
     protected String getFileContent() throws IOException {
-        try (InputStream tsDefinitionStream = FrontendUtils.getResourceAsStream(
-                TS_DEFINITIONS, TaskGenerateTsDefinitions.class.getClassLoader()
-        )) {
+        try (InputStream tsDefinitionStream = FrontendUtils.getResourceAsStream(TS_DEFINITIONS)) {
             return IOUtils.toString(tsDefinitionStream, UTF_8);
         }
     }
 
     @Override
     protected File getGeneratedFile() {
-        return new File(studioFolder, TS_DEFINITIONS);
+        return new File(options.getStudioFolder(), TS_DEFINITIONS);
     }
 
     @Override
     protected boolean shouldGenerate() {
-        File tsDefinitionsFile = new File(studioFolder, TS_DEFINITIONS);
+        File tsDefinitionsFile = new File(options.getStudioFolder(), TS_DEFINITIONS);
         return !tsDefinitionsFile.exists()
-                && new File(studioFolder, TaskGenerateTsConfig.TSCONFIG_JSON).exists();
+                && new File(options.getStudioFolder(), TaskGenerateTsConfig.TSCONFIG_JSON).exists();
     }
 }
 

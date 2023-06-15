@@ -51,7 +51,7 @@ import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -121,6 +121,20 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
         return fieldDelegate.isInvalid();
     }
 
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateInvalidState();
+    }
+
     @Nullable
     @Override
     public String getRequiredMessage() {
@@ -144,7 +158,12 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
     @Override
     public void setInvalid(boolean invalid) {
+        validate();
         fieldDelegate.setInvalid(invalid);
+    }
+
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
     }
 
     @Nullable

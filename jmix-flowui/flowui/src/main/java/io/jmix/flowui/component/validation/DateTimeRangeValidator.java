@@ -22,7 +22,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Map;
 
 @Component("flowui_DateTimeRangeValidator")
@@ -77,7 +77,7 @@ public class DateTimeRangeValidator<T extends Comparable> extends AbstractValida
 
         if (max != null && value.compareTo(max) > 0) {
             Datatype<?> datatype = datatypeRegistry.get(max.getClass());
-            String formatted = datatype.format(min, currentAuthentication.getLocale());
+            String formatted = datatype.format(max, currentAuthentication.getLocale());
 
             this.defaultMessage = messages.getMessage("validation.constraints.dateTimeRangeMaxExceeded");
 

@@ -6,7 +6,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.collections4.CollectionUtils;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,19 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.component.filer.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.model.DataLoader;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -368,7 +370,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
     /**
      * Operation representing corresponding filtering condition.
      */
-    public enum Operation {
+    public enum Operation implements EnumClass<String> {
         EQUAL(Type.VALUE),
         NOT_EQUAL(Type.VALUE),
         GREATER(Type.VALUE),
@@ -393,6 +395,21 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
         public Type getType() {
             return type;
+        }
+
+        @Nullable
+        public static Operation fromId(String id) {
+            for (Operation operation : Operation.values()) {
+                if (Objects.equals(id, operation.getId())) {
+                    return operation;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String getId() {
+            return name();
         }
 
         /**

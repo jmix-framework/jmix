@@ -40,7 +40,7 @@ import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -48,7 +48,7 @@ import java.util.function.Function;
 public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
-    public static final String ID = "edit";
+    public static final String ID = "list_edit";
 
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;

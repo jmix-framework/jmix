@@ -26,7 +26,7 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 public interface StudioGridExportActions {
 
     @StudioAction(
-            type = "excelExport",
+            type = "grdexp_excelExport",
             description = "Action for export table content in XLSX format",
             classFqn = "io.jmix.gridexportflowui.action.ExcelExportAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
@@ -55,7 +55,7 @@ public interface StudioGridExportActions {
     void excelExport();
 
     @StudioAction(
-            type = "jsonExport",
+            type = "grdexp_jsonExport",
             description = "Action for export table content as JSON",
             classFqn = "io.jmix.gridexportflowui.action.JsonExportAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",

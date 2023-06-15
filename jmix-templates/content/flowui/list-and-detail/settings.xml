@@ -64,9 +64,14 @@
     <property caption="Table actions"
               step="1"
               code="tableActions"
-              defaultValue="create,edit,remove"
+              defaultValue="list_create,list_edit,list_remove"
               propertyType="MULTI_OPTION"
               optionsString="${actionSearch.getWizardTableActions()}"/>
+    <property caption="Create generic filter"
+              code="createGenericFilter"
+              step="1"
+              defaultValue="true"
+              propertyType="BOOLEAN"/>
     <property caption="Multiselect"
               code="multiselect"
               step="1"
@@ -188,11 +193,17 @@
     <source fileExt="java"
             group="list"
             name="../list/controller"/>
+    <source fileExt="kt"
+            group="list"
+            name="../list/controller"/>
 
     <source fileExt="xml"
             group="detail"
             name="../detail/descriptor"/>
     <source fileExt="java"
+            group="detail"
+            name="../detail/controller"/>
+    <source fileExt="kt"
             group="detail"
             name="../detail/controller"/>
 </template>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://UserListView.title"
+      focusComponent="usersDataGrid">
+    <data readOnly="true">
+        <collection id="usersDc"
+                    class="${project_rootPackage}.entity.User">
+            <fetchPlan extends="_base"/>
+            <loader id="usersDl">
+                <query>
+                    <![CDATA[select e from ${normalizedPrefix_underscore}User e order by e.username]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="usersDl">
+            <properties include=".*"/>
+        </genericFilter>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="usersDataGrid.create"/>
+            <button id="editBtn" action="usersDataGrid.edit"/>
+            <button id="removeBtn" action="usersDataGrid.remove"/>
+            <button id="showRoleAssignmentsBtn" action="usersDataGrid.showRoleAssignments"/>
+            <dropdownButton id="additionalBtn" text="msg://additionalMenu" icon="COG">
+                <items>
+                    <actionItem id="changePasswordItem" ref="usersDataGrid.changePassword"/>
+                    <actionItem id="resetPasswordItem" ref="usersDataGrid.resetPassword"/>
+                </items>
+            </dropdownButton>
+            <simplePagination id="pagination" dataLoader="usersDl"/>
+        </hbox>
+        <dataGrid id="usersDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="usersDc">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="remove" type="list_remove"/>
+                <action id="showRoleAssignments" type="sec_showRoleAssignments"/>
+                <action id="changePassword" type="sec_changePassword"/>
+                <action id="resetPassword" type="sec_resetPassword"/>
+            </actions>
+            <columns>
+                <column property="username"/>
+                <column property="firstName"/>
+                <column property="lastName"/>
+                <column property="email"/>
+                <column property="timeZoneId"/>
+                <column property="active"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

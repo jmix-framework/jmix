@@ -33,7 +33,7 @@ dependencies {
     implementation project(':security-starter')
     implementation project(':security-ui-starter')
     implementation project(':security-data-starter')
-    implementation project(':security-oauth2-starter')
+//    implementation project(':security-oauth2-starter')
     implementation project(':localfs-starter')
     implementation project(':sessions-starter')
     implementation project(':dynattr-starter')

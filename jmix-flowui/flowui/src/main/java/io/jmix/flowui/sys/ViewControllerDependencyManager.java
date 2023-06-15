@@ -21,7 +21,7 @@ import io.jmix.flowui.sys.ControllerDependencyInjector.InjectionContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.List;
 
 @Component("flowui_ViewControllerDependencyManager")

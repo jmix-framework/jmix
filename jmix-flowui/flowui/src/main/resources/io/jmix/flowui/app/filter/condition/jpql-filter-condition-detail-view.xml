@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://jpqlFilterConditionDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="filterConditionDc"
+                  class="io.jmix.flowui.entity.filter.JpqlFilterCondition">
+            <fetchPlan extends="_local">
+                <property name="valueComponent" fetchPlan="_local"/>
+            </fetchPlan>
+            <loader/>
+            <instance id="valueComponentDc" property="valueComponent"/>
+        </instance>
+    </data>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <formLayout id="form" dataContainer="filterConditionDc">
+            <select id="parameterClassField" required="true"
+                    label="msg://jpqlFilterConditionDetailView.parameterClassField.label"/>
+            <select id="entityClassField" required="true" visible="false"
+                    label="msg://jpqlFilterConditionDetailView.parameterClassField.entityTitle"/>
+            <select id="enumClassField" required="true" visible="false"
+                    label="msg://jpqlFilterConditionDetailView.parameterClassField.enumTitle"/>
+            <textField id="labelField" property="label" required="true"/>
+            <textField id="parameterNameField" property="parameterName" required="true"
+                       helperText="msg://jpqlFilterConditionDetailView.parameterNameField.helperText"/>
+            <hbox id="defaultValueBox" padding="false"/>
+            <checkbox id="hasInExpressionField" property="hasInExpression"/>
+            <checkbox id="visibleField" property="visible"/>
+            <textArea id="joinField" height="7.5em" property="join" colspan="2"/>
+            <textArea id="whereField" height="12em" required="true" property="where" colspan="2"
+                      requiredMessage="msg://jpqlFilterConditionDetailView.whereField.requiredMessage"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

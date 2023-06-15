@@ -24,7 +24,7 @@ import io.jmix.core.Id;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.*;
 import io.jmix.data.impl.EntityFetcher;
@@ -36,13 +36,14 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
 import io.jmix.eclipselink.impl.entitycache.QueryKey;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
+import org.springframework.lang.Nullable;
+import jakarta.persistence.*;
 import org.eclipse.persistence.config.CascadePolicy;
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
 import org.eclipse.persistence.internal.helper.ClassConstants;
 import org.eclipse.persistence.internal.helper.ConversionManager;
-//todo SB3 uncomment Jmix Eclipselink CubaUtil
-//import org.eclipse.persistence.internal.helper.CubaUtil;
+import org.eclipse.persistence.internal.helper.JmixUtil;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
 import org.eclipse.persistence.jpa.JpaQuery;
 import org.eclipse.persistence.queries.DatabaseQuery;
@@ -52,8 +53,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.env.Environment;
 
-import jakarta.annotation.Nullable;
-import jakarta.persistence.*;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
@@ -549,8 +548,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             }
         }
         if (!useJPQLCache) {
-            //todo SB3 uncomment Jmix Eclipselink CubaUtil
-//            CubaUtil.setEnabledJPQLParseCache(false);
+            JmixUtil.setEnabledJPQLParseCache(false);
         }
         try {
             if (resultClass != null) {
@@ -559,8 +557,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
                 return (JpaQuery) entityManager.createQuery(queryString);
             }
         } finally {
-            //todo SB3 uncomment Jmix Eclipselink CubaUtil
-//            CubaUtil.setEnabledJPQLParseCache(true);
+            JmixUtil.setEnabledJPQLParseCache(true);
         }
     }
 

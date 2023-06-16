@@ -9,7 +9,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -19,7 +18,7 @@ import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.SupportsValidation;
@@ -34,7 +33,7 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
@@ -145,7 +144,7 @@ public class ReportWizardCreatorView extends StandardView {
     @Autowired
     protected ReportWizard reportWizardService;
     @Autowired
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
@@ -435,7 +434,7 @@ public class ReportWizardCreatorView extends StandardView {
     }
 
     protected void initEntityLookupField() {
-        FlowuiComponentUtils.setItemsMap(entityField, MapUtils.invertMap(getAvailableEntities()));
+        ComponentUtils.setItemsMap(entityField, MapUtils.invertMap(getAvailableEntities()));
     }
 
     @Subscribe("reportTypeGenerateField")
@@ -514,7 +513,7 @@ public class ReportWizardCreatorView extends StandardView {
 
 
     protected void initTemplateFormatLookupField() {
-        FlowuiComponentUtils.setItemsMap(templateFileTypeField, getAvailableTemplateFormats());
+        ComponentUtils.setItemsMap(templateFileTypeField, getAvailableTemplateFormats());
         templateFileTypeField.setAllowCustomValue(false);
         templateFileTypeField.setValue(TemplateFileType.DOCX);
     }
@@ -785,7 +784,7 @@ public class ReportWizardCreatorView extends StandardView {
         ReportOutputType outputFileFormatPrevValue = outputFileFormat.getValue();
         outputFileFormat.setValue(null);
         Map<String, ReportOutputType> optionsMap = outputFormatTools.getOutputAvailableFormats(reportDataDc.getItem().getTemplateFileType());
-        FlowuiComponentUtils.setItemsMap(outputFileFormat, MapUtils.invertMap(optionsMap));
+        ComponentUtils.setItemsMap(outputFileFormat, MapUtils.invertMap(optionsMap));
 
         if (outputFileFormatPrevValue != null) {
             if (optionsMap.containsKey(outputFileFormatPrevValue.toString())) {
@@ -922,7 +921,7 @@ public class ReportWizardCreatorView extends StandardView {
 
             downloader.download(new ByteArrayDownloadDataProvider(
                             newTemplate,
-                            flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                            uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                             coreProperties.getTempDir()),
                     downloadTemplateFile.getText(),
                     DownloadFormat.getByExtension(templateFileType.toString().toLowerCase()));

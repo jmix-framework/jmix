@@ -26,7 +26,7 @@ import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.Report;
@@ -72,7 +72,7 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
 
     @Override
     protected void initAction() {
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.CLOCK);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.CLOCK);
     }
 
     protected void openLookup(@Nullable MetaClass metaClass) {
@@ -84,15 +84,16 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
 
         ReportExecutionDialog reportExecutionDialog = reportExecutionDialogDialogWindow.getView();
         reportExecutionDialog.setMetaClassParameter(metaClass);
-        reportExecutionDialog.setScreenParameter(parent.getId().orElse(null));
+        reportExecutionDialog.setScreenParameter(parent.getId().orElseThrow(() -> new NullPointerException("Parent view is null!")));
 
         reportExecutionDialogDialogWindow.open();
     }
 
-    protected void openExecutionBrowser(Collection<Report> reports, View screen) {
+    protected void openExecutionBrowser(Collection<Report> reports, View<?> screen) {
         if (CollectionUtils.isNotEmpty(reports)) {
-            DialogWindow<ReportExecutionListView> reportExecutionDialogWindow = dialogWindows.view(screen, ReportExecutionListView.class)
-                    .build();
+            DialogWindow<ReportExecutionListView> reportExecutionDialogWindow =
+                    dialogWindows.view(screen, ReportExecutionListView.class)
+                            .build();
 
             ReportExecutionListView reportExecutionListView = reportExecutionDialogWindow.getView();
             reportExecutionListView.setFilterByReports(new ArrayList<>(reports));

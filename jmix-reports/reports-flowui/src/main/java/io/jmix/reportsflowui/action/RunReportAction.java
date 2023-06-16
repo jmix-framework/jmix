@@ -16,12 +16,6 @@
 
 package io.jmix.reportsflowui.action;
 
-import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
-import io.jmix.reportsflowui.runner.UiReportRunContext;
-import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import io.jmix.reportsflowui.view.run.ReportRunView;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -32,10 +26,16 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.Report;
+import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.UiReportRunContext;
+import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.view.run.InputParametersDialog;
+import io.jmix.reportsflowui.view.run.ReportRunView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -100,7 +100,7 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
 
     @Override
     protected void initAction() {
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PRINT);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PRINT);
     }
 
     @Override
@@ -110,14 +110,14 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
         openLookup(findParent());
     }
 
-    protected void openLookup(View<?> view) {
-        DialogWindow<ReportRunView> reportRunDialogWindow = dialogWindows.lookup(view, Report.class)
+    protected void openLookup(View<?> parent) {
+        DialogWindow<ReportRunView> reportRunDialogWindow = dialogWindows.lookup(parent, Report.class)
                 .withViewClass(ReportRunView.class)
-                .withSelectHandler(reports -> runReports(reports, view))
+                .withSelectHandler(reports -> runReports(reports, parent))
                 .build();
 
         ReportRunView reportRunView = reportRunDialogWindow.getView();
-        reportRunView.setScreen(view.getId().orElse(null));
+        reportRunView.setScreen(parent.getId().orElseThrow(() -> new NullPointerException("Parent view is null!")));
         reportRunDialogWindow.open();
     }
 
@@ -145,13 +145,11 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
 
     protected void openReportParamsDialog(Report report, View<?> view) {
         Map<String, Object> selectedItems = null;
-        if (target != null) {
-            Set items = target.getSelectedItems();
-            if (!items.isEmpty()) {
-                selectedItems = ImmutableMap.of(
-                        DEFAULT_LIST_OF_ENTITIES_ALIAS, items,
-                        DEFAULT_SINGLE_ENTITY_ALIAS, items.stream().findFirst().get());
-            }
+        Set<?> items = target.getSelectedItems();
+        if (!items.isEmpty()) {
+            selectedItems = ImmutableMap.of(
+                    DEFAULT_LIST_OF_ENTITIES_ALIAS, items,
+                    DEFAULT_SINGLE_ENTITY_ALIAS, items.stream().findFirst().get());
         }
 
         DialogWindow<InputParametersDialog> inputParametersDialogWindow = dialogWindows.view(view, InputParametersDialog.class)

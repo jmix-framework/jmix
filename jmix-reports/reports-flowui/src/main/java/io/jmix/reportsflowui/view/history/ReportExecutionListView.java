@@ -17,14 +17,13 @@
 package io.jmix.reportsflowui.view.history;
 
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.FileRef;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.download.Downloader;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
@@ -64,7 +63,11 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
                 .setSortable(true)
                 .setResizable(true);
 
-        executionsDataGrid.addColumn(reportExecution -> reportExecution.getOutputDocument() != null ? reportExecution.getOutputDocument().getFileName() : "")
+        executionsDataGrid.addColumn(reportExecution ->
+                        reportExecution.getOutputDocument() != null
+                                ? reportExecution.getOutputDocument().getFileName()
+                                : ""
+                )
                 .setHeader(messageBundle.getMessage("history.outputDocument.header"))
                 .setKey("outputDocument")
                 .setSortable(true)
@@ -76,7 +79,7 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
 
     private SecuredBaseAction createDownloadAction() {
         SecuredBaseAction downloadDocumentAction = new SecuredBaseAction("download")
-                .withIcon(FlowuiComponentUtils.convertToIcon(VaadinIcon.DOWNLOAD))
+                .withIcon(ComponentUtils.convertToIcon(VaadinIcon.DOWNLOAD))
                 .withTitle(messageBundle.getMessage("action.download.text"))
                 .withHandler(handler -> {
                     ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
@@ -90,14 +93,18 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
         return downloadDocumentAction;
     }
 
+    @Override
+    public String getPageTitle() {
+        if (CollectionUtils.isNotEmpty(filterByReports)) {
+            return messageBundle.formatMessage("history.format.title", getReportsNames());
+        }
+
+        return super.getPageTitle();
+    }
+
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         initDataLoader();
-
-        if (CollectionUtils.isNotEmpty(filterByReports)) {
-            String title = messageBundle.formatMessage("history.format.title", getReportsNames());
-            UI.getCurrent().getPage().setTitle(title);
-        }
     }
 
     protected void initDataLoader() {

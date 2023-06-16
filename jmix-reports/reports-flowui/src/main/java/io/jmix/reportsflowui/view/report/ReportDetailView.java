@@ -58,7 +58,7 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
@@ -222,7 +222,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Autowired
     protected Downloader downloader;
     @Autowired
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
@@ -377,7 +377,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 byte[] reportTemplate = defaultTemplate.getContent();
                 downloader.download(
                         new ByteArrayDownloadDataProvider(reportTemplate,
-                                flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                                 coreProperties.getTempDir()),
                         defaultTemplate.getName(),
                         DownloadFormat.getByExtension(defaultTemplate.getExt()));
@@ -1494,7 +1494,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
             String title = menuId.equals(localeMsg) ? id : id + " ( " + localeMsg + " )";
             screens.put(id, title);
         }
-        FlowuiComponentUtils.setItemsMap(screenIdField, screens);
+        ComponentUtils.setItemsMap(screenIdField, screens);
     }
 
     protected void initRoleField() {
@@ -1503,7 +1503,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
             roles.put(baseRole, baseRole.getName());
         }
 
-        FlowuiComponentUtils.setItemsMap(rolesField, roles);
+        ComponentUtils.setItemsMap(rolesField, roles);
     }
 
     @Install(to = "rolesDataGrid.exclude", subject = "enabledRule")

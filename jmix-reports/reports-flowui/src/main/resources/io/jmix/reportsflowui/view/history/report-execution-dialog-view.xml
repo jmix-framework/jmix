@@ -71,10 +71,8 @@
                   dataContainer="reportsDc"
                   selectionMode="MULTI"
                   enabled="false"
+                  minHeight="20em"
                   width="100%">
-            <actions>
-                <action id="executionHistoryAction"/>
-            </actions>
             <columns>
                 <column property="group"/>
                 <column property="description"/>

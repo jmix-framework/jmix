@@ -116,7 +116,7 @@
             <tab id="lookupSettingsTab" label="msg://parameters.dropdownSettingsTab">
                 <div id="lookupSettingsBox" width="100%">
                     <div classNames="flex, justify-between">
-                        <label text="msg://lookupJoin"/>
+                        <label text="msg://lookupJoin" setFor="lookupJoinCodeEditor"/>
                         <button id="lookupJoinFullScreenBtn" text="msg:///fullScreenBtn.title"
                                 themeNames="tertiary-inline"/>
                     </div>
@@ -131,7 +131,7 @@
                                 icon="QUESTION_CIRCLE"/>
                     </div>
                     <div classNames="flex, justify-between">
-                        <label text="msg://lookupWhere"/>
+                        <label text="msg://lookupWhere" setFor="lookupWhereCodeEditor"/>
                         <button id="lookupWhereFullScreenBtn" text="msg:///fullScreenBtn.title"
                                 themeNames="tertiary-inline"/>
                     </div>

@@ -4,8 +4,8 @@
     <menu id="reports" title="msg://io.jmix.reportsflowui/menu.reports.title">
         <item view="report_Report.list" title="msg://io.jmix.reportsflowui/menu.report_Report.list"/>
         <item view="report_ReportGroup.list" title="msg://io.jmix.reportsflowui/menu.report_ReportGroup.list"/>
-        <item view="report_ReportRun.view" title="msg://io.jmix.reportsflowui/menu.report_ReportRun.view"/>
-        <item view="report_ReportTable.view" title="msg://io.jmix.reportsflowui/menu.report_ReportTable.view"/>
+        <item view="report_ReportRunView" title="msg://io.jmix.reportsflowui/menu.report_ReportRunView"/>
+        <item view="report_ReportTableView" title="msg://io.jmix.reportsflowui/menu.report_ReportTableView"/>
     </menu>
 
 </menu-config>

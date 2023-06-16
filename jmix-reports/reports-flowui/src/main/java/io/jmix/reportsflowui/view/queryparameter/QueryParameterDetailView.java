@@ -39,7 +39,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.ParameterType;
@@ -154,7 +154,7 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
             String enumLocalizedName = messages.getMessage(enumClass, enumClass.getSimpleName());
             enumsOptionsMap.put(enumLocalizedName + " (" + enumClass.getSimpleName() + ")", enumClass);
         }
-        FlowuiComponentUtils.setItemsMap(enumerationField, MapUtils.invertMap(enumsOptionsMap));
+        ComponentUtils.setItemsMap(enumerationField, MapUtils.invertMap(enumsOptionsMap));
     }
 
     protected void initEntityComboBox() {
@@ -164,7 +164,7 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
                 .collect(Collectors.toMap(metaClass ->
                                 messageTools.getDetailedEntityCaption(metaClass),
                         metaClass -> metaClass));
-        FlowuiComponentUtils.setItemsMap(entityMetaClassField, MapUtils.invertMap(metaClassesOptionsMap));
+        ComponentUtils.setItemsMap(entityMetaClassField, MapUtils.invertMap(metaClassesOptionsMap));
         if (StringUtils.isNotEmpty(getEditedEntity().getEntityMetaClassName())) {
             entityMetaClassField.setValue(metadata.findClass(getEditedEntity().getEntityMetaClassName()));
         }

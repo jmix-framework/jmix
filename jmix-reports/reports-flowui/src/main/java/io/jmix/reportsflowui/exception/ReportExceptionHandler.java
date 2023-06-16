@@ -22,7 +22,6 @@ import io.jmix.flowui.exception.ExceptionDialog;
 import io.jmix.flowui.sys.BeanUtil;
 import io.jmix.reports.exception.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -34,14 +33,13 @@ import javax.annotation.Nullable;
 @Component("report_ReportExceptionHandler")
 public class ReportExceptionHandler extends AbstractUiExceptionHandler {
 
-    @Autowired
-    protected Messages messages;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected ApplicationContext applicationContext;
+    protected final Messages messages;
+    protected final Notifications notifications;
+    protected final ApplicationContext applicationContext;
 
-    public ReportExceptionHandler() {
+    public ReportExceptionHandler(Messages messages,
+                                  Notifications notifications,
+                                  ApplicationContext applicationContext) {
         super(
                 ReportingException.class.getName(),
                 NoOpenOfficeFreePortsException.class.getName(),
@@ -50,6 +48,10 @@ public class ReportExceptionHandler extends AbstractUiExceptionHandler {
                 FailedToLoadTemplateClassException.class.getName(),
                 ValidationException.class.getName()
         );
+
+        this.messages = messages;
+        this.notifications = notifications;
+        this.applicationContext = applicationContext;
     }
 
     @Override

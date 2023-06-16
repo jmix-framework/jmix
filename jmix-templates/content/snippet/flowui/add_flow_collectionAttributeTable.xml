@@ -1,0 +1,22 @@
+<%
+def addActionName = (cardinality_MANY_TO_MANY) ? 'add' : 'create'
+def removeActionName = (cardinality_MANY_TO_MANY) ? 'exclude' : 'remove'
+%>
+<dataGrid id="${viewProperty_name}DataGrid" dataContainer="${viewProperty_name}Dc" width="100%" height="${tableHeight}">
+<% if (!cardinality_MANY_TO_MANY || owner) {%>
+<actions>
+    <action id="${addActionName}" type="list_${addActionName}"/>
+    <% if (cardinality_ONE_TO_MANY) {%>
+    <action id="edit" type="list_edit"/>
+    <% }%>
+    <action id="${removeActionName}" type="list_${removeActionName}"/>
+</actions>
+<% }%>
+<columns>
+    <%
+    columns.each {
+    print "<column property=\"${it}\"/>"
+    }
+    %>
+</columns>
+</dataGrid>

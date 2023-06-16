@@ -1,0 +1,13 @@
+<%
+def addActionName = (cardinality_MANY_TO_MANY) ? 'add' : 'create'
+def removeActionName = (cardinality_MANY_TO_MANY) ? 'exclude' : 'remove'
+%>
+<% if (!cardinality_MANY_TO_MANY || owner) {%>
+<hbox id="buttonsPanel" classNames="buttons-panel">
+<button action="${viewProperty_name}DataGrid.${addActionName}"/>
+<% if (cardinality_ONE_TO_MANY) {%>
+<button action="${viewProperty_name}DataGrid.edit"/>
+<% }%>
+<button action="${viewProperty_name}DataGrid.${removeActionName}"/>
+</hbox>
+<% }%>

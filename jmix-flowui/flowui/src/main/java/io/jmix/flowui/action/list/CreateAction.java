@@ -22,15 +22,15 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
@@ -51,7 +51,7 @@ import static io.jmix.flowui.component.UiComponentUtils.isComponentAttachedToDia
 public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
-    public static final String ID = "create";
+    public static final String ID = "list_create";
 
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;
@@ -78,7 +78,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         super.initAction();
 
         this.variant = ActionVariant.PRIMARY;
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PLUS);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PLUS);
     }
 
     @Nullable
@@ -233,8 +233,8 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridCreateShortcut());
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridCreateShortcut());
     }
 
     @Autowired
@@ -263,7 +263,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
             return true;
         }
 
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
 
         if (!entityContext.isCreatePermitted()) {

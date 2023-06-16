@@ -64,6 +64,7 @@
         <xs:attribute name="hide" type="xs:boolean"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="optionsString" type="xs:string"/>
+        <xs:attribute name="focused" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="stepsType">
@@ -77,6 +78,7 @@
 
     <xs:complexType name="stepType">
         <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="description" type="xs:string"/>
         <xs:attribute name="order" type="xs:int"/>
     </xs:complexType>
 
@@ -163,6 +165,7 @@
             <xs:enumeration value="FRAGMENT"/>
             <xs:enumeration value="EXTEND"/>
             <xs:enumeration value="OVERRIDE"/>
+            <xs:enumeration value="BPM"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

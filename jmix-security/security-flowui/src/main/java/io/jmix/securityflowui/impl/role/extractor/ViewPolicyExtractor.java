@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component("sec_FlowuiViewPolicyExtractor")
+@Component("sec_ViewPolicyExtractor")
 public class ViewPolicyExtractor implements ResourcePolicyExtractor {
 
     @Override

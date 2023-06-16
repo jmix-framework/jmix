@@ -37,6 +37,6 @@ public interface ShowEntityInfoRole {
     @ViewPolicy(viewIds = {"entityInfoView"})
     @EntityPolicy(entityClass = InfoValue.class, actions = {EntityPolicyAction.ALL})
     @EntityAttributePolicy(entityClass = InfoValue.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
-    @SpecificPolicy(resources = "datatools.flowui.showEntityInfo")
+    @SpecificPolicy(resources = "datatools.showEntityInfo")
     void showEntityInfo();
 }

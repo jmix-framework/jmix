@@ -19,7 +19,7 @@ package component.listmenu.test_support;
 import io.jmix.core.*;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.flowui.FlowuiConfiguration;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.menu.MenuConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,9 +32,9 @@ public class ListMenuTestConfiguration {
 
     @Bean
     public MenuConfig menuConfig(Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
-                                 Environment environment, FlowuiProperties flowuiProperties, JmixModules modules,
+                                 Environment environment, UiProperties uiProperties, JmixModules modules,
                                  Metadata metadata, MetadataTools metadataTools) {
-        return new TestMenuConfig(resources, messages, messageTools, dom4JTools, environment, flowuiProperties,
+        return new TestMenuConfig(resources, messages, messageTools, dom4JTools, environment, uiProperties,
                 modules, metadata, metadataTools);
     }
 }

@@ -13,7 +13,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.items.EnumDataProvider;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.ResourcePolicyEffect;
 import io.jmix.securityflowui.model.DefaultResourcePolicyGroupResolver;
@@ -57,7 +57,7 @@ public class EntityResourcePolicyModelCreateView extends MultipleResourcePolicyM
 
     @Subscribe
     public void onInit(InitEvent event) {
-        FlowuiComponentUtils.setItemsMap(entityField, resourcePolicyEditorUtils.getEntityOptionsMap());
+        ComponentUtils.setItemsMap(entityField, resourcePolicyEditorUtils.getEntityOptionsMap());
         entityField.addValueChangeListener(this::onEntityFieldValueChange);
 
         actionsGroup.setItems(new EnumDataProvider<>(EntityPolicyAction.class));

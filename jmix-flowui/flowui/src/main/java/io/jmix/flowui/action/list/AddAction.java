@@ -22,13 +22,13 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiComponentProperties;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
+import io.jmix.flowui.UiComponentProperties;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.data.ContainerDataUnit;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.sys.ActionViewInitializer;
@@ -50,7 +50,7 @@ import java.util.function.Predicate;
 public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
-    public static final String ID = "add";
+    public static final String ID = "list_add";
 
     protected DialogWindows dialogWindows;
     protected AccessManager accessManager;
@@ -71,7 +71,7 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PLUS);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PLUS);
     }
 
     @Autowired
@@ -80,8 +80,8 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridAddShortcut());
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridAddShortcut());
     }
 
     @Autowired
@@ -196,8 +196,8 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
             MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
-            FlowuiEntityAttributeContext attributeContext =
-                    new FlowuiEntityAttributeContext(masterMetaClass, metaProperty.getName());
+            UiEntityAttributeContext attributeContext =
+                    new UiEntityAttributeContext(masterMetaClass, metaProperty.getName());
             accessManager.applyRegisteredConstraints(attributeContext);
 
             if (!attributeContext.canModify()) {

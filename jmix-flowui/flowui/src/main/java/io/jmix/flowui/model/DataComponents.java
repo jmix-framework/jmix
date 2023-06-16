@@ -21,8 +21,8 @@ import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.model.impl.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -97,11 +97,11 @@ public class DataComponents {
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
 
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(masterContainer.getEntityMetaClass());
+        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
         accessManager.applyRegisteredConstraints(entityContext);
 
-        FlowuiEntityAttributeContext attributeContext =
-                new FlowuiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
+        UiEntityAttributeContext attributeContext =
+                new UiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
         accessManager.applyRegisteredConstraints(attributeContext);
 
         if (entityContext.isViewPermitted()
@@ -143,11 +143,11 @@ public class DataComponents {
         autowire(container);
         container.setSorter(sorterFactory.createCollectionPropertyContainerSorter(container));
 
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(masterContainer.getEntityMetaClass());
+        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
         accessManager.applyRegisteredConstraints(entityContext);
 
-        FlowuiEntityAttributeContext attributeContext =
-                new FlowuiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
+        UiEntityAttributeContext attributeContext =
+                new UiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
         accessManager.applyRegisteredConstraints(attributeContext);
 
         if (attributeContext.canView()

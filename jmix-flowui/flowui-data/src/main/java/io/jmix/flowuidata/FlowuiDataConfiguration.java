@@ -26,15 +26,15 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.flowui.Actions;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.genericfilter.FilterMetadataTools;
 import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.sys.ActionsConfiguration;
-import io.jmix.flowuidata.genericfilter.FlowiDataFilterMetadataTools;
-import io.jmix.flowuidata.genericfilter.FlowuiDataGenericFilterSupport;
+import io.jmix.flowuidata.genericfilter.UiDataFilterMetadataTools;
+import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import io.jmix.flowuidata.genericfilter.GenericFilterConfigurationConverter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -51,7 +51,7 @@ import java.util.Collections;
 @JmixModule(dependsOn = {DataConfiguration.class, FlowuiConfiguration.class})
 public class FlowuiDataConfiguration {
 
-    @Bean("flowui_FlowuiDataActions")
+    @Bean("flowui_UiDataActions")
     public ActionsConfiguration actions(ApplicationContext applicationContext,
                                         AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
@@ -59,7 +59,7 @@ public class FlowuiDataConfiguration {
         return actionsConfiguration;
     }
 
-    @Bean("flowui_FlowuiDataGenericFilterSupport")
+    @Bean("flowui_UiDataGenericFilterSupport")
     @Primary
     public GenericFilterSupport genericFilterSupport(Actions actions,
                                                      UiComponents uiComponents,
@@ -68,18 +68,18 @@ public class FlowuiDataConfiguration {
                                                      CurrentAuthentication currentAuthentication,
                                                      DataComponents dataComponents,
                                                      Metadata metadata) {
-        return new FlowuiDataGenericFilterSupport(actions, uiComponents, dataManager,
+        return new UiDataGenericFilterSupport(actions, uiComponents, dataManager,
                 genericFilterConfigurationConverter, currentAuthentication, dataComponents, metadata);
     }
 
-    @Bean("flowui_FlowuiDataFilterMetadataTools")
+    @Bean("flowui_UiDataFilterMetadataTools")
     @Primary
     public FilterMetadataTools filterMetadataTools(MetadataTools metadataTools,
-                                                   FlowuiComponentProperties flowuiComponentProperties,
+                                                   UiComponentProperties uiComponentProperties,
                                                    AccessManager accessManager,
                                                    QueryTransformerFactory queryTransformerFactory,
                                                    Metadata metadata) {
-        return new FlowiDataFilterMetadataTools(metadataTools, flowuiComponentProperties, accessManager,
+        return new UiDataFilterMetadataTools(metadataTools, uiComponentProperties, accessManager,
                 queryTransformerFactory, metadata);
     }
 }

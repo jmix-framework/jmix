@@ -26,8 +26,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.action.list.EditAction;
-import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -48,7 +46,7 @@ import java.util.stream.Collectors;
 @ViewController("quartz_JobModel.detail")
 @ViewDescriptor("job-model-detail-view.xml")
 @EditedEntityContainer("jobModelDc")
-@DialogMode(width = "80em", height = "60em", resizable = true)
+@DialogMode(width = "80em", height = "65em", resizable = true)
 public class JobModelDetailView extends StandardDetailView<JobModel> {
 
     @ViewComponent
@@ -108,18 +106,22 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     }
 
     protected void initModelTable() {
-        triggerModelTable.addColumn(entity -> entity.getLastFireDate() != null ?
-                        new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getLastFireDate()) : "").setResizable(true)
-                .setHeader(messageBundle.getMessage("column.lastFireDate.header"));
         triggerModelTable.addColumn(entity -> entity.getStartDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getStartDate()) : "").setResizable(true)
                 .setHeader(messageBundle.getMessage("column.startDate.header"));
+        triggerModelTable.addColumn(entity -> entity.getLastFireDate() != null ?
+                        new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
+                                .format(entity.getLastFireDate()) : "").setResizable(true)
+                .setHeader(messageBundle.getMessage("column.lastFireDate.header"));
         triggerModelTable.addColumn(entity -> entity.getNextFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getNextFireDate()) : "").setResizable(true)
                 .setHeader(messageBundle.getMessage("column.nextFireDate.header"));
+        triggerModelTable.addColumn(entity -> entity.getEndDate() != null ?
+                        new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
+                                .format(entity.getEndDate()) : "").setResizable(true)
+                .setHeader(messageBundle.getMessage("column.endDate.header"));
     }
 
     @Subscribe("jobGroupField")
@@ -174,8 +176,8 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
         jobNameField.setReadOnly(readOnly);
         jobGroupField.setReadOnly(readOnly);
         jobClassField.setReadOnly(readOnly);
-        triggerModelTable.getAction(EditAction.ID).setVisible(!readOnly);
-        triggerModelTable.getAction(ReadAction.ID).setVisible(readOnly);
+        triggerModelTable.getAction("edit").setVisible(!readOnly);
+        triggerModelTable.getAction("read").setVisible(readOnly);
         addDataParamButton.setEnabled(!readOnly);
         jobDataParamsTable.setEnabled(!readOnly);
     }

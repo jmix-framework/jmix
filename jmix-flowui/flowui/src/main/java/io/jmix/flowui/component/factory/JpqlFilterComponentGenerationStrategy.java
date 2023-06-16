@@ -32,7 +32,7 @@ import io.jmix.flowui.component.jpqlfilter.JpqlFilter;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
@@ -214,7 +214,7 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         // TODO: gg, style or theme?
         component.addClassName(UNARY_FIELD_CLASS_NAME);
 
-        FlowuiComponentUtils.setItemsMap(component, ImmutableMap.of(
+        ComponentUtils.setItemsMap(component, ImmutableMap.of(
                 Boolean.TRUE, messages.getMessage("boolean.yes"),
                 Boolean.FALSE, messages.getMessage("boolean.no")
         ));

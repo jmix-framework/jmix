@@ -1123,13 +1123,13 @@
                     <xs:enumeration value="entity_lookup"/>
                     <xs:enumeration value="entity_open"/>
                     <xs:enumeration value="entity_openComposition"/>
-                    <xs:enumeration value="create"/>
-                    <xs:enumeration value="edit"/>
-                    <xs:enumeration value="remove"/>
-                    <xs:enumeration value="add"/>
-                    <xs:enumeration value="exclude"/>
-                    <xs:enumeration value="read"/>
-                    <xs:enumeration value="refresh"/>
+                    <xs:enumeration value="list_create"/>
+                    <xs:enumeration value="list_edit"/>
+                    <xs:enumeration value="list_remove"/>
+                    <xs:enumeration value="list_add"/>
+                    <xs:enumeration value="list_exclude"/>
+                    <xs:enumeration value="list_read"/>
+                    <xs:enumeration value="list_refresh"/>
                     <xs:enumeration value="detail_close"/>
                     <xs:enumeration value="detail_save"/>
                     <xs:enumeration value="detail_saveClose"/>
@@ -1139,7 +1139,7 @@
                     <xs:enumeration value="lookup_select"/>
                     <xs:enumeration value="view_close"/>
                     <xs:enumeration value="value_clear"/>
-                    <xs:enumeration value="itemTracking"/>
+                    <xs:enumeration value="list_itemTracking"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

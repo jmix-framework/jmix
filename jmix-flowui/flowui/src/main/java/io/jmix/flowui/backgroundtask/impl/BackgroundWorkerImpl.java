@@ -65,7 +65,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
     @Autowired
     protected TimeSource timeSource;
 
-    protected FlowuiBackgroundTaskProperties properties;
+    protected UiBackgroundTaskProperties properties;
 
     protected ExecutorService executorService;
 
@@ -73,7 +73,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
     }
 
     @Autowired
-    public void setProperties(FlowuiBackgroundTaskProperties properties) {
+    public void setProperties(UiBackgroundTaskProperties properties) {
         this.properties = properties;
 
         createThreadPoolExecutor();

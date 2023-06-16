@@ -29,7 +29,7 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.model.impl.ViewDataXmlLoader;
@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 public class AssignToUsersAction<E extends BaseRoleModel>
         extends SecuredListDataComponentAction<AssignToUsersAction<E>, E> {
 
-    public static final String ID = "assignToUsers";
+    public static final String ID = "sec_assignToUsers";
 
     protected static final String ROLE_CODE_PROPERTY = "roleCode";
     protected static final String USERNAME_PROPERTY = "username";
@@ -77,7 +77,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.USERS);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.USERS);
     }
 
     @Autowired

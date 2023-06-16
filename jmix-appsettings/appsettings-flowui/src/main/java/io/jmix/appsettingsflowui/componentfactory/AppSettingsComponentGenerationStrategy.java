@@ -44,7 +44,7 @@ import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.value.ContainerValueSource;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.core.Ordered;
 
 import org.springframework.lang.Nullable;
@@ -126,7 +126,7 @@ public class AppSettingsComponentGenerationStrategy
     protected Select<Boolean> createBooleanField() {
         Select<Boolean> field = uiComponents.create(JmixSelect.class);
 
-        FlowuiComponentUtils.setItemsMap(field, ImmutableMap.of(
+        ComponentUtils.setItemsMap(field, ImmutableMap.of(
                 Boolean.TRUE, messages.getMessage("trueString"),
                 Boolean.FALSE, messages.getMessage("falseString")
         ));

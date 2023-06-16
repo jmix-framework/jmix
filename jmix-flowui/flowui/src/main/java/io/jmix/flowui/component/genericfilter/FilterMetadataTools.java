@@ -25,8 +25,8 @@ import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.FlowuiComponentProperties;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
+import io.jmix.flowui.UiComponentProperties;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -40,11 +40,11 @@ public class FilterMetadataTools {
 
     protected final MetadataTools metadataTools;
     protected final Metadata metadata;
-    protected final FlowuiComponentProperties componentProperties;
+    protected final UiComponentProperties componentProperties;
     protected final AccessManager accessManager;
 
     public FilterMetadataTools(MetadataTools metadataTools,
-                               FlowuiComponentProperties uiComponentProperties,
+                               UiComponentProperties uiComponentProperties,
                                AccessManager accessManager,
                                Metadata metadata) {
         this.metadataTools = metadataTools;
@@ -97,7 +97,7 @@ public class FilterMetadataTools {
     }
 
     protected boolean isMetaPropertyPathAllowed(MetaPropertyPath propertyPath, String query) {
-        FlowuiEntityAttributeContext context = new FlowuiEntityAttributeContext(propertyPath);
+        UiEntityAttributeContext context = new UiEntityAttributeContext(propertyPath);
         accessManager.applyRegisteredConstraints(context);
 
         return context.canView()

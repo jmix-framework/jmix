@@ -26,7 +26,7 @@ import io.jmix.flowui.view.builder.LookupWindowBuilder;
 @ActionType(EntityInspectorAddAction.ID)
 public class EntityInspectorAddAction<E> extends AddAction<E> {
 
-    public static final String ID = "entity_inspector_add";
+    public static final String ID = "datatl_entityInspector_add";
 
     protected String entityName;
 

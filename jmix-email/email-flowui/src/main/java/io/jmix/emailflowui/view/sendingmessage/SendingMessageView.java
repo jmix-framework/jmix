@@ -27,7 +27,7 @@ import io.jmix.email.entity.SendingMessage;
 import io.jmix.emailflowui.view.sendingmessage.attachments.SendingMessageAttachmentsListView;
 import io.jmix.emailflowui.view.sendingmessage.resend.ResendMessageView;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textarea.JmixTextArea;
@@ -67,7 +67,7 @@ public class SendingMessageView extends StandardView {
     @Autowired
     protected EmailerProperties emailerProperties;
     @Autowired
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
 
@@ -100,7 +100,7 @@ public class SendingMessageView extends StandardView {
     public void onShowContentBtnClick(ClickEvent<JmixButton> event) {
         ByteArrayDownloadDataProvider dataProvider = new ByteArrayDownloadDataProvider(
                 contentTextArea.getValue().getBytes(StandardCharsets.UTF_8),
-                flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                 coreProperties.getTempDir()
         );
 

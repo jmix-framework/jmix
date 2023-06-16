@@ -21,7 +21,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.filter.FilterComponent;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class GenericFilterClearValuesAction extends GenericFilterAction<GenericF
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.ERASER);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ERASER);
     }
 
     @Autowired

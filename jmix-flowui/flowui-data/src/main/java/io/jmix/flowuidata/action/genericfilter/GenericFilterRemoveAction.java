@@ -27,10 +27,10 @@ import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
-import io.jmix.flowuidata.accesscontext.FlowuiGenericFilterModifyGlobalConfigurationContext;
+import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowuidata.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowuidata.entity.FilterConfiguration;
-import io.jmix.flowuidata.genericfilter.FlowuiDataGenericFilterSupport;
+import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(GenericFilterRemoveAction.ID)
@@ -56,7 +56,7 @@ public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilter
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.TRASH);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.TRASH);
     }
 
     @Autowired
@@ -77,8 +77,8 @@ public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilter
 
     @Autowired
     public void setAccessManager(AccessManager accessManager) {
-        FlowuiGenericFilterModifyGlobalConfigurationContext globalFilterContext =
-                new FlowuiGenericFilterModifyGlobalConfigurationContext();
+        UiGenericFilterModifyGlobalConfigurationContext globalFilterContext =
+                new UiGenericFilterModifyGlobalConfigurationContext();
         accessManager.applyRegisteredConstraints(globalFilterContext);
         globalConfigurationModificationPermitted = globalFilterContext.isPermitted();
     }
@@ -107,7 +107,7 @@ public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilter
 
     protected boolean isCurrentConfigurationAvailableForAll() {
         Configuration currentConfiguration = target.getCurrentConfiguration();
-        FilterConfiguration model = ((FlowuiDataGenericFilterSupport) genericFilterSupport)
+        FilterConfiguration model = ((UiDataGenericFilterSupport) genericFilterSupport)
                 .loadFilterConfigurationModel(target, currentConfiguration.getId());
         return model != null && Strings.isNullOrEmpty(model.getUsername());
     }

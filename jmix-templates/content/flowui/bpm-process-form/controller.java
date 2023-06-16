@@ -16,7 +16,6 @@
 
 package ${packageName};
 
-
 <%if (!api.jmixProjectModule.isApplication()) {%>
 import io.jmix.flowui.view.DefaultMainViewParent;
 <%} else {%>
@@ -39,6 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ViewController("${id}")
 @ViewDescriptor("${descriptorName}.xml")
 public class ${controllerName} extends ${superClass} {
+
     @Autowired
     private ProcessFormContext processFormContext;
+
 }

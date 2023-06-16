@@ -20,13 +20,13 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.FlowuiComponentProperties;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
+import io.jmix.flowui.UiComponentProperties;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.Nested;
@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "exclude";
+    public static final String ID = "list_exclude";
 
     protected RemoveOperation removeOperation;
 
@@ -65,7 +65,7 @@ public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeActi
         super.initAction();
 
         variant = ActionVariant.DANGER;
-        icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.CLOSE);
+        icon = ComponentUtils.convertToIcon(VaadinIcon.CLOSE);
     }
 
     @Autowired
@@ -79,8 +79,8 @@ public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeActi
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridRemoveShortcut());
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridRemoveShortcut());
     }
 
     /**
@@ -166,8 +166,8 @@ public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeActi
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
             MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
-            FlowuiEntityAttributeContext entityAttributeContext =
-                    new FlowuiEntityAttributeContext(masterMetaClass, metaProperty.getName());
+            UiEntityAttributeContext entityAttributeContext =
+                    new UiEntityAttributeContext(masterMetaClass, metaProperty.getName());
             accessManager.applyRegisteredConstraints(entityAttributeContext);
 
             if (!entityAttributeContext.canModify()) {

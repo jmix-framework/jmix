@@ -17,7 +17,7 @@
 package io.jmix.securityflowui;
 
 import io.jmix.core.AccessConstraintsRegistry;
-import io.jmix.securityflowui.impl.constraint.FlowuiSecurityConstraintsRegistration;
+import io.jmix.securityflowui.impl.constraint.UiSecurityConstraintsRegistration;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,9 +27,9 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan
 public class StandardSecurityFlowuiConfiguration {
 
-    @Bean(name = "sec_FlowuiConstraintsRegistration")
-    public FlowuiSecurityConstraintsRegistration constraintsRegistration(BeanFactory beanFactory,
-                                                                         AccessConstraintsRegistry accessConstraintsRegistry) {
-        return new FlowuiSecurityConstraintsRegistration(beanFactory, accessConstraintsRegistry);
+    @Bean(name = "sec_UiConstraintsRegistration")
+    public UiSecurityConstraintsRegistration constraintsRegistration(BeanFactory beanFactory,
+                                                                     AccessConstraintsRegistry accessConstraintsRegistry) {
+        return new UiSecurityConstraintsRegistration(beanFactory, accessConstraintsRegistry);
     }
 }

@@ -17,8 +17,8 @@
 package io.jmix.flowui.xml.layout.loader;
 
 import com.google.common.collect.ImmutableMap;
-import io.jmix.flowui.FlowuiComponentProperties;
-import io.jmix.flowui.FlowuiViewProperties;
+import io.jmix.flowui.UiComponentProperties;
+import io.jmix.flowui.UiViewProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -27,28 +27,28 @@ import java.util.function.Function;
 @Component("flowui_PropertyShortcutLoader")
 public class PropertyShortcutCombinationLoader {
 
-    protected static final Map<String, Function<FlowuiComponentProperties, String>> COMPONENTS_SHORTCUT_ALIASES =
-            ImmutableMap.<String, Function<FlowuiComponentProperties, String>>builder()
-                    .put("GRID_CREATE_SHORTCUT", FlowuiComponentProperties::getGridCreateShortcut)
-                    .put("GRID_ADD_SHORTCUT", FlowuiComponentProperties::getGridAddShortcut)
-                    .put("GRID_EDIT_SHORTCUT", FlowuiComponentProperties::getGridEditShortcut)
-                    .put("GRID_READ_SHORTCUT", FlowuiComponentProperties::getGridReadShortcut)
-                    .put("GRID_REMOVE_SHORTCUT", FlowuiComponentProperties::getGridRemoveShortcut)
-                    .put("PICKER_LOOKUP_SHORTCUT", FlowuiComponentProperties::getPickerLookupShortcut)
-                    .put("PICKER_OPEN_SHORTCUT", FlowuiComponentProperties::getPickerOpenShortcut)
-                    .put("PICKER_CLEAR_SHORTCUT", FlowuiComponentProperties::getPickerClearShortcut)
+    protected static final Map<String, Function<UiComponentProperties, String>> COMPONENTS_SHORTCUT_ALIASES =
+            ImmutableMap.<String, Function<UiComponentProperties, String>>builder()
+                    .put("GRID_CREATE_SHORTCUT", UiComponentProperties::getGridCreateShortcut)
+                    .put("GRID_ADD_SHORTCUT", UiComponentProperties::getGridAddShortcut)
+                    .put("GRID_EDIT_SHORTCUT", UiComponentProperties::getGridEditShortcut)
+                    .put("GRID_READ_SHORTCUT", UiComponentProperties::getGridReadShortcut)
+                    .put("GRID_REMOVE_SHORTCUT", UiComponentProperties::getGridRemoveShortcut)
+                    .put("PICKER_LOOKUP_SHORTCUT", UiComponentProperties::getPickerLookupShortcut)
+                    .put("PICKER_OPEN_SHORTCUT", UiComponentProperties::getPickerOpenShortcut)
+                    .put("PICKER_CLEAR_SHORTCUT", UiComponentProperties::getPickerClearShortcut)
                     .build();
 
-    protected static final Map<String, Function<FlowuiViewProperties, String>> VIEWS_SHORTCUT_ALIASES =
-            ImmutableMap.<String, Function<FlowuiViewProperties, String>>builder()
-                    .put("SAVE_SHORTCUT", FlowuiViewProperties::getSaveShortcut)
-                    .put("CLOSE_SHORTCUT", FlowuiViewProperties::getCloseShortcut)
+    protected static final Map<String, Function<UiViewProperties, String>> VIEWS_SHORTCUT_ALIASES =
+            ImmutableMap.<String, Function<UiViewProperties, String>>builder()
+                    .put("SAVE_SHORTCUT", UiViewProperties::getSaveShortcut)
+                    .put("CLOSE_SHORTCUT", UiViewProperties::getCloseShortcut)
                     .build();
 
-    protected FlowuiComponentProperties componentProperties;
-    protected FlowuiViewProperties viewProperties;
+    protected UiComponentProperties componentProperties;
+    protected UiViewProperties viewProperties;
 
-    public PropertyShortcutCombinationLoader(FlowuiComponentProperties componentProperties, FlowuiViewProperties viewProperties) {
+    public PropertyShortcutCombinationLoader(UiComponentProperties componentProperties, UiViewProperties viewProperties) {
         this.componentProperties = componentProperties;
         this.viewProperties = viewProperties;
     }
@@ -59,12 +59,12 @@ public class PropertyShortcutCombinationLoader {
     }
 
     public String getShortcut(String alias) {
-        Function<FlowuiComponentProperties, String> componentsShortcut = COMPONENTS_SHORTCUT_ALIASES.get(alias);
+        Function<UiComponentProperties, String> componentsShortcut = COMPONENTS_SHORTCUT_ALIASES.get(alias);
         if (componentsShortcut != null) {
             return componentsShortcut.apply(componentProperties);
         }
 
-        Function<FlowuiViewProperties, String> viewsShortcut = VIEWS_SHORTCUT_ALIASES.get(alias);
+        Function<UiViewProperties, String> viewsShortcut = VIEWS_SHORTCUT_ALIASES.get(alias);
         if (viewsShortcut != null) {
             return viewsShortcut.apply(viewProperties);
         }

@@ -91,7 +91,7 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 
         ByteArrayDownloadDataProvider downloadDataProvider = new ByteArrayDownloadDataProvider(
                 gson.toJson(jsonElements).getBytes(StandardCharsets.UTF_8),
-                flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                 coreProperties.getTempDir()
         );
 

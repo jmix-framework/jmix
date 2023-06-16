@@ -1,7 +1,7 @@
 package io.jmix.securityflowui.view.resourcepolicy;
 
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.model.DefaultResourcePolicyGroupResolver;
@@ -24,7 +24,7 @@ public class MenuResourcePolicyModelDetailView extends StandardDetailView<Resour
 
     @Subscribe
     public void onInit(InitEvent event) {
-        FlowuiComponentUtils.setItemsMap(resourceField, resourcePolicyEditorUtils.getMenuItemOptionsMap());
+        ComponentUtils.setItemsMap(resourceField, resourcePolicyEditorUtils.getMenuItemOptionsMap());
     }
 
     @Subscribe(id = "resourcePolicyModelDc", target = Target.DATA_CONTAINER)

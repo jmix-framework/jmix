@@ -12,14 +12,14 @@ import com.vaadin.flow.spring.security.RequestUtil;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import com.vaadin.flow.spring.security.VaadinSavedRequestAwareAuthenticationSuccessHandler;
 import io.jmix.core.JmixSecurityFilterChainOrder;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
-import io.jmix.securityflowui.access.FlowuiViewAccessChecker;
+import io.jmix.securityflowui.access.UiViewAccessChecker;
 import org.springframework.lang.Nullable;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -77,8 +77,8 @@ public class FlowuiSecurityConfiguration {
     protected VaadinConfigurationProperties configurationProperties;
     protected RequestUtil requestUtil;
 
-    protected FlowuiViewAccessChecker viewAccessChecker;
-    protected FlowuiProperties flowuiProperties;
+    protected UiViewAccessChecker viewAccessChecker;
+    protected UiProperties uiProperties;
     protected ViewRegistry viewRegistry;
 
     @Autowired
@@ -102,13 +102,13 @@ public class FlowuiSecurityConfiguration {
     }
 
     @Autowired
-    public void setViewAccessChecker(FlowuiViewAccessChecker viewAccessChecker) {
+    public void setViewAccessChecker(UiViewAccessChecker viewAccessChecker) {
         this.viewAccessChecker = viewAccessChecker;
     }
 
     @Autowired
-    public void setFlowuiProperties(FlowuiProperties flowuiProperties) {
-        this.flowuiProperties = flowuiProperties;
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
     }
 
     @Autowired
@@ -128,7 +128,7 @@ public class FlowuiSecurityConfiguration {
         return (web) -> web.ignoring().requestMatchers(getDefaultWebSecurityIgnoreMatcher(getUrlMapping()));
     }
 
-    @Bean("sec_FlowUiSecurityFilterChain")
+    @Bean("sec_UiSecurityFilterChain")
     @Order(JmixSecurityFilterChainOrder.FLOWUI)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         configure(http);
@@ -193,7 +193,7 @@ public class FlowuiSecurityConfiguration {
     }
 
     protected void initLoginView(HttpSecurity http) throws Exception {
-        String loginViewId = flowuiProperties.getLoginViewId();
+        String loginViewId = uiProperties.getLoginViewId();
         if (Strings.isNullOrEmpty(loginViewId)) {
             log.debug("Login view Id is not defined");
             return;

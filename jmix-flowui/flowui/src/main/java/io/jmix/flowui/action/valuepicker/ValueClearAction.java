@@ -19,10 +19,10 @@ package io.jmix.flowui.action.valuepicker;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.PickerComponent;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,7 +46,7 @@ public class ValueClearAction<V> extends PickerAction<ValueClearAction<V>, Picke
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.CLOSE);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.CLOSE);
     }
 
     @Autowired
@@ -55,8 +55,8 @@ public class ValueClearAction<V> extends PickerAction<ValueClearAction<V>, Picke
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getPickerClearShortcut());
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerClearShortcut());
     }
 
     @Override

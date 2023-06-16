@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ExecutableAction;
@@ -38,7 +38,7 @@ public class ChangePasswordAction<E extends UserDetails>
         extends SecuredListDataComponentAction<ChangePasswordAction<E>, E>
         implements ExecutableAction, AdjustWhenViewReadOnly {
 
-    public static final String ID = "changePassword";
+    public static final String ID = "sec_changePassword";
 
     protected boolean currentPasswordRequired = false;
     protected DialogWindows dialogWindows;
@@ -73,7 +73,7 @@ public class ChangePasswordAction<E extends UserDetails>
 
         MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
 
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
 
         if (!entityContext.isEditPermitted()) {

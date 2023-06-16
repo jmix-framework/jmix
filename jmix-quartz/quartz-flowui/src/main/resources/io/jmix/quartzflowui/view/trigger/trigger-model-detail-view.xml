@@ -21,8 +21,13 @@
             <select id="scheduleTypeField" property="scheduleType"
                     required="true"/>
             <textField id="cronExpressionField" property="cronExpression"
-                           required="true"
+                       required="true"
                        visible="false"/>
+            <hbox id="repeatModeBox">
+                <radioButtonGroup id="repeatModeSelector" label="msg://triggerRepeatMode"
+                                  itemsEnum="io.jmix.quartz.model.RepeatMode" width="100%"/>
+                <button id="repeatModeSelectorHelpButton" classNames="self-center"/>
+            </hbox>
             <textField id="repeatCountField" property="repeatCount" visible="false"/>
             <textField id="repeatIntervalField" property="repeatInterval" required="true" visible="false"/>
             <dateTimePicker id="startDateTimePicker" property="startDate"/>

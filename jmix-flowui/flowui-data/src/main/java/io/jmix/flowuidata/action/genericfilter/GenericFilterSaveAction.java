@@ -21,9 +21,9 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
-import io.jmix.flowuidata.accesscontext.FlowuiGenericFilterModifyGlobalConfigurationContext;
+import io.jmix.flowuidata.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowuidata.entity.FilterConfiguration;
-import io.jmix.flowuidata.genericfilter.FlowuiDataGenericFilterSupport;
+import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(GenericFilterSaveAction.ID)
@@ -49,8 +49,8 @@ public class GenericFilterSaveAction extends AbstractGenericFilterSaveAction<Gen
 
     @Autowired
     public void setAccessManager(AccessManager accessManager) {
-        FlowuiGenericFilterModifyGlobalConfigurationContext globalFilterContext =
-                new FlowuiGenericFilterModifyGlobalConfigurationContext();
+        UiGenericFilterModifyGlobalConfigurationContext globalFilterContext =
+                new UiGenericFilterModifyGlobalConfigurationContext();
         accessManager.applyRegisteredConstraints(globalFilterContext);
         globalConfigurationModificationPermitted = globalFilterContext.isPermitted();
     }
@@ -72,7 +72,7 @@ public class GenericFilterSaveAction extends AbstractGenericFilterSaveAction<Gen
         if (configuration == target.getEmptyConfiguration()) {
             openInputDialog();
         } else {
-            FilterConfiguration configurationModel = ((FlowuiDataGenericFilterSupport) genericFilterSupport)
+            FilterConfiguration configurationModel = ((UiDataGenericFilterSupport) genericFilterSupport)
                     .loadFilterConfigurationModel(target, configuration.getId());
 
             if (configurationModel != null) {

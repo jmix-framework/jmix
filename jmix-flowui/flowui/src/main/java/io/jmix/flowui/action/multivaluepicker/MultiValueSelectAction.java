@@ -24,7 +24,7 @@ import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
@@ -35,7 +35,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.data.EntityValueSource;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.DialogWindow;
@@ -68,7 +68,7 @@ public class MultiValueSelectAction<E>
     public static final String DEFAULT_MULTI_VALUE_SELECT_VIEW = "multiValueSelectDialog";
 
     protected Messages messages;
-    protected FlowuiComponentProperties flowuiComponentProperties;
+    protected UiComponentProperties uiComponentProperties;
     protected DialogWindows dialogWindows;
 
     protected boolean readOnly = false;
@@ -88,12 +88,12 @@ public class MultiValueSelectAction<E>
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
     }
 
     @Autowired
-    protected void setFlowuiComponentProperties(FlowuiComponentProperties flowuiComponentProperties) {
-        this.flowuiComponentProperties = flowuiComponentProperties;
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.uiComponentProperties = uiComponentProperties;
     }
 
     @Autowired
@@ -108,7 +108,7 @@ public class MultiValueSelectAction<E>
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        setShortcutCombination(KeyCombination.create(flowuiComponentProperties.getPickerLookupShortcut()));
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getPickerLookupShortcut()));
 
         if (getShortcutCombination() != null) {
             setDescription(messages.getMessage("actions.multiValuePicker.select.description")

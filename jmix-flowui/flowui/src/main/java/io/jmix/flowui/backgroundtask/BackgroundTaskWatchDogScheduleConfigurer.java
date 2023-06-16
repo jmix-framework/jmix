@@ -29,11 +29,11 @@ public class BackgroundTaskWatchDogScheduleConfigurer {
 
     private BackgroundTaskWatchDog backgroundTaskWatchDog;
 
-    private FlowuiBackgroundTaskProperties backgroundTaskProperties;
+    private UiBackgroundTaskProperties backgroundTaskProperties;
 
     public BackgroundTaskWatchDogScheduleConfigurer(@Qualifier("flowui_ThreadPoolTaskScheduler") TaskScheduler taskScheduler,
                                                     BackgroundTaskWatchDog backgroundTaskWatchDog,
-                                                    FlowuiBackgroundTaskProperties backgroundTaskProperties) {
+                                                    UiBackgroundTaskProperties backgroundTaskProperties) {
         this.taskScheduler = taskScheduler;
         this.backgroundTaskWatchDog = backgroundTaskWatchDog;
         this.backgroundTaskProperties = backgroundTaskProperties;

@@ -24,8 +24,8 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.FlowuiComponentProperties;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiComponentProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.kit.component.pagination.JmixItemsPerPage;
 import org.apache.commons.collections4.CollectionUtils;
@@ -43,8 +43,8 @@ public class ItemsPerPage extends JmixItemsPerPage implements ApplicationContext
 
     protected ApplicationContext applicationContext;
     protected Messages messages;
-    protected FlowuiComponentProperties componentProperties;
-    protected FlowuiProperties flowuiProperties;
+    protected UiComponentProperties componentProperties;
+    protected UiProperties uiProperties;
 
     protected PaginationDataLoader loader;
 
@@ -63,8 +63,8 @@ public class ItemsPerPage extends JmixItemsPerPage implements ApplicationContext
 
     protected void autowireDependencies() {
         messages = applicationContext.getBean(Messages.class);
-        componentProperties = applicationContext.getBean(FlowuiComponentProperties.class);
-        flowuiProperties = applicationContext.getBean(FlowuiProperties.class);
+        componentProperties = applicationContext.getBean(UiComponentProperties.class);
+        uiProperties = applicationContext.getBean(UiProperties.class);
     }
 
     protected void initComponent() {
@@ -166,11 +166,11 @@ public class ItemsPerPage extends JmixItemsPerPage implements ApplicationContext
     }
 
     protected int getEntityMaxFetchSize(MetaClass metaClass) {
-        return flowuiProperties.getEntityMaxFetchSize(metaClass.getName());
+        return uiProperties.getEntityMaxFetchSize(metaClass.getName());
     }
 
     protected int getEntityPageSize(MetaClass metaClass) {
-        return flowuiProperties.getEntityPageSize(metaClass.getName());
+        return uiProperties.getEntityPageSize(metaClass.getName());
     }
 
     protected Integer getDefaultItemValue(List<Integer> options, MetaClass metaClass) {

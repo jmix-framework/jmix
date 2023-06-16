@@ -22,7 +22,7 @@ import io.jmix.oidc.OidcProperties;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
 import io.jmix.oidc.claimsmapper.DefaultClaimsRolesMapper;
 import io.jmix.oidc.jwt.JmixJwtAuthenticationConverter;
-import io.jmix.oidc.resourceserver.OidcResourceServerLastSecurityFilter;
+import io.jmix.oidc.resourceserver.OidcResourceServerEventSecurityFilter;
 import io.jmix.oidc.userinfo.DefaultJmixOidcUserService;
 import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
@@ -44,7 +44,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 @AutoConfiguration
 @Import({OidcConfiguration.class})
@@ -147,8 +147,9 @@ public class OidcAutoConfiguration {
             });
             http.apply(SecurityConfigurers.apiSecurity());
 
-            OidcResourceServerLastSecurityFilter lastSecurityFilter = new OidcResourceServerLastSecurityFilter(applicationEventPublisher);
-            http.addFilterAfter(lastSecurityFilter, FilterSecurityInterceptor.class);
+            OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =
+                    new OidcResourceServerEventSecurityFilter(applicationEventPublisher);
+            http.addFilterBefore(resourceServerEventSecurityFilter, AuthorizationFilter.class);
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }

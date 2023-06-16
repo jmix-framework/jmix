@@ -9,7 +9,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.menu.MenuItem;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.ResourcePolicy;
@@ -52,7 +52,7 @@ public class ViewResourcePolicyModelCreateView extends MultipleResourcePolicyMod
 
     @Subscribe
     public void onInit(InitEvent event) {
-        FlowuiComponentUtils.setItemsMap(viewField, resourcePolicyEditorUtils.getViewsOptionsMap());
+        ComponentUtils.setItemsMap(viewField, resourcePolicyEditorUtils.getViewsOptionsMap());
         viewField.addValueChangeListener(this::onViewFieldValueChange);
     }
 

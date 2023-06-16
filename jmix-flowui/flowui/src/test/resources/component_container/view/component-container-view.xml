@@ -32,7 +32,7 @@
             </hbox>
             <dataGrid id="detailsDataGrid" metaClass="test_Order">
                 <actions>
-                    <action id="read" type="read"/>
+                    <action id="read" type="list_read"/>
                     <action id="customAction"/>
                 </actions>
                 <columns>
@@ -51,7 +51,7 @@
                     </hbox>
                     <dataGrid id="accordionDataGrid" metaClass="test_Order">
                         <actions>
-                            <action id="read" type="read"/>
+                            <action id="read" type="list_read"/>
                             <action id="customAction"/>
                         </actions>
                         <columns>

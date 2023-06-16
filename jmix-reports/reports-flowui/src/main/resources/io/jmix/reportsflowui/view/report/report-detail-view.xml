@@ -385,8 +385,8 @@
                         <dataGrid id="rolesDataGrid" dataContainer="reportRolesDc"
                                   columnReorderingAllowed="false" detailsVisibleOnClick="false">
                             <actions>
-                                <action id="add" type="add"/>
-                                <action id="exclude" type="exclude" icon="CLOSE"
+                                <action id="add" type="list_add"/>
+                                <action id="exclude" type="list_exclude" icon="CLOSE"
                                         text="msg://screens.removeScreen"/>
                             </actions>
                             <columns>
@@ -407,7 +407,7 @@
                                   dataContainer="reportScreensDc"
                                   columnReorderingAllowed="false" detailsVisibleOnClick="false">
                             <actions>
-                                <action id="add" type="add"/>
+                                <action id="add" type="list_add"/>
                                 <action id="remove" type="list_remove" icon="CLOSE"/>
                             </actions>
                             <columns>

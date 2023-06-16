@@ -116,8 +116,8 @@ public class ReportListView extends StandardListView<Report> {
         reportsDataGridCreate.setIcon(null);
     }
 
-    @Subscribe("wizard")
-    public void onWizardClick(final DropdownButtonItem.ClickEvent event) {
+    @Subscribe("reportsDataGrid.wizard")
+    public void onWizardClick(final ActionPerformedEvent event) {
         DialogWindow<ReportWizardCreatorView> build = dialogWindows.view(this, ReportWizardCreatorView.class).build();
         build.addAfterCloseListener(e -> {
             if (e.closedWith(StandardOutcome.SAVE)) {
@@ -133,11 +133,10 @@ public class ReportListView extends StandardListView<Report> {
         build.open();
     }
 
-
     private void initColumnDataGrid() {
         reportsDataGrid.addColumn(report -> metadataTools.getInstanceName(report))
                 .setKey("name")
-                .setHeader(messageBundle.getMessage("name"))
+                .setHeader(messageBundle.getMessage("reportsDataGrid.name.header"))
                 .setResizable(true)
                 .setSortable(true);
 

@@ -58,7 +58,7 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
 
     private static final Logger log = LoggerFactory.getLogger(JmixServiceInitListener.class);
 
-    public static final String IMPORT_STYLES_PROP = "jmix.ui.import-styles";
+    public static final String IMPORT_STYLES_PROP = "jmix.ui.export-styles";
     protected static final String RESOURCE_PREFIX = "META-INF/resources/";
 
     protected ApplicationContext applicationContext;

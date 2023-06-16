@@ -36,13 +36,11 @@ public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
         this.scalarOnly = scalarOnly;
         this.collectionsOnly = collectionsOnly;
         this.persistentOnly = persistentOnly;
+        createEntityTree();
     }
 
     @Override
     public io.jmix.flowui.component.LookupComponent<EntityTreeNode> getLookupComponent() {
-        if (entityTree == null) {
-            createEntityTree();
-        }
         return entityTree;
     }
 

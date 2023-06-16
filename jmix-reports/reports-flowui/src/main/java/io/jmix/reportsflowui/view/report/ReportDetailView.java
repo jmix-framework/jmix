@@ -90,7 +90,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.jmix.reportsflowui.helper.ReportsUiHelper.FIELD_ICON_CLASS_NAME;
-import static io.jmix.reportsflowui.helper.ReportsUiHelper.FIELD_ICON_SIZE_CLASS_NAME;
 
 @Route(value = "reports/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.detail")
@@ -181,7 +180,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected FormLayout jsonQueryParameterForm;
     @ViewComponent
-    protected JmixTextArea jsonGroovyCodeEditor;
+    protected CodeEditor jsonGroovyCodeEditor;
     @ViewComponent
     protected DataGrid<ReportTemplate> templatesDataGrid;
     @ViewComponent
@@ -266,7 +265,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         initDataStoreField();
         initJsonPathQueryTextAreaField();
-        initJsonGroovyCodeEditor();
 
         initEntitiesParamField();
         initEntityParamField();
@@ -607,7 +605,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         bandNameField.setReadOnly(fieldReadOnly);
         parentBandField.setReadOnly(fieldReadOnly);
-        multiDataSetField.setEnabled(dataSetsDc.getItems().size() <= 1);
+        multiDataSetField.setEnabled(bandsDc.getItemOrNull() != null && dataSetsDc.getItems().size() <= 1);
 
         updateBandFieldRequiredIndicators(item);
         selectFirstDataSet();
@@ -703,7 +701,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe(id = "dataSetsDc", target = Target.DATA_CONTAINER)
     protected void onDataSetsDcCollectionChange(CollectionContainer.CollectionChangeEvent<DataSet> event) {
-        multiDataSetField.setEnabled(event.getSource().getItems().size() <= 1);
+        multiDataSetField.setEnabled(bandsDc.getItemOrNull() != null && event.getSource().getItems().size() <= 1);
     }
 
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
@@ -740,7 +738,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe("orientationField")
     protected void onOrientationFieldComponentValueChange(
             ComponentValueChangeEvent<JmixSelect<Orientation>, Orientation> event) {
-        if (Boolean.FALSE.equals(bandsDc.getItem().getMultiDataSet())
+        if (bandsDc.getItemOrNull() != null
+                && Boolean.FALSE.equals(bandsDc.getItem().getMultiDataSet())
                 && bandsDc.getItem().getBandOrientation() == BandOrientation.CROSS) {
             multiDataSetField.setValue(true);
         }
@@ -1272,6 +1271,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
         onJsonGroovyCodeEditorHelpIconClick();
     }
 
+    @Subscribe("jsonGroovyCodeCodeEditorHelpBtn")
+    protected void onJsonGroovyCodeCodeEditorHelpBtnClick(ClickEvent<Button> event) {
+        onJsonGroovyCodeEditorHelpIconClick();
+    }
+
     protected void onDataSetScriptFieldExpandIconClick() {
         reportsUiHelper.showScriptEditorDialog(this)
                 .withTitle(getScriptEditorDialogCaption())
@@ -1305,19 +1309,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 .open();
     }
 
-    protected void initJsonGroovyCodeEditor() {
-        Icon expandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        expandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        expandIcon.addClickListener(this::onJsonGroovyCodeEditorExpandIconClick);
-
-        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
-        helpIcon.addClickListener(event -> onJsonGroovyCodeEditorHelpIconClick());
-
-        jsonGroovyCodeEditor.setSuffixComponent(new Div(expandIcon, helpIcon));
-    }
-
-    protected void onJsonGroovyCodeEditorExpandIconClick(ClickEvent<Icon> event) {
+    @Subscribe("jsonGroovyCodeEditorFullScreenBtn")
+    public void onJsonGroovyCodeEditorFullScreenBtnClick(final ClickEvent<Button> event) {
         reportsUiHelper.showScriptEditorDialog(this)
                 .withTitle(getScriptEditorDialogCaption())
                 .withValue(dataSetsDc.getItem().getJsonSourceText())

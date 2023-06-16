@@ -43,14 +43,18 @@ public class ReportTemplatePlaceholder {
 
     private static final Logger log = LoggerFactory.getLogger(ReportTemplatePlaceholder.class);
 
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected Messages messages;
+    protected final Metadata metadata;
+    protected final Messages messages;
+
+    public ReportTemplatePlaceholder(Metadata metadata, Messages messages) {
+        this.metadata = metadata;
+        this.messages = messages;
+    }
 
     /**
      * used in doc table fields and sheet reports
-     * @param value string to remove root node name
+     *
+     * @param value        string to remove root node name
      * @param reportRegion report region
      * @return string without root node name
      */
@@ -60,7 +64,8 @@ public class ReportTemplatePlaceholder {
 
     /**
      * used in common fields
-     * @param value string to remove root node name
+     *
+     * @param value        string to remove root node name
      * @param reportRegion report region
      * @return string that contains name for band and specified value without root node name
      */

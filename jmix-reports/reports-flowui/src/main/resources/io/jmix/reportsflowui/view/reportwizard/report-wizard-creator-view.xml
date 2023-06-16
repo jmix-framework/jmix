@@ -25,7 +25,7 @@
         <action id="save" icon="CHECK" text="msg://save"/>
     </actions>
     <layout>
-        <div id="detailsDiv">
+        <vbox id="detailsVBox">
             <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
                 <responsiveSteps>
                     <responsiveStep minWidth="0" columns="1"/>
@@ -55,10 +55,10 @@
                                   themeNames="vertical"
                                   label="msg://reportBuildType"/>
             </formLayout>
-        </div>
-        <div id="regionsDiv">
+        </vbox>
+        <vbox id="regionsVBox">
             <hbox width="100%" classNames="buttons-panel">
-                <hbox id="buttonsBox" classNames="buttons-panel">
+                <hbox id="buttonsBox">
                     <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
                     <button id="addSimpleRegionBtn"
                             text="msg://simpleRegion"/>
@@ -73,7 +73,7 @@
             </hbox>
             <dataGrid id="regionDataGrid" dataContainer="reportRegionsDc"
                       columnReorderingAllowed="false"
-                      height="30em" width="100%">
+                      height="25em" width="100%">
                 <actions>
                     <action id="up" type="list_itemTracking" icon="ARROW_UP"/>
                     <action id="down" type="list_itemTracking" icon="ARROW_DOWN"/>
@@ -81,8 +81,8 @@
                     <action id="edit" text="msg://editRegion" icon="PENCIL"/>
                 </actions>
             </dataGrid>
-        </div>
-        <div id="saveDiv" width="30em">
+        </vbox>
+        <vbox id="saveVBox" width="30em">
             <button id="downloadTemplateFile"
                     classNames="link"
                     themeNames="icon, tertiary-inline"
@@ -90,7 +90,8 @@
             <textField id="outputFileName" width="100%"
                        required="true"
                        label="msg://outputFileName"
-                       dataContainer="reportDataDc" property="outputNamePattern"
+                       dataContainer="reportDataDc"
+                       property="outputNamePattern"
                        helperText="msg://outputFileNameHintMsg" maxLength="255">
                 <validators>
                     <custom bean="report_OutputFileNameValidator"/>
@@ -100,8 +101,8 @@
                       label="msg://outputFileFormat"
                       dataContainer="reportDataDc" property="outputFileType"
                       helperText="msg://outputFileTypeHintMsg"/>
-        </div>
-        <div id="queryDiv" width="40em">
+        </vbox>
+        <vbox id="queryVBox" width="40em">
             <div classNames="flex, justify-between, buttons-panel">
                 <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
                 <button id="fullScreenTransformationBtn"
@@ -109,7 +110,7 @@
                         classNames="link"
                         themeNames="icon, tertiary-inline"/>
             </div>
-            <div classNames="flex, items-start">
+            <div width="100%" classNames="flex, items-start">
                 <codeEditor id="reportQueryCodeEditor"
                             title="msg://reportQuery"
                             width="100%"
@@ -145,8 +146,8 @@
                     <column property="parameterType"/>
                 </columns>
             </dataGrid>
-        </div>
-        <hbox id="navBtnsPanel">
+        </vbox>
+        <hbox id="navBtnsPanel"  classNames="ml-m">
             <button id="backBtn" visible="false" action="back"/>
             <button id="nextBtn" action="next"/>
             <button id="saveBtn" visible="false" themeNames="primary"  action="save"/>

@@ -171,7 +171,7 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
     }
 
     protected void initDefaultValueField() {
-        if (defaultValueField != null){
+        if (defaultValueField != null) {
             queryParameterFormLayout.remove(defaultValueField);
         }
         defaultValueField = createDefaultValueField();

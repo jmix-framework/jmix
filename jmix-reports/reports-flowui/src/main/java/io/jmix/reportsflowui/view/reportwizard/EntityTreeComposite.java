@@ -39,9 +39,6 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.view.MessageBundle;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.Target;
-import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -82,12 +79,6 @@ public class EntityTreeComposite extends Composite<FormLayout>
         return collator.compare(o1.getHierarchicalLocalizedNameExceptRoot(), o2.getHierarchicalLocalizedNameExceptRoot());
     };
 
-    @Subscribe(target = Target.PARENT_CONTROLLER)
-    public void onBeforeShow(View.BeforeShowEvent event) {
-        reportEntityTreeNodeDl.load();
-        entityTree.expand(rootEntity);
-    }
-
     public TreeDataGrid<EntityTreeNode> getEntityTree() {
         return entityTree;
     }
@@ -98,6 +89,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
         setCollectionsOnly(collectionsOnly);
         setPersistentOnly(persistentOnly);
         reportEntityTreeNodeDl.load();
+        entityTree.expand(rootEntity);
     }
 
     public void setScalarOnly(boolean scalarOnly) {

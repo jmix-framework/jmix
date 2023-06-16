@@ -86,7 +86,7 @@
             <tab id="bandsTab" label="msg://mainTabSheet.bandsTab.label">
                 <div id="bandsTabContent" width="100%" height="100%" classNames="reports-flex-layout">
                     <vbox id="bandsLayout" classNames="bands-layout" padding="false">
-                        <hbox id="bandsButtonsLayout">
+                        <hbox id="bandsButtonsLayout" classNames="buttons-panel">
                             <button id="createBandBtn" action="bandsTreeDataGrid.create"/>
                             <button id="removeBandBtn" action="bandsTreeDataGrid.remove"/>
                             <button id="upBandBtn" action="bandsTreeDataGrid.upBand"/>
@@ -131,7 +131,7 @@
                                 <div id="dataSetTypeLayout" width="100%" height="100%">
                                     <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptCodeEditor"
                                           height="100%">
-                                        <div classNames="flex, justify-between">
+                                        <div width="100%" classNames="flex, justify-end">
                                             <button id="dataSetScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
                                                     themeNames="tertiary-inline"/>
                                         </div>
@@ -206,10 +206,21 @@
                                                 <responsiveStep minWidth="30em" columns="2"/>
                                             </responsiveSteps>
                                         </formLayout>
-                                        <textArea id="jsonGroovyCodeEditor" width="100%"
-                                                  dataContainer="dataSetsDc"
-                                                  label="msg://bandsTab.dataSetTypeLayout.jsonGroovyCodeEditor.label"
-                                                  property="jsonSourceText"/>
+                                        <div width="100%" classNames="flex, justify-end">
+                                            <button id="jsonGroovyCodeEditorFullScreenBtn"
+                                                    text="msg:///fullScreenBtn.title"
+                                                    themeNames="tertiary-inline"/>
+                                        </div>
+                                        <div width="100%" classNames="flex, items-start">
+                                            <codeEditor id="jsonGroovyCodeEditor"
+                                                        width="100%"
+                                                        dataContainer="dataSetsDc"
+                                                        mode="GROOVY"
+                                                        property="jsonSourceText"/>
+                                            <button id="jsonGroovyCodeCodeEditorHelpBtn"
+                                                    themeNames="icon, tertiary-inline"
+                                                    icon="QUESTION_CIRCLE"/>
+                                        </div>
                                         <textArea id="jsonSourceURLTextArea" width="100%"
                                                   dataContainer="dataSetsDc"
                                                   label="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.label"
@@ -290,12 +301,13 @@
                     </vbox>
                     <vbox classNames="parameters-validate-layout" padding="false">
                         <h2 text="msg://report.crossParametersValidation"/>
-                        <div classNames="flex, justify-between">
+                        <div width="100%" classNames="flex, justify-between">
                             <checkbox id="validationOnCheckBox"
                                       label="msg://parameters.validationOn"
                                       dataContainer="reportDc"
                                       property="validationOn"/>
-                            <button id="validationScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
+                            <button id="validationScriptFullScreenBtn"
+                                    text="msg:///fullScreenBtn.title"
                                     themeNames="tertiary-inline"/>
                         </div>
                         <div width="100%" classNames="flex, items-start">

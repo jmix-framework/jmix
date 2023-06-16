@@ -7,7 +7,7 @@
 
     <actions>
         <action id="okAction"
-                text="msg://scriptEditorDialog.okButton.text"
+                text="msg://okAction.text"
                 actionVariant="PRIMARY" icon="CHECK"/>
         <action id="cancelAction" type="view_close"/>
     </actions>

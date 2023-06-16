@@ -21,7 +21,6 @@ import io.jmix.core.Messages;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.wizard.TemplateFileType;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -32,10 +31,12 @@ import java.util.Map;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class OutputFormatTools {
 
+    protected final Messages messages;
     protected Map<TemplateFileType, Map<String, ReportOutputType>> availableOutputFormats;
 
-    @Autowired
-    protected Messages messages;
+    public OutputFormatTools(Messages messages) {
+        this.messages = messages;
+    }
 
     @PostConstruct
     protected void init() {

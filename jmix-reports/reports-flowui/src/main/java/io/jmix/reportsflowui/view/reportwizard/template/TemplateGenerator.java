@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component("report_TemplateGenerator")
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class TemplateGenerator {
 
     @Autowired

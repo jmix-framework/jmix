@@ -16,10 +16,7 @@
 
 package io.jmix.reportsflowui.view.reportwizard;
 
-import io.jmix.core.ExtendedEntities;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.reports.ReportsProperties;
@@ -41,18 +38,23 @@ import java.util.Set;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EntityTreeModelBuilder {
 
-    @Autowired
-    protected MessageTools messageTools;
-    @Autowired
-    protected ReportWizard reportWizard;
-    @Autowired
-    protected ReportsProperties reportsProperties;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected ExtendedEntities extendedEntities;
-    @Autowired
-    protected MetadataTools metadataTools;
+    protected final MessageTools messageTools;
+    protected final ReportWizard reportWizard;
+    protected final ReportsProperties reportsProperties;
+    protected final Metadata metadata;
+    protected final ExtendedEntities extendedEntities;
+    protected final MetadataTools metadataTools;
+
+    public EntityTreeModelBuilder(MessageTools messageTools, ReportWizard reportWizard,
+                                  ReportsProperties reportsProperties, Metadata metadata,
+                                  ExtendedEntities extendedEntities, MetadataTools metadataTools) {
+        this.messageTools = messageTools;
+        this.reportWizard = reportWizard;
+        this.reportsProperties = reportsProperties;
+        this.metadata = metadata;
+        this.extendedEntities = extendedEntities;
+        this.metadataTools = metadataTools;
+    }
 
     protected int entityTreeModelMaxDepth;
 

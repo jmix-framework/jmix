@@ -1,6 +1,6 @@
 <%
 def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
-tableId = "${pluralForm}Table"
+tableId = "${pluralForm}DataGrid"
 def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
 def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 def isNotPersistEntity = entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')
@@ -34,7 +34,8 @@ def tableXml = api.processSnippet('table.xml',
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <urlQueryParameters>
+        <urlQueryParameters><%if (createGenericFilter) {%>
+            <genericFilter component="genericFilter"/><%}%>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>

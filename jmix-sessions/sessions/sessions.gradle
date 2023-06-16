@@ -24,7 +24,7 @@ dependencies {
     api project(':core')
 
     api 'org.springframework.session:spring-session-core'
-    compileOnly 'org.springframework.security.oauth:spring-security-oauth2'
+//    compileOnly 'org.springframework.security.oauth:spring-security-oauth2'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

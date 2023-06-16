@@ -20,8 +20,8 @@ includeProject('audit-starter', 'jmix-audit/audit-starter')
 includeProject('audit-flowui', 'jmix-audit/audit-flowui')
 includeProject('audit-flowui-starter', 'jmix-audit/audit-flowui-starter')
 
-includeProject('authorization-server', 'jmix-authserver/authorization-server')
-includeProject('authorization-server-starter', 'jmix-authserver/authorization-server-starter')
+includeProject('authserver', 'jmix-authserver/authserver')
+includeProject('authserver-starter', 'jmix-authserver/authserver-starter')
 
 includeProject('awsfs', 'jmix-awsfs/awsfs')
 includeProject('awsfs-starter', 'jmix-awsfs/awsfs-starter')
@@ -117,11 +117,9 @@ includeProject('security-data', 'jmix-security/security-data')
 includeProject('security-data-starter', 'jmix-security/security-data-starter')
 includeProject('security-flowui', 'jmix-security/security-flowui')
 includeProject('security-flowui-starter', 'jmix-security/security-flowui-starter')
-includeProject('security-oauth2', 'jmix-security/security-oauth2')
-includeProject('security-oauth2-starter', 'jmix-security/security-oauth2-starter')
 
-includeProject('sessions', 'jmix-sessions/sessions')
-includeProject('sessions-starter', 'jmix-sessions/sessions-starter')
+//includeProject('sessions', 'jmix-sessions/sessions')
+//includeProject('sessions-starter', 'jmix-sessions/sessions-starter')
 
 void includeProject(String name, String path, boolean changeBuildFileName = true) {
     include ":$name"

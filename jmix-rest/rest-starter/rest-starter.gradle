@@ -20,7 +20,7 @@ archivesBaseName = 'jmix-rest-starter'
 dependencies {
     api project(':rest')
 
-    compileOnly project(':security-oauth2')
+    compileOnly project(':authserver')
     compileOnly project(':oidc')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'

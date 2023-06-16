@@ -18,12 +18,12 @@ package io.jmix.securityflowui.view.resourcepolicy;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
-import io.jmix.flowui.FlowuiViewProperties;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
@@ -53,11 +53,11 @@ public abstract class MultipleResourcePolicyModelCreateView extends StandardView
 
     protected SecuredBaseAction createSaveAction() {
         Messages messages = getApplicationContext().getBean(Messages.class);
-        FlowuiViewProperties flowUiViewProperties = getApplicationContext().getBean(FlowuiViewProperties.class);
+        UiViewProperties flowUiViewProperties = getApplicationContext().getBean(UiViewProperties.class);
 
         return new SecuredBaseAction(SAVE_ACTION_ID)
                 .withText(messages.getMessage("actions.Ok"))
-                .withIcon(FlowuiComponentUtils.convertToIcon(VaadinIcon.CHECK))
+                .withIcon(ComponentUtils.convertToIcon(VaadinIcon.CHECK))
                 .withVariant(ActionVariant.PRIMARY)
                 .withShortcutCombination(KeyCombination.create(flowUiViewProperties.getSaveShortcut()))
                 .withHandler(this::validateAndClose);
@@ -84,7 +84,7 @@ public abstract class MultipleResourcePolicyModelCreateView extends StandardView
             UnknownOperationResult result = new UnknownOperationResult();
 
             boolean useSaveConfirmation = getApplicationContext()
-                    .getBean(FlowuiViewProperties.class).isUseSaveConfirmation();
+                    .getBean(UiViewProperties.class).isUseSaveConfirmation();
 
             if (useSaveConfirmation) {
                 viewValidation.showSaveConfirmationDialog(this)

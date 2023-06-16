@@ -33,7 +33,8 @@
     </locMessages>
     <steps>
         <step name="Entity list view" order="0"/>
-        <step name="Entity list view fetch plan" order="1"/>
+        <step name="Entity list view fetch plan" order="1"
+              description="List view fetch plan determines entity attributes and associations to be loaded from the database and displayed in the dataGrid component"/>
     </steps>
     <property caption="Entity"
               code="entity"

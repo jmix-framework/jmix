@@ -21,7 +21,7 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.EmptyDataUnit;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.DataLoader;
@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(RefreshAction.ID)
 public class RefreshAction<E> extends ListDataComponentAction<RefreshAction<E>, E> {
 
-    public static final String ID = "refresh";
+    public static final String ID = "list_refresh";
 
     private static final Logger log = LoggerFactory.getLogger(RefreshAction.class);
 
@@ -49,7 +49,7 @@ public class RefreshAction<E> extends ListDataComponentAction<RefreshAction<E>, 
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.REFRESH);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.REFRESH);
     }
 
     @Autowired

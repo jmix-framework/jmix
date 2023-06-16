@@ -28,7 +28,7 @@ import io.jmix.flowui.component.upload.JmixUpload;
 import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer;
 import io.jmix.flowui.component.upload.receiver.MultiFileTemporaryStorageBuffer;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 import org.springframework.beans.BeansException;
@@ -165,7 +165,7 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
 
     protected void loadIcon(Element element, String attributeName, Consumer<Component> iconSetter) {
         loadString(element, attributeName)
-                .map(FlowuiComponentUtils::parseIcon)
+                .map(ComponentUtils::parseIcon)
                 .ifPresent(iconSetter);
     }
 }

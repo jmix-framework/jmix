@@ -292,8 +292,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                     context, "Component ID", component.getId());
         }
 
-        String key = loadString(element, "key")
-                .orElseGet(() -> metaPropertyPath.getMetaProperty().getName());
+        String key = loadString(element, "key").orElse(property);
 
         Column column = addColumn(key, metaPropertyPath);
         loadString(element, "width", column::setWidth);

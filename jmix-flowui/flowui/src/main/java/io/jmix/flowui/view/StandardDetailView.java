@@ -34,9 +34,9 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.FlowuiViewProperties;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
@@ -396,7 +396,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             UnknownOperationResult result = new UnknownOperationResult();
 
             boolean useSaveConfirmation = getApplicationContext()
-                    .getBean(FlowuiViewProperties.class).isUseSaveConfirmation();
+                    .getBean(UiViewProperties.class).isUseSaveConfirmation();
 
             if (action instanceof NavigateCloseAction) {
                 BeforeLeaveEvent beforeLeaveEvent = ((NavigateCloseAction) action).getBeforeLeaveEvent();
@@ -722,7 +722,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             AccessManager accessManager = getApplicationContext().getBean(AccessManager.class);
             MetaClass metaClass = getEditedEntityContainer().getEntityMetaClass();
 
-            FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+            UiEntityContext entityContext = new UiEntityContext(metaClass);
             accessManager.applyRegisteredConstraints(entityContext);
 
             InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass, getApplicationContext());

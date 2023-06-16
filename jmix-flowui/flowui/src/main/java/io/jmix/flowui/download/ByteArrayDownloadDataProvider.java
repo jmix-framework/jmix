@@ -18,7 +18,7 @@ package io.jmix.flowui.download;
 
 import io.jmix.core.CoreProperties;
 import io.jmix.core.UuidProvider;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class ByteArrayDownloadDataProvider implements DownloadDataProvider {
      *
      * @param data                                    byte array
      * @param saveExportedByteArrayDataThresholdBytes threshold in bytes on which downloaded byte array will be saved to
-     *                                                a temporary file to prevent HTTP session memory leaks. Use {@link FlowuiProperties#getSaveExportedByteArrayDataThresholdBytes()}.
+     *                                                a temporary file to prevent HTTP session memory leaks. Use {@link UiProperties#getSaveExportedByteArrayDataThresholdBytes()}.
      * @param tempDir                                 where to store the temporary file if {@code saveExportedByteArrayDataThresholdBytes} is exceeded.
      *                                                Use {@link CoreProperties#getTempDir()}.
      */

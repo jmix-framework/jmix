@@ -24,7 +24,7 @@ import com.vaadin.flow.component.notification.Notification;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.FlowuiViewProperties;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.SupportsValidation;
@@ -50,13 +50,13 @@ public class ViewValidation {
     protected Validator validator;
     protected Dialogs dialogs;
     protected Notifications notifications;
-    protected FlowuiViewProperties viewProperties;
+    protected UiViewProperties viewProperties;
 
     @Autowired
     public ViewValidation(Messages messages,
                           Validator validator,
                           Dialogs dialogs,
-                          FlowuiViewProperties viewProperties,
+                          UiViewProperties viewProperties,
                           Notifications notifications) {
         this.messages = messages;
         this.validator = validator;

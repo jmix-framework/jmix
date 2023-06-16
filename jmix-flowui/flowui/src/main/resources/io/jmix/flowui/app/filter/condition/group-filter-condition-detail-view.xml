@@ -65,7 +65,7 @@
                     <actions>
                         <action id="addCondition" type="genericFilter_addCondition" actionVariant="PRIMARY"/>
                         <action id="edit" type="logicalFilter_edit"/>
-                        <action id="remove" type="remove"/>
+                        <action id="remove" type="list_remove"/>
                         <action id="moveUp" icon="ARROW_UP"/>
                         <action id="moveDown" icon="ARROW_DOWN"/>
                     </actions>

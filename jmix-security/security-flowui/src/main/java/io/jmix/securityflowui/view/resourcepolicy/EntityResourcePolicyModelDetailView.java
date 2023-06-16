@@ -2,7 +2,7 @@ package io.jmix.securityflowui.view.resourcepolicy;
 
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.select.JmixSelect;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.model.ResourcePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class EntityResourcePolicyModelDetailView extends StandardDetailView<Reso
 
     @Subscribe
     public void onInit(InitEvent event) {
-        FlowuiComponentUtils.setItemsMap(entityField, resourcePolicyEditorUtils.getEntityOptionsMap());
+        ComponentUtils.setItemsMap(entityField, resourcePolicyEditorUtils.getEntityOptionsMap());
         resourcePolicyEditorUtils.setEnumItemsAsString(actionField, EntityPolicyAction.class);
     }
 }

@@ -23,7 +23,7 @@ archivesBaseName = 'jmix-reports-rest'
 dependencies {
     api project(':reports')
 
-    compileOnly project(':security-oauth2')
+    compileOnly project(':authserver')
     compileOnly project(':oidc')
 
     implementation 'com.google.code.gson:gson'

@@ -21,7 +21,7 @@ import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
 import io.jmix.flowui.menu.MenuItem.MenuItemProperty;
@@ -51,7 +51,7 @@ public class MenuConfig {
 
     private final Logger log = LoggerFactory.getLogger(MenuConfig.class);
 
-    public static final String MENU_CONFIG_XML_PROP = "jmix.flowui.menu-config";
+    public static final String MENU_CONFIG_XML_PROP = "jmix.ui.menu-config";
 
     protected List<MenuItem> rootItems = new ArrayList<>();
 
@@ -60,7 +60,7 @@ public class MenuConfig {
     protected MessageTools messageTools;
     protected Dom4jTools dom4JTools;
     protected Environment environment;
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
     protected JmixModules modules;
     protected Metadata metadata;
     protected MetadataTools metadataTools;
@@ -70,14 +70,14 @@ public class MenuConfig {
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
     public MenuConfig(Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
-                      Environment environment, FlowuiProperties flowuiProperties, JmixModules modules,
+                      Environment environment, UiProperties uiProperties, JmixModules modules,
                       Metadata metadata, MetadataTools metadataTools) {
         this.resources = resources;
         this.messages = messages;
         this.messageTools = messageTools;
         this.dom4JTools = dom4JTools;
         this.environment = environment;
-        this.flowuiProperties = flowuiProperties;
+        this.uiProperties = uiProperties;
         this.modules = modules;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
@@ -117,7 +117,7 @@ public class MenuConfig {
     protected void init() {
         rootItems.clear();
 
-        List<String> locations = flowuiProperties.isCompositeMenu() ?
+        List<String> locations = uiProperties.isCompositeMenu() ?
                 modules.getPropertyValues(MENU_CONFIG_XML_PROP) :
                 Collections.singletonList(environment.getProperty(MENU_CONFIG_XML_PROP));
 

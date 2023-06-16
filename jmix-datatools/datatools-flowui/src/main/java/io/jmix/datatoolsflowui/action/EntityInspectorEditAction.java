@@ -30,7 +30,7 @@ import io.jmix.flowui.view.builder.DetailWindowBuilder;
 @ActionType(EntityInspectorEditAction.ID)
 public class EntityInspectorEditAction<E> extends EditAction<E> {
 
-    public static final String ID = "entity_inspector_edit";
+    public static final String ID = "datatl_entityInspector_edit";
 
     protected String entityMetaClass;
     protected String entityId;

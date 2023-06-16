@@ -35,7 +35,7 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.data.SupportsValueSource;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
@@ -163,7 +163,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         component.setEmptySelectionAllowed(true);
         component.addClassName(UNARY_FIELD_CLASS_NAME);
 
-        FlowuiComponentUtils.setItemsMap(component, ImmutableMap.of(
+        ComponentUtils.setItemsMap(component, ImmutableMap.of(
                 Boolean.TRUE, messages.getMessage("boolean.yes"),
                 Boolean.FALSE, messages.getMessage("boolean.no")
         ));

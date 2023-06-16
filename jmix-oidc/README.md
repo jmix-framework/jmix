@@ -225,20 +225,7 @@ jmix.oidc.jwt-authentication-converter.username-claim=preferred_username
 
 In most cases the property value should be aligned with the value of the `spring.security.oauth2.client.provider.keycloak.user-name-attribute` property.
 
-Access tokens obtained from OpenID Provider may be used for accessing protected endpoints provided by the REST API add-on.    
-
-After installing the REST API add-on using the marketplace, two starters are added to the build.gradle:
-
-```groovy
-implementation("io.jmix.security:jmix-security-oauth2-starter")
-implementation("io.jmix.rest:jmix-rest-starter")
-```
-
-If you are using an external OpenID Provider for issuing tokens, you don't longer need the `jmix-security-oauth2-starter`, and this dependency must be removed from the build.gradle.
-
-```groovy
-implementation("io.jmix.security:jmix-security-oauth2-starter")
-```
+Access tokens obtained from OpenID Provider may be used for accessing protected endpoints provided by the REST API add-on.
 
 For local keycloak instance access tokens may be obtained by in the following way:
 

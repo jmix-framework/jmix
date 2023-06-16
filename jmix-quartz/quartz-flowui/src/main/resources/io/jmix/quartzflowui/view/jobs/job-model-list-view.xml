@@ -45,21 +45,21 @@
                   width="100%"
                   minHeight="20em">
             <actions>
-                <action id="create" type="create">
+                <action id="create" type="list_create">
                     <properties>
                         <property name="openMode" value="DIALOG"/>
                     </properties>
                 </action>
-                <action id="edit" type="edit">
+                <action id="edit" type="list_edit">
                     <properties>
                         <property name="openMode" value="DIALOG"/>
                     </properties>
                 </action>
-                <action id="remove" type="remove"/>
-                <action id="refresh" type="refresh"/>
-                <action id="executeNow" type="itemTracking" text="msg://triggerJob" icon="PLAY_CIRCLE"/>
-                <action id="activate" type="itemTracking" text="msg://resumeJob" icon="PLAY"/>
-                <action id="deactivate" type="itemTracking" text="msg://pauseJob" icon="PAUSE"/>
+                <action id="remove" type="list_remove"/>
+                <action id="refresh" type="list_refresh"/>
+                <action id="executeNow" type="list_itemTracking" text="msg://triggerJob" icon="PLAY_CIRCLE"/>
+                <action id="activate" type="list_itemTracking" text="msg://resumeJob" icon="PLAY"/>
+                <action id="deactivate" type="list_itemTracking" text="msg://pauseJob" icon="PAUSE"/>
             </actions>
             <columns>
                 <column property="jobName" resizable="true"/>

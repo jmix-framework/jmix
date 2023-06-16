@@ -36,29 +36,29 @@ def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim(
 %>
 <% if (!isManyToMany || isOwnerAttr) {%>
 <hbox id="buttonsPanel" classNames="buttons-panel">
-    <button action="${nestedDcProperty}Table.create"/>
+    <button action="${nestedDcProperty}DataGrid.create"/>
     <% if (attribute.hasAnnotation('OneToMany')) {%>
-    <button action="${nestedDcProperty}Table.edit"/>
+    <button action="${nestedDcProperty}DataGrid.edit"/>
     <%}%>
-    <button action="${nestedDcProperty}Table.remove"/>
+    <button action="${nestedDcProperty}DataGrid.remove"/>
 </hbox>
 <% }%>
-<dataGrid id="${nestedDcProperty}Table" dataContainer="${nestedDcProperty}Dc" width="100%" minHeight="20em">
+<dataGrid id="${nestedDcProperty}DataGrid" dataContainer="${nestedDcProperty}Dc" width="100%" minHeight="20em">
     <% if (!isManyToMany || isOwnerAttr) {%>
     <actions>
-        <action id="create" type="create">
+        <action id="create" type="list_create">
             <properties>
                 <property name="openMode" value="DIALOG"/>
             </properties>
         </action>
         <% if (attribute.hasAnnotation('OneToMany')) {%>
-        <action id="edit" type="edit">
+        <action id="edit" type="list_edit">
             <properties>
                 <property name="openMode" value="DIALOG"/>
             </properties>
         </action>
         <%}%>
-        <action id="remove" type="remove"/>
+        <action id="remove" type="list_remove"/>
     </actions>
     <% }%>
     <columns>

@@ -85,9 +85,9 @@
                     <action id="createGraphQLPolicy" text="msg://actions.graphQLPolicy.text"/>
                     <action id="createSpecificPolicy" text="msg://actions.specificPolicy.text"/>
 
-                    <action id="edit" type="edit"/>
-                    <action id="read" type="read"/>
-                    <action id="remove" type="remove"/>
+                    <action id="edit" type="list_edit"/>
+                    <action id="read" type="list_read"/>
+                    <action id="remove" type="list_remove"/>
                 </actions>
                 <columns>
                     <column property="policyGroup"/>
@@ -108,8 +108,8 @@
                       minHeight="20em"
                       width="100%">
                 <actions>
-                    <action id="add" type="add"/>
-                    <action id="remove" type="remove">
+                    <action id="add" type="list_add"/>
+                    <action id="remove" type="list_remove">
                         <properties>
                             <property name="confirmation" value="false"/>
                         </properties>

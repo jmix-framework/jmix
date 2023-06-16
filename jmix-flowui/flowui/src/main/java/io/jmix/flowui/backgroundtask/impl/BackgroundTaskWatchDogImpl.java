@@ -18,7 +18,7 @@ package io.jmix.flowui.backgroundtask.impl;
 
 import io.jmix.core.TimeSource;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
-import io.jmix.flowui.backgroundtask.FlowuiBackgroundTaskProperties;
+import io.jmix.flowui.backgroundtask.UiBackgroundTaskProperties;
 import io.jmix.flowui.backgroundtask.BackgroundTaskWatchDog;
 
 import org.slf4j.Logger;
@@ -48,13 +48,13 @@ public class BackgroundTaskWatchDogImpl implements BackgroundTaskWatchDog {
     }
 
     protected TimeSource timeSource;
-    protected FlowuiBackgroundTaskProperties properties;
+    protected UiBackgroundTaskProperties properties;
 
     private final Set<TaskHandlerImpl> watches = new LinkedHashSet<>();
 
     protected volatile boolean initialized;
 
-    public BackgroundTaskWatchDogImpl(FlowuiBackgroundTaskProperties properties,
+    public BackgroundTaskWatchDogImpl(UiBackgroundTaskProperties properties,
                                       TimeSource timeSource) {
         this.properties = properties;
         this.timeSource = timeSource;

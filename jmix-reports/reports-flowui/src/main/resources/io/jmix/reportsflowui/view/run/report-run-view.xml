@@ -76,7 +76,7 @@
             <actions>
                 <action id="runReport" text="msg://io.jmix.reportsflowui.view.run/runReport.action.title" icon="ANGLE_DOUBLE_RIGHT"
                         actionVariant="PRIMARY"
-                        type="itemTracking"/>
+                        type="list_itemTracking"/>
             </actions>
             <columns>
                 <column property="group"/>

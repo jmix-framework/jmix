@@ -38,9 +38,7 @@
             <dropdownButton id="dropdownCreateBtn" icon="PLUS" text="msg://dropdownCreateBtn.text" themeNames="primary">
                 <items>
                     <actionItem id="create" ref="reportsDataGrid.create"/>
-                    <actionItem id="wizardItem">
-                        <action id="wizard" text="msg://dropdownCreateBtn.action.wizard.text"/>
-                    </actionItem>
+                    <actionItem id="wizard" ref="reportsDataGrid.wizard"/>
                 </items>
             </dropdownButton>
             <button id="editBtn" action="reportsDataGrid.edit"/>
@@ -57,19 +55,21 @@
                   minHeight="20em"
                   dataContainer="reportsDc">
             <actions>
-                <action id="create" type="create" text="msg://action.create.text"/>
-                <action id="edit" type="edit"/>
-                <action id="remove" type="remove"/>
-                <action id="copy" type="itemTracking" icon="COPY" text="msg://action.copy.text"/>
+                <action id="create" type="list_create" text="msg://dropdownCreateBtn.action.create.text"/>
+                <action id="wizard" text="msg://dropdownCreateBtn.action.wizard.text"/>
+                <action id="edit" type="list_edit"/>
+                <action id="remove" type="list_remove"/>
+                <action id="copy" type="list_itemTracking" icon="COPY" text="msg://action.copy.text"/>
                 <action id="importAction" icon="UPLOAD" description="msg://action.import.description"/>
-                <action id="export" type="itemTracking" icon="DOWNLOAD" description="msg://action.export.description"/>
-                <action id="runReport" type="itemTracking" icon="ANGLE_DOUBLE_RIGHT" text="msg://action.runReport.text"/>
-                <action id="executions" text="msg://action.executions.text"/>
+                <action id="export" type="list_itemTracking" icon="DOWNLOAD" description="msg://action.export.description"/>
+                <action id="runReport" type="list_itemTracking" icon="ANGLE_DOUBLE_RIGHT"
+                        text="msg://action.runReport.text"/>
+                <action id="executions" type="list_itemTracking" icon="FILE"
+                        text="msg://action.executions.text"/>
             </actions>
             <columns>
-                <column property="name"/>
                 <column property="group"/>
-                <column property="description"/> <!--todo rp maxTextLength="100" -->
+                <column property="description"/>
                 <column property="code"/>
             </columns>
         </dataGrid>

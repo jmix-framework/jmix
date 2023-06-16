@@ -35,7 +35,7 @@ import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.app.ParameterPrototype;
@@ -111,7 +111,7 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
 
     @Override
     protected void initAction() {
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PRINT);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PRINT);
     }
 
     protected boolean isDataAvailable() {
@@ -170,12 +170,12 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
                 Action printSelectedAction = new BaseAction("actions.printSelected")
                         .withVariant(ActionVariant.PRIMARY)
                         .withHandler(event -> printSelected(selected))
-                        .withIcon(FlowuiComponentUtils.convertToIcon(VaadinIcon.LINES))
+                        .withIcon(ComponentUtils.convertToIcon(VaadinIcon.LINES))
                         .withText(messages.getMessage(getClass(), "actions.printSelected"));
 
                 Action printAllAction = new BaseAction("actions.printAll")
                         .withText(messages.getMessage(getClass(), "actions.printAll"))
-                        .withIcon(FlowuiComponentUtils.convertToIcon(VaadinIcon.TABLE))
+                        .withIcon(ComponentUtils.convertToIcon(VaadinIcon.TABLE))
                         .withHandler(event -> printAll());
 
                 dialogs.createOptionDialog()

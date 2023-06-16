@@ -47,8 +47,8 @@ public interface ReportsFullAccessRole {
 
 	@ViewPolicy(viewIds = {
 			"report_InputParametersDialog.view",
-			"report_ReportRun.view",
-			"report_ReportTable.view",
+			"report_ReportRunView",
+			"report_ReportTableView",
 			"report_ReportGroup.list",
 			"report_Report.list",
 			"report_Report.detail",
@@ -69,8 +69,8 @@ public interface ReportsFullAccessRole {
 	@MenuPolicy(menuIds = {
 			"report_Report.list",
 			"report_ReportGroup.list",
-			"report_ReportRun.view",
-			"report_ReportTable.view"
+			"report_ReportRunView",
+			"report_ReportTableView"
 	})
 
 	@EntityPolicy(entityClass = Report.class, actions = EntityPolicyAction.ALL)

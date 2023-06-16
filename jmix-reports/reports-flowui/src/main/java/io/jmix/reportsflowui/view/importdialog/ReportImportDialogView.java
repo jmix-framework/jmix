@@ -123,8 +123,6 @@ public class ReportImportDialogView extends StandardView {
             return reportImportResult;
         }
 
-        //todo
-//        temporaryStorage.deleteFile(fileId);
         return reportImportExport.importReportsWithResult(bytes, getImportOptions());
     }
 

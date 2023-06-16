@@ -97,10 +97,10 @@
                             <actions>
                                 <action id="create" icon="PLUS" actionVariant="PRIMARY"
                                         description="msg://bandsTab.createBand.tooltipText"/>
-                                <action id="remove" type="remove" description="msg://bandsTab.removeBand.tooltipText"/>
-                                <action id="upBand" type="itemTracking" icon="ARROW_UP"
+                                <action id="remove" type="list_remove" description="msg://bandsTab.removeBand.tooltipText"/>
+                                <action id="upBand" type="list_itemTracking" icon="ARROW_UP"
                                         description="msg://bandsTab.upBand.tooltipText"/>
-                                <action id="downBand" type="itemTracking" icon="ARROW_DOWN"
+                                <action id="downBand" type="list_itemTracking" icon="ARROW_DOWN"
                                         description="msg://bandsTab.downBand.tooltipText"/>
                             </actions>
                             <columns>
@@ -240,9 +240,9 @@
                                     </hbox>
                                     <dataGrid id="dataSetsDataGrid" dataContainer="dataSetsDc" height="100%">
                                         <actions>
-                                            <action id="create" type="create" actionVariant="PRIMARY"
+                                            <action id="create" type="list_create" actionVariant="PRIMARY"
                                                     description="msg://bandsTab.dataSetsDataGrid.action.create.description"/>
-                                            <action id="remove" type="remove"
+                                            <action id="remove" type="list_remove"
                                                     description="msg://bandsTab.dataSetsDataGrid.action.remove.description"/>
                                         </actions>
                                     </dataGrid>
@@ -267,19 +267,19 @@
                         </hbox>
                         <dataGrid id="inputParametersDataGrid" multiSort="true" dataContainer="parametersDc">
                             <actions>
-                                <action id="createParameter" type="create">
+                                <action id="createParameter" type="list_create">
                                     <properties>
                                         <property name="openMode" value="DIALOG"/>
                                     </properties>
                                 </action>
-                                <action id="removeParameter" type="remove"/>
-                                <action id="editParameter" type="edit">
+                                <action id="removeParameter" type="list_remove"/>
+                                <action id="editParameter" type="list_edit">
                                     <properties>
                                         <property name="openMode" value="DIALOG"/>
                                     </properties>
                                 </action>
-                                <action id="up" type="itemTracking" icon="ARROW_UP"/>
-                                <action id="down" type="itemTracking" icon="ARROW_DOWN"/>
+                                <action id="up" type="list_itemTracking" icon="ARROW_UP"/>
+                                <action id="down" type="list_itemTracking" icon="ARROW_DOWN"/>
                             </actions>
                             <columns>
                                 <column property="name"/>
@@ -324,17 +324,17 @@
                               dataContainer="valuesFormatsDc"
                               columnReorderingAllowed="false">
                         <actions>
-                            <action id="createValueFormat" type="create">
+                            <action id="createValueFormat" type="list_create">
                                 <properties>
                                     <property name="openMode" value="DIALOG"/>
                                 </properties>
                             </action>
-                            <action id="editValueFormat" type="edit">
+                            <action id="editValueFormat" type="list_edit">
                                 <properties>
                                     <property name="openMode" value="DIALOG"/>
                                 </properties>
                             </action>
-                            <action id="removeValueFormat" type="remove"/>
+                            <action id="removeValueFormat" type="list_remove"/>
                         </actions>
                         <columns>
                             <column property="valueName"/>
@@ -355,12 +355,12 @@
                     <dataGrid id="templatesDataGrid" width="100%" dataContainer="templatesDc"
                               columnReorderingAllowed="false" detailsVisibleOnClick="false">
                         <actions>
-                            <action id="create" type="create"/>
-                            <action id="remove" type="remove"/>
-                            <action id="edit" type="edit"/>
-                            <action id="defaultAction" type="itemTracking" text="msg://report.defaultTemplate"
+                            <action id="create" type="list_create"/>
+                            <action id="remove" type="list_remove"/>
+                            <action id="edit" type="list_edit"/>
+                            <action id="defaultAction" type="list_itemTracking" text="msg://report.defaultTemplate"
                                     icon="CHECK"/>
-                            <action id="copy" type="itemTracking" text="msg://report.template.copy" icon="COPY"/>
+                            <action id="copy" type="list_itemTracking" text="msg://report.template.copy" icon="COPY"/>
                         </actions>
                         <columns>
                             <column property="name" sortable="false"/>
@@ -408,7 +408,7 @@
                                   columnReorderingAllowed="false" detailsVisibleOnClick="false">
                             <actions>
                                 <action id="add" type="add"/>
-                                <action id="remove" type="remove" icon="CLOSE"/>
+                                <action id="remove" type="list_remove" icon="CLOSE"/>
                             </actions>
                             <columns>
                                 <column property="screenId"/>

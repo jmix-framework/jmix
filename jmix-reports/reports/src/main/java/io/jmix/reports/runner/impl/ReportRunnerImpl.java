@@ -16,12 +16,6 @@
 
 package io.jmix.reports.runner.impl;
 
-import io.jmix.reports.yarg.exception.OpenOfficeException;
-import io.jmix.reports.yarg.exception.ReportingInterruptedException;
-import io.jmix.reports.yarg.formatters.impl.doc.connector.NoFreePortsException;
-import io.jmix.reports.yarg.reporting.ReportOutputDocument;
-import io.jmix.reports.yarg.reporting.ReportingAPI;
-import io.jmix.reports.yarg.reporting.RunParams;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Id;
@@ -39,6 +33,12 @@ import io.jmix.reports.runner.FluentReportRunner;
 import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.util.ReportsUtils;
+import io.jmix.reports.yarg.exception.OpenOfficeException;
+import io.jmix.reports.yarg.exception.ReportingInterruptedException;
+import io.jmix.reports.yarg.formatters.impl.doc.connector.NoFreePortsException;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportingAPI;
+import io.jmix.reports.yarg.reporting.RunParams;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.MDC;
@@ -58,28 +58,20 @@ public class ReportRunnerImpl implements ReportRunner {
 
     @Autowired
     protected PrototypesLoader prototypesLoader;
-
     @Autowired
     protected ReportingAPI reportingAPI;
-
     @Autowired
     protected ObjectProvider<FluentReportRunner> fluentReportRunners;
-
     @Autowired
     protected EntityStates entityStates;
-
     @Autowired
     protected DataManager dataManager;
-
     @Autowired
     protected ReportsProperties reportsProperties;
-
     @Autowired
     protected ReportExecutionHistoryRecorder executionHistoryRecorder;
-
     @Autowired
     protected ReportsUtils reportsUtils;
-
     @Autowired
     protected ApplicationContext applicationContext;
 
@@ -146,31 +138,28 @@ public class ReportRunnerImpl implements ReportRunner {
             throw new FailedToConnectToOpenOfficeException(ooe.getMessage());
         } catch (ReportingInterruptedException ie) {
             throw new ReportCanceledException(String.format("Report is canceled. %s", ie.getMessage()));
-        }
-        //todo
-//        catch (com.haulmont.yarg.exception.UnsupportedFormatException fe) {
-//            throw new UnsupportedFormatException(fe.getMessage());
-//        } catch (com.haulmont.yarg.exception.ValidationException ve) {
-//            throw new ValidationException(ve.getMessage());
-//        } catch (com.haulmont.yarg.exception.ReportingException re) {
-////            todo https://github.com/Haulmont/jmix-reports/issues/22
-////            Throwable rootCause = ExceptionUtils.getRootCause(re);
-////            if (rootCause instanceof ResourceCanceledException) {
-////                throw new ReportCanceledException(String.format("Report is canceled. %s", rootCause.getMessage()));
-////            }
-//            //noinspection unchecked
-//            List<Throwable> list = ExceptionUtils.getThrowableList(re);
-//            StringBuilder sb = new StringBuilder();
-//            for (Iterator<Throwable> it = list.iterator(); it.hasNext(); ) {
-//                //noinspection ThrowableResultOfMethodCallIgnored
-//                sb.append(it.next().getMessage());
-//                if (it.hasNext())
-//                    sb.append("\n");
+        } catch (io.jmix.reports.yarg.exception.UnsupportedFormatException fe) {
+            throw new UnsupportedFormatException(fe.getMessage());
+        } catch (io.jmix.reports.exception.ValidationException ve) {
+            throw new ValidationException(ve.getMessage());
+        } catch (io.jmix.reports.yarg.exception.ReportingException re) {
+//            todo https://github.com/Haulmont/jmix-reports/issues/22
+//            Throwable rootCause = ExceptionUtils.getRootCause(re);
+//            if (rootCause instanceof ResourceCanceledException) {
+//                throw new ReportCanceledException(String.format("Report is canceled. %s", rootCause.getMessage()));
 //            }
-//
-//            throw new ReportingException(sb.toString());
-//        }
-        finally {
+            //noinspection unchecked
+            List<Throwable> list = ExceptionUtils.getThrowableList(re);
+            StringBuilder sb = new StringBuilder();
+            for (Iterator<Throwable> it = list.iterator(); it.hasNext(); ) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                sb.append(it.next().getMessage());
+                if (it.hasNext())
+                    sb.append("\n");
+            }
+
+            throw new ReportingException(sb.toString());
+        } finally {
 //            todo https://github.com/Haulmont/jmix-reports/issues/22
 //            executions.endExecution();
             MDC.remove("user");

@@ -47,9 +47,9 @@
                       dataContainer="reportRegionPropertiesDataGridDc"
                       width="30em" height="100%">
                 <actions>
-                    <action id="removeItemAction" icon="CLOSE" type="itemTracking"/>
-                    <action id="upItemAction" type="itemTracking" icon="ARROW_UP"/>
-                    <action id="downItemAction" type="itemTracking" icon="ARROW_DOWN"/>
+                    <action id="removeItemAction" icon="CLOSE" type="list_itemTracking"/>
+                    <action id="upItemAction" type="list_itemTracking" icon="ARROW_UP"/>
+                    <action id="downItemAction" type="list_itemTracking" icon="ARROW_DOWN"/>
                 </actions>
                 <columns>
                     <column property="hierarchicalLocalizedName" header="msg://hierarchicalLocalizedName.header"/>

@@ -62,7 +62,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Route(value = "reports/tables", layout = DefaultMainViewParent.class)
-@ViewController("report_ReportTable.view")
+@ViewController("report_ReportTableView")
 @ViewDescriptor("report-table-view.xml")
 @DialogMode(width = "50em")
 public class ReportTableView extends StandardView {

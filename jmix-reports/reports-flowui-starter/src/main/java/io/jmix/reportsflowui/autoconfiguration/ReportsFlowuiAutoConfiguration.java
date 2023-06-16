@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfiguration.reportsflowui;
+package io.jmix.reportsflowui.autoconfiguration;
 
 import io.jmix.reports.ReportsConfiguration;
 import io.jmix.reportsflowui.ReportsFlowuiConfiguration;

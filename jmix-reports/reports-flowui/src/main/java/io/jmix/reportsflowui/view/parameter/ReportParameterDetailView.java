@@ -24,7 +24,7 @@ import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
@@ -345,7 +345,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             String enumLocalizedName = messages.getMessage(enumClass, enumClass.getSimpleName());
             enumsOptionsMap.put(enumClass.getCanonicalName(), enumLocalizedName + " (" + enumClass.getSimpleName() + ")");
         }
-        FlowuiComponentUtils.setItemsMap(enumerationField, enumsOptionsMap);
+        ComponentUtils.setItemsMap(enumerationField, enumsOptionsMap);
     }
 
     protected void initMetaClassLookup() {
@@ -359,7 +359,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             }
         }
 
-        FlowuiComponentUtils.setItemsMap(metaClassField, metaClassesOptionsMap);
+        ComponentUtils.setItemsMap(metaClassField, metaClassesOptionsMap);
     }
 
     @Subscribe

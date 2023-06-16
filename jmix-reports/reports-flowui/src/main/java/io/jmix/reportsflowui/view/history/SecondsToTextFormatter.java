@@ -31,8 +31,11 @@ import java.util.function.Function;
 @Component("report_SecondsToTextFormatter")
 public class SecondsToTextFormatter implements Function<Long, String> {
 
-    @Autowired
-    protected Messages messages;
+    protected final Messages messages;
+
+    public SecondsToTextFormatter(Messages messages) {
+        this.messages = messages;
+    }
 
     @Override
     @Nullable

@@ -75,9 +75,9 @@
                       columnReorderingAllowed="false"
                       height="30em" width="100%">
                 <actions>
-                    <action id="up" type="itemTracking" icon="ARROW_UP"/>
-                    <action id="down" type="itemTracking" icon="ARROW_DOWN"/>
-                    <action id="remove" type="remove"/>
+                    <action id="up" type="list_itemTracking" icon="ARROW_UP"/>
+                    <action id="down" type="list_itemTracking" icon="ARROW_DOWN"/>
+                    <action id="remove" type="list_remove"/>
                     <action id="edit" text="msg://editRegion" icon="PENCIL"/>
                 </actions>
             </dataGrid>
@@ -136,9 +136,9 @@
                       width="100%">
                 <actions>
                     <action id="generate" text="msg://generateParameters.text"/>
-                    <action id="create" type="create"/>
-                    <action id="edit" type="edit"/>
-                    <action id="remove" type="remove"/>
+                    <action id="create" type="list_create"/>
+                    <action id="edit" type="list_edit"/>
+                    <action id="remove" type="list_remove"/>
                 </actions>
                 <columns>
                     <column property="name"/>

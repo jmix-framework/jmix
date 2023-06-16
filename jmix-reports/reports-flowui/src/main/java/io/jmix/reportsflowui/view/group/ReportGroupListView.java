@@ -66,25 +66,27 @@ public class ReportGroupListView extends StandardListView<ReportGroup> {
         }
 
         ReportGroup group = reportGroupsDataGrid.getSingleSelectedItem();
-        if (group != null) {
-            if (group.getSystemFlag()) {
-                notifications.create(messageBundle.getMessage("unableToDeleteSystemReportGroup"))
+        if (group == null) {
+            return;
+        }
+
+        if (group.getSystemFlag()) {
+            notifications.create(messageBundle.getMessage("unableToDeleteSystemReportGroup"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+        } else {
+            Optional<Report> report = dataManager.load(Report.class)
+                    .query("select r from report_Report r where r.group.id = :groupId")
+                    .parameter("groupId", group.getId())
+                    .fetchPlan("report.view")
+                    .optional();
+
+            if (report.isPresent()) {
+                notifications.create(messageBundle.getMessage("unableToDeleteNotEmptyReportGroup"))
                         .withType(Notifications.Type.WARNING)
                         .show();
             } else {
-                Optional<Report> report = dataManager.load(Report.class)
-                        .query("select r from report_Report r where r.group.id = :groupId")
-                        .parameter("groupId", group.getId())
-                        .fetchPlan("report.view")
-                        .optional();
-
-                if (report.isPresent()) {
-                    notifications.create(messageBundle.getMessage("unableToDeleteNotEmptyReportGroup"))
-                            .withType(Notifications.Type.WARNING)
-                            .show();
-                } else {
-                    removeAction.execute();
-                }
+                removeAction.execute();
             }
         }
     }

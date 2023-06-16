@@ -16,10 +16,6 @@
 
 package io.jmix.reportsflowui.view.run;
 
-import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.runner.FluentUiReportRunner;
-import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
-import io.jmix.reportsflowui.runner.UiReportRunner;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -41,6 +37,11 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
+import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.runner.FluentUiReportRunner;
+import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.UiReportRunner;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -50,7 +51,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Route(value = "reports/run", layout = DefaultMainViewParent.class)
-@ViewController("report_ReportRun.view")
+@ViewController("report_ReportRunView")
 @ViewDescriptor("report-run-view.xml")
 @LookupComponent("reportDataGrid")
 @DialogMode(width = "80em", resizable = true)
@@ -136,17 +137,19 @@ public class ReportRunView extends StandardListView<Report> {
     @Subscribe("reportDataGrid.runReport")
     protected void onReportDataGridRunReport(ActionPerformedEvent event) {
         Report report = reportDataGrid.getSingleSelectedItem();
-        if (report != null) {
-            report = dataManager.load(Id.of(report))
-                    .fetchPlan("report.edit")
-                    .one();
-            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
-                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-                fluentRunner.inBackground(ReportRunView.this);
-            }
-            fluentRunner.runAndShow();
+        if (report == null) {
+            return;
         }
+
+        report = dataManager.load(Id.of(report))
+                .fetchPlan("report.edit")
+                .one();
+        FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
+                .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
+        if (reportsClientProperties.getUseBackgroundReportProcessing()) {
+            fluentRunner.inBackground(ReportRunView.this);
+        }
+        fluentRunner.runAndShow();
     }
 
     @Subscribe("searchBtn")
@@ -170,48 +173,42 @@ public class ReportRunView extends StandardListView<Report> {
         ReportGroup groupFilterValue = groupFilter.getValue();
         Date dateFilterValue = updatedDateFilter.getTypedValue();
 
-        List<Report> reports =
-                reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(), metaClassParameter)
-                        .stream()
-                        .filter(report -> {
-                            if (nameFilterValue != null
-                                    && !report.getName().toLowerCase().contains(nameFilterValue)) {
-                                return false;
-                            }
+        List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
+                        currentUserSubstitution.getEffectiveUser(), metaClassParameter)
+                .stream()
+                .filter(report ->
+                        isSearchReport(nameFilterValue, codeFilterValue, groupFilterValue, dateFilterValue, report)
+                )
+                .toList();
 
-                            if (codeFilterValue != null) {
-                                if (report.getCode() == null
-                                        || (report.getCode() != null
-                                        && !report.getCode().toLowerCase().contains(codeFilterValue))) {
-                                    return false;
-                                }
-                            }
+        reportsDc.setItems(reports);
+    }
 
-                            if (groupFilterValue != null && !Objects.equals(report.getGroup(), groupFilterValue)) {
-                                return false;
-                            }
-
-                            if (dateFilterValue != null
-                                    && report.getUpdateTs() != null
-                                    && !report.getUpdateTs().after(dateFilterValue)) {
-                                return false;
-                            }
-
-                            return true;
-                        })
-                        .toList();
-
-        reportsDc.getMutableItems().clear();
-
-        for (Report report : reports) {
-            reportsDc.getMutableItems().add(report);
+    protected boolean isSearchReport(@Nullable String nameFilterValue, @Nullable String codeFilterValue,
+                                     @Nullable ReportGroup groupFilterValue, @Nullable Date dateFilterValue,
+                                     Report report) {
+        if (!report.getName().toLowerCase().contains(nameFilterValue)) {
+            return false;
         }
 
-        //todo
-//        Table.SortInfo sortInfo = reportDataGrid.getSortInfo();
-//        if (sortInfo != null) {
-//            Table.SortDirection direction = sortInfo.getAscending() ? Table.SortDirection.ASCENDING : Table.SortDirection.DESCENDING;
-//            reportDataGrid.sort(sortInfo.getPropertyId().toString(), direction);
-//        }
+        if (codeFilterValue != null) {
+            if (report.getCode() == null
+                    || (report.getCode() != null
+                    && !report.getCode().toLowerCase().contains(codeFilterValue))) {
+                return false;
+            }
+        }
+
+        if (groupFilterValue != null && !Objects.equals(report.getGroup(), groupFilterValue)) {
+            return false;
+        }
+
+        if (dateFilterValue != null
+                && report.getUpdateTs() != null
+                && !report.getUpdateTs().after(dateFilterValue)) {
+            return false;
+        }
+
+        return true;
     }
 }

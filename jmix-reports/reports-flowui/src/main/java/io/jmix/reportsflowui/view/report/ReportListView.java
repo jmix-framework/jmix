@@ -16,24 +16,22 @@
 
 package io.jmix.reportsflowui.view.report;
 
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiProperties;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
-import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.list.CreateAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.dropdownbutton.ActionItem;
-import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
@@ -52,9 +50,7 @@ import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
 
@@ -69,8 +65,6 @@ public class ReportListView extends StandardListView<Report> {
     protected DataGrid<Report> reportsDataGrid;
     @ViewComponent("reportsDataGrid.create")
     protected CreateAction<Report> reportsDataGridCreate;
-    @ViewComponent
-    protected DropdownButton dropdownCreateBtn;
 
     @ViewComponent
     protected CollectionLoader<Report> reportsDl;
@@ -98,7 +92,7 @@ public class ReportListView extends StandardListView<Report> {
     @Autowired
     protected ReportImportExport reportImportExport;
     @Autowired
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
@@ -114,18 +108,48 @@ public class ReportListView extends StandardListView<Report> {
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        reportsDataGridCreate.setIcon(null);
-
-        ActionItem wizardItem = (ActionItem) dropdownCreateBtn.getItem("wizardItem");
-        ((BaseAction) wizardItem.getAction()).addActionPerformedListener(this::onDropdownCreateBtnWizardItemWizard);
-        ((SecuredBaseAction) wizardItem.getAction()).addEnabledRule(this::dropdownCreateBtnWizardItemWizardEnabledRule);
+        initColumnDataGrid();
+        initReportsDataCreate();
     }
 
-    // todo rp value provider for column "name"
-    /*@Install(to = "reportsTable.name", subject = "valueProvider")
-    protected String reportsTableNameValueProvider(Report report) {
-        return metadataTools.getInstanceName(report);
-    }*/
+    private void initReportsDataCreate() {
+        reportsDataGridCreate.setIcon(null);
+    }
+
+    @Subscribe("wizard")
+    public void onWizardClick(final DropdownButtonItem.ClickEvent event) {
+        DialogWindow<ReportWizardCreatorView> build = dialogWindows.view(this, ReportWizardCreatorView.class).build();
+        build.addAfterCloseListener(e -> {
+            if (e.closedWith(StandardOutcome.SAVE)) {
+                Report item = build.getView().getItem().getGeneratedReport();
+                reportsDc.getMutableItems().add(item);
+                reportsDataGrid.select(item);
+                viewNavigators.detailView(Report.class)
+                        .editEntity(reportsDc.getItem())
+                        .withViewClass(ReportDetailView.class)
+                        .navigate();
+            }
+        });
+        build.open();
+    }
+
+
+    private void initColumnDataGrid() {
+        reportsDataGrid.addColumn(report -> metadataTools.getInstanceName(report))
+                .setKey("name")
+                .setHeader(messageBundle.getMessage("name"))
+                .setResizable(true)
+                .setSortable(true);
+
+        List<Grid.Column<Report>> columnList = Arrays.asList(
+                reportsDataGrid.getColumnByKey("name"),
+                reportsDataGrid.getColumnByKey("group"),
+                reportsDataGrid.getColumnByKey("description"),
+                reportsDataGrid.getColumnByKey("code")
+        );
+
+        reportsDataGrid.setColumnOrder(columnList);
+    }
 
     @Subscribe("reportsDataGrid.runReport")
     public void onReportsDataGridRunReport(ActionPerformedEvent event) {
@@ -171,7 +195,7 @@ public class ReportListView extends StandardListView<Report> {
 
         ByteArrayDownloadDataProvider provider = new ByteArrayDownloadDataProvider(
                 reportImportExport.exportReports(reportsTableSelected),
-                flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                 coreProperties.getTempDir());
         if (reportsTableSelected.size() > 1) {
             downloader.download(provider, "Reports", DownloadFormat.ZIP);
@@ -222,26 +246,6 @@ public class ReportListView extends StandardListView<Report> {
     protected boolean reportsDataGridCopyEnabledRule() {
         Report report = reportsDataGrid.getSingleSelectedItem();
         return report != null && isPermissionsToCreateReports();
-    }
-
-    protected boolean dropdownCreateBtnWizardItemWizardEnabledRule() {
-        return isPermissionsToCreateReports();
-    }
-
-    protected void onDropdownCreateBtnWizardItemWizard(ActionPerformedEvent event) {
-        DialogWindow<ReportWizardCreatorView> build = dialogWindows.view(this, ReportWizardCreatorView.class).build();
-        build.addAfterCloseListener(e -> {
-            if (e.closedWith(StandardOutcome.SAVE)) {
-                Report item = build.getView().getItem().getGeneratedReport();
-                reportsDc.getMutableItems().add(item);
-                reportsDataGrid.select(item);
-                viewNavigators.detailView(Report.class)
-                        .editEntity(reportsDc.getItem())
-                        .withViewClass(ReportDetailView.class)
-                        .navigate();
-            }
-        });
-        build.open();
     }
 
     protected Report copyReport(Report source) {

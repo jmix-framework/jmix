@@ -118,15 +118,6 @@ public class ReportExecutionDialog extends StandardListView<Report> {
                 .collect(Collectors.toList());
 
         reportsDc.setItems(reports);
-
-        //todo
-//        Table.SortInfo sortInfo = reportsDataGrid.getSortInfo();
-//        if (sortInfo != null) {
-//            Table.SortDirection direction = sortInfo.getAscending()
-//                    ? Table.SortDirection.ASCENDING
-//                    : Table.SortDirection.DESCENDING;
-//            reportsTable.sort(sortInfo.getPropertyId().toString(), direction);
-//        }
     }
 
     protected boolean filterReport(Report report) {

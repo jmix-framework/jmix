@@ -24,7 +24,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.view.DetailCloseAction;
 import io.jmix.flowui.action.view.ViewAction;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,7 +48,7 @@ public class RunSingleEntityReportAction<E> extends ViewAction<DetailCloseAction
     public RunSingleEntityReportAction(String id) {
         super(id);
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PRINT);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PRINT);
     }
 
     @Autowired

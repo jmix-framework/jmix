@@ -15,6 +15,6 @@
  */
 
 @Internal
-package io.jmix.autoconfiguration.reportsflowui;
+package io.jmix.reportsflowui.autoconfiguration;
 
 import io.jmix.core.annotation.Internal;

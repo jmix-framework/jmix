@@ -50,17 +50,17 @@
         </hbox>
         <dataGrid id="reportGroupsDataGrid" dataContainer="groupsDc" width="100%">
             <actions>
-                <action id="create" type="create">
+                <action id="create" type="list_create">
                     <properties>
                         <property name="openMode" value="DIALOG"/>
                     </properties>
                 </action>
-                <action id="edit" type="edit">
+                <action id="edit" type="list_edit">
                     <properties>
                         <property name="openMode" value="DIALOG"/>
                     </properties>
                 </action>
-                <action id="remove" type="remove"/>
+                <action id="remove" type="list_remove"/>
             </actions>
             <columns>
                 <column property="systemFlag"/>

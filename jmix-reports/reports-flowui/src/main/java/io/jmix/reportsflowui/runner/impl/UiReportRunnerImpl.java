@@ -127,7 +127,6 @@ public class UiReportRunnerImpl implements UiReportRunner {
             long timeout = reportsClientProperties.getBackgroundReportProcessingTimeoutMs();
             BackgroundTask<Integer, List<ReportOutputDocument>> task =
                     new BackgroundTask<>(timeout, TimeUnit.MILLISECONDS, owner) {
-                        @SuppressWarnings("UnnecessaryLocalVariable")
                         @Override
                         public List<ReportOutputDocument> run(TaskLifeCycle<Integer> taskLifeCycle) {
                             context.setReport(targetReport);

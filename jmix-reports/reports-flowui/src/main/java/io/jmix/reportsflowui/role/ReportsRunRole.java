@@ -40,10 +40,10 @@ public interface ReportsRunRole {
 
     @ViewPolicy(viewIds = {
             "report_InputParametersDialog.view",
-            "report_ReportRun.view",
-            "report_ReportTable.view"
+            "report_ReportRunView",
+            "report_ReportTableView"
     })
-    @MenuPolicy(menuIds = {"report_ReportRun.view"})
+    @MenuPolicy(menuIds = {"report_ReportRunView"})
 
     @EntityPolicy(entityClass = Report.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportGroup.class, actions = {EntityPolicyAction.READ})

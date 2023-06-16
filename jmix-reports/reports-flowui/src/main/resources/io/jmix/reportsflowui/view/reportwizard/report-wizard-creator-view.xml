@@ -57,8 +57,8 @@
             </formLayout>
         </div>
         <div id="regionsDiv">
-            <hbox width="100%">
-                <hbox id="buttonsBox">
+            <hbox width="100%" classNames="buttons-panel">
+                <hbox id="buttonsBox" classNames="buttons-panel">
                     <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
                     <button id="addSimpleRegionBtn"
                             text="msg://simpleRegion"/>
@@ -78,7 +78,7 @@
                     <action id="up" type="itemTracking" icon="ARROW_UP"/>
                     <action id="down" type="itemTracking" icon="ARROW_DOWN"/>
                     <action id="remove" type="remove"/>
-                    <action id="edit" text="msg://editRegion" icon="EDIT"/>
+                    <action id="edit" text="msg://editRegion" icon="PENCIL"/>
                 </actions>
             </dataGrid>
         </div>
@@ -102,7 +102,7 @@
                       helperText="msg://outputFileTypeHintMsg"/>
         </div>
         <div id="queryDiv" width="40em">
-            <div classNames="flex, justify-between">
+            <div classNames="flex, justify-between, buttons-panel">
                 <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
                 <button id="fullScreenTransformationBtn"
                         text="msg://fullScreen.title"
@@ -124,7 +124,7 @@
                         themeNames="icon, tertiary-inline"
                         icon="QUESTION_CIRCLE"/>
             </div>
-            <hbox>
+            <hbox classNames="buttons-panel">
                 <button id="generateParameters" action="reportParameterDataGrid.generate"/>
                 <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
                 <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>
@@ -149,7 +149,7 @@
         <hbox id="navBtnsPanel">
             <button id="backBtn" visible="false" action="back"/>
             <button id="nextBtn" action="next"/>
-            <button id="saveBtn" visible="false" action="save"/>
+            <button id="saveBtn" visible="false" themeNames="primary"  action="save"/>
         </hbox>
     </layout>
 </view>

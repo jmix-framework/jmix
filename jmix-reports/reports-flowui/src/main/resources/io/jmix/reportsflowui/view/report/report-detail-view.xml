@@ -67,7 +67,7 @@
                                         description="msg://detailsTab.defaultTemplateField.download.description"/>
                                 <action id="upload" icon="UPLOAD"
                                         description="msg://detailsTab.defaultTemplateField.upload.description"/>
-                                <action id="edit" icon="EDIT"
+                                <action id="edit" icon="PENCIL"
                                         description="msg://detailsTab.defaultTemplateField.edit.description"/>
                             </actions>
                         </entityComboBox>
@@ -129,11 +129,23 @@
                             <div id="singleDataSetLayout" classNames="reports-flex-layout" width="100%" height="100%">
                                 <!--Movable layout-->
                                 <div id="dataSetTypeLayout" width="100%" height="100%">
-                                    <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptField"
+                                    <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptCodeEditor"
                                           height="100%">
-                                        <textArea id="dataSetScriptField" dataContainer="dataSetsDc" property="text"
-                                                  label="msg://bandsTab.dataSetTypeLayout.dataSetScriptField.label"
-                                                  width="100%"/>
+                                        <div classNames="flex, justify-between">
+                                            <button id="dataSetScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
+                                                    themeNames="tertiary-inline"/>
+                                        </div>
+                                        <div width="100%" classNames="flex, items-start">
+                                            <codeEditor id="dataSetScriptCodeEditor"
+                                                        title="msg://bandsTab.dataSetTypeLayout.dataSetScriptField.label"
+                                                        width="100%"
+                                                        height="20em"
+                                                        dataContainer="dataSetsDc"
+                                                        property="text"/>
+                                            <button id="dataSetScriptCodeEditorHelpBtn"
+                                                    themeNames="icon, tertiary-inline"
+                                                    icon="QUESTION_CIRCLE"/>
+                                        </div>
                                         <formLayout id="textParamsForm" dataContainer="dataSetsDc" width="100%">
                                             <textField id="linkParameterNameField"
                                                        label="msg://bandsTab.dataSetTypeLayout.linkParameterNameField.label"
@@ -184,7 +196,6 @@
                                                   required="true"
                                                   width="100%"
                                                   requiredMessage="msg://bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.requiredMessage"/>
-
                                         <formLayout>
                                             <comboBox id="jsonSourceTypeField"
                                                       dataContainer="dataSetsDc"
@@ -195,7 +206,6 @@
                                                 <responsiveStep minWidth="30em" columns="2"/>
                                             </responsiveSteps>
                                         </formLayout>
-
                                         <textArea id="jsonGroovyCodeEditor" width="100%"
                                                   dataContainer="dataSetsDc"
                                                   label="msg://bandsTab.dataSetTypeLayout.jsonGroovyCodeEditor.label"
@@ -205,7 +215,6 @@
                                                   label="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.label"
                                                   property="jsonSourceText" required="true"
                                                   requiredMessage="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.requiredMessage"/>
-
                                         <formLayout id="jsonQueryParameterForm">
                                             <entityComboBox id="jsonQueryParameterField"
                                                             dataContainer="dataSetsDc"
@@ -217,7 +226,6 @@
                                                 <responsiveStep minWidth="30em" columns="2"/>
                                             </responsiveSteps>
                                         </formLayout>
-
                                     </vbox>
                                 </div>
                             </div>
@@ -282,15 +290,26 @@
                     </vbox>
                     <vbox classNames="parameters-validate-layout" padding="false">
                         <h2 text="msg://report.crossParametersValidation"/>
-                        <checkbox id="validationOnCheckBox"
-                                  label="msg://parameters.validationOn"
-                                  dataContainer="reportDc"
-                                  property="validationOn"/>
-                        <textArea id="validationScriptCodeEditor"
-                                  dataContainer="reportDc"
-                                  property="validationScript"
-                                  label="msg://parameters.groovyScript"
-                                  width="100%" height="20em"/>
+                        <div classNames="flex, justify-between">
+                            <checkbox id="validationOnCheckBox"
+                                      label="msg://parameters.validationOn"
+                                      dataContainer="reportDc"
+                                      property="validationOn"/>
+                            <button id="validationScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
+                                    themeNames="tertiary-inline"/>
+                        </div>
+                        <div width="100%" classNames="flex, items-start">
+                            <codeEditor id="validationScriptCodeEditor"
+                                        title="msg://validationScript.title"
+                                        width="100%"
+                                        height="20em"
+                                        mode="GROOVY"
+                                        dataContainer="reportDc"
+                                        property="validationScript"/>
+                            <button id="validationScriptCodeEditorHelpBtn"
+                                    themeNames="icon, tertiary-inline"
+                                    icon="QUESTION_CIRCLE"/>
+                        </div>
                     </vbox>
                 </div>
             </tab>
@@ -341,7 +360,7 @@
                             <action id="edit" type="edit"/>
                             <action id="defaultAction" type="itemTracking" text="msg://report.defaultTemplate"
                                     icon="CHECK"/>
-                            <action id="copy" type="itemTracking" icon="COPY"/>
+                            <action id="copy" type="itemTracking" text="msg://report.template.copy" icon="COPY"/>
                         </actions>
                         <columns>
                             <column property="name" sortable="false"/>

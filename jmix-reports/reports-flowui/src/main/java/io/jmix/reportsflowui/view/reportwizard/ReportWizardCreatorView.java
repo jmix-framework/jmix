@@ -33,6 +33,7 @@ import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
@@ -213,7 +214,7 @@ public class ReportWizardCreatorView extends StandardView {
         if (div.equals(regionsDiv)) {
             updateRegionButtons();
             showAddRegion();
-            updateButtons();
+            updateFragmentChangeButtons();
             regionsRunBtn.setVisible(getReportTypeGenerate() != ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
         } else if (div.equals(saveDiv)) {
             if (StringUtils.isEmpty(outputFileName.getValue())) {
@@ -281,7 +282,7 @@ public class ReportWizardCreatorView extends StandardView {
         prevFragment();
     }
 
-    protected void updateButtons() {
+    protected void updateFragmentChangeButtons() {
         if (currentFragmentIdx == 0) {
             backBtn.setVisible(false);
             saveBtn.setVisible(false);
@@ -302,7 +303,7 @@ public class ReportWizardCreatorView extends StandardView {
             beforeShowFragments();
             fragmentsList.get(currentFragmentIdx).setVisible(true);
         }
-        updateButtons();
+        updateFragmentChangeButtons();
     }
 
     protected void prevFragment() {
@@ -312,7 +313,7 @@ public class ReportWizardCreatorView extends StandardView {
             beforeShowFragments();
             fragmentsList.get(currentFragmentIdx).setVisible(true);
         }
-        updateButtons();
+        updateFragmentChangeButtons();
     }
 
     public boolean isNeedUpdateEntityModel() {
@@ -363,9 +364,9 @@ public class ReportWizardCreatorView extends StandardView {
                     .withHeader(messageBundle.getMessage("dialogConfirmation.header"))
                     .withText(messageBundle.getMessage("saveReport.confirmSaveWithoutRegions.text"))
                     .withActions(
-                            new DialogAction(DialogAction.Type.OK).withHandler(handle ->
-                                    convertToReportAndForceCloseWizard()
-                            ),
+                            new DialogAction(DialogAction.Type.OK)
+                                    .withVariant(ActionVariant.PRIMARY)
+                                    .withHandler(handle -> convertToReportAndForceCloseWizard()),
                             new DialogAction(DialogAction.Type.NO)
                     ).open();
         } else {
@@ -424,9 +425,9 @@ public class ReportWizardCreatorView extends StandardView {
                     .withHeader(messageBundle.getMessage("dialogConfirmation.header"))
                     .withText(messageBundle.getMessage("beforeClose.interruptConfirm.text"))
                     .withActions(
-                            new DialogAction(DialogAction.Type.OK).withHandler(handle ->
-                                    close(StandardOutcome.DISCARD)
-                            ),
+                            new DialogAction(DialogAction.Type.OK)
+                                    .withVariant(ActionVariant.PRIMARY)
+                                    .withHandler(handle -> close(StandardOutcome.DISCARD)),
                             new DialogAction(DialogAction.Type.NO)
                     ).open();
             event.preventClose();
@@ -819,7 +820,7 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         initRegionsDataGrid();
-        updateButtons();
+        updateFragmentChangeButtons();
     }
 
     protected void initRegionsDataGrid() {
@@ -875,7 +876,9 @@ public class ReportWizardCreatorView extends StandardView {
                     .withHeader(messageBundle.getMessage("dialogConfirmation.header"))
                     .withText(messageBundle.getMessage("queryParameterDialog.clearQueryParameterConfirm.text"))
                     .withActions(
-                            new DialogAction(DialogAction.Type.OK).withHandler(e -> generateQueryParameters()),
+                            new DialogAction(DialogAction.Type.OK)
+                                    .withVariant(ActionVariant.PRIMARY)
+                                    .withHandler(e -> generateQueryParameters()),
                             new DialogAction(DialogAction.Type.CANCEL))
                     .open();
         } else {
@@ -934,6 +937,9 @@ public class ReportWizardCreatorView extends StandardView {
     public void onReportRegionsDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportData> event) {
         updateMoveButtons();
         regenerateQuery = event.getChangeType() == CollectionChangeType.ADD_ITEMS;
+        if (event.getChangeType() == CollectionChangeType.ADD_ITEMS || event.getChangeType() == CollectionChangeType.REMOVE_ITEMS) {
+            updateRegionButtons();
+        }
     }
 
     protected void updateMoveButtons() {

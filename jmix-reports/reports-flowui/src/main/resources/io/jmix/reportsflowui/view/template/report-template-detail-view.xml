@@ -34,7 +34,7 @@
                     <textField id="outputNamePatternField" property="outputNamePattern"
                                label="msg://outputNamePatternField.label" width="100%">
                         <validators>
-                            <custom bean="reportflowui_OutputFileNameValidator"/>
+                            <custom bean="report_OutputFileNameValidator"/>
                         </validators>
                     </textField>
                     <radioButtonGroup id="isGroovyRadioButtonGroup" property="groovy"

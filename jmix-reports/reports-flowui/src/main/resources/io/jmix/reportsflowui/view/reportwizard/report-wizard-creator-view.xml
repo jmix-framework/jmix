@@ -93,7 +93,7 @@
                        dataContainer="reportDataDc" property="outputNamePattern"
                        helperText="msg://outputFileNameHintMsg" maxLength="255">
                 <validators>
-                    <custom bean="reportflowui_OutputFileNameValidator"/>
+                    <custom bean="report_OutputFileNameValidator"/>
                 </validators>
             </textField>
             <comboBox id="outputFileFormat" required="true" width="100%"

@@ -276,7 +276,7 @@
                             <button id="upButton" action="inputParametersDataGrid.up"/>
                             <button id="downButton" action="inputParametersDataGrid.down"/>
                         </hbox>
-                        <dataGrid id="inputParametersDataGrid" multiSort="true" dataContainer="parametersDc">
+                        <dataGrid id="inputParametersDataGrid" dataContainer="parametersDc">
                             <actions>
                                 <action id="createParameter" type="list_create">
                                     <properties>

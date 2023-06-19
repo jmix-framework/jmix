@@ -25,7 +25,7 @@
         <action id="save" icon="CHECK" text="msg://save"/>
     </actions>
     <layout>
-        <vbox id="detailsVBox">
+        <vbox id="detailsVBox" padding="false">
             <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
                 <responsiveSteps>
                     <responsiveStep minWidth="0" columns="1"/>
@@ -56,7 +56,7 @@
                                   label="msg://reportBuildType"/>
             </formLayout>
         </vbox>
-        <vbox id="regionsVBox">
+        <vbox id="regionsVBox" padding="false">
             <hbox width="100%" classNames="buttons-panel">
                 <hbox id="buttonsBox">
                     <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
@@ -82,7 +82,7 @@
                 </actions>
             </dataGrid>
         </vbox>
-        <vbox id="saveVBox" width="30em">
+        <vbox id="saveVBox" width="30em" padding="false">
             <button id="downloadTemplateFile"
                     classNames="link"
                     themeNames="icon, tertiary-inline"
@@ -102,7 +102,7 @@
                       dataContainer="reportDataDc" property="outputFileType"
                       helperText="msg://outputFileTypeHintMsg"/>
         </vbox>
-        <vbox id="queryVBox" width="40em">
+        <vbox id="queryVBox" width="40em" padding="false">
             <div classNames="flex, justify-between, buttons-panel">
                 <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
                 <button id="fullScreenTransformationBtn"
@@ -147,7 +147,7 @@
                 </columns>
             </dataGrid>
         </vbox>
-        <hbox id="navBtnsPanel"  classNames="ml-m">
+        <hbox id="buttonPanel" padding="false">
             <button id="backBtn" visible="false" action="back"/>
             <button id="nextBtn" action="next"/>
             <button id="saveBtn" visible="false" themeNames="primary"  action="save"/>

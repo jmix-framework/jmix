@@ -25,7 +25,6 @@ import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reports.exception.ReportingException;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.groovy.runtime.MethodClosure;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
@@ -104,7 +103,8 @@ public class ReportParameterValidator {
         context.put("applicationContext", applicationContext);
         context.put("dataManager", dataManager);
         context.put("metadata", metadata);
-        context.put("invalid", new MethodClosure(this, "invalidThrowMethod"));
+        //todo replace MethodClosure
+//        context.put("invalid", new MethodClosure(this, "invalidThrowMethod"));
     }
 
     // Used for invalid("") syntax

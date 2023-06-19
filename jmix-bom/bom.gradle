@@ -246,7 +246,6 @@ dependencies {
 
         api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.1'
 
-        api 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
         //todo SB3 org.glassfish.jaxb:jaxb-runtime:2.3.6 -> 4.0.2
         api 'org.glassfish.jaxb:jaxb-runtime:2.3.6'
 
@@ -259,8 +258,6 @@ dependencies {
 
         api 'io.swagger.core.v3:swagger-models:2.1.11'
         api 'io.swagger.core.v3:swagger-core:2.1.11'
-
-        api 'javax.cache:cache-api:1.1.1'
 
         api 'com.icegreen:greenmail:2.0.0'
 
@@ -283,27 +280,19 @@ dependencies {
         api 'org.apache.httpcomponents:httpclient:4.5.14'
 
         api 'commons-logging:commons-logging:1.2'
-        api 'org.apache.commons:commons-lang3:3.9'
-        api 'commons-io:commons-io:2.6'
-        api 'org.dom4j:dom4j:2.1.3'
-        api 'com.google.guava:guava:28.0-jre'
-        api 'org.slf4j:slf4j-api:1.7.26'
-        api 'org.codehaus.groovy:groovy-all:2.4.12'
-        api 'org.freemarker:freemarker:2.3.32'
 
-        def openOficeVersion = '4.1.2'
-        api "org.openoffice:juh:$openOficeVersion"
-        api "org.openoffice:ridl:$openOficeVersion"
-        api "org.openoffice:unoil:$openOficeVersion"
+        def openOfficeVersion = '4.1.2'
+        api "org.openoffice:juh:$openOfficeVersion"
+        api "org.openoffice:ridl:$openOfficeVersion"
+        api "org.openoffice:unoil:$openOfficeVersion"
 
         def avalonVersion = '4.3.1'
         api "org.apache.avalon.framework:avalon-framework-api:$avalonVersion"
         api "org.apache.avalon.framework:avalon-framework-impl:$avalonVersion"
 
-        api 'javax.media.jai:com.springsource.javax.media.jai.core:1.1.3'
-
-        api 'org.apache.xmlgraphics:fop:2.8'
-        api 'org.apache.xmlgraphics:xmlgraphics-commons:2.8'
+        def xmlgraphicsVersion = '2.8'
+        api "org.apache.xmlgraphics:fop:$xmlgraphicsVersion"
+        api "org.apache.xmlgraphics:xmlgraphics-commons:$xmlgraphicsVersion"
 
         def batikVersion = '1.16'
         api "org.apache.xmlgraphics:batik-bridge:$batikVersion"
@@ -317,10 +306,11 @@ dependencies {
 
         api 'org.plutext:jaxb-xmldsig-core:1.0.0'
 
-        api 'xalan:xalan:2.7.3'
-        api 'xalan:serializer:2.7.3'
+        def xalanVersion = '2.7.3'
+        api "xalan:xalan:$xalanVersion"
+        api "xalan:serializer:$xalanVersion"
 
-        api('com.lowagie:itext:4.2.2')
+        api 'com.itextpdf:itextpdf:5.5.13.3'
 
         def poiVersion = '5.2.3'
         api "org.apache.poi:poi:$poiVersion"
@@ -341,15 +331,12 @@ dependencies {
         api 'org.docx4j:docx4j-export-fo:11.4.9'
 
         api 'org.jsoup:jsoup:1.16.1'
-        api 'com.jayway.jsonpath:json-path:2.8.0'
         api 'com.opencsv:opencsv:5.7.1'
         api 'org.olap4j:olap4j:1.2.0'
 
         def jasperVersion = '6.20.5'
         api "net.sf.jasperreports:jasperreports:$jasperVersion"
         api "net.sf.jasperreports:jasperreports-fonts:$jasperVersion"
-
-        api 'org.jsoup:jsoup:1.14.3'
 
         api 'org.apache.tika:tika-parsers:1.27'
 
@@ -377,7 +364,6 @@ dependencies {
 
         api 'io.vavr:vavr:0.9.3'
         api 'org.jetbrains:annotations:22.0.0'
-        api 'commons-codec:commons-codec:1.15'
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
 

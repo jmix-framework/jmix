@@ -48,7 +48,6 @@ dependencies {
     }
     api 'com.google.guava:guava'
     api 'org.slf4j:slf4j-api'
-    api 'org.codehaus.groovy:groovy-all'
     api 'org.freemarker:freemarker'
     api 'org.openoffice:juh'
     api 'org.openoffice:ridl'
@@ -72,7 +71,7 @@ dependencies {
     api 'xalan:xalan'
     api 'xalan:serializer'
 
-    api('com.lowagie:itext') {
+    api('com.itextpdf:itextpdf') {
         exclude group: 'org.bouncycastle', module: 'bctsp-jdk14'
         exclude group: 'org.bouncycastle', module: 'bcprov-jdk14'
         exclude group: 'org.bouncycastle', module: 'bcmail-jdk14'
@@ -127,6 +126,7 @@ dependencies {
     api 'com.jayway.jsonpath:json-path'
     api 'com.opencsv:opencsv'
     api 'org.olap4j:olap4j'
+
     api('net.sf.jasperreports:jasperreports') {
         exclude group: 'org.apache.lucene'
         exclude group: 'commons-beanutils', module: 'commons-beanutils'

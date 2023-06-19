@@ -19,12 +19,25 @@ package io.jmix.flowui.testassist.navigation;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.sys.ViewSupport;
+import io.jmix.flowui.view.StandardListView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.view.navigation.ListViewNavigationProcessor;
-import io.jmix.flowui.view.navigation.ListViewNavigator;
-import io.jmix.flowui.view.navigation.ViewNavigationSupport;
+import io.jmix.flowui.view.navigation.*;
 
+/**
+ * The main goal of this class is supporting backward navigation in UI integration tests.
+ * <p>
+ * The {@link DetailViewNavigationProcessor} is used for preparing and performing navigation to the
+ * inheritor of {@link StandardListView}.
+ * <p>
+ * To perform navigation the {@link AbstractNavigationProcessor#processNavigation(AbstractViewNavigator)} method
+ * checks whether backward navigation should be used or not. To get correct backward navigation URL it uses
+ * information from client-side.
+ * <p>
+ * In UI integration tests there is no client-side, so backward navigation URL should be got by another way.
+ * This is why {@link TestDetailViewNavigationProcessor} replaces {@link DetailViewNavigationProcessor} and
+ * delegates building backward navigation URL to {@link ViewNavigationDelegate}.
+ */
 public class TestListViewNavigationProcessor extends ListViewNavigationProcessor {
 
     protected ViewNavigationDelegate<ListViewNavigator<?>> navigationDelegate;

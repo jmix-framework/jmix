@@ -1,41 +1,57 @@
 package ${project_rootPackage}.user;
 
+import ${project_rootPackage}.${project_classPrefix}Application;
 import ${project_rootPackage}.entity.User;
-import ${project_rootPackage}.test_support.UiIntegrationTest;
 import ${project_rootPackage}.view.user.UserDetailView;
 import ${project_rootPackage}.view.user.UserListView;
+import com.vaadin.flow.component.Component;
 import io.jmix.core.DataManager;
+import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
+import io.jmix.flowui.testassist.UiTest;
+import io.jmix.flowui.testassist.UiTestUtils;
+import io.jmix.flowui.view.View;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-public class UserUiTest extends UiIntegrationTest {
+import java.util.Optional;
+
+/**
+ * Sample UI integration test for the User entity.
+ */
+@UiTest
+@SpringBootTest(classes = {${project_classPrefix}Application.class, FlowuiTestAssistConfiguration.class})
+public class UserUiTest {
 
     @Autowired
     DataManager dataManager;
 
+    @Autowired
+    ViewNavigators viewNavigators;
+
     @Test
     void test_createUser() {
         // Navigate to user list view
-        getViewNavigators()
-                .view(UserListView.class)
-                .navigate();
+        viewNavigators.view(UserListView.class).navigate();
 
-        UserListView userListView = getCurrentView();
+        UserListView userListView = UiTestUtils.getCurrentView();
 
         // click "Create" button
         JmixButton createBtn = findComponent(userListView, "createBtn");
         createBtn.click();
 
         // Get detail view
-        UserDetailView userDetailView = getCurrentView();
+        UserDetailView userDetailView = UiTestUtils.getCurrentView();
 
         // Set username and password in the fields
         TypedTextField<String> usernameField = findComponent(userDetailView, "usernameField");
@@ -53,13 +69,13 @@ public class UserUiTest extends UiIntegrationTest {
         commitAndCloseBtn.click();
 
         // Get navigated user list view
-        userListView = getCurrentView();
+        userListView = UiTestUtils.getCurrentView();
 
         // Check the created user is shown in the table
         DataGrid<User> usersDataGrid = findComponent(userListView, "usersDataGrid");
 
         DataUnit usersDataGridItems = usersDataGrid.getItems();
-        Assertions.assertNotNull(usersTableItems);
+        Assertions.assertNotNull(usersDataGridItems);
 
         //noinspection unchecked
         ((ContainerDataGridItems<User>) usersDataGridItems).getContainer()
@@ -75,5 +91,16 @@ public class UserUiTest extends UiIntegrationTest {
                 .query("e.username like ?1", "test-user-%")
                 .list()
                 .forEach(u -> dataManager.remove(u));
+    }
+
+    /**
+     * Returns a component defined in the screen by the component id.
+     * Throws an exception if not found.
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T findComponent(View<?> view, String componentId) {
+        Optional<Component> component = UiComponentUtils.findComponent(view, componentId);
+        Assertions.assertTrue(component.isPresent());
+        return (T) component.get();
     }
 }

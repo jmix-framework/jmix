@@ -26,12 +26,31 @@ import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.AbstractViewNavigator;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
+import io.jmix.flowui.view.navigation.ViewNavigator;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Class is designed for processing navigation in UI integration tests.
+ * <p>
+ * For building backward navigation URL it uses:
+ * <ul>
+ *     <li>"http://"</li>
+ *     <li>"localhost"</li>
+ *     <li>{@link RouteParameters}</li>
+ *     <li>{@link QueryParameters}</li>
+ * </ul>
+ * <p>
+ * During the navigation Vaadin ignores "http://" and "localhost" parts.
+ * <p>
+ * It saves current URL in {@link VaadinSession} and for new navigation will be used as backward
+ * navigation URL.
+ *
+ * @param <N> type of navigator (e.g. {@link ViewNavigator}, etc)
+ */
 public class ViewNavigationDelegate<N extends AbstractViewNavigator> {
 
     protected static final String CURRENT_NAVIGATION_URL_ATTRIBUTE = "testCurrentNavigationUrl";
@@ -59,7 +78,7 @@ public class ViewNavigationDelegate<N extends AbstractViewNavigator> {
             view.ifPresent(fireAfterViewNavigation);
         }
 
-        storeCurrentNavigation(viewClass, routeParameters, queryParameters);
+        saveCurrentNavigation(viewClass, routeParameters, queryParameters);
     }
 
     protected URL fetchCurrentUrl() {
@@ -68,8 +87,8 @@ public class ViewNavigationDelegate<N extends AbstractViewNavigator> {
         return url != null ? url : getHostUrl();
     }
 
-    protected void storeCurrentNavigation(Class<? extends View<?>> viewClass, RouteParameters routeParameters,
-                                          QueryParameters queryParameters) {
+    protected void saveCurrentNavigation(Class<? extends View<?>> viewClass, RouteParameters routeParameters,
+                                         QueryParameters queryParameters) {
         String path = getRouteConfiguration().getUrl(viewClass, routeParameters);
         Location location = new Location(path, queryParameters);
 

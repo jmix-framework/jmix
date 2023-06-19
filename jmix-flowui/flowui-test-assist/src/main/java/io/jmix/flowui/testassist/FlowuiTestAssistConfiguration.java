@@ -20,7 +20,7 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.sys.ViewSupport;
-import io.jmix.flowui.testassist.navigation.TestDetailViewnavigationProcessor;
+import io.jmix.flowui.testassist.navigation.TestDetailViewNavigationProcessor;
 import io.jmix.flowui.testassist.navigation.TestListViewNavigationProcessor;
 import io.jmix.flowui.testassist.navigation.TestViewNavigationProcessor;
 import io.jmix.flowui.testassist.navigation.ViewNavigationDelegate;
@@ -64,7 +64,7 @@ public class FlowuiTestAssistConfiguration {
                                                                        RouteSupport routeSupport, Metadata metadata,
                                                                        MetadataTools metadataTools,
                                                                        ViewNavigationDelegate<?> navigationDelegate) {
-        return new TestDetailViewnavigationProcessor(viewSupport, viewRegistry, navigationSupport, routeSupport,
+        return new TestDetailViewNavigationProcessor(viewSupport, viewRegistry, navigationSupport, routeSupport,
                 metadata, metadataTools, (ViewNavigationDelegate<DetailViewNavigator<?>>) navigationDelegate);
     }
 

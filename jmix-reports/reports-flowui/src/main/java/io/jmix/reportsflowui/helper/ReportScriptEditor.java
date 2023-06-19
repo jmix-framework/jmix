@@ -22,7 +22,6 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
-import io.jmix.reports.entity.DataSet;
 import io.jmix.reportsflowui.view.scripteditor.ScriptEditorView;
 import org.springframework.stereotype.Component;
 
@@ -103,7 +102,7 @@ public class ReportScriptEditor {
             }
 
             if (helpRunnable != null) {
-                scriptEditorView.setHelpBtnClickListener(event -> helpRunnable.run());
+                scriptEditorView.setHelpBtnClickListener(helpRunnable);
             }
 
             scriptEditorViewDialogWindow.open();

@@ -1,9 +1,6 @@
 package io.jmix.reportsflowui.view.scripteditor;
 
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.button.Button;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -27,13 +24,17 @@ public class ScriptEditorView extends StandardView {
     protected String value;
     protected CodeEditorMode mode;
     protected Consumer<String> okButtonConsumer;
-    protected ComponentEventListener<ClickEvent<Button>> helpBtnClickListener;
+    protected Runnable helpBtnClickListener;
 
     public String getValue() {
         return editor.getValue();
     }
 
-    public void setEditorMode(CodeEditorMode mode){
+    public void setValue(String value) {
+        UiComponentUtils.setValue(editor, value);
+    }
+
+    public void setEditorMode(CodeEditorMode mode) {
         editor.setMode(mode);
     }
 
@@ -41,21 +42,17 @@ public class ScriptEditorView extends StandardView {
         this.title = title;
     }
 
-    public void setValue(String value) {
-        UiComponentUtils.setValue(editor, value);
-    }
-
     public void setOkButtonConsumer(Consumer<String> okButtonConsumer) {
         this.okButtonConsumer = okButtonConsumer;
     }
 
-    public void setHelpBtnClickListener(ComponentEventListener<ClickEvent<Button>> helpBtnClickListener) {
+    public void setHelpBtnClickListener(Runnable helpBtnClickListener) {
         this.helpBtnClickListener = helpBtnClickListener;
     }
 
     @Subscribe
     public void onInit(final InitEvent event) {
-        codeEditorHelpBtn.addClickListener(helpBtnClickListener);
+        codeEditorHelpBtn.addClickListener(listener -> helpBtnClickListener.run());
     }
 
     @Subscribe("okAction")

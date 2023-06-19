@@ -18,6 +18,7 @@ package io.jmix.flowui.testassist;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.internal.CurrentInstance;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
@@ -37,9 +38,11 @@ import io.jmix.flowui.testassist.vaadin.TestVaadinSession;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -77,7 +80,7 @@ import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APP
  *         viewNavigators.view(UserListView.class)
  *                 .navigate();
  *
- *         UserListView view = ViewsHelper.getCurrentView();
+ *         UserListView view = UiTestUtils.getCurrentView();
  *
  *         CollectionContainer&lt;User&gt; usersDc = ViewControllerUtils.getViewData(view)
  *                 .getContainer("usersDc");
@@ -90,11 +93,9 @@ import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APP
  */
 public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
 
-    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(JmixUiTestExtension.class);
-
     private static final String APP_ID = "testJmixUiAppId";
 
-    public static final String VIEW_PACKAGES = "viewPackages";
+    public static final String WINDOW_NAME = "windowName";
 
     protected String[] viewBasePackages;
 
@@ -168,9 +169,7 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         removeAuthentication(context);
-
-        // Do not remove View configurations from ViewRegistry,
-        // because they are initialized only once.
+        clearViewBasePackages(context);
     }
 
     protected void setupVaadin(ExtensionContext context) {
@@ -181,15 +180,20 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
         VaadinServletContextInitializer contextInitializer =
                 applicationContext.getBean(VaadinServletContextInitializer.class, applicationContext);
         try {
+            // We create custom servlet context to disable dev server via attribute (see DevModeServletContextListener).
+            // Also, custom TestServletContext enables adding ServletContextListener from
+            // VaadinServletContextInitializer.
             TestServletContext servletContext = new TestServletContext();
             servletContext.setAttribute(ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
             servletContext.setInitParameter(InitParameters.SERVLET_PARAMETER_PRODUCTION_MODE, "true");
 
             MockServletConfig mockServletConfig = new MockServletConfig(servletContext);
 
-            // fill servlet context with listeners from VaadinServletContextInitializer
+            // Vaadin adds its own CompositeServletContextListener that contains other listeners:
+            // LookupInitializerListener, RouteServletContextListener, DevModeServletContextListener, etc.
             contextInitializer.onStartup(mockServletConfig.getServletContext());
 
+            // Fire event for composite listener from VaadinServletContextInitializer
             servletContext.fireServletContextInitialized();
 
             springServlet.init(mockServletConfig);
@@ -209,70 +213,58 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
 
         ui = new UI();
         ui.getInternals().setSession(vaadinSession);
+
+        // ExtendedClientDetails is not available since we don't have client-side here.
+        // Mock and stub method to return the same window name (something like a tab's id in browser for Vaadin).
+        ExtendedClientDetails clientDetails = Mockito.mock(ExtendedClientDetails.class);
+        Mockito.when(clientDetails.getWindowName()).thenReturn(WINDOW_NAME);
+        ui.getInternals().setExtendedClientDetails(clientDetails);
+
         ui.doInit(request, 1, APP_ID);
         UI.setCurrent(ui);
     }
 
     protected void registerViewBasePackages(ExtensionContext context) {
-        String[] storedViewBasePackages = getStore(context).get(VIEW_PACKAGES, String[].class);
-        if (ArrayUtils.isNotEmpty(storedViewBasePackages)) {
-            return;
-        }
-
-        String[] viewBasePackages = {};
-        if (ArrayUtils.isNotEmpty(this.viewBasePackages)) {
-            viewBasePackages = this.viewBasePackages;
-        } else {
-            Optional<UiTest> annotationOpt =
-                    AnnotationSupport.findAnnotation(context.getTestClass(), UiTest.class);
-            if (annotationOpt.isPresent()) {
-                viewBasePackages = annotationOpt.get().viewBasePackages();
-            }
-        }
-
-        if (ArrayUtils.isEmpty(viewBasePackages)) {
-            return;
-        }
-
         ApplicationContext applicationContext = getApplicationContext(context);
 
-        AnnotationScanMetadataReaderFactory metadataReaderFactory =
-                applicationContext.getBean(AnnotationScanMetadataReaderFactory.class);
+        String[] viewBasePackages = getViewBasePackagesToRegister(context);
 
-        ViewControllersConfiguration configuration =
-                new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
-        applicationContext.getAutowireCapableBeanFactory()
-                .autowireBean(configuration);
-        configuration.setBasePackages(Arrays.asList(viewBasePackages));
+        List<ViewControllersConfiguration> result;
 
-        try {
-            Field configurationsField = getDeclaredField(ViewRegistry.class,
-                    "configurations", true);
+        if (ArrayUtils.isNotEmpty(viewBasePackages)) {
+            // Setup custom View configuration
+            result = new ArrayList<>(1);
 
-            ViewRegistry viewRegistry = getApplicationContext(context).getBean(ViewRegistry.class);
+            AnnotationScanMetadataReaderFactory metadataReaderFactory =
+                    applicationContext.getBean(AnnotationScanMetadataReaderFactory.class);
 
-            //noinspection unchecked
+            ViewControllersConfiguration configuration =
+                    new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+            applicationContext.getAutowireCapableBeanFactory()
+                    .autowireBean(configuration);
+            configuration.setBasePackages(Arrays.asList(viewBasePackages));
+
+            result.add(configuration);
+        } else {
+            // Setup default View configurations
             Collection<ViewControllersConfiguration> configurations =
-                    (Collection<ViewControllersConfiguration>) configurationsField.get(viewRegistry);
+                    applicationContext.getBeansOfType(ViewControllersConfiguration.class)
+                            .values();
 
-            List<ViewControllersConfiguration> modifiedConfigurations = new ArrayList<>(configurations);
-            modifiedConfigurations.add(configuration);
-
-            configurationsField.set(viewRegistry, modifiedConfigurations);
-
-            getDeclaredField(ViewRegistry.class, "initialized", true)
-                    .set(viewRegistry, false);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Cannot register view packages", e);
+            result = new ArrayList<>(configurations);
         }
 
-        getStore(context).put(VIEW_PACKAGES, viewBasePackages);
+        setViewControllersConfigurations(context, result);
 
-        registerViewRoutes(viewBasePackages, context);
+        List<String> viewPackages = new ArrayList<>();
+
+        result.forEach(config -> viewPackages.addAll(config.getBasePackages()));
+
+        registerViewRoutes(viewPackages, context);
     }
 
-    protected void registerViewRoutes(String[] viewBasePackages, ExtensionContext context) {
-        if (ArrayUtils.isEmpty(viewBasePackages)) {
+    protected void registerViewRoutes(List<String> viewBasePackages, ExtensionContext context) {
+        if (CollectionUtils.isEmpty(viewBasePackages)) {
             return;
         }
 
@@ -287,13 +279,13 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
             Class<? extends View> controllerClass = view.getControllerClass();
             Route route = controllerClass.getAnnotation(Route.class);
             if (route == null) {
-                return;
+                continue;
             }
 
             RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
             if (Strings.isNullOrEmpty(route.value())
                     || routeConfiguration.isPathAvailable(route.value())) {
-                return;
+                continue;
             }
 
             if (route.layout() == UI.class) {
@@ -304,8 +296,8 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
         }
     }
 
-    protected boolean isClassInPackages(String classPackage, String[] viewBasePackages) {
-        return Arrays.stream(viewBasePackages).anyMatch(classPackage::startsWith);
+    protected boolean isClassInPackages(String classPackage, List<String> viewBasePackages) {
+        return viewBasePackages.stream().anyMatch(classPackage::startsWith);
     }
 
     protected void setupAuthentication(ExtensionContext context) {
@@ -321,6 +313,21 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
             uiTestAuthenticator.removeAuthentication(getApplicationContext(context));
         } else {
             getApplicationContext(context).getBean(SystemAuthenticator.class).end();
+        }
+    }
+
+    protected void clearViewBasePackages(ExtensionContext context) {
+        try {
+            Field configurationsField = getDeclaredField(ViewRegistry.class,
+                    "configurations", true);
+
+            ViewRegistry viewRegistry = getApplicationContext(context).getBean(ViewRegistry.class);
+            configurationsField.set(viewRegistry, new ArrayList<>());
+
+            getDeclaredField(ViewRegistry.class, "initialized", true)
+                    .set(viewRegistry, false);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot clear view packages", e);
         }
     }
 
@@ -347,8 +354,35 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
         }
     }
 
-    protected ExtensionContext.Store getStore(ExtensionContext context) {
-        return context.getRoot().getStore(NAMESPACE);
+    protected String[] getViewBasePackagesToRegister(ExtensionContext context) {
+        String[] viewBasePackages = {};
+        if (ArrayUtils.isNotEmpty(this.viewBasePackages)) {
+            viewBasePackages = this.viewBasePackages;
+        } else {
+            Optional<UiTest> annotationOpt =
+                    AnnotationSupport.findAnnotation(context.getTestClass(), UiTest.class);
+            if (annotationOpt.isPresent()) {
+                viewBasePackages = annotationOpt.get().viewBasePackages();
+            }
+        }
+        return viewBasePackages;
+    }
+
+    protected void setViewControllersConfigurations(ExtensionContext context,
+                                                    List<ViewControllersConfiguration> configurations) {
+        try {
+            Field configurationsField = getDeclaredField(ViewRegistry.class,
+                    "configurations", true);
+
+            ViewRegistry viewRegistry = getApplicationContext(context).getBean(ViewRegistry.class);
+
+            configurationsField.set(viewRegistry, configurations);
+
+            getDeclaredField(ViewRegistry.class, "initialized", true)
+                    .set(viewRegistry, false);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot set packages to register views", e);
+        }
     }
 
     protected ApplicationContext getApplicationContext(ExtensionContext context) {

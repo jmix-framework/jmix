@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package test_support;
+@NonNullApi
+@Internal
+package io.jmix.flowui.testassist.navigation;
 
-import io.jmix.flowui.exception.UiExceptionHandler;
-
-// todo rp remove after https://github.com/jmix-framework/jmix/issues/1382
-public class TestAssistExceptionHandler implements UiExceptionHandler {
-
-    @Override
-    public boolean handle(Throwable exception) {
-        throw (RuntimeException) exception;
-    }
-}
+import org.springframework.lang.NonNullApi;
+import io.jmix.core.annotation.Internal;

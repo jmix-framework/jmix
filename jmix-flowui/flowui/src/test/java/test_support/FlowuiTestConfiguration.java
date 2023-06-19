@@ -16,7 +16,6 @@
 
 package test_support;
 
-import com.vaadin.flow.spring.VaadinServletContextInitializer;
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
@@ -28,16 +27,11 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.testassist.vaadin.TestServletContext;
-import io.jmix.flowui.view.ViewAttributes;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
-import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -104,27 +98,9 @@ public class FlowuiTestConfiguration {
     }
 
     @Bean
-    public ServletContextInitializer contextInitializer(ApplicationContext applicationContext) {
-        return new VaadinServletContextInitializer(applicationContext);
-    }
-
-    @Bean
-    @Primary
-    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public ViewAttributes testViewAttributes(String viewId) {
-        return new TestViewAttributes(viewId);
-    }
-
-    @Bean
     @Primary
     public ServletContext servletContext() {
         return new TestServletContext();
-    }
-
-    @Order(JmixOrder.LOWEST_PRECEDENCE - 50)
-    @Bean
-    public TestAssistExceptionHandler testAssistExceptionHandler() {
-        return new TestAssistExceptionHandler();
     }
 
     @EnableWebSecurity

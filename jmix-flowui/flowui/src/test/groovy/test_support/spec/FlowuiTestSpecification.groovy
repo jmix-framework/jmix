@@ -19,6 +19,7 @@ package test_support.spec
 import com.google.common.base.Strings
 import com.vaadin.flow.component.HasElement
 import com.vaadin.flow.component.UI
+import com.vaadin.flow.component.page.ExtendedClientDetails
 import com.vaadin.flow.internal.CurrentInstance
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouteConfiguration
@@ -40,6 +41,7 @@ import io.jmix.flowui.testassist.vaadin.TestVaadinSession
 import io.jmix.flowui.view.View
 import io.jmix.flowui.view.ViewRegistry
 import org.apache.commons.lang3.ArrayUtils
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.mock.web.MockServletConfig
@@ -108,15 +110,20 @@ class FlowuiTestSpecification extends Specification {
         VaadinServletContextInitializer contextInitializer =
                 applicationContext.getBean(VaadinServletContextInitializer.class, applicationContext)
         try {
+            // We create custom servlet context to disable dev server via attribute (see DevModeServletContextListener).
+            // Also, custom TestServletContext enables adding ServletContextListener from
+            // VaadinServletContextInitializer.
             TestServletContext servletContext = new TestServletContext()
             servletContext.setAttribute(ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext)
             servletContext.setInitParameter(InitParameters.SERVLET_PARAMETER_PRODUCTION_MODE, "true")
 
             MockServletConfig mockServletConfig = new MockServletConfig(servletContext)
 
-            // fill servlet context with listeners from VaadinServletContextInitializer
+            // Vaadin adds its own CompositeServletContextListener that contains other listeners:
+            // LookupInitializerListener, RouteServletContextListener, DevModeServletContextListener, etc.
             contextInitializer.onStartup(mockServletConfig.getServletContext())
 
+            // Fire event for composite listener from VaadinServletContextInitializer
             servletContext.fireServletContextInitialized()
 
             springServlet.init(mockServletConfig)
@@ -136,6 +143,13 @@ class FlowuiTestSpecification extends Specification {
 
         ui = new UI()
         ui.getInternals().setSession(vaadinSession)
+
+        // ExtendedClientDetails is not available since we don't have client-side here.
+        // Mock and stub method to return the same window name (something like a tab's id in browser for Vaadin).
+        def clientDetails = Mockito.mock(ExtendedClientDetails.class)
+        Mockito.when(clientDetails.getWindowName()).thenReturn("windowName")
+        ui.getInternals().setExtendedClientDetails(clientDetails)
+
         ui.doInit(request, 1, APP_ID)
         UI.setCurrent(ui)
     }
@@ -160,6 +174,8 @@ class FlowuiTestSpecification extends Specification {
             //noinspection unchecked
             def configurations = (Collection<ViewControllersConfiguration>) configurationsField.get(viewRegistry)
 
+            // Add new configuration to existing ones. It enables adding
+            // multiple configurations from parent/child specifications.
             def modifiedConfigurations = new ArrayList<>(configurations)
             modifiedConfigurations.add(configuration)
 

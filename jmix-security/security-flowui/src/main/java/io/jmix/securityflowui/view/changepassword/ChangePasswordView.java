@@ -47,7 +47,6 @@ import java.util.Objects;
 
 @ViewController("changePasswordView")
 @ViewDescriptor("change-password-view.xml")
-@DialogMode(width = "AUTO", height = "AUTO")
 public class ChangePasswordView extends StandardView {
 
     @ViewComponent

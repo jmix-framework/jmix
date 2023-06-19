@@ -16,8 +16,8 @@
 package io.jmix.reports.libintegration;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.haulmont.yarg.formatters.CustomReport;
-import com.haulmont.yarg.structure.BandData;
+import io.jmix.reports.yarg.formatters.CustomReport;
+import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.core.ClassManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.reports.ReportsProperties;
@@ -94,7 +94,7 @@ public class CustomFormatter implements CustomReport {
     }
 
     @Override
-    public byte[] createReport(com.haulmont.yarg.structure.Report report, BandData rootBand, Map<String, Object> params) {
+    public byte[] createReport(io.jmix.reports.yarg.structure.Report report, BandData rootBand, Map<String, Object> params) {
         this.params = params;//we set params here because they might change inside YARG (for instance - default values)
         return createDocument(rootBand);
     }

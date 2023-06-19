@@ -25,7 +25,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.app.filter.condition.LogicalFilterConditionDetailView;
@@ -44,10 +44,10 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowuidata.entity.FilterConfiguration;
-import io.jmix.flowuidata.genericfilter.FlowuiDataGenericFilterSupport;
+import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -66,7 +66,7 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
     protected GenericFilterSupport genericFilterSupport;
     protected FilterComponents filterComponents;
     protected UiComponents uiComponents;
-    protected FlowuiComponentProperties flowuiComponentProperties;
+    protected UiComponentProperties uiComponentProperties;
 
     protected Registration configurationRefreshedRegistration;
 
@@ -97,15 +97,15 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
     }
 
     @Autowired
-    public void setFlowuiComponentProperties(FlowuiComponentProperties flowuiComponentProperties) {
-        this.flowuiComponentProperties = flowuiComponentProperties;
+    public void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.uiComponentProperties = uiComponentProperties;
     }
 
     @Override
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.ARCHIVE);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ARCHIVE);
         this.inputDialogCloseListener = inputDialogCloseEvent -> {
             if (inputDialogCloseEvent.closedWith(DialogOutcome.OK)) {
                 applyDefaultInputDialogOkAction(inputDialogCloseEvent);
@@ -155,13 +155,7 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
     protected void openInputDialog() {
         checkTarget();
 
-        View<?> parent = findParentView();
-
-        if (parent == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
+        View<?> parent = getParentView();
         String header = messages.getMessage(getClass(), "saveFilterConfigurationInputDialog.header");
 
         String nameFieldLabel = messages.getMessage(FilterConfiguration.class, "FilterConfiguration.name");
@@ -222,10 +216,10 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
         generatedIdField.getParent()
                 .ifPresent(formItem ->
                         formItem.setVisible(
-                                flowuiComponentProperties.isFilterShowConfigurationIdField()));
+                                uiComponentProperties.isFilterShowConfigurationIdField()));
         idField.getParent()
                 .ifPresent(formItem -> formItem.setVisible(
-                        flowuiComponentProperties.isFilterShowConfigurationIdField()));
+                        uiComponentProperties.isFilterShowConfigurationIdField()));
     }
 
     protected Component formItemMapper(Component formItem) {
@@ -260,7 +254,7 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
 
     protected void saveNewConfigurationModel(Configuration configuration) {
         Map<String, Object> valuesMap = genericFilterSupport.initConfigurationValuesMap(configuration);
-        ((FlowuiDataGenericFilterSupport) genericFilterSupport).saveConfigurationModel(configuration, null);
+        ((UiDataGenericFilterSupport) genericFilterSupport).saveConfigurationModel(configuration, null);
 
         genericFilterSupport.resetConfigurationValuesMap(configuration, valuesMap);
         target.addConfiguration(configuration);
@@ -292,7 +286,7 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
     protected void saveExistedConfigurationModel(Configuration configuration,
                                                  @Nullable FilterConfiguration existedConfigurationModel) {
         Map<String, Object> valuesMap = genericFilterSupport.initConfigurationValuesMap(configuration);
-        ((FlowuiDataGenericFilterSupport) genericFilterSupport).saveConfigurationModel(configuration,
+        ((UiDataGenericFilterSupport) genericFilterSupport).saveConfigurationModel(configuration,
                 existedConfigurationModel);
 
         genericFilterSupport.resetConfigurationValuesMap(configuration, valuesMap);
@@ -302,7 +296,7 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
 
     protected boolean isCurrentConfigurationAvailableForAll() {
         Configuration currentConfiguration = target.getCurrentConfiguration();
-        FilterConfiguration model = ((FlowuiDataGenericFilterSupport) genericFilterSupport)
+        FilterConfiguration model = ((UiDataGenericFilterSupport) genericFilterSupport)
                 .loadFilterConfigurationModel(target, currentConfiguration.getId());
 
         return model != null && Strings.isNullOrEmpty(model.getUsername());

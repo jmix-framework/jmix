@@ -71,7 +71,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     @Override
     public void loadComponent() {
         loadInteger(element, "pageSize", resultComponent::setPageSize);
-        loadBoolean(element, "multiSort", resultComponent::setMultiSort);
         loadBoolean(element, "rowsDraggable", resultComponent::setRowsDraggable);
         loadBoolean(element, "allRowsVisible", resultComponent::setAllRowsVisible);
         loadEnum(element, GridDropMode.class, "dropMode", resultComponent::setDropMode);
@@ -292,8 +291,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                     context, "Component ID", component.getId());
         }
 
-        String key = loadString(element, "key")
-                .orElseGet(() -> metaPropertyPath.getMetaProperty().getName());
+        String key = loadString(element, "key").orElse(property);
 
         Column column = addColumn(key, metaPropertyPath);
         loadString(element, "width", column::setWidth);

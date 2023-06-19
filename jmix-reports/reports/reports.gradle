@@ -1,7 +1,7 @@
 /*
  * Copyright 2021 Haulmont.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -24,27 +24,124 @@ dependencies {
     api project(':core')
     api project(':data')
     api project(':security')
+    api project(':eclipselink')
+
     compileOnly project(':dynattr')
 
     api 'com.thoughtworks.xstream:xstream'
 
-    api ('com.haulmont.yarg:yarg-api') {
-        exclude group: 'org.apache.groovy', module: 'groovy-all'
+    api 'org.apache.groovy:groovy-templates'
+
+    api 'com.google.code.gson:gson'
+    api 'com.fasterxml.jackson.core:jackson-annotations'
+    api 'com.fasterxml.jackson.core:jackson-databind'
+    api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+
+    api 'org.apache.httpcomponents:httpclient'
+
+    api 'commons-logging:commons-logging'
+    api 'org.apache.commons:commons-lang3'
+    api 'commons-io:commons-io'
+    api('org.dom4j:dom4j') {
+        exclude group: 'xpp3', module: 'xpp3'
+        exclude group: 'pull-parser', module: 'pull-parser'
     }
-    api ('com.haulmont.yarg:yarg') {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
-        exclude group: 'commons-dbcp', module: 'commons-dbcp'
+    api 'com.google.guava:guava'
+    api 'org.slf4j:slf4j-api'
+    api 'org.freemarker:freemarker'
+    api 'org.openoffice:juh'
+    api 'org.openoffice:ridl'
+    api 'org.openoffice:unoil'
+    api 'org.apache.avalon.framework:avalon-framework-api'
+    api 'org.apache.avalon.framework:avalon-framework-impl'
+
+    api 'javax.media.jai:com.springsource.javax.media.jai.core'
+
+    api 'org.apache.xmlgraphics:fop'
+    api 'org.apache.xmlgraphics:xmlgraphics-commons'
+    api 'org.apache.xmlgraphics:batik-bridge'
+    api 'org.apache.xmlgraphics:batik-svggen'
+    api 'org.apache.xmlgraphics:batik-awt-util'
+    api 'org.apache.xmlgraphics:batik-css'
+
+    api 'org.plutext:jaxb-svg11'
+    api 'org.plutext:jaxb-xslfo'
+    api 'org.plutext:jaxb-xmldsig-core'
+
+    api 'xalan:xalan'
+    api 'xalan:serializer'
+
+    api('com.itextpdf:itextpdf') {
+        exclude group: 'org.bouncycastle', module: 'bctsp-jdk14'
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk14'
+        exclude group: 'org.bouncycastle', module: 'bcmail-jdk14'
+        exclude group: 'bouncycastle', module: 'bcmail-jdk14'
+        exclude group: 'bouncycastle', module: 'bcprov-jdk14'
+        exclude group: 'bouncycastle', module: 'bctsp-jdk14'
     }
 
-    implementation 'org.apache.groovy:groovy-templates'
+    api 'org.apache.poi:poi'
+    api 'org.apache.poi:poi-ooxml'
+    api('org.apache.poi:poi-scratchpad') {
+        exclude group: 'org.apache.poi', module: 'poi'
+    }
 
-    implementation 'com.google.code.gson:gson'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations'
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+    api 'org.xhtmlrenderer:flying-saucer-core'
+    api('org.xhtmlrenderer:flying-saucer-pdf-itext5') {
+        exclude group: 'org.bouncycastle', module: 'bctsp-jdk14'
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk14'
+        exclude group: 'org.bouncycastle', module: 'bcmail-jdk14'
+        exclude group: 'bouncycastle', module: 'bcmail-jdk14'
+        exclude group: 'bouncycastle', module: 'bcprov-jdk14'
+        exclude group: 'bouncycastle', module: 'bctsp-jdk14'
+    }
 
-    //todo SB3 why ui-test-assist-spock in reports module?
-//    testImplementation project(':ui-test-assist-spock')
+    api('com.openhtmltopdf:openhtmltopdf-core') {
+        exclude group: 'junit', module: 'junit'
+    }
+    api 'com.openhtmltopdf:openhtmltopdf-rtl-support'
+    api('com.openhtmltopdf:openhtmltopdf-pdfbox') {
+        exclude group: 'junit', module: 'junit'
+    }
+    api('org.docx4j:docx4j-JAXB-ReferenceImpl') {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'log4j', module: 'log4j'
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'com.fasterxml.jackson.core'
+    }
+    api('org.docx4j:docx4j-ImportXHTML') {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.apache.poi', module: 'poi'
+        exclude group: 'log4j', module: 'log4j'
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'com.fasterxml.jackson.core'
+    }
+    api('org.docx4j:docx4j-export-fo') {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'log4j', module: 'log4j'
+        exclude group: 'org.slf4j', module: 'slf4j -log4j12'
+        exclude group: 'com.fasterxml.jackson.core'
+    }
+    api 'org.jsoup:jsoup'
+    api 'com.jayway.jsonpath:json-path'
+    api 'com.opencsv:opencsv'
+    api 'org.olap4j:olap4j'
+
+    api('net.sf.jasperreports:jasperreports') {
+        exclude group: 'org.apache.lucene'
+        exclude group: 'commons-beanutils', module: 'commons-beanutils'
+        exclude group: 'com.google.zxing', module: 'core'
+        exclude group: 'com.ibm.icu', module: 'icu4j'
+        exclude group: 'com.fasterxml.jackson.core'
+        exclude group: 'org.jfree'
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+        exclude group: 'com.lowagie', module: 'itext'
+        exclude group: 'org.codehaus.castor', module: 'castor-xml'
+    }
+    api 'net.sf.jasperreports:jasperreports-fonts'
+
+    api 'jakarta.xml.bind:jakarta.xml.bind-api'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

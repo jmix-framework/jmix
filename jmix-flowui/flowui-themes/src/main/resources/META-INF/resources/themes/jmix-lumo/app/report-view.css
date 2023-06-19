@@ -1,0 +1,101 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.table-edit-fragment-root {
+    max-width: 40em;
+}
+
+.table-edit-fragment-data-grids-box {
+    max-width: 40em;
+}
+
+.table-edit-fragment-band-box {
+    min-width: 15em;
+}
+
+.table-edit-fragment-template-form {
+    max-width: 40em;
+}
+
+.bands-layout {
+    flex-grow: 1;
+    flex-basis: 20em;
+}
+
+.bands-details-layout {
+    flex-grow: 1;
+    flex-basis: 30em;
+}
+
+.data-sets-data-grid-layout {
+    flex-grow: 1;
+    min-width: 20em;
+}
+
+.data-set-details-layout {
+    flex-grow: 2;
+    min-width: 15em;
+}
+
+.reports-flex-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.multi-data-set-layout.reports-flex-layout {
+    gap: var(--lumo-space-m);
+}
+
+.reports-field-icon {
+    cursor: pointer;
+}
+
+.reports-field-icon-size {
+    padding: 0.25em;
+}
+
+.reports-dialog-transparent-code code {
+    background-color: transparent;
+}
+
+/* Styles to remove later */
+
+/*.report-edit-border {
+    box-sizing: border-box;
+    border: 1px solid var(--lumo-contrast-10pct);
+}*/
+
+.parameters-layout {
+    flex-grow: 1;
+    flex-basis: 45em;
+}
+
+.parameters-validate-layout {
+    flex-grow: 1;
+    flex-basis: 30em;
+}
+
+.roles-layout {
+    flex-grow: 1;
+    flex-basis: 30em;
+}
+
+.views-layout {
+    flex-grow: 1;
+    flex-basis: 30em;
+}
+

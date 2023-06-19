@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @ViewController("quartz_JobModel.detail")
 @ViewDescriptor("job-model-detail-view.xml")
 @EditedEntityContainer("jobModelDc")
-@DialogMode(width = "80em", height = "65em", resizable = true)
+@DialogMode(width = "80em", resizable = true)
 public class JobModelDetailView extends StandardDetailView<JobModel> {
 
     @ViewComponent
@@ -176,8 +176,8 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
         jobNameField.setReadOnly(readOnly);
         jobGroupField.setReadOnly(readOnly);
         jobClassField.setReadOnly(readOnly);
-        triggerModelTable.getAction("create").setVisible(!readOnly);
-        triggerModelTable.getAction("edit").setVisible(readOnly);
+        triggerModelTable.getAction("edit").setVisible(!readOnly);
+        triggerModelTable.getAction("read").setVisible(readOnly);
         addDataParamButton.setEnabled(!readOnly);
         jobDataParamsTable.setEnabled(!readOnly);
     }

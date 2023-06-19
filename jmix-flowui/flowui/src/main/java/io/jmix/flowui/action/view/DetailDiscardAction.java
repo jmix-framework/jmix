@@ -19,7 +19,7 @@ package io.jmix.flowui.action.view;
 import io.jmix.flowui.action.ActionType;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,7 +40,7 @@ public class DetailDiscardAction<E> extends OperationResultViewAction<DetailDisc
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.BAN);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.BAN);
     }
 
     @Autowired

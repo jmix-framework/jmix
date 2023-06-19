@@ -16,7 +16,7 @@
 
 package io.jmix.autoconfigure.rest;
 
-import io.jmix.authserver.AuthorizationServerConfiguration;
+import io.jmix.authserver.AuthServerConfiguration;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.oidc.OidcConfiguration;
 import io.jmix.rest.RestConfiguration;
@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Import;
 @Import({CoreConfiguration.class, RestConfiguration.class})
 public class RestAutoConfiguration {
     @Bean("rest_RestAsResourceServerBeforeInvocationEventListener")
-    @ConditionalOnClass(AuthorizationServerConfiguration.class)
+    @ConditionalOnClass(AuthServerConfiguration.class)
     protected RestAsResourceServerBeforeInvocationEventListener restAsResourceServerBeforeInvocationEventListener() {
         return new RestAsResourceServerBeforeInvocationEventListener();
     }

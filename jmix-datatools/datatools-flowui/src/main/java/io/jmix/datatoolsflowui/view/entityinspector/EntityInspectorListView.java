@@ -47,7 +47,7 @@ import io.jmix.datatoolsflowui.action.ShowEntityInfoAction;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorDataGridBuilder;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.flowui.*;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.list.*;
 import io.jmix.flowui.action.view.LookupSelectAction;
@@ -61,7 +61,7 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.CollectionContainer;
@@ -89,7 +89,7 @@ import static io.jmix.flowui.download.DownloadFormat.ZIP;
 @ViewController("datatl_entityInspectorListView")
 @ViewDescriptor("entity-inspector-list-view.xml")
 @LookupComponent("entitiesDataGrid")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "50em")
 public class EntityInspectorListView extends StandardListView<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(EntityInspectorListView.class);
@@ -134,7 +134,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
@@ -171,7 +171,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
     public void onInit(InitEvent event) {
         showMode.setValue(ShowMode.NON_REMOVED);
         getViewData().setDataContext(dataComponents.createDataContext());
-        FlowuiComponentUtils.setItemsMap(entitiesLookup, getEntitiesLookupFieldOptions());
+        ComponentUtils.setItemsMap(entitiesLookup, getEntitiesLookupFieldOptions());
 
         entitiesLookup.addValueChangeListener(e -> showEntities());
         showMode.addValueChangeListener(e -> showEntities());
@@ -684,7 +684,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
     }
 
     protected boolean readPermitted(MetaClass metaClass) {
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
         return entityContext.isViewPermitted();
     }
@@ -837,7 +837,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
                 selected = ((ContainerDataGridItems<Object>) dataGrid.getItems()).getContainer().getItems();
             }
 
-            int saveExportedByteArrayDataThresholdBytes = flowuiProperties.getSaveExportedByteArrayDataThresholdBytes();
+            int saveExportedByteArrayDataThresholdBytes = uiProperties.getSaveExportedByteArrayDataThresholdBytes();
             String tempDir = coreProperties.getTempDir();
 
             try {

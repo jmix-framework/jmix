@@ -21,7 +21,7 @@ import com.vaadin.flow.component.HasValueAndElement;
 import io.jmix.core.AccessManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityValueSource;
@@ -99,7 +99,7 @@ public class ReadOnlyViewsSupport {
                         && ((EntityValueSource<?, ?>) valueSource).isDataModelSecurityEnabled()) {
                     MetaPropertyPath metaPropertyPath = ((EntityValueSource<?, ?>) valueSource).getMetaPropertyPath();
 
-                    FlowuiEntityAttributeContext attributeContext = new FlowuiEntityAttributeContext(metaPropertyPath);
+                    UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaPropertyPath);
                     accessManager.applyRegisteredConstraints(attributeContext);
 
                     if (!attributeContext.canModify()

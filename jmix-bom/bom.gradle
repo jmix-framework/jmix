@@ -93,8 +93,8 @@ dependencies {
         api "io.jmix.audit:jmix-audit-starter:$freeVersion"
         api "io.jmix.audit:jmix-audit-flowui-starter:$freeVersion"
 
-        api "io.jmix.authserver:jmix-authorization-server:$freeVersion"
-        api "io.jmix.authserver:jmix-authorization-server-starter:$freeVersion"
+        api "io.jmix.authserver:jmix-authserver:$freeVersion"
+        api "io.jmix.authserver:jmix-authserver-starter:$freeVersion"
 
         api "io.jmix.awsfs:jmix-awsfs:$freeVersion"
         api "io.jmix.awsfs:jmix-awsfs-starter:$freeVersion"
@@ -187,6 +187,8 @@ dependencies {
         api "io.jmix.reports:jmix-reports-rest:$freeVersion"
         api "io.jmix.reports:jmix-reports-starter:$freeVersion"
         api "io.jmix.reports:jmix-reports-rest-starter:$freeVersion"
+        api "io.jmix.reports:jmix-reports-flowui:$freeVersion"
+        api "io.jmix.reports:jmix-reports-flowui-starter:$freeVersion"
 
         api "io.jmix.rest:jmix-rest:$freeVersion"
         api "io.jmix.rest:jmix-rest-starter:$freeVersion"
@@ -244,8 +246,6 @@ dependencies {
 
         api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.1'
 
-        //todo SB3 jakarta.xml.bind-api:2.3.3 -> 4.0.0
-        api 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
         //todo SB3 org.glassfish.jaxb:jaxb-runtime:2.3.6 -> 4.0.2
         api 'org.glassfish.jaxb:jaxb-runtime:2.3.6'
 
@@ -258,8 +258,6 @@ dependencies {
 
         api 'io.swagger.core.v3:swagger-models:2.1.11'
         api 'io.swagger.core.v3:swagger-core:2.1.11'
-
-        api 'javax.cache:cache-api:1.1.1'
 
         api 'com.icegreen:greenmail:2.0.0'
 
@@ -279,14 +277,67 @@ dependencies {
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        def yargVersion = '2.2.21'
-        api "com.haulmont.yarg:yarg-api:$yargVersion"
-        api "com.haulmont.yarg:yarg:$yargVersion"
+        api 'org.apache.httpcomponents:httpclient:4.5.14'
 
-        api 'org.jsoup:jsoup:1.14.3'
+        api 'commons-logging:commons-logging:1.2'
 
-        api 'org.apache.poi:poi:4.1.2'
-        api 'org.apache.poi:poi-ooxml:4.1.2'
+        def openOfficeVersion = '4.1.2'
+        api "org.openoffice:juh:$openOfficeVersion"
+        api "org.openoffice:ridl:$openOfficeVersion"
+        api "org.openoffice:unoil:$openOfficeVersion"
+
+        def avalonVersion = '4.3.1'
+        api "org.apache.avalon.framework:avalon-framework-api:$avalonVersion"
+        api "org.apache.avalon.framework:avalon-framework-impl:$avalonVersion"
+
+        def xmlgraphicsVersion = '2.8'
+        api "org.apache.xmlgraphics:fop:$xmlgraphicsVersion"
+        api "org.apache.xmlgraphics:xmlgraphics-commons:$xmlgraphicsVersion"
+
+        def batikVersion = '1.16'
+        api "org.apache.xmlgraphics:batik-bridge:$batikVersion"
+        api "org.apache.xmlgraphics:batik-svggen:$batikVersion"
+        api "org.apache.xmlgraphics:batik-awt-util:$batikVersion"
+        api "org.apache.xmlgraphics:batik-css:$batikVersion"
+
+        def plutextVersion = '11.4.0'
+        api "org.plutext:jaxb-svg11:$plutextVersion"
+        api "org.plutext:jaxb-xslfo:$plutextVersion"
+
+        api 'org.plutext:jaxb-xmldsig-core:1.0.0'
+
+        def xalanVersion = '2.7.3'
+        api "xalan:xalan:$xalanVersion"
+        api "xalan:serializer:$xalanVersion"
+
+        api 'com.itextpdf:itextpdf:5.5.13.3'
+
+        def poiVersion = '5.2.3'
+        api "org.apache.poi:poi:$poiVersion"
+        api "org.apache.poi:poi-ooxml:$poiVersion"
+        api "org.apache.poi:poi-scratchpad:$poiVersion"
+
+        def xhtmlrendererVersion = '9.1.22'
+        api "org.xhtmlrenderer:flying-saucer-core:$xhtmlrendererVersion"
+        api "org.xhtmlrenderer:flying-saucer-pdf-itext5:$xhtmlrendererVersion"
+
+        def openhtmltopdfVersion = '1.0.10'
+        api "com.openhtmltopdf:openhtmltopdf-core:$openhtmltopdfVersion"
+        api "com.openhtmltopdf:openhtmltopdf-rtl-support:$openhtmltopdfVersion"
+        api "com.openhtmltopdf:openhtmltopdf-pdfbox:$openhtmltopdfVersion"
+
+        api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.4.9'
+        api 'org.docx4j:docx4j-ImportXHTML:11.4.8'
+        api 'org.docx4j:docx4j-export-fo:11.4.9'
+
+        api 'org.jsoup:jsoup:1.16.1'
+        api 'com.opencsv:opencsv:5.7.1'
+        api 'org.olap4j:olap4j:1.2.0'
+
+        def jasperVersion = '6.20.5'
+        api "net.sf.jasperreports:jasperreports:$jasperVersion"
+        api "net.sf.jasperreports:jasperreports-fonts:$jasperVersion"
+
         api 'org.apache.tika:tika-parsers:1.27'
 
         //todo SB3 Update flowable 7.0 to production version
@@ -303,7 +354,7 @@ dependencies {
         api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
 
         //todo remove strict version after jmix-graphql is reworked
-        api ('com.graphql-java:graphql-java') {
+        api('com.graphql-java:graphql-java') {
             version {
                 strictly '16.2'
             }
@@ -313,7 +364,6 @@ dependencies {
 
         api 'io.vavr:vavr:0.9.3'
         api 'org.jetbrains:annotations:22.0.0'
-        api 'commons-codec:commons-codec:1.15'
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
 

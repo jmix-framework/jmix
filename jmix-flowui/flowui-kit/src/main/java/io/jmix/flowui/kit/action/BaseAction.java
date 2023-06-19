@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 
 import jakarta.annotation.Nullable;
@@ -94,7 +94,7 @@ public class BaseAction extends AbstractAction {
     }
 
     public BaseAction withIcon(@Nullable VaadinIcon icon) {
-        setIcon(FlowuiComponentUtils.convertToIcon(icon));
+        setIcon(ComponentUtils.convertToIcon(icon));
         return this;
     }
 

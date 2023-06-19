@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ViewController("mten_Tenant.detail")
 @ViewDescriptor("tenant-detail-view.xml")
 @EditedEntityContainer("tenantDc")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "30em")
 public class TenantDetailView extends StandardDetailView<Tenant> {
 
     @ViewComponent

@@ -398,10 +398,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             GridSortOrder<E> sortOrder = sortOrders.get(0);
 
             Grid.Column<E> column = sortOrder.getSorted();
-            if (column != null
-                    && !Strings.isNullOrEmpty(column.getKey())) {
-                MetaClass metaClass = ((EntityDataUnit) dataGridItems).getEntityMetaClass();
-                MetaPropertyPath mpp = metaClass.getPropertyPath(column.getKey());
+            if (column != null) {
+                MetaPropertyPath mpp = propertyColumns.get(column);
                 if (mpp != null) {
                     boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
                     dataProvider.sort(new Object[]{mpp}, new boolean[]{ascending});

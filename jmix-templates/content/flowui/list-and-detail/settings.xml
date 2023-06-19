@@ -40,8 +40,10 @@
     <steps>
         <step name="Entity list and detail views" order="0"/>
         <step name="Entity list and detail options" order="1"/>
-        <step name="Entity list view fetch plan" order="2"/>
-        <step name="Entity detail view fetch plan" order="3"/>
+        <step name="Entity list view fetch plan" order="2"
+              description="List view fetch plan determines entity attributes and associations to be loaded from the database and displayed in the dataGrid component"/>
+        <step name="Entity detail view fetch plan" order="3"
+              description="Detail view fetch plan determines entity attributes and associations to be loaded from the database and edited in the view components"/>
     </steps>
 
     <!--properties-->
@@ -64,7 +66,7 @@
     <property caption="Table actions"
               step="1"
               code="tableActions"
-              defaultValue="list_create,list_edit,list_remove"
+              defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
               optionsString="${actionSearch.getWizardTableActions()}"/>
     <property caption="Create generic filter"

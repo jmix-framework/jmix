@@ -16,7 +16,7 @@
 
 package io.jmix.autoconfigure.reportsrest;
 
-import io.jmix.authserver.AuthorizationServerConfiguration;
+import io.jmix.authserver.AuthServerConfiguration;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.oidc.OidcConfiguration;
@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Import;
 public class ReportsRestAutoConfiguration {
 
     @Bean
-    @ConditionalOnClass(AuthorizationServerConfiguration.class)
+    @ConditionalOnClass(AuthServerConfiguration.class)
     protected ReportAsResourceServerBeforeInvocationEventListener reportBeforeInvocationEventListener() {
         return new ReportAsResourceServerBeforeInvocationEventListener();
     }

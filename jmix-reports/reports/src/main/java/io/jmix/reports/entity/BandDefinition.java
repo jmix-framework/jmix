@@ -15,16 +15,15 @@
  */
 package io.jmix.reports.entity;
 
-import com.haulmont.yarg.structure.BandOrientation;
-import com.haulmont.yarg.structure.ReportBand;
-import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.structure.BandOrientation;
+import io.jmix.reports.yarg.structure.ReportBand;
+import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,27 +40,22 @@ public class BandDefinition implements ReportBand {
     protected UUID id;
 
     @InstanceName
-    @JmixProperty
     protected String name;
 
-    @JmixProperty
     protected BandDefinition parentBandDefinition;
 
-    @JmixProperty
     protected Report report;
 
-    @JmixProperty
     protected List<BandDefinition> childrenBandDefinitions = new ArrayList<>();
 
-    @JmixProperty
     @Composition
     protected List<DataSet> dataSets = new ArrayList<>();
 
-    @JmixProperty
     protected Integer orientation;
 
-    @JmixProperty
     protected Integer position;
+
+    protected Boolean multiDataSet = false;
 
     public UUID getId() {
         return id;
@@ -146,5 +140,13 @@ public class BandDefinition implements ReportBand {
     @Override
     public BandOrientation getBandOrientation() {
         return BandOrientation.defaultIfNull(getOrientation() != null ? getOrientation().getBandOrientation() : null);
+    }
+
+    public Boolean getMultiDataSet() {
+        return multiDataSet;
+    }
+
+    public void setMultiDataSet(Boolean multiDataSet) {
+        this.multiDataSet = multiDataSet;
     }
 }

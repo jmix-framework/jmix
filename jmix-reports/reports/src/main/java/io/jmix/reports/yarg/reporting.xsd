@@ -1,0 +1,112 @@
+<!--
+  ~ Copyright 2013 Haulmont
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not
+  ~ use this file except in compliance with the License. You may obtain a copy of
+  ~ the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  ~ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing permissions and limitations under
+  ~ the License.
+  -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="report">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="templates" minOccurs='1' maxOccurs='1'>
+                    <xs:complexType>
+                        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="template" type="template"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="parameters" minOccurs='0' maxOccurs='1'>
+                    <xs:complexType>
+                        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="parameter" type="parameter"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="formats" minOccurs='0' maxOccurs='1'>
+                    <xs:complexType>
+                        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="format" type="format"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="rootBand" minOccurs='1' maxOccurs='1' type="band"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="template">
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="documentName" type="xs:string" use="required"/>
+        <xs:attribute name="documentPath" type="xs:string"/>
+        <xs:attribute name="outputType" type="xs:string" use="required"/>
+        <xs:attribute name="outputNamePattern" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="band">
+        <xs:sequence>
+            <xs:element name="bands" minOccurs="0" maxOccurs='1'>
+                <xs:complexType>
+                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="band" type="band"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="queries" minOccurs="0" maxOccurs='1'>
+                <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="query" type="reportQuery"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="name" type="BandName" use="required"/>
+        <xs:attribute name="orientation" type="Orientation" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="reportQuery">
+        <xs:sequence>
+            <xs:element name="script" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="BandName" use="required"/>
+        <xs:attribute name="type" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="parameter">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="alias" type="xs:string" use="required"/>
+        <xs:attribute name="class" type="xs:string" use="required"/>
+        <xs:attribute name="required" type="xs:boolean"/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="format">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="format" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:simpleType name="Orientation">
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="H"/>
+            <xs:enumeration value="V"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="BandName">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-z0-9_]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

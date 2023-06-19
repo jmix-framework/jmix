@@ -23,16 +23,8 @@ archivesBaseName = 'jmix-reports-rest'
 dependencies {
     api project(':reports')
 
-    compileOnly project(':authorization-server')
+    compileOnly project(':authserver')
     compileOnly project(':oidc')
-
-    api ('com.haulmont.yarg:yarg-api') {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
-    }
-    api ('com.haulmont.yarg:yarg') {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
-        exclude group: 'commons-dbcp', module: 'commons-dbcp'
-    }
 
     implementation 'com.google.code.gson:gson'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'

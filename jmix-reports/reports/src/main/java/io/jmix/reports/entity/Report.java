@@ -15,8 +15,8 @@
  */
 package io.jmix.reports.entity;
 
-import com.haulmont.yarg.structure.ReportBand;
-import com.haulmont.yarg.structure.ReportFieldFormat;
+import io.jmix.reports.yarg.structure.ReportBand;
+import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
@@ -25,6 +25,7 @@ import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.*;
 import io.jmix.reports.util.MsgBundleTools;
+import io.jmix.reports.yarg.structure.ReportParameter;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
@@ -44,7 +45,7 @@ import java.util.*;
 @Listeners("report_ReportDetachListener")
 @JmixEntity
 @SuppressWarnings("unused")
-public class Report implements com.haulmont.yarg.structure.Report {
+public class Report implements io.jmix.reports.yarg.structure.Report {
     private static final long serialVersionUID = -2817764915661205093L;
     protected static final String IDX_SEPARATOR = ",";
 
@@ -434,8 +435,8 @@ public class Report implements com.haulmont.yarg.structure.Report {
     }
 
     @Override
-    public Map<String, com.haulmont.yarg.structure.ReportTemplate> getReportTemplates() {
-        Map<String, com.haulmont.yarg.structure.ReportTemplate> templateMap = new HashMap<>();
+    public Map<String, io.jmix.reports.yarg.structure.ReportTemplate> getReportTemplates() {
+        Map<String, io.jmix.reports.yarg.structure.ReportTemplate> templateMap = new HashMap<>();
         for (ReportTemplate template : templates) {
             templateMap.put(template.getCode(), template);
         }
@@ -444,7 +445,7 @@ public class Report implements com.haulmont.yarg.structure.Report {
     }
 
     @Override
-    public List<com.haulmont.yarg.structure.ReportParameter> getReportParameters() {
+    public List<ReportParameter> getReportParameters() {
         return (List) inputParameters;
     }
 

@@ -16,8 +16,8 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.loaders.ReportDataLoader;
-import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.*;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.Report;

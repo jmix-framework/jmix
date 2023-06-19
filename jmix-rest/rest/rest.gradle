@@ -24,7 +24,7 @@ dependencies {
     api project(':core')
     compileOnly project(':security')
     compileOnly project(':oidc')
-    compileOnly project(':authorization-server')
+    compileOnly project(':authserver')
 
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'

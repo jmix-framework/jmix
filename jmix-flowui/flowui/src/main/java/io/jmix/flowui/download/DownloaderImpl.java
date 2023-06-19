@@ -27,7 +27,7 @@ import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.FileTypesHelper;
 import io.jmix.core.Messages;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.filedownloader.JmixFileDownloader;
 import io.jmix.flowui.exception.IllegalConcurrentAccessException;
 import org.apache.commons.io.FilenameUtils;
@@ -54,7 +54,7 @@ public class DownloaderImpl implements Downloader {
 
     private static final Logger log = LoggerFactory.getLogger(DownloaderImpl.class);
 
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
     protected CoreProperties coreProperties;
 
     protected Messages messages;
@@ -85,8 +85,8 @@ public class DownloaderImpl implements Downloader {
     }
 
     @Autowired
-    public void setFlowuiProperties(FlowuiProperties flowuiProperties) {
-        this.flowuiProperties = flowuiProperties;
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
     }
 
     @Autowired
@@ -147,7 +147,7 @@ public class DownloaderImpl implements Downloader {
                 fileExt = FilenameUtils.getExtension(resourceName);
             }
 
-            showNewWindow = flowuiProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExt));
+            showNewWindow = uiProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExt));
         }
 
         if (downloadFormat != null) {
@@ -217,7 +217,7 @@ public class DownloaderImpl implements Downloader {
     @Override
     public void download(byte[] data, String resourceName) {
         ByteArrayDownloadDataProvider dataProvider = new ByteArrayDownloadDataProvider(data,
-                flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                 coreProperties.getTempDir());
         download(dataProvider, resourceName);
     }
@@ -225,7 +225,7 @@ public class DownloaderImpl implements Downloader {
     @Override
     public void download(byte[] data, String resourceName, @Nullable DownloadFormat format) {
         ByteArrayDownloadDataProvider dataProvider = new ByteArrayDownloadDataProvider(data,
-                flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                 coreProperties.getTempDir());
         download(dataProvider, resourceName, format);
     }

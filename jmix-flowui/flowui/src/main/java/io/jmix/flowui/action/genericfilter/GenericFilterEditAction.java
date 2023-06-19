@@ -30,7 +30,7 @@ import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.View;
@@ -61,7 +61,7 @@ public class GenericFilterEditAction extends GenericFilterAction<GenericFilterEd
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PENCIL);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PENCIL);
     }
 
     @Autowired
@@ -143,13 +143,7 @@ public class GenericFilterEditAction extends GenericFilterAction<GenericFilterEd
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected DialogWindow createDetailDialog(Class modelClass, LogicalFilterCondition model) {
-        View<?> parent = findParentView();
-
-        if (parent == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
+        View<?> parent = getParentView();
         DialogWindow dialog = dialogWindows.detail(parent, modelClass)
                 .withViewId(filterComponents.getDetailViewId(modelClass))
                 .editEntity(model)

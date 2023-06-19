@@ -10,18 +10,18 @@ import io.jmix.security.role.annotation.ResourceRole
 import io.jmix.security.role.annotation.SpecificPolicy
 import io.jmix.securityflowui.role.annotation.ViewPolicy
 
-@ResourceRole(name = "Flow UI: minimal access", code = UiMinimalRole.CODE, scope = [SecurityScope.UI])
+@ResourceRole(name = "UI: minimal access", code = UiMinimalRole.CODE, scope = [SecurityScope.UI])
 interface UiMinimalRole {
 
     companion object {
-        const val CODE = "flowui-minimal"
+        const val CODE = "ui-minimal"
     }
 
     @ViewPolicy(viewIds = ["${normalizedPrefix_underscore}MainView"])
     fun main()
 
     @ViewPolicy(viewIds = ["${normalizedPrefix_underscore}LoginView"])
-    @SpecificPolicy(resources = ["flowui.loginToUi"])
+    @SpecificPolicy(resources = ["ui.loginToUi"])
     fun login()
 
     @EntityPolicy(entityClass = KeyValueEntity::class, actions = [EntityPolicyAction.READ])

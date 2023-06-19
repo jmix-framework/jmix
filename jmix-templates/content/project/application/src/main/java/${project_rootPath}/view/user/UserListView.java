@@ -9,6 +9,6 @@ import io.jmix.flowui.view.*;
 @ViewController("${normalizedPrefix_underscore}User.list")
 @ViewDescriptor("user-list-view.xml")
 @LookupComponent("usersDataGrid")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "50em")
 public class UserListView extends StandardListView<User> {
 }

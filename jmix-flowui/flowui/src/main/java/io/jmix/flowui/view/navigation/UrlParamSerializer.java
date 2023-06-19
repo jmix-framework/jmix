@@ -22,7 +22,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.FlowuiNavigationProperties;
+import io.jmix.flowui.UiNavigationProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -60,11 +60,11 @@ public class UrlParamSerializer {
     protected static final DateTimeFormatter TEMPORAL_OFFSET_TIME_FORMATTER
             = DateTimeFormatter.ofPattern(DEFAULT_OFFSET_TIME_FORMAT);
 
-    protected FlowuiNavigationProperties navigationProperties;
+    protected UiNavigationProperties navigationProperties;
     protected MetadataTools metadataTools;
     protected Metadata metadata;
 
-    public UrlParamSerializer(FlowuiNavigationProperties navigationProperties,
+    public UrlParamSerializer(UiNavigationProperties navigationProperties,
                               MetadataTools metadataTools,
                               Metadata metadata) {
         this.navigationProperties = navigationProperties;

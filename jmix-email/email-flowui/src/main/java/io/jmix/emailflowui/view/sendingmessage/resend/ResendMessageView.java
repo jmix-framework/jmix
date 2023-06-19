@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 
 @ViewController("email_resendMessageView")
 @ViewDescriptor("resend-message-view.xml")
-@DialogMode(width = "50em", height = "AUTO")
+@DialogMode(width = "50em")
 public class ResendMessageView extends StandardView {
 
     protected SendingMessage sendingMessage;

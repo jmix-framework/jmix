@@ -21,7 +21,7 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowuidata.entity.FilterConfiguration;
-import io.jmix.flowuidata.genericfilter.FlowuiDataGenericFilterSupport;
+import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -61,7 +61,7 @@ public class GenericFilterSaveWithValuesAction
         if (configuration == target.getEmptyConfiguration()) {
             openInputDialog();
         } else {
-            FilterConfiguration configurationModel = ((FlowuiDataGenericFilterSupport) genericFilterSupport)
+            FilterConfiguration configurationModel = ((UiDataGenericFilterSupport) genericFilterSupport)
                     .loadFilterConfigurationModel(target, configuration.getId());
 
             if (configurationModel != null) {
@@ -74,7 +74,7 @@ public class GenericFilterSaveWithValuesAction
 
     @Override
     protected void saveNewConfigurationModel(Configuration configuration) {
-        ((FlowuiDataGenericFilterSupport) genericFilterSupport).saveConfigurationModel(configuration, null);
+        ((UiDataGenericFilterSupport) genericFilterSupport).saveConfigurationModel(configuration, null);
         genericFilterSupport.refreshConfigurationDefaultValues(configuration);
 
         target.addConfiguration(configuration);
@@ -85,7 +85,7 @@ public class GenericFilterSaveWithValuesAction
     @Override
     protected void saveExistedConfigurationModel(Configuration configuration,
                                                  @Nullable FilterConfiguration existedConfigurationModel) {
-        ((FlowuiDataGenericFilterSupport) genericFilterSupport)
+        ((UiDataGenericFilterSupport) genericFilterSupport)
                 .saveConfigurationModel(configuration, existedConfigurationModel);
         genericFilterSupport.refreshConfigurationDefaultValues(configuration);
         setCurrentFilterConfiguration(configuration);

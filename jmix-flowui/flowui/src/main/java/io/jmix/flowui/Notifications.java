@@ -43,10 +43,10 @@ import org.springframework.lang.Nullable;
 public class Notifications {
     private static final Logger log = LoggerFactory.getLogger(Notifications.class);
 
-    protected FlowuiComponentProperties uiComponentProperties;
+    protected UiComponentProperties uiComponentProperties;
 
     @Autowired
-    public Notifications(FlowuiComponentProperties uiComponentProperties) {
+    public Notifications(UiComponentProperties uiComponentProperties) {
         this.uiComponentProperties = uiComponentProperties;
     }
 
@@ -192,7 +192,7 @@ public class Notifications {
          * Sets notification position.
          * <p>
          * Default position is specified in the {@code jmix.flowui.component.default-notification-position} property
-         * which is MIDDLE by default, see {@link FlowuiComponentProperties#getDefaultNotificationPosition()}.
+         * which is MIDDLE by default, see {@link UiComponentProperties#getDefaultNotificationPosition()}.
          */
         public NotificationBuilder withPosition(Notification.Position position) {
             Preconditions.checkNotNullArgument(position);
@@ -206,7 +206,7 @@ public class Notifications {
          * Set to 0 or a negative number to disable the notification auto-closing.
          * <p>
          * Default duration is specified in the {@code jmix.flowui.component.default-notification-duration} property
-         * which is 3000 by default, see {@link FlowuiComponentProperties#getDefaultNotificationDuration()}.
+         * which is 3000 by default, see {@link UiComponentProperties#getDefaultNotificationDuration()}.
          */
         public NotificationBuilder withDuration(int duration) {
             this.duration = duration;
@@ -340,7 +340,7 @@ public class Notifications {
             build().open();
         }
 
-        protected NotificationBuilder applyDefaults(FlowuiComponentProperties properties) {
+        protected NotificationBuilder applyDefaults(UiComponentProperties properties) {
             this.duration = properties.getDefaultNotificationDuration();
             this.position = properties.getDefaultNotificationPosition();
             return this;

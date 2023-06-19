@@ -23,13 +23,13 @@ import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.FlowuiComponentProperties;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
@@ -69,7 +69,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.SEARCH);
+        this.icon = ComponentUtils.convertToIcon(VaadinIcon.SEARCH);
     }
 
     @Autowired
@@ -89,8 +89,8 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getPickerOpenShortcut());
+    protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerOpenShortcut());
     }
 
     @Override

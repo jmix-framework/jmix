@@ -103,7 +103,7 @@ public class DialogWindows {
     public <E, V extends View<?>> DetailWindowBuilder<E, V> detail(ListDataComponent<E> listDataComponent) {
         checkNotNullArgument(listDataComponent);
 
-        View<?> origin = getView((Component) listDataComponent);
+        View<?> origin = UiComponentUtils.getView((Component) listDataComponent);
         Class<E> beanType = getBeanType(listDataComponent);
 
         DetailWindowBuilder<E, V> builder =
@@ -131,7 +131,7 @@ public class DialogWindows {
         checkState(picker instanceof HasValue,
                 "A component must implement " + HasValue.class.getSimpleName());
 
-        View<?> origin = getView((Component) picker);
+        View<?> origin = UiComponentUtils.getView((Component) picker);
         Class<E> beanType = getBeanType(picker);
 
         DetailWindowBuilder<E, V> builder =
@@ -179,7 +179,7 @@ public class DialogWindows {
     public <E, V extends View<?>> LookupWindowBuilder<E, V> lookup(ListDataComponent<E> listDataComponent) {
         checkNotNullArgument(listDataComponent);
 
-        View<?> origin = getView((Component) listDataComponent);
+        View<?> origin = UiComponentUtils.getView((Component) listDataComponent);
         Class<E> beanType = getBeanType(listDataComponent);
 
         LookupWindowBuilder<E, V> builder =
@@ -202,7 +202,7 @@ public class DialogWindows {
         checkState(picker instanceof HasValue,
                 "A component must implement " + HasValue.class.getSimpleName());
 
-        View<?> origin = getView((Component) picker);
+        View<?> origin = UiComponentUtils.getView((Component) picker);
         Class<E> beanType = getBeanType(picker);
 
         LookupWindowBuilder<E, V> builder =
@@ -235,16 +235,6 @@ public class DialogWindows {
      */
     public WindowBuilder<View<?>> view(View<?> origin, String viewId) {
         return new WindowBuilder<>(origin, viewId, windowBuilderProcessor::build);
-    }
-
-    protected View<?> getView(Component component) {
-        View<?> view = UiComponentUtils.findView(component);
-        if (view == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    component.getClass().getSimpleName()));
-        }
-
-        return view;
     }
 
     protected <E> Class<E> getBeanType(ListDataComponent<E> listDataComponent) {

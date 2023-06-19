@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view" xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://ReportExecutionListView.title"
+      focusComponent="executionsDataGrid">
+    <data>
+        <collection id="executionsDc"
+                    class="io.jmix.reports.entity.ReportExecution"
+                    fetchPlan="reportExecution.view">
+            <loader id="executionsDl">
+                <query>
+                    <![CDATA[select e from report_ReportExecution e order by e.startTime desc]]>
+                    <condition>
+                        <c:jpql>
+                            <c:where>{E}.report.id in :reportIds</c:where>
+                        </c:jpql>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+    </data>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+
+    <layout>
+        <genericFilter id="genericFilter" dataLoader="executionsDl" opened="false"/>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="excelBtn" action="executionsDataGrid.excel"/>
+            <button id="downloadBtn" action="executionsDataGrid.download"/>
+            <simplePagination id="pagination" dataLoader="executionsDl"/>
+        </hbox>
+        <dataGrid id="executionsDataGrid" dataContainer="executionsDc" width="100%" selectionMode="MULTI">
+            <actions>
+                <action id="excel" type="grdexp_excelExport"/>
+                <action id="download" text="msg://action.download.text" icon="DOWNLOAD"/>
+            </actions>
+            <columns>
+                <column property="startTime"/>
+                <column property="finishTime"/>
+                <column property="reportName"/>
+                <column property="reportCode"/>
+                <column property="username"/>
+                <column property="success"/>
+                <column property="cancelled"/>
+                <column property="params"/>
+                <column property="errorMessage"/>
+            </columns>
+        </dataGrid>
+    </layout>
+</view>

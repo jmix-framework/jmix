@@ -15,7 +15,7 @@
  */
 package io.jmix.reports.entity;
 
-import com.haulmont.yarg.structure.ReportFieldFormat;
+import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;

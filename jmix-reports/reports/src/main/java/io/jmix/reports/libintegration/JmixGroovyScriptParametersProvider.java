@@ -17,15 +17,14 @@
 package io.jmix.reports.libintegration;
 
 
-import com.haulmont.yarg.exception.ValidationException;
-import com.haulmont.yarg.structure.BandData;
-import com.haulmont.yarg.structure.ReportQuery;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.ReportsProperties;
-import org.codehaus.groovy.runtime.MethodClosure;
+import io.jmix.reports.yarg.exception.ValidationException;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.ReportQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -66,7 +65,8 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
         scriptParams.put("dataManager", dataManager);
         scriptParams.put("timeSource", timeSource);
         scriptParams.put("applicationContext", applicationContext);
-        scriptParams.put("validationException", new MethodClosure(this, "validationException"));
+        //todo replace MethodClosure
+//        scriptParams.put("validationException", new MethodClosure(this, "validationException"));
 
         return scriptParams;
     }

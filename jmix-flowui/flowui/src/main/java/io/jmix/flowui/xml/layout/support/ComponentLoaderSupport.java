@@ -355,7 +355,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
     public Optional<Icon> loadIcon(Element element) {
         return loaderSupport.loadString(element, "icon")
-                .map(FlowuiComponentUtils::parseIcon);
+                .map(ComponentUtils::parseIcon);
     }
 
     public void loadIcon(Element element, Consumer<Icon> setter) {

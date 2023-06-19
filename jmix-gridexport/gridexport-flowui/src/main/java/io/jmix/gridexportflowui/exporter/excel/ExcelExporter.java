@@ -254,7 +254,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             }
 
             ByteArrayDownloadDataProvider dataProvider = new ByteArrayDownloadDataProvider(out.toByteArray(),
-                    flowuiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
+                    uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
 
 
             downloader.download(dataProvider, getFileName(dataGrid) + "." + XLSX.getFileExt(), XLSX);

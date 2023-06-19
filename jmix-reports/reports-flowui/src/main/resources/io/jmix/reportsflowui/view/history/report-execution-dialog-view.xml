@@ -1,0 +1,88 @@
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://ReportExecutionDialogView.title">
+    <data>
+        <collection id="reportsDc"
+                    class="io.jmix.reports.entity.Report"
+                    fetchPlan="report.view">
+            <loader id="reportsDl"/>
+        </collection>
+        <collection id="reportGroupsDc"
+                    class="io.jmix.reports.entity.ReportGroup"
+                    fetchPlan="_local">
+            <loader id="reportGroupsDl">
+                <query>
+                    <![CDATA[select e from report_ReportGroup e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+
+    <layout>
+        <formLayout id="gridFilter">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="3"/>
+                <responsiveStep minWidth="80em" columns="5"/>
+            </responsiveSteps>
+            <textField id="filterName" datatype="string"
+                       label="msg://io.jmix.reportsflowui.view.run/report.reportRunFilterName"/>
+            <textField id="filterCode"
+                       label="msg://io.jmix.reportsflowui.view.run/report.reportRunFilterCode"/>
+            <entityComboBox id="filterGroup"
+                            label="msg://io.jmix.reportsflowui.view.run/report.reportRunFilterGroup"
+                            itemsContainer="reportGroupsDc"
+                            metaClass="report_ReportGroup"/>
+            <datePicker id="filterUpdatedDate"
+                        label="msg://io.jmix.reportsflowui.view.run/report.reportRunFilterUpdatedDate"/>
+            <hbox>
+                <button id="applyFilterBtn"
+                        text="msg://io.jmix.reportsflowui.view.run/report.reportFilterButton"
+                        themeNames="primary"
+                        icon="SEARCH"/>
+                <button id="clearFilterBtn"
+                        text="msg://io.jmix.reportsflowui.view.run/report.reportClearButton"
+                        themeNames="error"
+                        icon="TRASH"/>
+            </hbox>
+        </formLayout>
+
+        <dataGrid id="reportsDataGrid"
+                  dataContainer="reportsDc"
+                  selectionMode="MULTI"
+                  enabled="false"
+                  minHeight="20em"
+                  width="100%">
+            <columns>
+                <column property="group"/>
+                <column property="description"/>
+                <column property="code"/>
+                <column property="updateTs"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

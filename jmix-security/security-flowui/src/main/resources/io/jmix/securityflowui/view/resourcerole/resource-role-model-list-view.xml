@@ -46,6 +46,7 @@
         </hbox>
         <dataGrid id="roleModelsTable"
                   dataContainer="roleModelsDc"
+                  minHeight="20em"
                   width="100%">
             <actions>
                 <action id="create" type="list_create"/>

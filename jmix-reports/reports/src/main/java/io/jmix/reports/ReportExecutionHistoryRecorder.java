@@ -16,7 +16,7 @@
 
 package io.jmix.reports;
 
-import com.haulmont.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://reportImportDialogView.title">
+
+    <layout>
+        <label text="msg://io.jmix.reportsflowui.view.importdialog/uploadDescription.title"/>
+        <hbox id="uploadBox" width="100%"/>
+        <checkbox id="importRoles" label="msg://io.jmix.reportsflowui.view.importdialog/reportImportDialogView.importRoles.title"/>
+        <hbox>
+            <button id="commitBtn" text="msg:///actions.Ok" icon="CHECK"/>
+            <button id="closeBtn" text="msg:///actions.Cancel" icon="CLOSE"/>
+        </hbox>
+    </layout>
+</view>

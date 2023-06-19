@@ -52,7 +52,7 @@ import java.util.stream.Stream;
 @ViewController("userSession.view")
 @ViewDescriptor("user-sessions-view.xml")
 @LookupComponent("sessionsTable")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "50em")
 public class UserSessionsView extends StandardListView<EntityLogItem> {
 
     @ViewComponent

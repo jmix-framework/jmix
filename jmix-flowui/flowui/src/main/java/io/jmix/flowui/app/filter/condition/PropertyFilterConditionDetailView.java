@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
 @ViewController("flowui_PropertyFilterCondition.detail")
 @ViewDescriptor("property-filter-condition-detail-view.xml")
 @EditedEntityContainer("filterConditionDc")
-@DialogMode(height = "AUTO", width = "32em", resizable = true)
+@DialogMode(width = "32em", resizable = true)
 public class PropertyFilterConditionDetailView extends FilterConditionDetailView<PropertyFilterCondition> {
 
     @ViewComponent

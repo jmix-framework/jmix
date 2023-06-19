@@ -41,7 +41,7 @@ import java.util.List;
 @ViewController("flowui_GroupFilterCondition.detail")
 @ViewDescriptor("group-filter-condition-detail-view.xml")
 @EditedEntityContainer("filterConditionDc")
-@DialogMode(height = "AUTO", width = "64em")
+@DialogMode(width = "64em")
 public class GroupFilterConditionDetailView extends LogicalFilterConditionDetailView<GroupFilterCondition> {
 
     protected static final String GROUP_FILTER_CLASS_NAME = "jmix-group-filter";

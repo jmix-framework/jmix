@@ -28,8 +28,8 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.flowui.FlowuiComponentProperties;
-import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.UiComponentProperties;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
@@ -60,7 +60,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     protected Messages messages;
     protected UiComponents uiComponents;
     protected CurrentAuthentication currentAuthentication;
-    protected FlowuiProperties flowuiProperties;
+    protected UiProperties uiProperties;
 
     protected ItemsPerPage itemsPerPage;
     protected PaginationDataLoader loader;
@@ -99,7 +99,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
         uiComponents = applicationContext.getBean(UiComponents.class);
         messages = applicationContext.getBean(Messages.class);
         currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
-        flowuiProperties = applicationContext.getBean(FlowuiProperties.class);
+        uiProperties = applicationContext.getBean(UiProperties.class);
     }
 
     protected void initComponent() {
@@ -177,7 +177,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
     /**
      * Sets visibility of unlimited (null) option value in the items per page select component. If unlimited (null) option
-     * is selected component will try to load data with {@link FlowuiProperties#getEntityMaxFetchSize(String)}
+     * is selected component will try to load data with {@link UiProperties#getEntityMaxFetchSize(String)}
      * limitation. The default value is true.
      *
      * @param unlimitedItemVisible whether unlimited option should be visible
@@ -196,7 +196,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     /**
      * Sets visibility of items per page select component. This component contains options to limit the number
      * of items for one page. If custom options are not set component will use
-     * {@link FlowuiComponentProperties#getPaginationItemsPerPageItems()}. The default value is {@code false}.
+     * {@link UiComponentProperties#getPaginationItemsPerPageItems()}. The default value is {@code false}.
      */
     public void setItemsPerPageVisible(boolean itemsPerPageVisible) {
         if (isItemsPerPageVisible() != itemsPerPageVisible) {
@@ -584,7 +584,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     }
 
     protected int getEntityMaxFetchSize(MetaClass metaClass) {
-        return flowuiProperties.getEntityMaxFetchSize(metaClass.getName());
+        return uiProperties.getEntityMaxFetchSize(metaClass.getName());
     }
 
     protected void setSilentlyItemsPerPageValue(@Nullable Integer value) {

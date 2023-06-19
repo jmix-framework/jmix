@@ -16,7 +16,7 @@
 package io.jmix.reports.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
-import com.haulmont.yarg.structure.BandOrientation;
+import io.jmix.reports.yarg.structure.BandOrientation;
 
 public enum Orientation implements EnumClass<Integer> {
     HORIZONTAL(0, BandOrientation.HORIZONTAL),

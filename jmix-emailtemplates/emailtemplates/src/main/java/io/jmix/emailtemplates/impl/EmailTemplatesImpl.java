@@ -17,7 +17,7 @@
 package io.jmix.emailtemplates.impl;
 
 import com.google.common.io.Files;
-import com.haulmont.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.email.EmailAttachment;

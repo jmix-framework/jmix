@@ -37,7 +37,10 @@
         <hbox classNames="buttons-panel">
             <simplePagination id="pagination" dataLoader="sendingAttachmentsDl"/>
         </hbox>
-        <dataGrid id="attachmentsDataGrid" dataContainer="attachmentsDc" width="100%">
+        <dataGrid id="attachmentsDataGrid"
+                  dataContainer="attachmentsDc"
+                  minHeight="20em"
+                  width="100%">
             <columns>
                 <column property="name"/>
                 <column property="encoding"/>

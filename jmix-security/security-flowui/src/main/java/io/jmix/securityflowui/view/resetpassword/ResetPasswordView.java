@@ -33,7 +33,7 @@ import java.util.Set;
 
 @ViewController("resetPasswordView")
 @ViewDescriptor("reset-password-view.xml")
-@DialogMode(width = "40em", height = "AUTO")
+@DialogMode(width = "40em")
 public class ResetPasswordView extends StandardView {
 
     @ViewComponent

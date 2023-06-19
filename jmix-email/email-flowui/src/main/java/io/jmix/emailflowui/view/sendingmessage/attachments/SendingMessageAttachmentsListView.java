@@ -23,7 +23,7 @@ import io.jmix.flowui.view.*;
 
 @ViewController("email_SendingMessageAttachments.list")
 @ViewDescriptor("sending-message-attachments-list-view.xml")
-@DialogMode(width = "50em", height = "37.5em", resizable = true)
+@DialogMode(width = "50em")
 @LookupComponent("attachmentsDataGrid")
 public class SendingMessageAttachmentsListView extends StandardListView<SendingAttachment> {
 

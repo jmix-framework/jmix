@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @ViewController("sec_ResourceRoleModel.lookup")
 @ViewDescriptor("resource-role-model-lookup-view.xml")
 @LookupComponent("roleModelsTable")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "50em")
 public class ResourceRoleModelLookupView extends StandardListView<ResourceRoleModel> {
 
     @ViewComponent

@@ -46,7 +46,7 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 @ViewController("quartz_JobModel.list")
 @ViewDescriptor("job-model-list-view.xml")
 @LookupComponent("jobModelsTable")
-@DialogMode(width = "60em", height = "37.5em", resizable = true)
+@DialogMode(width = "60em")
 public class JobModelListView extends StandardListView<JobModel> {
 
     @ViewComponent

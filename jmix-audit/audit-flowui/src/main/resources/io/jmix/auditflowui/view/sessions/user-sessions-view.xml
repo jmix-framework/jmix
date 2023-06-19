@@ -51,7 +51,8 @@
             <button id="refreshBtn" action="sessionsTable.refresh"/>
             <button id="expireBtn" action="sessionsTable.expire"/>
         </hbox>
-        <dataGrid id="sessionsTable" minHeight="20em"
+        <dataGrid id="sessionsTable"
+                  minHeight="20em"
                   width="100%"
                   dataContainer="userSessionsDc"
                   selectionMode="MULTI">

@@ -39,10 +39,7 @@ import io.jmix.reportsflowui.view.run.ReportRunView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
 
@@ -144,8 +141,8 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
     }
 
     protected void openReportParamsDialog(Report report, View<?> view) {
-        Map<String, Object> selectedItems = null;
-        Set<?> items = target.getSelectedItems();
+        Map<String, Object> selectedItems = new HashMap<>();
+        Set<E> items = target.getSelectedItems();
         if (!items.isEmpty()) {
             selectedItems = ImmutableMap.of(
                     DEFAULT_LIST_OF_ENTITIES_ALIAS, items,

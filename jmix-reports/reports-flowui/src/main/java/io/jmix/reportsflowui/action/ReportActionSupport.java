@@ -104,22 +104,20 @@ public class ReportActionSupport {
                 inputValueMetaClass);
 
         if (reports.size() > 1) {
-            if (CollectionUtils.isNotEmpty(reports)) {
-                DialogWindow<ReportRunView> reportRunScreenDialogWindow = dialogWindows.lookup(view, Report.class)
-                        .withViewClass(ReportRunView.class)
-                        .withSelectHandler(selectedReports -> {
-                            if (CollectionUtils.isNotEmpty(selectedReports)) {
-                                Report report = selectedReports.iterator().next();
-                                runReport(report, view, selectedValue, inputValueMetaClass, outputFileName);
-                            }
-                        })
-                        .build();
+            DialogWindow<ReportRunView> reportRunScreenDialogWindow = dialogWindows.lookup(view, Report.class)
+                    .withViewClass(ReportRunView.class)
+                    .withSelectHandler(selectedReports -> {
+                        if (CollectionUtils.isNotEmpty(selectedReports)) {
+                            Report report = selectedReports.iterator().next();
+                            runReport(report, view, selectedValue, inputValueMetaClass, outputFileName);
+                        }
+                    })
+                    .build();
 
-                ReportRunView reportRunView = reportRunScreenDialogWindow.getView();
-                reportRunView.setReports(reports);
+            ReportRunView reportRunView = reportRunScreenDialogWindow.getView();
+            reportRunView.setReports(reports);
 
-                reportRunScreenDialogWindow.open();
-            }
+            reportRunScreenDialogWindow.open();
         } else if (reports.size() == 1) {
             Report report = reports.get(0);
             runReport(report, view, selectedValue, inputValueMetaClass, outputFileName);

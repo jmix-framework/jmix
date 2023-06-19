@@ -18,7 +18,6 @@ package io.jmix.reportsflowui.view.template;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.reports.entity.ReportOutputType;
@@ -30,7 +29,6 @@ public abstract class AbstractDescriptionEditFragment<C extends Component> exten
 
     protected ReportTemplate reportTemplate;
     protected VerticalLayout previewBox;
-    //protected Dialog target;
 
     @Nullable
     public ReportTemplate getReportTemplate() {
@@ -40,15 +38,6 @@ public abstract class AbstractDescriptionEditFragment<C extends Component> exten
     public void setReportTemplate(@Nullable ReportTemplate reportTemplate) {
         this.reportTemplate = reportTemplate;
     }
-
-//    public Dialog getTarget() {
-//        return target;
-//    }
-//
-//    public void setTarget(Dialog target) {
-//        Preconditions.checkNotNullArgument(target);
-//        this.target = target;
-//    }
 
     public VerticalLayout getPreviewBox() {
         return previewBox;
@@ -64,18 +53,12 @@ public abstract class AbstractDescriptionEditFragment<C extends Component> exten
         previewBox.setSizeFull();
         previewBox.removeAll();
 
-//        target.setResizable(true);
-//        target.setWidth("80em");
-
         initPreviewContent(previewBox);
     }
 
     public void hidePreview() {
         previewBox.setVisible(false);
         previewBox.removeAll();
-
-//        target.setSizeUndefined();
-//        target.setResizable(false);
     }
 
     public abstract boolean isSupportPreview();

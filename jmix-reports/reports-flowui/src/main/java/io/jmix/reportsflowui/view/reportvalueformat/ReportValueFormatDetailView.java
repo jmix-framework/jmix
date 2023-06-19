@@ -16,7 +16,7 @@ import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.ReportValueFormat;
-import io.jmix.reportsflowui.helper.ReportsUiHelper;
+import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
-    protected ReportsUiHelper reportsUiHelper;
+    protected ReportScriptEditor reportScriptEditor;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -122,7 +122,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
 
     @Subscribe("fullScreenTransformationBtn")
     public void onFullScreenTransformationBtnClick(final ClickEvent<Button> event) {
-        reportsUiHelper.showScriptEditorDialog(this)
+        reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("fullScreenBtn.title"))
                 .withValue(valuesFormatsDc.getItem().getFormatString())
                 .withEditorMode(CodeEditorMode.GROOVY)

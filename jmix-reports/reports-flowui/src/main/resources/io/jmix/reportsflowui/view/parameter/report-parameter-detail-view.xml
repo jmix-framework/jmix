@@ -72,7 +72,7 @@
                     </vbox>
                     <div id="transformationEditorBox">
                         <div classNames="flex, justify-between">
-                            <label text="msg://parameters.groovyScript.title"/>
+                            <label text="msg://parameters.groovyScript.title" setFor="transformationScript"/>
                             <button id="fullScreenTransformationBtn" text="msg:///fullScreenBtn.title"
                                     themeNames="tertiary-inline"/>
                         </div>
@@ -96,7 +96,7 @@
                               label="msg://parameters.validateFields"
                               property="validationOn"/>
                     <div classNames="flex, justify-between">
-                        <label text="msg://parameters.groovyScript.title"/>
+                        <label text="msg://parameters.groovyScript.title" setFor="validationScript"/>
                         <button id="fullScreenValidationBtn" text="msg:///fullScreenBtn.title"
                                 themeNames="tertiary-inline"/>
                     </div>

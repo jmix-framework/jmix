@@ -70,9 +70,9 @@ import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
-import io.jmix.reportsflowui.CrossTabDataGridDecorator;
+import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.helper.ReportsUiHelper;
+import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
 import io.jmix.security.constraint.PolicyStore;
@@ -89,7 +89,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.jmix.reportsflowui.helper.ReportsUiHelper.FIELD_ICON_CLASS_NAME;
+import static io.jmix.reportsflowui.helper.ReportScriptEditor.FIELD_ICON_CLASS_NAME;
 
 @Route(value = "reports/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.detail")
@@ -233,9 +233,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Autowired
     protected Stores stores;
     @Autowired
-    protected ReportsUiHelper reportsUiHelper;
+    protected ReportScriptEditor reportScriptEditor;
     @Autowired
-    protected CrossTabDataGridDecorator dataGridDecorator;
+    protected CrossTabDataGridSupport dataGridDecorator;
     @Autowired
     protected ReportsClientProperties reportsClientProperties;
     @Autowired
@@ -1277,7 +1277,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void onDataSetScriptFieldExpandIconClick() {
-        reportsUiHelper.showScriptEditorDialog(this)
+        reportScriptEditor.create(this)
                 .withTitle(getScriptEditorDialogCaption())
                 .withValue(dataSetsDc.getItem().getText())
                 .withEditorMode(CodeEditorMode.GROOVY)
@@ -1311,7 +1311,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("jsonGroovyCodeEditorFullScreenBtn")
     public void onJsonGroovyCodeEditorFullScreenBtnClick(final ClickEvent<Button> event) {
-        reportsUiHelper.showScriptEditorDialog(this)
+        reportScriptEditor.create(this)
                 .withTitle(getScriptEditorDialogCaption())
                 .withValue(dataSetsDc.getItem().getJsonSourceText())
                 .withEditorMode(CodeEditorMode.GROOVY)
@@ -1453,7 +1453,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("validationScriptFullScreenBtn")
     public void onValidationScriptFullScreenBtnClick(final ClickEvent<Button> event) {
-        reportsUiHelper.showScriptEditorDialog(this)
+        reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("fullScreenBtn.title"))
                 .withValue(reportDc.getItem().getValidationScript())
                 .withEditorMode(CodeEditorMode.GROOVY)

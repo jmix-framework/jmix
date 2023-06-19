@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.EnumSet;
 
-@ViewController("report_ReportImportDialog.view")
+@ViewController("report_ReportImportDialogView")
 @ViewDescriptor("report-import-view.xml")
 @DialogMode(width = "30em")
 public class ReportImportDialogView extends StandardView {

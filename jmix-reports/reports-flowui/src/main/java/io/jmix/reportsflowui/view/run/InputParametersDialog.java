@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
-@ViewController("report_InputParametersDialog.view")
+@ViewController("report_InputParametersDialogView")
 @ViewDescriptor("input-parameters-dialog.xml")
 @DialogMode(width = "30em")
 public class InputParametersDialog extends StandardView {

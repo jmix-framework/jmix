@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.helper;
+@NonNullApi
+package io.jmix.reportsflowui.support;
 
-@FunctionalInterface
-public interface Procedure {
-
-    void invoke();
-
-}
-
+import org.springframework.lang.NonNullApi;

@@ -177,17 +177,18 @@ public class ReportRunView extends StandardListView<Report> {
                         currentUserSubstitution.getEffectiveUser(), metaClassParameter)
                 .stream()
                 .filter(report ->
-                        isSearchReport(nameFilterValue, codeFilterValue, groupFilterValue, dateFilterValue, report)
+                        isCandidateReport(nameFilterValue, codeFilterValue, groupFilterValue, dateFilterValue, report)
                 )
                 .toList();
 
         reportsDc.setItems(reports);
     }
 
-    protected boolean isSearchReport(@Nullable String nameFilterValue, @Nullable String codeFilterValue,
-                                     @Nullable ReportGroup groupFilterValue, @Nullable Date dateFilterValue,
-                                     Report report) {
-        if (!report.getName().toLowerCase().contains(nameFilterValue)) {
+    protected boolean isCandidateReport(@Nullable String nameFilterValue, @Nullable String codeFilterValue,
+                                        @Nullable ReportGroup groupFilterValue, @Nullable Date dateFilterValue,
+                                        Report report) {
+        if (nameFilterValue != null
+                && !report.getName().toLowerCase().contains(nameFilterValue)) {
             return false;
         }
 
@@ -199,7 +200,8 @@ public class ReportRunView extends StandardListView<Report> {
             }
         }
 
-        if (groupFilterValue != null && !Objects.equals(report.getGroup(), groupFilterValue)) {
+        if (groupFilterValue != null
+                && !Objects.equals(report.getGroup(), groupFilterValue)) {
             return false;
         }
 

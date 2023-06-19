@@ -15,16 +15,21 @@
   ~ limitations under the License.
   -->
 
-<view xmlns="http://jmix.io/schema/flowui/view"
-        title="msg://ReportExecutionListView.title"
-        focusComponent="executionsDataGrid">
+<view xmlns="http://jmix.io/schema/flowui/view" xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://ReportExecutionListView.title"
+      focusComponent="executionsDataGrid">
     <data>
         <collection id="executionsDc"
                     class="io.jmix.reports.entity.ReportExecution"
                     fetchPlan="reportExecution.view">
             <loader id="executionsDl">
                 <query>
-                    <![CDATA[select e from report_ReportExecution e order by e.createTs]]>
+                    <![CDATA[select e from report_ReportExecution e order by e.startTime desc]]>
+                    <condition>
+                        <c:jpql>
+                            <c:where>{E}.report.id in :reportIds</c:where>
+                        </c:jpql>
+                    </condition>
                 </query>
             </loader>
         </collection>
@@ -40,13 +45,14 @@
     <layout>
         <genericFilter id="genericFilter" dataLoader="executionsDl" opened="false"/>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="excel" action="executionsDataGrid.excel"/>
-            <button id="download" action="executionsDataGrid.download"/>
+            <button id="excelBtn" action="executionsDataGrid.excel"/>
+            <button id="downloadBtn" action="executionsDataGrid.download"/>
             <simplePagination id="pagination" dataLoader="executionsDl"/>
         </hbox>
         <dataGrid id="executionsDataGrid" dataContainer="executionsDc" width="100%" selectionMode="MULTI">
             <actions>
-                <action id="excel" type="excelExport"/>
+                <action id="excel" type="grdexp_excelExport"/>
+                <action id="download" text="msg://action.download.text" icon="DOWNLOAD"/>
             </actions>
             <columns>
                 <column property="startTime"/>

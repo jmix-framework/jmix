@@ -31,7 +31,7 @@
         </formLayout>
         <div id="groovyCodeEditorBox" visible="false" width="100%">
             <div classNames="flex, justify-between">
-                <label text="msg://valuesFormats.groovyScript"/>
+                <label text="msg://valuesFormats.groovyScript" setFor="groovyCodeEditor"/>
                 <button id="fullScreenTransformationBtn" text="msg:///fullScreenBtn.title"
                         themeNames="tertiary-inline"/>
             </div>

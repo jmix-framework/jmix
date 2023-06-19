@@ -13,7 +13,7 @@ import io.jmix.flowui.view.*;
 
 import java.util.function.Consumer;
 
-@ViewController("report_ScriptEditor.view")
+@ViewController("report_ScriptEditorView")
 @ViewDescriptor("script-editor-view.xml")
 @DialogMode(width = "75em", height = "45em")
 public class ScriptEditorView extends StandardView {

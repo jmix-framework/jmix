@@ -16,7 +16,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://showReportTable.caption">
+      title="msg://showReportTable.title">
 
     <data>
         <collection id="reportsDc"

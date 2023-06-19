@@ -33,7 +33,7 @@ import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.PredefinedTransformation;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
-import io.jmix.reportsflowui.helper.ReportsUiHelper;
+import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.view.report.ReportDetailView;
 import io.jmix.reportsflowui.view.run.ParameterComponentGenerationStrategy;
 import io.jmix.reportsflowui.view.validators.ReportParamAliasValidator;
@@ -111,7 +111,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @Autowired
     protected Dialogs dialogs;
     @Autowired
-    protected ReportsUiHelper reportsUiHelper;
+    protected ReportScriptEditor reportScriptEditor;
     @Autowired
     protected JmixObjectToStringConverter jmixObjectToStringConverter;
     @Autowired
@@ -186,7 +186,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     @Subscribe("fullScreenTransformationBtn")
     public void onFullScreenTransformationBtnClick(final ClickEvent<Button> event) {
-        reportsUiHelper.showScriptEditorDialog(this)
+        reportScriptEditor.create(this)
                 .withTitle(messages.getMessage("fullScreenBtn.title"))
                 .withValue(parameterDc.getItem().getTransformationScript())
                 .withEditorMode(CodeEditorMode.GROOVY)
@@ -212,7 +212,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     @Subscribe("fullScreenValidationBtn")
     public void onFullScreenValidationBtnClick(final ClickEvent<Button> event) {
-        reportsUiHelper.showScriptEditorDialog(this)
+        reportScriptEditor.create(this)
                 .withTitle(messages.getMessage("fullScreenBtn.title"))
                 .withValue(parameterDc.getItem().getValidationScript())
                 .withEditorMode(CodeEditorMode.GROOVY)
@@ -238,23 +238,23 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     @Subscribe("lookupWhereFullScreenBtn")
     public void onLookupWhereFullScreenBtnClick(final ClickEvent<Button> event) {
-        reportsUiHelper.showScriptEditorDialog(this)
-                .withTitle(messages.getMessage("fullScreenBtn.title"))
-                .withValue(parameterDc.getItem().getLookupJoin())
-                .withEditorMode(CodeEditorMode.GROOVY)
-                .withCloseOnClick(value -> parameterDc.getItem().setLookupJoin(value))
-                .withHelpOnClick(this::onLookupJoinHelpIconClick)
-                .open();
-    }
-
-    @Subscribe("lookupJoinFullScreenBtn")
-    public void onLookupJoinFullScreenBtnClick(final ClickEvent<Button> event) {
-        reportsUiHelper.showScriptEditorDialog(this)
+        reportScriptEditor.create(this)
                 .withTitle(messages.getMessage("fullScreenBtn.title"))
                 .withValue(parameterDc.getItem().getLookupWhere())
                 .withEditorMode(CodeEditorMode.GROOVY)
                 .withCloseOnClick(value -> parameterDc.getItem().setLookupWhere(value))
                 .withHelpOnClick(this::onLookupWhereHelpIconClick)
+                .open();
+    }
+
+    @Subscribe("lookupJoinFullScreenBtn")
+    public void onLookupJoinFullScreenBtnClick(final ClickEvent<Button> event) {
+        reportScriptEditor.create(this)
+                .withTitle(messages.getMessage("fullScreenBtn.title"))
+                .withValue(parameterDc.getItem().getLookupJoin())
+                .withEditorMode(CodeEditorMode.GROOVY)
+                .withCloseOnClick(value -> parameterDc.getItem().setLookupJoin(value))
+                .withHelpOnClick(this::onLookupJoinHelpIconClick)
                 .open();
     }
 
@@ -333,7 +333,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         if (parameter.getType() == ParameterType.ENTITY || parameter.getType() == ParameterType.ENTITY_LIST) {
             Class clazz = parameterClassResolver.resolveClass(parameter);
             if (clazz != null) {
-                String availableListViewId = viewRegistry.getAvailableListViewId(metadata.findClass(clazz));
+                String availableListViewId = viewRegistry.getAvailableListViewId(metadata.getClass(clazz));
                 screenField.setItems(availableListViewId);
             }
         }

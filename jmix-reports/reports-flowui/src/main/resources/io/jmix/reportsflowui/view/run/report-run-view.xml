@@ -71,7 +71,7 @@
             <button id="runReport" action="reportDataGrid.runReport"/>
         </hbox>
         <dataGrid id="reportDataGrid"
-                  width="100%"
+                  width="100%" minHeight="20em"
                   dataContainer="reportsDc">
             <actions>
                 <action id="runReport" text="msg://io.jmix.reportsflowui.view.run/runReport.action.title" icon="ANGLE_DOUBLE_RIGHT"

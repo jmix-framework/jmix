@@ -16,20 +16,13 @@
 
 package io.jmix.reportsflowui;
 
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
-import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
 import io.jmix.reports.ReportsConfiguration;
-import io.jmix.reports.util.DataSetFactory;
-import io.jmix.security.constraint.PolicyStore;
-import io.jmix.security.constraint.SecureOperations;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -45,20 +38,6 @@ import java.util.Collections;
 @JmixModule(dependsOn = {FlowuiConfiguration.class, ReportsConfiguration.class, GridExportFlowuiConfiguration.class})
 @PropertySource(name = "io.jmix.reportsflowui", value = "classpath:/io/jmix/reportsflowui/module.properties")
 public class ReportsFlowuiConfiguration {
-
-    @Bean("report_DataSetFactory")
-    public DataSetFactory dataSetFactory() {
-        return new DataSetFactory();
-    }
-
-    @Bean("report_CrossTabOrientationDataGridDecorator")
-    public CrossTabDataGridDecorator crossTabDataGridDecorator(DataSetFactory dataSetFactory, UiComponents uiComponents,
-                                                               SecureOperations secureOperations,
-                                                               PolicyStore policyStore, Metadata metadata,
-                                                               DataComponents dataComponents, Messages messages) {
-        return new CrossTabDataGridDecorator(dataSetFactory, uiComponents, secureOperations, policyStore, metadata,
-                dataComponents, messages);
-    }
 
     @Bean("report_ReportsControllersConfiguration")
     public ViewControllersConfiguration views(ApplicationContext applicationContext,

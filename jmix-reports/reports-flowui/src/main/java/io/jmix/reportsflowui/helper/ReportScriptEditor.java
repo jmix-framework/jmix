@@ -22,13 +22,17 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
+import io.jmix.reports.entity.DataSet;
 import io.jmix.reportsflowui.view.scripteditor.ScriptEditorView;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
-@Component("report_ReportsUiHelper")
-public class ReportsUiHelper {
+/**
+ * Provides fluent interface for opening script editor
+ */
+@Component("report_ReportScriptEditor")
+public class ReportScriptEditor {
 
     public static final String FIELD_ICON_CLASS_NAME = "reports-field-icon";
     public static final String FIELD_ICON_SIZE_CLASS_NAME = "reports-field-icon-size";
@@ -37,13 +41,13 @@ public class ReportsUiHelper {
     protected final Messages messages;
     protected final DialogWindows dialogWindows;
 
-    public ReportsUiHelper(UiComponents uiComponents, Messages messages, DialogWindows dialogWindows) {
+    public ReportScriptEditor(UiComponents uiComponents, Messages messages, DialogWindows dialogWindows) {
         this.uiComponents = uiComponents;
         this.messages = messages;
         this.dialogWindows = dialogWindows;
     }
 
-    public Builder showScriptEditorDialog(View<?> parentView) {
+    public Builder create(View<?> parentView) {
         DialogWindow<ScriptEditorView> scriptEditorDialogWindow = dialogWindows.view(parentView, ScriptEditorView.class)
                 .build();
 

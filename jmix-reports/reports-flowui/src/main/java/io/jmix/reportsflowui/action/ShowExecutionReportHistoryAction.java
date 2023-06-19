@@ -19,6 +19,7 @@ package io.jmix.reportsflowui.action;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.ActionType;
@@ -35,7 +36,6 @@ import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -51,6 +51,7 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
     public static final String ID = "report_showExecutionReportHistory";
 
     protected DialogWindows dialogWindows;
+    protected Metadata metadata;
 
     public ShowExecutionReportHistoryAction() {
         this(ID);
@@ -75,7 +76,7 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
         this.icon = ComponentUtils.convertToIcon(VaadinIcon.CLOCK);
     }
 
-    protected void openLookup(@Nullable MetaClass metaClass) {
+    protected void openLookup(MetaClass metaClass) {
         View<?> parent = findParent();
         DialogWindow<ReportExecutionDialog> reportExecutionDialogDialogWindow = dialogWindows.lookup(parent, Report.class)
                 .withViewClass(ReportExecutionDialog.class)
@@ -114,13 +115,10 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
     @Override
     public void execute() {
         checkTarget();
+        checkTargetItems(EntityDataUnit.class);
 
-        MetaClass metaClass = null;
         DataUnit items = target.getItems();
-        if (items instanceof EntityDataUnit) {
-            metaClass = ((EntityDataUnit) items).getEntityMetaClass();
-        }
-
+        MetaClass metaClass = ((EntityDataUnit) items).getEntityMetaClass();
         openLookup(metaClass);
     }
 }

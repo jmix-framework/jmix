@@ -39,18 +39,23 @@ public interface ReportsRunRole {
     String CODE = "report-run";
 
     @ViewPolicy(viewIds = {
-            "report_InputParametersDialog.view",
+            "report_InputParametersDialogView",
             "report_ReportRunView",
             "report_ReportTableView"
     })
+    void viewPolicy();
+
     @MenuPolicy(menuIds = {"report_ReportRunView"})
+    void menuPolicy();
 
     @EntityPolicy(entityClass = Report.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportGroup.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportTemplate.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportExecution.class, actions = {EntityPolicyAction.CREATE, EntityPolicyAction.UPDATE})
+    void entityPolicy();
+
     @EntityAttributePolicy(entityClass = Report.class, attributes = {"name", "localeNames", "description", "code", "updateTs", "group"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportGroup.class, attributes = {"title", "localeNames"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportTemplate.class, attributes = {"code", "name", "customDefinition", "custom", "alterable"}, action = VIEW)
-    void reportsRun();
+    void entityAttributePolicy();
 }

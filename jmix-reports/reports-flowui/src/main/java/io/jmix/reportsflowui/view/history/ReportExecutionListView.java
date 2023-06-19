@@ -17,13 +17,13 @@
 package io.jmix.reportsflowui.view.history;
 
 
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.FileRef;
-import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.download.Downloader;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
@@ -72,25 +72,21 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
                 .setKey("outputDocument")
                 .setSortable(true)
                 .setResizable(true);
-
-        SecuredBaseAction downloadDocumentAction = createDownloadAction();
-        executionsDataGrid.addAction(downloadDocumentAction);
     }
 
-    private SecuredBaseAction createDownloadAction() {
-        SecuredBaseAction downloadDocumentAction = new SecuredBaseAction("download")
-                .withIcon(ComponentUtils.convertToIcon(VaadinIcon.DOWNLOAD))
-                .withTitle(messageBundle.getMessage("action.download.text"))
-                .withHandler(handler -> {
-                    ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
-                    if (execution != null && execution.getOutputDocument() != null) {
-                        FileRef fileRef = execution.getOutputDocument();
-                        downloader.download(fileRef);
-                    }
-                });
 
-        downloadDocumentAction.addEnabledRule(this::downloadEnabledRule);
-        return downloadDocumentAction;
+    @Subscribe("executionsDataGrid.download")
+    public void onDownloadClick(final ActionPerformedEvent event) {
+        ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
+        if (execution != null && execution.getOutputDocument() != null) {
+            FileRef fileRef = execution.getOutputDocument();
+            downloader.download(fileRef);
+        }
+    }
+
+    @Install(to = "executionsDataGrid.download", subject = "enabledRule")
+    protected boolean reportsDataGridImportEnabledRule() {
+        return downloadEnabledRule();
     }
 
     @Override
@@ -103,21 +99,10 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     }
 
     @Subscribe
-    protected void onBeforeShow(BeforeShowEvent event) {
-        initDataLoader();
-    }
-
-    protected void initDataLoader() {
-        StringBuilder query = new StringBuilder("select e from report_ReportExecution e");
-
-        if (!CollectionUtils.isEmpty(filterByReports)) {
-            query.append(" where e.report.id in :reportIds");
+    public void onQueryParametersChange(final QueryParametersChangeEvent event) {
+        if (CollectionUtils.isNotEmpty(filterByReports)) {
             executionsDl.setParameter("reportIds", filterByReports);
         }
-        query.append(" order by e.startTime desc");
-
-        executionsDl.setQuery(query.toString());
-        executionsDl.load();
     }
 
     protected String getReportsNames() {

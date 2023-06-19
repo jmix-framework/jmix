@@ -45,26 +45,28 @@ import io.jmix.securityflowui.role.annotation.ViewPolicy;
 @ResourceRole(name = "Reports: full access", code = ReportsFullAccessRole.CODE, scope = SecurityScope.UI)
 public interface ReportsFullAccessRole {
 
+	String CODE = "reports-full-access";
+
 	@ViewPolicy(viewIds = {
-			"report_InputParametersDialog.view",
 			"report_ReportRunView",
 			"report_ReportTableView",
 			"report_ReportGroup.list",
 			"report_Report.list",
 			"report_Report.detail",
 			"report_ReportInputParameter.detail",
-			"report_ReportImportDialog.view",
-			"report_Region.detail",
-			"report_ReportWizardCreator.view",
-			"report_EntityTreeList.list",
+			"report_ReportImportDialogView",
+			"report_WizardReportRegion.detail",
+			"report_ReportWizardCreatorView",
+			"report_EntityTreeNode.list",
 			"report_ReportExecution.list",
-			"report_ReportExecutionDialog.view",
+			"report_ReportExecutionDialogView",
 			"report_ReportGroup.detail",
-			"report_InputParametersDialog.view",
+			"report_InputParametersDialogView",
 			"report_ReportTemplate.detail",
 			"report_ReportValueFormat.detail",
-			"report_ScriptEditor.view"
+			"report_ScriptEditorView"
 	})
+	void viewPolicy();
 
 	@MenuPolicy(menuIds = {
 			"report_Report.list",
@@ -72,6 +74,7 @@ public interface ReportsFullAccessRole {
 			"report_ReportRunView",
 			"report_ReportTableView"
 	})
+	void menuPolicy();
 
 	@EntityPolicy(entityClass = Report.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportGroup.class, actions = EntityPolicyAction.ALL)
@@ -95,6 +98,8 @@ public interface ReportsFullAccessRole {
 	@EntityPolicy(entityClass = ReportInputParameter.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportScreen.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportValueFormat.class, actions = EntityPolicyAction.ALL)
+	void entityPolicy();
+
 	@EntityAttributePolicy(entityClass = Report.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportGroup.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportTemplate.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
@@ -117,7 +122,5 @@ public interface ReportsFullAccessRole {
 	@EntityAttributePolicy(entityClass = ReportInputParameter.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportScreen.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportValueFormat.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
-	void reportsFullAccess();
-
-	String CODE = "reports-full-access";
+	void entityAttributePolicy();
 }

@@ -36,7 +36,7 @@ import java.util.Map;
  * </ul>
  * <br>
  *
- * <b>Note:</b> if a report runs in the background, the screen (or screen fragment) from which the report runs should be specified as well.
+ * <b>Note:</b> if a report runs in the background, the view from which the report runs should be specified as well.
  *
  * <br>
  * Creation examples:

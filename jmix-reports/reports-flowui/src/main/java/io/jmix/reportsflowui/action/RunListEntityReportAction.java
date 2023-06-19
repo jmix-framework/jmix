@@ -39,7 +39,6 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.app.ParameterPrototype;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -115,26 +114,26 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
     }
 
     protected boolean isDataAvailable() {
-        ContainerDataUnit<?> unit = (ContainerDataUnit<?>) target.getItems();
-        CollectionContainer<?> container = unit.getContainer();
+        ContainerDataUnit<E> unit = (ContainerDataUnit<E>) target.getItems();
+        CollectionContainer<E> container = unit.getContainer();
         return container instanceof HasLoader && unit.getState() == BindingState.ACTIVE && !container.getItems().isEmpty();
     }
 
     protected void printSelected(Set<?> selected) {
-        ContainerDataUnit<?> unit = (ContainerDataUnit<?>) target.getItems();
-        InstanceContainer<?> container = unit.getContainer();
+        ContainerDataUnit<E> unit = (ContainerDataUnit<E>) target.getItems();
+        InstanceContainer<E> container = unit.getContainer();
         MetaClass metaClass = container.getEntityMetaClass();
 
         reportActionSupport.openRunReportScreen(findParent(), selected, metaClass);
     }
 
     protected void printAll() {
-        ContainerDataUnit<?> unit = (ContainerDataUnit<?>) target.getItems();
-        CollectionContainer<?> container = unit.getContainer();
+        ContainerDataUnit<E> unit = (ContainerDataUnit<E>) target.getItems();
+        CollectionContainer<E> container = unit.getContainer();
         if (container instanceof CollectionPropertyContainer) {
             // as CollectionPropertyContainer does not have loader it always fetches all records,
             // so print these records as selected
-            printSelected(new HashSet(container.getMutableItems()));
+            printSelected(new HashSet<E>(container.getMutableItems()));
             return;
         }
         CollectionLoader<?> loader = (CollectionLoader<?>) ((HasLoader) unit.getContainer()).getLoader();
@@ -165,43 +164,38 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
         DialogAction cancelAction = new DialogAction(DialogAction.Type.CANCEL);
 
         Set<E> selected = target.getSelectedItems();
-        if (CollectionUtils.isNotEmpty(selected)) {
-            if (selected.size() > 1) {
-                Action printSelectedAction = new BaseAction("actions.printSelected")
-                        .withVariant(ActionVariant.PRIMARY)
-                        .withHandler(event -> printSelected(selected))
-                        .withIcon(ComponentUtils.convertToIcon(VaadinIcon.LINES))
-                        .withText(messages.getMessage(getClass(), "actions.printSelected"));
+        if (selected.size() > 1) {
+            Action printSelectedAction = new BaseAction("actions.printSelected")
+                    .withVariant(ActionVariant.PRIMARY)
+                    .withHandler(event -> printSelected(selected))
+                    .withIcon(ComponentUtils.convertToIcon(VaadinIcon.LINES))
+                    .withText(messages.getMessage(getClass(), "actions.printSelected"));
 
-                Action printAllAction = new BaseAction("actions.printAll")
-                        .withText(messages.getMessage(getClass(), "actions.printAll"))
-                        .withIcon(ComponentUtils.convertToIcon(VaadinIcon.TABLE))
-                        .withHandler(event -> printAll());
+            Action printAllAction = new BaseAction("actions.printAll")
+                    .withText(messages.getMessage(getClass(), "actions.printAll"))
+                    .withIcon(ComponentUtils.convertToIcon(VaadinIcon.TABLE))
+                    .withHandler(event -> printAll());
 
-                dialogs.createOptionDialog()
-                        .withHeader(messages.getMessage(getClass(), "notifications.confirmPrintSelectedHeader"))
-                        .withText(messages.getMessage(getClass(), "notifications.confirmPrintSelected"))
-                        .withActions(printAllAction, printSelectedAction, cancelAction)
-                        .open();
-            } else {
-                printSelected(selected);
-            }
+            dialogs.createOptionDialog()
+                    .withHeader(messages.getMessage(getClass(), "notifications.confirmPrintSelectedHeader"))
+                    .withText(messages.getMessage(getClass(), "notifications.confirmPrintSelected"))
+                    .withActions(printAllAction, printSelectedAction, cancelAction)
+                    .open();
+        } else if (selected.size() == 1) {
+            printSelected(selected);
+        } else if (isDataAvailable()) {
+            Action yesAction = new DialogAction(DialogAction.Type.OK)
+                    .withHandler(event -> printAll())
+                    .withVariant(ActionVariant.PRIMARY);
+
+            dialogs.createOptionDialog()
+                    .withHeader(messages.getMessage(getClass(), "notifications.confirmPrintAllheader"))
+                    .withText(messages.getMessage(getClass(), "notifications.confirmPrintAll"))
+                    .withActions(yesAction, cancelAction)
+                    .open();
         } else {
-            if (isDataAvailable()) {
-                Action yesAction = new DialogAction(DialogAction.Type.OK)
-                        .withHandler(event -> printAll())
-                        .withVariant(ActionVariant.PRIMARY);
-
-                dialogs.createOptionDialog()
-                        .withHeader(messages.getMessage(getClass(), "notifications.confirmPrintAllheader"))
-                        .withText(messages.getMessage(getClass(), "notifications.confirmPrintAll"))
-                        .withActions(yesAction, cancelAction)
-                        .open();
-            } else {
-                notifications.create(messages.getMessage(getClass(), "notifications.noSelectedEntity"))
-                        .show();
-            }
-
+            notifications.create(messages.getMessage(getClass(), "notifications.noSelectedEntity"))
+                    .show();
         }
     }
 

@@ -27,12 +27,13 @@ public class ReportsClientProperties {
      */
     boolean useBackgroundReportProcessing;
 
+    /**
+     * Defines the processing timeout in milliseconds for the report execution
+     */
     long backgroundReportProcessingTimeoutMs;
 
     /**
      * Whether Script fields in report editor should handle TAB key as \t symbol instead of focus navigation.
-     *
-     * @see io.jmix.reportsui.screen.definition.edit.BandDefinitionEditor
      */
     boolean enableTabSymbolInDataSetEditor;
 
@@ -51,6 +52,9 @@ public class ReportsClientProperties {
         return useBackgroundReportProcessing;
     }
 
+    /**
+     * @see #backgroundReportProcessingTimeoutMs
+     */
     public long getBackgroundReportProcessingTimeoutMs() {
         return backgroundReportProcessingTimeoutMs;
     }

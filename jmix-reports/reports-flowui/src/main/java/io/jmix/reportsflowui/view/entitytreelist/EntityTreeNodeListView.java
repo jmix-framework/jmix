@@ -9,11 +9,11 @@ import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.reportsflowui.view.reportwizard.EntityTreeComposite;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ViewController("EntityTreeList.lookup")
-@ViewDescriptor("entity-tree-lookup.xml")
+@ViewController("report_EntityTreeNode.list")
+@ViewDescriptor("entity-tree-node-list-view.xml")
 @LookupComponent("treePanel.treeDataGrid")
 @DialogMode(height = "37.5em")
-public class EntityTreeLookupView extends StandardListView<EntityTreeNode> {
+public class EntityTreeNodeListView extends StandardListView<EntityTreeNode> {
 
     @ViewComponent
     protected FormLayout treePanel;

@@ -398,8 +398,7 @@
                                   columnReorderingAllowed="false" detailsVisibleOnClick="false">
                             <actions>
                                 <action id="add" type="list_add"/>
-                                <action id="exclude" type="list_exclude" icon="CLOSE"
-                                        text="msg://screens.removeScreen"/>
+                                <action id="exclude" type="list_exclude" icon="CLOSE"/>
                             </actions>
                             <columns>
                                 <column property="roleName"/>
@@ -412,7 +411,7 @@
                         <hbox id="addScreenGroupBox" expand="screenIdField" width="100%">
                             <comboBox id="screenIdField"/>
                             <button id="addReportScreenBtn" action="screenDataGrid.add"
-                                    text="msg://screens.add"/>
+                                    text="msg://views.add"/>
                         </hbox>
                         <button action="screenDataGrid.remove" icon="font-icon:REMOVE"/>
                         <dataGrid id="screenDataGrid"

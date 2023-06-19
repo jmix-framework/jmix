@@ -23,11 +23,11 @@
         <formLayout id="groupProps" dataContainer="groupDc">
             <textField id="title" property="title" required="true"/>
             <textField id="code" property="code"/>
+            <textArea id="localeTextField"
+                      label="msg://io.jmix.reportsflowui.view.group/reportGroupDetailView.locale.title"
+                      dataContainer="groupDc" property="localeNames"
+                      width="100%" height="9.5em" colspan="2"/>
         </formLayout>
-        <textArea id="localeTextField"
-                  label="msg://io.jmix.reportsflowui.view.group/reportGroupDetailView.locale.title"
-                  dataContainer="groupDc" property="localeNames"
-                  width="100%" height="9.5em"/>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>

@@ -48,7 +48,8 @@
             <button action="reportGroupsDataGrid.remove"/>
             <simplePagination id="pagination" dataLoader="groupsDl"/>
         </hbox>
-        <dataGrid id="reportGroupsDataGrid" dataContainer="groupsDc" width="100%">
+        <dataGrid id="reportGroupsDataGrid" dataContainer="groupsDc"
+                  width="100%" minHeight="20em">
             <actions>
                 <action id="create" type="list_create">
                     <properties>

@@ -48,11 +48,11 @@ import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsClientProperties;
-import io.jmix.reportsflowui.helper.ReportsUiHelper;
+import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.entitytreelist.EntityTreeLookupView;
+import io.jmix.reportsflowui.view.entitytreelist.EntityTreeNodeListView;
 import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
 import io.jmix.reportsflowui.view.reportwizard.template.query.JpqlQueryBuilder;
 import org.apache.commons.collections4.CollectionUtils;
@@ -157,7 +157,7 @@ public class ReportWizardCreatorView extends StandardView {
     @Autowired
     protected JmixObjectToStringConverter jmixObjectToStringConverter;
     @Autowired
-    protected ReportsUiHelper reportsUiHelper;
+    protected ReportScriptEditor reportScriptEditor;
     @Autowired
     protected UiReportRunner uiReportRunner;
     @Autowired
@@ -684,14 +684,14 @@ public class ReportWizardCreatorView extends StandardView {
 
     protected void openRegionEditorOnlyWithNestedCollections(final ReportRegion item) {
         //show lookup for choosing parent collection for tabulated region
-        DialogWindow<EntityTreeLookupView> entityTreeListDialogWindow = dialogWindows
+        DialogWindow<EntityTreeNodeListView> entityTreeListDialogWindow = dialogWindows
                 .lookup(this, EntityTreeNode.class)
-                .withViewClass(EntityTreeLookupView.class)
+                .withViewClass(EntityTreeNodeListView.class)
                 .build();
-        EntityTreeLookupView entityTreeLookupView = entityTreeListDialogWindow.getView();
-        entityTreeLookupView.setParameters(
+        EntityTreeNodeListView entityTreeNodeListView = entityTreeListDialogWindow.getView();
+        entityTreeNodeListView.setParameters(
                 reportDataDc.getItem().getEntityTreeRootNode(), false, true, false);
-        entityTreeLookupView.setSelectionHandler(items -> {
+        entityTreeNodeListView.setSelectionHandler(items -> {
             if (items.size() == 1) {
                 EntityTreeNode regionPropertiesRootNode = IterableUtils.get(items, 0);
 
@@ -969,7 +969,7 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe("fullScreenTransformationBtn")
     protected void onFullScreenTransformationBtnClick(ClickEvent<Icon> event) {
-        reportsUiHelper.showScriptEditorDialog(this)
+        reportScriptEditor.create(this)
                 .withTitle(getScriptEditorDialogCaption())
                 .withValue(reportDataDc.getItem().getQuery())
                 .withEditorMode(CodeEditorMode.SQL)

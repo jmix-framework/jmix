@@ -29,7 +29,7 @@
                                      label="msg://templateUploadField.label" width="100%"/>
                     <textArea id="templateFileEditor" width="100%" height="20em"/>
                     <comboBox id="outputTypeField" property="reportOutputType" label="msg://outputTypeField.label"
-                              pageSize="20" width="100%"
+                              width="100%"
                               required="true" requiredMessage="msg://outputTypeField.requiredMessage"/>
                     <textField id="outputNamePatternField" property="outputNamePattern"
                                label="msg://outputNamePatternField.label" width="100%">

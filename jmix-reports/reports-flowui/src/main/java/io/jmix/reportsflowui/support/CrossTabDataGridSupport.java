@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui;
+package io.jmix.reportsflowui.support;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
@@ -35,8 +35,13 @@ import io.jmix.reportsflowui.view.report.ReportDetailView;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import jakarta.annotation.Nullable;
+import org.springframework.stereotype.Component;
 
-public class CrossTabDataGridDecorator {
+/**
+ * Class provides helper methods to work with {@link DataSet}.
+ */
+@Component("report_CrossTabOrientationDataGridSupport")
+public class CrossTabDataGridSupport {
 
     protected static final String HORIZONTAL_TPL = "dynamic_header";
     protected static final String VERTICAL_TPL = "master_data";
@@ -49,9 +54,9 @@ public class CrossTabDataGridDecorator {
     protected DataComponents dataComponents;
     protected Messages messages;
 
-    public CrossTabDataGridDecorator(DataSetFactory dataSetFactory, UiComponents uiComponents,
-                                     SecureOperations secureOperations, PolicyStore policyStore, Metadata metadata,
-                                     DataComponents dataComponents, Messages messages) {
+    public CrossTabDataGridSupport(DataSetFactory dataSetFactory, UiComponents uiComponents,
+                                   SecureOperations secureOperations, PolicyStore policyStore, Metadata metadata,
+                                   DataComponents dataComponents, Messages messages) {
         this.dataSetFactory = dataSetFactory;
         this.uiComponents = uiComponents;
         this.secureOperations = secureOperations;

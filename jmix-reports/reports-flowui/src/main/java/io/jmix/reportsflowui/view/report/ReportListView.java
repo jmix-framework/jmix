@@ -31,7 +31,6 @@ import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
@@ -109,28 +108,11 @@ public class ReportListView extends StandardListView<Report> {
     @Subscribe
     protected void onInit(InitEvent event) {
         initColumnDataGrid();
-        initReportsDataCreate();
+        initReportsDataGridCreate();
     }
 
-    private void initReportsDataCreate() {
+    private void initReportsDataGridCreate() {
         reportsDataGridCreate.setIcon(null);
-    }
-
-    @Subscribe("reportsDataGrid.wizard")
-    public void onWizardClick(final ActionPerformedEvent event) {
-        DialogWindow<ReportWizardCreatorView> build = dialogWindows.view(this, ReportWizardCreatorView.class).build();
-        build.addAfterCloseListener(e -> {
-            if (e.closedWith(StandardOutcome.SAVE)) {
-                Report item = build.getView().getItem().getGeneratedReport();
-                reportsDc.getMutableItems().add(item);
-                reportsDataGrid.select(item);
-                viewNavigators.detailView(Report.class)
-                        .editEntity(reportsDc.getItem())
-                        .withViewClass(ReportDetailView.class)
-                        .navigate();
-            }
-        });
-        build.open();
     }
 
     private void initColumnDataGrid() {
@@ -245,6 +227,28 @@ public class ReportListView extends StandardListView<Report> {
     protected boolean reportsDataGridCopyEnabledRule() {
         Report report = reportsDataGrid.getSingleSelectedItem();
         return report != null && isPermissionsToCreateReports();
+    }
+
+    @Subscribe("reportsDataGrid.wizard")
+    public void onWizardClick(final ActionPerformedEvent event) {
+        DialogWindow<ReportWizardCreatorView> build = dialogWindows.view(this, ReportWizardCreatorView.class).build();
+        build.addAfterCloseListener(e -> {
+            if (e.closedWith(StandardOutcome.SAVE)) {
+                Report item = build.getView().getItem().getGeneratedReport();
+                reportsDc.getMutableItems().add(item);
+                reportsDataGrid.select(item);
+                viewNavigators.detailView(Report.class)
+                        .editEntity(reportsDc.getItem())
+                        .withViewClass(ReportDetailView.class)
+                        .navigate();
+            }
+        });
+        build.open();
+    }
+
+    @Install(to = "reportsDataGrid.wizard", subject = "enabledRule")
+    protected boolean reportsDataGridWizardEnabledRule() {
+        return isPermissionsToCreateReports();
     }
 
     protected Report copyReport(Report source) {

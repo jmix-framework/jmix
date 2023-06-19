@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@ViewController("report_ReportExecutionDialog.view")
+@ViewController("report_ReportExecutionDialogView")
 @ViewDescriptor("report-execution-dialog-view.xml")
 @LookupComponent("reportsDataGrid")
 public class ReportExecutionDialog extends StandardListView<Report> {

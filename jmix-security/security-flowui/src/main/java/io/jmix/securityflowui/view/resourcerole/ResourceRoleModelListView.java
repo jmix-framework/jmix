@@ -60,7 +60,7 @@ import static io.jmix.securityflowui.model.RoleSource.DATABASE;
 @ViewController("sec_ResourceRoleModel.list")
 @ViewDescriptor("resource-role-model-list-view.xml")
 @LookupComponent("roleModelsTable")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "50em")
 public class ResourceRoleModelListView extends StandardListView<ResourceRoleModel> {
     private static final Logger log = LoggerFactory.getLogger(ResourceRoleModelListView.class);
 

@@ -89,7 +89,7 @@ import static io.jmix.flowui.download.DownloadFormat.ZIP;
 @ViewController("datatl_entityInspectorListView")
 @ViewDescriptor("entity-inspector-list-view.xml")
 @LookupComponent("entitiesDataGrid")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "50em")
 public class EntityInspectorListView extends StandardListView<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(EntityInspectorListView.class);

@@ -90,7 +90,7 @@ import static io.jmix.flowui.download.DownloadFormat.ZIP;
 @ViewController("entityLog.view")
 @ViewDescriptor("entity-log-view.xml")
 @LookupComponent("entityLogTable")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "80em", height = "60em", resizable = true)
 public class EntityLogView extends StandardListView<EntityLogItem> {
     private static final Logger log = LoggerFactory.getLogger(EntityLogView.class);
 

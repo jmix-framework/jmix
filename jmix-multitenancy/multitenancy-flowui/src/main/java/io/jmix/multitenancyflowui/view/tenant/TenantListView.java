@@ -29,6 +29,6 @@ import io.jmix.multitenancy.entity.Tenant;
 @ViewController("mten_Tenant.list")
 @ViewDescriptor("tenant-list-view.xml")
 @LookupComponent("tenantsTable")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "50em")
 public class TenantListView extends StandardListView<Tenant> {
 }

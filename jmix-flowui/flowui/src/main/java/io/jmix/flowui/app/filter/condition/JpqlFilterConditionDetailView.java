@@ -56,7 +56,7 @@ import java.util.UUID;
 @ViewController("flowui_JpqlFilterCondition.detail")
 @ViewDescriptor("jpql-filter-condition-detail-view.xml")
 @EditedEntityContainer("filterConditionDc")
-@DialogMode(height = "AUTO", width = "56em", resizable = true)
+@DialogMode(width = "56em", resizable = true)
 public class JpqlFilterConditionDetailView extends FilterConditionDetailView<JpqlFilterCondition> {
 
     @ViewComponent

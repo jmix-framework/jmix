@@ -15,7 +15,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      xmlns:c="http://jmix.io/schema/ui/jpql-condition"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://EntityLogView.list">
     <data>
         <collection id="loggedEntityDc"

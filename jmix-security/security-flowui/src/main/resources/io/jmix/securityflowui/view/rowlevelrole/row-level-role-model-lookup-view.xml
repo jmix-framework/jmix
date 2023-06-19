@@ -31,6 +31,7 @@
         <dataGrid id="roleModelsTable"
                   dataContainer="roleModelsDc"
                   selectionMode="MULTI"
+                  minHeight="20em"
                   width="100%">
             <columns>
                 <column property="name"/>

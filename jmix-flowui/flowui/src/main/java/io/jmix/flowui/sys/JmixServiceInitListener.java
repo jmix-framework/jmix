@@ -22,43 +22,65 @@ import com.vaadin.flow.router.InternalServerError;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.internal.ErrorTargetEntry;
 import com.vaadin.flow.server.*;
+import com.vaadin.flow.server.communication.IndexHtmlResponse;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import io.jmix.core.CoreProperties;
+import io.jmix.core.JmixModules;
 import io.jmix.core.LocaleResolver;
+import io.jmix.core.Resources;
 import io.jmix.flowui.component.error.JmixInternalServerError;
 import io.jmix.flowui.exception.UiExceptionHandlers;
 import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
 import io.jmix.flowui.view.ViewRegistry;
+import org.jsoup.nodes.DataNode;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component("flowui_JmixServiceInitListener")
 public class JmixServiceInitListener implements VaadinServiceInitListener, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(JmixServiceInitListener.class);
 
+    public static final String IMPORT_STYLES_PROP = "jmix.ui.export-styles";
+    protected static final String RESOURCE_PREFIX = "META-INF/resources/";
+
     protected ApplicationContext applicationContext;
 
     protected ViewRegistry viewRegistry;
     protected UiExceptionHandlers uiExceptionHandlers;
     protected CoreProperties coreProperties;
+    protected JmixModules modules;
+    protected Resources resources;
 
     protected AppCookies cookies;
 
     public JmixServiceInitListener(ViewRegistry viewRegistry,
                                    UiExceptionHandlers uiExceptionHandlers,
-                                   CoreProperties coreProperties) {
+                                   CoreProperties coreProperties,
+                                   JmixModules modules,
+                                   Resources resources) {
         this.viewRegistry = viewRegistry;
         this.uiExceptionHandlers = uiExceptionHandlers;
         this.coreProperties = coreProperties;
+        this.modules = modules;
+        this.resources = resources;
     }
 
     @Override
@@ -71,6 +93,8 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         event.getSource().addSessionInitListener(this::onSessionInitEvent);
         event.getSource().addSessionDestroyListener(this::onSessionDestroyEvent);
         event.getSource().addUIInitListener(this::onUIInitEvent);
+
+        event.addIndexHtmlRequestListener(this::modifyIndexHtmlResponse);
 
         // Vaadin scans only application packages by default. To enable scanning
         // Jmix packages, Vaadin provides @EnableVaadin() annotation, but it
@@ -139,6 +163,55 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         applicationRouteRegistry.setErrorNavigationTargets(Collections.singleton(JmixInternalServerError.class));
 
         log.debug("Default internal server error handler is registered: " + JmixInternalServerError.class.getName());
+    }
+
+    protected void modifyIndexHtmlResponse(IndexHtmlResponse response) {
+        List<String> styles = modules.getPropertyValues(IMPORT_STYLES_PROP);
+        if (styles.isEmpty()) {
+            return;
+        }
+
+        Element head = response.getDocument().head();
+        styles.forEach(path -> appendStyles(head, path));
+    }
+
+    protected void appendStyles(Element element, String path) {
+        String fullPath = RESOURCE_PREFIX + (path.startsWith("/") ? path.substring(1) : path);
+        String content = getContent(fullPath);
+        if (Strings.isNullOrEmpty(content)) {
+            return;
+        }
+
+        log.debug("Adding styles from '" + fullPath + "'");
+        Element styleElement = createElement("style", content, "type", "text/css");
+        element.appendChild(styleElement);
+    }
+
+    @Nullable
+    protected String getContent(String path) {
+        InputStream resourceStream = resources.getResourceAsStream(path);
+        if (resourceStream == null) {
+            return null;
+        }
+
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(resourceStream, StandardCharsets.UTF_8)
+        );
+        return bufferedReader.lines()
+                .collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    protected Element createElement(String tag, @Nullable String content, String... attrs) {
+        Element element = new Element(Tag.valueOf(tag), "");
+        if (content != null && !content.isEmpty()) {
+            element.appendChild(new DataNode(content));
+        }
+
+        for (int i = 0; i < attrs.length - 1; i += 2) {
+            element.attr(attrs[i], attrs[i + 1]);
+        }
+
+        return element;
     }
 
     protected AppCookies getCookies() {

@@ -1471,10 +1471,11 @@ public class FrontendUtils {
                 }
             }
 
-            throw new RuntimeException(
+            throw new IllegalStateException(
                     "Free port not found in range " +
                             "[" + rangeStart + ":" + rangeEnd + "]"
             );
+
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }

@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -64,7 +65,14 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
 
         try (InputStream resource = FrontendUtils.getResourceAsStream(FrontendUtils.VITE_CONFIG)) {
             String template = IOUtils.toString(resource, StandardCharsets.UTF_8);
-            template = template.replace("60001", String.valueOf(FrontendUtils.findFreePort(60_000, 65_000)));
+            int freePort;
+            try {
+                freePort = FrontendUtils.findFreePort(60_000, 65_000);
+            } catch (Exception e) {
+                freePort = new Random().nextInt(60_000, 65_000);
+            }
+
+            template = template.replace("60001", String.valueOf(freePort));
 
             FileUtils.write(configFile, template, StandardCharsets.UTF_8);
             String message = String.format("Created vite configuration file: '%s'", configFile);

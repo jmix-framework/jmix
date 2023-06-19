@@ -33,11 +33,11 @@ public class AuthServerProperties {
     /**
      * A list of jmix-specific client configurations
      */
-    Map<String, JmixAuthorizationServerClient> client;
+    Map<String, JmixClient> client;
 
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
-            Map<String, JmixAuthorizationServerClient> client) {
+            @DefaultValue Map<String, JmixClient> client) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.client = client;
     }
@@ -46,21 +46,28 @@ public class AuthServerProperties {
         return useDefaultConfiguration;
     }
 
-    public Map<String, JmixAuthorizationServerClient> getClient() {
+    public Map<String, JmixClient> getClient() {
         return client;
     }
 
     /**
      * Class stores Jmix-specific settings of Authorization Server client.
      */
-    public static class JmixAuthorizationServerClient {
+    public static class JmixClient {
+        String clientId;
         List<String> resourceRoles;
         List<String> rowLevelRoles;
 
-        public JmixAuthorizationServerClient(@DefaultValue List<String> resourceRoles,
-                                             @DefaultValue List<String> rowLevelRoles) {
+        public JmixClient(String clientId,
+                          @DefaultValue List<String> resourceRoles,
+                          @DefaultValue List<String> rowLevelRoles) {
+            this.clientId = clientId;
             this.resourceRoles = resourceRoles;
             this.rowLevelRoles = rowLevelRoles;
+        }
+
+        public String getClientId() {
+            return clientId;
         }
 
         public List<String> getResourceRoles() {
@@ -71,4 +78,5 @@ public class AuthServerProperties {
             return rowLevelRoles;
         }
     }
+
 }

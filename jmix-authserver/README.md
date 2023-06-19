@@ -116,8 +116,27 @@ There must be Basic authentication on behalf of one of the registered clients (e
 The response will contain an access token. To specify the actions that can be performed in the application using this token, you must assign roles to this client using application properties:
 
 ```properties
+jmix.authserver.client.jmix2.client-id = jmix2
 jmix.authserver.client.jmix2.resource-roles = resource-role1, resource-role2
 jmix.authserver.client.jmix2.row-level-roles = row-level-role1, row-level-role-2
+```
+
+An alternative way to configure client role assignments is to register a Spring bean implementing the `io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository` interface:
+
+```java
+@Configuration
+public class MyAuthServerConfiguration {
+
+    @Bean
+    public RegisteredClientRoleAssignmentRepository registeredClientRoleAssignmentRepository() {
+        RegisteredClientRoleAssignment roleAssignment = RegisteredClientRoleAssignment.builder()
+                .clientId("myapp")
+                .resourceRoles(List.of("system-full-access", "rest-minimal"))
+                .build();
+
+        return new InMemoryRegisteredClientRoleAssignmentRepository(roleAssignment);
+    }
+}
 ```
 
 ### Testing Using Postman

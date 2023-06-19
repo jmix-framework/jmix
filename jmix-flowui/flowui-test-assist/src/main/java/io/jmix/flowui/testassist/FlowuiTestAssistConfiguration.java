@@ -39,7 +39,7 @@ public class FlowuiTestAssistConfiguration {
 
     @Bean("ui_PropagationExceptionHandler")
     @Order(JmixOrder.LOWEST_PRECEDENCE - 90)
-    public PropagationExceptionHandler testAssistExceptionHandler() {
+    public PropagationExceptionHandler propagationExceptionHandler() {
         return new PropagationExceptionHandler();
     }
 

@@ -17,6 +17,8 @@
 package io.jmix.authserver.introspection;
 
 import io.jmix.authserver.AuthServerProperties;
+import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignment;
+import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
 import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RowLevelRoleRepository;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,18 +42,18 @@ public class TokenIntrospectorRolesHelper {
 
     private static final Logger log = LoggerFactory.getLogger(TokenIntrospectorRolesHelper.class);
 
-    private AuthServerProperties authServerProperties;
-
     private ResourceRoleRepository resourceRoleRepository;
 
     private RowLevelRoleRepository rowLevelRoleRepository;
 
-    public TokenIntrospectorRolesHelper(AuthServerProperties authServerProperties,
-                                        ResourceRoleRepository resourceRoleRepository,
-                                        RowLevelRoleRepository rowLevelRoleRepository) {
-        this.authServerProperties = authServerProperties;
+    private RegisteredClientRoleAssignmentRepository clientRoleAssignmentRepository;
+
+    public TokenIntrospectorRolesHelper(ResourceRoleRepository resourceRoleRepository,
+                                        RowLevelRoleRepository rowLevelRoleRepository,
+                                        RegisteredClientRoleAssignmentRepository clientRoleAssignmentRepository) {
         this.resourceRoleRepository = resourceRoleRepository;
         this.rowLevelRoleRepository = rowLevelRoleRepository;
+        this.clientRoleAssignmentRepository = clientRoleAssignmentRepository;
     }
 
     /**
@@ -61,26 +64,25 @@ public class TokenIntrospectorRolesHelper {
      * @return a list of RoleGrantedAuthority
      */
     public List<RoleGrantedAuthority> getClientGrantedAuthorities(String clientId) {
-        AuthServerProperties.JmixAuthorizationServerClient client = authServerProperties.getClient().get(clientId);
-        if (client == null) {
-            log.debug("No roles are specified for the client {}", clientId);
-            return Collections.emptyList();
-        }
+        Collection<RegisteredClientRoleAssignment> roleAssignments = clientRoleAssignmentRepository.findByClientId(clientId);
 
-        List<RoleGrantedAuthority> authorities = new ArrayList<>();
-
-        List<String> resourceRoles = client.getResourceRoles();
+        List<String> resourceRoles = roleAssignments.stream()
+                .flatMap(roleAssignment -> roleAssignment.resourceRoles().stream())
+                .toList();
         List<RoleGrantedAuthority> resourceRoleAuthorities = resourceRoles.stream()
                 .map(resourceRoleRepository::getRoleByCode)
                 .map(RoleGrantedAuthority::ofResourceRole)
                 .toList();
 
-        List<String> rowLevelRoles = client.getRowLevelRoles();
+        List<String> rowLevelRoles = roleAssignments.stream()
+                .flatMap(roleAssignment -> roleAssignment.rowLevelRoles().stream())
+                .toList();
         List<RoleGrantedAuthority> rowLevelRolesAuthorities = rowLevelRoles.stream()
                 .map(rowLevelRoleRepository::getRoleByCode)
                 .map(RoleGrantedAuthority::ofRowLevelRole)
                 .toList();
 
+        List<RoleGrantedAuthority> authorities = new ArrayList<>();
         authorities.addAll(resourceRoleAuthorities);
         authorities.addAll(rowLevelRolesAuthorities);
 

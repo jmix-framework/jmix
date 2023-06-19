@@ -17,9 +17,11 @@
 package io.jmix.autoconfigure.authserver;
 
 import io.jmix.authserver.AuthServerConfiguration;
+import io.jmix.authserver.AuthServerProperties;
 import io.jmix.authserver.filter.AsResourceServerEventSecurityFilter;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
 import io.jmix.authserver.introspection.TokenIntrospectorRolesHelper;
+import io.jmix.authserver.roleassignment.*;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.security.SecurityConfigurers;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -43,6 +45,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Collection;
+
 @AutoConfiguration
 @Import({AuthServerConfiguration.class})
 @ConditionalOnProperty(name = "jmix.authserver.use-default-configuration", matchIfMissing = true)
@@ -63,6 +67,12 @@ public class AuthServerAutoConfiguration {
 
         public static final String SECURITY_CONFIGURER_QUALIFIER = "authorization-server";
         public static final String LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER = "authorization-server-login-form";
+
+        private final AuthServerProperties authServerProperties;
+
+        public AuthorizationServerSecurityConfiguration(AuthServerProperties authServerProperties) {
+            this.authServerProperties = authServerProperties;
+        }
 
         @Bean("authsr_AuthorizationServerSecurityFilterChain")
         @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER)
@@ -107,6 +117,14 @@ public class AuthServerAutoConfiguration {
         @Bean
         public AuthorizationServerSettings authorizationServerSettings() {
             return AuthorizationServerSettings.builder().build();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(RegisteredClientRoleAssignmentRepository.class)
+        public InMemoryRegisteredClientRoleAssignmentRepository inMemoryRegisteredClientRoleAssignmentRepository() {
+            Collection<RegisteredClientRoleAssignment> registeredClientRoleAssignments =
+                    new RegisteredClientRoleAssignmentPropertiesMapper(authServerProperties).asRegisteredClientRoleAssignments();
+            return new InMemoryRegisteredClientRoleAssignmentRepository(registeredClientRoleAssignments);
         }
     }
 

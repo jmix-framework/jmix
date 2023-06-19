@@ -2518,7 +2518,6 @@
 
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
-                <xs:attribute name="multiSort" type="xs:boolean"/>
                 <xs:attribute name="dropMode" type="gridDropMode"/>
                 <xs:attribute name="rowsDraggable" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="gridThemeNames"/>

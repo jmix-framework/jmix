@@ -25,7 +25,6 @@
         <dataGrid id="infoDataGrid"
                   dataContainer="infoDc"
                   columnReorderingAllowed="false"
-                  multiSort="false"
                   width="100%"
                   height="15.5em">
             <columns>

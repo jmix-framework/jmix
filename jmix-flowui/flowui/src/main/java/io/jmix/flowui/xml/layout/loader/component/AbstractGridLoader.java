@@ -71,7 +71,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     @Override
     public void loadComponent() {
         loadInteger(element, "pageSize", resultComponent::setPageSize);
-        loadBoolean(element, "multiSort", resultComponent::setMultiSort);
         loadBoolean(element, "rowsDraggable", resultComponent::setRowsDraggable);
         loadBoolean(element, "allRowsVisible", resultComponent::setAllRowsVisible);
         loadEnum(element, GridDropMode.class, "dropMode", resultComponent::setDropMode);

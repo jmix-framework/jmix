@@ -29,7 +29,6 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(ShowEntityInfoAction.ID)
@@ -112,19 +111,10 @@ public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEnt
     }
 
     public void showInfo(Object entity) {
-        DialogWindow<EntityInfoView> dialog = dialogWindows.view(findParent(), EntityInfoView.class)
+        DialogWindow<EntityInfoView> dialog = dialogWindows
+                .view(UiComponentUtils.getView(((Component) target)), EntityInfoView.class)
                 .build();
         dialog.getView().setEntity(entity);
         dialog.open();
-    }
-
-    protected View<?> findParent() {
-        View<?> view = UiComponentUtils.findView((Component) target);
-        if (view == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
-        return view;
     }
 }

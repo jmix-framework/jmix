@@ -143,13 +143,7 @@ public class GenericFilterEditAction extends GenericFilterAction<GenericFilterEd
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected DialogWindow createDetailDialog(Class modelClass, LogicalFilterCondition model) {
-        View<?> parent = findParentView();
-
-        if (parent == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
+        View<?> parent = getParentView();
         DialogWindow dialog = dialogWindows.detail(parent, modelClass)
                 .withViewId(filterComponents.getDetailViewId(modelClass))
                 .editEntity(model)

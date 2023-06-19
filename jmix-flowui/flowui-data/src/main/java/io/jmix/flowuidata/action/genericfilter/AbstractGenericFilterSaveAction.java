@@ -155,13 +155,7 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
     protected void openInputDialog() {
         checkTarget();
 
-        View<?> parent = findParentView();
-
-        if (parent == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
+        View<?> parent = getParentView();
         String header = messages.getMessage(getClass(), "saveFilterConfigurationInputDialog.header");
 
         String nameFieldLabel = messages.getMessage(FilterConfiguration.class, "FilterConfiguration.name");

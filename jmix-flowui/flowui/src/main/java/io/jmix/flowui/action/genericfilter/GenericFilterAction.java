@@ -221,8 +221,7 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
         }
     }
 
-    @Nullable
-    protected View<?> findParentView() {
-        return UiComponentUtils.findView(target);
+    protected View<?> getParentView() {
+        return UiComponentUtils.getView(target);
     }
 }

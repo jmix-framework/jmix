@@ -224,12 +224,7 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
     }
 
     protected void openAddConditionView(List<FilterCondition> filterConditions) {
-        View<?> origin = UiComponentUtils.findView(target);
-        if (origin == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
+        View<?> origin = UiComponentUtils.getView(target);
         DialogWindow<AddConditionView> dialog = dialogWindows.lookup(origin, FilterCondition.class)
                 .withViewClass(AddConditionView.class)
                 .withSelectValidator(selectValidator)

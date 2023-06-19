@@ -137,7 +137,8 @@ public class AssignToUsersAction<E extends BaseRoleModel>
             throw new IllegalStateException(message);
         }
 
-        DialogWindow<View<?>> dialog = dialogWindows.lookup(findParent(), userClass)
+        DialogWindow<View<?>> dialog = dialogWindows
+                .lookup(UiComponentUtils.getView(((Component) target)), userClass)
                 .withSelectHandler(this::selectHandler)
                 .withAfterCloseListener(this::showNotification)
                 .build();
@@ -223,21 +224,6 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         notifications.create(title, message)
                 .withType(Notifications.Type.SUCCESS)
                 .show();
-    }
-
-    protected View<?> findParent() {
-        View<?> view = UiComponentUtils.findView((Component) target);
-
-        if (view == null) {
-            String message = String.format(
-                    "A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()
-            );
-
-            throw new IllegalStateException(message);
-        }
-
-        return view;
     }
 
     protected String getRoleType(E selectedItem) {

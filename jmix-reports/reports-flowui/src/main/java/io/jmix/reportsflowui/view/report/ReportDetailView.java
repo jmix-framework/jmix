@@ -342,10 +342,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("defaultTemplateField.create")
     protected void onDefaultTemplateFieldCreate(ActionPerformedEvent event) {
-        View<?> view = UiComponentUtils.findView(this);
-        if (view == null) {
-            throw new IllegalStateException(this.getClass().getSimpleName() + " is not attached to View");
-        }
+        View<?> view = UiComponentUtils.getView(this);
+
         DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(view, ReportTemplate.class)
                 .withViewClass(ReportTemplateDetailView.class)
                 .withContainer(templatesDc)
@@ -411,10 +409,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         Report report = reportDc.getItem();
         ReportTemplate defaultTemplate = report.getDefaultTemplate();
         if (defaultTemplate != null) {
-            View<?> view = UiComponentUtils.findView(this);
-            if (view == null) {
-                throw new IllegalStateException(this.getClass().getSimpleName() + " is not attached to a View");
-            }
             DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(defaultTemplateField)
                     .withViewClass(ReportTemplateDetailView.class)
                     .withContainer(templatesDc)
@@ -1547,11 +1541,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("templatesDataGrid.create")
     protected void ontemplatesDataGridCreate(ActionPerformedEvent event) {
-        View<?> view = UiComponentUtils.findView(this);
-        if (view == null) {
-            throw new IllegalStateException(this.getClass().getSimpleName() + " is not attached to View");
-        }
-        DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(view, ReportTemplate.class)
+        View<?> view = UiComponentUtils.getView(this);
+        DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows
+                .detail(view, ReportTemplate.class)
                 .withViewClass(ReportTemplateDetailView.class)
                 .withContainer(templatesDc)
                 .newEntity()
@@ -1574,10 +1566,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("templatesDataGrid.edit")
     protected void onTemplatesDataGridEdit(ActionPerformedEvent event) {
-        View<?> view = UiComponentUtils.findView(this);
-        if (view == null) {
-            throw new IllegalStateException(this.getClass().getSimpleName() + " is not attached to a View");
-        }
         ReportTemplate selectedTemplate = templatesDataGrid.getSingleSelectedItem();
         if (selectedTemplate == null) {
             return;

@@ -28,7 +28,6 @@ import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.View;
 import io.jmix.securityflowui.view.changepassword.ChangePasswordView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -101,22 +100,13 @@ public class ChangePasswordAction<E extends UserDetails>
     }
 
     protected void buildAndShowDialog(E selectedItem) {
-        DialogWindow<ChangePasswordView> dialog = dialogWindows.view(findParent(), ChangePasswordView.class)
+        DialogWindow<ChangePasswordView> dialog = dialogWindows
+                .view(UiComponentUtils.getView(((Component) target)), ChangePasswordView.class)
                 .build();
         ChangePasswordView view = dialog.getView();
         view.setUsername(selectedItem.getUsername());
         view.setCurrentPasswordRequired(currentPasswordRequired);
         dialog.open();
-    }
-
-    protected View<?> findParent() {
-        View<?> view = UiComponentUtils.findView((Component) target);
-        if (view == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
-        return view;
     }
 
     public ChangePasswordAction<E> withCurrentPasswordRequired(boolean currentPasswordRequired) {

@@ -28,12 +28,9 @@ import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.View;
 import io.jmix.securityflowui.view.resetpassword.ResetPasswordView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Optional;
 
 @ActionType(ResetPasswordAction.ID)
 public class ResetPasswordAction<E extends UserDetails>
@@ -98,19 +95,11 @@ public class ResetPasswordAction<E extends UserDetails>
     }
 
     protected void buildAndShowDialog() {
-        findParent().ifPresent(parent -> {
-            DialogWindow<ResetPasswordView> dialog = dialogWindows.view(parent, ResetPasswordView.class)
-                    .build();
-            ResetPasswordView view = dialog.getView();
-            view.setUsers(target.getSelectedItems());
-            dialog.open();
-        });
-
-    }
-
-    protected Optional<View<?>> findParent() {
-        return target instanceof Component
-                ? Optional.ofNullable(UiComponentUtils.findView((Component) target))
-                : Optional.empty();
+        DialogWindow<ResetPasswordView> dialog = dialogWindows
+                .view(UiComponentUtils.getView(((Component) target)), ResetPasswordView.class)
+                .build();
+        ResetPasswordView view = dialog.getView();
+        view.setUsers(target.getSelectedItems());
+        dialog.open();
     }
 }

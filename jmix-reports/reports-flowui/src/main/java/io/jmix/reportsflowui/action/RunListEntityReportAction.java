@@ -37,7 +37,6 @@ import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.*;
-import io.jmix.flowui.view.View;
 import io.jmix.reports.app.ParameterPrototype;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -124,7 +123,7 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
         InstanceContainer<E> container = unit.getContainer();
         MetaClass metaClass = container.getEntityMetaClass();
 
-        reportActionSupport.openRunReportScreen(findParent(), selected, metaClass);
+        reportActionSupport.openRunReportScreen(UiComponentUtils.getView(((Component) target)), selected, metaClass);
     }
 
     protected void printAll() {
@@ -154,7 +153,8 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
             parameterPrototype.setFetchPlan(loadContext.getFetchPlan());
         }
 
-        reportActionSupport.openRunReportScreen(findParent(), parameterPrototype, metaClass);
+        reportActionSupport.openRunReportScreen(UiComponentUtils.getView(((Component) target)),
+                parameterPrototype, metaClass);
     }
 
     @Override
@@ -197,15 +197,5 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
             notifications.create(messages.getMessage(getClass(), "notifications.noSelectedEntity"))
                     .show();
         }
-    }
-
-    protected View<?> findParent() {
-        View<?> view = UiComponentUtils.findView((Component) target);
-        if (view == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
-        return view;
     }
 }

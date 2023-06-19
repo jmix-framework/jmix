@@ -232,6 +232,16 @@ public final class UiComponentUtils {
         return parent.map(UiComponentUtils::findDialog).orElse(null);
     }
 
+    public static View<?> getView(Component component) {
+        View<?> view = findView(component);
+        if (view == null) {
+            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
+                    component.getClass().getSimpleName()));
+        }
+
+        return view;
+    }
+
     @Nullable
     public static View<?> findView(Component component) {
         if (component instanceof View) {

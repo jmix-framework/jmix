@@ -280,12 +280,7 @@ public class MultiValueSelectAction<E>
     public void execute() {
         checkTarget();
 
-        View<?> origin = UiComponentUtils.findView((Component) target);
-        if (origin == null) {
-            String message = String.format("%s component is not bound to a view", target.getClass().getSimpleName());
-            throw new IllegalStateException(message);
-        }
-
+        View<?> origin = UiComponentUtils.getView((Component) target);
         WindowBuilder<View<?>> builder = dialogWindows.view(origin, Objects.requireNonNull(getViewId()));
 
         builder = viewInitializer.initWindowBuilder(builder);

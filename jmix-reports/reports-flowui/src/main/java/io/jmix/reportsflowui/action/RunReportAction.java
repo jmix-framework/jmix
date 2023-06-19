@@ -104,7 +104,7 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
     public void execute() {
         checkTarget();
 
-        openLookup(findParent());
+        openLookup(UiComponentUtils.getView(((Component) target)));
     }
 
     protected void openLookup(View<?> parent) {
@@ -158,15 +158,4 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
 
         inputParametersDialogWindow.open();
     }
-
-    protected View<?> findParent() {
-        View<?> view = UiComponentUtils.findView((Component) target);
-        if (view == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
-        return view;
-    }
-
 }

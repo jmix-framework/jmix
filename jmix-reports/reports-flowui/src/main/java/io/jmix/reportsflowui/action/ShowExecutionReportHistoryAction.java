@@ -77,7 +77,7 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
     }
 
     protected void openLookup(MetaClass metaClass) {
-        View<?> parent = findParent();
+        View<?> parent = UiComponentUtils.getView(((Component) target));
         DialogWindow<ReportExecutionDialog> reportExecutionDialogDialogWindow = dialogWindows.lookup(parent, Report.class)
                 .withViewClass(ReportExecutionDialog.class)
                 .withSelectHandler(reports -> openExecutionBrowser(reports, parent))
@@ -100,16 +100,6 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
             reportExecutionListView.setFilterByReports(new ArrayList<>(reports));
             reportExecutionDialogWindow.open();
         }
-    }
-
-    protected View<?> findParent() {
-        View<?> view = UiComponentUtils.findView((Component) target);
-        if (view == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
-                    target.getClass().getSimpleName()));
-        }
-
-        return view;
     }
 
     @Override

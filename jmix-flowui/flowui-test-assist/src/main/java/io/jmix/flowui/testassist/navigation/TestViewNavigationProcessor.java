@@ -27,7 +27,7 @@ import io.jmix.flowui.view.navigation.*;
 /**
  * The main goal of this class is supporting backward navigation in UI integration tests.
  * <p>
- * The {@link DetailViewNavigationProcessor} is used for preparing and performing navigation to the
+ * The {@link ViewNavigationProcessor} is used for preparing and performing navigation to the
  * inheritor of {@link StandardView}.
  * <p>
  * To perform navigation the {@link AbstractNavigationProcessor#processNavigation(AbstractViewNavigator)} method
@@ -35,7 +35,7 @@ import io.jmix.flowui.view.navigation.*;
  * information from client-side.
  * <p>
  * In UI integration tests there is no client-side, so backward navigation URL should be got by another way.
- * This is why {@link TestDetailViewNavigationProcessor} replaces {@link DetailViewNavigationProcessor} and
+ * This is why {@link TestViewNavigationProcessor} replaces {@link ViewNavigationProcessor} and
  * delegates building backward navigation URL to {@link ViewNavigationDelegate}.
  */
 public class TestViewNavigationProcessor extends ViewNavigationProcessor {

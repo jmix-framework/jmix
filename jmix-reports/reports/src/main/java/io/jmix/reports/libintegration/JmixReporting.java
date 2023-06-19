@@ -17,12 +17,13 @@
 package io.jmix.reports.libintegration;
 
 import com.google.common.base.Strings;
-import com.haulmont.yarg.exception.ReportingException;
-import com.haulmont.yarg.reporting.RunParams;
-import com.haulmont.yarg.structure.BandData;
-import com.haulmont.yarg.structure.Report;
-import com.haulmont.yarg.structure.ReportParameter;
-import com.haulmont.yarg.util.groovy.Scripting;
+import io.jmix.reports.yarg.reporting.Reporting;
+import io.jmix.reports.yarg.exception.ReportingException;
+import io.jmix.reports.yarg.reporting.RunParams;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.Report;
+import io.jmix.reports.yarg.structure.ReportParameter;
+import io.jmix.reports.yarg.util.groovy.Scripting;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.QueryUtils;
@@ -41,7 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class JmixReporting extends com.haulmont.yarg.reporting.Reporting {
+public class JmixReporting extends Reporting {
 
     public static final String REPORT_FILE_NAME_KEY = "__REPORT_FILE_NAME";
 

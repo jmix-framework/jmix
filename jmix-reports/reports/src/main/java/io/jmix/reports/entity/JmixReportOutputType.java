@@ -16,9 +16,12 @@
 
 package io.jmix.reports.entity;
 
+import io.jmix.reports.yarg.structure.ReportOutputType;
+
 import java.io.ObjectStreamException;
 
-public class JmixReportOutputType extends com.haulmont.yarg.structure.ReportOutputType {
+public class JmixReportOutputType extends ReportOutputType {
+
     public final static JmixReportOutputType chart = new JmixReportOutputType("chart");
     public final static JmixReportOutputType table = new JmixReportOutputType("table");
     public final static JmixReportOutputType pivot = new JmixReportOutputType("pivot");

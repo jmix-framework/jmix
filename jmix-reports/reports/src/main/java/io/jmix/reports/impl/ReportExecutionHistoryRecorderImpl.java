@@ -17,8 +17,8 @@
 package io.jmix.reports.impl;
 
 import com.google.common.collect.Sets;
-import com.haulmont.yarg.reporting.ReportOutputDocument;
-import com.haulmont.yarg.structure.ReportOutputType;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.structure.ReportOutputType;
 import io.jmix.core.*;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SystemAuthenticator;
@@ -28,7 +28,7 @@ import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;

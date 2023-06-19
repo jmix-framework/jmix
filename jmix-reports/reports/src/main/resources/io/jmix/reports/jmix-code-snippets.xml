@@ -22,9 +22,10 @@
             <inject variable="reportRunner" classQualifiedName="io.jmix.reports.runner.ReportRunner"/>
 
             <text language="java">
-                ${IS_FINAL}com.haulmont.yarg.reporting.ReportOutputDocument document = reportRunner.byReportCode("user-list")
-                        .addParam("active", true)
-                        .run();
+                ${IS_FINAL}io.jmix.reports.yarg.reporting.ReportOutputDocument document =
+                reportRunner.byReportCode("user-list")
+                .addParam("active", true)
+                .run();
                 ${IS_FINAL}byte[] reportContent = document.getContent();
                 ${IS_FINAL}String reportName = document.getDocumentName();
             </text>

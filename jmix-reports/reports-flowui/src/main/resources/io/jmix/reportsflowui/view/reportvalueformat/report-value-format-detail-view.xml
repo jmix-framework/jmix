@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://reportValueFormatDetailView.title">
+    <data>
+        <instance id="valuesFormatsDc"
+                  class="io.jmix.reports.entity.ReportValueFormat">
+            <loader id="valuesFormatsDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveCloseAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout dataContainer="valuesFormatsDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0em" columns="1"/>
+            </responsiveSteps>
+            <textField id="valueNameField" property="valueName" required="true" width="100%"
+                       requiredMessage="msg://valueNameMsg"/>
+            <comboBox id="formatField" required="true"
+                      width="100%"
+                      property="formatString"
+                      label="msg://formatStringMsg"
+                      requiredMessage="msg://formatStringMsg"/>
+            <checkbox id="groovyField" property="groovyScript"
+                      label="msg://valuesFormats.groovyScript"/>
+        </formLayout>
+        <div id="groovyCodeEditorBox" visible="false" width="100%">
+            <div classNames="flex, justify-between">
+                <label text="msg://valuesFormats.groovyScript" setFor="groovyCodeEditor"/>
+                <button id="fullScreenTransformationBtn" text="msg:///fullScreenBtn.title"
+                        themeNames="tertiary-inline"/>
+            </div>
+            <div classNames="flex, items-start">
+                <codeEditor id="groovyCodeEditor"
+                            dataContainer="valuesFormatsDc"
+                            height="20em"
+                            width="100%"
+                            property="formatString"
+                            mode="GROOVY"
+                            required="true"
+                            requiredMessage="msg://groovyScriptMsg"/>
+                <button id="groovyCodeEditorHelpBtn"
+                        themeNames="icon, tertiary-inline"
+                        icon="QUESTION_CIRCLE"/>
+            </div>
+        </div>
+        <hbox id="detailActions" width="100%">
+            <button id="saveAndCloseBtn" action="saveCloseAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

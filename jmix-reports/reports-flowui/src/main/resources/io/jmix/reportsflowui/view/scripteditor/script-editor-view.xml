@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://scriptEditorView.title">
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
+    <actions>
+        <action id="okAction"
+                text="msg://okAction.text"
+                actionVariant="PRIMARY" icon="CHECK"/>
+        <action id="cancelAction" type="view_close"/>
+    </actions>
+
+    <layout expand="codeEditorBox">
+        <div id="codeEditorBox" classNames="flex, items-start" width="100%">
+            <codeEditor id="editor"
+                        width="100%"
+                        height="100%"/>
+            <button id="codeEditorHelpBtn"
+                    themeNames="icon, tertiary-inline"
+                    icon="QUESTION_CIRCLE"/>
+        </div>
+        <hbox width="100%" id="lookupActions" justifyContent="END">
+            <button action="okAction"/>
+            <button action="cancelAction"/>
+        </hbox>
+    </layout>
+</view>

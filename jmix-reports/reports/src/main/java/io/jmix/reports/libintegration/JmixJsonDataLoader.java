@@ -16,10 +16,10 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.loaders.impl.JsonDataLoader;
-import com.haulmont.yarg.structure.BandData;
-import com.haulmont.yarg.structure.ReportQuery;
-import com.haulmont.yarg.util.groovy.Scripting;
+import io.jmix.reports.yarg.loaders.impl.JsonDataLoader;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.util.groovy.Scripting;
 import io.jmix.core.Resources;
 import io.jmix.reports.entity.JsonSourceType;
 import io.jmix.reports.entity.ReportInputParameter;

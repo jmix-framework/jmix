@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("report_ReportsSerialization")
 public class ReportsSerialization {
+
     @Autowired
     protected GsonConverter gsonConverter;
 

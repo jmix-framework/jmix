@@ -16,10 +16,10 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.exception.ReportFormattingException;
-import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
-import com.haulmont.yarg.formatters.impl.AbstractFormatter;
-import com.haulmont.yarg.structure.BandData;
+import io.jmix.reports.yarg.exception.ReportFormattingException;
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
+import io.jmix.reports.yarg.formatters.impl.AbstractFormatter;
+import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.core.*;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.StandardSerialization;

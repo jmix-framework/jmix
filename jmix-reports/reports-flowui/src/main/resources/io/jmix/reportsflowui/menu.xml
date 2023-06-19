@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="2700">
+
+    <menu id="reports" title="msg://io.jmix.reportsflowui/menu.reports.title">
+        <item view="report_Report.list" title="msg://io.jmix.reportsflowui/reportListView.menu"/>
+        <item view="report_ReportGroup.list" title="msg://io.jmix.reportsflowui/reportGroupListView.menu"/>
+        <item view="report_ReportRunView" title="msg://io.jmix.reportsflowui/reportRunView.menu"/>
+        <item view="report_ReportTableView" title="msg://io.jmix.reportsflowui/reportTableView.menu"/>
+    </menu>
+
+</menu-config>

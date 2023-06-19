@@ -15,7 +15,7 @@
  */
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.formatters.impl.DefaultFormatProvider;
+import io.jmix.reports.yarg.formatters.impl.DefaultFormatProvider;
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Entity;
 import io.jmix.core.Messages;

@@ -15,7 +15,7 @@
  */
 package io.jmix.reports.entity;
 
-import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.CopyingSystemState;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;

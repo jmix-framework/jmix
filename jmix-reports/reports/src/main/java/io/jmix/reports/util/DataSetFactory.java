@@ -30,6 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Class presents factory bean for create {@link DataSet} instance with basic filled attributes
  */
+@Component("report_DataSetFactory")
 public class DataSetFactory {
 
     @Autowired

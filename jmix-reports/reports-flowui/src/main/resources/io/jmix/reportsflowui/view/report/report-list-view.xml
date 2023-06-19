@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://reportListView.title"
+      focusComponent="reportsDataGrid">
+    <data>
+        <collection id="reportsDc"
+                    class="io.jmix.reports.entity.Report"
+                    fetchPlan="report.view">
+            <loader id="reportsDl">
+                <query>select r from report_Report r
+                    <!--todo rp condition?-->
+                    <condition>
+                        <and>
+                            <c:jpql>
+                                <c:join>report_ReportInputParameter p</c:join>
+                                <c:where>p.report.id = r.id and p.className like :javaClassName</c:where>
+                            </c:jpql>
+                        </and>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <genericFilter id="genericFilter" dataLoader="reportsDl" opened="false"/>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <dropdownButton id="dropdownCreateBtn" icon="PLUS" text="msg://dropdownCreateBtn.text" themeNames="primary">
+                <items>
+                    <actionItem id="create" ref="reportsDataGrid.create"/>
+                    <actionItem id="wizard" ref="reportsDataGrid.wizard"/>
+                </items>
+            </dropdownButton>
+            <button id="editBtn" action="reportsDataGrid.edit"/>
+            <button id="removeBtn" action="reportsDataGrid.remove"/>
+            <button id="copyBtn" action="reportsDataGrid.copy"/>
+            <button id="importBtn" action="reportsDataGrid.importAction"/>
+            <button id="exportBtn" action="reportsDataGrid.export"/>
+            <button id="runReportBtn" action="reportsDataGrid.runReport"/>
+            <button id="executionsBtn" action="reportsDataGrid.executions"/>
+            <simplePagination id="pagination" dataLoader="reportsDl"/>
+        </hbox>
+        <dataGrid id="reportsDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="reportsDc">
+            <actions>
+                <action id="create" type="list_create" text="msg://dropdownCreateBtn.action.create.text"/>
+                <action id="wizard" text="msg://dropdownCreateBtn.action.wizard.text"/>
+                <action id="edit" type="list_edit"/>
+                <action id="remove" type="list_remove"/>
+                <action id="copy" type="list_itemTracking" icon="COPY" text="msg://action.copy.text"/>
+                <action id="importAction" icon="UPLOAD" description="msg://action.import.description"/>
+                <action id="export" type="list_itemTracking" icon="DOWNLOAD" description="msg://action.export.description"/>
+                <action id="runReport" type="list_itemTracking" icon="ANGLE_DOUBLE_RIGHT"
+                        text="msg://action.runReport.text"/>
+                <action id="executions" type="list_itemTracking" icon="FILE"
+                        text="msg://action.executions.text"/>
+            </actions>
+            <columns>
+                <column property="group"/>
+                <column property="description"/>
+                <column property="code"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

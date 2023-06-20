@@ -35,7 +35,7 @@ public @interface StudioComponent {
 
     String category() default "";
 
-    String icon() default "";
+    String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";
 
     String xmlElement() default "";
 

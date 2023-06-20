@@ -15,13 +15,13 @@
  */
 package io.jmix.reports.yarg.formatters.impl.inline;
 
-import io.jmix.reports.yarg.exception.ReportFormattingException;
-import io.jmix.reports.yarg.formatters.impl.doc.OfficeComponent;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.document.XDocumentInsertable;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
+import io.jmix.reports.yarg.exception.ReportFormattingException;
+import io.jmix.reports.yarg.formatters.impl.doc.OfficeComponent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -36,6 +36,7 @@ import org.docx4j.wml.Text;
 import org.xlsx4j.sml.Cell;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -89,7 +90,7 @@ public class HtmlContentInliner implements ContentInliner {
             R run = (R) text.getParent();
             wordPackage.getContentTypeManager().addDefaultContentType("xhtml", "text/xhtml");
             MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
-            mainDocumentPart.addAltChunk(AltChunkType.Xhtml, paramValue.toString().getBytes(), run);
+            mainDocumentPart.addAltChunk(AltChunkType.Xhtml, paramValue.toString().getBytes(StandardCharsets.UTF_8), run);
             text.setValue("");
         } catch (Exception e) {
             throw new ReportFormattingException("An error occurred while inserting html to docx file", e);
@@ -118,7 +119,7 @@ public class HtmlContentInliner implements ContentInliner {
             contentBuilder.append(htmlContent);
             contentBuilder.append(CLOSE_HTML_TAGS);
 
-            FileUtils.writeByteArrayToFile(tempFile, contentBuilder.toString().getBytes());
+            FileUtils.writeByteArrayToFile(tempFile, contentBuilder.toString().getBytes(StandardCharsets.UTF_8));
             String fileUrl = "file:///" + tempFile.getCanonicalPath().replace("\\", "/");
 
             XTextCursor textCursor = destination.createTextCursorByRange(textRange);

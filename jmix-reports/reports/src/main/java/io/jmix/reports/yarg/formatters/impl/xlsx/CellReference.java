@@ -38,7 +38,7 @@ public class CellReference implements Comparable {
         Matcher matcher = CELL_COORDINATES_PATTERN.matcher(cellRef);
         if (matcher.find()) {
             column = io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.getNumberFromColumnReference(matcher.group(1));
-            row = Integer.valueOf(matcher.group(2));
+            row = Integer.parseInt(matcher.group(2));
             this.sheet = sheet;
         } else {
             throw new RuntimeException(String.format("Wrong cell %s", cellRef));

@@ -33,6 +33,10 @@ public class XslStyleHelper {
     private XslStyleHelper() {
     }
 
+    public static FontRecord getFontRecord(HSSFFont font) {
+        return XslStyleHelper.getFieldValue(font, "font");
+    }
+
     public static ExtendedFormatRecord getFormatFromStyle(HSSFCellStyle style) {
         return XslStyleHelper.getFieldValue(style, "_format");
     }
@@ -63,14 +67,14 @@ public class XslStyleHelper {
             FontRecord fr = targetWorkbook.createNewFont();
             fr.cloneStyleFrom(sourceWorkbook.getFontRecordAt(source.getFontIndex()));
             HSSFFont font = newInstance(HSSFFont.class, new Class[]{int.class, FontRecord.class},
-                    (short)targetWorkbook.getFontIndex(fr), fr);
+                    (short) targetWorkbook.getFontIndex(fr), fr);
             target.setFont(font);
         }
     }
 
 
     @SuppressWarnings("unchecked")
-    public static <T> T getFieldValue(Object obj, String fieldName) {
+    private static <T> T getFieldValue(Object obj, String fieldName) {
         try {
             Field field = obj.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);

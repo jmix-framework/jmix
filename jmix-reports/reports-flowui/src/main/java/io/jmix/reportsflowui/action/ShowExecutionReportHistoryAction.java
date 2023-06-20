@@ -19,7 +19,6 @@ package io.jmix.reportsflowui.action;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.ActionType;
@@ -51,7 +50,6 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
     public static final String ID = "report_showExecutionReportHistory";
 
     protected DialogWindows dialogWindows;
-    protected Metadata metadata;
 
     public ShowExecutionReportHistoryAction() {
         this(ID);

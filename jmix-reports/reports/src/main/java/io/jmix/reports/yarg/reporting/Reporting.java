@@ -45,7 +45,6 @@ import static java.lang.String.format;
 public class Reporting implements ReportingAPI {
 
     protected ReportFormatterFactory formatterFactory;
-    protected ReportLoaderFactory loaderFactory;
     protected DataExtractor dataExtractor;
 
     protected ObjectToStringConverter objectToStringConverter = new ObjectToStringConverterImpl();
@@ -57,7 +56,6 @@ public class Reporting implements ReportingAPI {
     }
 
     public void setLoaderFactory(ReportLoaderFactory loaderFactory) {
-        this.loaderFactory = loaderFactory;
         if (loaderFactory != null && dataExtractor == null) {
             dataExtractor = new DataExtractorImpl(loaderFactory);
         }

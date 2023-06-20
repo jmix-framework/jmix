@@ -15,7 +15,6 @@
  */
 package io.jmix.reports.yarg.structure;
 
-import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,6 +48,15 @@ public class ReportOutputType implements Serializable {
         values.put(xlsx.id, xlsx);
     }
 
+    private final String id;
+
+    public ReportOutputType(String id) {
+        if (id == null) {
+            throw new NullPointerException("\"id\" field can not be null");
+        }
+        this.id = id;
+    }
+
     protected static void registerOutputType(ReportOutputType outputType) {
         if (outputType == null) {
             throw new NullPointerException("\"outputType\" parameter can not be null");
@@ -60,20 +68,7 @@ public class ReportOutputType implements Serializable {
         return values.get(id);
     }
 
-    public ReportOutputType(String id) {
-        if (id == null) {
-            throw new NullPointerException("\"id\" field can not be null");
-        }
-        this.id = id;
-    }
-
-    private final String id;
-
     public String getId() {
         return id;
-    }
-
-    private Object readResolve() throws ObjectStreamException {
-        return getOutputTypeById(id);
     }
 }

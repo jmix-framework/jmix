@@ -263,7 +263,7 @@ public class TableEditFragment extends AbstractDescriptionEditFragment<TableEdit
     public void setReportTemplate(@Nullable ReportTemplate reportTemplate) {
         super.setReportTemplate(reportTemplate);
 
-        if (reportTemplate.getTemplateTableDescription() == null) {
+        if (reportTemplate == null || reportTemplate.getTemplateTableDescription() == null) {
             templateTableDescriptionDc.setItem(createDefaultTemplateTableDescription());
         } else {
             templateTableDescriptionDc.setItem(reportTemplate.getTemplateTableDescription());

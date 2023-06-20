@@ -20,7 +20,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.view.DetailCloseAction;
 import io.jmix.flowui.action.view.ViewAction;
@@ -37,8 +36,6 @@ public class RunSingleEntityReportAction<E> extends ViewAction<DetailCloseAction
 
     protected String reportOutputName;
     protected Metadata metadata;
-    protected Messages messages;
-    protected Notifications notifications;
     protected ReportActionSupport reportActionSupport;
 
     public RunSingleEntityReportAction() {
@@ -53,7 +50,6 @@ public class RunSingleEntityReportAction<E> extends ViewAction<DetailCloseAction
 
     @Autowired
     public void setMessages(Messages messages) {
-        this.messages = messages;
         this.text = messages.getMessage(getClass(), "actions.Report");
     }
 
@@ -62,10 +58,6 @@ public class RunSingleEntityReportAction<E> extends ViewAction<DetailCloseAction
         this.metadata = metadata;
     }
 
-    @Autowired
-    public void setNotifications(Notifications notifications) {
-        this.notifications = notifications;
-    }
 
     @Autowired
     public void setPrintReport(ReportActionSupport reportActionSupport) {

@@ -17,13 +17,12 @@
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
 
-import io.jmix.reports.yarg.formatters.impl.doc.connector.JavaProcessManager;
-import io.jmix.reports.yarg.formatters.impl.doc.connector.ProcessManager;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -41,36 +40,15 @@ public class WinProcessManager extends JavaProcessManager implements ProcessMana
             Pattern.compile("^.*?(\\d+\\.\\d+\\.\\d+\\.\\d+)[\\.\\:](\\d+)\\s+(\\d+\\.\\d+\\.\\d+\\.\\d+)[\\.\\:](\\d+)\\s+\\w+\\s+(\\d+)");
     protected static final String LOCAL_HOST = "127.0.0.1";
 
-
-    protected static class NetStatInfo {
-        protected String localAddress;
-        protected int localPort;
-        protected long pid;
-
-        protected NetStatInfo(String output) {
-            Matcher matcher = NETSTAT_PATTERN.matcher(output);
-            if (matcher.matches()) {
-                localAddress = matcher.group(1);
-                String value = matcher.group(2);
-                if (isNotBlank(value))
-                    localPort = Integer.valueOf(value);
-                value = matcher.group(5);
-                if (isNotBlank(value))
-                    pid = Long.valueOf(value);
-            }
-        }
-    }
-
     @Override
-    @SuppressWarnings("unchecked")
     public List<Long> findPid(String host, int port) {
         try {
             if ("localhost".equalsIgnoreCase(host))
                 host = LOCAL_HOST;
             Process process = Runtime.getRuntime().exec(String.format(FIND_PID_COMMAND, port));
-            List r = IOUtils.readLines(process.getInputStream());
-            for (Object output : r) {
-                NetStatInfo info = new NetStatInfo((String) output);
+            List<String> r = IOUtils.readLines(process.getInputStream(), StandardCharsets.UTF_8);
+            for (String output : r) {
+                NetStatInfo info = new NetStatInfo(output);
                 if (info.localPort == port && Objects.equals(host, info.localAddress))
                     return Collections.singletonList(info.pid);
             }
@@ -96,6 +74,25 @@ public class WinProcessManager extends JavaProcessManager implements ProcessMana
             } catch (IOException e) {
                 log.error(String.format("An error occurred while killing process %d in windows system. Process.destroy() will be called.", pid), e);
                 super.kill(process, Collections.singletonList(pid));
+            }
+        }
+    }
+
+    protected static class NetStatInfo {
+        protected String localAddress;
+        protected int localPort;
+        protected long pid;
+
+        protected NetStatInfo(String output) {
+            Matcher matcher = NETSTAT_PATTERN.matcher(output);
+            if (matcher.matches()) {
+                localAddress = matcher.group(1);
+                String value = matcher.group(2);
+                if (isNotBlank(value))
+                    localPort = Integer.parseInt(value);
+                value = matcher.group(5);
+                if (isNotBlank(value))
+                    pid = Long.parseLong(value);
             }
         }
     }

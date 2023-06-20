@@ -105,9 +105,9 @@ public class Range {
 
     private static Range getRange(String range, String sheet, String startColumnStr, String startRowStr, String lastColumnStr, String lastRowStr) {
         try {
-            int startRow = startRowStr != null ? Integer.valueOf(startRowStr) : MIN_LENGTH_RANGE;
+            int startRow = startRowStr != null ? Integer.parseInt(startRowStr) : MIN_LENGTH_RANGE;
             int startColumn = startColumnStr != null ? XlsxUtils.getNumberFromColumnReference(startColumnStr) : MIN_LENGTH_RANGE;
-            int lastRow = lastRowStr != null ? Integer.valueOf(lastRowStr) : MAX_LENGTH_RANGE;
+            int lastRow = lastRowStr != null ? Integer.parseInt(lastRowStr) : MAX_LENGTH_RANGE;
             int lastColumn = lastColumnStr != null ? XlsxUtils.getNumberFromColumnReference(lastColumnStr) : MAX_LENGTH_RANGE;
 
             return new Range(sheet, startColumn, startRow, lastColumn, lastRow);

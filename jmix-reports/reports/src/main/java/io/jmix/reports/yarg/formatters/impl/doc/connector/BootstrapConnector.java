@@ -16,8 +16,6 @@
 
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
-import io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException;
-import io.jmix.reports.yarg.formatters.impl.doc.connector.OOServer;
 import com.sun.star.bridge.UnoUrlResolver;
 import com.sun.star.bridge.XUnoUrlResolver;
 import com.sun.star.comp.helper.Bootstrap;
@@ -28,6 +26,8 @@ import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
@@ -52,19 +52,18 @@ import java.util.function.Supplier;
  */
 public class BootstrapConnector {
 
+    private static final Logger log = LoggerFactory.getLogger(BootstrapConnector.class);
+
+    protected static final int CONNECTION_RETRY_INTERVAL = 500;
+    protected Supplier<Integer> connectionTimeoutSupplier;
     /**
      * The OOo server.
      */
     private OOServer oooServer;
-
     /**
      * The connection string which has ben used to establish the connection.
      */
     private String oooConnectionString;
-
-    protected Supplier<Integer> connectionTimeoutSupplier;
-
-    protected static final int CONNECTION_RETRY_INTERVAL = 500;
 
     /**
      * Constructs a bootstrap connector which connects to the specified
@@ -103,7 +102,7 @@ public class BootstrapConnector {
      * @param oooConnectionString The connection string
      * @return The component context
      */
-    public XComponentContext connect(String oooConnectionString) throws io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException {
+    public XComponentContext connect(String oooConnectionString) throws BootstrapException {
 
         this.oooConnectionString = oooConnectionString;
 
@@ -117,7 +116,7 @@ public class BootstrapConnector {
             // initial service manager
             XMultiComponentFactory xLocalServiceManager = xLocalContext.getServiceManager();
             if (xLocalServiceManager == null)
-                throw new io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException("no initial service manager!");
+                throw new BootstrapException("no initial service manager!");
 
             // create a URL resolver
             XUnoUrlResolver xUrlResolver = UnoUrlResolver.create(xLocalContext);
@@ -134,14 +133,14 @@ public class BootstrapConnector {
                         // Retry to connect after a short interval
                         Thread.sleep(CONNECTION_RETRY_INTERVAL);
                     } else {
-                        throw new io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException("Unable to connect to the OO process", ex);
+                        throw new BootstrapException("Unable to connect to the OO process", ex);
                     }
                 }
             }
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            throw new io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException(e);
+            throw new BootstrapException(e);
         }
         return xContext;
     }
@@ -174,10 +173,10 @@ public class BootstrapConnector {
             // get desktop to terminate office
             Object desktop = xRemoteContext.getServiceManager().createInstanceWithContext(
                     "com.sun.star.frame.Desktop", xRemoteContext);
-            XDesktop xDesktop = (XDesktop) UnoRuntime.queryInterface(XDesktop.class, desktop);
+            XDesktop xDesktop = UnoRuntime.queryInterface(XDesktop.class, desktop);
             xDesktop.terminate();
         } catch (Exception e) {
-            // Bad luck, unable to terminate office
+            log.error("Unable to terminate office");
         }
 
         oooServer.kill();
@@ -189,11 +188,11 @@ public class BootstrapConnector {
      *
      * @return The default local component context
      */
-    protected XComponentContext getLocalContext() throws io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException, Exception {
+    protected XComponentContext getLocalContext() throws Exception {
 
         XComponentContext xLocalContext = Bootstrap.createInitialComponentContext(null);
         if (xLocalContext == null) {
-            throw new io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException("no local component context!");
+            throw new BootstrapException("no local component context!");
         }
         return xLocalContext;
     }
@@ -203,11 +202,11 @@ public class BootstrapConnector {
      *
      * @return The remote component context
      */
-    protected XComponentContext getRemoteContext(XUnoUrlResolver xUrlResolver) throws io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException,
+    protected XComponentContext getRemoteContext(XUnoUrlResolver xUrlResolver) throws BootstrapException,
             ConnectionSetupException, IllegalArgumentException, NoConnectException {
 
         Object context = xUrlResolver.resolve(oooConnectionString);
-        XComponentContext xContext = (XComponentContext) UnoRuntime.queryInterface(XComponentContext.class, context);
+        XComponentContext xContext = UnoRuntime.queryInterface(XComponentContext.class, context);
         if (xContext == null) {
             throw new BootstrapException("no component context!");
         }

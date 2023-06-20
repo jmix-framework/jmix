@@ -41,7 +41,7 @@ public class UserSessionControllerManager {
 //    protected TokenStore tokenStore;
 
     public void setSessionLocale(HttpServletRequest request) {
-        Locale locale = restLocaleUtils.extractLocaleFromRequestHeader(request);
+//        Locale locale = restLocaleUtils.extractLocaleFromRequestHeader(request);
 
         //todo MG fix REST API UserSessionControllerManager
 //        if (locale != null) {

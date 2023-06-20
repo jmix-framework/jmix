@@ -256,6 +256,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
                 .collect(Collectors.toList());
     }
 
+    @Nullable
     protected GrantedAuthority createAuthority(RoleAssignment roleAssignment) {
         GrantedAuthority authority = null;
         if (RoleAssignmentRoleType.RESOURCE.equals(roleAssignment.getRoleType())) {

@@ -61,7 +61,6 @@ public interface StudioComponents {
             classFqn = "com.vaadin.flow.component.avatar.Avatar",
             category = "Components",
             xmlElement = "avatar",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "abbreviation", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
@@ -89,7 +88,6 @@ public interface StudioComponents {
             classFqn = "com.vaadin.flow.component.icon.Icon",
             category = "Components",
             xmlElement = "icon",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.LOCALIZED_STRING),
@@ -108,7 +106,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.textfield.JmixBigDecimalField",
             category = "Components",
             xmlElement = "bigDecimalField",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "autocapitalize", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.textfield.Autocapitalize", defaultValue = "NONE",
@@ -565,7 +562,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.kit.component.combobutton.ComboButton",
             category = "Components",
             xmlElement = "comboButton",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "action", type = StudioPropertyType.ACTION_REF),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
@@ -716,7 +712,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
             category = "Components",
             xmlElement = "dateTimePicker",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "autoOpen", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -771,7 +766,6 @@ public interface StudioComponents {
             classFqn = "com.vaadin.flow.component.applayout.DrawerToggle",
             category = "Components",
             xmlElement = "drawerToggle",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "autoFocus", type = StudioPropertyType.BOOLEAN,
@@ -798,7 +792,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.textfield.JmixEmailField",
             category = "Components",
             xmlElement = "emailField",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "allowedCharPattern", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "autocapitalize", type = StudioPropertyType.ENUMERATION,
@@ -1123,7 +1116,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.textfield.JmixIntegerField",
             category = "Components",
             xmlElement = "integerField",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "autocapitalize", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.textfield.Autocapitalize", defaultValue = "NONE",
@@ -1207,7 +1199,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.textfield.JmixNumberField",
             category = "Components",
             xmlElement = "numberField",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "allowedCharPattern", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "autocapitalize", type = StudioPropertyType.ENUMERATION,
@@ -1451,7 +1442,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.select.JmixSelect",
             category = "Components",
             xmlElement = "select",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "autofocus", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -1543,7 +1533,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.listbox.JmixListBox",
             category = "Components",
             xmlElement = "listBox",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
@@ -1573,7 +1562,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.listbox.JmixMultiSelectListBox",
             category = "Components",
             xmlElement = "multiSelectListBox",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
@@ -1766,7 +1754,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.timepicker.TypedTimePicker",
             category = "Components",
             xmlElement = "timePicker",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "allowedCharPattern", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "autoOpen", type = StudioPropertyType.BOOLEAN,
@@ -1925,7 +1912,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.loginform.JmixLoginForm",
             category = "Components",
             xmlElement = "loginForm",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "forgotPasswordButtonVisible", type = StudioPropertyType.BOOLEAN),
@@ -1945,7 +1931,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.pagination.SimplePagination",
             category = "Components",
             xmlElement = "simplePagination",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "dataLoader", type = StudioPropertyType.DATA_LOADER_REF),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
@@ -2167,7 +2152,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter",
             category = "Components",
             xmlElement = "propertyFilter",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "autoApply", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
@@ -2227,7 +2211,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
             category = "Components",
             xmlElement = "jpqlFilter",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "autoApply", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),

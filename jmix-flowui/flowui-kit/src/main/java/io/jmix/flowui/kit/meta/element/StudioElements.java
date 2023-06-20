@@ -63,7 +63,6 @@ public interface StudioElements {
             name = "ActionItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ActionItem",
             xmlElement = "actionItem",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
@@ -75,7 +74,6 @@ public interface StudioElements {
             name = "AdditionalInformation",
             xmlElement = "additionalInformation",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING)
             }
@@ -118,7 +116,6 @@ public interface StudioElements {
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = "componentItem",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }
@@ -129,7 +126,6 @@ public interface StudioElements {
             name = "ErrorMessage",
             classFqn = "com.vaadin.flow.component.login.LoginI18n.ErrorMessage",
             xmlElement = "errorMessage",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
@@ -142,7 +138,6 @@ public interface StudioElements {
             name = "Form",
             classFqn = "io.jmix.flowui.kit.component.loginform.JmixLoginI18n.JmixForm",
             xmlElement = "form",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
             properties = {
                     @StudioProperty(xmlAttribute = "forgotPassword", type = StudioPropertyType.LOCALIZED_STRING),
@@ -160,7 +155,6 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.GenericFilterQueryParametersBinder",
             xmlElement = "genericFilter",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -196,7 +190,6 @@ public interface StudioElements {
             name = "TextItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.TextItem",
             xmlElement = "textItem",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
@@ -264,7 +257,6 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.PaginationQueryParametersBinder",
             xmlElement = "pagination",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "firstResultParam", type = StudioPropertyType.STRING),
@@ -279,7 +271,6 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.PropertyFilterQueryParametersBinder",
             xmlElement = "propertyFilter",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -292,7 +283,6 @@ public interface StudioElements {
             name = "ResponsiveStep",
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveStep",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE, required = true),
                     @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
@@ -307,7 +297,6 @@ public interface StudioElements {
             name = "ResponsiveStep",
             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
             xmlElement = "responsiveStep",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE, required = true),
                     @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
@@ -322,7 +311,6 @@ public interface StudioElements {
             name = "PropertyFilter",
             classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter",
             xmlElement = "propertyFilter",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",
                     "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
@@ -372,7 +360,6 @@ public interface StudioElements {
             name = "JpqlFilter",
             classFqn = "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
             xmlElement = "jpqlFilter",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",
                     "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
@@ -413,10 +400,33 @@ public interface StudioElements {
     void jpqlFilter();
 
     @StudioElement(
+            name = "Condition",
+            classFqn = "io.jmix.flowui.kit.component.stub.JpqlFilterCondition",
+            xmlElement = "condition",
+            target = { "io.jmix.flowui.component.jpqlfilter.JpqlFilter"},
+            unlimitedCount = false
+    )
+    void jpqlFilterCondition();
+
+    @StudioElement(
+            name = "Jpql",
+            classFqn = "io.jmix.flowui.kit.component.stub.JpqlFilterJpql",
+            xmlns = "http://jmix.io/schema/flowui/jpql-condition",
+            xmlElement = "jpql",
+            xmlnsAlias = "c",
+            target = { "io.jmix.flowui.kit.component.stub.JpqlFilterCondition"},
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.JPQL_FILTER_JOIN),
+                    @StudioProperty(xmlAttribute = "where", type = StudioPropertyType.JPQL_FILTER_WHERE),
+            }
+    )
+    void jpqlFilterConditionJpql();
+
+    @StudioElement(
             name = "GroupFilter",
             classFqn = "io.jmix.flowui.component.logicalfilter.GroupFilter",
             xmlElement = "groupFilter",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",
                     "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"

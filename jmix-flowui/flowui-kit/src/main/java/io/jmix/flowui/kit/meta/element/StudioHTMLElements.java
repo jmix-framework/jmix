@@ -29,7 +29,6 @@ public interface StudioHTMLElements {
             name = "Description",
             classFqn = "com.vaadin.flow.component.html.DescriptionList$Description",
             xmlElement = "description",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = {"com.vaadin.flow.component.html.DescriptionList"},
             visible = true,
             properties = {
@@ -61,7 +60,6 @@ public interface StudioHTMLElements {
             name = "Term",
             classFqn = "com.vaadin.flow.component.html.DescriptionList$Term",
             xmlElement = "term",
-            icon = "io/jmix/flowui/kit/meta/icon/unknownComponent.svg",
             target = "com.vaadin.flow.component.html.DescriptionList",
             visible = true,
             properties = {

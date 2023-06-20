@@ -127,6 +127,16 @@ public enum StudioPropertyType {
     JPA_QUERY,
 
     /**
+     * Jpql filter join part.
+     */
+    JPQL_FILTER_JOIN,
+
+    /**
+     * Jpql filter where part.
+     */
+    JPQL_FILTER_WHERE,
+
+    /**
      * Long type.
      */
     LONG,

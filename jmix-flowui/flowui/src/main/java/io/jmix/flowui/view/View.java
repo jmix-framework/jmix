@@ -337,8 +337,7 @@ public class View<T extends Component> extends Composite<T>
      * @param listener the listener to add, not {@code null}
      * @return a registration object that can be used for removing the listener
      */
-    @Internal
-    Registration addQueryParametersChangeListener(ComponentEventListener<QueryParametersChangeEvent> listener) {
+    protected Registration addQueryParametersChangeListener(ComponentEventListener<QueryParametersChangeEvent> listener) {
         return getEventBus().addListener(QueryParametersChangeEvent.class, listener);
     }
 
@@ -527,11 +526,9 @@ public class View<T extends Component> extends Composite<T>
 
     /**
      * An event informing which query parameters the view is opened with.
-     * For internal use only. Can be changed or removed in future releases.
      *
      * @see #addQueryParametersChangeListener(ComponentEventListener)
      */
-    @Internal
     public static class QueryParametersChangeEvent extends ComponentEvent<View<?>> {
 
         protected QueryParameters queryParameters;

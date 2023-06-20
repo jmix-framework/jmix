@@ -16,10 +16,7 @@
 
 package navigation.view;
 
-import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.facet.UrlQueryParametersFacet;
-import io.jmix.flowui.facet.urlqueryparameters.AbstractUrlQueryParametersBinder;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import test_support.entity.sales.Customer;
@@ -37,24 +34,15 @@ public class BackwardNavigationListView extends StandardListView<Customer> {
     @ViewComponent
     public JmixButton createBtn;
 
-    @ViewComponent
-    public UrlQueryParametersFacet urlQueryParameters;
-
     public String paramValue;
 
     @Subscribe
-    public void onInit(final InitEvent event) {
-        // todo rp rework after https://github.com/jmix-framework/jmix/issues/1843
-        urlQueryParameters.registerBinder(new AbstractUrlQueryParametersBinder() {
-            @Override
-            public void updateState(QueryParameters queryParameters) {
-                Map<String, List<String>> parameters = queryParameters.getParameters();
+    protected void onQueryParametersChange(QueryParametersChangeEvent event) {
+        Map<String, List<String>> parameters = event.getQueryParameters().getParameters();
 
-                List<String> values = parameters.getOrDefault("param", Collections.emptyList());
-                if (!values.isEmpty()) {
-                    paramValue = values.get(0);
-                }
-            }
-        });
+        List<String> values = parameters.getOrDefault("param", Collections.emptyList());
+        if (!values.isEmpty()) {
+            paramValue = values.get(0);
+        }
     }
 }

@@ -40,8 +40,10 @@ import java.util.*;
 
 import static java.lang.String.format;
 
-//todo SB3 restore NotThreadSafe annotation?
-//@NotThreadSafe
+/**
+ * This class is not thread-safe and should not be accessed concurrently from multiple threads without proper
+ * synchronization.
+ */
 //todo add dynamic attributes support
 //todo add not meta property objects support
 public class GsonSerializationSupport {

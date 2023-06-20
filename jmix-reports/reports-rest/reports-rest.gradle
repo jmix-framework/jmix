@@ -31,9 +31,6 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
-    //todo SB3 why ui-test-assist-spock in reports-rest?
-//    testImplementation project(':ui-test-assist-spock')
-
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
     testImplementation 'ch.qos.logback:logback-classic'

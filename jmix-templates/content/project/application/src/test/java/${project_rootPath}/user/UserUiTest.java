@@ -11,8 +11,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.data.DataUnit;
-import io.jmix.flowui.data.grid.ContainerDataGridItems;
+import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
@@ -74,12 +73,10 @@ public class UserUiTest {
         // Check the created user is shown in the table
         DataGrid<User> usersDataGrid = findComponent(userListView, "usersDataGrid");
 
-        DataUnit usersDataGridItems = usersDataGrid.getItems();
+        DataGridItems<User> usersDataGridItems = usersDataGrid.getItems();
         Assertions.assertNotNull(usersDataGridItems);
 
-        //noinspection unchecked
-        ((ContainerDataGridItems<User>) usersDataGridItems).getContainer()
-                .getItems().stream()
+        usersDataGridItems.getItems().stream()
                 .filter(u -> u.getUsername().equals(username))
                 .findFirst()
                 .orElseThrow();

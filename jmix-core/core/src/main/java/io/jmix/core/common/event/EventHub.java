@@ -24,9 +24,11 @@ import java.util.function.Consumer;
 
 /**
  * EventHub class implementing the event listening model with concrete event classes.
+ * <p>
+ * This class is not thread-safe and should not be accessed concurrently from multiple threads without proper
+ * synchronization. * This class is not thread-safe and should not be accessed concurrently from multiple threads
+ * without proper synchronization.
  */
-//todo SB3 restore NotThreadSafe annotation?
-//@NotThreadSafe
 public class EventHub {
     protected static final int EVENTS_MAP_EXPECTED_MAX_SIZE = 4;
 

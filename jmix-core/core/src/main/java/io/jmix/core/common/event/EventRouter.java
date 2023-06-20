@@ -23,9 +23,10 @@ import java.util.function.BiConsumer;
 
 /**
  * Generic Event router with lazily initialized event map.
+ * <p>
+ * This class is not thread-safe and should not be accessed concurrently from multiple threads without proper
+ * synchronization.
  */
-//todo SB3 restore NotThreadSafe annotation?
-//@NotThreadSafe
 public class EventRouter {
     private static final int EVENTS_MAP_EXPECTED_MAX_SIZE = 4;
     private static final int EVENTS_LIST_INITIAL_CAPACITY = 2;

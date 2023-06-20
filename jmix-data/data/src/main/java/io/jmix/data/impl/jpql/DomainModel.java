@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-//todo SB3 restore NotThreadSafe annotation?
-//@NotThreadSafe
+/**
+ * This class is not thread-safe and should not be accessed concurrently from multiple threads without proper
+ * synchronization.
+ */
 public class DomainModel {
     protected Map<String, JpqlEntityModel> entities = new HashMap<>();
     protected ExtendedEntities extendedEntities;

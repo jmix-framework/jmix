@@ -30,7 +30,6 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
@@ -60,7 +59,8 @@ import javax.sql.DataSource;
 import java.util.Collections;
 
 @Configuration
-@ComponentScan
+@ComponentScan(excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = UiTestSecurityConfiguration.class)})
 @PropertySource("classpath:/test_support/test-ui-app.properties")
 @JmixModule(dependsOn = CoreConfiguration.class)
 public class UiTestConfiguration {

@@ -75,7 +75,7 @@ import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField;
  *
  * @see UiTest
  */
-public class JmixUiTestExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
+public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(JmixUiTestExtension.class);
 
@@ -184,16 +184,6 @@ public class JmixUiTestExtension implements BeforeEachCallback, AfterEachCallbac
     }
 
     protected void setupAuthentication(ExtensionContext context) {
-        String authenticatedUser = null;
-        if (!Strings.isNullOrEmpty(this.authenticatedUser)) {
-            authenticatedUser = this.authenticatedUser;
-        } else {
-            Optional<UiTest> jmixUiTestAnnotationOpt = AnnotationSupport.findAnnotation(context.getTestClass(), UiTest.class);
-            if (jmixUiTestAnnotationOpt.isPresent()) {
-                authenticatedUser = jmixUiTestAnnotationOpt.get().authenticatedUser();
-            }
-        }
-
         SystemAuthenticator systemAuthenticator = getApplicationContext(context).getBean(SystemAuthenticator.class);
         if (!Strings.isNullOrEmpty(authenticatedUser)) {
             systemAuthenticator.begin(authenticatedUser);
@@ -285,7 +275,7 @@ public class JmixUiTestExtension implements BeforeEachCallback, AfterEachCallbac
         if (ArrayUtils.isNotEmpty(this.screenBasePackages)) {
             screenBasePackages = this.screenBasePackages;
         } else {
-            Optional<UiTest> jmixUiTestAnnotationOpt = AnnotationSupport.findAnnotation(context.getTestClass(), UiTest.class);
+            Optional<UiTest> jmixUiTestAnnotationOpt = getUiTestAnnotation(context);
             if (jmixUiTestAnnotationOpt.isPresent()) {
                 screenBasePackages = jmixUiTestAnnotationOpt.get().screenBasePackages();
             }
@@ -328,16 +318,6 @@ public class JmixUiTestExtension implements BeforeEachCallback, AfterEachCallbac
     }
 
     protected void openMainScreen(ExtensionContext context) {
-        String mainScreenId = null;
-
-        if (!Strings.isNullOrEmpty(this.mainScreenId)) {
-            mainScreenId = this.mainScreenId;
-        } else {
-            Optional<UiTest> jmixUiTestAnnotationOpt = AnnotationSupport.findAnnotation(context.getTestClass(), UiTest.class);
-            if (jmixUiTestAnnotationOpt.isPresent()) {
-                mainScreenId = jmixUiTestAnnotationOpt.get().mainScreenId();
-            }
-        }
 
         AppUI appUI = getAppUI(context);
 
@@ -349,4 +329,35 @@ public class JmixUiTestExtension implements BeforeEachCallback, AfterEachCallbac
                     .show();
         }
     }
+
+    @Override
+    public void postProcessTestInstance(Object testInstance, ExtensionContext context) {
+        initAuthenticatedUser(context);
+        initMainScreenId(context);
+        initScreenBasePackages(context);
+    }
+
+    private void initAuthenticatedUser(ExtensionContext context) {
+        if (Strings.isNullOrEmpty(this.authenticatedUser)) {
+            getUiTestAnnotation(context)
+                    .ifPresent(uiTest -> this.authenticatedUser = uiTest.authenticatedUser());
+        }
+    }
+
+    private void initScreenBasePackages(ExtensionContext context) {
+        if (ArrayUtils.isEmpty(this.screenBasePackages)) {
+            getUiTestAnnotation(context).ifPresent(uiTest -> this.screenBasePackages = uiTest.screenBasePackages());
+        }
+    }
+
+    private void initMainScreenId(ExtensionContext context) {
+        if (Strings.isNullOrEmpty(this.mainScreenId)) {
+            getUiTestAnnotation(context).ifPresent(uiTest -> this.mainScreenId = uiTest.mainScreenId());
+        }
+    }
+
+    private static Optional<UiTest> getUiTestAnnotation(ExtensionContext context) {
+        return AnnotationSupport.findAnnotation(context.getTestClass(), UiTest.class);
+    }
+
 }

@@ -23,7 +23,7 @@ import java.util.Arrays;
  * Executes SQL queries with pluggable strategies for handling
  * <code>ResultSet</code>s.  This class is thread safe.
  *
- * @see com.haulmont.yarg.util.db.ResultSetHandler
+ * @see ResultSetHandler
  */
 public class QueryRunner {
 

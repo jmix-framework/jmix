@@ -137,7 +137,7 @@ public abstract class AbstractViewNavigator {
     }
 
     /**
-     * Perform navigation to the view configured using {@link #withViewId(String)} or {@link #withViewClass(Class)}.
+     * Perform navigation to the view configured using {@link #withViewId(String)}.
      */
     public void navigate() {
         ((Consumer<AbstractViewNavigator>) handler).accept(this);

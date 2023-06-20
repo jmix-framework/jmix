@@ -51,7 +51,7 @@ public class HtmlGenerator implements Generator {
     @Autowired
     protected Messages messages;
 
-    protected volatile static Configuration freeMarkerConfiguration;
+    protected volatile Configuration freeMarkerConfiguration;
 
     @Override
     public byte[] generate(ReportData reportData) throws TemplateException, IOException {

@@ -24,6 +24,7 @@ import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportOutputType;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ public class CsvFormatter extends AbstractFormatter {
     protected void writeCsvDocument(BandData rootBand, OutputStream outputStream) {
         try {
             List<BandData> actualData = getActualData(rootBand);
-            CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream), separator,
+            CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), separator,
                     CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
             writer.writeNext(header);
@@ -93,12 +94,12 @@ public class CsvFormatter extends AbstractFormatter {
     protected void readTemplateData() {
         checkThreadInterrupted();
         InputStream documentContent = reportTemplate.getDocumentContent();
-        BufferedReader in = new BufferedReader(new InputStreamReader(documentContent));
+        BufferedReader in = new BufferedReader(new InputStreamReader(documentContent, StandardCharsets.UTF_8));
 
         StringBuilder headerData = new StringBuilder();
         try {
             String line;
-            while((line = in.readLine()) != null) {
+            while ((line = in.readLine()) != null) {
                 checkThreadInterrupted();
                 Matcher matcher = UNIVERSAL_ALIAS_PATTERN.matcher(line);
                 if (!matcher.find())

@@ -33,9 +33,9 @@ import java.util.List;
 @DialogMode(width = "40em")
 public class ReportValueFormatDetailView extends StandardDetailView<ReportValueFormat> {
 
-    protected static final String RETURN_VALUE = "return value";
+    private static final String RETURN_VALUE = "return value";
 
-    protected static final String[] defaultFormats = new String[]{
+    private static final String[] DEFAULT_FORMATS = new String[]{
             "#,##0",
             "##,##0",
             "#,##0.###",
@@ -142,7 +142,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     }
 
     protected void initFormatComboBox() {
-        formatField.setItems(Arrays.asList(defaultFormats));
+        formatField.setItems(Arrays.asList(DEFAULT_FORMATS));
 
         formatField.addCustomValueSetListener(event -> {
             String text = event.getDetail();

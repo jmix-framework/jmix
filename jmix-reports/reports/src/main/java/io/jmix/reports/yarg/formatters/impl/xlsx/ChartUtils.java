@@ -55,11 +55,11 @@ public class ChartUtils {
         } else if (area instanceof CTBarSer) {
             return ((CTBarSer) area).getCat();
         } else if (area instanceof CTSurfaceSer) {
-            ((CTSurfaceSer) area).getCat();
+            return ((CTSurfaceSer) area).getCat();
         } else if (area instanceof CTBubbleSer) {
             return ((CTBubbleSer) area).getXVal();
         } else if (area instanceof CTScatterSer) {
-            ((CTScatterSer) area).getXVal();
+            return ((CTScatterSer) area).getXVal();
         }
         return null;
     }
@@ -76,11 +76,11 @@ public class ChartUtils {
         } else if (area instanceof CTBarSer) {
             return ((CTBarSer) area).getVal();
         } else if (area instanceof CTSurfaceSer) {
-            ((CTSurfaceSer) area).getCat();
+            return ((CTSurfaceSer) area).getVal();
         } else if (area instanceof CTBubbleSer) {
             return ((CTBubbleSer) area).getYVal();
         } else if (area instanceof CTScatterSer) {
-            ((CTScatterSer) area).getYVal();
+            return ((CTScatterSer) area).getYVal();
         }
         return null;
     }

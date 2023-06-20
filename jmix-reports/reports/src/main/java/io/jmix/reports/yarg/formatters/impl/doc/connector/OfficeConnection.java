@@ -31,27 +31,25 @@ import static io.jmix.reports.yarg.formatters.impl.doc.UnoConverter.as;
 public class OfficeConnection {
     protected static AtomicLong bridgeIndex = new AtomicLong();
 
-    protected String openOfficePath;
-    protected io.jmix.reports.yarg.formatters.impl.doc.connector.OOServer oooServer;
+    protected OOServer oooServer;
     protected Integer port;
-    protected io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeIntegration officeIntegration;
-    protected io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapSocketConnector bsc;
+    protected OfficeIntegration officeIntegration;
+    protected BootstrapSocketConnector bsc;
 
     protected volatile XComponentContext xComponentContext;
-    protected volatile io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeResourceProvider officeResourceProvider;
+    protected volatile OfficeResourceProvider officeResourceProvider;
     protected volatile boolean closed = true;
 
 
     public OfficeConnection(String openOfficePath, Integer port, ProcessManager processManager, OfficeIntegration officeIntegration) {
         this.port = port;
         this.officeIntegration = officeIntegration;
-        this.oooServer = new io.jmix.reports.yarg.formatters.impl.doc.connector.OOServer(openOfficePath, OOServer.getDefaultOOoOptions(),
+        this.oooServer = new OOServer(openOfficePath, OOServer.getDefaultOOoOptions(),
                 "localhost", port, officeIntegration::getTemporaryDirPath, processManager);
         this.bsc = new BootstrapSocketConnector(oooServer, officeIntegration::getConnectionTimeoutSec);
-        this.openOfficePath = openOfficePath;
     }
 
-    public io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeResourceProvider getOOResourceProvider() {
+    public OfficeResourceProvider getOOResourceProvider() {
         return officeResourceProvider;
     }
 

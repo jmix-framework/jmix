@@ -34,7 +34,7 @@ import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reportsflowui.view.report.ReportDetailView;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 /**

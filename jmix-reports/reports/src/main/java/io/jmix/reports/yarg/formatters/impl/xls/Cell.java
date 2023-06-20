@@ -17,6 +17,8 @@ package io.jmix.reports.yarg.formatters.impl.xls;
 
 import org.apache.poi.ss.util.CellReference;
 
+import java.util.Objects;
+
 public class Cell {
     private int row;
     private int col;
@@ -66,6 +68,11 @@ public class Cell {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(row, col);
     }
 
     @Override

@@ -24,11 +24,8 @@ import java.util.Date;
 
 public class ObjectToStringConverterImpl extends AbstractObjectToStringConverter {
 
-    public static final SimpleDateFormat DEFAULT_DATETIME_FORMAT = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-    public static final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
-
-    protected SimpleDateFormat dateTimeFormat = DEFAULT_DATETIME_FORMAT;
-    protected SimpleDateFormat dateFormat = DEFAULT_DATE_FORMAT;
+    protected SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+    protected SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override
     public String convertToString(Class parameterClass, Object paramValue) {

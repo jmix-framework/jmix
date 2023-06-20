@@ -33,7 +33,6 @@ public class OfficeIntegration implements OfficeIntegrationAPI {
 
     protected String openOfficePath;
     protected String temporaryDirPath;
-    protected Integer[] openOfficePorts;
     protected Integer timeoutInSeconds = DEFAULT_TIMEOUT;
     protected int connectionTimeoutSec = DEFAULT_CONNECTION_TIMEOUT;
     protected int countOfRetry = DEFAULT_RETRY_COUNT;
@@ -42,7 +41,6 @@ public class OfficeIntegration implements OfficeIntegrationAPI {
 
     public OfficeIntegration(String openOfficePath, Integer... ports) {
         this.openOfficePath = openOfficePath;
-        this.openOfficePorts = ports;
         initConnections(ports);
         executor = createExecutor();
     }

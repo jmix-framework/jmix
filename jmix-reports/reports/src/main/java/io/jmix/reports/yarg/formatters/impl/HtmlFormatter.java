@@ -82,7 +82,7 @@ public class HtmlFormatter extends AbstractFormatter {
             ByteArrayOutputStream htmlOutputStream = new ByteArrayOutputStream();
             writeHtmlDocument(rootBand, htmlOutputStream);
 
-            String htmlContent = new String(htmlOutputStream.toByteArray());
+            String htmlContent = htmlOutputStream.toString(StandardCharsets.UTF_8);
             renderPdfDocument(htmlContent, outputStream);
 
         } else {

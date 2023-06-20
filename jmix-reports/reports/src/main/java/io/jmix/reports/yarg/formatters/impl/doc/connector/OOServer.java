@@ -17,7 +17,6 @@
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
 import com.google.common.collect.Lists;
-import io.jmix.reports.yarg.formatters.impl.doc.connector.ProcessManager;
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.lib.util.NativeLibraryLoader;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -66,7 +66,7 @@ public class OOServer {
      */
     private List<String> oooOptions;
 
-    private io.jmix.reports.yarg.formatters.impl.doc.connector.ProcessManager processManager;
+    private ProcessManager processManager;
 
     /**
      * Constructs an OOo server which uses the folder of the OOo installation
@@ -85,6 +85,27 @@ public class OOServer {
         this.oooOptions = oooOptions;
         this.processManager = processManager;
         this.temporaryDirSupplier = temporaryDirSupplier;
+    }
+
+    /**
+     * Returns the list of default options.
+     * !Note! we are using old version notation (- instead of --) to support old version of office
+     *
+     * @return The list of default options
+     */
+    public static List<String> getDefaultOOoOptions() {
+
+        ArrayList<String> options = new ArrayList<String>();
+
+        options.add("-nologo");
+        options.add("-nodefault");
+        options.add("-norestore");
+        options.add("-nocrashreport");
+        options.add("-nolockcheck");
+        options.add("-nofirststartwizard");
+        options.add("-headless");
+
+        return options;
     }
 
     /**
@@ -158,7 +179,7 @@ public class OOServer {
         new Thread(String.format("OOServer: %s", prefix)) {
             @Override
             public void run() {
-                BufferedReader r = new BufferedReader(new InputStreamReader(in));
+                BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
                 try {
                     for (; ; ) {
                         String s = r.readLine();
@@ -172,27 +193,6 @@ public class OOServer {
                 }
             }
         }.start();
-    }
-
-    /**
-     * Returns the list of default options.
-     * !Note! we are using old version notation (- instead of --) to support old version of office
-     *
-     * @return The list of default options
-     */
-    public static List<String> getDefaultOOoOptions() {
-
-        ArrayList<String> options = new ArrayList<String>();
-
-        options.add("-nologo");
-        options.add("-nodefault");
-        options.add("-norestore");
-        options.add("-nocrashreport");
-        options.add("-nolockcheck");
-        options.add("-nofirststartwizard");
-        options.add("-headless");
-
-        return options;
     }
 
     protected void prepareInstanceProfileDir() {

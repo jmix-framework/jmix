@@ -18,16 +18,16 @@ package io.jmix.reports.yarg.formatters.impl;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.opencsv.CSVWriter;
+import io.jmix.reports.yarg.exception.ReportingException;
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
 import io.jmix.reports.yarg.formatters.impl.xlsx.*;
 import io.jmix.reports.yarg.formatters.impl.xlsx.hints.XslxHintProcessor;
-import io.jmix.reports.yarg.util.docx4j.XmlCopyUtils;
-import io.jmix.reports.yarg.exception.ReportingException;
-import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.structure.BandVisitor;
 import io.jmix.reports.yarg.structure.ReportOutputType;
+import io.jmix.reports.yarg.util.docx4j.XmlCopyUtils;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,10 +57,14 @@ import org.xlsx4j.jaxb.Context;
 import org.xlsx4j.sml.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 
 public class XlsxFormatter extends AbstractFormatter {
+
+    private static final Logger log = LoggerFactory.getLogger(XlsxFormatter.class);
+
     private static final String TRUE_AS_STRING = "1";
     private static final String FALSE_AS_STRING = "0";
 
@@ -86,8 +90,6 @@ public class XlsxFormatter extends AbstractFormatter {
 
     protected Unmarshaller unmarshaller;
     protected Marshaller marshaller;
-
-    protected static final Logger log = LoggerFactory.getLogger(XlsxFormatter.class);
 
     public XlsxFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -1041,7 +1043,8 @@ public class XlsxFormatter extends AbstractFormatter {
     }
 
     protected void saveXlsxAsCsv(Document document, OutputStream outputStream) throws IOException, Docx4JException {
-        CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream), ';', CSVWriter.DEFAULT_QUOTE_CHARACTER,
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8),
+                ';', CSVWriter.DEFAULT_QUOTE_CHARACTER,
                 CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
         for (Document.SheetWrapper sheetWrapper : document.getWorksheets()) {

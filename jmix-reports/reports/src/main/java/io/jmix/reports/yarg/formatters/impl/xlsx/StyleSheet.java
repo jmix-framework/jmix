@@ -18,10 +18,7 @@ package io.jmix.reports.yarg.formatters.impl.xlsx;
 
 import org.xlsx4j.sml.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StyleSheet {
 
@@ -170,6 +167,20 @@ public class StyleSheet {
 
         public String getName() {
             return name;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            if (!super.equals(o)) return false;
+            CellStyle cellStyle = (CellStyle) o;
+            return Objects.equals(xfId, cellStyle.xfId) && Objects.equals(name, cellStyle.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(super.hashCode(), xfId, name);
         }
     }
 

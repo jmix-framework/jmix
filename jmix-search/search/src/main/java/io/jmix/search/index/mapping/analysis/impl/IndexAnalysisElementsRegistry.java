@@ -23,10 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -109,6 +107,9 @@ public class IndexAnalysisElementsRegistry {
      */
     public Set<AnalysisElementConfiguration> resolveAllUsedCustomElementsForAnalyzer(String name) {
         AnalysisElementConfiguration analyzer = getAnalyzer(name);
+        if(analyzer == null) {
+            return Collections.emptySet();
+        }
         return resolveAllUsedCustomElements(analyzer);
     }
 
@@ -127,17 +128,18 @@ public class IndexAnalysisElementsRegistry {
      */
     public Set<AnalysisElementConfiguration> resolveAllUsedCustomElementsForNormalizer(String name) {
         AnalysisElementConfiguration normalizer = getNormalizer(name);
+        if(normalizer == null) {
+            return Collections.emptySet();
+        }
         return resolveAllUsedCustomElements(normalizer);
     }
 
     protected Set<AnalysisElementConfiguration> resolveAllUsedCustomElements(AnalysisElementConfiguration rootElement) {
         Set<AnalysisElementConfiguration> result = new HashSet<>();
-        if (rootElement != null) {
-            result.add(rootElement);
-            ObjectNode config = rootElement.getConfig();
-            if ("custom".equals(config.path("type").textValue())) {
-                processCustomRootElementConfig(config, result);
-            }
+        result.add(rootElement);
+        ObjectNode config = rootElement.getConfig();
+        if ("custom".equals(config.path("type").textValue())) {
+            processCustomRootElementConfig(config, result);
         }
 
         return result;

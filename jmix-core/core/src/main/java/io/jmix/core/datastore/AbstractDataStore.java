@@ -16,8 +16,8 @@
 
 package io.jmix.core.datastore;
 
-import com.google.common.base.Preconditions;
 import io.jmix.core.*;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -132,8 +132,9 @@ public abstract class AbstractDataStore implements DataStore {
                 resultList = loadEvent.getResultEntities();
 
                 if (entities.size() != resultList.size()) {
-                    Preconditions.checkNotNull(context.getQuery());
-                    if (context.getQuery().getMaxResults() != 0) {
+                    LoadContext.Query query = context.getQuery();
+                    Preconditions.checkNotNullArgument(query);
+                    if (query.getMaxResults() != 0) {
                         resultList = loadListByBatches(context, resultList.size(), loadState);
                     }
                 }
@@ -180,9 +181,10 @@ public abstract class AbstractDataStore implements DataStore {
         try {
             if (beforeCountEvent.countByItems()) {
                 LoadContext<?> countContext = context.copy();
-                if (countContext.getQuery() != null) {
-                    countContext.getQuery().setFirstResult(0);
-                    countContext.getQuery().setMaxResults(0);
+                LoadContext.Query query = countContext.getQuery();
+                if (query != null) {
+                    query.setFirstResult(0);
+                    query.setMaxResults(0);
                 }
 
                 List<?> entities = loadAll(countContext);
@@ -238,8 +240,8 @@ public abstract class AbstractDataStore implements DataStore {
 
     @Override
     public List<KeyValueEntity> loadValues(ValueLoadContext context) {
-        Preconditions.checkNotNull(context, "context is null");
-        Preconditions.checkNotNull(context.getQuery(), "query is null");
+        Preconditions.checkNotNullArgument(context, "context is null");
+        Preconditions.checkNotNullArgument(context.getQuery(), "query is null");
 
         if (log.isDebugEnabled()) {
             log.debug("loadValues: store={}, query={}", getName(), context.getQuery());
@@ -272,8 +274,8 @@ public abstract class AbstractDataStore implements DataStore {
 
     @Override
     public long getCount(ValueLoadContext context) {
-        Preconditions.checkNotNull(context, "context is null");
-        Preconditions.checkNotNull(context.getQuery(), "query is null");
+        Preconditions.checkNotNullArgument(context, "context is null");
+        Preconditions.checkNotNullArgument(context.getQuery(), "query is null");
 
         if (log.isDebugEnabled()) {
             log.debug("getCountValues: store={}, query={}", getName(), context.getQuery());
@@ -345,12 +347,13 @@ public abstract class AbstractDataStore implements DataStore {
     }
 
     protected List<Object> loadListByBatches(LoadContext<?> context, int actualSize, EventSharedState eventState) {
-        assert context.getQuery() != null;
+        LoadContext.Query contextQuery = context.getQuery();
+        assert contextQuery != null;
 
         List<Object> entities = new ArrayList<>();
 
-        int requestedFirst = context.getQuery().getFirstResult();
-        int requestedMax = context.getQuery().getMaxResults();
+        int requestedFirst = contextQuery.getFirstResult();
+        int requestedMax = contextQuery.getMaxResults();
 
         int expectedSize = requestedMax + requestedFirst;
         int factor = actualSize == 0 ? 2 : requestedMax / actualSize * 2;
@@ -366,9 +369,10 @@ public abstract class AbstractDataStore implements DataStore {
 
             LoadContext<?> batchContext = context.copy();
 
-            assert batchContext.getQuery() != null;
-            batchContext.getQuery().setFirstResult(firstResult);
-            batchContext.getQuery().setMaxResults(maxResults);
+            LoadContext.Query batchContextQuery = batchContext.getQuery();
+            assert batchContextQuery != null;
+            batchContextQuery.setFirstResult(firstResult);
+            batchContextQuery.setMaxResults(maxResults);
 
             List<Object> list = loadAll(batchContext);
             if (list.size() == 0) {

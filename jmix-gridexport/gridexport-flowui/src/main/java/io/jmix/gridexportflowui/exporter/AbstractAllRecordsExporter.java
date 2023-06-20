@@ -79,7 +79,7 @@ public abstract class AbstractAllRecordsExporter {
         }
         query.setSort(Sort.by(primaryKeyName));
 
-        Condition condition = loadContext.getQuery().getCondition();
+        Condition condition = query.getCondition();
 
         LogicalCondition wrappingCondition = new LogicalCondition(LogicalCondition.Type.AND);
         if (condition != null) {
@@ -90,7 +90,7 @@ public abstract class AbstractAllRecordsExporter {
         PropertyCondition lastPkCondition = PropertyCondition.createWithParameterName(primaryKeyName,
                 PropertyCondition.Operation.GREATER, LAST_LOADED_PK_CONDITION_PARAMETER_NAME);
         wrappingCondition.add(lastPkCondition);
-        loadContext.getQuery().setCondition(wrappingCondition);
+        query.setCondition(wrappingCondition);
 
         return loadContext;
     }

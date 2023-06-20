@@ -121,9 +121,10 @@ public class FetchPlan implements Serializable {
             if (!properties.containsKey(propertyName))
                 return false;
 
-            if (property.getFetchPlan() != null) {
+            FetchPlan propertyFetchPlan = property.getFetchPlan();
+            if (propertyFetchPlan != null) {
                 FetchPlan currentPlan = properties.get(propertyName).getFetchPlan();
-                if ((currentPlan == null || !currentPlan.isSupersetOf(property.getFetchPlan())))
+                if ((currentPlan == null || !currentPlan.isSupersetOf(propertyFetchPlan)))
                     return false;
             }
         }

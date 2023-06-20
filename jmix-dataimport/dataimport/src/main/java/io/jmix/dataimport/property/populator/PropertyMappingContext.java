@@ -75,10 +75,11 @@ public class PropertyMappingContext {
 
     @Nullable
     public Object getRawValue() {
-        if (propertyMapping.getDataFieldName() == null) {
+        String dataFieldName = propertyMapping.getDataFieldName();
+        if (dataFieldName == null) {
             return null;
         }
-        return rawValuesSource.getRawValue(propertyMapping.getDataFieldName());
+        return rawValuesSource.getRawValue(dataFieldName);
     }
 
     public MetaProperty getMetaProperty() {

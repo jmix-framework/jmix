@@ -2,6 +2,7 @@ package io.jmix.quartz.service;
 
 import com.google.common.base.Strings;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
 import org.apache.commons.collections4.CollectionUtils;
@@ -233,10 +234,14 @@ public class QuartzService {
         }
 
         if (triggerModel.getScheduleType() == ScheduleType.CRON_EXPRESSION) {
-            triggerBuilder.withSchedule(cronSchedule(triggerModel.getCronExpression()));
+            String cronExpression = triggerModel.getCronExpression();
+            Preconditions.checkNotNullArgument(cronExpression, "Cron expression can't be null");
+            triggerBuilder.withSchedule(cronSchedule(cronExpression));
         } else {
+            Long repeatInterval = triggerModel.getRepeatInterval();
+            Preconditions.checkNotNullArgument(repeatInterval, "Repeat interval can't be null");
             SimpleScheduleBuilder simpleScheduleBuilder = simpleSchedule()
-                    .withIntervalInMilliseconds(triggerModel.getRepeatInterval());
+                    .withIntervalInMilliseconds(repeatInterval);
             Integer repeatCount = triggerModel.getRepeatCount();
             if (Objects.isNull(repeatCount)) {
                 // Infinite executions

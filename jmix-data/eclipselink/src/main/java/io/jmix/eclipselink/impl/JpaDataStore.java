@@ -552,8 +552,10 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
     protected FetchPlan createFetchPlan(LoadContext<?> context) {
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
-        FetchPlan fetchPlan = context.getFetchPlan() != null ? context.getFetchPlan() :
-                fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
+        FetchPlan fetchPlan = context.getFetchPlan();
+        if(fetchPlan == null) {
+            fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
+        }
 
         return fetchPlans.builder(fetchPlan)
                 .partial(context.isLoadPartialEntities())
@@ -630,7 +632,8 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
      * @return false if maxResults=1 and the query is not by ID we should not use getSingleResult() for backward compatibility
      */
     protected boolean isSingleResult(LoadContext<?> context) {
-        return !(context.getQuery() != null && context.getQuery().getMaxResults() == 1)
+        LoadContext.Query query = context.getQuery();
+        return !(query != null && query.getMaxResults() == 1)
                 && context.getId() != null;
     }
 

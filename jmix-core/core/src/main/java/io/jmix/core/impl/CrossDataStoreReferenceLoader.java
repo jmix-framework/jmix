@@ -166,8 +166,10 @@ public class CrossDataStoreReferenceLoader {
 
         LoadContext<?> loadContext = new LoadContext<>(aProp.property.getRange().asClass())
                 .setId(id);
-        if (aProp.fetchPlanProperty.getFetchPlan() != null)
-            loadContext.setFetchPlan(aProp.fetchPlanProperty.getFetchPlan());
+        FetchPlan propertyFetchPlan = aProp.fetchPlanProperty.getFetchPlan();
+        if (propertyFetchPlan != null) {
+            loadContext.setFetchPlan(propertyFetchPlan);
+        }
         loadContext.setJoinTransaction(joinTransaction);
         Object relatedEntity = dataManager.load(loadContext);
         EntityValues.setValue(entity, aProp.property.getName(), relatedEntity);

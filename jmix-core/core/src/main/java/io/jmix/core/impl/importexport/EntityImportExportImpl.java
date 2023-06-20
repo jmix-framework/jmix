@@ -420,7 +420,8 @@ public class EntityImportExportImpl implements EntityImportExport {
             } else if (metaProperty.getRange().isEnum()) {
                 EntityValues.setValue(dstEntity, propertyName, EntityValues.getValue(srcEntity, propertyName));
             } else if (metaProperty.getRange().isClass()) {
-                FetchPlan propertyFetchPlan = fetchPlan.getProperty(propertyName) != null ? fetchPlan.getProperty(propertyName).getFetchPlan() : null;
+                FetchPlanProperty property = fetchPlan.getProperty(propertyName);
+                FetchPlan propertyFetchPlan = property != null ? property.getFetchPlan() : null;
                 if (metadataTools.isEmbedded(metaProperty)) {
                     if (importPlanProperty.getPlan() != null) {
                         Object embeddedEntity = importEmbeddedAttribute(srcEntity, dstEntity, createOp, importPlanProperty, propertyFetchPlan,
@@ -609,7 +610,8 @@ public class EntityImportExportImpl implements EntityImportExport {
             if ((mp.getRange().isDatatype() && !"version".equals(mp.getName())) || mp.getRange().isEnum()) {
                 EntityValues.setValue(dstEmbeddedEntity, vp.getName(), EntityValues.getValue(srcEmbeddedEntity, vp.getName()));
             } else if (mp.getRange().isClass()) {
-                FetchPlan fetchPlanProperty = fetchPlan.getProperty(propertyName) != null ? fetchPlan.getProperty(propertyName).getFetchPlan() : null;
+                FetchPlanProperty property = fetchPlan.getProperty(propertyName);
+                FetchPlan fetchPlanProperty = property != null ? property.getFetchPlan() : null;
                 if (metaProperty.getRange().getCardinality() == Range.Cardinality.ONE_TO_MANY) {
                     importOneToManyCollectionAttribute(srcEmbeddedEntity, dstEmbeddedEntity,
                             vp, fetchPlanProperty, saveContext, referenceInfoList, optimisticLock, false);

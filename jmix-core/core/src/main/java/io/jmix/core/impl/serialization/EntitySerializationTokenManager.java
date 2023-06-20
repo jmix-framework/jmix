@@ -16,6 +16,7 @@
 package io.jmix.core.impl.serialization;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -82,8 +83,9 @@ public class EntitySerializationTokenManager {
         if (!metadataTools.hasCompositePrimaryKey(metaClass) && !EntitySystemAccess.isEmbeddable(entity)) {
             addSingleId(tokenObject, ENTITY_ID_KEY, EntityValues.getId(entity));
         }
-        if (securityState.getErasedData() != null) {
-            securityState.getErasedData().asMap().forEach((k, v) -> addCollectionId(tokenObject, k, v));
+        Multimap<String, Object> erasedData = securityState.getErasedData();
+        if (erasedData != null) {
+            erasedData.asMap().forEach((k, v) -> addCollectionId(tokenObject, k, v));
         }
         try {
             return Base64.getEncoder().encodeToString(

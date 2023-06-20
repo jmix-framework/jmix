@@ -76,6 +76,7 @@ public class ClassManager {
      * @param className fully qualified class name
      * @return class or null if not found
      */
+    @Nullable
     public Class<?> reloadClass(String className) {
         javaClassLoader.removeClass(className);
         return findClass(className);

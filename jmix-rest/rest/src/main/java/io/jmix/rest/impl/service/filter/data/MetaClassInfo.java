@@ -35,7 +35,8 @@ public class MetaClassInfo {
                          DatatypeRegistry datatypeRegistry,
                          MetadataTools metadataTools) {
         this.entityName = metaClass.getName();
-        this.ancestor = metaClass.getAncestor() != null ? metaClass.getAncestor().getName() : null;
+        MetaClass metaClassAncestor = metaClass.getAncestor();
+        this.ancestor = metaClassAncestor != null ? metaClassAncestor.getName() : null;
         properties.addAll(metaClass.getProperties().stream()
                 .map(metaProperty -> new MetaPropertyInfo(metaProperty, messageTools, datatypeRegistry, metadataTools))
                 .collect(Collectors.toList()));

@@ -108,9 +108,10 @@ public class JmixEntityManager implements EntityManager {
         String storeName = support.getStorageName(delegate.unwrap(UnitOfWork.class));
         entityListenerMgr.fireListener(object, EntityListenerType.BEFORE_ATTACH, storeName);
 
-        if ((entityStates.isNew(object) || !entityStates.isDetached(object)) && EntityValues.getId(object) != null) {
+        Object id = EntityValues.getId(object);
+        if ((entityStates.isNew(object) || !entityStates.isDetached(object)) && id != null) {
             // if a new instance is passed to merge(), we suppose it is persistent but "not detached"
-            Object destEntity = findOrCreate(object.getClass(), EntityValues.getId(object));
+            Object destEntity = findOrCreate(object.getClass(), id);
             deepCopyIgnoringNulls(object, destEntity, Sets.newIdentityHashSet());
             return (T) destEntity;
         }
@@ -599,8 +600,9 @@ public class JmixEntityManager implements EntityManager {
 
     protected void setAdditionalProperties() {
         for (AdditionalCriteriaProvider acp : beanFactory.getBeansOfType(AdditionalCriteriaProvider.class).values()) {
-            if (acp.getCriteriaParameters() != null) {
-                for (Map.Entry<String, Object> entry : acp.getCriteriaParameters().entrySet()) {
+            Map<String, Object> criteriaParameters = acp.getCriteriaParameters();
+            if (criteriaParameters != null) {
+                for (Map.Entry<String, Object> entry : criteriaParameters.entrySet()) {
                     this.delegate.setProperty(entry.getKey(), entry.getValue());
                 }
             }

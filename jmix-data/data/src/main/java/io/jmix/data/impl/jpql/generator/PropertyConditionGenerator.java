@@ -102,9 +102,11 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             return "";
         }
 
-        if (context.getJoinAlias() != null && context.getJoinProperty() != null) {
-            String property = getProperty(context.getJoinProperty(), context.getJoinMetaClass().getName());
-            return generateWhere(propertyCondition, context.getJoinAlias(), property);
+        String joinAlias = context.getJoinAlias();
+        String joinProperty = context.getJoinProperty();
+        if (joinAlias != null && joinProperty != null) {
+            String property = getProperty(joinProperty, context.getJoinMetaClass().getName());
+            return generateWhere(propertyCondition, joinAlias, property);
         } else {
             String entityAlias = context.getEntityAlias();
             String property = getProperty(propertyCondition.getProperty(), context.getEntityName());

@@ -58,11 +58,12 @@ public final class Id<T> implements Serializable {
      */
     public static <T> Id<T> of(T entity) {
         checkNotNullArgument(entity);
-        checkNotNullArgument(EntityValues.getId(entity));
+        Object entityId = EntityValues.getId(entity);
+        checkNotNullArgument(entityId);
 
         @SuppressWarnings("unchecked")
         Class<T> entityClass = (Class<T>) entity.getClass();
-        return new Id<>(EntityValues.getId(entity), entityClass);
+        return new Id<>(entityId, entityClass);
     }
 
     /**

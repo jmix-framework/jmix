@@ -203,8 +203,9 @@ public class DeletePolicyProcessor {
                             setReferenceNull(entity, property);
                         } else {
                             Object value = getReference(entity, property);
-                            if (value != null && property.getInverse() != null) {
-                                setReferenceNull(value, property.getInverse());
+                            MetaProperty inverseProperty = property.getInverse();
+                            if (value != null && inverseProperty != null) {
+                                setReferenceNull(value, inverseProperty);
                             }
                         }
                     }

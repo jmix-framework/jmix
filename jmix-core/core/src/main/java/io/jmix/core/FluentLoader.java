@@ -552,11 +552,12 @@ public class FluentLoader<E> {
             }
             loadContext.setQuery(query);
 
-            assert loadContext.getQuery() != null;
-            loadContext.getQuery().setFirstResult(firstResult);
-            loadContext.getQuery().setMaxResults(maxResults);
-            loadContext.getQuery().setSort(sort);
-            loadContext.getQuery().setCacheable(cacheable);
+            query = loadContext.getQuery();
+            assert query != null;
+            query.setFirstResult(firstResult);
+            query.setMaxResults(maxResults);
+            query.setSort(sort);
+            query.setCacheable(cacheable);
 
             return loadContext;
         }
@@ -800,12 +801,13 @@ public class FluentLoader<E> {
             }
             loadContext.setQuery(query);
 
-            assert loadContext.getQuery() != null;
-            loadContext.getQuery().setCondition(condition);
-            loadContext.getQuery().setFirstResult(firstResult);
-            loadContext.getQuery().setMaxResults(maxResults);
-            loadContext.getQuery().setSort(sort);
-            loadContext.getQuery().setCacheable(cacheable);
+            query = loadContext.getQuery();
+            assert query != null;
+            query.setCondition(condition);
+            query.setFirstResult(firstResult);
+            query.setMaxResults(maxResults);
+            query.setSort(sort);
+            query.setCacheable(cacheable);
 
             return loadContext;
         }

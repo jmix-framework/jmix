@@ -30,8 +30,9 @@ public class MetaPropertyInfo implements Serializable {
     public MetaPropertyInfo(MetaProperty metaProperty) {
         this.name = metaProperty.getName();
         this.javaType = metaProperty.getJavaType();
-        if (metaProperty.getInverse() != null) {
-            this.inversePropertyName = metaProperty.getInverse().getName();
+        MetaProperty inverseProperty = metaProperty.getInverse();
+        if (inverseProperty != null) {
+            this.inversePropertyName = inverseProperty.getName();
         } else {
             this.inversePropertyName = null;
         }

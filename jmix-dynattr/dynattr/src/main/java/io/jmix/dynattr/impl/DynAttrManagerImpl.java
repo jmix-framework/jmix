@@ -476,8 +476,9 @@ public class DynAttrManagerImpl implements DynAttrManager {
         HashSet<Class<?>> classes = new HashSet<>();
         classes.add(fetchPlan.getEntityClass());
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
-            if (property.getFetchPlan() != null) {
-                classes.addAll(collectEntityClasses(property.getFetchPlan(), visited));
+            FetchPlan propertyFetchPlan = property.getFetchPlan();
+            if (propertyFetchPlan != null) {
+                classes.addAll(collectEntityClasses(propertyFetchPlan, visited));
             }
         }
         return classes;

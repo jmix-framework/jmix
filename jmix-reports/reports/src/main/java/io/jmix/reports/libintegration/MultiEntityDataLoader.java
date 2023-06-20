@@ -21,15 +21,13 @@ import com.haulmont.yarg.structure.ProxyWrapper;
 import com.haulmont.yarg.structure.ReportQuery;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanProperty;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.reports.app.EntityMap;
 import io.jmix.reports.entity.DataSet;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MultiEntityDataLoader extends AbstractEntityDataLoader {
 
@@ -60,10 +58,10 @@ public class MultiEntityDataLoader extends AbstractEntityDataLoader {
                 entities = EntityValues.getValueEx(entity, nestedCollectionName);
                 if (dataSet instanceof DataSet) {
                     FetchPlan entityFetchPlan = getFetchPlan(entity, (DataSet) dataSet);
-                    if (entityFetchPlan != null && entityFetchPlan.getProperty(nestedCollectionName) != null) {
-                        //noinspection ConstantConditions
-                        nestedCollectionFetchPLan = entityFetchPlan.getProperty(nestedCollectionName).getFetchPlan();
-                    }
+                    nestedCollectionFetchPLan = Optional.ofNullable(entityFetchPlan)
+                            .map(efp -> efp.getProperty(nestedCollectionName))
+                            .map(FetchPlanProperty::getFetchPlan)
+                            .orElse(null);
                 }
             }
         }

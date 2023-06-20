@@ -850,8 +850,9 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     private Map<String, Object> getAdditionalCriteriaParameters() {
         Map<String, Object> parameters = new HashMap<>();
         for (AdditionalCriteriaProvider acp : additionalCriteriaProviders) {
-            if (acp.getCriteriaParameters() != null) {
-                for (Map.Entry<String, Object> entry : acp.getCriteriaParameters().entrySet()) {
+            Map<String, Object> criteriaParameters = acp.getCriteriaParameters();
+            if (criteriaParameters != null) {
+                for (Map.Entry<String, Object> entry : criteriaParameters.entrySet()) {
                     parameters.put(entry.getKey(), entry.getValue());
                 }
             }
@@ -876,8 +877,9 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         checkState();
 
         DbmsFeatures dbmsFeatures = dbmsSpecifics.getDbmsFeatures();
-        if (isNative && (value instanceof UUID) && (dbmsFeatures.getUuidTypeClassName() != null)) {
-            Class<?> c = ReflectionHelper.getClass(dbmsFeatures.getUuidTypeClassName());
+        String uuidTypeClassName = dbmsFeatures.getUuidTypeClassName();
+        if (isNative && (value instanceof UUID) && (uuidTypeClassName != null)) {
+            Class<?> c = ReflectionHelper.getClass(uuidTypeClassName);
             try {
                 value = ReflectionHelper.newInstance(c, value);
             } catch (NoSuchMethodException e) {

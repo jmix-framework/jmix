@@ -177,10 +177,11 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
     }
 
     protected Collection<MetaClass> collectEntityClasses(LoadContext<?> context) {
-        if (context.getFetchPlan() == null) {
+        FetchPlan fetchPlan = context.getFetchPlan();
+        if (fetchPlan == null) {
             return Collections.singletonList(extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass()));
         }
-        return collectEntityClasses(context.getFetchPlan(), new HashSet<>());
+        return collectEntityClasses(fetchPlan, new HashSet<>());
     }
 
     protected Collection<MetaClass> collectEntityClasses(FetchPlan fetchPlan, Set<FetchPlan> visited) {

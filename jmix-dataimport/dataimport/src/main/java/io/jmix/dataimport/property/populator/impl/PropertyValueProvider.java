@@ -101,10 +101,11 @@ public class PropertyValueProvider {
     }
 
     protected RawValuesSource getRawValueSource(RawValuesSource rawValuesSource, PropertyMapping propertyMapping) {
-        if (propertyMapping.getDataFieldName() == null) {
+        String dataFieldName = propertyMapping.getDataFieldName();
+        if (dataFieldName == null) {
             return rawValuesSource;
         }
-        Object propertyRawValuesSource = rawValuesSource.getRawValue(propertyMapping.getDataFieldName());
+        Object propertyRawValuesSource = rawValuesSource.getRawValue(dataFieldName);
         if (propertyRawValuesSource instanceof RawValuesSource) {
             return (RawValuesSource) propertyRawValuesSource;
         }

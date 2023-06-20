@@ -464,7 +464,7 @@ public class AnnotatedIndexDefinitionProcessor {
         FieldConfiguration explicitFieldConfiguration = element.getFieldConfiguration();
         PropertyValueExtractor explicitPropertyValueExtractor = element.getPropertyValueExtractor();
 
-        if (!fieldMappingStrategyOpt.isPresent() && explicitFieldConfiguration == null) {
+        if (fieldMappingStrategyOpt.isEmpty() && explicitFieldConfiguration == null) {
             log.error("Unable to create mapping field descriptor for property '{}': neither field mapping strategy nor explicit field configuration is specified", propertyPath);
             return Optional.empty();
         }
@@ -501,9 +501,10 @@ public class AnnotatedIndexDefinitionProcessor {
 
         List<MetaPropertyPath> instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(propertyPath);
 
-        int effectiveOrder = element.getOrder() == null
+        Integer order = element.getOrder();
+        int effectiveOrder = order == null
                 ? fieldMappingStrategyOpt.map(FieldMappingStrategy::getOrder).orElse(Integer.MIN_VALUE)
-                : element.getOrder();
+                : order;
 
         MappingFieldDescriptor fieldDescriptor = new MappingFieldDescriptor();
         fieldDescriptor.setEntityPropertyFullName(propertyPath.toPathString());

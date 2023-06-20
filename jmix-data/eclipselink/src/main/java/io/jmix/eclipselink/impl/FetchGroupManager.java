@@ -485,8 +485,9 @@ public class FetchGroupManager {
         sameMetaclassOccurrences.add(new OccurrenceDescription(subject, path, firstLayer, localProperties));
 
         for (FetchPlanProperty property : subject.getProperties()) {
-            if (property.getFetchPlan() != null) {
-                collectAbsentProperties(property.getFetchPlan(), occurrences,
+            FetchPlan fetchPlan = property.getFetchPlan();
+            if (fetchPlan != null) {
+                collectAbsentProperties(fetchPlan, occurrences,
                         (path.length() > 0 ? path + "." : "") + property.getName(), absentProperties);
             }
         }
@@ -522,13 +523,14 @@ public class FetchGroupManager {
             if (metadataTools.isJpa(metaProperty) && (metaProperty.getRange().isClass() || useFetchGroup)) {
                 FetchGroupField field = createFetchGroupField(entityClass, parentField, propertyName, property.getFetchMode());
                 fetchGroupFields.add(field);
-                if (property.getFetchPlan() != null) {
+                FetchPlan propertyFetchPlan = property.getFetchPlan();
+                if (propertyFetchPlan != null) {
                     if (ClassUtils.isPrimitiveOrWrapper(metaProperty.getJavaType()) ||
                             String.class.isAssignableFrom(metaProperty.getJavaType())) {
                         String message = "Wrong fetch plans mechanism usage found. Fetch plan %s is set for property \"%s\" of " +
                                 "class \"%s\", but this property does not point to an Entity";
 
-                        String propertyFetchPlanName = property.getFetchPlan().getName();
+                        String propertyFetchPlanName = propertyFetchPlan.getName();
                         propertyFetchPlanName = propertyFetchPlanName != null && !propertyFetchPlanName.isEmpty()
                                 ? "\"" + propertyFetchPlanName + "\""
                                 : "";
@@ -538,7 +540,7 @@ public class FetchGroupManager {
                         throw new DevelopmentException(message);
                     }
 
-                    processFetchPlan(property.getFetchPlan(), field, fetchGroupFields, useFetchGroup);
+                    processFetchPlan(propertyFetchPlan, field, fetchGroupFields, useFetchGroup);
                 }
             }
 

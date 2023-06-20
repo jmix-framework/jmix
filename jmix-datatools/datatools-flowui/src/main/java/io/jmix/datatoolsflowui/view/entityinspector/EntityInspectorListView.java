@@ -54,6 +54,7 @@ import io.jmix.flowui.action.view.LookupSelectAction;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
@@ -831,10 +832,10 @@ public class EntityInspectorListView extends StandardListView<Object> {
         @Override
         public void execute() {
             Collection<Object> selected = dataGrid.getSelectedItems();
+            DataUnit items = dataGrid.getItems();
             if (selected.isEmpty()
-                    && dataGrid.getItems() != null
-                    && dataGrid.getItems() instanceof ContainerDataGridItems) {
-                selected = ((ContainerDataGridItems<Object>) dataGrid.getItems()).getContainer().getItems();
+                    && items instanceof ContainerDataGridItems) {
+                selected = ((ContainerDataGridItems<Object>) items).getContainer().getItems();
             }
 
             int saveExportedByteArrayDataThresholdBytes = uiProperties.getSaveExportedByteArrayDataThresholdBytes();

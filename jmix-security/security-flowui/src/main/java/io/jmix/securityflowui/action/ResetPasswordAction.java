@@ -64,11 +64,11 @@ public class ResetPasswordAction<E extends UserDetails>
 
     @Override
     protected boolean isPermitted() {
-        if (target == null || !(target.getItems() instanceof EntityDataUnit)) {
+        if (target == null || !(target.getItems() instanceof EntityDataUnit items)) {
             return false;
         }
 
-        MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
+        MetaClass metaClass = items.getEntityMetaClass();
 
         UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);

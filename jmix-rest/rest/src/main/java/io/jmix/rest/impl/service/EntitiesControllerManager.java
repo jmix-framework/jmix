@@ -213,10 +213,11 @@ public class EntitiesControllerManager {
                 dynamicAttributes, modelVersion, metaClass, queryParameters);
         Long count = null;
         if (BooleanUtils.isTrue(returnCount)) {
+            LoadContext.Query query = new LoadContext.Query(queryString);
             LoadContext ctx = new LoadContext(metadata.getClass(metaClass.getJavaClass()))
-                    .setQuery(new LoadContext.Query(queryString));
+                    .setQuery(query);
             if (queryParameters != null) {
-                ctx.getQuery().setParameters(queryParameters);
+                query.setParameters(queryParameters);
             }
             count = dataManager.getCount(ctx);
         }
@@ -304,7 +305,7 @@ public class EntitiesControllerManager {
                                        @Nullable Boolean dynamicAttributes,
                                        @Nullable String modelVersion,
                                        MetaClass metaClass,
-                                       Map<String, Object> queryParameters) {
+                                       @Nullable Map<String, Object> queryParameters) {
         LoadContext<Object> ctx = new LoadContext<>(metaClass);
         String orderedQueryString = addOrderBy(queryString, sort, metaClass);
         LoadContext.Query query = new LoadContext.Query(orderedQueryString);
@@ -810,7 +811,7 @@ public class EntitiesControllerManager {
         }
     }
 
-    protected void checkEntityIsNotNull(String entityName, String entityId, Object entity) {
+    protected void checkEntityIsNotNull(String entityName, String entityId, @Nullable Object entity) {
         if (entity == null) {
             throw new RestAPIException("Entity not found",
                     String.format("Entity %s with id %s not found", entityName, entityId),

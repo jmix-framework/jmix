@@ -749,10 +749,11 @@ public class MetadataTools {
 
         Class<?> javaClass = metaClass.getJavaClass();
         jakarta.persistence.Table annotation = javaClass.getAnnotation(jakarta.persistence.Table.class);
+        MetaClass ancestor = metaClass.getAncestor();
         if (annotation != null && StringUtils.isNotEmpty(annotation.name())) {
             return annotation.name();
-        } else if (metaClass.getAncestor() != null) {
-            return getDatabaseTable(metaClass.getAncestor());
+        } else if (ancestor != null) {
+            return getDatabaseTable(ancestor);
         }
 
         return null;

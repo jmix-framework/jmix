@@ -64,8 +64,9 @@ public abstract class BaseRoleRepository<T extends BaseRole> implements RoleRepo
         for (RoleProvider<T> roleProvider : getRoleProviders()) {
             T role = roleProvider.findRoleByCode(code);
             if (role != null) {
-                if (role.getChildRoles() != null) {
-                    for (String childCode : role.getChildRoles()) {
+                Set<String> childRoles = role.getChildRoles();
+                if (childRoles != null) {
+                    for (String childCode : childRoles) {
                         if (!visited.contains(childCode)) {
                             T childRole = findRoleByCodeExcludeVisited(childCode, visited);
                             if (childRole != null) {

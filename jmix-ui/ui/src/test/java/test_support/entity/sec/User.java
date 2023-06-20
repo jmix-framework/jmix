@@ -22,9 +22,12 @@ import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import test_support.entity.TestBaseEntity;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,7 +36,7 @@ import java.util.List;
 @Entity(name = "sec$User")
 @JmixEntity
 @Table(name = "SEC_USER")
-public class User extends TestBaseEntity {
+public class User extends TestBaseEntity implements UserDetails {
 
     private static final long serialVersionUID = 5007187642916030394L;
 
@@ -131,8 +134,39 @@ public class User extends TestBaseEntity {
         this.loginLowerCase = loginLowerCase;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return getLogin();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public void setPassword(String password) {

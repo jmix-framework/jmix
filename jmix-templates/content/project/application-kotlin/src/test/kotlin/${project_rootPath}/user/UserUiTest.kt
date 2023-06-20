@@ -10,7 +10,6 @@ import io.jmix.flowui.component.UiComponentUtils
 import io.jmix.flowui.component.grid.DataGrid
 import io.jmix.flowui.component.textfield.JmixPasswordField
 import io.jmix.flowui.component.textfield.TypedTextField
-import io.jmix.flowui.data.grid.ContainerDataGridItems
 import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration
 import io.jmix.flowui.testassist.UiTest
@@ -72,14 +71,10 @@ class UserUiTest {
         val usersDataGrid = findComponent<DataGrid<User>>(userListView, "usersDataGrid")
 
         val usersDataGridItems = usersDataGrid.items
-        Assertions.assertNotNull(usersDataGridItems)
+        val user = usersDataGridItems!!.items
+                .find { u: User -> u.getUsername() == username }
 
-        @Suppress("UNCHECKED_CAST")
-        (usersDataGridItems as ContainerDataGridItems<User>).container
-                .items.stream()
-                .filter { u: User -> u.getUsername().equals(username) }
-                .findFirst()
-                .orElseThrow()
+        Assertions.assertNotNull(user)
     }
 
     @AfterEach

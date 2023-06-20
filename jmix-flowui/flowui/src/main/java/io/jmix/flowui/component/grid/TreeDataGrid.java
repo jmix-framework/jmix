@@ -117,7 +117,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
 
     @Nullable
     @Override
-    public DataUnit getItems() {
+    public TreeDataGridItems<E> getItems() {
         return gridDelegate.getItems();
     }
 

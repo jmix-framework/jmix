@@ -24,6 +24,9 @@ import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EmptyDataUnit;
 
 import org.springframework.lang.Nullable;
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -34,6 +37,11 @@ public class EmptyDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     public EmptyDataGridItems(MetaClass metaClass) {
         this.metaClass = metaClass;
+    }
+
+    @Override
+    public Collection<T> getItems() {
+        return Collections.emptyList();
     }
 
     @Override

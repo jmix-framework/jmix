@@ -118,7 +118,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
 
     @Nullable
     @Override
-    public DataUnit getItems() {
+    public DataGridItems<E> getItems() {
         return gridDelegate.getItems();
     }
 

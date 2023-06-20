@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.lang.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -73,6 +74,11 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     protected void containerItemPropertyChanged(CollectionContainer.ItemPropertyChangeEvent<T> event) {
         getEventBus().fireEvent(new ValueChangeEvent<>(this, event.getItem(),
                 event.getProperty(), event.getPrevValue(), event.getValue()));
+    }
+
+    @Override
+    public Collection<T> getItems() {
+        return container.getItems();
     }
 
     @Nullable
@@ -184,13 +190,9 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
             return Stream.empty();
         }
 
-        return getItems()
+        return getItems().stream()
                 .skip(query.getOffset())
                 .limit(query.getLimit());
-    }
-
-    protected Stream<T> getItems() {
-        return container.getItems().stream();
     }
 
     public T getItem(Object entityId) {

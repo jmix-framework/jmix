@@ -17,3 +17,7 @@
 .jmix-upload-button vaadin-button[theme~="jmix-upload-field-no-margin"] {
   margin: 0;
 }
+
+.jmix-upload-button vaadin-button[theme~="jmix-upload-field-full-width"] {
+  width: 100%;
+}

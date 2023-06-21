@@ -91,7 +91,7 @@ import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APP
  * </pre>
  * For annotation based approach use {@link UiTest} annotation to configure the extension.
  */
-public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
+public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEachCallback, AfterEachCallback {
 
     private static final String APP_ID = "testJmixUiAppId";
 
@@ -149,14 +149,9 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
     }
 
     @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
-        if (uiTestAuthenticator == null) {
-            uiTestAuthenticator = getTestAuthenticatorFromAnnotation(context);
-        }
-        if (uiTestAuthenticator == null) {
-            uiTestAuthenticator = getApplicationContext(context).getBeanProvider(UiTestAuthenticator.class)
-                    .getIfAvailable();
-        }
+    public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
+        initViewBasePackages(context);
+        initAuthentication(context);
     }
 
     @Override
@@ -387,5 +382,25 @@ public class JmixUiTestExtension implements BeforeAllCallback, BeforeEachCallbac
 
     protected ApplicationContext getApplicationContext(ExtensionContext context) {
         return SpringExtension.getApplicationContext(context);
+    }
+
+    private void initViewBasePackages(ExtensionContext context) {
+        if (ArrayUtils.isEmpty(viewBasePackages)) {
+            getUiTestAnnotation(context).ifPresent(uiTest -> this.viewBasePackages = uiTest.viewBasePackages());
+        }
+    }
+
+    private void initAuthentication(ExtensionContext context) {
+        if (uiTestAuthenticator == null) {
+            uiTestAuthenticator = getTestAuthenticatorFromAnnotation(context);
+        }
+        if (uiTestAuthenticator == null) {
+            uiTestAuthenticator = getApplicationContext(context).getBeanProvider(UiTestAuthenticator.class)
+                    .getIfAvailable();
+        }
+    }
+
+    private static Optional<UiTest> getUiTestAnnotation(ExtensionContext context) {
+        return AnnotationSupport.findAnnotation(context.getTestClass(), UiTest.class);
     }
 }

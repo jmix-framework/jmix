@@ -37,7 +37,7 @@
         <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup">
             <loader id="groupsDl">
                 <query>
-                    select rg from report_ReportGroup rg order by rg.createTs asc
+                    <![CDATA[select rg from report_ReportGroup rg order by rg.createTs asc]]>
                 </query>
             </loader>
         </collection>
@@ -79,7 +79,6 @@
                         <textArea id="localeTextField" property="localeNames" label="msg://nameLocale"/>
                         <checkbox id="systemField" property="system"/>
                         <checkbox id="restAccessField" property="restAccess"/>
-                        <!-- todo report invisible upload?-->
                     </formLayout>
                 </vbox>
             </tab>
@@ -300,7 +299,7 @@
                         </dataGrid>
                     </vbox>
                     <vbox classNames="parameters-validate-layout" padding="false">
-                        <h2 text="msg://report.crossParametersValidation"/>
+                        <h4 text="msg://report.crossParametersValidation"/>
                         <div width="100%" classNames="flex, justify-between">
                             <checkbox id="validationOnCheckBox"
                                       label="msg://parameters.validationOn"
@@ -386,7 +385,7 @@
             <tab id="securityTab" label="msg://mainTabSheet.securityTab.label">
                 <div id="securityTabContent" width="100%" height="100%" classNames="reports-flex-layout">
                     <vbox classNames="roles-layout" expand="rolesDataGrid" padding="false">
-                        <h2 text="msg://io.jmix.reportsflowui.view.report/securityTab.roles.title"/>
+                        <h4 text="msg://io.jmix.reportsflowui.view.report/securityTab.roles.title"/>
                         <hbox id="addRoleGroupBox" expand="rolesField" width="100%">
                             <comboBox id="rolesField"/>
                             <button id="addRoleBtn" text="msg://roles.add" action="rolesDataGrid.add"/>
@@ -407,7 +406,7 @@
                         </dataGrid>
                     </vbox>
                     <vbox classNames="views-layout" expand="screenDataGrid" padding="false">
-                        <h2 text="msg://io.jmix.reportsflowui.view.report/securityTab.views.title"/>
+                        <h4 text="msg://io.jmix.reportsflowui.view.report/securityTab.views.title"/>
                         <hbox id="addScreenGroupBox" expand="screenIdField" width="100%">
                             <comboBox id="screenIdField"/>
                             <button id="addReportScreenBtn" action="screenDataGrid.add"

@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 @ViewController("report_ScriptEditorView")
 @ViewDescriptor("script-editor-view.xml")
-@DialogMode(width = "75em", height = "45em")
+@DialogMode(width = "75em", height = "45em", resizable = true)
 public class ScriptEditorView extends StandardView {
 
     @ViewComponent

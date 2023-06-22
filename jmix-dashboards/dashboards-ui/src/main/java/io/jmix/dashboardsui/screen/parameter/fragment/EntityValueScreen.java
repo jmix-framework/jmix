@@ -57,7 +57,7 @@ public class EntityValueScreen extends Screen implements ValueFragment, Window.C
 
     @Subscribe("cancelBtn")
     public void cancelAndClose(Button.ClickEvent event) {
-        close(new StandardCloseAction(COMMIT_ACTION_ID));
+        close(StandardOutcome.CLOSE);
     }
 
     @Override

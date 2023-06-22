@@ -21,7 +21,7 @@
             <vbox id="fieldsBox" padding="false">
                 <formLayout id="templateForm"
                             dataContainer="reportTemplateDc"
-                            classNames="table-edit-fragment-template-form">
+                            classNames="report-table-edit-fragment-template-form">
                     <textField id="codeField" property="code"
                                label="msg://codeField.label" width="100%"
                                required="true" requiredMessage="msg://codeField.requiredMessage"/>

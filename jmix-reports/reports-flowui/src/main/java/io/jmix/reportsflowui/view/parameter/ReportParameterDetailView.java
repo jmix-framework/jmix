@@ -33,6 +33,7 @@ import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.PredefinedTransformation;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
+import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.view.report.ReportDetailView;
 import io.jmix.reportsflowui.view.run.ParameterComponentGenerationStrategy;
@@ -54,9 +55,6 @@ import java.util.TreeMap;
 @EditedEntityContainer("parameterDc")
 @DialogMode(width = "40em")
 public class ReportParameterDetailView extends StandardDetailView<ReportInputParameter> {
-
-    protected static final String FIELD_ICON_SIZE_CLASS_NAME = "reports-field-icon-size";
-    protected static final String FIELD_ICON_CLASS_NAME = "template-detailview-field-icon";
 
     @ViewComponent
     protected JmixComboBox<ParameterType> parameterTypeField;
@@ -168,7 +166,10 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     protected void initLocaleField() {
         Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
+        helpIcon.addClassNames(
+                ReportStyleConstants.FIELD_ICON_SIZE_CLASS_NAME,
+                ReportStyleConstants.FIELD_ICON_CLASS_NAME
+        );
         helpIcon.addClickListener(this::onLocaleFieldHelpIconClick);
 
         localeField.setSuffixComponent(helpIcon);

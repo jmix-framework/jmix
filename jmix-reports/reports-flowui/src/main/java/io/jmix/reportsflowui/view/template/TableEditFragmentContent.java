@@ -39,6 +39,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
+import io.jmix.reportsflowui.constant.ReportStyleConstants;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -55,9 +56,6 @@ public class TableEditFragmentContent extends VerticalLayout {
     protected static final String REMOVE_COLUMN_ID = "removeColumn";
     protected static final String UP_COLUMN_ID = "upColumn";
     protected static final String DOWN_COLUMN_ID = "downColumn";
-
-    protected static final String DATA_GRIDS_BOX_CLASS_NAME = "table-edit-fragment-data-grids-box";
-    protected static final String BAND_BOX_CLASS_NAME = "table-edit-fragment-band-box";
 
     protected UiComponents uiComponents;
     protected Metadata metadata;
@@ -144,7 +142,7 @@ public class TableEditFragmentContent extends VerticalLayout {
         FlexLayout layout = uiComponents.create(FlexLayout.class);
         layout.setId("tableEditDataGridsBox");
         layout.setWidth("100%");
-        layout.setClassName(DATA_GRIDS_BOX_CLASS_NAME);
+        layout.setClassName(ReportStyleConstants.DATA_GRIDS_BOX_CLASS_NAME);
         layout.setFlexWrap(FlexLayout.FlexWrap.WRAP);
         layout.addClassName(LumoUtility.Gap.MEDIUM);
         return layout;
@@ -155,7 +153,7 @@ public class TableEditFragmentContent extends VerticalLayout {
         bandBox.setId("tableEditBandBox");
         bandBox.setPadding(false);
         bandBox.setSizeUndefined();
-        bandBox.setClassName(BAND_BOX_CLASS_NAME);
+        bandBox.setClassName(ReportStyleConstants.BAND_BOX_CLASS_NAME);
 
         bandsButtonsBox = createBandsButtonsBox();
         bandsDataGrid = createBandsDataGrid();

@@ -84,8 +84,8 @@
                 </vbox>
             </tab>
             <tab id="bandsTab" label="msg://mainTabSheet.bandsTab.label">
-                <div id="bandsTabContent" width="100%" height="100%" classNames="reports-flex-layout">
-                    <vbox id="bandsLayout" classNames="bands-layout" padding="false">
+                <div id="bandsTabContent" width="100%" height="100%" classNames="report-flex-layout">
+                    <vbox id="bandsLayout" classNames="report-bands-layout" padding="false">
                         <hbox id="bandsButtonsLayout" classNames="buttons-panel">
                             <button id="createBandBtn" action="bandsTreeDataGrid.create"/>
                             <button id="removeBandBtn" action="bandsTreeDataGrid.remove"/>
@@ -108,7 +108,7 @@
                             </columns>
                         </treeDataGrid>
                     </vbox>
-                    <vbox id="bandsDetailsLayout" classNames="bands-details-layout">
+                    <vbox id="bandsDetailsLayout" classNames="report-bands-details-layout">
                         <formLayout id="bandForm" dataContainer="bandsDc">
                             <textField id="bandNameField" property="name"/>
                             <select id="orientationField" property="orientation" emptySelectionAllowed="true"/>
@@ -125,8 +125,8 @@
                                 <responsiveStep minWidth="50em" columns="4"/>
                             </responsiveSteps>
                         </formLayout>
-                        <div id="dataSetsLayout" classNames="reports-flex-layout" width="100%" height="100%">
-                            <div id="singleDataSetLayout" classNames="reports-flex-layout" width="100%" height="100%">
+                        <div id="dataSetsLayout" classNames="report-flex-layout" width="100%" height="100%">
+                            <div id="singleDataSetLayout" classNames="report-flex-layout" width="100%" height="100%">
                                 <!--Movable layout-->
                                 <div id="dataSetTypeLayout" width="100%" height="100%">
                                     <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptCodeEditor"
@@ -240,11 +240,11 @@
                                     </vbox>
                                 </div>
                             </div>
-                            <div id="multiDataSetLayout" classNames="reports-flex-layout multi-data-set-layout"
+                            <div id="multiDataSetLayout" classNames="report-flex-layout report-multi-data-set-layout"
                                  width="100%" height="100%"
                                  visible="false">
                                 <vbox id="dataSetsDataGridLayout" padding="false" height="100%"
-                                      classNames="data-sets-data-grid-layout">
+                                      classNames="report-data-sets-data-grid-layout">
                                     <hbox id="dataSetsButtonsLayout">
                                         <button id="createDataSetBtn" action="dataSetsDataGrid.create"/>
                                         <button id="removeDataSetBtn" action="dataSetsDataGrid.remove"/>
@@ -258,7 +258,7 @@
                                         </actions>
                                     </dataGrid>
                                 </vbox>
-                                <div id="dataSetDetailsLayout" classNames="data-set-details-layout">
+                                <div id="dataSetDetailsLayout" classNames="report-data-set-details-layout">
                                     <!--In multiDataSet mode contains 'dataSetTypeLayout'-->
                                 </div>
                             </div>
@@ -267,8 +267,8 @@
                 </div>
             </tab>
             <tab id="parametersTab" label="msg://mainTabSheet.parametersTab.label">
-                <div classNames="reports-flex-layout" width="100%" height="100%">
-                    <vbox classNames="parameters-layout" padding="false">
+                <div classNames="report-flex-layout" width="100%" height="100%">
+                    <vbox classNames="report-parameters-layout" padding="false">
                         <hbox>
                             <button action="inputParametersDataGrid.createParameter"/>
                             <button action="inputParametersDataGrid.editParameter"/>
@@ -299,7 +299,7 @@
                             </columns>
                         </dataGrid>
                     </vbox>
-                    <vbox classNames="parameters-validate-layout" padding="false">
+                    <vbox classNames="report-parameters-validate-layout" padding="false">
                         <h2 text="msg://report.crossParametersValidation"/>
                         <div width="100%" classNames="flex, justify-between">
                             <checkbox id="validationOnCheckBox"
@@ -384,8 +384,8 @@
                 </vbox>
             </tab>
             <tab id="securityTab" label="msg://mainTabSheet.securityTab.label">
-                <div id="securityTabContent" width="100%" height="100%" classNames="reports-flex-layout">
-                    <vbox classNames="roles-layout" expand="rolesDataGrid" padding="false">
+                <div id="securityTabContent" width="100%" height="100%" classNames="report-flex-layout">
+                    <vbox classNames="report-roles-layout" expand="rolesDataGrid" padding="false">
                         <h2 text="msg://io.jmix.reportsflowui.view.report/securityTab.roles.title"/>
                         <hbox id="addRoleGroupBox" expand="rolesField" width="100%">
                             <comboBox id="rolesField"/>
@@ -406,7 +406,7 @@
                             </columns>
                         </dataGrid>
                     </vbox>
-                    <vbox classNames="views-layout" expand="screenDataGrid" padding="false">
+                    <vbox classNames="report-views-layout" expand="screenDataGrid" padding="false">
                         <h2 text="msg://io.jmix.reportsflowui.view.report/securityTab.views.title"/>
                         <hbox id="addScreenGroupBox" expand="screenIdField" width="100%">
                             <comboBox id="screenIdField"/>

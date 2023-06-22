@@ -2772,15 +2772,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- ComboBoxPicker-->
-    <xs:complexType name="comboBoxPickerComponent">
-        <xs:complexContent>
-            <xs:extension base="baseComboBoxPickerComponent">
-                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <!-- EntityComboBox-->
     <xs:complexType name="entityComboBoxComponent">
         <xs:complexContent>
@@ -3903,7 +3894,6 @@
                 <xs:element name="valuePicker" type="valuePickerComponent"/>
                 <xs:element name="multiValuePicker" type="valuePickerComponent"/>
                 <xs:element name="entityPicker" type="entityPickerComponent"/>
-                <xs:element name="comboBoxPicker" type="comboBoxPickerComponent"/>
                 <xs:element name="entityComboBox" type="entityComboBoxComponent"/>
                 <xs:element name="radioButtonGroup" type="radioButtonGroupComponent"/>
                 <xs:element name="checkboxGroup" type="checkboxGroupComponent"/>

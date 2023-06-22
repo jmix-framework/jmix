@@ -78,7 +78,6 @@ public interface StudioElementsGroups {
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/validators.svg",
             target = {"io.jmix.flowui.component.SupportsValidation"},
             unsupportedTarget = {
-                    "io.jmix.flowui.kit.component.combobox.ComboBoxPicker",
                     "io.jmix.flowui.kit.component.upload.AbstractSingleUploadField",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
                     "io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup",

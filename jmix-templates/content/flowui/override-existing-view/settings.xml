@@ -68,7 +68,7 @@
 
     <property caption="View route"
               code="viewRoute"
-              propertyType="STRING"
+              propertyType="FLOW_VIEW_ROUTE"
               advanced="true"
               dynamic="true"
               required="true"

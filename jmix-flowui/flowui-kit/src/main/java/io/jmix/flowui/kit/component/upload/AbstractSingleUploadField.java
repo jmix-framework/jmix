@@ -54,9 +54,8 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     protected static final String UPLOAD = "Upload";
     protected static final String CLEAR_COMPONENT_ARIA_LABEL = "Remove file";
 
-    protected static final String NO_MARGIN_THEME = "jmix-upload-field-no-margin";
-    protected static final String NO_FILE_NAME_THEME = "jmix-upload-field-no-file-name";
-    protected static final String FULL_WIDTH_THEME = "jmix-upload-field-full-width";
+    protected static final String NO_FILE_NAME_THEME = "no-file-name";
+    protected static final String FULL_WIDTH_THEME = "full-width";
 
     protected JmixUploadButton uploadButton;
     protected HasComponents content;
@@ -106,7 +105,6 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected void initFileNameComponent(Component fileNameComponent) {
         addClassNames(fileNameComponent, FILE_NAME_COMPONENT_CLASS_NAME, FILE_NAME_COMPONENT_EMPTY_CLASS_NAME);
-        addThemeNames(fileNameComponent, NO_MARGIN_THEME);
 
         if (fileNameComponent instanceof HasText) {
             String fileName = Strings.nullToEmpty(generateFileName());
@@ -159,7 +157,6 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected void initUploadButtonComponent(Component component) {
         setComponentText(component, UPLOAD);
-        addThemeNames(component, NO_MARGIN_THEME);
     }
 
     protected void attachUploadEvents(JmixUploadButton upload) {

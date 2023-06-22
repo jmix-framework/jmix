@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-jmix-upload-field[theme~="jmix-upload-field-no-file-name"] .jmix-upload-button {
+jmix-upload-field[theme~="no-file-name"] .jmix-upload-button {
     flex-grow: 1;
 }
 

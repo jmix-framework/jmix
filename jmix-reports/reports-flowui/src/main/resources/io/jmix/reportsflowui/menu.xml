@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="2700">
+<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="1100">
 
     <menu id="reports" title="msg://io.jmix.reportsflowui/menu.reports.title">
         <item view="report_Report.list" title="msg://io.jmix.reportsflowui/reportListView.menu"/>

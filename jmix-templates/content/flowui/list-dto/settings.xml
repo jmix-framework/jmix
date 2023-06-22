@@ -90,7 +90,7 @@
 
     <property caption="View route"
               code="listRoute"
-              propertyType="STRING"
+              propertyType="FLOW_VIEW_ROUTE"
               advanced="true"
               dynamic="true"
               required="true"

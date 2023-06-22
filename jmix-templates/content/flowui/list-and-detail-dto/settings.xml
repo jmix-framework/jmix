@@ -98,7 +98,7 @@
     </property>
     <property caption="List view route"
               code="listRoute"
-              propertyType="STRING"
+              propertyType="FLOW_VIEW_ROUTE"
               group="list"
               advanced="true"
               dynamic="true"
@@ -141,7 +141,7 @@
     </property>
     <property caption="Detail view route"
               code="detailRoute"
-              propertyType="STRING"
+              propertyType="FLOW_VIEW_ROUTE"
               group="detail"
               advanced="true"
               dynamic="true"

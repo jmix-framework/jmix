@@ -113,6 +113,12 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     }
 
     @Override
+    public boolean isInstanceNameDefined(Class<?> aClass) {
+        MetaClass metaClass = metadata.getClass(aClass);
+        return instanceNameRecCache.getUnchecked(metaClass).isPresent();
+    }
+
+    @Override
     public String getInstanceName(Object instance) {
         checkNotNullArgument(instance, "instance is null");
 

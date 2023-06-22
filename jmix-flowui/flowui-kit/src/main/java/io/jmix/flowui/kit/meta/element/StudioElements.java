@@ -208,7 +208,6 @@ public interface StudioElements {
                     "io.jmix.flowui.component.checkbox.JmixCheckbox",
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
-                    "io.jmix.flowui.kit.component.combobox.ComboBoxPicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "com.vaadin.flow.component.applayout.DrawerToggle",

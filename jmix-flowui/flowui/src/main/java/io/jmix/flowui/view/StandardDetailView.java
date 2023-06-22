@@ -144,11 +144,16 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         MessageTools messageTools = getApplicationContext().getBean(MessageTools.class);
         InstanceNameProvider instanceNameProvider = getApplicationContext().getBean(InstanceNameProvider.class);
 
-        MetaClass metaClass = metadata.getClass(getEditedEntity());
+        T editedEntity = getEditedEntity();
+        MetaClass metaClass = metadata.getClass(editedEntity);
+        String entityCaption = messageTools.getEntityCaption(metaClass);
 
-        return messages.formatMessage("", "info.EntitySaved",
-                messageTools.getEntityCaption(metaClass),
-                instanceNameProvider.getInstanceName(getEditedEntity()));
+        if (instanceNameProvider.isInstanceNameDefined(editedEntity.getClass())) {
+            return messages.formatMessage("", "info.EntitySaved", entityCaption,
+                    instanceNameProvider.getInstanceName(editedEntity));
+        } else {
+            return messages.formatMessage("", "info.EntitySaved.short", entityCaption);
+        }
     }
 
     @Override

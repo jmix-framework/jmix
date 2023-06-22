@@ -28,10 +28,19 @@ import java.util.Collection;
 public interface InstanceNameProvider {
 
     /**
-     * Get entity instance name defined by {@link InstanceName} annotation
+     * Checks if {@link InstanceName} annotation is present in an entity class,
+     * i.e. whether instance name can be obtained for entity instances.
      *
-     * @param instance   instance
+     * @param aClass an entity class to check
+     * @return {@code true} if {@link InstanceName} annotation is present, {@code false} otherwise
+     */
+    boolean isInstanceNameDefined(Class<?> aClass);
+
+    /**
+     * Gets entity instance name defined by {@link InstanceName} annotation.
+     * If {@link InstanceName} annotation is not defined, returns {@code entity.toString()}.
      *
+     * @param instance an entity instance to get instance name
      * @return instance name
      */
     String getInstanceName(Object instance);

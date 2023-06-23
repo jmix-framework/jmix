@@ -48,6 +48,7 @@ import io.jmix.reports.entity.CustomTemplateDefinedBy;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -61,9 +62,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import static io.jmix.reportsflowui.helper.ReportScriptEditor.FIELD_ICON_CLASS_NAME;
-import static io.jmix.reportsflowui.helper.ReportScriptEditor.FIELD_ICON_SIZE_CLASS_NAME;
 
 @Route(value = "reports/templates/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportTemplate.detail")
@@ -224,13 +222,19 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
     protected void initCustomDefinitionHelpIcon() {
         customDefinitionHelpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        customDefinitionHelpIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
+        customDefinitionHelpIcon.addClassNames(
+                ReportStyleConstants.FIELD_ICON_SIZE_CLASS_NAME,
+                ReportStyleConstants.FIELD_ICON_CLASS_NAME
+        );
         customDefinitionHelpIcon.addClickListener(this::onCustomDefinitionHelpIconClick);
     }
 
     protected void initCustomDefinitionExpandIcon() {
         customDefinitionExpandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        customDefinitionExpandIcon.addClassNames(FIELD_ICON_SIZE_CLASS_NAME, FIELD_ICON_CLASS_NAME);
+        customDefinitionExpandIcon.addClassNames(
+                ReportStyleConstants.FIELD_ICON_SIZE_CLASS_NAME,
+                ReportStyleConstants.FIELD_ICON_CLASS_NAME
+        );
         customDefinitionExpandIcon.addClickListener(this::onExpandCustomDefinitionExpandIconClick);
     }
 
@@ -255,7 +259,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     protected void initOutputNamePatternField() {
         Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
         icon.addClickListener(this::onOutputNamePatternHelpIconClick);
-        icon.addClassName(FIELD_ICON_CLASS_NAME);
+        icon.addClassName(ReportStyleConstants.FIELD_ICON_CLASS_NAME);
         outputNamePatternField.setSuffixComponent(icon);
     }
 

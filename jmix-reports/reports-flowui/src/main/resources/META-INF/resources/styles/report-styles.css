@@ -14,87 +14,80 @@
  * limitations under the License.
  */
 
-.table-edit-fragment-root {
+.report-table-edit-fragment-root {
     max-width: 40em;
 }
 
-.table-edit-fragment-data-grids-box {
+.report-table-edit-fragment-data-grids-box {
     max-width: 40em;
 }
 
-.table-edit-fragment-band-box {
+.report-table-edit-fragment-band-box {
     min-width: 15em;
 }
 
-.table-edit-fragment-template-form {
+.report-table-edit-fragment-template-form {
     max-width: 40em;
 }
 
-.bands-layout {
+.report-bands-layout {
     flex-grow: 1;
     flex-basis: 20em;
 }
 
-.bands-details-layout {
+.report-bands-details-layout {
     flex-grow: 1;
     flex-basis: 30em;
 }
 
-.data-sets-data-grid-layout {
+.report-data-sets-data-grid-layout {
     flex-grow: 1;
     min-width: 20em;
 }
 
-.data-set-details-layout {
+.report-data-set-details-layout {
     flex-grow: 2;
     min-width: 15em;
 }
 
-.reports-flex-layout {
+.report-flex-layout {
     display: flex;
     flex-wrap: wrap;
     gap: 1em;
 }
 
-.multi-data-set-layout.reports-flex-layout {
+.report-multi-data-set-layout.report-flex-layout {
     gap: var(--lumo-space-m);
 }
 
-.reports-field-icon {
+.report-field-icon {
     cursor: pointer;
 }
 
-.reports-field-icon-size {
+.report-field-icon-size {
     padding: 0.25em;
 }
 
-.reports-dialog-transparent-code code {
+.report-dialog-transparent-code code {
     background-color: transparent;
 }
 
-/* Styles to remove later */
-
-/*.report-edit-border {
-    box-sizing: border-box;
-    border: 1px solid var(--lumo-contrast-10pct);
-}*/
-
-.parameters-layout {
+.report-parameters-layout {
     flex-grow: 1;
     flex-basis: 45em;
 }
 
-.parameters-validate-layout {
+.report-parameters-validate-layout {
     flex-grow: 1;
     flex-basis: 30em;
 }
 
-.roles-layout {
+.report-roles-layout {
     flex-grow: 1;
     flex-basis: 30em;
 }
 
-.views-layout {
+.report-views-layout {
     flex-grow: 1;
     flex-basis: 30em;
 }

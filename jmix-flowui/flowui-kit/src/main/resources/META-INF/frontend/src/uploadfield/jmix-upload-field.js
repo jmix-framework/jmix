@@ -38,7 +38,11 @@ const uploadField = css`
     display: inline-flex;
   }
   
-  [class$='container'] { {
+  /*
+   * Use "auto" width instead of default 12em, because upload field
+   * with visible file name is not fit in.
+   */
+  [class$='container'] {
     width: var(--jmix-upload-field-default-width, var(--vaadin-field-default-width, auto));
   }
 `;

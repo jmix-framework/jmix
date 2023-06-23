@@ -35,8 +35,8 @@ import java.util.Collections;
 @Import({CoreConfiguration.class, FlowuiConfiguration.class})
 public class FlowuiAutoConfiguration {
 
-    @Bean("jmix_AppFlowuiControllers")
-    @ConditionalOnMissingBean(name = "jmix_AppFlowuiControllers")
+    @Bean("jmix_AppUiControllers")
+    @ConditionalOnMissingBean(name = "jmix_AppUiControllers")
     public ViewControllersConfiguration viewControllersConfiguration(
             ApplicationContext applicationContext,
             AnnotationScanMetadataReaderFactory metadataReaderFactory,
@@ -48,8 +48,8 @@ public class FlowuiAutoConfiguration {
         return viewControllers;
     }
 
-    @Bean("jmix_AppFlowuiActions")
-    @ConditionalOnMissingBean(name = "jmix_AppFlowuiActions")
+    @Bean("jmix_AppUiActions")
+    @ConditionalOnMissingBean(name = "jmix_AppUiActions")
     public ActionsConfiguration actionsConfiguration(
             ApplicationContext applicationContext,
             AnnotationScanMetadataReaderFactory metadataReaderFactory,

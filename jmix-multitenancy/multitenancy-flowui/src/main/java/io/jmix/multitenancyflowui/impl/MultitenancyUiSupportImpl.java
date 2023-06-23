@@ -22,7 +22,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Messages;
 import io.jmix.multitenancy.MultitenancyProperties;
 import io.jmix.multitenancy.entity.Tenant;
-import io.jmix.multitenancyflowui.MultitenancyFlowuiSupport;
+import io.jmix.multitenancyflowui.MultitenancyUiSupport;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
 /**
  * Helper for login screen.
  */
-@Component("mten_MultitenancyFlowuiSupport")
-public class MultitenancyFlowuiSupportImpl implements MultitenancyFlowuiSupport {
+@Component("mten_MultitenancyUiSupport")
+public class MultitenancyUiSupportImpl implements MultitenancyUiSupport {
 
     protected final MultitenancyProperties multitenancyProperties;
     protected final DataManager dataManager;
@@ -43,9 +43,9 @@ public class MultitenancyFlowuiSupportImpl implements MultitenancyFlowuiSupport 
     protected static final String TENANT_USERNAME_SEPARATOR = "|";
     protected static final String INVALID_TENANT_ID_PARAM_MESSAGE_KEY = "invalidQueryParameter";
 
-    public MultitenancyFlowuiSupportImpl(MultitenancyProperties multitenancyProperties,
-                                         DataManager dataManager,
-                                         Messages messages) {
+    public MultitenancyUiSupportImpl(MultitenancyProperties multitenancyProperties,
+                                     DataManager dataManager,
+                                     Messages messages) {
         this.multitenancyProperties = multitenancyProperties;
         this.dataManager = dataManager;
         this.messages = messages;

@@ -21,7 +21,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.datatoolsflowui.DatatoolsFlowuiProperties;
+import io.jmix.datatoolsflowui.DatatoolsUiProperties;
 import io.jmix.datatoolsflowui.view.entityinspector.EntityFormLayoutUtils;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -48,7 +48,7 @@ public class InspectorDataGridBuilder {
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
-    protected DatatoolsFlowuiProperties datatoolsflowuiProperties;
+    protected DatatoolsUiProperties datatoolsUiProperties;
 
     private final MetaClass metaClass;
     private final CollectionContainer<?> collectionContainer;

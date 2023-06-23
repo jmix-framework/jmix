@@ -22,8 +22,8 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.lang.Nullable;
 import java.util.List;
 
-@ConfigurationProperties(prefix = "jmix.datatools.flowui")
-public class DatatoolsFlowuiProperties {
+@ConfigurationProperties(prefix = "jmix.datatools.ui")
+public class DatatoolsUiProperties {
 
     /**
      * Whether the controls to display SQL-scripts for creating / updating / retrieving an entity instance in the Entity
@@ -36,8 +36,8 @@ public class DatatoolsFlowuiProperties {
      */
     EntityInspectorListView entityInspectorListView;
 
-    public DatatoolsFlowuiProperties(@DefaultValue("true") boolean entityInfoScriptsEnabled,
-                                     @DefaultValue EntityInspectorListView entityInspectorListView) {
+    public DatatoolsUiProperties(@DefaultValue("true") boolean entityInfoScriptsEnabled,
+                                 @DefaultValue EntityInspectorListView entityInspectorListView) {
         this.entityInfoScriptsEnabled = entityInfoScriptsEnabled;
         this.entityInspectorListView = entityInspectorListView;
     }

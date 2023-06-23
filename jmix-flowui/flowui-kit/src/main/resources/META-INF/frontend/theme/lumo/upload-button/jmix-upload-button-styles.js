@@ -26,6 +26,14 @@ const uploadButton = css`
   [part='drop-label'] {
     display: none;
   }
+
+  ::slotted(vaadin-button) {
+    margin: 0;
+  }
+  
+  ::slotted(vaadin-button[theme~="full-width"]) {
+    width: 100%;
+  }
 `;
 
 registerStyles('jmix-upload-button', uploadButton, {

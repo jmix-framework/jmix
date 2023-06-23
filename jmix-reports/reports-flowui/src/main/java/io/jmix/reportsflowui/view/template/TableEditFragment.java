@@ -37,6 +37,7 @@ import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
 import io.jmix.reports.entity.table.TemplateTableDescription;
+import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -49,8 +50,6 @@ import java.util.List;
 
 public class TableEditFragment extends AbstractDescriptionEditFragment<TableEditFragmentContent>
         implements ApplicationContextAware, InitializingBean {
-
-    protected static final String TABLE_EDIT_FRAGMENT_ROOT_CLASS_NAME = "table-edit-fragment-root";
 
     public static final int UP = 1;
     public static final int DOWN = -1;
@@ -98,7 +97,7 @@ public class TableEditFragment extends AbstractDescriptionEditFragment<TableEdit
 
         content = createContent();
         content.setPadding(false);
-        content.setClassName(TABLE_EDIT_FRAGMENT_ROOT_CLASS_NAME);
+        content.setClassName(ReportStyleConstants.TABLE_EDIT_FRAGMENT_ROOT_CLASS_NAME);
 
         initBands();
         initColumns();

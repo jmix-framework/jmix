@@ -70,6 +70,7 @@ import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
+import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
@@ -89,8 +90,6 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.jmix.reportsflowui.helper.ReportScriptEditor.FIELD_ICON_CLASS_NAME;
-
 @Route(value = "reports/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.detail")
 @ViewDescriptor("report-detail-view.xml")
@@ -98,7 +97,6 @@ import static io.jmix.reportsflowui.helper.ReportScriptEditor.FIELD_ICON_CLASS_N
 public class ReportDetailView extends StandardDetailView<Report> {
 
     public static final String ROOT_BAND = "Root";
-    protected static final String TRANSPARENT_CODE_CLASS_NAME = "reports-dialog-transparent-code";
 
     @ViewComponent
     protected DataContext dataContext;
@@ -1283,7 +1281,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void initJsonPathQueryTextAreaField() {
         Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
         icon.addClickListener(this::onJsonPathQueryTextAreaFieldHelpIconClick);
-        icon.addClassName(FIELD_ICON_CLASS_NAME);
+        icon.addClassName(ReportStyleConstants.FIELD_ICON_CLASS_NAME);
 
         jsonPathQueryTextAreaField.setSuffixComponent(icon);
     }
@@ -1291,7 +1289,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onJsonPathQueryTextAreaFieldHelpIconClick(ClickEvent<Icon> event) {
         Html content = new Html(messageBundle.getMessage(
                 "bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.helpIcon.dialog.content"));
-        content.addClassName(TRANSPARENT_CODE_CLASS_NAME);
+        content.addClassName(ReportStyleConstants.TRANSPARENT_CODE_CLASS_NAME);
 
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage(
@@ -1431,7 +1429,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void initLocaleDetailReportTextField() {
         Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
         icon.addClickListener(this::onLocaleHelpIconClick);
-        icon.addClassName(FIELD_ICON_CLASS_NAME);
+        icon.addClassName(ReportStyleConstants.FIELD_ICON_CLASS_NAME);
         localeTextField.setSuffixComponent(icon);
     }
 

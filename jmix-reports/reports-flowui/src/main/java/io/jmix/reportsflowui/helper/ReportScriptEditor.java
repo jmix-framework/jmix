@@ -33,9 +33,6 @@ import java.util.function.Consumer;
 @Component("report_ReportScriptEditor")
 public class ReportScriptEditor {
 
-    public static final String FIELD_ICON_CLASS_NAME = "reports-field-icon";
-    public static final String FIELD_ICON_SIZE_CLASS_NAME = "reports-field-icon-size";
-
     protected final UiComponents uiComponents;
     protected final Messages messages;
     protected final DialogWindows dialogWindows;

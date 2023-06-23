@@ -118,6 +118,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
     @Override
     public boolean isInvalid() {
+        validate();
         return fieldDelegate.isInvalid();
     }
 
@@ -158,7 +159,6 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
     @Override
     public void setInvalid(boolean invalid) {
-        validate();
         fieldDelegate.setInvalid(invalid);
     }
 

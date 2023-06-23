@@ -68,21 +68,21 @@
                                 type="list_itemTracking" icon="lumo:reload"/>
                     </actions>
                     <columns>
-                        <column property="address" sortable="false"/>
-                        <column property="cc"/>
-                        <column property="bcc"/>
-                        <column property="from"/>
-                        <column property="subject"/>
-                        <column property="status"/>
-                        <column property="bodyContentType"/>
-                        <column property="createTs"/>
-                        <column property="dateSent"/>
-                        <column property="updateTs"/>
-                        <column property="attachmentsName" sortable="false"/>
-                        <column property="attemptsLimit"/>
-                        <column property="deadline"/>
-                        <column property="attemptsMade"/>
-                        <column property="important"/>
+                        <column property="address" resizable="true" sortable="false"/>
+                        <column property="cc" resizable="true"/>
+                        <column property="bcc" resizable="true"/>
+                        <column property="from" resizable="true"/>
+                        <column property="subject" resizable="true"/>
+                        <column property="status" resizable="true"/>
+                        <column property="bodyContentType" resizable="true"/>
+                        <column property="createTs" resizable="true"/>
+                        <column property="dateSent" resizable="true"/>
+                        <column property="updateTs" resizable="true"/>
+                        <column property="attachmentsName" resizable="true" sortable="false"/>
+                        <column property="attemptsLimit" resizable="true"/>
+                        <column property="deadline" resizable="true"/>
+                        <column property="attemptsMade" resizable="true"/>
+                        <column property="important" resizable="true"/>
                     </columns>
                 </dataGrid>
             </vbox>

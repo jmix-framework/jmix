@@ -20,7 +20,7 @@ import com.vaadin.flow.router.Location;
 
 import java.util.List;
 
-public interface MultitenancyFlowuiSupport {
+public interface MultitenancyUiSupport {
 
     String getUsernameByLocation(String username, Location location);
 

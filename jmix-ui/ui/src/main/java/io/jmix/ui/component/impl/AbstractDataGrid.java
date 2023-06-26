@@ -3429,14 +3429,22 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                 this.visible = visible;
 
                 Grid<E> grid = owner.getComponent();
+                Function<ColumnGeneratorEvent<E>, ?> columnGenerator = owner.getColumnGenerator(getId());
 
                 if (visible) {
-                    Grid.Column<E, ?> gridColumn =
-                            grid.addColumn(new EntityValueProvider<>(getPropertyPath()));
+                    Grid.Column<E, ?> gridColumn = columnGenerator != null
+                            ? grid.addColumn(owner.createGeneratedColumnValueProvider(getId(), columnGenerator))
+                            : grid.addColumn(new EntityValueProvider<>(getPropertyPath()));
                     owner.setupGridColumnProperties(gridColumn, this);
 
                     grid.setColumnOrder(owner.getColumnOrder());
                 } else {
+                    // If it's generated column, reset renderer. Vaadin does not
+                    // enable reusing extension with other columns.
+                    if (columnGenerator != null
+                            && getRenderer() instanceof AbstractRenderer) {
+                        ((AbstractRenderer<?, ?>) getRenderer()).resetImplementation();
+                    }
                     grid.removeColumn(getId());
                     setGridColumn(null);
                 }

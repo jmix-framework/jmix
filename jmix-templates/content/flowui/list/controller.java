@@ -15,6 +15,6 @@ ${classComment}
 @ViewController("${viewId}")
 @ViewDescriptor("${viewDescriptorName}.xml")
 @LookupComponent("${tableId}")
-@DialogMode(width = "50em")
+@DialogMode(width = "64em")
 public class ${viewControllerName} extends StandardListView<${entity.className}> {
 }

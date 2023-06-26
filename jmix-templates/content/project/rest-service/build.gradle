@@ -26,6 +26,7 @@ dependencies {
     implementation 'io.jmix.security:jmix-security-starter'
     implementation 'io.jmix.security:jmix-security-data-starter'
     implementation 'io.jmix.localfs:jmix-localfs-starter'
+    implementation 'io.jmix.authserver:jmix-authserver-starter'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 

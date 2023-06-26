@@ -16,7 +16,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://testEntityDetailView.title"
+      title="msg://EntityDetailView.title"
       focusComponent="form">
     <data>
         <instance id="reportRegionDc"

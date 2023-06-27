@@ -359,11 +359,6 @@ public class JmixGroupTableWidget extends JmixScrollTableWidget {
     }
 
     @Override
-    protected boolean isColumnCollapsingEnabled() {
-        return (columnOrder.length - 1) > collapsedColumns.size();
-    }
-
-    @Override
     public void updateTextSelection() {
         super.updateTextSelection();
 

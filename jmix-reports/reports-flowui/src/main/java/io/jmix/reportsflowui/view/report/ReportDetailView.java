@@ -70,23 +70,27 @@ import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
-import io.jmix.reportsflowui.constant.ReportStyleConstants;
-import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
+import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
+import io.jmix.reportsflowui.view.uploaddialog.FileUploadDialog;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.ResourceRoleRepository;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -181,8 +185,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected CodeEditor jsonGroovyCodeEditor;
     @ViewComponent
     protected DataGrid<ReportTemplate> templatesDataGrid;
-    @ViewComponent
-    protected CodeEditor validationScriptCodeEditor;
     @ViewComponent
     protected JmixTextArea localeTextField;
     @ViewComponent
@@ -393,8 +395,40 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onDefaultTemplateFieldUpload(ActionPerformedEvent event) {
         ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
         if (defaultTemplate != null) {
-            // todo
+            if (!isTemplateWithoutFile(defaultTemplate)) {
+                dialogWindows.view(this, FileUploadDialog.class)
+                        .withAfterCloseListener(listener -> {
+                            FileUploadDialog dialog = listener.getView();
+
+                            //if (Window.COMMIT_ACTION_ID.equals(standardCloseAction.getActionId())) {
+                                try {
+                                    InputStream content = dialog.getFileContent();
+                                    if (content != null) {
+                                        defaultTemplate.setContent(IOUtils.toByteArray(content));
+                                        defaultTemplate.setName(dialog.getFileName());
+                                        templatesDc.replaceItem(defaultTemplate);
+                                    }
+                                } catch (IOException e) {
+                                    throw new RuntimeException(String.format(
+                                            "An error occurred while uploading file for template [%s]",
+                                            defaultTemplate.getCode()));
+                                }
+                            //}
+                            defaultTemplateField.focus();
+                        })
+                        .build()
+                        .open();
+            } else {
+                notifications.create(messageBundle.getMessage("notification.fileIsNotAllowedForSpecificTypes"))
+                        .withPosition(Notification.Position.BOTTOM_END)
+                        .show();
+            }
+        } else {
+            notifications.create(messageBundle.getMessage("notification.defaultTemplateIsEmpty"))
+                    .withPosition(Notification.Position.BOTTOM_END)
+                    .show();
         }
+
     }
 
     @Install(to = "defaultTemplateField.upload", subject = "enabledRule")

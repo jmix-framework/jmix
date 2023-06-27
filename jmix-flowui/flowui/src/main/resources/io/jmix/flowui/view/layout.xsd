@@ -2980,6 +2980,8 @@
                 <xs:attribute name="autoselect" type="xs:boolean"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="textAreaThemeNames"/>
+                <xs:attribute name="maxLength" type="xs:integer"/>
+                <xs:attribute name="minLength" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>

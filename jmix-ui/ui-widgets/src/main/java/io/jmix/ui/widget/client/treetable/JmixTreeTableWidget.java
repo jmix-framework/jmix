@@ -52,6 +52,7 @@ import io.jmix.ui.widget.client.tableshared.TableWidget;
 import io.jmix.ui.widget.client.tableshared.TableWidgetDelegate;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -1037,7 +1038,12 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
 
     @Override
     protected boolean isColumnCollapsingEnabled() {
-        return (columnOrder.length - 1) > collapsedColumns.size();
+        // 'columnOrder' is available only if 'reorderingAllowed' property is true
+        // If it is false we should get columns by different way
+        int columnsCount = columnOrder != null
+                ? columnOrder.length
+                : getColumnsCount();
+        return (columnsCount - 1) > collapsedColumns.size();
     }
 
     @Override
@@ -1126,5 +1132,23 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
     @Override
     public boolean hasVerticalScrollbar() {
         return scrollBody.getOffsetHeight() > scrollBodyPanel.getOffsetHeight();
+    }
+
+    protected int getColumnsCount() {
+        // The idea of calculating columns count copied from
+        // com.vaadin.v7.client.ui.VScrollTable.TableHead#getActions()
+        int count = 0;
+        for (int i = 0; i < visibleColOrder.length; i++) {
+            if (!visibleColOrder[i].contains("-")) {
+                count++;
+            }
+        }
+        for (Iterator<String> it = collapsedColumns.iterator(); it.hasNext(); ) {
+            String col = it.next();
+            if (!col.contains("-")) {
+                count++;
+            }
+        }
+        return count;
     }
 }

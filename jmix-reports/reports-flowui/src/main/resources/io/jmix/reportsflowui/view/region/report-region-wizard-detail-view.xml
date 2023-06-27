@@ -31,7 +31,7 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout expand="mainContent" width="40em">
+    <layout width="40em">
         <label id="tipLabel"
                classNames="report-wizard-tip-label"
                width="100%"/>

@@ -25,6 +25,12 @@
         <action id="save" icon="CHECK" text="msg://save"/>
     </actions>
     <layout>
+        <h3 id="wizardTitleLabel"/>
+        <div width="100%">
+            <hr/>
+            <label id="wizardDescriptionLabel"/>
+            <hr/>
+        </div>
         <vbox id="detailsVBox" padding="false">
             <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
                 <responsiveSteps>
@@ -36,6 +42,7 @@
                           helperText="msg://entityHintMsg" width="100%"/>
                 <comboBox id="templateFileTypeField"
                           property="templateFileType"
+                          allowCustomValue="false"
                           label="msg://templateFileFormat" required="true"
                           requiredMessage="msg://fillTemplateTypeMsg"
                           helperText="msg://templateTypeHintMsg" width="100%"/>
@@ -47,6 +54,7 @@
                            width="100%"/>
                 <entityComboBox id="groupField"
                                 label="msg://group"
+                                required="true"
                                 requiredMessage="msg://groupHintMsg"
                                 metaClass="report_ReportGroup"
                                 width="100%"
@@ -86,9 +94,12 @@
             <button id="downloadTemplateFile"
                     classNames="link"
                     themeNames="icon, tertiary-inline"
+                    icon="DOWNLOAD"
+                    iconAfterText="true"
                     title="msg://templateHintMsg"/>
             <textField id="outputFileName" width="100%"
                        required="true"
+                       requiredMessage="msg://outputFileName.requiredMessage"
                        label="msg://outputFileName"
                        dataContainer="reportDataDc"
                        property="outputNamePattern"
@@ -97,9 +108,14 @@
                     <custom bean="report_OutputFileNameValidator"/>
                 </validators>
             </textField>
-            <comboBox id="outputFileFormat" required="true" width="100%"
+            <comboBox id="outputFileFormat"
+                      required="true"
+                      requiredMessage="msg://outputFileFormat.requiredMessage"
+                      width="100%"
                       label="msg://outputFileFormat"
-                      dataContainer="reportDataDc" property="outputFileType"
+                      allowCustomValue="false"
+                      dataContainer="reportDataDc"
+                      property="outputFileType"
                       helperText="msg://outputFileTypeHintMsg"/>
         </vbox>
         <vbox id="queryVBox" width="40em" padding="false">
@@ -133,7 +149,7 @@
             </hbox>
             <dataGrid id="reportParameterDataGrid"
                       dataContainer="queryParametersDc"
-                      height="20em"
+                      height="15em"
                       width="100%">
                 <actions>
                     <action id="generate" text="msg://generateParameters.text"/>
@@ -150,7 +166,7 @@
         <hbox id="buttonPanel" padding="false">
             <button id="backBtn" visible="false" action="back"/>
             <button id="nextBtn" action="next"/>
-            <button id="saveBtn" visible="false" themeNames="primary"  action="save"/>
+            <button id="saveBtn" visible="false" themeNames="primary" action="save"/>
         </hbox>
     </layout>
 </view>

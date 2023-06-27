@@ -6,6 +6,9 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.ItemClickEvent;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -19,10 +22,11 @@ import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -32,6 +36,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -110,6 +115,10 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected CodeEditor reportQueryCodeEditor;
     @ViewComponent
+    protected H3 wizardTitleLabel;
+    @ViewComponent
+    protected Label wizardDescriptionLabel;
+    @ViewComponent
     protected CollectionPropertyContainer<QueryParameter> queryParametersDc;
     @ViewComponent
     protected VerticalLayout regionsVBox;
@@ -178,6 +187,8 @@ public class ReportWizardCreatorView extends StandardView {
     protected boolean entityTreeHasCollections;
     protected Report lastGeneratedTmpReport;
     protected List<VerticalLayout> fragmentsList;
+    protected Map<VerticalLayout, String> fragmentTitleMap = new HashMap<>();
+    protected Map<VerticalLayout, String> fragmentDescriptionMap = new HashMap<>();
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -188,6 +199,10 @@ public class ReportWizardCreatorView extends StandardView {
         initEntityLookupField();
         initRegionDataGrid();
         initReportParameterDataGrid();
+        initFragmentTitle();
+        initFragmentDescription();
+        updateWizardTitle();
+        updateWizardDescription();
     }
 
     protected void initItem() {
@@ -234,6 +249,40 @@ public class ReportWizardCreatorView extends StandardView {
             }
             reportQueryCodeEditor.setValue(resultQuery);
         }
+    }
+
+    public void initFragmentTitle() {
+        fragmentTitleMap = Map.of(detailsVBox, messageBundle.getMessage("reportDetails"),
+                queryVBox, messageBundle.getMessage("reportQueryCaption"),
+                regionsVBox, messageBundle.getMessage("reportRegions"),
+                saveVBox, messageBundle.getMessage("saveReport"));
+    }
+
+    public void initFragmentDescription() {
+        String regionDescription;
+        if (getReportTypeGenerate() != null && getReportTypeGenerate().isList()) {
+            MetaClass entityMetaClass = metadata.getClass(reportDataDc.getItem().getEntityName());
+            regionDescription = messageBundle.formatMessage("regionTabulatedMessage", messageTools.getEntityCaption(entityMetaClass));
+        } else {
+            regionDescription = messageBundle.getMessage("addPropertiesAndTableAreas");
+        }
+
+        fragmentDescriptionMap = Map.of(detailsVBox, messageBundle.getMessage("enterMainParameters"),
+                queryVBox, messageBundle.getMessage("enterQuery"),
+                regionsVBox, regionDescription,
+                saveVBox, messageBundle.getMessage("finishPrepareReport"));
+    }
+
+    public void updateWizardTitle() {
+        wizardTitleLabel.setText(messages.formatMessage(getClass(), "stepNo",
+                fragmentTitleMap.get(getCurrentFragment()),
+                currentFragmentIdx + 1,
+                fragmentsList.size())
+        );
+    }
+
+    public void updateWizardDescription() {
+        wizardDescriptionLabel.setText(fragmentDescriptionMap.get(getCurrentFragment()));
     }
 
     @Subscribe(id = "reportDataDc", target = Target.DATA_CONTAINER)
@@ -304,6 +353,8 @@ public class ReportWizardCreatorView extends StandardView {
             beforeShowFragments();
             fragmentsList.get(currentFragmentIdx).setVisible(true);
         }
+        updateWizardTitle();
+        updateWizardDescription();
         updateFragmentChangeButtons();
     }
 
@@ -314,6 +365,8 @@ public class ReportWizardCreatorView extends StandardView {
             beforeShowFragments();
             fragmentsList.get(currentFragmentIdx).setVisible(true);
         }
+        updateWizardTitle();
+        updateWizardDescription();
         updateFragmentChangeButtons();
     }
 
@@ -346,9 +399,13 @@ public class ReportWizardCreatorView extends StandardView {
         VerticalLayout currentFragment = getCurrentFragment();
         List<String> errors = new ArrayList<>();
 
-        currentFragment.getChildren().forEach(component -> {
+        UiComponentUtils.getComponents(currentFragment).forEach(component -> {
             if (component instanceof SupportsValidation<?>) {
-                ((SupportsValidation<?>) component).executeValidators();
+                try {
+                    ((SupportsValidation<?>) component).executeValidators();
+                } catch (ValidationException e) {
+                    errors.add(messageBundle.getMessage("validationException.message"));
+                }
             }
         });
         if (currentFragment.equals(regionsVBox)) {
@@ -361,6 +418,10 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe("saveBtn")
     public void onSaveBtnClick(ClickEvent<Button> event) {
+        if (!validateFragment()) {
+            return;
+        }
+
         if (reportDataDc.getItem().getReportRegions().isEmpty()) {
             dialogs.createOptionDialog()
                     .withHeader(messageBundle.getMessage("dialogConfirmation.header"))
@@ -446,6 +507,7 @@ public class ReportWizardCreatorView extends StandardView {
         ReportData reportData = reportDataDc.getItem();
         ReportTypeGenerate currentType = (ReportTypeGenerate) event.getValue();
         updateReportTypeGenerate(reportData, currentType);
+        updateWizardTitle();
     }
 
     protected void updateReportTypeGenerate(ReportData reportData, @Nullable ReportTypeGenerate reportTypeGenerate) {
@@ -590,6 +652,11 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe("regionDataGrid.edit")
     public void onRegionDataGridEditItemAction(ActionPerformedEvent event) {
+        editRegion();
+    }
+
+    @Subscribe("regionDataGrid")
+    public void onUsersTableItemClick(final ItemClickEvent<ReportRegion> event) {
         editRegion();
     }
 
@@ -829,14 +896,7 @@ public class ReportWizardCreatorView extends StandardView {
                     return messageBundle.formatMessage(messageKey, reportRegion.getOrderNum());
                 }).setKey("name")
                 .setHeader(messageBundle.getMessage("name"))
-                .setSortable(true)
-                .setResizable(true);
-
-        regionDataGrid.addColumn(reportRegion ->
-                        messageTools.getEntityCaption(metadata.getClass(reportRegion.getRegionPropertiesRootNode().getMetaClassName()))
-                ).setKey("entity")
-                .setHeader(messageBundle.getMessage("entity"))
-                .setSortable(true)
+                .setSortable(false)
                 .setResizable(true);
 
         regionDataGrid.addColumn(reportRegion ->
@@ -846,7 +906,14 @@ public class ReportWizardCreatorView extends StandardView {
                                 MAX_ATTRS_BTN_CAPTION_WIDTH)
                 ).setKey("attributes")
                 .setHeader(messageBundle.getMessage("attributes"))
-                .setSortable(true)
+                .setSortable(false)
+                .setResizable(true);
+
+        regionDataGrid.addColumn(reportRegion ->
+                        messageTools.getEntityCaption(metadata.getClass(reportRegion.getRegionPropertiesRootNode().getMetaClassName()))
+                ).setKey("entity")
+                .setHeader(messageBundle.getMessage("entity"))
+                .setSortable(false)
                 .setResizable(true);
     }
 

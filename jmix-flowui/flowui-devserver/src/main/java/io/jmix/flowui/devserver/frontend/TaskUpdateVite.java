@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -59,10 +60,6 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
         File configFile = new File(options.getStudioFolder(),
                 FrontendUtils.VITE_CONFIG);
 
-        if (!configFile.exists()) {
-            configFile.createNewFile();
-        }
-
         try (InputStream resource = FrontendUtils.getResourceAsStream(FrontendUtils.VITE_CONFIG)) {
             String template = IOUtils.toString(resource, StandardCharsets.UTF_8);
             int freePort;
@@ -74,10 +71,26 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
 
             template = template.replace("60001", String.valueOf(freePort));
 
-            FileUtils.write(configFile, template, StandardCharsets.UTF_8);
-            String message = String.format("Created vite configuration file: '%s'", configFile);
-            log().debug(message);
-            FrontendUtils.logInFile(message);
+            if (!configFile.exists()) {
+                configFile.createNewFile();
+                FileUtils.write(configFile, template, StandardCharsets.UTF_8);
+                String message = String.format("Created vite configuration file: '%s'", configFile);
+                log().debug(message);
+                FrontendUtils.logInFile(message);
+            } else {
+                List<String> viteConfigLines = FileUtils.readLines(configFile, StandardCharsets.UTF_8);
+                final String hmrPortConstDeclaration = "let hmrPort = " + freePort + ";";
+                for (String line : viteConfigLines) {
+                    if (line.trim().contains("let hmrPort")) {
+                        viteConfigLines.set(
+                                viteConfigLines.indexOf(line),
+                                hmrPortConstDeclaration
+                        );
+                    }
+                }
+                FileUtils.writeLines(configFile, viteConfigLines);
+                FrontendUtils.logInFile(String.format("Vite configuration '%s' has been updated", configFile));
+            }
         }
     }
 

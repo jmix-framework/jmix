@@ -1,8 +1,7 @@
-// NOTE: do not change the file, it will be overwritten by the Studio
-
 import { UserConfigFn } from 'vite';
 import { overrideVaadinConfig } from './vite.generated';
 
+// WARN: do not change this row, it will be overwritten by the Studio
 let hmrPort = 60001;
 
 const customConfig: UserConfigFn = (env) => ({

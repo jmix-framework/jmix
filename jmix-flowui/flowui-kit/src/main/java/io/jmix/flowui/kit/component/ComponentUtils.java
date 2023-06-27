@@ -23,6 +23,7 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.provider.HasListDataView;
 import com.vaadin.flow.dom.Element;
@@ -86,6 +87,11 @@ public final class ComponentUtils {
     }
 
     public static <T> void setItemsMap(CheckboxGroup<T> component, Map<T, String> items) {
+        setItemsMapInternal(component, items);
+        component.setItemLabelGenerator(createItemLabelGenerator(items));
+    }
+
+    public static <T> void setItemsMap(RadioButtonGroup<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
     }

@@ -23,9 +23,11 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.pessimisticlocking.LockManager;
 import io.jmix.ui.accesscontext.UiEntityContext;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.action.list.EditAction;
+import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.Options;
@@ -329,7 +331,23 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
         if (tabSheet != null) {
             ComponentsHelper.walkComponents(tabSheet, (component, name) -> {
                 if (component instanceof Table) {
-                    ((Table) component).getActions().forEach(action -> action.setEnabled(enabled));
+                    ((Table<?>) component).getActions().stream()
+                            .filter(this::isManagedAction)
+                            .forEach(action -> action.setEnabled(enabled));
+                    // Disable selection in table in order to actions
+                    // change their availability.
+                    if (!enabled) {
+                        ((Table<?>) component).setSelected(Collections.emptyList());
+                    }
+                    component.setEnabled(enabled);
+                } else if (component instanceof Button) {
+                    // If button has null or a managed action it should
+                    // be enabled by passed parameter. Other buttons
+                    // change availability according to their action state.
+                    Action action = ((Button) component).getAction();
+                    if (action == null || isManagedAction(action)) {
+                        component.setEnabled(enabled);
+                    }
                 } else if (!(component instanceof HasComponents)) {
                     component.setEnabled(enabled);
                 }
@@ -338,6 +356,10 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
         getForm().setEditable(enabled);
         getActionsPane().setVisible(enabled);
         getLookupBox().setEnabled(!enabled);
+    }
+
+    protected boolean isManagedAction(Action action) {
+        return !(action instanceof SecuredListAction);
     }
 
     /**

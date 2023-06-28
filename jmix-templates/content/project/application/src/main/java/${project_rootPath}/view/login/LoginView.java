@@ -105,6 +105,8 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
         final LoginI18n.ErrorMessage errorMessage = new LoginI18n.ErrorMessage();
         errorMessage.setTitle(messageBundle.getMessage("loginForm.errorTitle"));
         errorMessage.setMessage(messageBundle.getMessage("loginForm.badCredentials"));
+        errorMessage.setUsername(messageBundle.getMessage("loginForm.errorUsername"));
+        errorMessage.setPassword(messageBundle.getMessage("loginForm.errorPassword"));
         loginI18n.setErrorMessage(errorMessage);
 
         login.setI18n(loginI18n);

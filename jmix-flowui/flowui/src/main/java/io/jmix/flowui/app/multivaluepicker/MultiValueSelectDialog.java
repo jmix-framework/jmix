@@ -20,7 +20,7 @@ package io.jmix.flowui.app.multivaluepicker;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -196,8 +196,8 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
     protected void addValueToLayout(E value) {
         String label = getGeneratedLabel(value);
 
-        Label itemLabel = uiComponents.create(Label.class);
-        itemLabel.setText(label);
+        Div item = uiComponents.create(Div.class);
+        item.setText(label);
 
         if (!context.isReadOnly()) {
             JmixButton deleteItemButton = uiComponents.create(JmixButton.class);
@@ -210,13 +210,13 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
             );
             deleteItemButton.addClickListener(e -> {
                 values.remove(value);
-                itemLabel.getElement().removeFromParent();
+                item.getElement().removeFromParent();
             });
 
-            itemLabel.add(deleteItemButton);
+            item.add(deleteItemButton);
         }
 
-        multiValueLayout.add(itemLabel);
+        multiValueLayout.add(item);
         values.add(value);
     }
 

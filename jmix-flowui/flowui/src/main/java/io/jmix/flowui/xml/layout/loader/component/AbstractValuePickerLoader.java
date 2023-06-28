@@ -46,6 +46,7 @@ public abstract class AbstractValuePickerLoader<T extends ValuePickerBase<?, ?>>
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
+        componentLoader().loadAriaLabel(resultComponent, element);
 
         getActionLoaderSupport().loadActions(resultComponent, element);
     }

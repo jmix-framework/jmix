@@ -111,7 +111,7 @@ public class HtmlView extends StandardView {
     public OrderedList orderedListId;
 
     @ViewComponent
-    public Label labelId;
+    public NativeLabel labelId;
 
     //Components
     @ViewComponent

@@ -50,6 +50,7 @@ public abstract class AbstractSingleFilterComponentLoader<C extends SingleFilter
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadSizeAttributes(resultComponent, element);
+        componentLoader().loadAriaLabel(resultComponent, element);
     }
 
     protected void loadAttributesBeforeValueComponent() {

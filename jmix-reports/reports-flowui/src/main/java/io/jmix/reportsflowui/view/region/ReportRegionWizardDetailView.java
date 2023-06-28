@@ -1,7 +1,7 @@
 package io.jmix.reportsflowui.view.region;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Metadata;
@@ -35,7 +35,7 @@ import java.util.*;
 public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegion> {
 
     @ViewComponent
-    protected Label tipLabel;
+    protected Div tipLabel;
     @ViewComponent
     protected JmixButton upItem;
     @ViewComponent

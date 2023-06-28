@@ -33,5 +33,6 @@ public class AnchorLoader extends AbstractHtmlContainerLoader<Anchor> {
         loadEnum(element, AnchorTarget.class, "target", resultComponent::setTarget);
 
         componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadAriaLabel(resultComponent, element);
     }
 }

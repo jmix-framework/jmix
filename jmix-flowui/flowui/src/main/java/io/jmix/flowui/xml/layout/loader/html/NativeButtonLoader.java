@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.logicalfilter;
+package io.jmix.flowui.xml.layout.loader.html;
 
-import com.vaadin.flow.component.html.Div;
-import io.jmix.core.annotation.Internal;
-import jakarta.annotation.Nullable;
-import org.springframework.stereotype.Component;
+import com.vaadin.flow.component.html.NativeButton;
 
-@Internal
-@Component("flowui_GroupFilterSupport")
-public class GroupFilterSupport {
+public class NativeButtonLoader extends AbstractHtmlContainerLoader<NativeButton> {
 
-    @Nullable
-    public Div getGroupFilterSummaryComponent(GroupFilter groupFilter) {
-        return groupFilter.getSummaryComponent();
+    @Override
+    protected NativeButton createComponent() {
+        return factory.create(NativeButton.class);
+    }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadAriaLabel(resultComponent, element);
     }
 }

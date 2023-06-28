@@ -222,8 +222,8 @@
             <tab id="tab1"
                  label="tab1Label">
                 <hbox>
-                    <label text="tab1Child1"/>
-                    <label text="tab1Child2"/>
+                    <nativeLabel text="tab1Child1"/>
+                    <nativeLabel text="tab1Child2"/>
                 </hbox>
                 <tooltip text="tooltipText"
                          focusDelay="1"

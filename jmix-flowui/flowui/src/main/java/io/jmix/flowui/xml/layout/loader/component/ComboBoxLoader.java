@@ -37,7 +37,7 @@ public class ComboBoxLoader extends AbstractComboBoxLoader<JmixComboBox<?>> {
         getDataLoaderSupport().loadItems(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
 
-        //These properties are loaded after the data provider is loaded,
+        // These properties are loaded after the data provider is loaded,
         // because setting the data provider resets the value of the readOnly attribute to default.
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadTitle(resultComponent, element, context);

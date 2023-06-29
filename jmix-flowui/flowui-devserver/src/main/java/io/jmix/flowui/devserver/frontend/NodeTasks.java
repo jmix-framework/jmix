@@ -23,7 +23,9 @@ import com.vaadin.flow.server.ExecutionFailedException;
 import com.vaadin.flow.server.PwaConfiguration;
 import com.vaadin.flow.server.frontend.FallibleCommand;
 import com.vaadin.flow.server.frontend.TaskCleanFrontendFiles;
+import com.vaadin.flow.server.frontend.TaskGenerateWebComponentBootstrap;
 import com.vaadin.flow.server.frontend.TaskGenerateWebComponentHtml;
+import com.vaadin.flow.server.frontend.TaskPrepareProdBundle;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import com.vaadin.flow.server.frontend.scanner.FrontendDependenciesScanner;
 import com.vaadin.flow.theme.AbstractTheme;
@@ -62,8 +64,8 @@ public class NodeTasks implements FallibleCommand {
                     TaskGenerateTsDefinitions.class,
                     TaskGenerateServiceWorker.class,
                     TaskGenerateBootstrap.class,
-                    // TaskGenerateWebComponentHtml.class,
-                    // TaskGenerateWebComponentBootstrap.class,
+                    TaskGenerateWebComponentHtml.class,
+                    TaskGenerateWebComponentBootstrap.class,
                     TaskGenerateFeatureFlags.class,
                     TaskInstallFrontendBuildPlugins.class,
                     TaskUpdatePackages.class,
@@ -76,10 +78,10 @@ public class NodeTasks implements FallibleCommand {
                     TaskUpdateVite.class,
                     TaskUpdateImports.class,
                     TaskUpdateThemeImport.class,
-                    TaskCopyTemplateFiles.class
-                    //TaskRunDevBundleBuild.class,
-                    //TaskPrepareProdBundle.class,
-                    //TaskCleanFrontendFiles.class
+                    TaskCopyTemplateFiles.class,
+                    TaskRunDevBundleBuild.class,
+                    TaskPrepareProdBundle.class,
+                    TaskCleanFrontendFiles.class
         ));
     // @formatter:on
 
@@ -102,7 +104,7 @@ public class NodeTasks implements FallibleCommand {
         final FeatureFlags featureFlags = options.getFeatureFlags();
 
         if (options.isFrontendHotdeploy()) {
-            UsageStatistics.markAsUsed("flow/hotdeploy", null);
+            // UsageStatistics.markAsUsed("flow/hotdeploy", null);
         }
 
         if (options.isEnablePackagesUpdate() || options.isEnableImportsUpdate()
@@ -283,7 +285,7 @@ public class NodeTasks implements FallibleCommand {
 
     private void addGenerateServiceWorkerTask(Options options,
                                               PwaConfiguration pwaConfiguration) {
-        if (pwaConfiguration.isEnabled()) {
+        if (true/*pwaConfiguration.isEnabled()*/) {
             commands.add(new TaskGenerateServiceWorker(options));
         }
     }

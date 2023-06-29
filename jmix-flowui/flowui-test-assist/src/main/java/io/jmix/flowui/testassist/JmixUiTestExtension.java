@@ -201,6 +201,8 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
         vaadinSession = new TestVaadinSession(springServlet.getService());
         VaadinSession.setCurrent(vaadinSession);
 
+        vaadinSession.setConfiguration(springServlet.getService().getDeploymentConfiguration());
+
         TestVaadinRequest request = new TestVaadinRequest(springServlet.getService());
         CurrentInstance.set(VaadinRequest.class, request);
 

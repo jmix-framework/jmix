@@ -20,7 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
-import io.jmix.dynattr.DynAttrQueryHints;
+//import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.reports.entity.Report;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.ResourceRoleRepository;
@@ -119,7 +119,7 @@ public class ReportSecurityManager {
     public List<Report> getAvailableReports(@Nullable String screenId, @Nullable UserDetails user, @Nullable MetaClass inputValueMetaClass) {
         MetaClass metaClass = metadata.getClass(Report.class);
         LoadContext<Report> lc = new LoadContext<>(metaClass);
-        lc.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
+//        lc.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
         FetchPlan fetchPlan = fetchPlans.builder(Report.class)
                 .add("name")
                 .add("localeNames")

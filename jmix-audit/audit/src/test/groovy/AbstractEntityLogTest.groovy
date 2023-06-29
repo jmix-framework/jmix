@@ -6,7 +6,6 @@ import io.jmix.audit.entity.LoggedEntity
 import io.jmix.core.*
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
-import io.jmix.dynattr.DynAttrConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -39,7 +38,7 @@ import jakarta.persistence.TypedQuery
  */
 
 @ContextConfiguration(
-        classes = [CoreConfiguration, DataConfiguration, EclipselinkConfiguration, AuditConfiguration, DynAttrConfiguration, AuditTestConfiguration],
+        classes = [CoreConfiguration, DataConfiguration, EclipselinkConfiguration, AuditConfiguration, AuditTestConfiguration],
         initializers = [TestContextInititalizer]
 )
 class AbstractEntityLogTest extends Specification {

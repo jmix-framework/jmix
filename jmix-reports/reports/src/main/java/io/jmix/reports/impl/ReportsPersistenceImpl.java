@@ -20,7 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
-import io.jmix.dynattr.DynAttrQueryHints;
+//import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.entity.*;
 import io.jmix.security.constraint.PolicyStore;
@@ -70,7 +70,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
         FetchPlan reportEditFetchPlan = fetchPlanRepository.getFetchPlan(metadata.getClass(savedReport), REPORT_EDIT_FETCH_PLAN_NAME);
         return dataManager.load(Id.of(savedReport))
                 .fetchPlan(reportEditFetchPlan)
-                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
+//                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one();
     }
 

@@ -122,12 +122,11 @@ public class JmixUI extends UI {
 
     @Override
     public void connectClient(
-            String clientElementTag,
-            String clientElementId,
             String flowRoutePath,
             String flowRouteQuery,
             String appShellTitle,
-            JsonValue historyState
+            JsonValue historyState,
+            String trigger
     ) {
         // do nothing
     }

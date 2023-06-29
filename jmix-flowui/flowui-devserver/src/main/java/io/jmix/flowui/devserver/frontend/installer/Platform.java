@@ -82,7 +82,7 @@ public class Platform {
             final String osName = System.getProperty("os.name");
             return osName.contains("Windows") ? OS.WINDOWS
                     : osName.contains("Mac") ? OS.MAC
-                    : osName.contains("SunOS") ? OS.SUN_OS : OS.LINUX;
+                            : osName.contains("SunOS") ? OS.SUN_OS : OS.LINUX;
         }
 
         /**

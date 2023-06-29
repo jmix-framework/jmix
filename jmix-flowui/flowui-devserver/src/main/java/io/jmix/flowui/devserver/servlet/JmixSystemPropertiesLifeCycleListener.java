@@ -51,7 +51,6 @@ public class JmixSystemPropertiesLifeCycleListener implements LifeCycle.Listener
         this.properties.setProperty(VAADIN_PREFIX + InitParameters.BUILD_FOLDER, FrontendUtils.BUILD_FOLDER);
         this.properties.setProperty(PARAM_STUDIO_DIR, projectBaseDir + VIEW_DESIGNER_FOLDER);
         this.properties.setProperty(PARAM_FRONTEND_DIR, projectBaseDir + FRONTEND_FOLDER);
-        this.properties.setProperty(PARAM_GENERATED_DIR, projectBaseDir + BUILD_FRONTEND_FOLDER);
         this.properties.setProperty(PARAM_FLOW_FRONTEND_DIR, projectBaseDir + FLOW_FRONTEND_FOLDER);
         this.properties.setProperty(VAADIN_PREFIX + SERVLET_PARAMETER_ENABLE_PNPM, isPnpmEnabled);
         this.properties.setProperty(VAADIN_PREFIX + PROJECT_FRONTEND_GENERATED_DIR_TOKEN, projectBaseDir + GENERATED_FRONTEND_FOLDER);

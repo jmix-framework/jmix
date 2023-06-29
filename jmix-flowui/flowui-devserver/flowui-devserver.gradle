@@ -34,6 +34,7 @@ dependencies {
     api('jakarta.servlet:jakarta.servlet-api')
     api('commons-logging:commons-logging:1.2')
     api('org.slf4j:slf4j-nop:2.0.7')
+    implementation('io.methvin:directory-watcher:0.18.0')
 }
 
 shadowJar {

@@ -16,26 +16,18 @@
 
 package io.jmix.flowui.devserver.frontend;
 
-import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.di.Lookup;
 import com.vaadin.flow.di.ResourceProvider;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.internal.DevModeHandler;
 import com.vaadin.flow.internal.DevModeHandlerManager;
+import com.vaadin.flow.internal.Pair;
 import com.vaadin.flow.server.AbstractConfiguration;
-import com.vaadin.flow.server.AppShellRegistry;
 import com.vaadin.flow.server.Constants;
-import com.vaadin.flow.server.VaadinContext;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServlet;
-import com.vaadin.flow.server.frontend.FallbackChunk;
-import com.vaadin.flow.server.frontend.FallbackChunk.CssImportData;
 import com.vaadin.flow.server.frontend.FrontendVersion;
-import com.vaadin.flow.server.frontend.TaskRunDevBundleBuild;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.ThemeDefinition;
-import elemental.json.Json;
-import elemental.json.JsonArray;
+import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import elemental.json.JsonObject;
 import jakarta.servlet.ServletContext;
 import org.apache.commons.io.FileUtils;
@@ -65,18 +57,16 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
 import static com.vaadin.flow.server.Constants.COMPATIBILITY_RESOURCES_FRONTEND_DEFAULT;
-import static com.vaadin.flow.server.Constants.DEV_BUNDLE_JAR_PATH;
 import static com.vaadin.flow.server.Constants.RESOURCES_FRONTEND_DEFAULT;
 import static com.vaadin.flow.server.Constants.VAADIN_WEBAPP_RESOURCES;
 import static com.vaadin.flow.server.frontend.FrontendTools.INSTALL_NODE_LOCALLY;
@@ -125,7 +115,6 @@ public class FrontendUtils {
     public static final String DEFAULT_FRONTEND_DIR = DEFAULT_NODE_DIR
             + FRONTEND;
 
-
     /**
      * The name of the vite configuration file.
      */
@@ -135,7 +124,6 @@ public class FrontendUtils {
      * The name of the generated vite configuration file.
      */
     public static final String VITE_GENERATED_CONFIG = "vite.generated.ts";
-
 
     /**
      * The name of the service worker source file for InjectManifest method of
@@ -148,6 +136,7 @@ public class FrontendUtils {
      * has a JavaScript version of a custom service worker file already.
      */
     public static final String SERVICE_WORKER_SRC_JS = "sw.js";
+
     /**
      * The folder inside the 'generated' folder where frontend resources from
      * jars are copied.
@@ -167,17 +156,9 @@ public class FrontendUtils {
     public static final String JAR_RESOURCES_IMPORT_FRONTEND_RELATIVE = JAR_RESOURCES_IMPORT
             .replace("Frontend/", "./");
 
-
-    /**
-     * Default folder name for flow generated stuff relative to the
-     * {@link com.vaadin.flow.server.InitParameters#BUILD_FOLDER}.
-     */
-    public static final String DEFAULT_GENERATED_DIR = FRONTEND;
-
     /**
      * Name of the file that contains application imports, javascript, theme and
-     * style annotations. It is always generated in the
-     * {@link FrontendUtils#DEFAULT_GENERATED_DIR} folder.
+     * style annotations.
      */
     public static final String IMPORTS_NAME = "generated-flow-imports.js";
 
@@ -203,13 +184,14 @@ public class FrontendUtils {
      * in an exported web component.
      */
     public static final String WEB_COMPONENT_BOOTSTRAP_FILE_NAME = "vaadin-web-component.ts";
+
     /**
      * File name of the feature flags file that is generated in frontend
      * {@link #GENERATED} folder. The feature flags file contains code to define
      * feature flags as globals that might be used by Vaadin web components or
      * application code.
      */
-    public static final String FEATURE_FLAGS_FILE_NAME = "vaadin-featureflags.ts";
+    public static final String FEATURE_FLAGS_FILE_NAME = "vaadin-featureflags.js";
 
     /**
      * File name of the index.html in client side.
@@ -220,6 +202,7 @@ public class FrontendUtils {
      * File name of the web-component.html in client side.
      */
     public static final String WEB_COMPONENT_HTML = "web-component.html";
+
     /**
      * File name of the index.ts in client side.
      */
@@ -240,28 +223,11 @@ public class FrontendUtils {
      */
     public static final String VITE_DEVMODE_TS = "vite-devmode.ts";
 
-
     /**
      * Default generated path for generated frontend files.
      */
     public static final String DEFAULT_PROJECT_FRONTEND_GENERATED_DIR = DEFAULT_FRONTEND_DIR
             + GENERATED;
-
-    /**
-     * Name of the file that contains all application imports, javascript, theme
-     * and style annotations which are not discovered by the current scanning
-     * strategy (but they are in the project classpath). This file is
-     * dynamically imported by the {@link FrontendUtils#IMPORTS_NAME} file. It
-     * is always generated in the {@link FrontendUtils#DEFAULT_GENERATED_DIR}
-     * folder.
-     */
-    public static final String FALLBACK_IMPORTS_NAME = "generated-flow-imports-fallback.js";
-
-    /**
-     * A parameter for overriding the
-     * {@link FrontendUtils#DEFAULT_GENERATED_DIR} folder.
-     */
-    public static final String PARAM_GENERATED_DIR = "vaadin.frontend.generated.folder";
 
     /**
      * A parameter for overriding the {@link FrontendUtils#DEFAULT_FRONTEND_DIR}
@@ -296,6 +262,12 @@ public class FrontendUtils {
     public static final String FRONTEND_FOLDER_ALIAS = "Frontend/";
 
     /**
+     * The prefix used to import files generated by Flow.
+     */
+    public static final String FRONTEND_GENERATED_FLOW_IMPORT_PATH = FRONTEND_FOLDER_ALIAS
+            + "generated/flow/";
+
+    /**
      * File used to enable npm mode.
      */
     public static final String TOKEN_FILE = Constants.VAADIN_CONFIGURATION
@@ -305,11 +277,6 @@ public class FrontendUtils {
      * A key in a Json object for chunks list.
      */
     public static final String CHUNKS = "chunks";
-
-    /**
-     * A key in a Json object for fallback chunk.
-     */
-    public static final String FALLBACK = "fallback";
 
     /**
      * The entry-point key used for the exported bundle.
@@ -356,9 +323,6 @@ public class FrontendUtils {
     public static final String GREEN = "\u001b[38;5;35m%s\u001b[0m";
 
     public static final String BRIGHT_BLUE = "\u001b[94m%s\u001b[0m";
-
-    private static final Pattern THEME_GENERATED_FILE_PATTERN = Pattern
-            .compile("theme-([\\s\\S]+?)\\.generated\\.js");
 
     /**
      * Only static stuff here.
@@ -453,16 +417,14 @@ public class FrontendUtils {
         return processBuilder;
     }
 
-
     /**
      * Gets the content of the <code>frontend/index.html</code> file which is
-     * served by webpack or vite in dev-mode and read from classpath in
-     * production mode.
+     * served by vite in dev-mode and read from classpath in production mode.
      * <p>
      * NOTE: In dev mode, the file content is fetched using an http request so
      * that we don't need to have a separate index.html's content watcher.
-     * Auto-reloading will work automatically, like other files managed by
-     * webpack in `frontend/` folder.
+     * Auto-reloading will work automatically, like other files in the
+     * `frontend/` folder.
      *
      * @param service the vaadin service
      * @return the content of the index html file as a string, null if not
@@ -476,13 +438,13 @@ public class FrontendUtils {
 
     /**
      * Gets the content of the <code>frontend/web-component.html</code> file
-     * which is served by webpack or vite in dev-mode and read from classpath in
-     * production mode.
+     * which is served by vite in dev-mode and read from classpath in production
+     * mode.
      * <p>
      * NOTE: In dev mode, the file content is fetched using an http request so
      * that we don't need to have a separate web-component.html's content
-     * watcher. Auto-reloading will work automatically, like other files managed
-     * by webpack in `frontend/` folder.
+     * watcher. Auto-reloading will work automatically, like other files in the
+     * `frontend/` folder.
      *
      * @param service the vaadin service
      * @return the content of the web-component.html file as a string, null if
@@ -549,10 +511,10 @@ public class FrontendUtils {
         }
     }
 
-
     private static InputStream getFileFromDevModeHandler(
             DevModeHandler devModeHandler, String filePath) throws IOException {
-        return devModeHandler.prepareConnection("/" + filePath, "GET").getInputStream();
+        return devModeHandler.prepareConnection("/" + filePath, "GET")
+                .getInputStream();
     }
 
     /**
@@ -624,12 +586,12 @@ public class FrontendUtils {
      * @param jarImport jar file to get (no resource folder should be added)
      * @return resource as String or {@code null} if not found
      */
-    public static String getJarResourceString(String jarImport) {
-        final ClassLoader classLoader = FrontendUtils.class.getClassLoader();
-        URL resource = classLoader
+    public static String getJarResourceString(String jarImport,
+                                              ClassFinder finder) {
+        URL resource = finder
                 .getResource(RESOURCES_FRONTEND_DEFAULT + "/" + jarImport);
         if (resource == null) {
-            resource = classLoader.getResource(
+            resource = finder.getResource(
                     COMPATIBILITY_RESOURCES_FRONTEND_DEFAULT + "/" + jarImport);
         }
 
@@ -655,10 +617,9 @@ public class FrontendUtils {
                 JAR_RESOURCES_FOLDER);
     }
 
-    private static File getFrontendGeneratedFolder(File frontendDirectory) {
+    public static File getFrontendGeneratedFolder(File frontendDirectory) {
         return new File(frontendDirectory, GENERATED);
     }
-
 
     private static String buildTooOldString(String tool, String version,
                                             int supportedMajor, int supportedMinor) {
@@ -673,12 +634,16 @@ public class FrontendUtils {
      * @return {@link #DEFAULT_FRONTEND_DIR} or value of
      * {@link #PARAM_FRONTEND_DIR} if it is set.
      */
-    public static String getProjectFrontendDir(
-            DeploymentConfiguration configuration) {
-        return configuration.getStringProperty(PARAM_FRONTEND_DIR,
-                DEFAULT_FRONTEND_DIR);
+    public static File getProjectFrontendDir(
+            AbstractConfiguration configuration) {
+        String propertyValue = configuration
+                .getStringProperty(PARAM_FRONTEND_DIR, DEFAULT_FRONTEND_DIR);
+        File f = new File(propertyValue);
+        if (f.isAbsolute()) {
+            return f;
+        }
+        return new File(configuration.getProjectFolder(), propertyValue);
     }
-
 
     /**
      * Get relative path from a source path to a target path in Unix form. All
@@ -700,54 +665,6 @@ public class FrontendUtils {
      */
     public static String getUnixPath(Path source) {
         return source.toString().replaceAll("\\\\", "/");
-    }
-
-    /**
-     * Read fallback chunk data from a json object.
-     *
-     * @param object json object to read fallback chunk data
-     * @return a fallback chunk data
-     */
-    public static FallbackChunk readFallbackChunk(JsonObject object) {
-        if (!object.hasKey(CHUNKS)) {
-            return null;
-        }
-        JsonObject obj = object.getObject(CHUNKS);
-        if (!obj.hasKey(FALLBACK)) {
-            return null;
-        }
-        obj = obj.getObject(FALLBACK);
-        List<String> fallbackModles = new ArrayList<>();
-        JsonArray modules = obj.getArray(JS_MODULES);
-        for (int i = 0; i < modules.length(); i++) {
-            fallbackModles.add(modules.getString(i));
-        }
-        List<CssImportData> fallbackCss = new ArrayList<>();
-        JsonArray css = obj.getArray(CSS_IMPORTS);
-        for (int i = 0; i < css.length(); i++) {
-            fallbackCss.add(createCssData(css.getObject(i)));
-        }
-        return new FallbackChunk(fallbackModles, fallbackCss);
-    }
-
-    private static CssImportData createCssData(JsonObject object) {
-        String value = null;
-        String id = null;
-        String include = null;
-        String themeFor = null;
-        if (object.hasKey("value")) {
-            value = object.getString("value");
-        }
-        if (object.hasKey("id")) {
-            id = object.getString("id");
-        }
-        if (object.hasKey("include")) {
-            include = object.getString("include");
-        }
-        if (object.hasKey("themeFor")) {
-            themeFor = object.getString("themeFor");
-        }
-        return new CssImportData(value, id, include, themeFor);
     }
 
     static void validateToolVersion(String tool, FrontendVersion toolVersion,
@@ -873,16 +790,51 @@ public class FrontendUtils {
         try {
             Process process = FrontendUtils.createProcessBuilder(command)
                     .start();
+
+            CompletableFuture<Pair<String, String>> streamConsumer = consumeProcessStreams(
+                    process);
             int exitCode = process.waitFor();
+            Pair<String, String> outputs = streamConsumer.get();
             if (exitCode != 0) {
                 throw new CommandExecutionException(exitCode,
-                        streamToString(process.getInputStream()),
-                        streamToString(process.getErrorStream()));
+                        outputs.getFirst(), outputs.getSecond());
             }
-            return streamToString(process.getInputStream());
+            return outputs.getFirst();
+        } catch (ExecutionException e) {
+            throw new CommandExecutionException(e.getCause());
         } catch (IOException | InterruptedException e) {
             throw new CommandExecutionException(e);
         }
+    }
+
+    /**
+     * Reads input and error stream from the give process asynchronously.
+     * <p>
+     * The method returns a {@link CompletableFuture} that is completed when
+     * both the streams are consumed.
+     * <p>
+     * Streams are converted into strings and wrapped into a {@link Pair},
+     * mapping input stream into {@link Pair#getFirst()} and error stream into
+     * {@link Pair#getSecond()}.
+     * <p>
+     * This method should be mainly used to avoid that {@link Process#waitFor()}
+     * hangs indefinitely on some operating systems because process streams are
+     * not consumed. See https://github.com/vaadin/flow/issues/15339 for an
+     * example case.
+     *
+     * @param process the process whose streams should be read
+     * @return a {@link CompletableFuture} that return the string contents of
+     * the process input and error streams when both are consumed,
+     * wrapped into a {@link Pair}.
+     */
+    public static CompletableFuture<Pair<String, String>> consumeProcessStreams(
+            Process process) {
+        CompletableFuture<String> stdOut = CompletableFuture
+                .supplyAsync(() -> streamToString(process.getInputStream()));
+        CompletableFuture<String> stdErr = CompletableFuture
+                .supplyAsync(() -> streamToString(process.getErrorStream()));
+        return CompletableFuture.allOf(stdOut, stdErr).thenApply(
+                unused -> new Pair<>(stdOut.getNow(""), stdErr.getNow("")));
     }
 
     /**
@@ -958,7 +910,6 @@ public class FrontendUtils {
         return LoggerFactory.getLogger(FrontendUtils.class);
     }
 
-
     /**
      * Pretty prints a command line order. It split in lines adapting to 80
      * columns, and allowing copy and paste in console. It also removes the
@@ -1023,7 +974,6 @@ public class FrontendUtils {
      * @param format  Format of the line to send to console, it must contain a `%s`
      *                outlet for the message
      * @param message the string to show
-     * @see FrontendUtils#console(String, Object, boolean)
      */
     @SuppressWarnings("squid:S106")
     public static void console(String format, Object message) {
@@ -1301,162 +1251,35 @@ public class FrontendUtils {
     }
 
     /**
-     * Finds the given file inside the express mode development bundle that is
-     * used.
-     * <p>
+     * Gets the folder where Flow generated frontend files are placed.
      *
-     * @param projectDir the project root folder
-     * @param filename   the file name inside the bundle
-     * @return a URL referring to the file inside the bundle or {@code null} if
-     * the file was not found
+     * @param frontendFolder the project frontend folder
+     * @return the folder for Flow generated files
      */
-    public static URL findBundleFile(File projectDir, String filename)
-            throws IOException {
-        File devBundleFolder = getDevBundleFolder(projectDir);
-        if (devBundleFolder.exists()) {
-            // Has an application bundle
-            File bundleFile = new File(devBundleFolder, filename);
-            if (bundleFile.exists()) {
-                return bundleFile.toURI().toURL();
-            }
-        }
-        return TaskRunDevBundleBuild.class.getClassLoader()
-                .getResource(DEV_BUNDLE_JAR_PATH + filename);
+    public static File getFlowGeneratedFolder(File frontendFolder) {
+        return new File(getFrontendGeneratedFolder(frontendFolder), "flow");
     }
 
     /**
-     * Get the folder where an application specific bundle is stored.
+     * Gets the location of the generated import file for Flow.
      *
-     * @param projectDir the project base directory
-     * @return the bundle directory
+     * @param frontendFolder the project frontend folder
+     * @return the location of the generated import JS file
      */
-    public static File getDevBundleFolder(File projectDir) {
-        return new File(projectDir, Constants.DEV_BUNDLE_LOCATION);
+    public static File getFlowGeneratedImports(File frontendFolder) {
+        return new File(getFlowGeneratedFolder(frontendFolder), IMPORTS_NAME);
     }
 
     /**
-     * Get the stats.json for the application specific development bundle.
+     * Gets the folder where exported web components are generated.
      *
-     * @param projectDir the project base directory
-     * @return stats.json content or {@code null} if not found
-     * @throws IOException if an I/O exception occurs.
+     * @param frontendFolder the project frontend folder
+     * @return the exported web components folder
      */
-    public static String findBundleStatsJson(File projectDir)
-            throws IOException {
-        URL statsJson = findBundleFile(projectDir, "config/stats.json");
-        if (statsJson == null) {
-            getLogger().warn(
-                    "There is no dev-bundle in the project " +
-                            "or on the classpath nor is there a default bundle included."
-            );
-            return null;
-        }
-
-        return IOUtils.toString(statsJson, StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Gets the custom theme name if the custom theme is used in the project.
-     * <p>
-     * Should be only used in the development mode.
-     *
-     * @param projectFolder the project root folder
-     * @return custom theme name or empty optional if no theme is used
-     * @throws IOException if I/O exceptions occur while trying to extract the theme
-     *                     name.
-     */
-    public static Optional<String> getThemeName(File projectFolder)
-            throws IOException {
-        File themeJs = new File(projectFolder, com.vaadin.flow.server.frontend.FrontendUtils.FRONTEND
-                + com.vaadin.flow.server.frontend.FrontendUtils.GENERATED + com.vaadin.flow.server.frontend.FrontendUtils.THEME_IMPORTS_NAME);
-
-        if (!themeJs.exists()) {
-            return Optional.empty();
-        }
-
-        String themeJsContent = FileUtils.readFileToString(themeJs,
-                StandardCharsets.UTF_8);
-        Matcher matcher = THEME_GENERATED_FILE_PATTERN.matcher(themeJsContent);
-        if (matcher.find()) {
-            return Optional.of(matcher.group(1));
-        } else {
-            throw new IllegalStateException(
-                    "Couldn't extract theme name from theme imports file 'theme.js'");
-        }
-    }
-
-    /**
-     * Gets the theme annotation for the project.
-     *
-     * @param context the Vaadin context
-     * @return the theme annotation or an empty optional
-     */
-    public static Optional<Theme> getThemeAnnotation(VaadinContext context) {
-        AppShellRegistry registry = AppShellRegistry.getInstance(context);
-        Class<? extends AppShellConfigurator> shell = registry.getShell();
-        if (shell == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(shell.getAnnotation(Theme.class));
-    }
-
-    public static Optional<JsonObject> getThemeJsonInFrontend(
-            File frontendFolder, String themeName) throws IOException {
-        File themeJsonFile = Path.of(frontendFolder.getAbsolutePath(),
-                        Constants.APPLICATION_THEME_ROOT, themeName, "theme.json")
-                .toFile();
-        if (themeJsonFile.exists()) {
-            String content = FileUtils.readFileToString(themeJsonFile,
-                    StandardCharsets.UTF_8);
-            content = content.replaceAll("\\r\\n", "\n");
-            return Optional.of(Json.parse(content));
-        }
-        return Optional.empty();
-    }
-
-    public static Optional<JsonObject> getThemeJsonInFrontend(Options options,
-                                                              ThemeDefinition themeDefinition) throws IOException {
-        if (themeDefinition != null) {
-            String themeName = themeDefinition.getName();
-            return getThemeJsonInFrontend(options.getFrontendDirectory(),
-                    themeName);
-        }
-        return Optional.empty();
-    }
-
-    public static Optional<String> getParentThemeNameInFrontend(
-            File frontendFolder, JsonObject themeJson) {
-        if (themeJson != null) {
-            if (themeJson.hasKey("parent")) {
-                String parentThemeName = themeJson.getString("parent");
-                File parentThemeFolder = Path
-                        .of(frontendFolder.getAbsolutePath(),
-                                Constants.APPLICATION_THEME_ROOT,
-                                parentThemeName)
-                        .toFile();
-                if (parentThemeFolder.exists()) {
-                    return Optional.of(parentThemeName);
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
-    public static Optional<String> getParentThemeNameInFrontend(
-            File frontendFolder, String projectCustomThemeName)
-            throws IOException {
-        Optional<JsonObject> themeJson = getThemeJsonInFrontend(frontendFolder,
-                projectCustomThemeName);
-        if (themeJson.isPresent()) {
-            return getParentThemeNameInFrontend(frontendFolder,
-                    themeJson.get());
-        }
-        return Optional.empty();
-    }
-
-    public static InputStream getResourceAsStream(String name) {
-        final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
-        return FrontendUtils.class.getClassLoader().getResourceAsStream(devServerResourcesBaseDir + name);
+    public static File getFlowGeneratedWebComponentsFolder(
+            File frontendFolder) {
+        return new File(getFlowGeneratedFolder(frontendFolder),
+                "web-components");
     }
 
     public static int findFreePort(int rangeStart, int rangeEnd) {
@@ -1489,5 +1312,10 @@ public class FrontendUtils {
         } catch (Exception e) {
             return true; // Port is available
         }
+    }
+
+    public static InputStream getResourceAsStream(String name) {
+        final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
+        return FrontendUtils.class.getClassLoader().getResourceAsStream(devServerResourcesBaseDir + name);
     }
 }

@@ -20,6 +20,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.internal.Template;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.ExecutionFailedException;
+import com.vaadin.flow.server.frontend.DevBundleUtils;
 import com.vaadin.flow.server.frontend.FallibleCommand;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import org.apache.commons.io.FileUtils;
@@ -75,8 +76,8 @@ public class TaskCopyTemplateFiles implements FallibleCommand {
                 File templateDirectory;
                 if (options.isDevBundleBuild()) {
                     templateDirectory = new File(
-                            FrontendUtils
-                                    .getDevBundleFolder(options.getStudioFolder()),
+                            DevBundleUtils
+                                    .getDevBundleFolder(options.getNpmFolder()),
                             Constants.TEMPLATE_DIRECTORY);
                 } else {
                     templateDirectory = new File(

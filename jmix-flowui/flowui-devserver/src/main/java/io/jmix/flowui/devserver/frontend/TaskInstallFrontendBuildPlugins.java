@@ -29,6 +29,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
 import static com.vaadin.flow.server.Constants.PACKAGE_JSON;
+import static io.jmix.flowui.devserver.frontend.FrontendPluginsUtil.PLUGIN_TARGET;
 
 /**
  * Task that installs any Flow webpack plugins into node_modules/@vaadin for use
@@ -52,7 +53,7 @@ public class TaskInstallFrontendBuildPlugins implements FallibleCommand {
      * @param options the task options
      */
     public TaskInstallFrontendBuildPlugins(Options options) {
-        targetFolder = new File(options.getBuildDirectory(), FrontendPluginsUtil.PLUGIN_TARGET);
+        targetFolder = new File(options.getBuildDirectory(), PLUGIN_TARGET);
     }
 
     @Override
@@ -73,7 +74,7 @@ public class TaskInstallFrontendBuildPlugins implements FallibleCommand {
         // Get the target folder where the plugin should be installed to
         File pluginTargetFile = new File(targetFolder, pluginName);
 
-        final String pluginFolderName = FrontendPluginsUtil.PLUGIN_TARGET + "/" + pluginName + "/";
+        final String pluginFolderName = PLUGIN_TARGET + "/" + pluginName + "/";
         final JsonObject packageJson = FrontendPluginsUtil
                 .getJsonFile(pluginFolderName + PACKAGE_JSON);
         if (packageJson == null) {

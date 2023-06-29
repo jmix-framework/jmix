@@ -16,9 +16,9 @@
 
 package io.jmix.flowui.devserver.frontend;
 
-import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.internal.StringUtil;
+import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.Platform;
 import com.vaadin.flow.server.frontend.FrontendVersion;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
@@ -27,9 +27,12 @@ import elemental.json.Json;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -42,7 +45,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.jmix.flowui.devserver.frontend.FrontendUtils.NODE_MODULES;
+import static io.jmix.flowui.devserver.frontend.FrontendUtils.getResourceAsStream;
 
 /**
  * Updates <code>package.json</code> by visiting {@link NpmPackage} annotations
@@ -59,15 +62,12 @@ public class TaskUpdatePackages extends NodeUpdater {
     /**
      * Create an instance of the updater given all configurable parameters.
      *
-     * @param finder
-     *            a reusable class finder
-     * @param frontendDependencies
-     *            a reusable frontend dependencies
-     * @param options
-     *            the task options
+     * @param finder               a reusable class finder
+     * @param frontendDependencies a reusable frontend dependencies
+     * @param options              the task options
      */
     TaskUpdatePackages(ClassFinder finder,
-            FrontendDependenciesScanner frontendDependencies, Options options) {
+                       FrontendDependenciesScanner frontendDependencies, Options options) {
         super(finder, frontendDependencies, options);
         this.jarResourcesFolder = options.getJarFrontendResourcesFolder();
         this.forceCleanUp = options.isCleanNpmFiles();
@@ -80,8 +80,8 @@ public class TaskUpdatePackages extends NodeUpdater {
             Map<String, String> scannedApplicationDependencies = frontDeps.getPackages();
             JsonObject packageJson = getPackageJson(getStudioJsonFile());
             modified = updatePackageJsonDependencies(packageJson, scannedApplicationDependencies);
-            versionsPath = generateVersionsJson(packageJson);
-            boolean npmVersionLockingUpdated = lockVersionForNpm(packageJson, versionsPath);
+            generateVersionsJson(packageJson);
+            boolean npmVersionLockingUpdated = lockVersionForNpm(packageJson);
 
             if (modified || npmVersionLockingUpdated) {
                 writePackageFile(packageJson);
@@ -104,16 +104,11 @@ public class TaskUpdatePackages extends NodeUpdater {
         }
     }
 
-    boolean lockVersionForNpm(JsonObject packageJson, String versionsPath)
-            throws IOException {
+    boolean lockVersionForNpm(JsonObject packageJson) throws IOException {
         if (enablePnpm) {
             return false;
         }
         boolean versionLockingUpdated = false;
-
-        File generatedVersionsFile = new File(options.getStudioFolder(), versionsPath);
-        final JsonObject versionsJson = Json.parse(FileUtils.readFileToString(
-                generatedVersionsFile, StandardCharsets.UTF_8));
 
         JsonObject overridesSection = getOverridesSection(packageJson);
         final JsonObject dependencies = packageJson.getObject(DEPENDENCIES);
@@ -311,7 +306,7 @@ public class TaskUpdatePackages extends NodeUpdater {
     }
 
     protected static boolean pinPlatformDependency(JsonObject packageJson,
-                                          JsonObject platformPinnedVersions, String pkg) {
+                                                   JsonObject platformPinnedVersions, String pkg) {
         final FrontendVersion platformPinnedVersion = FrontendUtils
                 .getPackageVersionFromJson(platformPinnedVersions, pkg,
                         "vaadin_dependencies.json");
@@ -345,13 +340,12 @@ public class TaskUpdatePackages extends NodeUpdater {
      * considered updated.
      *
      * @return {@code true} if the version has changed, {@code false} if not
-     * @throws IOException
-     *             when file reading fails
+     * @throws IOException when file reading fails
      */
     private boolean isPlatformVersionUpdated() throws IOException {
         // if no record of current version is present, version is not
         // considered updated
-        Optional<String> platformVersion = Platform.getVaadinVersion();
+        Optional<String> platformVersion = getVaadinVersion(finder);
         if (platformVersion.isPresent()
                 && options.getNodeModulesFolder().exists()) {
             JsonObject vaadinJsonContents = getVaadinJsonContents();
@@ -366,15 +360,34 @@ public class TaskUpdatePackages extends NodeUpdater {
         return false;
     }
 
+    static Optional<String> getVaadinVersion(ClassFinder finder) {
+//        URL coreVersionsResource = finder
+//                .getResource(Constants.VAADIN_CORE_VERSIONS_JSON);
+//
+//        if (coreVersionsResource == null) {
+//            return Optional.empty();
+//        }
+        try (InputStream vaadinVersionsStream = getResourceAsStream(Constants.VAADIN_CORE_VERSIONS_JSON)) {
+            final JsonObject versionsJson = Json.parse(IOUtils
+                    .toString(vaadinVersionsStream, StandardCharsets.UTF_8));
+            if (versionsJson.hasKey("platform")) {
+                return Optional.of(versionsJson.getString("platform"));
+            }
+        } catch (Exception e) {
+            LoggerFactory.getLogger(Platform.class)
+                    .error("Unable to determine version information", e);
+        }
+
+        return Optional.empty();
+    }
+
     /**
      * Cleans up any previous version properties from the packageJson object if
      * present.
      *
-     * @param packageJson
-     *            JsonObject of current package.json contents
+     * @param packageJson JsonObject of current package.json contents
      * @return amount of removed properties
-     * @throws IOException
-     *             thrown if removal of package-lock.json fails
+     * @throws IOException thrown if removal of package-lock.json fails
      */
     private int removeLegacyProperties(JsonObject packageJson)
             throws IOException {
@@ -423,14 +436,8 @@ public class TaskUpdatePackages extends NodeUpdater {
             // This feels like cleanup done in the wrong place but is left here
             // for historical reasons
             for (File file : jarResourcesFolder.listFiles()) {
-                    file.delete();
-                }
+                file.delete();
             }
-
-        File generatedNodeModules = new File(options.getGeneratedFolder(),
-                NODE_MODULES);
-        if (generatedNodeModules.exists()) {
-            FrontendUtils.deleteNodeModules(generatedNodeModules);
         }
     }
 
@@ -449,8 +456,7 @@ public class TaskUpdatePackages extends NodeUpdater {
      * Dependencies will be sorted by key so that different runs for same
      * dependencies in different order will not trigger npm install.
      *
-     * @param packageJson
-     *            JsonObject built in the same format as package.json
+     * @param packageJson JsonObject built in the same format as package.json
      * @return has for dependencies and devDependencies
      */
     static String generatePackageJsonHash(JsonObject packageJson) {

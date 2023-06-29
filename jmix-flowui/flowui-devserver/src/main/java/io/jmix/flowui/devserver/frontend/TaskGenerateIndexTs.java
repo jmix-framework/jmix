@@ -40,19 +40,15 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
 
-    private final Options options;
     private final File frontendDirectory;
-    private final File generatedImports;
 
     /**
      * Create a task to generate <code>index.js</code> if necessary.
      *
-     * @param options the task options
+     * @param options
+     *            the task options
      */
     TaskGenerateIndexTs(Options options) {
-        this.options = options;
-        this.generatedImports = new File(options.getGeneratedFolder(),
-                FrontendUtils.IMPORTS_NAME);
         this.frontendDirectory = options.getFrontendDirectory();
     }
 
@@ -77,22 +73,8 @@ public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
         try (InputStream indexTsStream = FrontendUtils.getResourceAsStream(INDEX_TS)) {
             assert indexTsStream != null;
             indexTemplate = IOUtils.toString(indexTsStream, UTF_8);
-
-            String relativizedImport = ensureValidRelativePath(FrontendUtils
-                    .getUnixRelativePath(options.getBuildDirectory().toPath(),
-                            generatedImports.toPath()));
-
-            String generatedDirRelativePathToBuildDir = FrontendUtils
-                    .getUnixRelativePath(
-                            getGeneratedFile().getParentFile().toPath(),
-                            options.getBuildDirectory().toPath());
-            relativizedImport = relativizedImport
-                    // replace `./` with `../../target/` to make it work
-                    .replaceFirst("^./", generatedDirRelativePathToBuildDir + "/");
-
-            return indexTemplate.replace("[to-be-generated-by-flow]",
-                    relativizedImport);
         }
+        return indexTemplate;
     }
 
     /**

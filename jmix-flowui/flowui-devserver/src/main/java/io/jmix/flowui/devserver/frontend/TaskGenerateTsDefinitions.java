@@ -30,7 +30,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class TaskGenerateTsDefinitions extends AbstractTaskClientGenerator {
 
-    private static final String TS_DEFINITIONS = "types.d.ts";
+    static final String TS_DEFINITIONS = "types.d.ts";
     private Options options;
 
     /**

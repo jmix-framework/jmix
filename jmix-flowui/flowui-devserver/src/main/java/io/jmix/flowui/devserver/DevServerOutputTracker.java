@@ -47,7 +47,7 @@ public class DevServerOutputTracker {
         private boolean started = false;
 
         private Finder(InputStream inputStream, Pattern success,
-                       Pattern failure, Consumer<Result> onMatch) {
+                Pattern failure, Consumer<Result> onMatch) {
             this.inputStream = inputStream;
             this.success = success;
             this.failure = failure;
@@ -56,7 +56,8 @@ public class DevServerOutputTracker {
 
         @Override
         public void run() {
-            InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            InputStreamReader reader = new InputStreamReader(inputStream,
+                    StandardCharsets.UTF_8);
             try {
                 readLinesLoop(reader);
             } catch (IOException e) {
@@ -186,7 +187,7 @@ public class DevServerOutputTracker {
      *            callback triggered when either success or failure is found
      */
     public DevServerOutputTracker(InputStream inputStream, Pattern success,
-                                  Pattern failure, Consumer<Result> onMatch) {
+            Pattern failure, Consumer<Result> onMatch) {
         monitor = new CountDownLatch(1);
         finder = new Finder(inputStream, success, failure, result -> {
             if (result != null) {
@@ -225,4 +226,5 @@ public class DevServerOutputTracker {
     private static Logger getLogger() {
         return LoggerFactory.getLogger(DevServerOutputTracker.class);
     }
+
 }

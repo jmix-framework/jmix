@@ -181,8 +181,7 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
 
     @Override
     public Optional<String> getAriaLabelledBy() {
-        return Optional
-                .ofNullable(getElement().getProperty("accessibleNameRef"));
+        return Optional.ofNullable(getElement().getProperty("accessibleNameRef"));
     }
 
     @Override

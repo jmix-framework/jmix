@@ -478,8 +478,7 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     @Override
     public Optional<String> getAriaLabelledBy() {
-        return Optional
-                .ofNullable(getElement().getProperty("accessibleNameRef"));
+        return Optional.ofNullable(getElement().getProperty("accessibleNameRef"));
     }
 
     @Override

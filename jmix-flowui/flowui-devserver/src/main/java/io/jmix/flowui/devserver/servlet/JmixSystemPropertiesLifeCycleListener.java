@@ -47,13 +47,14 @@ public class JmixSystemPropertiesLifeCycleListener implements LifeCycle.Listener
     }
 
     private void initializeProperties() {
-        this.properties.setProperty(VAADIN_PREFIX + PROJECT_BASEDIR, projectBaseDir);
-        this.properties.setProperty(VAADIN_PREFIX + InitParameters.BUILD_FOLDER, FrontendUtils.BUILD_FOLDER);
-        this.properties.setProperty(PARAM_STUDIO_DIR, projectBaseDir + VIEW_DESIGNER_FOLDER);
-        this.properties.setProperty(PARAM_FRONTEND_DIR, projectBaseDir + FRONTEND_FOLDER);
-        this.properties.setProperty(PARAM_FLOW_FRONTEND_DIR, projectBaseDir + FLOW_FRONTEND_FOLDER);
+        String studioViewDesignerDir = projectBaseDir + VIEW_DESIGNER_FOLDER;
+        this.properties.setProperty(VAADIN_PREFIX + PROJECT_BASEDIR, studioViewDesignerDir);
+        this.properties.setProperty(VAADIN_PREFIX + InitParameters.BUILD_FOLDER, BUILD_FOLDER);
+        this.properties.setProperty(PARAM_STUDIO_DIR, studioViewDesignerDir);
+        this.properties.setProperty(PARAM_FRONTEND_DIR, studioViewDesignerDir + FRONTEND_FOLDER);
+        this.properties.setProperty(PARAM_FLOW_FRONTEND_DIR, studioViewDesignerDir + FLOW_FRONTEND_FOLDER);
         this.properties.setProperty(VAADIN_PREFIX + SERVLET_PARAMETER_ENABLE_PNPM, isPnpmEnabled);
-        this.properties.setProperty(VAADIN_PREFIX + PROJECT_FRONTEND_GENERATED_DIR_TOKEN, projectBaseDir + GENERATED_FRONTEND_FOLDER);
+        this.properties.setProperty(VAADIN_PREFIX + PROJECT_FRONTEND_GENERATED_DIR_TOKEN, studioViewDesignerDir + GENERATED_FRONTEND_FOLDER);
         this.properties.setProperty(VAADIN_PREFIX + FRONTEND_HOTDEPLOY, "true");
     }
 }

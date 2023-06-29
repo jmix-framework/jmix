@@ -422,9 +422,9 @@ public class TaskUpdatePackages extends NodeUpdater {
         /*
          * In case of PNPM tool the package-lock should not be used at all.
          */
-        File packageLockFile = getPackageLockFile();
+        File packageLockFile = getStudioPackageLockFile();
         if (packageLockFile.exists()) {
-            FileUtils.forceDelete(getPackageLockFile());
+            FileUtils.forceDelete(packageLockFile);
         }
         return result;
     }

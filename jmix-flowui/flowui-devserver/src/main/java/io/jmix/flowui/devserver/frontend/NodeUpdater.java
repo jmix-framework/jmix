@@ -126,7 +126,7 @@ public abstract class NodeUpdater implements FallibleCommand {
         return new File(options.getStudioFolder(), PACKAGE_JSON);
     }
 
-    protected File getPackageLockFile() {
+    protected File getProjectPackageLockFile() {
         return new File(options.getNpmFolder(), PACKAGE_LOCK_JSON);
     }
 
@@ -144,7 +144,7 @@ public abstract class NodeUpdater implements FallibleCommand {
      *             when versions file could not be read
      */
     JsonObject getPlatformPinnedDependencies() throws IOException {
-        URL coreVersionsResource = finder
+        URL coreVersionsResource = FrontendUtils
                 .getResource(Constants.VAADIN_CORE_VERSIONS_JSON);
         if (coreVersionsResource == null) {
             String message = String.format(
@@ -160,7 +160,7 @@ public abstract class NodeUpdater implements FallibleCommand {
         JsonObject versionsJson = getFilteredVersionsFromResource(
                 coreVersionsResource, Constants.VAADIN_CORE_VERSIONS_JSON);
 
-        URL vaadinVersionsResource = finder
+        URL vaadinVersionsResource = FrontendUtils
                 .getResource(Constants.VAADIN_VERSIONS_JSON);
         if (vaadinVersionsResource == null) {
             // vaadin is not on the classpath, only vaadin-core is present.
@@ -498,7 +498,7 @@ public abstract class NodeUpdater implements FallibleCommand {
     }
 
     File getVaadinJsonFile() {
-        return new File(new File(options.getNpmFolder(), NODE_MODULES),
+        return new File(new File(options.getStudioFolder(), NODE_MODULES),
                 VAADIN_JSON);
     }
 

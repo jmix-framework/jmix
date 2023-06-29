@@ -37,6 +37,8 @@ import com.vaadin.flow.server.VaadinContext;
 import com.vaadin.flow.server.frontend.FileIOUtils;
 import com.vaadin.flow.server.startup.ApplicationConfiguration;
 
+import static io.jmix.flowui.devserver.frontend.FrontendUtils.PARAM_STUDIO_DIR;
+
 public class ExternalDependencyWatcher implements Closeable {
 
     final private static Set<FileWatcher> watchers = new HashSet<>();
@@ -49,7 +51,7 @@ public class ExternalDependencyWatcher implements Closeable {
                 InitParameters.FRONTEND_HOTDEPLOY_DEPENDENCIES, null);
 
         List<String> hotdeployDependencyFolders = new ArrayList<>();
-        File projectFolder = config.getProjectFolder();
+        File studioFolder = new File(System.getProperty(PARAM_STUDIO_DIR));
         if (hotdeployDependenciesProperty != null) {
             for (String folder : hotdeployDependenciesProperty.split(",")) {
                 if (!folder.isBlank()) {
@@ -57,7 +59,7 @@ public class ExternalDependencyWatcher implements Closeable {
                 }
             }
         } else {
-            File pomFile = new File(projectFolder, "pom.xml");
+            File pomFile = new File(studioFolder, "pom.xml");
             File parentPomFile = MavenUtils
                     .getParentPomOfMultiModuleProject(pomFile);
             if (parentPomFile != null) {
@@ -76,9 +78,9 @@ public class ExternalDependencyWatcher implements Closeable {
         }
 
         for (String hotdeployDependencyFolder : hotdeployDependencyFolders) {
-            Path moduleFolder = projectFolder.toPath()
+            Path moduleFolder = studioFolder.toPath()
                     .resolve(hotdeployDependencyFolder).normalize();
-            if (moduleFolder.equals(projectFolder.toPath())) {
+            if (moduleFolder.equals(studioFolder.toPath())) {
                 // Don't watch the active module
                 continue;
             }

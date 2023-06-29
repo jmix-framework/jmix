@@ -208,7 +208,7 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
     private void startWatchingAndSyncThemesFolder(VaadinContext context) {
         try {
             ApplicationConfiguration config = ApplicationConfiguration.get(context);
-            File projectFolder = config.getProjectFolder();
+            File projectFolder = FrontendUtils.getProjectBaseDir(config);
             File studioFolder = new File(System.getProperty(PARAM_STUDIO_DIR));
             Optional<String> themeName = Optional.ofNullable(System.getProperty(PARAM_THEME_VALUE));
 
@@ -243,15 +243,15 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
         }
     }
 
-    private void synchronizeThemesFolders(File projectThemesFolder, File stuidThemesFolder) {
+    private void synchronizeThemesFolders(File projectThemesFolder, File studioThemesFolder) {
         try {
             FrontendUtils.logInFile("Synchronizing themes folder...");
-            FileUtils.copyDirectory(projectThemesFolder, stuidThemesFolder);
+            FileUtils.copyDirectory(projectThemesFolder, studioThemesFolder);
         } catch (IOException e) {
             FrontendUtils.logInFile(
                     "Error when trying to synchronize themes folders..." +
                             "\nProject themes dir:" + projectThemesFolder +
-                            "\nStudio themes dir:" + stuidThemesFolder +
+                            "\nStudio themes dir:" + studioThemesFolder +
                             "\nTheme changes cannot by applied by live reload..."
             );
         }

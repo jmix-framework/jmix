@@ -194,7 +194,7 @@ public class DevModeInitializer implements Serializable {
 
         featureFlags.setPropertiesLocation(config.getJavaResourceFolder());
 
-        String baseDir = config.getProjectFolder().getAbsolutePath();
+        String baseDir = FrontendUtils.getProjectBaseDir(config).getAbsolutePath();
 
 //        // Initialize the usage statistics if enabled
 //        if (config.isUsageStatisticsEnabled()) {
@@ -223,7 +223,7 @@ public class DevModeInitializer implements Serializable {
         // TODO: make sure target directories are aligned with build
         // config,
         // see https://github.com/vaadin/flow/issues/9082
-        File target = new File(baseDir, config.getBuildFolder());
+        File target = new File(studioFolder, config.getBuildFolder());
         options.withWebpack(
                 Paths.get(target.getPath(), "classes", VAADIN_WEBAPP_RESOURCES)
                         .toFile(),
@@ -232,7 +232,7 @@ public class DevModeInitializer implements Serializable {
 
         // If we are missing either the base or generated package json
         // files generate those
-        if (!new File(options.getNpmFolder(), PACKAGE_JSON).exists()) {
+        if (!new File(options.getStudioFolder(), PACKAGE_JSON).exists()) {
             options.createMissingPackageJson(true);
         }
 
@@ -260,7 +260,7 @@ public class DevModeInitializer implements Serializable {
 
         String frontendGeneratedFolderName = config
                 .getStringProperty(PROJECT_FRONTEND_GENERATED_DIR_TOKEN,
-                        Paths.get(baseDir,
+                        Paths.get(studioFolder.getAbsolutePath(),
                                 DEFAULT_PROJECT_FRONTEND_GENERATED_DIR)
                                 .toString());
         File frontendGeneratedFolder = new File(frontendGeneratedFolderName);

@@ -20,7 +20,6 @@ import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.di.Lookup;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.frontend.FrontendTools;
-import com.vaadin.flow.server.frontend.FrontendUtils;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import elemental.json.JsonObject;
 import io.jmix.flowui.devserver.frontend.installer.NodeInstaller;
@@ -29,7 +28,6 @@ import io.jmix.flowui.devserver.frontend.installer.Platform;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -198,7 +196,7 @@ public class Options implements Serializable {
     public Options withFrontendDirectory(File frontendDirectory) {
         this.frontendDirectory = frontendDirectory.isAbsolute()
                 ? frontendDirectory
-                : new File(npmFolder, frontendDirectory.getPath());
+                : new File(studioFolder, frontendDirectory.getPath());
         return this;
     }
 
@@ -309,7 +307,7 @@ public class Options implements Serializable {
             File jarFrontendResourcesFolder) {
         this.jarFrontendResourcesFolder = jarFrontendResourcesFolder
                 .isAbsolute() ? jarFrontendResourcesFolder
-                        : new File(npmFolder,
+                        : new File(studioFolder,
                                 jarFrontendResourcesFolder.getPath());
         return this;
     }
@@ -666,9 +664,9 @@ public class Options implements Serializable {
     public File getFrontendDirectory() {
         if (frontendDirectory == null && npmFolder != null) {
             // Use default if not specified
-            return new File(npmFolder,
-                    System.getProperty(com.vaadin.flow.server.frontend.FrontendUtils.PARAM_FRONTEND_DIR,
-                            com.vaadin.flow.server.frontend.FrontendUtils.DEFAULT_FRONTEND_DIR));
+            return new File(
+                    System.getProperty(FrontendUtils.PARAM_FRONTEND_DIR,
+                            FrontendUtils.DEFAULT_FRONTEND_DIR));
         }
         return frontendDirectory;
     }
@@ -691,7 +689,7 @@ public class Options implements Serializable {
      * @return the build directory
      */
     public File getBuildDirectory() {
-        return new File(npmFolder, getBuildDirectoryName());
+        return new File(studioFolder, getBuildDirectoryName());
     }
 
     public Options withFeatureFlags(FeatureFlags featureFlags) {

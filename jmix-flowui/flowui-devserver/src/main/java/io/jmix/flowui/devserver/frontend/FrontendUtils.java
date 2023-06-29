@@ -28,6 +28,7 @@ import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.frontend.FrontendVersion;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
+import com.vaadin.flow.server.startup.ApplicationConfiguration;
 import elemental.json.JsonObject;
 import jakarta.servlet.ServletContext;
 import org.apache.commons.io.FileUtils;
@@ -242,10 +243,9 @@ public class FrontendUtils {
     public static final String PARAM_STUDIO_DIR = "vaadin.frontend.studio.folder";
 
     public static final String VIEW_DESIGNER_FOLDER = "/.jmix/screen-designer";
-    public static final String FRONTEND_FOLDER = VIEW_DESIGNER_FOLDER + "/frontend";
-    public static final String BUILD_FOLDER = VIEW_DESIGNER_FOLDER + "/build";
-    public static final String BUILD_FRONTEND_FOLDER = BUILD_FOLDER + "/frontend";
-    public static final String FLOW_FRONTEND_FOLDER = BUILD_FOLDER + "/flow-frontend";
+    public static final String FRONTEND_FOLDER = "/frontend";
+    public static final String BUILD_FOLDER = "/build";
+    public static final String FLOW_FRONTEND_FOLDER = "/flow-frontend";
     public static final String GENERATED_FRONTEND_FOLDER = FRONTEND_FOLDER + "/generated";
 
     /**
@@ -642,7 +642,7 @@ public class FrontendUtils {
         if (f.isAbsolute()) {
             return f;
         }
-        return new File(configuration.getProjectFolder(), propertyValue);
+        return new File(getProjectBaseDir((ApplicationConfiguration) configuration), propertyValue);
     }
 
     /**
@@ -1317,5 +1317,19 @@ public class FrontendUtils {
     public static InputStream getResourceAsStream(String name) {
         final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
         return FrontendUtils.class.getClassLoader().getResourceAsStream(devServerResourcesBaseDir + name);
+    }
+
+    public static URL getResource(String name) {
+        final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
+        return FrontendUtils.class.getClassLoader().getResource(devServerResourcesBaseDir + name);
+    }
+
+    public static File getProjectBaseDir(ApplicationConfiguration configuration) {
+        return new File(
+                configuration
+                        .getProjectFolder()
+                        .getAbsolutePath()
+                        .replace(VIEW_DESIGNER_FOLDER, "")
+        );
     }
 }

@@ -91,15 +91,13 @@ public class TaskGenerateBootstrap extends AbstractTaskClientGenerator {
 
     private Collection<String> getThemeLines() {
         Collection<String> lines = new ArrayList<>();
-        if (shouldApplyAppTheme()) {
+        if (themeDefinition != null && !"".equals(themeDefinition.getName())) {
+            lines.add("import './theme-" + themeDefinition.getName() + ".global.generated.js';");
             lines.add("import { applyTheme } from './theme.js';");
             lines.add("applyTheme(document);");
             lines.add("");
         }
-        return lines;
-    }
 
-    private boolean shouldApplyAppTheme() {
-        return themeDefinition != null && !"".equals(themeDefinition.getName());
+        return lines;
     }
 }

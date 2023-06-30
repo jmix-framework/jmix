@@ -91,7 +91,9 @@ public class EntitySet extends ForwardingSet<Object> implements Serializable {
     @SuppressWarnings("unchecked")
     public <T> Optional<T> optional(T prototype) {
         Preconditions.checkNotNullArgument(prototype, "prototype entity is null");
-        return (Optional<T>) optional(prototype.getClass(), EntityValues.getId(prototype));
+        Object prototypeId = EntityValues.getId(prototype);
+        Preconditions.checkNotNullArgument(prototypeId, "prototype entityId is null");
+        return (Optional<T>) optional(prototype.getClass(), prototypeId);
     }
 
     /**
@@ -114,7 +116,9 @@ public class EntitySet extends ForwardingSet<Object> implements Serializable {
     @SuppressWarnings("unchecked")
     public <T> T get(T prototype) {
         Preconditions.checkNotNullArgument(prototype, "prototype entity is null");
-        return (T) get(prototype.getClass(), EntityValues.getId(prototype));
+        Object prototypeId = EntityValues.getId(prototype);
+        Preconditions.checkNotNullArgument(prototypeId, "prototype entityId is null");
+        return (T) get(prototype.getClass(), prototypeId);
     }
 
     /**

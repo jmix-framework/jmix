@@ -108,6 +108,9 @@ public class ReportRunnerImpl implements ReportRunner {
     protected ReportOutputDocument createReportDocumentInternal(ReportRunContext context) {
         Report report = context.getReport();
         ReportTemplate template = context.getReportTemplate();
+        if(template == null) {
+            throw new RuntimeException("Report template is null");
+        }
         ReportOutputType outputType = context.getOutputType();
         Map<String, Object> params = context.getParams();
         String outputNamePattern = context.getOutputNamePattern();

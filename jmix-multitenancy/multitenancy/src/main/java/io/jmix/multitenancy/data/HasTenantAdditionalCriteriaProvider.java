@@ -17,6 +17,7 @@
 package io.jmix.multitenancy.data;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
@@ -61,6 +62,7 @@ public class HasTenantAdditionalCriteriaProvider implements AdditionalCriteriaPr
     @Override
     public String getAdditionalCriteria(Class<?> entityClass) {
         MetaProperty metaProperty = tenantEntityOperation.findTenantProperty(entityClass);
+        Preconditions.checkNotNullArgument(metaProperty, "Tenant property not found");
         return String.format("(:tenantId = '%s' or this.%s = :tenantId)", TenantProvider.NO_TENANT, metaProperty.getName());
     }
 

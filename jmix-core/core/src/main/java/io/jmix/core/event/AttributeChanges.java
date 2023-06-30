@@ -209,7 +209,11 @@ public class AttributeChanges {
      * @return collection of Ids
      */
     public <E> Collection<Id<E>> getOldCollection(String attributeName, Class<E> entityClass) {
-        return getOldValue(attributeName);
+        Collection<Id<E>> oldValue = getOldValue(attributeName);
+        if(oldValue == null) {
+            oldValue = Collections.emptyList(); //todo OK?
+        }
+        return oldValue;
     }
 
     /**

@@ -421,9 +421,11 @@ public abstract class AbstractDataStore implements DataStore {
         Object loadTransaction = beginLoadTransaction(context.isJoinTransaction());
         try {
             for (Object entity : savedEntities) {
+                Object entityId = EntityValues.getId(entity);
+                Preconditions.checkNotNullArgument(entityId, "entityId is null");
                 EventSharedState loadState = new EventSharedState();
                 LoadContext<?> loadContext = new LoadContext<>(metadata.getClass(entity))
-                        .setId(Objects.requireNonNull(EntityValues.getId(entity)))
+                        .setId(entityId)
                         .setFetchPlan(getFetchPlanForSave(context.getFetchPlans(), entity));
 
                 DataStoreEntityReloadEvent reloadEvent = new DataStoreEntityReloadEvent(loadContext, context, loadState);

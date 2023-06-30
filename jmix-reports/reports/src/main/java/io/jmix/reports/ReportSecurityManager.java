@@ -17,6 +17,7 @@
 package io.jmix.reports;
 
 import io.jmix.core.*;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
@@ -62,10 +63,12 @@ public class ReportSecurityManager {
      * @param userDetails user details
      */
     public void applySecurityPolicies(LoadContext lc, @Nullable String screen, @Nullable UserDetails userDetails) {
-        QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
+        LoadContext.Query query = lc.getQuery();
+        Preconditions.checkNotNullArgument(query, "Query is null");
+        QueryTransformer transformer = queryTransformerFactory.transformer(query.getQueryString());
         if (screen != null) {
             transformer.addWhereAsIs("r.screensIdx like :screen escape '\\'");
-            lc.getQuery().setParameter("screen", wrapCodeParameterForSearch(screen));
+            query.setParameter("screen", wrapCodeParameterForSearch(screen));
         }
         if (userDetails != null) {
             List<BaseRole> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
@@ -78,11 +81,11 @@ public class ReportSecurityManager {
                 BaseRole role = roles.get(i);
                 String paramName = "role" + (i + 1);
                 roleCondition.append(" or r.rolesIdx like :").append(paramName).append(" escape '\\'");
-                lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(role.getCode()));
+                query.setParameter(paramName, wrapCodeParameterForSearch(role.getCode()));
             }
             transformer.addWhereAsIs(roleCondition.toString());
         }
-        lc.getQuery().setQueryString(transformer.getResult());
+        query.setQueryString(transformer.getResult());
     }
 
     /**
@@ -92,18 +95,20 @@ public class ReportSecurityManager {
      */
     public void applyPoliciesByEntityParameters(LoadContext lc, @Nullable MetaClass inputValueMetaClass) {
         if (inputValueMetaClass != null) {
-            QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
+            LoadContext.Query query = lc.getQuery();
+            Preconditions.checkNotNullArgument(query, "Query is null");
+            QueryTransformer transformer = queryTransformerFactory.transformer(query.getQueryString());
             StringBuilder parameterTypeCondition = new StringBuilder("r.inputEntityTypesIdx like :type escape '\\'");
-            lc.getQuery().setParameter("type", wrapCodeParameterForSearch(inputValueMetaClass.getName()));
+            query.setParameter("type", wrapCodeParameterForSearch(inputValueMetaClass.getName()));
             List<MetaClass> ancestors = inputValueMetaClass.getAncestors();
             for (int i = 0; i < ancestors.size(); i++) {
                 MetaClass metaClass = ancestors.get(i);
                 String paramName = "type" + (i + 1);
                 parameterTypeCondition.append(" or r.inputEntityTypesIdx like :").append(paramName).append(" escape '\\'");
-                lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(metaClass.getName()));
+                query.setParameter(paramName, wrapCodeParameterForSearch(metaClass.getName()));
             }
             transformer.addWhereAsIs(String.format("(%s)", parameterTypeCondition.toString()));
-            lc.getQuery().setQueryString(transformer.getResult());
+            query.setQueryString(transformer.getResult());
         }
     }
 

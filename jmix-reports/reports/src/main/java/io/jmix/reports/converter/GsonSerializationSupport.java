@@ -127,7 +127,14 @@ public class GsonSerializationSupport {
             idProperty = metaClass.getProperty("id");
         }
         try {
-            EntityValues.setValue(entity, idProperty.getName(), datatypeRegistry.find(idProperty.getJavaType()).parse(id));
+            Datatype<?> datatype = datatypeRegistry.find(idProperty.getJavaType());
+            if(datatype == null) {
+                throw new RuntimeException(
+                        format("An error occurred while parsing id property. Datatype not found for class [%s]",
+                                idProperty.getJavaType())
+                );
+            }
+            EntityValues.setValue(entity, idProperty.getName(), datatype.parse(id));
         } catch (ParseException e) {
             throw new RuntimeException(
                     format("An error occurred while parsing id property. Class [%s]. Value [%s].", idProperty.getJavaType(), id), e);
@@ -226,7 +233,13 @@ public class GsonSerializationSupport {
         if (primaryKeyProperty == null) {
             primaryKeyProperty = metaClass.getProperty("id");
         }
-        Datatype idType = datatypeRegistry.find(primaryKeyProperty.getJavaType());
+        Datatype<?> idType = datatypeRegistry.find(primaryKeyProperty.getJavaType());
+        if(idType == null) {
+            throw new RuntimeException(
+                    format("An error occurred while parsing primary key property. Datatype not found for class [%s]",
+                            primaryKeyProperty.getJavaType())
+            );
+        }
         Object id = Id.of(entity).getValue();
         if (processedObjects.containsKey(id)) {
             out.name("metaClass");

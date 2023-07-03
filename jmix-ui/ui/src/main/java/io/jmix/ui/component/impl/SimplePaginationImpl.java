@@ -21,6 +21,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
@@ -400,7 +401,10 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
                 break;
             case FIRST_INCOMPLETE:
             case MIDDLE:
-                msgKey = "pagination.msg1";
+                // QueryTransformer can't create count query for KeyValueEntity,
+                // so we return message without 'of' regardless the state,
+                // because we don't display the count button.
+                msgKey = isKeyValueEntity() ? "pagination.msg2Plural1" : "pagination.msg1";
                 break;
             case LAST:
                 msgKey = "pagination.msg2Plural2";
@@ -429,6 +433,10 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     }
 
     protected void updateNavigationButtonsAvailability() {
+        // QueryTransformer can't create count query for KeyValueEntity,
+        // so we hide count and last buttons if DataBinder is bound to KeyValueEntity.
+        boolean canBeVisible = !isKeyValueEntity();
+
         switch (state) {
             case FIRST_COMPLETE:
                 getFirstButton().setEnabled(false);
@@ -440,16 +448,16 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
             case FIRST_INCOMPLETE:
                 getFirstButton().setEnabled(false);
                 getPrevButton().setEnabled(false);
-                getCountButton().setVisible(true);
+                getCountButton().setVisible(canBeVisible);
                 getNextButton().setEnabled(true);
-                getLastButton().setEnabled(true);
+                getLastButton().setEnabled(canBeVisible);
                 break;
             case MIDDLE:
                 getFirstButton().setEnabled(true);
                 getPrevButton().setEnabled(true);
-                getCountButton().setVisible(true);
+                getCountButton().setVisible(canBeVisible);
                 getNextButton().setEnabled(true);
-                getLastButton().setEnabled(true);
+                getLastButton().setEnabled(canBeVisible);
                 break;
             case LAST:
                 getFirstButton().setEnabled(true);
@@ -521,5 +529,9 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
     protected Label getLabel() {
         return component.getLabel();
+    }
+
+    protected boolean isKeyValueEntity() {
+        return dataBinder.getEntityMetaClass() instanceof KeyValueMetaClass;
     }
 }

@@ -23,6 +23,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
@@ -117,7 +118,6 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         root.getThemeList().add("spacing-s");
     }
 
-    // TODO: gg, rename?
     public HorizontalLayout getRoot() {
         return root;
     }
@@ -294,7 +294,6 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         return label;
     }
 
-    // TODO: gg, try to make it protected
     public abstract String getInnerComponentPrefix();
 
     @Override
@@ -331,7 +330,6 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         super.setWidth(width);
 
         if (valueComponent != null) {
-            // TODO: replace with helper method
             if (Strings.isNullOrEmpty(width)) {
                 // Same as remove expand
                 root.setFlexGrow(0.0, valueComponent);
@@ -376,7 +374,8 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
             ((SupportsStatusChangeHandler<?>) valueComponent).setStatusChangeHandler(this::onFieldStatusChanged);
         }
 
-        // TODO: replace with helper method
+        valueComponent.getElement().addPropertyChangeListener("invalid", this::onFieldInvalidChanged);
+
         String width = getWidth();
         if (!Strings.isNullOrEmpty(width)
                 && Unit.getSize(width) > 0) {
@@ -390,6 +389,12 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     protected void onFieldStatusChanged(SupportsStatusChangeHandler.StatusContext<?> statusContext) {
         setErrorMessage(statusContext.getDescription());
+    }
+
+    protected void onFieldInvalidChanged(PropertyChangeEvent event) {
+        if (event.getValue() instanceof Boolean) {
+            super.setInvalid(((Boolean) event.getValue()));
+        }
     }
 
     @Override

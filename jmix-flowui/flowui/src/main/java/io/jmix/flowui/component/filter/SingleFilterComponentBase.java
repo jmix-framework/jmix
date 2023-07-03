@@ -23,6 +23,7 @@ import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
@@ -374,6 +375,8 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
             ((SupportsStatusChangeHandler<?>) valueComponent).setStatusChangeHandler(this::onFieldStatusChanged);
         }
 
+        valueComponent.getElement().addPropertyChangeListener("invalid", this::onFieldInvalidChanged);
+
         String width = getWidth();
         if (!Strings.isNullOrEmpty(width)
                 && Unit.getSize(width) > 0) {
@@ -387,6 +390,12 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     protected void onFieldStatusChanged(SupportsStatusChangeHandler.StatusContext<?> statusContext) {
         setErrorMessage(statusContext.getDescription());
+    }
+
+    protected void onFieldInvalidChanged(PropertyChangeEvent event) {
+        if (event.getValue() instanceof Boolean) {
+            super.setInvalid(((Boolean) event.getValue()));
+        }
     }
 
     @Override

@@ -179,6 +179,9 @@ public class JobModelListView extends StandardListView<JobModel> {
     @Subscribe("jobModelsTable.deactivate")
     protected void onJobModelsTableDeactivate(ActionPerformedEvent event) {
         JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
+        if (selectedJobModel == null) {
+            return;
+        }
         quartzService.pauseJob(selectedJobModel.getJobName(), selectedJobModel.getJobGroup());
         notifications.create(messageBundle.formatMessage("jobPaused", selectedJobModel.getJobName()))
                 .withType(Notifications.Type.DEFAULT)

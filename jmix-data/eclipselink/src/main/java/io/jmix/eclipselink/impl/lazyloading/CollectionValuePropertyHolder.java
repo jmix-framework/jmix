@@ -80,8 +80,12 @@ public class CollectionValuePropertyHolder extends AbstractValueHolder {
     }
 
     protected LoadContext<?> createLoadContextByOwner(MetaClass metaClass) {
+        Object ownerId = EntityValues.getId(getOwner());
+        if (ownerId == null) {
+            throw new RuntimeException("Owner id is null");
+        }
         return new LoadContext<>(metaClass)
-                .setId(Objects.requireNonNull(EntityValues.getId(getOwner())))
+                .setId(ownerId)
                 .setFetchPlan(
                         getFetchPlans().builder(metaClass.getJavaClass())
                                 .add(getPropertyInfo().getName(), builder -> builder.addFetchPlan(FetchPlan.BASE))

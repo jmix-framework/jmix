@@ -23,8 +23,8 @@ import io.jmix.core.Metadata;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
+import org.springframework.lang.NonNull;
 
-import jakarta.annotation.Nonnull;
 import java.lang.reflect.Method;
 
 public class JmixCountQuery extends JmixStructuredQuery {
@@ -34,7 +34,7 @@ public class JmixCountQuery extends JmixStructuredQuery {
     }
 
     @Override
-    @Nonnull
+    @NonNull
     public Object execute(Object[] parameters) {
         String entityName = jmixMetadata.getClass(metadata.getDomainType()).getName();
 

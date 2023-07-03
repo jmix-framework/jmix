@@ -163,7 +163,9 @@ public class CrossDataStoreReferenceLoader {
         Object entity = entityCrossDataStoreProperty.entity;
         CrossDataStoreProperty aProp = entityCrossDataStoreProperty.crossProp;
         Object id = EntityValues.getValue(entity, aProp.relatedPropertyName);
-
+        if(id == null) {
+            throw new RuntimeException("Id is null");
+        }
         LoadContext<?> loadContext = new LoadContext<>(aProp.property.getRange().asClass())
                 .setId(id);
         FetchPlan propertyFetchPlan = aProp.fetchPlanProperty.getFetchPlan();

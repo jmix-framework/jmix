@@ -19,6 +19,7 @@ package io.jmix.core.impl.repository.support;
 import io.jmix.core.EntityStates;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
 
 import java.util.Objects;
@@ -44,8 +45,12 @@ public class JmixEntityInformation<T, ID> extends AbstractEntityInformation<T, I
 
     @Override
     public Class<ID> getIdType() {
+        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(getJavaType());
+        if(primaryKeyProperty == null) {
+            throw new RuntimeException("Primary key property is null");
+        }
         //noinspection unchecked
-        return (Class<ID>) metadataTools.getPrimaryKeyProperty(getJavaType()).getJavaType();
+        return (Class<ID>) primaryKeyProperty.getJavaType();
     }
 
     @Override

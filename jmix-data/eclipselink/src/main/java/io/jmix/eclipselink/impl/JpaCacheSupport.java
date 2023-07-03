@@ -66,13 +66,18 @@ public class JpaCacheSupport {
                 if (changes != null) {
                     for (String attributeName : changes.getOwnAttributes()) {
                         if (property.getName().equals(attributeName)) {
-                            evictEntity(changes.getOldValue(attributeName));
+                            Object oldValue = changes.getOldValue(attributeName);
+                            if (oldValue != null) {
+                                evictEntity(oldValue);
+                            }
                             break;
                         }
                     }
                 } else {
                     Object masterEntity = EntityValues.getValue(entity, property.getName());
-                    evictEntity(masterEntity);
+                    if (masterEntity != null) {
+                        evictEntity(masterEntity);
+                    }
                 }
             }
         }

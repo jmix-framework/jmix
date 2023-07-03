@@ -96,10 +96,11 @@ public final class MsgBundleTools {
         return result;
     }
 
+    @Nullable
     public String convertMsgBundleToEnumMsgBundle(String enumValue, String msgBundle) {
         Properties result = new Properties();
         Map<String, String> msgBundleValues = getMsgBundleValues(msgBundle);
-        if (msgBundleValues != null && !msgBundleValues.isEmpty()) {
+        if (!msgBundleValues.isEmpty()) {
             for (Map.Entry<String, String> entry : msgBundleValues.entrySet()) {
                 String key = entry.getKey();
                 result.put(key + "/" + enumValue, entry.getValue());
@@ -108,10 +109,11 @@ public final class MsgBundleTools {
         return getMsgBundle(result);
     }
 
+    @Nullable
     public String convertEnumMsgBundleToMsgBundle(String enumMsgBundle) {
         Properties result = new Properties();
         Map<String, String> msgBundleValues = getMsgBundleValues(enumMsgBundle);
-        if (msgBundleValues != null) {
+        if (!msgBundleValues.isEmpty()) {
             for (Map.Entry<String, String> entry : msgBundleValues.entrySet()) {
                 String key = entry.getKey();
                 key = key.substring(0, key.indexOf("/"));

@@ -62,11 +62,10 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
 
     @Override
     public boolean supports(ConditionGenerationContext context) {
-        if (!(context.getCondition() instanceof PropertyCondition)) {
+        if (!(context.getCondition() instanceof PropertyCondition propertyCondition)) {
             return false;
         }
 
-        PropertyCondition propertyCondition = (PropertyCondition) context.getCondition();
         String[] properties = propertyCondition.getProperty().split("\\.");
         for (String property : properties) {
             if (DynAttrUtils.isDynamicAttributeProperty(property)) {

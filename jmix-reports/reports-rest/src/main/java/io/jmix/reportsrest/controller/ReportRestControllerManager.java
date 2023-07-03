@@ -23,6 +23,7 @@ import com.google.gson.annotations.SerializedName;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
@@ -342,7 +343,10 @@ public class ReportRestControllerManager {
 
     protected Object getIdFromString(String entityId, MetaClass metaClass) {
         try {
-            MetaProperty primaryKeyProperty = Objects.requireNonNull(metadataTools.getPrimaryKeyProperty(metaClass));
+            MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+            Preconditions.checkNotNullArgument(
+                    primaryKeyProperty, "PrimaryKey property not found for MetaClass '%s'", metaClass
+            );
             Class<?> idClass = primaryKeyProperty.getJavaType();
 
             if (UUID.class.isAssignableFrom(idClass)) {

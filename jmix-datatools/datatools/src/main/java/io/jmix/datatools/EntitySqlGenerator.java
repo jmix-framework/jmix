@@ -186,7 +186,9 @@ public class EntitySqlGenerator {
                 value = getValue(entity, fieldName);
             }
 
-            value = dbmsSpecifics.getDbTypeConverter().getSqlObject(value);
+            if (value != null) {
+                value = dbmsSpecifics.getDbTypeConverter().getSqlObject(value);
+            }
 
             if (value == null) {
                 valueStr = null;

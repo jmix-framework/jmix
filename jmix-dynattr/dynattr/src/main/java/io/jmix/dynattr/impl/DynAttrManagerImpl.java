@@ -112,10 +112,11 @@ public class DynAttrManagerImpl implements DynAttrManager {
     @SuppressWarnings("unchecked")
     protected void doStoreValues(Object entity, Collection<AccessConstraint<?>> accessConstraints) {
         DynamicAttributesState state = getExtraState(entity, DynamicAttributesState.class);
-        if (state != null && state.getDynamicAttributes() != null) {
+        DynamicAttributes dynamicModel = Optional.ofNullable(state)
+                .map(DynamicAttributesState::getDynamicAttributes)
+                .orElse(null);
+        if (dynamicModel != null) {
             EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
-
-            DynamicAttributes dynamicModel = state.getDynamicAttributes();
             DynamicAttributes.Changes changes = dynamicModel.getChanges();
 
             if (changes.hasChanges()) {

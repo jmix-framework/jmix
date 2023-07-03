@@ -107,6 +107,13 @@ public class DbmsSpecifics {
                 bean = (T) applicationContext.getBean(name);
             }
         }
+        if (bean == null) {
+            throw new RuntimeException(
+                    String.format("Unable to find DBMS specific bean: class=%s, dbmsType=%s, dbmsVersion=%s",
+                            intf.getName(), dbmsType, dbmsVersion
+                    )
+            );
+        }
         return bean;
     }
 

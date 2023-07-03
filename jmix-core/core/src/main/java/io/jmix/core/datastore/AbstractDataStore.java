@@ -133,7 +133,9 @@ public abstract class AbstractDataStore implements DataStore {
 
                 if (entities.size() != resultList.size()) {
                     LoadContext.Query query = context.getQuery();
-                    Preconditions.checkNotNullArgument(query);
+                    if(query == null) {
+                        throw new RuntimeException("Query is null");
+                    }
                     if (query.getMaxResults() != 0) {
                         resultList = loadListByBatches(context, resultList.size(), loadState);
                     }
@@ -422,7 +424,9 @@ public abstract class AbstractDataStore implements DataStore {
         try {
             for (Object entity : savedEntities) {
                 Object entityId = EntityValues.getId(entity);
-                Preconditions.checkNotNullArgument(entityId, "entityId is null");
+                if(entityId == null) {
+                    throw new RuntimeException("entityId is null");
+                }
                 EventSharedState loadState = new EventSharedState();
                 LoadContext<?> loadContext = new LoadContext<>(metadata.getClass(entity))
                         .setId(entityId)

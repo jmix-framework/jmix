@@ -43,7 +43,9 @@ public final class Ids<T> extends ArrayList<Id<T>> {
         for (T entity : entities) {
             checkNotNullArgument(entity);
             Object entityId = EntityValues.getId(entity);
-            checkNotNullArgument(entityId);
+            if(entityId == null) {
+                throw new RuntimeException("Entity id is null");
+            }
 
             @SuppressWarnings("unchecked")
             Class<T> entityClass = (Class<T>) entity.getClass();

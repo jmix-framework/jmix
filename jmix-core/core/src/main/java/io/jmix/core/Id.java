@@ -59,7 +59,9 @@ public final class Id<T> implements Serializable {
     public static <T> Id<T> of(T entity) {
         checkNotNullArgument(entity);
         Object entityId = EntityValues.getId(entity);
-        checkNotNullArgument(entityId);
+        if(entityId == null) {
+            throw new RuntimeException("Entity id is null");
+        }
 
         @SuppressWarnings("unchecked")
         Class<T> entityClass = (Class<T>) entity.getClass();

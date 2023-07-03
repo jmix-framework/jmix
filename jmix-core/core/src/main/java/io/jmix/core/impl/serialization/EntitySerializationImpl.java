@@ -267,12 +267,17 @@ public class EntitySerializationImpl implements EntitySerialization {
             MetaClass metaClass = metadata.getClass(entity);
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
             if (primaryKeyProperty == null) {
-                primaryKeyProperty = metaClass.getProperty("id");
+                primaryKeyProperty = metaClass.findProperty("id");
             }
-            if (primaryKeyProperty == null)
+            if (primaryKeyProperty == null) {
                 throw new EntitySerializationException("Primary key property not found for entity " + metaClass);
+            }
             if (metadataTools.hasCompositePrimaryKey(metaClass)) {
-                JsonObject serializedIdEntity = serializeEntity((Entity) EntityValues.getId(entity), null, Collections.emptySet());
+                Object id = EntityValues.getId(entity);
+                if(id == null) {
+                    throw new RuntimeException("Id is null");
+                }
+                JsonObject serializedIdEntity = serializeEntity((Entity) id, null, Collections.emptySet());
                 jsonObject.add("id", serializedIdEntity);
             } else {
                 Datatype idDatatype = datatypeRegistry.get(primaryKeyProperty.getJavaType());

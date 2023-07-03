@@ -455,6 +455,7 @@ public class JmixEntityManager implements EntityManager {
             return entity;
     }
 
+    @Nullable
     private <T> T findPartial(MetaClass metaClass, Object id, Collection<FetchPlan> fetchPlans) {
         Object realId = id;
         log.debug("find {} by id={}, fetchPlans={}", metaClass.getJavaClass().getSimpleName(), realId, fetchPlans);
@@ -568,7 +569,11 @@ public class JmixEntityManager implements EntityManager {
                     if (!equal) {
                         dstCollection.clear();
                         for (Object srcRef : srcCollection) {
-                            Object reloadedRef = findOrCreate(srcRef.getClass(), EntityValues.getId(srcRef));
+                            Object srcRefId = EntityValues.getId(srcRef);
+                            if(srcRefId == null) {
+                                throw new RuntimeException("entityId is null");
+                            }
+                            Object reloadedRef = findOrCreate(srcRef.getClass(), srcRefId);
                             dstCollection.add(reloadedRef);
                             deepCopyIgnoringNulls(srcRef, reloadedRef, visited);
                         }
@@ -578,7 +583,11 @@ public class JmixEntityManager implements EntityManager {
                     if (value.equals(destRef)) {
                         deepCopyIgnoringNulls(value, destRef, visited);
                     } else {
-                        Object reloadedRef = findOrCreate(value.getClass(), EntityValues.getId(value));
+                        Object entityId = EntityValues.getId(value);
+                        if(entityId == null) {
+                            throw new RuntimeException("entityId is null");
+                        }
+                        Object reloadedRef = findOrCreate(value.getClass(), entityId);
                         EntityValues.setValue(dest, name, reloadedRef);
                         deepCopyIgnoringNulls(value, reloadedRef, visited);
                     }

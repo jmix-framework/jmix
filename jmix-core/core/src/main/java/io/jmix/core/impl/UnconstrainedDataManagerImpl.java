@@ -380,7 +380,7 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
         return repeatRequired;
     }
 
-    protected void readCrossDataStoreReferences(Collection<?> entities, FetchPlan fetchPlan, MetaClass metaClass,
+    protected void readCrossDataStoreReferences(Collection<?> entities, @Nullable FetchPlan fetchPlan, MetaClass metaClass,
                                                 boolean joinTransaction) {
         if (stores.getAdditional().isEmpty() || entities.isEmpty() || fetchPlan == null)
             return;

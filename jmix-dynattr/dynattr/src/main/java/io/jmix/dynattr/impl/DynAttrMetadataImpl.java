@@ -81,8 +81,10 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
     }
 
     private CacheItem getItemFromCacheOrLoad(String metaClassName) {
-        CacheItem value = Objects.requireNonNull(
-                cacheOperations.get(cache, metaClassName, () -> loadCacheItem(metaClassName)));
+        CacheItem value = cacheOperations.get(cache, metaClassName, () -> loadCacheItem(metaClassName));
+        if (value == null) {
+            throw new RuntimeException("Cache item loading failed: value is null");
+        }
         completeDeserializedItem(value);
         return value;
     }

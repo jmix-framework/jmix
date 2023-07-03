@@ -224,15 +224,23 @@ public class DeletePolicyProcessor {
                         String updateMasterSql = "update " + metadataTools.getDatabaseTable(metaClass)
                                 + " set " + column + " = null where "
                                 + metadataTools.getPrimaryKeyName(metaClass) + " = ?";
-                        log.debug("Hard delete un-fetched reference: {}, bind: [{}]", updateMasterSql, EntityValues.getId(entity));
-                        getJdbcTemplate().update(updateMasterSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
+                        Object entityId = EntityValues.getId(entity);
+                        log.debug("Hard delete un-fetched reference: {}, bind: [{}]", updateMasterSql, entityId);
+                        if(entityId == null) {
+                            throw new RuntimeException("Unable to update entity " + entity + ": entityId is null");
+                        }
+                        getJdbcTemplate().update(updateMasterSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(entityId));
                     }
 
                     MetaClass refMetaClass = property.getRange().asClass();
                     String deleteRefSql = "delete from " + metadataTools.getDatabaseTable(refMetaClass) + " where "
                             + metadataTools.getPrimaryKeyName(refMetaClass) + " = ?";
-                    log.debug("Hard delete un-fetched reference: {}, bind: [{}]", deleteRefSql, EntityValues.getId(reference));
-                    getJdbcTemplate().update(deleteRefSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(reference)));
+                    Object referenceId = EntityValues.getId(reference);
+                    log.debug("Hard delete un-fetched reference: {}, bind: [{}]", deleteRefSql, referenceId);
+                    if(referenceId == null) {
+                        throw new RuntimeException("Unable to remove reference " + reference + ": referenceId is null");
+                    }
+                    getJdbcTemplate().update(deleteRefSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(referenceId));
                 } catch (DataAccessException e) {
                     throw new RuntimeException("Error processing deletion of " + entity, e);
                 }
@@ -275,8 +283,12 @@ public class DeletePolicyProcessor {
                         metadataTools.getDatabaseColumn(property),
                         metadataTools.getPrimaryKeyName(entityMetaClass));
                 try {
-                    log.debug("Set reference to null: {}, bind: [{}]", sql, EntityValues.getId(entity));
-                    getJdbcTemplate().update(sql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
+                    Object entityId = EntityValues.getId(entity);
+                    log.debug("Set reference to null: {}, bind: [{}]", sql, entityId);
+                    if(entityId == null) {
+                        throw new RuntimeException("Error processing deletion of " + entity + ": entityId is null");
+                    }
+                    getJdbcTemplate().update(sql, dbmsSpecifics.getDbTypeConverter().getSqlObject(entityId));
                 } catch (DataAccessException e) {
                     throw new RuntimeException("Error processing deletion of " + entity, e);
                 }

@@ -158,8 +158,11 @@ public class LockManagerImpl implements LockManager {
 
         MetaClass metaClass = metadata.getClass(entity);
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-
-        return lock(originalMetaClass.getName(), EntityValues.getId(entity).toString());
+        Object id = EntityValues.getId(entity);
+        if(id == null) {
+            throw new RuntimeException("Id is null");
+        }
+        return lock(originalMetaClass.getName(), id.toString());
     }
 
     @Override
@@ -175,8 +178,11 @@ public class LockManagerImpl implements LockManager {
 
         MetaClass metaClass = metadata.getClass(entity);
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-
-        unlock(originalMetaClass.getName(), EntityValues.getId(entity).toString());
+        Object id = EntityValues.getId(entity);
+        if(id == null) {
+            throw new RuntimeException("Id is null");
+        }
+        unlock(originalMetaClass.getName(), id.toString());
     }
 
     @Override

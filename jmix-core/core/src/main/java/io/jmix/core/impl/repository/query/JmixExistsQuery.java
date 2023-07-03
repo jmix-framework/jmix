@@ -21,6 +21,7 @@ import io.jmix.core.Metadata;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
+import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Method;
 
@@ -30,6 +31,7 @@ public class JmixExistsQuery extends JmixCountQuery {
     }
 
     @Override
+    @NonNull
     public Object execute(Object[] parameters) {
         return (long) super.execute(parameters) > 0;
     }

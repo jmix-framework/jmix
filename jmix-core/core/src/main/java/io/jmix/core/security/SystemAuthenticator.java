@@ -81,6 +81,7 @@ public interface SystemAuthenticator {
      * @param operation code to execute
      * @return result of the execution
      */
+    @Nullable
     <T> T withUser(@Nullable String login, AuthenticatedOperation<T> operation);
 
     /**
@@ -97,6 +98,7 @@ public interface SystemAuthenticator {
      * @param operation code to execute
      * @return result of the execution
      */
+    @Nullable
     <T> T withSystem(AuthenticatedOperation<T> operation);
 
     /**

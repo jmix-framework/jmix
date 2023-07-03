@@ -244,7 +244,8 @@ public class EntitiesControllerManager {
         }
 
         String jpqlWhere = filterParseResult.getJpqlWhere();
-        Map<String, Object> queryParameters = filterParseResult.getQueryParameters();
+        Map<String, Object> queryParameters = Optional.ofNullable(filterParseResult.getQueryParameters())
+                .orElse(Collections.emptyMap());
 
         String queryString = "select count(e) from " + entityName + " e";
 
@@ -663,12 +664,14 @@ public class EntitiesControllerManager {
                                                     MetaClass metaClass,
                                                     JsonArray entitiesJsonArray) {
         Map<Object, EntityImportPlan> objectEntityImportPlanMap = new LinkedHashMap<>();
+        String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+        Preconditions.checkNotNullArgument(primaryKeyName, "Primary key property name is null");
         Object entity;
         EntityImportPlan entityImportPlan;
         for (JsonElement element : entitiesJsonArray) {
             String entityJson = element.toString();
             String idString = element.getAsJsonObject()
-                    .get(Objects.requireNonNull(metadataTools.getPrimaryKeyName(metaClass)))
+                    .get(primaryKeyName)
                     .getAsString();
             Object id = getIdFromString(idString, metaClass);
             LoadContext<Object> loadContext = new LoadContext<>(metaClass).setId(id);
@@ -786,7 +789,8 @@ public class EntitiesControllerManager {
 
     private Object getIdFromString(String entityId, MetaClass metaClass) {
         try {
-            MetaProperty primaryKeyProperty = Objects.requireNonNull(metadataTools.getPrimaryKeyProperty(metaClass));
+            MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+            Preconditions.checkNotNullArgument(primaryKeyProperty, "Primary key property is null");
 
             Class<?> idClass = primaryKeyProperty.getJavaType();
             if (UUID.class.isAssignableFrom(idClass)) {
@@ -911,10 +915,12 @@ public class EntitiesControllerManager {
 
     protected FetchPlan findOrCreateResponseView(MetaClass metaClass, String responseView) {
         if (StringUtils.isEmpty(responseView)) {
-            //noinspection ConstantConditions
-            return fetchPlans.builder(metaClass.getJavaClass())
-                    .add(metadataTools.getPrimaryKeyName(metaClass))
-                    .build();
+            FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
+            String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+            if(primaryKeyName != null) { //TODO fail if null?
+                fetchPlanBuilder.add(primaryKeyName);
+            }
+            return fetchPlanBuilder.build();
         }
 
         FetchPlan view = fetchPlanRepository.findFetchPlan(metaClass, responseView);

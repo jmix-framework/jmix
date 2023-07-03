@@ -211,8 +211,14 @@ public class RestControllerExceptionHandler {
         MetaClass metaClass = metadata.getClass(violation.getRootBeanClass());
         String propertyPath = violation.getPropertyPath().toString();
         MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, propertyPath);
-        return metaPropertyPath == null
-                ? datatypeRegistry.find(Date.class)
-                : metaPropertyPath.getRange().asDatatype();
+        if(metaPropertyPath == null) {
+            Datatype<Date> dateDatatype = datatypeRegistry.find(Date.class);
+            if(dateDatatype == null) {
+                throw new RuntimeException("'Date' datatype not found");
+            }
+            return dateDatatype;
+        } else {
+            return metaPropertyPath.getRange().asDatatype();
+        }
     }
 }

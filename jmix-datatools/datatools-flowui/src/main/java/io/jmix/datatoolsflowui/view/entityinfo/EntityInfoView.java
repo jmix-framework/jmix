@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 @ViewController("entityInfoView")
@@ -94,8 +95,10 @@ public class EntityInfoView extends StandardView {
 
     protected void initGrid() {
         infoDataGrid.removeAllActions();
-        infoDataGrid.getColumnByKey("key").setHeader(messageBundle.getMessage("entityInfo.name"));
-        infoDataGrid.getColumnByKey("value").setHeader(messageBundle.getMessage("entityInfo.value"));
+        Optional.ofNullable(infoDataGrid.getColumnByKey("key"))
+                .ifPresent(c -> c.setHeader(messageBundle.getMessage("entityInfo.name")));
+        Optional.ofNullable(infoDataGrid.getColumnByKey("value"))
+                .ifPresent(c -> c.setHeader(messageBundle.getMessage("entityInfo.value")));
     }
 
     protected void collectEntityInfo() {

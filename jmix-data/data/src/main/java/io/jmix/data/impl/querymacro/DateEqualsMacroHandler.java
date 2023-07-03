@@ -64,6 +64,9 @@ public class DateEqualsMacroHandler extends AbstractQueryMacroHandler {
         String param1 = args[1].trim();
         String param2;
         TimeZone timeZone = getTimeZoneFromArgs(args, 2);
+        if (timeZone == null) {
+            timeZone = TimeZone.getDefault();
+        }
 
         Matcher matcher = NOW_PARAM_PATTERN.matcher(param1);
         if (matcher.find()) {
@@ -98,8 +101,6 @@ public class DateEqualsMacroHandler extends AbstractQueryMacroHandler {
             String firstparamName = paramArg.getParamName();
             String secondParamName = paramArg.getSecondParamName();
             TimeZone timeZone = paramArg.getTimeZone();
-            if (timeZone == null)
-                timeZone = TimeZone.getDefault();
             if (paramArg.isNow()) {
                 zonedDateTime = timeSource.now();
                 javaType = expandedParamTypes.get(firstparamName);

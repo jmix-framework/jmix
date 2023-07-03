@@ -80,7 +80,9 @@ public class SoftDeleteProcessor implements MappingProcessor, DescriptorProcesso
 
         if (metadataTools.isSoftDeletable(descriptor.getJavaClass())) {
             String deletedDateProperty = metadataTools.findDeletedDateProperty(descriptor.getJavaClass());
-            Preconditions.checkNotNull(deletedDateProperty);
+            if (deletedDateProperty == null) {
+                throw new RuntimeException("DeletedDate property is null");
+            }
             descriptor.setDeletePredicate(entity -> {
                 if (EntityValues.isSoftDeletionSupported(entity)) {
                     return entityStates.isLoaded(entity, deletedDateProperty) && EntityValues.isSoftDeleted(entity);

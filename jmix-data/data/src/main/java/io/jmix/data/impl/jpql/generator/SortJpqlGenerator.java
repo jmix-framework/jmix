@@ -93,7 +93,10 @@ public class SortJpqlGenerator {
                 for (MetaProperty metaProperty : pkMetaClass.getProperties()) {
                     if (metadataTools.isJpa(metaProperty)) {
                         MetaPropertyPath idPropertyPath = metaClass.getPropertyPath(String.format("%s.%s", pkName, metaProperty.getName()));
-                        Map<String, Sort.Direction> currentSortExpressions = getPropertySortExpressions(Objects.requireNonNull(idPropertyPath), direction);
+                        if (idPropertyPath == null) {
+                            throw new RuntimeException("idPropertyPath is null");
+                        }
+                        Map<String, Sort.Direction> currentSortExpressions = getPropertySortExpressions(idPropertyPath, direction);
                         if (currentSortExpressions.keySet().stream().noneMatch(sortExpressions::containsKey)) {
                             uniqueSortExpressions.putAll(currentSortExpressions);
                         }
@@ -102,7 +105,10 @@ public class SortJpqlGenerator {
                 return uniqueSortExpressions;
             } else {
                 MetaPropertyPath idPropertyPath = metaClass.getPropertyPath(pkName);
-                Map<String, Sort.Direction> uniqueSortExpressions = getPropertySortExpressions(Objects.requireNonNull(idPropertyPath), direction);
+                if (idPropertyPath == null) {
+                    throw new RuntimeException("idPropertyPath is null");
+                }
+                Map<String, Sort.Direction> uniqueSortExpressions = getPropertySortExpressions(idPropertyPath, direction);
                 if (uniqueSortExpressions.keySet().stream().noneMatch(sortExpressions::containsKey)) {
                     return uniqueSortExpressions;
                 }

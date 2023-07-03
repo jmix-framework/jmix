@@ -534,7 +534,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         return resultClass;
     }
 
-    private JpaQuery buildJPAQuery(String queryString, Class<E> resultClass) {
+    private JpaQuery buildJPAQuery(String queryString, @Nullable Class<E> resultClass) {
         boolean useJPQLCache = true;
         FetchPlan fetchPlan = fetchPlans.isEmpty() ? null : fetchPlans.get(0);
         if (fetchPlan != null) {
@@ -584,7 +584,11 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             DbmsFeatures dbmsFeatures = dbmsSpecifics.getDbmsFeatures(storeName);
             if (dbmsFeatures.useOrderByForPaging()) {
                 QueryTransformer transformer = queryTransformerFactory.transformer(result);
-                transformer.addOrderByIdIfNotExists(metadataTools.getPrimaryKeyName(effectiveMetaClass));
+                String primaryKeyName = metadataTools.getPrimaryKeyName(effectiveMetaClass);
+                if(primaryKeyName == null) {
+                    throw new RuntimeException("Unable to order by id: primary key property is null");
+                }
+                transformer.addOrderByIdIfNotExists(primaryKeyName);
                 result = transformer.getResult();
                 rebuildParser = true;
             }

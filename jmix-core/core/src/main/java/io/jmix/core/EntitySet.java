@@ -92,7 +92,9 @@ public class EntitySet extends ForwardingSet<Object> implements Serializable {
     public <T> Optional<T> optional(T prototype) {
         Preconditions.checkNotNullArgument(prototype, "prototype entity is null");
         Object prototypeId = EntityValues.getId(prototype);
-        Preconditions.checkNotNullArgument(prototypeId, "prototype entityId is null");
+        if(prototypeId == null) {
+            throw new RuntimeException("prototype entityId is null");
+        }
         return (Optional<T>) optional(prototype.getClass(), prototypeId);
     }
 
@@ -117,7 +119,9 @@ public class EntitySet extends ForwardingSet<Object> implements Serializable {
     public <T> T get(T prototype) {
         Preconditions.checkNotNullArgument(prototype, "prototype entity is null");
         Object prototypeId = EntityValues.getId(prototype);
-        Preconditions.checkNotNullArgument(prototypeId, "prototype entityId is null");
+        if(prototypeId == null) {
+            throw new RuntimeException("prototype entityId is null");
+        }
         return (T) get(prototype.getClass(), prototypeId);
     }
 

@@ -235,11 +235,15 @@ public class QuartzService {
 
         if (triggerModel.getScheduleType() == ScheduleType.CRON_EXPRESSION) {
             String cronExpression = triggerModel.getCronExpression();
-            Preconditions.checkNotNullArgument(cronExpression, "Cron expression can't be null");
+            if (cronExpression == null) {
+                throw new RuntimeException("Cron expression can't be null");
+            }
             triggerBuilder.withSchedule(cronSchedule(cronExpression));
         } else {
             Long repeatInterval = triggerModel.getRepeatInterval();
-            Preconditions.checkNotNullArgument(repeatInterval, "Repeat interval can't be null");
+            if (repeatInterval == null) {
+                throw new RuntimeException("Repeat interval can't be null");
+            }
             SimpleScheduleBuilder simpleScheduleBuilder = simpleSchedule()
                     .withIntervalInMilliseconds(repeatInterval);
             Integer repeatCount = triggerModel.getRepeatCount();

@@ -73,7 +73,7 @@ public class DynamicAttributes implements Serializable {
         protected State state;
         protected Object oldValue;
 
-        public ValueHolder(String code, Object value) {
+        public ValueHolder(String code, @Nullable Object value) {
             this.code = code;
             this.value = value;
             this.state = State.LOADED;

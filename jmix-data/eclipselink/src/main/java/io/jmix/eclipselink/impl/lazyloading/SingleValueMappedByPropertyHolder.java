@@ -68,8 +68,12 @@ public class SingleValueMappedByPropertyHolder extends AbstractSingleValueHolder
     }
 
     protected LoadContext<?> createLoadContextByOwner(MetaClass metaClass) {
+        Object ownerId = EntityValues.getId(getOwner());
+        if (ownerId == null) {
+            throw new RuntimeException("Owner id is null");
+        }
         return new LoadContext<>(metaClass)
-                .setId(Objects.requireNonNull(EntityValues.getId(getOwner())))
+                .setId(ownerId)
                 .setFetchPlan(
                         getFetchPlans().builder(metaClass.getJavaClass())
                                 .add(getPropertyInfo().getName(), builder -> builder.addFetchPlan(FetchPlan.BASE))
@@ -83,9 +87,13 @@ public class SingleValueMappedByPropertyHolder extends AbstractSingleValueHolder
         LoadContext<?> loadContext = new LoadContext<>(metaClass)
                 .setHints(getLoadOptions().getHints())
                 .setHint(PersistenceHints.SOFT_DELETION, false);
+        Object ownerId = EntityValues.getId(getOwner());
+        if (ownerId == null) {
+            throw new RuntimeException("Owner id is null");
+        }
         loadContext.setQueryString(String.format("select e from %s e where e.%s.%s = :entityId", metaClass.getName(),
-                getPropertyInfo().getInversePropertyName(), primaryKeyName))
-                .setParameter("entityId", Objects.requireNonNull(EntityValues.getId(getOwner())));
+                        getPropertyInfo().getInversePropertyName(), primaryKeyName))
+                .setParameter("entityId", ownerId);
         return loadContext;
     }
 

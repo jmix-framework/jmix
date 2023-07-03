@@ -103,6 +103,7 @@ public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implemen
     }
 
     @Override
+    @Nullable
     public <T> T withUser(@Nullable String login, AuthenticatedOperation<T> operation) {
         begin(login);
         try {
@@ -123,6 +124,7 @@ public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implemen
     }
 
     @Override
+    @Nullable
     public <T> T withSystem(AuthenticatedOperation<T> operation) {
         begin();
         try {

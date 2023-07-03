@@ -16,6 +16,8 @@
 
 package io.jmix.core.impl.importexport;
 
+import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -50,7 +52,7 @@ public class CollectionCompare {
         return this;
     }
 
-    public void compare(Collection<Object> src, Collection<Object> dst) {
+    public void compare(@Nullable Collection<Object> src, @Nullable Collection<Object> dst) {
         final Collection<Object> srcNN = Optional.ofNullable(src)
                 .orElse(Collections.emptyList());
         final Collection<Object> dstNN = Optional.ofNullable(dst)

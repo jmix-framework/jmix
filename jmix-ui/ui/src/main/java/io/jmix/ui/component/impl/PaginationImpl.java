@@ -20,6 +20,8 @@ import com.vaadin.data.HasValue;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.Button;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import io.jmix.ui.icon.JmixIcon;
@@ -84,6 +86,11 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
 
     @Override
     public void setDataBinder(PaginationDataBinder dataBinder) {
+        if (dataBinder.getEntityMetaClass() instanceof KeyValueMetaClass) {
+            throw new IllegalArgumentException(
+                    Pagination.class.getSimpleName() + " doesn't support " + KeyValueEntity.class.getSimpleName());
+        }
+
         super.setDataBinder(dataBinder);
 
         component.setDataBinder(dataBinder);

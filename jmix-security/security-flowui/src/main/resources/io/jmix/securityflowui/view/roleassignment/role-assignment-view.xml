@@ -76,7 +76,7 @@
                             <action id="remove" type="list_remove"/>
                         </actions>
                         <columns>
-                            <column property="roleCode"/>
+                            <column property="roleCode" resizable="true"/>
                         </columns>
                     </dataGrid>
                 </vbox>
@@ -106,7 +106,7 @@
                             <action id="remove" type="list_remove"/>
                         </actions>
                         <columns>
-                            <column property="roleCode"/>
+                            <column property="roleCode" resizable="true"/>
                         </columns>
                     </dataGrid>
                 </vbox>

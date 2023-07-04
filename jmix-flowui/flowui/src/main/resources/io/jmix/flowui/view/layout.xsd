@@ -1276,6 +1276,34 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="contentAlignmentEnum">
+        <xs:restriction>
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="END"/>
+            <xs:enumeration value="CENTER"/>
+            <xs:enumeration value="STRETCH"/>
+            <xs:enumeration value="SPACE_BETWEEN"/>
+            <xs:enumeration value="SPACE_AROUND"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="flexDirectionEnum">
+        <xs:restriction>
+            <xs:enumeration value="ROW"/>
+            <xs:enumeration value="ROW_REVERSE"/>
+            <xs:enumeration value="COLUMN"/>
+            <xs:enumeration value="COLUMN_REVERSE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="flexWrapEnum">
+        <xs:restriction>
+            <xs:enumeration value="NOWRAP"/>
+            <xs:enumeration value="WRAP"/>
+            <xs:enumeration value="WRAP_REVERSE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="uploadReceiverEnum">
         <xs:restriction>
             <xs:enumeration value="MEMORY_BUFFER"/>
@@ -3913,6 +3941,7 @@
                 <!-- Layout -->
                 <xs:element name="vbox" type="componentLayout"/>
                 <xs:element name="hbox" type="componentLayout"/>
+                <xs:element name="flexLayout" type="flexLayoutComponent"/>
                 <xs:element name="formLayout" type="formLayoutComponent"/>
                 <xs:element name="scroller" type="scrollerContainer"/>
                 <xs:element name="split" type="splitContainer"/>
@@ -4002,6 +4031,21 @@
             <xs:extension base="baseLayout">
                 <xs:attributeGroup ref="hasId"/>
                 <xs:attribute name="visible" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="flexLayoutComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:group ref="layoutOrComponent"/>
+
+                <xs:attribute name="expand" type="xs:string"/>
+                <xs:attribute name="contentAlignment" type="contentAlignmentEnum"/>
+                <xs:attribute name="flexDirection" type="flexDirectionEnum"/>
+                <xs:attribute name="flexWrap" type="flexWrapEnum"/>
+
+                <xs:attributeGroup ref="hasFlexible"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

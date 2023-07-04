@@ -36,6 +36,7 @@ public abstract class BaseLoaderConfig {
         /* Abstract layouts */
         loaders.put("hbox", HorizontalLayoutLoader.class);
         loaders.put("vbox", VerticalLayoutLoader.class);
+        loaders.put("flexLayout", FlexLayoutLoader.class);
 
         /* Content panel */
         loaders.put("accordion", AccordionLoader.class);

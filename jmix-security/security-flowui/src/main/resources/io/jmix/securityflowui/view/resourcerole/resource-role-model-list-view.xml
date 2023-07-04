@@ -57,11 +57,11 @@
                 <action id="exportZIP" text="msg://actions.exportZIP"/>
             </actions>
             <columns>
-                <column property="name"/>
-                <column property="code"/>
-                <column property="source"/>
-                <column property="description"/>
-                <column property="scopes"/>
+                <column property="name" resizable="true"/>
+                <column property="code" resizable="true"/>
+                <column property="source" resizable="true"/>
+                <column property="description" resizable="true"/>
+                <column property="scopes" resizable="true" flexGrow="0"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

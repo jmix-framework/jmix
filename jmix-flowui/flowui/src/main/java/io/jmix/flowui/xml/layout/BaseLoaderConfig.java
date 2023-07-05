@@ -102,6 +102,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("input", InputLoader.class);
         loaders.put("image", ImageLoader.class);
         loaders.put("iframe", IFrameLoader.class);
+        loaders.put("html", HtmlLoader.class);
 
         /* Containers */
         loaders.put("h1", H1Loader.class);

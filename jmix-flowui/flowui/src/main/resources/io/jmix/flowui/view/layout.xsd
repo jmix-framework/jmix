@@ -3518,6 +3518,30 @@
     </xs:complexType>
 
     <!--    HTML-->
+
+    <!-- Html -->
+    <xs:complexType name="htmlComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="content" minOccurs="0">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+
+                    <xs:element name="file" minOccurs="0">
+                        <xs:complexType>
+                            <xs:attribute name="path" type="resourceString"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="content" type="resourceString"/>
+
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Anchor-->
     <xs:complexType name="anchor">
         <xs:complexContent>
@@ -3913,6 +3937,7 @@
                 <!--HTML Components-->
                 <xs:group ref="htmlHeaders"/>
                 <xs:group ref="htmlLists"/>
+                <xs:element name="html" type="htmlComponent"/>
                 <xs:element name="div" type="baseHtmlContainer"/>
                 <xs:element name="span" type="baseHtmlContainer"/>
                 <xs:element name="section" type="baseHtmlContainer"/>

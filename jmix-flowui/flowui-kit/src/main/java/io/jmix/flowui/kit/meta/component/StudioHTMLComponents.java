@@ -16,11 +16,27 @@
 
 package io.jmix.flowui.kit.meta.component;
 
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.*;
 import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
 public interface StudioHTMLComponents {
+
+    @StudioComponent(
+            name = "Html",
+            classFqn = "com.vaadin.flow.component.Html",
+            category = "HTML",
+            xmlElement = "html",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER)
+            }
+    )
+    Div html();
 
     @StudioComponent(
             name = "Anchor",

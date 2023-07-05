@@ -877,7 +877,8 @@ public class MetadataTools {
      * Gets name of uuid key property.
      *
      * @param clazz entity java class
-     * @return uuid property name or null if it doesn't exist
+     * @return uuid property name or null if it doesn't exist.
+     * Throws exception if there is no MetaClass for the provided java class.
      */
     @Nullable
     public String getUuidPropertyName(Class<?> clazz) {
@@ -897,13 +898,12 @@ public class MetadataTools {
         if(uuidProperty != null) {
             return uuidProperty;
         } else {
-            MetaClass ancestor = metaClass.getAncestor();
-            while (ancestor != null) {
+            List<MetaClass> ancestors = metaClass.getAncestors();
+            for(MetaClass ancestor : ancestors) {
                 uuidProperty = (String) ancestor.getAnnotations().get(UUID_KEY_ANN_NAME);
                 if (uuidProperty != null) {
                     return uuidProperty;
                 }
-                ancestor = ancestor.getAncestor();
             }
         }
         return null;

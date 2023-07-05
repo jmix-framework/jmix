@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -263,7 +264,8 @@ public class ViewControllerDependencyInjector {
                     .map(m -> new UiEventListenerMethodAdapter(controller, controller.getClass(), m, applicationContext))
                     .collect(Collectors.toList());
 
-            UiEventsManager eventsMulticaster = applicationContext.getBean(UiEventsManager.class);
+
+            UiEventsManager eventsMulticaster = VaadinSession.getCurrent().getAttribute(UiEventsManager.class);
             for (ApplicationListener<?> listener : listeners) {
                 eventsMulticaster.addApplicationListener(controller, listener);
             }

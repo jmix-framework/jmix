@@ -31,7 +31,11 @@ import java.util.Objects;
 public interface RoleProvider<T extends BaseRole> {
 
     default T getRoleByCode(String code) {
-        return Objects.requireNonNull(findRoleByCode(code), String.format("Role not found by code: %s", code));
+        T role = findRoleByCode(code);
+        if (role == null) {
+            throw new IllegalArgumentException(String.format("Role not found by code: %s", code));
+        }
+        return role;
     }
 
     @Nullable

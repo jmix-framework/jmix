@@ -201,6 +201,9 @@ public class RestFilterParser {
         if (shouldAddPkNameToPropertyPath(metaProperty, op)) {
             MetaClass _metaClass = metadata.getClass(metaProperty.getJavaType());
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(_metaClass);
+            if (primaryKeyProperty == null) {
+                throw new RestFilterParseException("Unable to add primary key to property path: primary key property is null");
+            }
             String pkName = primaryKeyProperty.getName();
 
             propertyName += "." + pkName;

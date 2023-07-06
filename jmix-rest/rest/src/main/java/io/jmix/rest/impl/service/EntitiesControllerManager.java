@@ -448,15 +448,22 @@ public class EntitiesControllerManager {
         entityJson = restControllerUtils.transformJsonIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION, entityJson);
 
         Object entity = createEntityFromJson(metaClass, entityJson);
+        Object entityId = EntityValues.getId(entity);
+        if (entityId == null) {
+            throw new RestAPIException("Cannot build response", "entityId is null", HttpStatus.BAD_REQUEST);
+        }
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
                 .path("/{id}")
-                .buildAndExpand(EntityValues.getId(entity).toString());
+                .buildAndExpand(entityId.toString());
 
         if (restProperties.isResponseFetchPlanEnabled() && responseFetchPlan != null && !entityStates.isLoadedWithFetchPlan(entity, responseFetchPlan)) {
             LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(responseFetchPlan);
-            loadContext.setId(EntityValues.getId(entity));
+            loadContext.setId(entityId);
             entity = dataManager.load(loadContext);
+        }
+        if (entity == null) {
+            throw new RestAPIException("Cannot build response", "entity is null", HttpStatus.BAD_REQUEST);
         }
         String bodyJson = createEntityJson(entity, metaClass, responseView, modelVersion);
         return new ResponseInfo(uriComponents.toUri(), bodyJson);
@@ -486,7 +493,11 @@ public class EntitiesControllerManager {
             for (Object entity : mainCollectionEntity) {
                 if (!entityStates.isLoadedWithFetchPlan(entity, responseFetchPlan)) {
                     LoadContext loadContext = new LoadContext<>(metaClass).setFetchPlan(responseFetchPlan);
-                    loadContext.setId(EntityValues.getId(entity));
+                    Object entityId = EntityValues.getId(entity);
+                    if (entityId == null) {
+                        throw new RestAPIException("Cannot build response", "entityId is null", HttpStatus.BAD_REQUEST);
+                    }
+                    loadContext.setId(entityId);
                     mainCollectionEntity.set(mainCollectionEntity.indexOf(entity), dataManager.load(loadContext));
                 }
             }
@@ -616,8 +627,15 @@ public class EntitiesControllerManager {
         Object entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, entityJson, entityId);
         if (restProperties.isResponseFetchPlanEnabled() && responseFetchPlan != null && !entityStates.isLoadedWithFetchPlan(entity, responseFetchPlan)) {
             LoadContext loadContext = new LoadContext<>(metaClass).setFetchPlan(responseFetchPlan);
-            loadContext.setId(EntityValues.getId(entity));
+            Object id = EntityValues.getId(entity);
+            if (id == null) {
+                throw new RestAPIException("Cannot load updated entity", "entityId is null", HttpStatus.BAD_REQUEST);
+            }
+            loadContext.setId(id);
             entity = dataManager.load(loadContext);
+        }
+        if (entity == null) {
+            throw new RestAPIException("Cannot build response", "entity is null", HttpStatus.BAD_REQUEST);
         }
         String bodyJson = createEntityJson(entity, metaClass, responseView, modelVersion);
         return new ResponseInfo(null, bodyJson);
@@ -647,7 +665,11 @@ public class EntitiesControllerManager {
             updatedEntities = updatedEntities.stream().map(entity -> {
                 if (!entityStates.isLoadedWithFetchPlan(entity, responseFetchPlan)) {
                     LoadContext<?> loadContext = new LoadContext<>(metaClass).setFetchPlan(responseFetchPlan);
-                    loadContext.setId(EntityValues.getId(entity));
+                    Object entityId = EntityValues.getId(entity);
+                    if (entityId == null) {
+                        throw new RestAPIException("Cannot load updated entity", "entityId is null", HttpStatus.BAD_REQUEST);
+                    }
+                    loadContext.setId(entityId);
                     return dataManager.load(loadContext);
                 } else {
                     return entity;
@@ -790,8 +812,9 @@ public class EntitiesControllerManager {
     private Object getIdFromString(String entityId, MetaClass metaClass) {
         try {
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
-            Preconditions.checkNotNullArgument(primaryKeyProperty, "Primary key property is null");
-
+            if (primaryKeyProperty == null) {
+                throw new RuntimeException("Primary key property is null");
+            }
             Class<?> idClass = primaryKeyProperty.getJavaType();
             if (UUID.class.isAssignableFrom(idClass)) {
                 return UUID.fromString(entityId);
@@ -917,7 +940,7 @@ public class EntitiesControllerManager {
         if (StringUtils.isEmpty(responseView)) {
             FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
             String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
-            if(primaryKeyName != null) { //TODO fail if null?
+            if (primaryKeyName != null) { //TODO fail if null?
                 fetchPlanBuilder.add(primaryKeyName);
             }
             return fetchPlanBuilder.build();

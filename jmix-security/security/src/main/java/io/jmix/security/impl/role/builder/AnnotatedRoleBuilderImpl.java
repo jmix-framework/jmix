@@ -76,7 +76,11 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
     }
 
     protected Class<?> loadClass(String className) {
-        return Objects.requireNonNull(classManager.findClass(className), "Class " + className + " is not found");
+        Class<?> foundClass = classManager.findClass(className);
+        if (foundClass == null) {
+            throw new IllegalArgumentException("Class " + className + " is not found");
+        }
+        return foundClass;
     }
 
     protected void initBaseParameters(BaseRole role, String name, String code, String description) {

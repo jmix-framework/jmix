@@ -344,9 +344,9 @@ public class ReportRestControllerManager {
     protected Object getIdFromString(String entityId, MetaClass metaClass) {
         try {
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
-            Preconditions.checkNotNullArgument(
-                    primaryKeyProperty, "PrimaryKey property not found for MetaClass '%s'", metaClass
-            );
+            if (primaryKeyProperty == null) {
+                throw new RuntimeException(String.format("PrimaryKey property not found for MetaClass '%s'", metaClass));
+            }
             Class<?> idClass = primaryKeyProperty.getJavaType();
 
             if (UUID.class.isAssignableFrom(idClass)) {

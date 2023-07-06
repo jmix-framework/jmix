@@ -64,7 +64,9 @@ public class ReportSecurityManager {
      */
     public void applySecurityPolicies(LoadContext lc, @Nullable String screen, @Nullable UserDetails userDetails) {
         LoadContext.Query query = lc.getQuery();
-        Preconditions.checkNotNullArgument(query, "Query is null");
+        if (query == null) {
+            throw new RuntimeException("Unable to apply constraints: query is null");
+        }
         QueryTransformer transformer = queryTransformerFactory.transformer(query.getQueryString());
         if (screen != null) {
             transformer.addWhereAsIs("r.screensIdx like :screen escape '\\'");
@@ -96,7 +98,9 @@ public class ReportSecurityManager {
     public void applyPoliciesByEntityParameters(LoadContext lc, @Nullable MetaClass inputValueMetaClass) {
         if (inputValueMetaClass != null) {
             LoadContext.Query query = lc.getQuery();
-            Preconditions.checkNotNullArgument(query, "Query is null");
+            if (query == null) {
+                throw new RuntimeException("Unable to apply constraints: query is null");
+            }
             QueryTransformer transformer = queryTransformerFactory.transformer(query.getQueryString());
             StringBuilder parameterTypeCondition = new StringBuilder("r.inputEntityTypesIdx like :type escape '\\'");
             query.setParameter("type", wrapCodeParameterForSearch(inputValueMetaClass.getName()));

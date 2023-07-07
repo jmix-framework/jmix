@@ -60,6 +60,10 @@ $he-table-header-row-height-scale: 1.5 !default;
     }
   }
 
+  &.v-overlay-container {
+    @include he-table-overlay-style($primary-stylename: $primary-stylename);
+  }
+
   @include he-table-empty-state-style();
 
   /* Global size */
@@ -77,6 +81,14 @@ $he-table-header-row-height-scale: 1.5 !default;
       @include he-table-composition-size-style($v-unit-size--small);
     }
 
+    &.v-overlay-container {
+      @include he-table-overlay-size-style(
+              $primary-stylename: $primary-stylename,
+              $row-height: $v-table-row-height--small,
+              $font-size: $v-font-size--small,
+              $header-font-size: $v-table-header-font-size--small);
+    }
+
     @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
   }
 
@@ -91,6 +103,14 @@ $he-table-header-row-height-scale: 1.5 !default;
 
     .jmix-table-composition {
       @include he-table-composition-size-style($v-unit-size--large);
+    }
+
+    &.v-overlay-container {
+      @include he-table-overlay-size-style(
+              $primary-stylename: $primary-stylename,
+              $row-height: $v-table-row-height--large,
+              $font-size: $v-font-size--large,
+              $header-font-size: $v-table-header-font-size--large);
     }
 
     @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
@@ -229,8 +249,7 @@ $he-table-header-row-height-scale: 1.5 !default;
   }
 
   .#{$primary-stylename}-header-wrap,
-  .#{$primary-stylename}-footer-wrap,
-  .#{$primary-stylename}-header-drag {
+  .#{$primary-stylename}-footer-wrap {
     border: $table-outer-border;
     background: var(--table-background-color);
     color: var(--table-header-text-color);
@@ -382,8 +401,7 @@ $he-table-header-row-height-scale: 1.5 !default;
   $table-header-row-height: round($row-height * $he-table-header-row-height-scale);
 
   .#{$primary-stylename}-header-wrap,
-  .#{$primary-stylename}-footer-wrap,
-  .#{$primary-stylename}-header-drag {
+  .#{$primary-stylename}-footer-wrap {
     font-size: $header-font-size;
   }
 
@@ -397,7 +415,6 @@ $he-table-header-row-height-scale: 1.5 !default;
     padding: $vertical-padding - $v-table-border-width $v-table-cell-padding-horizontal $vertical-padding;
   }
 
-  .#{$primary-stylename}-header-drag,
   .#{$primary-stylename}-header-wrap .#{$primary-stylename}-caption-container {
     $vertical-padding: round(($table-header-row-height - $header-font-size)/2);
     padding: $vertical-padding $v-table-cell-padding-horizontal $vertical-padding - $v-table-border-width;
@@ -661,6 +678,35 @@ $he-table-header-row-height-scale: 1.5 !default;
 
   .jmix-table-empty-state-message {
     color: var(--text-dim-color);
+  }
+}
+
+@mixin he-table-overlay-style($primary-stylename: v-table) {
+  @include he-table-overlay-size-style($primary-stylename: $primary-stylename);
+
+  $table-outer-border: he-table-border(--table-outer-border-color);
+
+  .#{$primary-stylename}-header-drag {
+    border: $table-outer-border;
+    background: var(--table-background-color);
+    color: var(--table-header-text-color);
+  }
+}
+
+@mixin he-table-overlay-size-style($primary-stylename : v-table,
+                                   $row-height        : $v-table-row-height,
+                                   $font-size         : $v-font-size,
+                                   $header-font-size  : $v-table-header-font-size) {
+  $table-header-row-height: round($row-height * $he-table-header-row-height-scale);
+
+
+  .#{$primary-stylename}-header-drag {
+    font-size: $header-font-size;
+  }
+
+  .#{$primary-stylename}-header-drag {
+    $vertical-padding: round(($table-header-row-height - $header-font-size)/2);
+    padding: $vertical-padding $v-table-cell-padding-horizontal $vertical-padding - $v-table-border-width;
   }
 }
 

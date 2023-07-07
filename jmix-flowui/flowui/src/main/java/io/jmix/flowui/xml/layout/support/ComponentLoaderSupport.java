@@ -18,6 +18,8 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -26,6 +28,7 @@ import com.vaadin.flow.component.shared.HasAllowedCharPattern;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
+import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import io.jmix.core.common.util.ReflectionHelper;
@@ -52,11 +55,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -353,6 +358,51 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 context.getMessageGroup(), component::setAllowedCharPattern);
     }
 
+    public void loadStep(com.vaadin.flow.component.Component component, Element element, Context context) {
+        loaderSupport.loadResourceString(element, "step", context.getMessageGroup())
+                .ifPresent(stepString -> {
+                    Duration step;
+
+                    if (stepString.endsWith("h")) {
+                        step = Duration.ofHours(Long.parseLong(StringUtils.chop(stepString)));
+                    } else if (stepString.endsWith("m")) {
+                        step = Duration.ofMinutes(Long.parseLong(StringUtils.chop(stepString)));
+                    } else if (stepString.endsWith("s")) {
+                        step = Duration.ofSeconds(Long.parseLong(StringUtils.chop(stepString)));
+                    } else {
+                        step = Duration.ofMinutes(Long.parseLong(StringUtils.chop(stepString)));
+                    }
+
+                    if (component instanceof TimePicker timePicker) {
+                        timePicker.setStep(step);
+                    } else if (component instanceof DateTimePicker dateTimePicker) {
+                        dateTimePicker.setStep(step);
+                    }
+                });
+    }
+
+    public void loadDateFormat(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
+        loaderSupport.loadResourceString(element, "dateFormat", context.getMessageGroup())
+                .ifPresent(dateFormatString -> {
+                    List<String> dateFormatList = split(dateFormatString);
+
+                    DatePicker.DatePickerI18n datePickerI18n = new DatePicker.DatePickerI18n();
+
+                    if (dateFormatList.size() == 1) {
+                        datePickerI18n.setDateFormat(dateFormatList.get(0));
+                    } else {
+                        datePickerI18n.setDateFormats(
+                                dateFormatList.get(0),
+                                dateFormatList.stream()
+                                        .skip(1)
+                                        .toArray(String[]::new)
+                        );
+                    }
+
+                    setter.accept(datePickerI18n);
+                });
+    }
+
     public Optional<Icon> loadIcon(Element element) {
         return loaderSupport.loadString(element, "icon")
                 .map(ComponentUtils::parseIcon);
@@ -474,12 +524,13 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     protected void split(String names, Consumer<String> setter) {
-        String[] values = names.split("[\\s,]+");
-        for (String value : values) {
-            if (!Strings.isNullOrEmpty(value)) {
-                setter.accept(value);
-            }
-        }
+        split(names).forEach(setter);
+    }
+
+    protected List<String> split(String names) {
+        return Arrays.stream(names.split("[\\s,]+"))
+                .filter(split -> !Strings.isNullOrEmpty(split))
+                .toList();
     }
 
     protected Optional<Formatter<?>> loadFormatter(Element element) {

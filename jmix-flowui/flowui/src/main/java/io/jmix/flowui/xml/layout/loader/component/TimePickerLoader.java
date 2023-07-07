@@ -17,8 +17,14 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import org.dom4j.Element;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.function.Consumer;
 
 public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>> {
 
@@ -37,6 +43,8 @@ public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
+        loadLocalTime(element, "max", resultComponent::setMax);
+        loadLocalTime(element, "min", resultComponent::setMin);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
@@ -47,9 +55,29 @@ public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadStep(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
+    }
+
+    protected void loadLocalTime(Element element, String attributeName, Consumer<LocalTime> setter) {
+        loadResourceString(element, attributeName, context.getMessageGroup())
+                .ifPresent(timeString -> {
+                    try {
+                        LocalTime localTime = parseTime(timeString);
+                        setter.accept(localTime);
+                    } catch (DateTimeParseException e) {
+                        String errorMessage = String.format("Unparseable time for %s with '%s' id",
+                                resultComponent.getClass().getSimpleName(),
+                                resultComponent.getId().orElse("null"));
+                        throw new GuiDevelopmentException(errorMessage, context);
+                    }
+                });
+    }
+
+    protected LocalTime parseTime(String time) throws DateTimeParseException {
+        return LocalTime.parse(time);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

@@ -17,8 +17,14 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import org.dom4j.Element;
+
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.util.function.Consumer;
 
 public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimePicker<?>> {
 
@@ -38,7 +44,10 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         loadResourceString(element, "timePlaceholder", context.getMessageGroup(), resultComponent::setTimePlaceholder);
         loadResourceString(element, "datePlaceholder", context.getMessageGroup(), resultComponent::setDatePlaceholder);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
+        loadLocalDateTime(element, "max", resultComponent::setMax);
+        loadLocalDateTime(element, "min", resultComponent::setMin);
 
+        componentLoader().loadDateFormat(element, resultComponent::setDatePickerI18n);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
@@ -48,8 +57,28 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
+        componentLoader().loadStep(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected void loadLocalDateTime(Element element, String attributeName, Consumer<LocalDateTime> setter) {
+        loadResourceString(element, attributeName, context.getMessageGroup())
+                .ifPresent(dateTimeString -> {
+                    try {
+                        LocalDateTime localDateTime = parseDateTime(dateTimeString);
+                        setter.accept(localDateTime);
+                    } catch (ParseException e) {
+                        String errorMessage = String.format("Unparseable date-time for %s with '%s' id",
+                                resultComponent.getClass().getSimpleName(),
+                                resultComponent.getId().orElse("null"));
+                        throw new GuiDevelopmentException(errorMessage, context);
+                    }
+                });
+    }
+
+    protected LocalDateTime parseDateTime(String date) throws ParseException {
+        return LocalDateTime.parse(date);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

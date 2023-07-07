@@ -654,6 +654,13 @@ public class JmixScrollTableWidget extends VScrollTable implements TableWidget {
                     return;
                 }
 
+                // We shouldn't collapse if only one column is visible.
+                // Otherwise, it will lead to setting first column visible
+                // but another one will not be collapsed.
+                if (getColumnsCount() - collapsedColumns.size() == 1) {
+                    return;
+                }
+
                 Action firstAction = actions[0];
                 if (firstAction instanceof VisibleColumnAction
                         && collapsedColumns.contains(((VisibleColumnAction) firstAction).getColKey())) {

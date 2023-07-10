@@ -44,8 +44,8 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         loadResourceString(element, "timePlaceholder", context.getMessageGroup(), resultComponent::setTimePlaceholder);
         loadResourceString(element, "datePlaceholder", context.getMessageGroup(), resultComponent::setDatePlaceholder);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
-        loadLocalDateTime(element, "max", resultComponent::setMax);
-        loadLocalDateTime(element, "min", resultComponent::setMin);
+        loadDateTime(element, "max", resultComponent::setMax);
+        loadDateTime(element, "min", resultComponent::setMin);
 
         componentLoader().loadDateFormat(element, resultComponent::setDatePickerI18n);
         componentLoader().loadLabel(resultComponent, element);
@@ -57,13 +57,14 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
-        componentLoader().loadStep(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+        componentLoader().loadStep(element)
+                .ifPresent(resultComponent::setStep);
     }
 
-    protected void loadLocalDateTime(Element element, String attributeName, Consumer<LocalDateTime> setter) {
-        loadResourceString(element, attributeName, context.getMessageGroup())
+    protected void loadDateTime(Element element, String attributeName, Consumer<LocalDateTime> setter) {
+        loadString(element, attributeName)
                 .ifPresent(dateTimeString -> {
                     try {
                         LocalDateTime localDateTime = parseDateTime(dateTimeString);

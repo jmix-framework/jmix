@@ -19,7 +19,6 @@ package io.jmix.flowui.xml.layout.support;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -28,7 +27,6 @@ import com.vaadin.flow.component.shared.HasAllowedCharPattern;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
-import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import io.jmix.core.common.util.ReflectionHelper;
@@ -358,9 +356,9 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 context.getMessageGroup(), component::setAllowedCharPattern);
     }
 
-    public void loadStep(com.vaadin.flow.component.Component component, Element element, Context context) {
-        loaderSupport.loadResourceString(element, "step", context.getMessageGroup())
-                .ifPresent(stepString -> {
+    public Optional<Duration> loadStep(Element element) {
+        return loaderSupport.loadString(element, "step")
+                .map(stepString -> {
                     Duration step;
 
                     if (stepString.endsWith("h")) {
@@ -373,11 +371,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                         step = Duration.ofMinutes(Long.parseLong(StringUtils.chop(stepString)));
                     }
 
-                    if (component instanceof TimePicker timePicker) {
-                        timePicker.setStep(step);
-                    } else if (component instanceof DateTimePicker dateTimePicker) {
-                        dateTimePicker.setStep(step);
-                    }
+                    return step;
                 });
     }
 

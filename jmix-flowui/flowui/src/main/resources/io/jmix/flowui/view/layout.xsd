@@ -2799,9 +2799,9 @@
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="timePickerThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
-                <xs:attribute name="step" type="resourceString"/>
-                <xs:attribute name="max" type="resourceString"/>
-                <xs:attribute name="min" type="resourceString"/>
+                <xs:attribute name="step" type="xs:string"/>
+                <xs:attribute name="max" type="xs:string"/>
+                <xs:attribute name="min" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2827,8 +2827,8 @@
                 <xs:attribute name="themeNames" type="datePickerThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="dateFormat" type="resourceString"/>
-                <xs:attribute name="max" type="resourceString"/>
-                <xs:attribute name="min" type="resourceString"/>
+                <xs:attribute name="max" type="xs:string"/>
+                <xs:attribute name="min" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
@@ -2851,10 +2851,10 @@
                 <xs:attribute name="datePlaceholder" type="resourceString"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
-                <xs:attribute name="step" type="resourceString"/>
+                <xs:attribute name="step" type="xs:string"/>
                 <xs:attribute name="dateFormat" type="resourceString"/>
-                <xs:attribute name="max" type="resourceString"/>
-                <xs:attribute name="min" type="resourceString"/>
+                <xs:attribute name="max" type="xs:string"/>
+                <xs:attribute name="min" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>

@@ -49,8 +49,8 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
-        loadLocalDate(element, "max", resultComponent::setMax);
-        loadLocalDate(element, "min", resultComponent::setMin);
+        loadDate(element, "max", resultComponent::setMax);
+        loadDate(element, "min", resultComponent::setMin);
 
         componentLoader().loadDateFormat(element, resultComponent::setI18n);
         componentLoader().loadLabel(resultComponent, element);
@@ -67,8 +67,8 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
     }
 
-    protected void loadLocalDate(Element element, String attributeName, Consumer<LocalDate> setter) {
-        loadResourceString(element, attributeName, context.getMessageGroup())
+    protected void loadDate(Element element, String attributeName, Consumer<LocalDate> setter) {
+        loadString(element, attributeName)
                 .ifPresent(dateString -> {
                     try {
                         LocalDate localDate = parseDate(dateString);

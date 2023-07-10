@@ -15,6 +15,7 @@
     <layout>
 
     </layout><%}%><%if (overrideActionType == "EXTEND") {%>
-        extends="${overrideScreen.reference}">
+        extends="${overrideScreen.reference}"<%if (messagesGroup != null && messagesGroup != '') {%>
+        messagesGroup="$messagesGroup"<%}%>>
     <layout/><%}%>
  </$rootTagName><%}%>

@@ -356,8 +356,8 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 context.getMessageGroup(), component::setAllowedCharPattern);
     }
 
-    public Optional<Duration> loadStep(Element element) {
-        return loaderSupport.loadString(element, "step")
+    public Optional<Duration> loadDuration(Element element, String attributeName) {
+        return loaderSupport.loadString(element, attributeName)
                 .map(stepString -> {
                     Duration step;
 

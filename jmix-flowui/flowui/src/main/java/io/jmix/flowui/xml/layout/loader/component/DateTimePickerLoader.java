@@ -59,7 +59,7 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
-        componentLoader().loadStep(element)
+        componentLoader().loadDuration(element, "step")
                 .ifPresent(resultComponent::setStep);
     }
 

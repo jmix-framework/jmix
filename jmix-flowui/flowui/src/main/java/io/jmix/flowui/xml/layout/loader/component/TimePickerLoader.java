@@ -58,7 +58,7 @@ public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
-        componentLoader().loadStep(element)
+        componentLoader().loadDuration(element, "step")
                 .ifPresent(resultComponent::setStep);
     }
 

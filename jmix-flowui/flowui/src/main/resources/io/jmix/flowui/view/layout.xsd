@@ -2555,7 +2555,8 @@
                         <xs:complexType>
                             <xs:sequence>
                                 <xs:element name="column" maxOccurs="unbounded" type="dataGridColumnComponent"/>
-                                <xs:element name="editorActionsColumn" type="dataGridEditorActionsColumn" minOccurs="0"/>
+                                <xs:element name="editorActionsColumn" type="dataGridEditorActionsColumn"
+                                            minOccurs="0"/>
                             </xs:sequence>
                             <xs:attributeGroup ref="columnsLoadType"/>
                         </xs:complexType>
@@ -2844,15 +2845,14 @@
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
-                <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
-                <!--                <xs:attribute name="min" type="timePickerMinVariants"/>-->
-                <!--                <xs:attribute name="locale" type="timePickerLocaleVariants"/>-->
-                <!--                <xs:attribute name="zone" type="timePickerZoneVariants"/>-->
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="timeDatatypeEnum"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="timePickerThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
+                <xs:attribute name="step" type="xs:string"/>
+                <xs:attribute name="max" type="xs:string"/>
+                <xs:attribute name="min" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2879,6 +2879,9 @@
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="datePickerThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
+                <xs:attribute name="dateFormat" type="resourceString"/>
+                <xs:attribute name="max" type="xs:string"/>
+                <xs:attribute name="min" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
@@ -2897,17 +2900,16 @@
                     <xs:element name="tooltip" type="tooltipElement"/>
                 </xs:choice>
 
-                <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
-                <!--                <xs:attribute name="min" type="timePickerMinVariants"/>-->
-                <!--                <xs:attribute name="locale" type="timePickerLocaleVariants"/>-->
-                <!--                <xs:attribute name="zone" type="timePickerZoneVariants"/>-->
-
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="dateTimePickerThemeNames"/>
                 <xs:attribute name="timePlaceholder" type="resourceString"/>
                 <xs:attribute name="datePlaceholder" type="resourceString"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
+                <xs:attribute name="step" type="xs:string"/>
+                <xs:attribute name="dateFormat" type="resourceString"/>
+                <xs:attribute name="max" type="xs:string"/>
+                <xs:attribute name="min" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
@@ -3489,7 +3491,7 @@
             <xs:extension base="baseComponent">
                 <xs:sequence>
                     <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
-                    <xs:element name="validators" type="constraintValidatorType"  minOccurs="0" />
+                    <xs:element name="validators" type="constraintValidatorType" minOccurs="0"/>
                 </xs:sequence>
 
                 <xs:attribute name="highlightActiveLine" type="xs:boolean"/>
@@ -3900,9 +3902,12 @@
     <xs:complexType name="urlQueryParametersType">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="pagination" type="paginationUrlQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="genericFilter" type="genericFilterUrlQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="propertyFilter" type="propertyFilterUrlQueryParametersType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="pagination" type="paginationUrlQueryParametersType" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                <xs:element name="genericFilter" type="genericFilterUrlQueryParametersType" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                <xs:element name="propertyFilter" type="propertyFilterUrlQueryParametersType" minOccurs="0"
+                            maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>

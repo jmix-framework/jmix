@@ -31,10 +31,7 @@ import test_support.entity.sales.Order
 import test_support.entity.sec.User
 import test_support.spec.FlowuiTestSpecification
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
+import java.time.*
 
 @SpringBootTest
 class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
@@ -187,14 +184,17 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             clearButtonVisible
             datatype.class == LocalDateDatatype
+            i18n.dateFormats.containsAll(["yyyy-MM-dd", "MM/dd/yyyy", "dd.MM.yyyy"])
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
             !invalid
             label == "labelString"
+            max == LocalDate.of(2023, 7, 7)
             maxHeight == "55px"
             maxWidth == "120px"
+            min == LocalDate.of(2023, 7, 5)
             minHeight == "40px"
             minWidth == "80px"
             name == "nameString"
@@ -243,8 +243,10 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             helperText == "helperTextString"
             !invalid
             label == "labelString"
+            max == LocalTime.of(18, 0)
             maxHeight == "55px"
             maxWidth == "120px"
+            min == LocalTime.of(9, 0)
             minHeight == "40px"
             minWidth == "80px"
             placeholder == "placeholderString"
@@ -252,6 +254,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            step == Duration.ofMinutes(15)
             tabIndex == 3
             typedValue == order.time
             themeNames.containsAll(["small", "align-center"])
@@ -283,20 +286,24 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             datatype.class == DateTimeDatatype
             datePlaceholder == "datePlaceholderString"
+            datePickerI18n.dateFormats.containsAll(["yyyy-MM-dd", "MM/dd/yyyy", "dd.MM.yyyy"])
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
             !invalid
             label == "labelString"
+            max == LocalDateTime.of(2023, 7, 7, 10, 15, 30)
             maxHeight == "55px"
             maxWidth == "120px"
+            min == LocalDateTime.of(2023, 5, 7, 10, 30, 30)
             minHeight == "40px"
             minWidth == "80px"
             readOnly
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
+            step == Duration.ofMinutes(15)
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             timePlaceholder == "timePlaceholderString"

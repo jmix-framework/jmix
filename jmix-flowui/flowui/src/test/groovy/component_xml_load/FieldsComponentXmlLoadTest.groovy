@@ -79,7 +79,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "checkBoxId"
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
-            element.getAttribute("aria-label") == "ariaLabelString"
+            ariaLabel.get() == "ariaLabelString"
             enabled
             height == "50px"
             indeterminate

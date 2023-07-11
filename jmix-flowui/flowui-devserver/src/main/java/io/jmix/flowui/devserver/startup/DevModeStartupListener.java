@@ -28,6 +28,7 @@ import com.vaadin.flow.internal.DevModeHandlerManager;
 import com.vaadin.flow.internal.Template;
 import com.vaadin.flow.router.HasErrorParameter;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.LoadDependenciesOnStartup;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.UIInitListener;
 import com.vaadin.flow.server.VaadinContext;
@@ -49,24 +50,27 @@ import java.util.Set;
  * Trigger for running dev mode initialization when running in a compatible
  * servlet environment.
  */
-@HandlesTypes({Route.class, UIInitListener.class,
+@HandlesTypes({ Route.class, UIInitListener.class,
         VaadinServiceInitListener.class, WebComponentExporter.class,
         WebComponentExporterFactory.class, NpmPackage.class,
         NpmPackage.Container.class, JsModule.class, JsModule.Container.class,
         CssImport.class, CssImport.Container.class, JavaScript.class,
         JavaScript.Container.class, Theme.class, NoTheme.class,
         HasErrorParameter.class, PWA.class, AppShellConfigurator.class,
-        Template.class })
+        Template.class, LoadDependenciesOnStartup.class })
 @WebListener
 public class DevModeStartupListener
         implements VaadinServletContextStartupInitializer, Serializable,
         ServletContextListener {
+
     @Override
     public void initialize(Set<Class<?>> classes, VaadinContext context)
             throws VaadinInitializerException {
         Lookup lookup = context.getAttribute(Lookup.class);
-        DevModeHandlerManager devModeHandlerManager = lookup.lookup(DevModeHandlerManager.class);
+        DevModeHandlerManager devModeHandlerManager = lookup
+                .lookup(DevModeHandlerManager.class);
         devModeHandlerManager.initDevModeHandler(classes, context);
+
     }
 
     @Override

@@ -775,6 +775,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="gridColumnRendering">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EAGER"/>
+            <xs:enumeration value="LAZY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="gridNestedNullBehaviorEnum">
         <xs:restriction base="xs:string">
             <xs:enumeration value="THROW"/>
@@ -1140,6 +1147,7 @@
                     <xs:enumeration value="view_close"/>
                     <xs:enumeration value="value_clear"/>
                     <xs:enumeration value="list_itemTracking"/>
+                    <xs:enumeration value="multi_value_select"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -1265,6 +1273,34 @@
             <xs:enumeration value="BETWEEN"/>
             <xs:enumeration value="AROUND"/>
             <xs:enumeration value="EVENLY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="contentAlignmentEnum">
+        <xs:restriction>
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="END"/>
+            <xs:enumeration value="CENTER"/>
+            <xs:enumeration value="STRETCH"/>
+            <xs:enumeration value="SPACE_BETWEEN"/>
+            <xs:enumeration value="SPACE_AROUND"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="flexDirectionEnum">
+        <xs:restriction>
+            <xs:enumeration value="ROW"/>
+            <xs:enumeration value="ROW_REVERSE"/>
+            <xs:enumeration value="COLUMN"/>
+            <xs:enumeration value="COLUMN_REVERSE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="flexWrapEnum">
+        <xs:restriction>
+            <xs:enumeration value="NOWRAP"/>
+            <xs:enumeration value="WRAP"/>
+            <xs:enumeration value="WRAP_REVERSE"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -1977,6 +2013,7 @@
 
     <xs:attributeGroup name="hasAriaLabel">
         <xs:attribute name="ariaLabel" type="resourceString"/>
+        <xs:attribute name="ariaLabelledBy" type="resourceString"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasLabel">
@@ -2015,6 +2052,10 @@
 
     <xs:attributeGroup name="hasClassNames">
         <xs:attribute name="classNames" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasOverlayClass">
+        <xs:attribute name="overlayClass" type="xs:string"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasSecurityConstraint">
@@ -2177,6 +2218,7 @@
                 <xs:attributeGroup ref="hasAutocapitalize"/>
                 <xs:attributeGroup ref="hasValueChangeMode"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2214,10 +2256,12 @@
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2247,6 +2291,7 @@
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasEnabled"/>
             </xs:extension>
         </xs:complexContent>
@@ -2409,6 +2454,7 @@
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2528,6 +2574,7 @@
                 <xs:attribute name="detailsVisibleOnClick" type="xs:boolean"/>
                 <xs:attribute name="columnReorderingAllowed" type="xs:boolean"/>
                 <xs:attribute name="nestedNullBehavior" type="gridNestedNullBehaviorEnum"/>
+                <xs:attribute name="columnRendering" type="gridColumnRendering"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -2719,6 +2766,8 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
+                <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2749,6 +2798,8 @@
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValidation"/>
+                <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2806,6 +2857,8 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2830,6 +2883,8 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
+                <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2856,6 +2911,8 @@
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2897,6 +2954,7 @@
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2923,6 +2981,7 @@
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2942,6 +3001,7 @@
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2961,6 +3021,7 @@
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2980,6 +3041,8 @@
                 <xs:attribute name="autoselect" type="xs:boolean"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="textAreaThemeNames"/>
+                <xs:attribute name="maxLength" type="xs:integer"/>
+                <xs:attribute name="minLength" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -2996,6 +3059,7 @@
                 <xs:attributeGroup ref="hasValueChangeMode"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3034,6 +3098,7 @@
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3160,6 +3225,7 @@
         <xs:attributeGroup ref="hasLabel"/>
         <xs:attributeGroup ref="hasEnabled"/>
         <xs:attributeGroup ref="hasClassNames"/>
+        <xs:attributeGroup ref="hasAriaLabel"/>
     </xs:complexType>
 
     <!-- Select-->
@@ -3181,12 +3247,14 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3304,6 +3372,8 @@
     <xs:complexType name="loginErrorMessageType">
         <xs:attribute name="title" type="resourceString"/>
         <xs:attribute name="message" type="resourceString"/>
+        <xs:attribute name="username" type="resourceString"/>
+        <xs:attribute name="password" type="resourceString"/>
     </xs:complexType>
 
     <xs:complexType name="loginAdditionalInformationType">
@@ -3448,6 +3518,30 @@
     </xs:complexType>
 
     <!--    HTML-->
+
+    <!-- Html -->
+    <xs:complexType name="htmlComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="content" minOccurs="0">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+
+                    <xs:element name="file" minOccurs="0">
+                        <xs:complexType>
+                            <xs:attribute name="path" type="resourceString"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="content" type="resourceString"/>
+
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Anchor-->
     <xs:complexType name="anchor">
         <xs:complexContent>
@@ -3530,6 +3624,15 @@
         <xs:complexContent>
             <xs:extension base="baseHtmlContainer">
                 <xs:attribute name="setFor" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- NativeButton-->
+    <xs:complexType name="nativeButtonComponent">
+        <xs:complexContent>
+            <xs:extension base="htmlContainerWithAria">
+                <xs:attributeGroup ref="hasTabIndex"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3624,6 +3727,7 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
 
                 <xs:attribute name="labelVisible" type="xs:boolean"/>
 
@@ -3833,6 +3937,7 @@
                 <!--HTML Components-->
                 <xs:group ref="htmlHeaders"/>
                 <xs:group ref="htmlLists"/>
+                <xs:element name="html" type="htmlComponent"/>
                 <xs:element name="div" type="baseHtmlContainer"/>
                 <xs:element name="span" type="baseHtmlContainer"/>
                 <xs:element name="section" type="baseHtmlContainer"/>
@@ -3847,7 +3952,8 @@
                 <xs:element name="aside" type="baseHtmlContainer"/>
                 <xs:element name="emphasis" type="baseHtmlContainer"/>
                 <xs:element name="anchor" type="anchor"/>
-                <xs:element name="label" type="labelComponent"/>
+                <xs:element name="nativeLabel" type="labelComponent"/>
+                <xs:element name="nativeButton" type="nativeButtonComponent"/>
                 <xs:element name="article" type="baseHtmlContainer"/>
                 <xs:element name="input" type="inputHtmlComponent"/>
                 <xs:element name="image" type="imageComponent"/>
@@ -3860,6 +3966,7 @@
                 <!-- Layout -->
                 <xs:element name="vbox" type="componentLayout"/>
                 <xs:element name="hbox" type="componentLayout"/>
+                <xs:element name="flexLayout" type="flexLayoutComponent"/>
                 <xs:element name="formLayout" type="formLayoutComponent"/>
                 <xs:element name="scroller" type="scrollerContainer"/>
                 <xs:element name="split" type="splitContainer"/>
@@ -3949,6 +4056,21 @@
             <xs:extension base="baseLayout">
                 <xs:attributeGroup ref="hasId"/>
                 <xs:attribute name="visible" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="flexLayoutComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:group ref="layoutOrComponent"/>
+
+                <xs:attribute name="expand" type="xs:string"/>
+                <xs:attribute name="contentAlignment" type="contentAlignmentEnum"/>
+                <xs:attribute name="flexDirection" type="flexDirectionEnum"/>
+                <xs:attribute name="flexWrap" type="flexWrapEnum"/>
+
+                <xs:attributeGroup ref="hasFlexible"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

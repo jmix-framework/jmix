@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.view.report.validator;
+package io.jmix.reportsflowui.view.validators;
 
 import io.jmix.flowui.component.validation.AbstractValidator;
 import io.jmix.flowui.exception.ValidationException;

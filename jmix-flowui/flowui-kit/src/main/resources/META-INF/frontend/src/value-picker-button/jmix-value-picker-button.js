@@ -15,11 +15,11 @@
  */
 
 import {html, PolymerElement} from "@polymer/polymer";
-import {TabindexMixin} from "@vaadin/component-base/src/tabindex-mixin";
-import {FocusMixin} from "@vaadin/component-base/src/focus-mixin";
+import {TabindexMixin} from "@vaadin/a11y-base/src/tabindex-mixin.js";
+import {FocusMixin} from "@vaadin/a11y-base/src/focus-mixin.js";
 import {ElementMixin} from "@vaadin/component-base/src/element-mixin";
 import {ThemableMixin} from "@vaadin/vaadin-themable-mixin";
-import {ActiveMixin} from "@vaadin/component-base/src/active-mixin";
+import {ActiveMixin} from "@vaadin/a11y-base/src/active-mixin.js";
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
 registerStyles('jmix-value-picker-button', [],{

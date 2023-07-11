@@ -39,6 +39,8 @@ public class TextAreaLoader extends AbstractComponentLoader<JmixTextArea> {
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
+        loadInteger(element, "maxLength", resultComponent::setMaxLength);
+        loadInteger(element, "minLength", resultComponent::setMinLength);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
@@ -56,6 +58,7 @@ public class TextAreaLoader extends AbstractComponentLoader<JmixTextArea> {
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
+        componentLoader().loadAriaLabel(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

@@ -36,6 +36,7 @@ public abstract class BaseLoaderConfig {
         /* Abstract layouts */
         loaders.put("hbox", HorizontalLayoutLoader.class);
         loaders.put("vbox", VerticalLayoutLoader.class);
+        loaders.put("flexLayout", FlexLayoutLoader.class);
 
         /* Content panel */
         loaders.put("accordion", AccordionLoader.class);
@@ -101,6 +102,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("input", InputLoader.class);
         loaders.put("image", ImageLoader.class);
         loaders.put("iframe", IFrameLoader.class);
+        loaders.put("html", HtmlLoader.class);
 
         /* Containers */
         loaders.put("h1", H1Loader.class);
@@ -133,5 +135,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("htmlObject", HtmlObjectLoader.class);
         loaders.put("anchor", AnchorLoader.class);
         loaders.put("label", LabelLoader.class);
+        loaders.put("nativeLabel", NativeLabelLoader.class);
+        loaders.put("nativeButton", NativeButtonLoader.class);
     }
 }

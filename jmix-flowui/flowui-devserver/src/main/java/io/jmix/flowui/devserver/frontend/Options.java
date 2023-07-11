@@ -20,7 +20,6 @@ import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.di.Lookup;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.frontend.FrontendTools;
-import com.vaadin.flow.server.frontend.FrontendUtils;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import elemental.json.JsonObject;
 import io.jmix.flowui.devserver.frontend.installer.NodeInstaller;
@@ -29,7 +28,6 @@ import io.jmix.flowui.devserver.frontend.installer.Platform;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +58,7 @@ public class Options implements Serializable {
 
     private boolean runNpmInstall = false;
 
-    private boolean devBundleBuild = false;
+    private boolean bundleBuild = false;
 
     private Set<File> jarFiles = null;
 
@@ -80,6 +78,10 @@ public class Options implements Serializable {
 
     private boolean enablePnpm = Constants.ENABLE_PNPM_DEFAULT;
 
+    private boolean ciBuild;
+
+    private boolean forceProductionBuild;
+
     private boolean useGlobalPnpm = false;
 
     private File frontendGeneratedFolder;
@@ -90,10 +92,9 @@ public class Options implements Serializable {
 
     private File npmFolder;
 
-    private File generatedFolder;
+    private boolean skipDevBundle = false;
 
     private File studioFolder;
-
     private String themeValue;
     private String themeVariant;
     private String themeClass;
@@ -121,7 +122,7 @@ public class Options implements Serializable {
      * Default is true here so we do not accidentally include development stuff
      * into production.
      */
-    private boolean productionMode = true;
+    private boolean productionMode = false;
 
     /**
      * The resource folder for java resources.
@@ -140,7 +141,8 @@ public class Options implements Serializable {
     /**
      * Creates a new instance.
      *
-     * @param lookup a {@link Lookup} to discover services used by Flow (SPI)
+     * @param lookup
+     *            a {@link Lookup} to discover services used by Flow (SPI)
      */
     public Options(Lookup lookup, File npmFolder) {
         this.lookup = lookup;
@@ -185,26 +187,16 @@ public class Options implements Serializable {
     }
 
     /**
-     * Sets the irectory where generated files are written.
-     *
-     * @param generatedFolder folder where flow generated files will be placed
-     * @return this
-     */
-    public Options withGeneratedFolder(File generatedFolder) {
-        this.generatedFolder = generatedFolder;
-        return this;
-    }
-
-    /**
      * Sets the directory containing the project's frontend files
      *
-     * @param frontendDirectory a directory with project's frontend files
+     * @param frontendDirectory
+     *            a directory with project's frontend files
      * @return this
      */
     public Options withFrontendDirectory(File frontendDirectory) {
         this.frontendDirectory = frontendDirectory.isAbsolute()
                 ? frontendDirectory
-                : new File(npmFolder, frontendDirectory.getPath());
+                : new File(studioFolder, frontendDirectory.getPath());
         return this;
     }
 
@@ -212,7 +204,9 @@ public class Options implements Serializable {
      * Use the specified directory name (inside the project folder) for the
      * build output.
      *
-     * @param buildDirectory project build directory
+     * @param buildDirectory
+     *            project build directory
+     *
      * @return this builder
      */
     public Options withBuildDirectory(String buildDirectory) {
@@ -223,11 +217,13 @@ public class Options implements Serializable {
     /**
      * Sets the webpack related properties.
      *
-     * @param webappResourcesDirectory the directory to set for webpack to output its build results,
-     *                                 meant for serving from context root.
-     * @param resourceOutputDirectory  the directory to output generated non-served resources, such
-     *                                 as the "config/stats.json" stats file, and the
-     *                                 "config/flow-build-info.json" token file.
+     * @param webappResourcesDirectory
+     *            the directory to set for webpack to output its build results,
+     *            meant for serving from context root.
+     * @param resourceOutputDirectory
+     *            the directory to output generated non-served resources, such
+     *            as the "config/stats.json" stats file, and the
+     *            "config/flow-build-info.json" token file.
      * @return this builder
      */
     public Options withWebpack(File webappResourcesDirectory,
@@ -242,8 +238,9 @@ public class Options implements Serializable {
      * Sets whether to enable packages and webpack file updates. Default is
      * <code>true</code>.
      *
-     * @param enablePackagesUpdate <code>true</code> to enable packages and webpack update,
-     *                             otherwise <code>false</code>
+     * @param enablePackagesUpdate
+     *            <code>true</code> to enable packages and webpack update,
+     *            otherwise <code>false</code>
      * @return this builder
      */
     public Options enablePackagesUpdate(boolean enablePackagesUpdate) {
@@ -255,11 +252,12 @@ public class Options implements Serializable {
      * Sets whether to perform always perform clean up procedure. Default is
      * <code>false</code>. When the value is false, npm related files will only
      * be removed when a platform version update is detected.
-     * <p>
+     *
      * This method is only for tests.
      *
-     * @param forceClean <code>true</code> to clean npm files always, otherwise
-     *                   <code>false</code>
+     * @param forceClean
+     *            <code>true</code> to clean npm files always, otherwise
+     *            <code>false</code>
      * @return this builder
      */
     @Deprecated
@@ -273,8 +271,9 @@ public class Options implements Serializable {
      * <code>false</code>. This will also enable creation of missing package
      * files if set to true.
      *
-     * @param enableImportsUpdate <code>true</code> to enable imports file update, otherwise
-     *                            <code>false</code>
+     * @param enableImportsUpdate
+     *            <code>true</code> to enable imports file update, otherwise
+     *            <code>false</code>
      * @return this builder
      */
     public Options enableImportsUpdate(boolean enableImportsUpdate) {
@@ -287,7 +286,8 @@ public class Options implements Serializable {
     /**
      * Sets whether run <code>npm install</code> after updating dependencies.
      *
-     * @param runNpmInstall run npm install. Default is <code>false</code>
+     * @param runNpmInstall
+     *            run npm install. Default is <code>false</code>
      * @return the builder
      */
     public Options withRunNpmInstall(boolean runNpmInstall) {
@@ -299,15 +299,16 @@ public class Options implements Serializable {
      * Sets the appropriate npm package folder for copying flow resources in
      * jars.
      *
-     * @param jarFrontendResourcesFolder target folder
+     * @param jarFrontendResourcesFolder
+     *            target folder
      * @return the builder
      */
     public Options withJarFrontendResourcesFolder(
             File jarFrontendResourcesFolder) {
         this.jarFrontendResourcesFolder = jarFrontendResourcesFolder
                 .isAbsolute() ? jarFrontendResourcesFolder
-                : new File(npmFolder,
-                jarFrontendResourcesFolder.getPath());
+                        : new File(studioFolder,
+                                jarFrontendResourcesFolder.getPath());
         return this;
     }
 
@@ -315,7 +316,9 @@ public class Options implements Serializable {
      * Sets whether copy resources from classpath to the appropriate npm package
      * folder so as they are available for webpack build.
      *
-     * @param jars set of class nodes to be visited. Not {@code null}
+     * @param jars
+     *            set of class nodes to be visited. Not {@code null}
+     *
      * @return the builder
      */
     public Options copyResources(Set<File> jars) {
@@ -327,7 +330,9 @@ public class Options implements Serializable {
     /**
      * Sets whether copy templates to {@code META-INF/VAADIN/config/templates}.
      *
-     * @param copyTemplates whether to copy templates
+     * @param copyTemplates
+     *            whether to copy templates
+     *
      * @return the builder
      */
     public Options withCopyTemplates(boolean copyTemplates) {
@@ -339,7 +344,8 @@ public class Options implements Serializable {
      * Sets whether to collect and package
      * {@link com.vaadin.flow.component.WebComponentExporter} dependencies.
      *
-     * @param generateEmbeddableWebComponents collect dependencies. Default is {@code true}
+     * @param generateEmbeddableWebComponents
+     *            collect dependencies. Default is {@code true}
      * @return the builder
      */
     public Options withEmbeddableWebComponents(
@@ -351,7 +357,8 @@ public class Options implements Serializable {
     /**
      * Sets whether to create the package file if missing.
      *
-     * @param create create the package
+     * @param create
+     *            create the package
      * @return the builder
      */
     public Options createMissingPackageJson(boolean create) {
@@ -362,7 +369,8 @@ public class Options implements Serializable {
     /**
      * Set local frontend files to be copied from given folder.
      *
-     * @param localResourcesFolder folder to copy local frontend files from
+     * @param localResourcesFolder
+     *            folder to copy local frontend files from
      * @return the builder, for chaining
      */
     public Options copyLocalResources(File localResourcesFolder) {
@@ -373,7 +381,8 @@ public class Options implements Serializable {
     /**
      * Set the folder where frontend files should be generated.
      *
-     * @param frontendGeneratedFolder folder to generate frontend files in.
+     * @param frontendGeneratedFolder
+     *            folder to generate frontend files in.
      * @return the builder, for chaining
      */
     public Options withFrontendGeneratedFolder(File frontendGeneratedFolder) {
@@ -395,8 +404,9 @@ public class Options implements Serializable {
      * {@code byteCodeScanner} is {@code true}, full classpath scanner strategy
      * is used otherwise (by default).
      *
-     * @param byteCodeScanner if {@code true} then byte code scanner is used, full scanner
-     *                        is used otherwise (by default).
+     * @param byteCodeScanner
+     *            if {@code true} then byte code scanner is used, full scanner
+     *            is used otherwise (by default).
      * @return the builder, for chaining
      */
     public Options useByteCodeScanner(boolean byteCodeScanner) {
@@ -407,7 +417,8 @@ public class Options implements Serializable {
     /**
      * Fill token file data into the provided {@code object}.
      *
-     * @param object the object to fill with token file data
+     * @param object
+     *            the object to fill with token file data
      * @return the builder, for chaining
      */
     public Options populateTokenFileData(JsonObject object) {
@@ -418,7 +429,8 @@ public class Options implements Serializable {
     /**
      * Sets the token file (flow-build-info.json) path.
      *
-     * @param tokenFile token file path
+     * @param tokenFile
+     *            token file path
      * @return the builder, for chaining
      */
     public Options withTokenFile(File tokenFile) {
@@ -431,7 +443,8 @@ public class Options implements Serializable {
      * <p>
      * "pnpm" will be used instead of "npm".
      *
-     * @param enable enables pnpm.
+     * @param enable
+     *            enables pnpm.
      * @return the builder, for chaining
      */
     public Options withEnablePnpm(boolean enable) {
@@ -440,10 +453,35 @@ public class Options implements Serializable {
     }
 
     /**
+     * Enables ci build.
+     * <p>
+     * "npm ci" will be used instead of "npm install". "--frozen-lockfile" will
+     * be used if pnpm is used instead of npm.
+     *
+     * @param ciBuild
+     *            true to enable ci build
+     * @return the builder, for chaining
+     */
+    public Options withCiBuild(boolean ciBuild) {
+        this.ciBuild = ciBuild;
+        return this;
+    }
+
+    /**
+     * Setting this to {@code true} will force a build of the production build
+     * even if there is a default production bundle that could be used.
+     */
+    public Options withForceProductionBuild(boolean forceProductionBuild) {
+        this.forceProductionBuild = forceProductionBuild;
+        return this;
+    }
+
+    /**
      * Uses globally installed pnpm tool for frontend packages installation.
      *
-     * @param useGlobalPnpm uses globally installed pnpm instead of default one, see
-     *                      {@link com.vaadin.flow.server.frontend.FrontendTools#DEFAULT_PNPM_VERSION}.
+     * @param useGlobalPnpm
+     *            uses globally installed pnpm instead of default one, see
+     *            {@link FrontendTools#DEFAULT_PNPM_VERSION}.
      * @return the builder, for chaining
      */
     public Options useGlobalPnpm(boolean useGlobalPnpm) {
@@ -454,7 +492,8 @@ public class Options implements Serializable {
     /**
      * Requires node executable to be installed in vaadin home folder.
      *
-     * @param requireHomeNodeExec requires vaadin home node exec
+     * @param requireHomeNodeExec
+     *            requires vaadin home node exec
      * @return the builder, for chaining
      */
     public Options withHomeNodeExecRequired(boolean requireHomeNodeExec) {
@@ -467,7 +506,8 @@ public class Options implements Serializable {
      * automatically by Vaadin, for example <code>"v16.0.0"</code>. Defaults to
      * {@value FrontendTools#DEFAULT_NODE_VERSION}.
      *
-     * @param nodeVersion the new node version to download, not null.
+     * @param nodeVersion
+     *            the new node version to download, not null.
      * @return the builder, for chaining
      */
     public Options withNodeVersion(String nodeVersion) {
@@ -480,7 +520,8 @@ public class Options implements Serializable {
      * environments where the node.js download can be provided from an intranet
      * mirror. Defaults to {@link NodeInstaller#DEFAULT_NODEJS_DOWNLOAD_ROOT}.
      *
-     * @param nodeDownloadRoot the new download URL to set, not null.
+     * @param nodeDownloadRoot
+     *            the new download URL to set, not null.
      * @return the builder, for chaining
      */
     public Options withNodeDownloadRoot(URI nodeDownloadRoot) {
@@ -491,8 +532,9 @@ public class Options implements Serializable {
     /**
      * Sets the production mode.
      *
-     * @param productionMode <code>true</code> to enable production mode, otherwise
-     *                       <code>false</code>
+     * @param productionMode
+     *            <code>true</code> to enable production mode, otherwise
+     *            <code>false</code>
      * @return this builder
      */
     public Options withProductionMode(boolean productionMode) {
@@ -503,7 +545,9 @@ public class Options implements Serializable {
     /**
      * Whether to run with a dev server (when not in production mode).
      *
-     * @param frontendHotdeploy true to run with a dev server, false to run in express mode
+     * @param frontendHotdeploy
+     *            true to run with a dev server, false to run in development
+     *            bundle mode
      * @return this builder
      */
     public Options withFrontendHotdeploy(boolean frontendHotdeploy) {
@@ -514,21 +558,11 @@ public class Options implements Serializable {
     /**
      * Checks if running with a dev server (when not in production mode).
      *
-     * @return true to run with a dev server, false to run in express mode
+     * @return true to run with a dev server, false to run in development bundle
+     *         mode
      */
     public boolean isFrontendHotdeploy() {
         return frontendHotdeploy;
-    }
-
-    /**
-     * Whether to run dev mode bundle build, useful when not using a dev server.
-     *
-     * @param devBundleBuild true to run a dev mode bundle build
-     * @return this builder
-     */
-    public Options withDevBundleBuild(boolean devBundleBuild) {
-        this.devBundleBuild = devBundleBuild;
-        return this;
     }
 
     /**
@@ -537,14 +571,37 @@ public class Options implements Serializable {
      * @return true to run the build, false otherwise
      */
     public boolean isDevBundleBuild() {
-        return devBundleBuild;
+        return !isProductionMode() && isBundleBuild();
+    }
+
+    /**
+     * Whether to run bundle build. Needed when not using a dev server or
+     * running for production.
+     *
+     * @param bundleBuild
+     *            true to run a bundle build
+     * @return this builder
+     */
+    public Options withBundleBuild(boolean bundleBuild) {
+        this.bundleBuild = bundleBuild;
+        return this;
+    }
+
+    /**
+     * Check if a bundle build should run.
+     *
+     * @return true to run the build, false otherwise
+     */
+    public boolean isBundleBuild() {
+        return bundleBuild;
     }
 
     /**
      * Sets whether it is fine to automatically update the alternate node
      * installation if installed version is older than the current default.
      *
-     * @param update true to update alternate node when used
+     * @param update
+     *            true to update alternate node when used
      * @return the builder
      */
     public Options setNodeAutoUpdate(boolean update) {
@@ -557,7 +614,8 @@ public class Options implements Serializable {
      * <p>
      * Needed for plugin execution.
      *
-     * @param javaResourceFolder java resources folder
+     * @param javaResourceFolder
+     *            java resources folder
      * @return this builder
      */
     public Options setJavaResourceFolder(File javaResourceFolder) {
@@ -571,7 +629,8 @@ public class Options implements Serializable {
      * By default, postinstall is only run for internal dependencies which rely
      * on post install scripts to work, e.g. esbuild
      *
-     * @param postinstallPackages the additional npm packages to run postinstall for
+     * @param postinstallPackages
+     *            the additional npm packages to run postinstall for
      * @return the builder, for chaining
      */
     public Options withPostinstallPackages(List<String> postinstallPackages) {
@@ -586,33 +645,6 @@ public class Options implements Serializable {
      */
     public File getNpmFolder() {
         return npmFolder;
-    }
-
-    /**
-     * Get the generated folder for this build, always an absolute path.
-     *
-     * @return the generated folder
-     */
-    public File getGeneratedFolder() {
-        if (generatedFolder != null) {
-            if (generatedFolder.isAbsolute()) {
-                return generatedFolder;
-            } else {
-                return new File(npmFolder, generatedFolder.getPath());
-            }
-        }
-
-        if (buildDirectoryName != null && npmFolder != null) {
-            // Use default if not specified
-            String generatedDir = System
-                    .getProperty(com.vaadin.flow.server.frontend.FrontendUtils.PARAM_GENERATED_DIR,
-                            Paths.get(buildDirectoryName,
-                                            com.vaadin.flow.server.frontend.FrontendUtils.DEFAULT_GENERATED_DIR)
-                                    .toString());
-            return new File(npmFolder, generatedDir);
-
-        }
-        return generatedFolder;
     }
 
     /**
@@ -632,9 +664,9 @@ public class Options implements Serializable {
     public File getFrontendDirectory() {
         if (frontendDirectory == null && npmFolder != null) {
             // Use default if not specified
-            return new File(npmFolder,
-                    System.getProperty(com.vaadin.flow.server.frontend.FrontendUtils.PARAM_FRONTEND_DIR,
-                            com.vaadin.flow.server.frontend.FrontendUtils.DEFAULT_FRONTEND_DIR));
+            return new File(
+                    System.getProperty(FrontendUtils.PARAM_FRONTEND_DIR,
+                            FrontendUtils.DEFAULT_FRONTEND_DIR));
         }
         return frontendDirectory;
     }
@@ -657,7 +689,7 @@ public class Options implements Serializable {
      * @return the build directory
      */
     public File getBuildDirectory() {
-        return new File(npmFolder, getBuildDirectoryName());
+        return new File(studioFolder, getBuildDirectoryName());
     }
 
     public Options withFeatureFlags(FeatureFlags featureFlags) {
@@ -753,6 +785,14 @@ public class Options implements Serializable {
         return enablePnpm;
     }
 
+    public boolean isCiBuild() {
+        return ciBuild;
+    }
+
+    public boolean isForceProductionBuild() {
+        return forceProductionBuild;
+    }
+
     public boolean isUseGlobalPnpm() {
         return useGlobalPnpm;
     }
@@ -790,7 +830,7 @@ public class Options implements Serializable {
      * Gets the production mode.
      *
      * @return <code>true</code> if production mode is enabled, otherwise
-     * <code>false</code>
+     *         <code>false</code>
      */
     public boolean isProductionMode() {
         return productionMode;
@@ -810,5 +850,27 @@ public class Options implements Serializable {
         return postinstallPackages;
     }
 
-}
+    /**
+     * Set to true to skip dev bundle build in case a dev bundle exists.
+     * <p>
+     * Dev bundle build will not be skipped in case no dev bundle is found.
+     *
+     * @param skip
+     *            {@code true} to skip rebuild of dev bundle
+     * @return this builder
+     */
+    public Options skipDevBundleBuild(boolean skip) {
+        skipDevBundle = skip;
+        return this;
+    }
 
+    /**
+     * Is dev bundle build skipped or not.
+     *
+     * @return {@code true} to skip dev bundle checks, {@code false} to run
+     *         normally. Default is {@code false}
+     */
+    public boolean isSkipDevBundle() {
+        return skipDevBundle;
+    }
+}

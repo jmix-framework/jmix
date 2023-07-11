@@ -21,7 +21,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
@@ -70,7 +71,7 @@ public class GroupFilter extends Composite<VerticalLayout>
     protected boolean conditionModificationDelegated = false;
 
     protected List<ResponsiveStep> responsiveSteps;
-    protected Label summaryComponent;
+    protected Div summaryComponent;
     protected String summaryText;
     protected boolean operationTextVisible = true;
 
@@ -150,7 +151,7 @@ public class GroupFilter extends Composite<VerticalLayout>
         if (filterComponent instanceof SingleFilterComponentBase) {
             SingleFilterComponentBase<?> singleFilterComponent = ((SingleFilterComponentBase<?>) filterComponent);
 
-            Label label = new Label(singleFilterComponent.getLabel());
+            NativeLabel label = new NativeLabel(singleFilterComponent.getLabel());
             singleFilterComponent.setWidthFull();
             FormLayout.FormItem formItem = conditionsLayout.addFormItem(singleFilterComponent, label);
             formItem.getElement().getThemeList().addAll(List.of("label-align-end", "jmix-group-filter-form-item"));
@@ -338,7 +339,7 @@ public class GroupFilter extends Composite<VerticalLayout>
     }
 
     @Nullable
-    protected Label getSummaryComponent() {
+    protected Div getSummaryComponent() {
         return summaryComponent;
     }
 
@@ -374,11 +375,11 @@ public class GroupFilter extends Composite<VerticalLayout>
         }
     }
 
-    protected Label createSummaryComponent() {
-        return uiComponents.create(Label.class);
+    protected Div createSummaryComponent() {
+        return uiComponents.create(Div.class);
     }
 
-    protected void initSummaryComponent(Label summaryComponent) {
+    protected void initSummaryComponent(Div summaryComponent) {
         // hook
     }
 

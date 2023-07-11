@@ -98,6 +98,8 @@ open class LoginView : StandardView(), LocaleChangeObserver {
         val errorMessage: LoginI18n.ErrorMessage = LoginI18n.ErrorMessage()
         errorMessage.title = messageBundle.getMessage("loginForm.errorTitle")
         errorMessage.message = messageBundle.getMessage("loginForm.badCredentials")
+        errorMessage.username = messageBundle.getMessage("loginForm.errorUsername")
+        errorMessage.password = messageBundle.getMessage("loginForm.errorPassword")
         loginI18n.errorMessage = errorMessage
 
         login.setI18n(loginI18n)

@@ -869,12 +869,44 @@ public class MetadataTools {
      * @return true if entity's {@link EntityEntry} implements {@link EntityEntryHasUuid}
      */
     public boolean hasUuid(MetaClass metaClass) {
-        return metaClass.getAnnotations().containsKey(UUID_KEY_ANN_NAME);
+        String uuidPropertyName = getUuidPropertyName(metaClass);
+        return uuidPropertyName != null;
     }
 
+    /**
+     * Gets name of uuid key property.
+     *
+     * @param clazz entity java class
+     * @return uuid property name or null if it doesn't exist.
+     * Throws exception if there is no MetaClass for the provided java class.
+     */
     @Nullable
     public String getUuidPropertyName(Class<?> clazz) {
-        return (String) metadata.getClass(clazz).getAnnotations().get(UUID_KEY_ANN_NAME);
+        MetaClass metaClass = metadata.getClass(clazz);
+        return getUuidPropertyName(metaClass);
+    }
+
+    /**
+     * Gets name of uuid key property.
+     *
+     * @param metaClass entity MetaClass
+     * @return uuid property name or null if it doesn't exist
+     */
+    @Nullable
+    public String getUuidPropertyName(MetaClass metaClass) {
+        String uuidProperty = (String) metaClass.getAnnotations().get(UUID_KEY_ANN_NAME);
+        if(uuidProperty != null) {
+            return uuidProperty;
+        } else {
+            List<MetaClass> ancestors = metaClass.getAncestors();
+            for(MetaClass ancestor : ancestors) {
+                uuidProperty = (String) ancestor.getAnnotations().get(UUID_KEY_ANN_NAME);
+                if (uuidProperty != null) {
+                    return uuidProperty;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -1210,7 +1242,8 @@ public class MetadataTools {
 //        }
     }
 
-    protected void internalTraverseAttributes(Entity entity, EntityAttributeVisitor visitor, HashSet<Object> visited) {
+    protected void internalTraverseAttributes(Entity entity, EntityAttributeVisitor
+            visitor, HashSet<Object> visited) {
         if (visited.contains(entity))
             return;
         visited.add(entity);
@@ -1237,7 +1270,8 @@ public class MetadataTools {
         }
     }
 
-    protected void internalTraverseAttributesByFetchPlan(FetchPlan fetchPlan, Object entity, EntityAttributeVisitor visitor,
+    protected void internalTraverseAttributesByFetchPlan(FetchPlan fetchPlan, Object entity, EntityAttributeVisitor
+            visitor,
                                                          Map<Object, Set<FetchPlan>> visited, boolean checkLoaded) {
         Set<FetchPlan> fetchPlans = visited.get(entity);
         if (fetchPlans == null) {

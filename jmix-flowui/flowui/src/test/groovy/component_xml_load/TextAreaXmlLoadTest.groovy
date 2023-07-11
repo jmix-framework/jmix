@@ -76,8 +76,10 @@ class TextAreaXmlLoadTest extends FlowuiTestSpecification {
             !invalid
             label == "labelString"
             maxHeight == "55px"
+            maxLength == 50
             maxWidth == "120px"
             minHeight == "40px"
+            minLength == 2
             minWidth == "80px"
             pattern == "patternString"
             placeholder == "placeholderString"

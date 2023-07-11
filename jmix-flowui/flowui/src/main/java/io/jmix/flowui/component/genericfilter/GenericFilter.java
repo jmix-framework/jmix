@@ -20,7 +20,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.details.Details;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -670,7 +670,7 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void updateGroupConditionButtons(GroupFilter groupFilter) {
-        Label summaryComponent = groupFilterSupport.getGroupFilterSummaryComponent(groupFilter);
+        Div summaryComponent = groupFilterSupport.getGroupFilterSummaryComponent(groupFilter);
 
         if (summaryComponent != null) {
             String removeButtonId = CONDITION_REMOVE_BUTTON_ID_SUFFIX;

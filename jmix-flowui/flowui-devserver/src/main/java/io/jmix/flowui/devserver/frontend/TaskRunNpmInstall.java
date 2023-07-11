@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.commandToString;
 import static io.jmix.flowui.devserver.frontend.NodeUpdater.HASH_KEY;
@@ -50,17 +51,13 @@ import static io.jmix.flowui.devserver.frontend.NodeUpdater.VAADIN_VERSION;
  */
 public class TaskRunNpmInstall implements FallibleCommand {
 
-    /**
-     * Container for npm installation statistics.
-     */
+    /** Container for npm installation statistics. */
     public static class Stats {
         private long installTimeMs = 0;
         private long cleanupTimeMs = 0;
         private String packageManager = "";
 
-        /**
-         * Create an instance.
-         */
+        /** Create an instance. */
         private Stats() {
         }
 
@@ -125,9 +122,11 @@ public class TaskRunNpmInstall implements FallibleCommand {
     /**
      * Create an instance of the command.
      *
-     * @param packageUpdater package-updater instance used for checking if previous
+     * @param packageUpdater
+     *            package-updater instance used for checking if previous
      *                       execution modified the package.json file
-     * @param options        the options for the task
+     * @param options
+     *            the options for the task
      */
     TaskRunNpmInstall(NodeUpdater packageUpdater, Options options) {
         this.packageUpdater = packageUpdater;
@@ -137,8 +136,17 @@ public class TaskRunNpmInstall implements FallibleCommand {
     @Override
     public void execute() throws ExecutionFailedException {
         String toolName = options.isEnablePnpm() ? "pnpm" : "npm";
+        String command = "install";
+        if (options.isCiBuild()) {
+            if (options.isEnablePnpm()) {
+                command += " --frozen-lockfile";
+            } else {
+                command = "ci";
+            }
+        }
         if (packageUpdater.modified || shouldRunNpmInstall()) {
-            String logMessage = "Running `" + toolName + " install` to "
+            String logMessage = "Running `" + toolName + " " + command
+                    + "` to "
                     + "resolve and optionally download frontend dependencies. "
                     + "This may take a moment, please stand by...";
             packageUpdater.log().info(logMessage);
@@ -185,7 +193,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
 
             final Map<String, String> updates = new HashMap<>();
             updates.put(HASH_KEY, hash);
-            Platform.getVaadinVersion()
+            TaskUpdatePackages.getVaadinVersion(packageUpdater.finder)
                     .ifPresent(s -> updates.put(VAADIN_VERSION, s));
             updates.put(PROJECT_FOLDER,
                     options.getStudioFolder().getAbsolutePath());
@@ -265,7 +273,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
         tools.validateNodeAndNpmVersion();
         if (options.isEnablePnpm()) {
             try {
-                createPnpmFile(packageUpdater.versionsPath, tools);
+                createPnpmFile(packageUpdater.versionsJson, tools);
             } catch (IOException exception) {
                 throw new ExecutionFailedException(
                         "Failed to read frontend version data from vaadin-core "
@@ -310,7 +318,17 @@ public class TaskRunNpmInstall implements FallibleCommand {
         }
 
         npmInstallCommand.add("--ignore-scripts");
+
+        if (options.isCiBuild()) {
+            if (options.isEnablePnpm()) {
         npmInstallCommand.add("install");
+                npmInstallCommand.add("--frozen-lockfile");
+            } else {
+                npmInstallCommand.add("ci");
+            }
+        } else {
+            npmInstallCommand.add("install");
+        }
 
         postinstallCommand.add("run");
         postinstallCommand.add("postinstall");
@@ -321,7 +339,8 @@ public class TaskRunNpmInstall implements FallibleCommand {
 
         String toolName = options.isEnablePnpm() ? "pnpm" : "npm";
 
-        String commandString = String.join(" ", npmInstallCommand);
+        String commandString = npmInstallCommand.stream()
+                .collect(Collectors.joining(" "));
 
         String logMessage = String.format(
                 "using '%s' for frontend package installation",
@@ -496,9 +515,9 @@ public class TaskRunNpmInstall implements FallibleCommand {
      * not supposed that it can be modified by the user. This is done in the
      * same way as for webpack.generated.js.
      */
-    private void createPnpmFile(String versionsPath, FrontendTools tools)
+    private void createPnpmFile(JsonObject versionsJson, FrontendTools tools)
             throws IOException {
-        if (versionsPath == null) {
+        if (versionsJson == null) {
             return;
         }
 
@@ -523,15 +542,17 @@ public class TaskRunNpmInstall implements FallibleCommand {
             }
 
             FileUtils.copyInputStreamToFile(content, pnpmFile);
+            packageUpdater.log().debug("Generated pnpmfile hook file: '{}'",
+                    pnpmFile);
 
-            packageUpdater.log().debug("Generated pnpmfile hook file: '{}'", pnpmFile);
-
-            FileUtils.writeLines(pnpmFile, modifyPnpmFile(pnpmFile, versionsPath));
+            FileUtils.writeStringToFile(pnpmFile,
+                    modifyPnpmFile(pnpmFile, versionsJson),
+                    StandardCharsets.UTF_8);
         }
     }
 
     /*
-     * Create an .npmrc file in the project directory if there is none.
+     * Create an .npmrc file the project directory if there is none.
      */
     private void createNpmRcFile() throws IOException {
         File npmrcFile = new File(options.getStudioFolder().getAbsolutePath(),
@@ -569,17 +590,12 @@ public class TaskRunNpmInstall implements FallibleCommand {
         }
     }
 
-    private List<String> modifyPnpmFile(File generatedFile, String versionsPath)
+    private String modifyPnpmFile(File generatedFile, JsonObject versionsJson)
             throws IOException {
-        List<String> lines = FileUtils.readLines(generatedFile, StandardCharsets.UTF_8);
-        int i = 0;
-        for (String line : lines) {
-            if (line.startsWith("const versionsFile")) {
-                lines.set(i, "const versionsFile = require('path').resolve(__dirname, '" + versionsPath + "');");
-            }
-            i++;
-        }
-        return lines;
+        String content = FileUtils.readFileToString(generatedFile,
+                StandardCharsets.UTF_8);
+        content = content.replace("versionsinfojson", versionsJson.toJson());
+        return content;
     }
 
     private void cleanUp() throws ExecutionFailedException {
@@ -588,19 +604,25 @@ public class TaskRunNpmInstall implements FallibleCommand {
             return;
         }
         long startTime = System.currentTimeMillis();
+
+        if (options.isCiBuild()) {
+            deleteNodeModules(options.getNodeModulesFolder());
+        } else {
         File modulesYaml = new File(options.getNodeModulesFolder(),
                 MODULES_YAML);
         boolean hasModulesYaml = modulesYaml.exists() && modulesYaml.isFile();
         if (!options.isEnablePnpm() && hasModulesYaml) {
             deleteNodeModules(options.getNodeModulesFolder());
         } else if (options.isEnablePnpm() && !hasModulesYaml) {
-            // presence of .staging dir with a "pnpm-*" folder means that pnpm
-            // download is in progress, don't remove anything in this case
+                // presence of .staging dir with a "pnpm-*" folder means that
+                // pnpm download is in progress, don't remove anything in this
+                // case
             File staging = new File(options.getNodeModulesFolder(), ".staging");
             if (!staging.isDirectory() || staging.listFiles(
                     (dir, name) -> name.startsWith("pnpm-")).length == 0) {
                 deleteNodeModules(options.getNodeModulesFolder());
             }
+        }
         }
         lastInstallStats.cleanupTimeMs = System.currentTimeMillis() - startTime;
     }

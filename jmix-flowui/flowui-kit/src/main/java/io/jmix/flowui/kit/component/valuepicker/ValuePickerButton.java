@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.component.valuepicker;
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.shared.SlotUtils;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasAction;
 import io.jmix.flowui.kit.component.HasShortcutCombination;
@@ -87,8 +88,7 @@ public class ValuePickerButton extends Component
     }
 
     protected void add(Component component) {
-        getElement().appendChild(component.getElement());
-        component.getElement().setAttribute("slot", "icon");
+        SlotUtils.addToSlot(this, "icon", component);
     }
 
     protected void remove(Component component) {

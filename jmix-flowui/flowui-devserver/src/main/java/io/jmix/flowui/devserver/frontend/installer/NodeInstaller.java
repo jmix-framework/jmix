@@ -25,7 +25,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
+import com.vaadin.flow.internal.Pair;
 import io.jmix.flowui.devserver.frontend.FrontendUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -56,7 +58,9 @@ public class NodeInstaller {
 
     public static final String PROVIDED_VERSION = "provided";
 
-    private static final int MAX_DOWNLOAD_ATTEMPS = 3;
+    private static final int MAX_DOWNLOAD_ATTEMPS = 5;
+
+    private static final int DOWNLOAD_ATTEMPT_DELAY = 5;
 
     private final Object lock = new Object();
 
@@ -216,7 +220,8 @@ public class NodeInstaller {
                 getLogger().warn(warnMessage);
                 FrontendUtils.logInFile(warnMessage);
             }
-            InstallData data = new InstallData(nodeVersion, nodeDownloadRoot, platform);
+            InstallData data = new InstallData(nodeVersion, nodeDownloadRoot,
+                    platform);
             installNode(data);
 
         }
@@ -252,7 +257,10 @@ public class NodeInstaller {
 
     private void installNode(InstallData data) throws InstallationException {
         try {
-            downloadFileIfMissing(data.getDownloadUrl(), data.getArchive(), userName, password);
+
+            downloadFileIfMissing(data.getDownloadUrl(), data.getArchive(),
+                    userName, password);
+
             extractFile(data.getArchive(), data.getTmpDirectory());
         } catch (DownloadException e) {
             throw new InstallationException(
@@ -502,7 +510,7 @@ public class NodeInstaller {
                 boolean deleted = archive.delete();
                 if (!deleted) {
                     getLogger().error("Failed to remove archive file {}. "
-                                    + "Please remove it manually and run the application.",
+                            + "Please remove it manually and run the application.",
                             archive.getPath());
                 }
                 try {
@@ -537,6 +545,11 @@ public class NodeInstaller {
                             e);
                     getLogger().warn("Download failed, retrying...");
                     FrontendUtils.logInFile("Download failed, retrying...");
+
+                    try {
+                        Thread.sleep(DOWNLOAD_ATTEMPT_DELAY * 1000);
+                    } catch (InterruptedException e1) {
+                    }
                 }
 
             }
@@ -559,13 +572,15 @@ public class NodeInstaller {
         try {
             Process process = FrontendUtils.createProcessBuilder(versionCommand)
                     .start();
+            CompletableFuture<Pair<String, String>> streamConsumer = FrontendUtils
+                    .consumeProcessStreams(process);
             int exitCode = process.waitFor();
             if (exitCode != 0) {
                 throw new IOException("Process exited with non 0 exit code. ("
                         + exitCode + ")");
             }
             return FrontendUtils.parseFrontendVersion(
-                    FrontendUtils.streamToString(process.getInputStream()));
+                    streamConsumer.getNow(new Pair<>("", "")).getFirst());
         } catch (InterruptedException | IOException e) {
             throw new InstallationException(String.format(
                     "Unable to detect version of %s. %s", tool,

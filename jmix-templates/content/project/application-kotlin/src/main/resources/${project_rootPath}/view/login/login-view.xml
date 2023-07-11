@@ -13,7 +13,9 @@
                   submit="msg://loginForm.submit"
                   forgotPassword="msg://loginForm.forgotPassword"/>
             <errorMessage title="msg://loginForm.errorTitle"
-                          message="msg://loginForm.badCredentials"/>
+                          message="msg://loginForm.badCredentials"
+                          username="msg://loginForm.errorUsername"
+                          password="msg://loginForm.errorPassword"/>
         </loginForm>
     </layout>
 </view>

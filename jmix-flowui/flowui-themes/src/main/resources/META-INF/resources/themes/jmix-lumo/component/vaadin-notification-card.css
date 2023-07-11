@@ -71,7 +71,7 @@ vaadin-notification-card[slot$='stretch'] .jmix-text-layout-closeable {
 
 vaadin-notification-card[theme~='warning'] .jmix-text-layout-closeable .title,
 vaadin-notification-card[theme~='warning'] .jmix-text-layout .title {
-  color: var(--jmix-lumo-warning-color);
+  color: var(--lumo-warning-contrast-color);
 }
 
 vaadin-notification-card[theme~='contrast'] .jmix-text-layout-closeable .title,
@@ -98,17 +98,4 @@ vaadin-notification-card::part(overlay) {
   display: flex;
   justify-content: center;
   position: relative;
-}
-
-vaadin-notification-card[theme~='warning'] {
-  --_lumo-button-background-color: var(--lumo-shade-20pct);
-  --_lumo-button-color: var(--jmix-lumo-warning-color);
-  --_lumo-button-primary-background-color: var(--jmix-lumo-warning-color);
-  --_lumo-button-primary-color: var(--jmix-lumo-warning-primary-text-color);
-}
-
-vaadin-notification-card[theme~='warning']::part(overlay) {
-  background-color: var(--jmix-lumo-warning-background-color);
-  color: var(--jmix-lumo-warning-color);
-  box-shadow: var(--lumo-box-shadow-l);
 }

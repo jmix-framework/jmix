@@ -19,7 +19,6 @@ package component_xml_load
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.button.Button
-import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.progressbar.ProgressBarVariant
@@ -271,7 +270,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             !autoUpload
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             dropAllowed
-            (dropLabel as Label).getText() == "dropLabelString"
+            (dropLabel as HasText).getText() == "dropLabelString"
             dropLabelIcon.element.getAttribute("icon") ==
                     VaadinIcon.UPLOAD.create().element.getAttribute("icon")
             height == "50px"

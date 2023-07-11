@@ -23,6 +23,7 @@ import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import com.vaadin.flow.component.shared.HasAllowedCharPattern;
+import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
@@ -244,6 +245,11 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 .ifPresent(classNamesString -> split(classNamesString, component::addClassName));
     }
 
+    public void loadOverlayClass(HasOverlayClassName component, Element element) {
+        loaderSupport.loadString(element, "overlayClass")
+                .ifPresent(component::setOverlayClassName);
+    }
+
     public void loadBadge(HasText component, Element element) {
         loaderSupport.loadString(element, "themeNames")
                 .ifPresent(badgeString -> {
@@ -303,6 +309,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
     public void loadAriaLabel(HasAriaLabel component, Element element) {
         loaderSupport.loadResourceString(element, "ariaLabel", context.getMessageGroup(), component::setAriaLabel);
+        loaderSupport.loadResourceString(element, "ariaLabelledBy", context.getMessageGroup(), component::setAriaLabel);
     }
 
     public void loadWhiteSpace(HasText component, Element element) {

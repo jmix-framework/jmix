@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.vaadin.flow.server.Constants.APPLICATION_THEME_ROOT;
 import static com.vaadin.flow.server.frontend.FrontendUtils.GENERATED;
@@ -81,12 +82,12 @@ public class TaskUpdateThemeImport implements FallibleCommand {
         }
 
         try {
-            AbstractTaskClientGenerator.writeIfChanged(themeImportFile, String
-                    .format("import {applyTheme as _applyTheme} from './theme-%s.generated.js';%n"
+            FileIOUtils.writeIfChanged(themeImportFile, String.format(
+                    "import {applyTheme as _applyTheme} from './theme-%s.generated.js';%n"
                                     + "export const applyTheme = _applyTheme;%n",
                             theme.getName()));
-            AbstractTaskClientGenerator.writeIfChanged(
-                    themeImportFileDefinition, EXPORT_MODULES_DEF);
+            FileIOUtils.writeIfChanged(themeImportFileDefinition,
+                    EXPORT_MODULES_DEF);
         } catch (IOException e) {
             throw new ExecutionFailedException(
                     "Unable to write theme import file", e);
@@ -102,8 +103,8 @@ public class TaskUpdateThemeImport implements FallibleCommand {
         List<String> appThemePossiblePaths = getAppThemePossiblePaths(
                 themePath);
         List<File> existingAppThemeDirectories = appThemePossiblePaths.stream()
-                .map(path -> new File(options.getStudioFolder(), path)).filter(File::exists)
-                .toList();
+                .map(path -> new File(options.getStudioFolder(), path))
+                .filter(File::exists).collect(Collectors.toList());
 
         if (existingAppThemeDirectories.isEmpty()) {
             String errorMessage = "Discovered @Theme annotation with theme "

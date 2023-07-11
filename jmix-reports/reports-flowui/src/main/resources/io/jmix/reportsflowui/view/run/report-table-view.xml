@@ -37,12 +37,12 @@
     <layout expand="tablesVBoxLayout">
         <hbox id="reportForm" alignItems="BASELINE">
             <entityComboBox id="reportEntityComboBox"
-                            label="msg://caption.reportForTable" width="30em"
+                            label="msg://reportEntityComboBox.title" width="30em"
                             itemsContainer="reportsDc" metaClass="report_Report"/>
             <button id="printReportBtn" action="runAction"/>
         </hbox>
         <div id="parametersBox" visible="false">
-            <h3 text="msg://caption.parameters"/>
+            <h3 text="msg://parameters.title"/>
             <hbox id="parametersFrameHolder" alignItems="BASELINE" padding="false"/>
         </div>
         <vbox id="tablesVBoxLayout" padding="false"/>

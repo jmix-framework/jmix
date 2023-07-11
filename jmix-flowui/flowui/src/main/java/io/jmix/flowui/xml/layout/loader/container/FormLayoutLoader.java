@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasLabel;
+import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep.LabelsPosition;
@@ -32,8 +33,8 @@ import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +56,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        loadLabelPosition(resultComponent, element);
+        loadLabelPosition(element);
 
         loadSubComponents();
     }
@@ -86,6 +87,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
             if (labelsPosition == LabelsPosition.ASIDE) {
                 FormLayout.FormItem formItem = resultComponent.addFormItem(child, label);
                 setLabel(child, null);
+                setWidthFull(child);
                 formItem.setVisible(child.isVisible());
                 colspan.ifPresent(it -> resultComponent.setColspan(formItem, it));
             } else {
@@ -97,14 +99,20 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
 
     @Nullable
     protected String getLabel(Component component) {
-        return component instanceof HasLabel ?
-                ((HasLabel) component).getLabel()
+        return component instanceof HasLabel hasLabelComponent
+                ? hasLabelComponent.getLabel()
                 : null;
     }
 
     protected void setLabel(Component component, @Nullable String label) {
-        if (component instanceof HasLabel) {
-            ((HasLabel) component).setLabel(label);
+        if (component instanceof HasLabel hasLabelComponent) {
+            hasLabelComponent.setLabel(label);
+        }
+    }
+
+    protected void setWidthFull(Component component) {
+        if (component instanceof HasSize hasSizeComponent) {
+            hasSizeComponent.setWidthFull();
         }
     }
 
@@ -113,6 +121,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         if (responsiveSteps == null) {
             return;
         }
+
         List<Element> responsiveStepList = responsiveSteps.elements("responsiveStep");
 
         if (responsiveStepList.isEmpty()) {
@@ -140,20 +149,19 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
 
     @Nullable
     protected String generatePropertyLabel(Component component) {
-        if (!(component instanceof SupportsValueSource)
-                || !(((SupportsValueSource<?>) component).getValueSource() instanceof EntityValueSource)) {
+        if (!(component instanceof SupportsValueSource<?> supportsValueSourceComponent)
+                || !(supportsValueSourceComponent.getValueSource() instanceof EntityValueSource<?, ?> entityValueSource)) {
             return null;
         }
 
-        MetaPropertyPath mpp =
-                ((EntityValueSource<?, ?>) ((SupportsValueSource<?>) component).getValueSource()).getMetaPropertyPath();
+        MetaPropertyPath mpp = entityValueSource.getMetaPropertyPath();
         MetaClass propertyMetaClass = getMetadataTools().getPropertyEnclosingMetaClass(mpp);
         String propertyName = mpp.getMetaProperty().getName();
 
         return getMessageTools().getPropertyCaption(propertyMetaClass, propertyName);
     }
 
-    protected void loadLabelPosition(FormLayout resultComponent, Element element) {
+    protected void loadLabelPosition(Element element) {
         loadEnum(element, LabelsPosition.class, "labelsPosition")
                 .ifPresent(this::setLabelsPosition);
     }

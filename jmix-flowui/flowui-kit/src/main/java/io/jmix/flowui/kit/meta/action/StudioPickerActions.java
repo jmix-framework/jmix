@@ -16,11 +16,7 @@
 
 package io.jmix.flowui.kit.meta.action;
 
-import io.jmix.flowui.kit.meta.StudioAction;
-import io.jmix.flowui.kit.meta.StudioPropertiesItem;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
 public interface StudioPickerActions {
@@ -203,4 +199,42 @@ public interface StudioPickerActions {
             }
     )
     void entityOpenCompositionAction();
+
+    @StudioAction(
+            type = "multi_value_select",
+            description = "Standard multi value select action for selection the field value",
+            classFqn = "io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction",
+            target = {"io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"},
+            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
+                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
+                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
+                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "ELLIPSIS_DOTS_H",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
+                            initialValue = "multiValueSelect"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
+                            defaultValue = "msg:///actions.multiValuePicker.select.description"),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
+            },
+            items = {
+                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioPropertiesItem(xmlAttribute = "useComboBox", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioPropertiesItem(xmlAttribute = "javaClass", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "entityName", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "enumClass", type = StudioPropertyType.ENUM_CLASS),
+                    @StudioPropertiesItem(xmlAttribute = "lookupViewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING)
+            }
+    )
+    void multiValueSelectAction();
 }

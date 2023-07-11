@@ -224,6 +224,7 @@ public interface StudioElements {
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.listbox.JmixListBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.listbox.JmixMultiSelectListBox",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
@@ -406,7 +407,7 @@ public interface StudioElements {
             name = "Condition",
             classFqn = "io.jmix.flowui.kit.component.stub.JpqlFilterCondition",
             xmlElement = "condition",
-            target = { "io.jmix.flowui.component.jpqlfilter.JpqlFilter"},
+            target = {"io.jmix.flowui.component.jpqlfilter.JpqlFilter"},
             unlimitedCount = false
     )
     void jpqlFilterCondition();
@@ -417,7 +418,7 @@ public interface StudioElements {
             xmlns = "http://jmix.io/schema/flowui/jpql-condition",
             xmlElement = "jpql",
             xmlnsAlias = "c",
-            target = { "io.jmix.flowui.kit.component.stub.JpqlFilterCondition"},
+            target = {"io.jmix.flowui.kit.component.stub.JpqlFilterCondition"},
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.JPQL_FILTER_JOIN),
@@ -483,4 +484,50 @@ public interface StudioElements {
             }
     )
     void properties();
+
+    @StudioElement(
+            name = "QueryItems",
+            xmlElement = "queryItems",
+            icon = "io/jmix/flowui/kit/meta/icon/element/queryItems.svg",
+            target = {"io.jmix.flowui.component.combobox.JmixComboBox"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false")
+            }
+    )
+    void valueQueryItems();
+
+    @StudioElement(
+            name = "QueryItems",
+            xmlElement = "queryItems",
+            icon = "io/jmix/flowui/kit/meta/icon/element/queryItems.svg",
+            target = {"io.jmix.flowui.component.combobox.EntityComboBox"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS, required = true),
+                    @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
+            }
+    )
+    void entityQueryItems();
+
+    @StudioElement(
+            name = "QueryItems",
+            xmlElement = "queryItems",
+            icon = "io/jmix/flowui/kit/meta/icon/element/queryItems.svg",
+            target = {
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS),
+                    @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
+            }
+    )
+    void queryItems();
 }

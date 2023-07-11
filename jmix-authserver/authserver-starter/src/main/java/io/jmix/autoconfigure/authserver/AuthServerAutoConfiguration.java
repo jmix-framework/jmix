@@ -54,7 +54,10 @@ public class AuthServerAutoConfiguration {
 
     @Configuration
     @EnableWebMvc
+    @Order(AuthorizationServerLoginPageConfiguration.ORDER)
     public static class AuthorizationServerLoginPageConfiguration implements WebMvcConfigurer {
+
+        public static final int ORDER = 100;
 
         @Override
         public void addViewControllers(ViewControllerRegistry registry) {

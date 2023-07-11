@@ -35,6 +35,8 @@ public class ComboBoxLoader extends AbstractComboBoxLoader<JmixComboBox<?>> {
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
 
         getDataLoaderSupport().loadItems(resultComponent, element);
+        getDataLoaderSupport().loadValueQueryItems(resultComponent, element);
+
         getDataLoaderSupport().loadData(resultComponent, element);
 
         // These properties are loaded after the data provider is loaded,

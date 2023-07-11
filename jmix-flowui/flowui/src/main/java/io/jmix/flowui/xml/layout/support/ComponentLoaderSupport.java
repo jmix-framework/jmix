@@ -29,13 +29,11 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.DatatypeRegistryImpl;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsDatatype;
-import io.jmix.flowui.component.SupportsResponsiveSteps;
-import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.formatter.FormatterLoadFactory;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.validation.ValidatorLoadFactory;
@@ -393,6 +391,12 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
                     return shortcutCombination;
                 });
+    }
+
+    public void loadMetaClass(SupportsMetaClass component, Element element) {
+        loaderSupport.loadString(element, "metaClass")
+                .ifPresent(metaClass ->
+                        component.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
     }
 
     protected boolean isShortcutCombinationFQN(String shortcutCombination) {

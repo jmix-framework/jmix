@@ -30,6 +30,7 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
 
         getDataLoaderSupport().loadItems(resultComponent, element);
+        getDataLoaderSupport().loadQueryItems(resultComponent, element);
 
         // These properties are loaded after the data provider is loaded,
         // because setting the data provider resets the value of the readOnly attribute to default.

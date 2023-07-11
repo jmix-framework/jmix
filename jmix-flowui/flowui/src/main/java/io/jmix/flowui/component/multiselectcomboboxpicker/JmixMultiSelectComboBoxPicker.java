@@ -258,10 +258,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
                                     boolean fromClient) {
         try {
             if (modelValue == null && presentationValue != null) {
-                modelValue = fieldDelegate.convertToModel(
-                        presentationValue,
-                        getDataProvider().fetch(new Query<>())
-                );
+                modelValue = convertToModel(presentationValue);
             }
 
             super.setValue(presentationValue);
@@ -274,6 +271,14 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
             }
         } catch (ConversionException e) {
             throw new IllegalArgumentException("Cannot convert value to a model type");
+        }
+    }
+
+    protected Collection<V> convertToModel(Set<V> presentationValue) {
+        if (getDataProvider() != null && getDataProvider().isInMemory()) {
+            return fieldDelegate.convertToModel(presentationValue, getDataProvider().fetch(new Query<>()));
+        } else {
+            return fieldDelegate.convertToModel(presentationValue);
         }
     }
 
@@ -304,10 +309,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
         super.updateSelection(itemsToSelect, Collections.emptySet());
 
-        internalValue = fieldDelegate.convertToModel(
-                super.getSelectedItems(),
-                getDataProvider().fetch(new Query<>())
-        );
+        internalValue = convertToModel(super.getSelectedItems());
     }
 
     @Override
@@ -325,10 +327,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
         super.updateSelection(Collections.emptySet(), itemsToDeselect);
 
-        internalValue = fieldDelegate.convertToModel(
-                super.getSelectedItems(),
-                getDataProvider().fetch(new Query<>())
-        );
+        internalValue = convertToModel(super.getSelectedItems());
     }
 
     @Override
@@ -370,7 +369,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
             Collection<V> value;
             try {
-                value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
+                value = convertToModel(presValue);
 
                 setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
             } catch (ConversionException e) {

@@ -252,10 +252,7 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
                                     boolean fromClient) {
         try {
             if (modelValue == null && presentationValue != null) {
-                modelValue = fieldDelegate.convertToModel(
-                        presentationValue,
-                        getDataProvider().fetch(new Query<>())
-                );
+                modelValue = convertToModel(presentationValue);
             }
 
             super.setValue(presentationValue);
@@ -268,6 +265,14 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
             }
         } catch (ConversionException e) {
             throw new IllegalArgumentException("Cannot convert value to a model type");
+        }
+    }
+
+    protected Collection<V> convertToModel(Set<V> presentationValue) {
+        if (getDataProvider() != null && getDataProvider().isInMemory()) {
+            return fieldDelegate.convertToModel(presentationValue, getDataProvider().fetch(new Query<>()));
+        } else {
+            return fieldDelegate.convertToModel(presentationValue);
         }
     }
 
@@ -298,10 +303,7 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
 
         super.updateSelection(itemsToSelect, Collections.emptySet());
 
-        internalValue = fieldDelegate.convertToModel(
-                super.getSelectedItems(),
-                getDataProvider().fetch(new Query<>())
-        );
+        internalValue = convertToModel(super.getSelectedItems());
     }
 
     @Override
@@ -319,10 +321,7 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
 
         super.updateSelection(Collections.emptySet(), itemsToDeselect);
 
-        internalValue = fieldDelegate.convertToModel(
-                super.getSelectedItems(),
-                getDataProvider().fetch(new Query<>())
-        );
+        internalValue = convertToModel(super.getSelectedItems());
     }
 
     @Override
@@ -362,7 +361,7 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
         if (event.isFromClient()) {
             Set<V> presValue = event.getValue();
 
-            Collection<V> value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
+            Collection<V> value = convertToModel(presValue);
             setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
         }
 

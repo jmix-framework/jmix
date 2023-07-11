@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.core.Metadata;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
@@ -37,9 +36,11 @@ public class EntityComboBoxLoader extends AbstractComboBoxLoader<EntityComboBox<
         super.loadComponent();
 
         getDataLoaderSupport().loadItems(resultComponent, element);
+        getDataLoaderSupport().loadEntityQueryItems(resultComponent, element);
+
         getDataLoaderSupport().loadData(resultComponent, element);
 
-        //These properties are loaded after the data provider is loaded,
+        // These properties are loaded after the data provider is loaded,
         // because setting the data provider resets the value of the readOnly attribute to default.
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadTitle(resultComponent, element, context);
@@ -48,7 +49,7 @@ public class EntityComboBoxLoader extends AbstractComboBoxLoader<EntityComboBox<
         getActionLoaderSupport().loadActions(resultComponent, element);
 
         if (resultComponent.getValueSource() == null) {
-            loadMetaClass();
+            componentLoader().loadMetaClass(resultComponent, element);
 
             if (resultComponent.getMetaClass() == null) {
                 String message = String.format(
@@ -60,12 +61,6 @@ public class EntityComboBoxLoader extends AbstractComboBoxLoader<EntityComboBox<
                         context, "Component ID", resultComponent.getId().orElse("null"));
             }
         }
-    }
-
-    protected void loadMetaClass() {
-        loadString(element, "metaClass")
-                .ifPresent(metaClass ->
-                        resultComponent.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

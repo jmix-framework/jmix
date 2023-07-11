@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.core.Metadata;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
 
 public class MultiSelectComboBoxLoader extends AbstractMultiSelectComboBoxLoader<JmixMultiSelectComboBox<?>> {
@@ -36,13 +35,7 @@ public class MultiSelectComboBoxLoader extends AbstractMultiSelectComboBoxLoader
         super.loadComponent();
 
         if (resultComponent.getValueSource() == null) {
-            loadMetaClass();
+            componentLoader().loadMetaClass(resultComponent, element);
         }
-    }
-
-    protected void loadMetaClass() {
-        loadString(element, "metaClass")
-                .ifPresent(metaClass ->
-                        resultComponent.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
     }
 }

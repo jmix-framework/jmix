@@ -18,7 +18,11 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import io.jmix.core.ClassManager;
+import com.vaadin.flow.data.provider.HasLazyDataView;
+import com.vaadin.flow.data.provider.Query;
+import io.jmix.core.*;
+import io.jmix.core.common.util.ParamsMap;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.data.SupportsValueSource;
@@ -27,6 +31,7 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.sys.substitutor.StringSubstitutor;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
@@ -35,23 +40,35 @@ import io.jmix.flowui.xml.layout.LoaderResolver;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkState;
 
 @org.springframework.stereotype.Component("flowui_DataLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DataLoaderSupport {
+public class DataLoaderSupport implements ApplicationContextAware {
+
+    protected static final String QUERY_ITEMS_ELEMENT = "queryItems";
+    protected static final String VALUE_PARAMETER = "value";
 
     protected Context context;
+    protected ApplicationContext applicationContext;
     protected LoaderResolver loaderResolver;
     protected ClassManager classManager;
+    protected LoaderSupport loaderSupport;
 
     public DataLoaderSupport(Context context) {
         this.context = context;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Autowired
@@ -62,6 +79,11 @@ public class DataLoaderSupport {
     @Autowired
     public void setClassManager(ClassManager classManager) {
         this.classManager = classManager;
+    }
+
+    @Autowired
+    public void setLoaderSupport(LoaderSupport loaderSupport) {
+        this.loaderSupport = loaderSupport;
     }
 
     public void loadData(SupportsValueSource<?> component, Element element) {
@@ -108,6 +130,125 @@ public class DataLoaderSupport {
         if (component instanceof SupportsItemsEnum) {
             loadItemsEnum(((SupportsItemsEnum<?>) component), element);
         }
+    }
+
+    public void loadQueryItems(HasLazyDataView<?, String, ?> component, Element element) {
+        Element queryItemsElement = element.element(QUERY_ITEMS_ELEMENT);
+        if (queryItemsElement == null) {
+            return;
+        }
+
+        loaderSupport.loadString(queryItemsElement, "class")
+                .map(ReflectionHelper::getClass).ifPresentOrElse(
+                        entityClass -> loadEntityQueryItemsInternal(component, queryItemsElement, entityClass),
+                        () -> loadValueQueryItemsInternal(component, queryItemsElement));
+    }
+
+    public void loadEntityQueryItems(HasLazyDataView<?, String, ?> component, Element element) {
+        Element queryItemsElement = element.element(QUERY_ITEMS_ELEMENT);
+        if (queryItemsElement == null) {
+            return;
+        }
+
+        Class<?> entityClass = loaderSupport.loadString(queryItemsElement, "class")
+                .map(ReflectionHelper::getClass)
+                .orElseThrow(() ->
+                        new GuiDevelopmentException(String.format("Field 'class' is empty in component %s.",
+                                ((Component) component).getId()), getComponentContext()));
+
+        loadEntityQueryItemsInternal(component, queryItemsElement, entityClass);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void loadEntityQueryItemsInternal(HasLazyDataView<?, String, ?> component,
+                                                Element queryItemsElement, Class<?> entityClass) {
+        String queryString = queryItemsElement.getStringValue();
+        String searchStringFormat = loadSearchStringFormat(queryItemsElement);
+        boolean escapeValue = loadEscapeValueForLike(queryItemsElement);
+
+        FetchPlan fetchPlan = loadFetchPlan(queryItemsElement, entityClass);
+
+        DataManager dataManager = applicationContext.getBean(DataManager.class);
+        component.setItems(query -> {
+            String searchString = getSearchString(query, searchStringFormat, escapeValue);
+
+            FluentLoader.ByQuery loader = dataManager.load(entityClass)
+                    .query(queryString)
+                    .parameter("searchString", searchString)
+                    .firstResult(query.getOffset())
+                    .maxResults(query.getLimit());
+            if (fetchPlan != null) {
+                loader.fetchPlan(fetchPlan);
+            }
+
+            return loader.list().stream();
+        });
+    }
+
+    public void loadValueQueryItems(HasLazyDataView<?, String, ?> component, Element element) {
+        Element queryItemsElement = element.element(QUERY_ITEMS_ELEMENT);
+        if (queryItemsElement == null) {
+            return;
+        }
+
+        loadValueQueryItemsInternal(component, queryItemsElement);
+    }
+
+    protected void loadValueQueryItemsInternal(HasLazyDataView<?, String, ?> component, Element queryItemsElement) {
+        String queryString = queryItemsElement.getStringValue();
+        String searchStringFormat = loadSearchStringFormat(queryItemsElement);
+        boolean escapeValue = loadEscapeValueForLike(queryItemsElement);
+
+        DataManager dataManager = applicationContext.getBean(DataManager.class);
+        component.setItems(query -> {
+            String searchString = getSearchString(query, searchStringFormat, escapeValue);
+
+            return dataManager.loadValues(queryString)
+                    .properties(VALUE_PARAMETER)
+                    .parameter("searchString", searchString)
+                    .firstResult(query.getOffset())
+                    .maxResults(query.getLimit())
+                    .list().stream()
+                    .map(entity -> entity.getValue(VALUE_PARAMETER));
+        });
+    }
+
+    @Nullable
+    protected String loadSearchStringFormat(Element queryItemsElement) {
+        return loaderSupport
+                .loadString(queryItemsElement, "searchStringFormat")
+                .orElse(null);
+    }
+
+    protected Boolean loadEscapeValueForLike(Element queryItemsElement) {
+        return loaderSupport
+                .loadBoolean(queryItemsElement, "escapeValueForLike")
+                .orElse(false);
+    }
+
+    @Nullable
+    protected FetchPlan loadFetchPlan(Element queryItemsElement, Class<?> entityClass) {
+        return loaderSupport.loadString(queryItemsElement, "fetchPlan")
+                .map(fetchPlanName -> {
+                    FetchPlanRepository fetchPlanRepository = applicationContext.getBean(FetchPlanRepository.class);
+                    return fetchPlanRepository.getFetchPlan(entityClass, fetchPlanName);
+                })
+                .orElse(null);
+    }
+
+    protected String getSearchString(Query<?, String> query,
+                                     @Nullable String searchStringFormat, boolean escapeValue) {
+        String searchString = query.getFilter().orElse("");
+        if (escapeValue) {
+            searchString = QueryUtils.escapeForLike(searchString);
+        }
+
+        if (!Strings.isNullOrEmpty(searchStringFormat)) {
+            StringSubstitutor substitutor = applicationContext.getBean(StringSubstitutor.class);
+            searchString = substitutor.substitute(searchStringFormat, ParamsMap.of("searchString", searchString));
+        }
+
+        return searchString;
     }
 
     public <E> void loadItemsContainer(SupportsItemsContainer<E> component, Element element) {

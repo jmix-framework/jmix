@@ -1,4 +1,4 @@
-package io.jmix.reportsflowui.view.importdialog;
+package io.jmix.reportsflowui.view.importreportdialog;
 
 
 import com.vaadin.flow.component.ClickEvent;
@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 
 @ViewController("report_ReportImportDialogView")
-@ViewDescriptor("report-import-view.xml")
+@ViewDescriptor("import-report-dialog-view.xml")
 @DialogMode(width = "30em")
 public class ReportImportDialogView extends StandardView {
 
@@ -87,10 +87,9 @@ public class ReportImportDialogView extends StandardView {
             ReportImportResult result = importReport();
 
             if (!result.hasErrors()) {
-                notifications.create(
-                                messageBundle.formatMessage("importResult",
-                                        result.getCreatedReports().size(),
-                                        result.getUpdatedReports().size()))
+                notifications.create(messageBundle.formatMessage("importResult",
+                                result.getCreatedReports().size(),
+                                result.getUpdatedReports().size()))
                         .withType(Notifications.Type.SUCCESS)
                         .withPosition(Notification.Position.TOP_END)
                         .show();

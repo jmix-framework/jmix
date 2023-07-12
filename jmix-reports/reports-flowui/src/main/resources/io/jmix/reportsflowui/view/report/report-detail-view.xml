@@ -96,7 +96,8 @@
                             <actions>
                                 <action id="create" icon="PLUS" actionVariant="PRIMARY"
                                         description="msg://bandsTab.createBand.tooltipText"/>
-                                <action id="remove" type="list_remove" description="msg://bandsTab.removeBand.tooltipText"/>
+                                <action id="remove" type="list_remove"
+                                        description="msg://bandsTab.removeBand.tooltipText"/>
                                 <action id="upBand" type="list_itemTracking" icon="ARROW_UP"
                                         description="msg://bandsTab.upBand.tooltipText"/>
                                 <action id="downBand" type="list_itemTracking" icon="ARROW_DOWN"
@@ -358,7 +359,7 @@
                 <vbox id="templatesTabContent" height="100%" padding="false">
                     <hbox>
                         <button action="templatesDataGrid.create"/>
-                        <button action="templatesDataGrid.edit"/>
+                        <button action="templatesDataGrid.editTemplate"/>
                         <button action="templatesDataGrid.remove"/>
                         <button action="templatesDataGrid.defaultAction"/>
                         <button action="templatesDataGrid.copy"/>
@@ -368,7 +369,11 @@
                         <actions>
                             <action id="create" type="list_create"/>
                             <action id="remove" type="list_remove"/>
-                            <action id="edit" type="list_edit"/>
+                            <action id="editTemplate" type="list_edit">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
                             <action id="defaultAction" type="list_itemTracking" text="msg://report.defaultTemplate"
                                     icon="CHECK"/>
                             <action id="copy" type="list_itemTracking" text="msg://report.template.copy" icon="COPY"/>

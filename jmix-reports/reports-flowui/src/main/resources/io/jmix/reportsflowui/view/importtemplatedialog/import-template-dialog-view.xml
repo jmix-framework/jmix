@@ -19,10 +19,10 @@
       title="msg://reportImportDialogView.title">
 
     <layout>
-        <label text="msg://io.jmix.reportsflowui.view.importdialog/uploadDescription.title"/>
+        <label text="msg://io.jmix.reportsflowui.view.importreportdialog/uploadDescription.title"/>
         <hbox id="uploadBox" width="100%"/>
         <hbox>
-            <button id="commitBtn" text="msg:///actions.Ok" icon="CHECK"/>
+            <button id="commitBtn" text="msg:///actions.Ok" icon="CHECK" themeNames="primary"/>
             <button id="closeBtn" text="msg:///actions.Cancel" icon="CLOSE"/>
         </hbox>
     </layout>

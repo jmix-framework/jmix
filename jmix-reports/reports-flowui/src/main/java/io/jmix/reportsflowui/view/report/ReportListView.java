@@ -43,7 +43,7 @@ import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
-import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
+import io.jmix.reportsflowui.view.importreportdialog.ReportImportDialogView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import org.apache.commons.collections4.CollectionUtils;

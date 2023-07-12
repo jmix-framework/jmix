@@ -3,9 +3,9 @@
       title="msg://reportImportDialogView.title">
 
     <layout>
-        <div text="msg://io.jmix.reportsflowui.view.importdialog/uploadDescription.title"/>
+        <div text="msg://uploadDescription.title"/>
         <hbox id="uploadBox" width="100%"/>
-        <checkbox id="importRoles" label="msg://io.jmix.reportsflowui.view.importdialog/reportImportDialogView.importRoles.title"/>
+        <checkbox id="importRoles" label="msg://reportImportDialogView.importRoles.title"/>
         <hbox>
             <button id="commitBtn" text="msg:///actions.Ok" icon="CHECK" themeNames="primary"/>
             <button id="closeBtn" text="msg:///actions.Cancel" icon="CLOSE"/>

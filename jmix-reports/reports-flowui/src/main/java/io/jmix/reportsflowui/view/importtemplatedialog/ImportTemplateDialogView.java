@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.view.uploaddialog;
+package io.jmix.reportsflowui.view.importtemplatedialog;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
@@ -25,19 +25,16 @@ import io.jmix.core.FileStorage;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.upload.TemporaryStorage;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportImportExport;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.InputStream;
 
-@ViewController("report_FileUploadDialog")
-@ViewDescriptor("report-upload-dialog-view.xml")
-public class FileUploadDialog extends StandardView {
+@ViewController("report_ImportTemplateDialogView")
+@ViewDescriptor("import-template-dialog-view.xml")
+public class ImportTemplateDialogView extends StandardView {
 
     @Autowired
     protected TemporaryStorage temporaryStorage;
@@ -53,9 +50,11 @@ public class FileUploadDialog extends StandardView {
     protected FileStorage fileStorage;
     @Autowired
     protected UiComponents uiComponents;
-    protected Upload upload;
+
     @ViewComponent
     private HorizontalLayout uploadBox;
+
+    protected Upload upload;
 
     public String getFileName() {
         FileBuffer fileBuffer = (FileBuffer) upload.getReceiver();
@@ -91,27 +90,7 @@ public class FileUploadDialog extends StandardView {
         ValidationErrors validationErrors = getValidationErrors();
 
         if (validationErrors.isEmpty()) {
-//            if (!result.hasErrors()) {
-//                notifications.create(
-//                                messageBundle.formatMessage("importResult",
-//                                        result.getCreatedReports().size(),
-//                                        result.getUpdatedReports().size()))
-//                        .withType(Notifications.Type.SUCCESS)
-//                        .withPosition(Notification.Position.TOP_END)
-//                        .show();
-//                close(StandardOutcome.SAVE);
-//            } else {
-//                StringBuilder exceptionTraces = new StringBuilder();
-//                result.getInnerExceptions().forEach(t -> exceptionTraces.append(t.toString()));
-//
-//                //log.error(exceptionTraces.toString());
-//
-//                notifications.create(messageBundle.getMessage("reportException.unableToImportReport"),
-//                                exceptionTraces.toString())
-//                        .withType(Notifications.Type.ERROR)
-//                        .show();
-//                close(StandardOutcome.CLOSE);
-//            }
+            close(StandardOutcome.SAVE);
         }
         viewValidation.showValidationErrors(validationErrors);
     }
@@ -124,10 +103,10 @@ public class FileUploadDialog extends StandardView {
             errors.add(messageBundle.getMessage("reportException.noFile"));
             return errors;
         }
-        String extension = FilenameUtils.getExtension(fileBuffer.getFileName());
-        if (!StringUtils.equalsIgnoreCase(extension, DownloadFormat.ZIP.getFileExt())) {
-            errors.add(messageBundle.formatMessage("reportException.wrongFileType", extension));
-        }
+//        String extension = FilenameUtils.getExtension(fileBuffer.getFileName());
+//        if (!StringUtils.equalsIgnoreCase(extension, DownloadFormat.ZIP.getFileExt())) {
+//            errors.add(messageBundle.formatMessage("reportException.wrongFileType", extension));
+//        }
         return errors;
     }
 }

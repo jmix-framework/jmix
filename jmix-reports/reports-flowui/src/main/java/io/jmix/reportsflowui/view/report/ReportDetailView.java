@@ -74,9 +74,9 @@ import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
+import io.jmix.reportsflowui.view.importtemplatedialog.ImportTemplateDialogView;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
-import io.jmix.reportsflowui.view.uploaddialog.FileUploadDialog;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.security.model.BaseRole;
@@ -396,24 +396,25 @@ public class ReportDetailView extends StandardDetailView<Report> {
         ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
         if (defaultTemplate != null) {
             if (!isTemplateWithoutFile(defaultTemplate)) {
-                dialogWindows.view(this, FileUploadDialog.class)
+                dialogWindows.view(this, ImportTemplateDialogView.class)
                         .withAfterCloseListener(listener -> {
-                            FileUploadDialog dialog = listener.getView();
+                            ImportTemplateDialogView dialog = listener.getView();
 
-                            //if (Window.COMMIT_ACTION_ID.equals(standardCloseAction.getActionId())) {
+                            if (listener.closedWith(StandardOutcome.SAVE)) {
                                 try {
                                     InputStream content = dialog.getFileContent();
                                     if (content != null) {
                                         defaultTemplate.setContent(IOUtils.toByteArray(content));
                                         defaultTemplate.setName(dialog.getFileName());
                                         templatesDc.replaceItem(defaultTemplate);
+                                        defaultTemplateField.setValue(defaultTemplate);
                                     }
                                 } catch (IOException e) {
                                     throw new RuntimeException(String.format(
                                             "An error occurred while uploading file for template [%s]",
                                             defaultTemplate.getCode()));
                                 }
-                            //}
+                            }
                             defaultTemplateField.focus();
                         })
                         .build()
@@ -443,15 +444,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (defaultTemplate != null) {
             DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(defaultTemplateField)
                     .withViewClass(ReportTemplateDetailView.class)
-                    .withContainer(templatesDc)
-                    .editEntity(defaultTemplate)
                     .build();
             templateDetailViewDialog.addAfterCloseListener(this::onReportTemplateDetailViewDialogClose);
             templateDetailViewDialog.open();
         } else {
-            notifications.create(
-                    messageBundle.getMessage(
-                            "detailsTab.notification.defaultTemplateIsEmpty.text")).show();
+            notifications.create(messageBundle.getMessage("detailsTab.notification.defaultTemplateIsEmpty.text"))
+                    .show();
         }
     }
 
@@ -601,15 +599,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Install(to = "dataSetsDataGrid.remove", subject = "enabledRule")
     protected boolean dataSetsDataGridRemoveEnabledRule() {
         return dataSetsDc.getItems().size() > 1;
-    }
-
-    @Subscribe(id = "reportDc", target = Target.DATA_CONTAINER)
-    protected void onReportDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<Report> event) {
-        boolean validationOnChanged = event.getProperty().equalsIgnoreCase("validationOn");
-
-        if (validationOnChanged) {
-            setValidationScriptGroupBoxCaption(event.getItem().getValidationOn());
-        }
     }
 
     @Subscribe(id = "bandsDc", target = Target.DATA_CONTAINER)
@@ -948,19 +937,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return "dataSet" + (band.getDataSets().size() + 1);
     }
 
-    protected void setValidationScriptGroupBoxCaption(Boolean onOffFlag) {
-        // todo implement
-        /*if (BooleanUtils.isTrue(onOffFlag)) {
-            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOn"));
-        } else {
-            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOff"));
-        }*/
-    }
-
     protected void onReportTemplateDetailViewDialogClose(DialogWindow.AfterCloseEvent<ReportTemplateDetailView> event) {
         if (StandardOutcome.SAVE.getCloseAction().equals(event.getCloseAction())) {
             ReportTemplate item = event.getView().getEditedEntity();
             reportDc.getItem().setDefaultTemplate(item);
+            defaultTemplateField.setValue(item);
         }
         defaultTemplateField.focus();
     }
@@ -1594,20 +1575,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (defaultTemplate == null) {
             report.setDefaultTemplate(event.getView().getEditedEntity());
         }
-    }
-
-    @Subscribe("templatesDataGrid.edit")
-    protected void onTemplatesDataGridEdit(ActionPerformedEvent event) {
-        ReportTemplate selectedTemplate = templatesDataGrid.getSingleSelectedItem();
-        if (selectedTemplate == null) {
-            return;
-        }
-        DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(defaultTemplateField)
-                .withViewClass(ReportTemplateDetailView.class)
-                .withContainer(templatesDc)
-                .editEntity(selectedTemplate)
-                .build();
-        templateDetailViewDialog.open();
     }
 
     @Install(to = "templatesDataGrid.copy", subject = "enabledRule")

@@ -26,11 +26,9 @@
     </actions>
     <layout>
         <h3 id="wizardTitleLabel"/>
-        <div width="100%">
-            <hr/>
-            <label id="wizardDescriptionLabel"/>
-            <hr/>
-        </div>
+        <hr/>
+        <span id="wizardDescriptionSpan"/>
+        <hr/>
         <vbox id="detailsVBox" padding="false">
             <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
                 <responsiveSteps>
@@ -52,13 +50,6 @@
                            required="true"
                            requiredMessage="msg://fillReportNameMsg"
                            width="100%"/>
-                <entityComboBox id="groupField"
-                                label="msg://group"
-                                required="true"
-                                requiredMessage="msg://groupHintMsg"
-                                metaClass="report_ReportGroup"
-                                width="100%"
-                                itemsContainer="groupsDc"/>
                 <radioButtonGroup id="reportTypeGenerateField"
                                   themeNames="vertical"
                                   label="msg://reportBuildType"/>

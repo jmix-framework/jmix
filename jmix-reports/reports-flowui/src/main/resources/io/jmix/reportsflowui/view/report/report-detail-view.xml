@@ -72,9 +72,8 @@
                                         description="msg://detailsTab.defaultTemplateField.edit.description"/>
                             </actions>
                         </entityComboBox>
-                        <entityComboBox id="groupField" property="group"
-                                        required="true"
-                                        requiredMessage="msg://detailsTab.groupField.requiredMessage"
+                        <entityComboBox id="groupField"
+                                        property="group"
                                         itemsContainer="groupsDc"/>
                         <textField id="codeField" property="code"/>
                         <textArea id="descriptionField" property="description"/>

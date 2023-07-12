@@ -8,7 +8,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -117,7 +117,7 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected H3 wizardTitleLabel;
     @ViewComponent
-    protected Label wizardDescriptionLabel;
+    protected Span wizardDescriptionSpan;
     @ViewComponent
     protected CollectionPropertyContainer<QueryParameter> queryParametersDc;
     @ViewComponent
@@ -282,7 +282,7 @@ public class ReportWizardCreatorView extends StandardView {
     }
 
     public void updateWizardDescription() {
-        wizardDescriptionLabel.setText(fragmentDescriptionMap.get(getCurrentFragment()));
+        wizardDescriptionSpan.setText(fragmentDescriptionMap.get(getCurrentFragment()));
     }
 
     @Subscribe(id = "reportDataDc", target = Target.DATA_CONTAINER)
@@ -532,18 +532,6 @@ public class ReportWizardCreatorView extends StandardView {
         reportRegionsDc.getMutableItems().clear();
         reportData.setEntityName(value.getName());
 
-        clearQuery();
-    }
-
-    @Subscribe("groupField")
-    public void onGroupFieldComponentValueChange(AbstractField.ComponentValueChangeEvent<EntityComboBox<ReportGroup>, ReportGroup> event) {
-        ReportData reportData = reportDataDc.getItem();
-        ReportGroup group = event.getValue();
-        updateReportGroup(reportData, group);
-    }
-
-    protected void updateReportGroup(ReportData reportData, @Nullable ReportGroup group) {
-        reportData.setGroup(group);
         clearQuery();
     }
 

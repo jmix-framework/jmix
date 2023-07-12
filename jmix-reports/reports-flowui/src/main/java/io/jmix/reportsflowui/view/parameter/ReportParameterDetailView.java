@@ -374,11 +374,11 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
                         && ((HasRequired) component).isRequired()
                         && ((AbstractSinglePropertyField<?, ?>) component).isEmpty());
         if (!isValidated) {
-            event.addErrors(ValidationErrors.of("Fill out required fields"));
+            event.addErrors(ValidationErrors.of(messages.getMessage(getClass(), "validationException.message")));
         }
         try {
             reportParamAliasValidator.accept(alias.getValue());
-        } catch (ValidationException e){
+        } catch (ValidationException e) {
             event.addErrors(ValidationErrors.of(e.getMessage()));
         }
     }

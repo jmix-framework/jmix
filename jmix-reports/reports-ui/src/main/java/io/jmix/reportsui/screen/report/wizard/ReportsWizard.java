@@ -83,6 +83,9 @@ public class ReportsWizard {
     protected Messages messages;
 
     @Autowired
+    protected MessageTools messageTools;
+
+    @Autowired
     protected MetadataTools metadataTools;
 
     @Autowired
@@ -236,11 +239,11 @@ public class ReportsWizard {
 
         reportInputParameter.setEntityMetaClass(metaClassName);
         if (ReportTypeGenerate.LIST_OF_ENTITIES == reportData.getReportTypeGenerate()) {
-            reportInputParameter.setName(DEFAULT_LIST_OF_ENTITIES_NAME);
+            reportInputParameter.setName(messages.getMessage(ParameterType.ENTITY_LIST));
             reportInputParameter.setType(ParameterType.ENTITY_LIST);
             reportInputParameter.setAlias(DEFAULT_LIST_OF_ENTITIES_ALIAS);
         } else {
-            reportInputParameter.setName(DEFAULT_SINGLE_ENTITY_NAME);
+            reportInputParameter.setName(messages.getMessage(ParameterType.ENTITY));
             reportInputParameter.setType(ParameterType.ENTITY);
             reportInputParameter.setAlias(DEFAULT_SINGLE_ENTITY_ALIAS);
         }

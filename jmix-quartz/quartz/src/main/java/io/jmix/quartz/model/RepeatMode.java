@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.quartzui.screen.trigger;
+package io.jmix.quartz.model;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 

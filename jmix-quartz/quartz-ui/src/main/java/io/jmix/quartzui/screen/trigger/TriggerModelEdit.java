@@ -1,6 +1,7 @@
 package io.jmix.quartzui.screen.trigger;
 
 import com.google.common.base.Strings;
+import io.jmix.quartz.model.RepeatMode;
 import io.jmix.quartz.model.ScheduleType;
 import io.jmix.quartz.model.TriggerModel;
 import io.jmix.quartz.service.QuartzService;

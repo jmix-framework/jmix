@@ -53,7 +53,6 @@ import java.util.Collection;
 public class AuthServerAutoConfiguration {
 
     @Configuration
-    @EnableWebMvc
     @Order(AuthorizationServerLoginPageConfiguration.ORDER)
     public static class AuthorizationServerLoginPageConfiguration implements WebMvcConfigurer {
 
@@ -61,7 +60,7 @@ public class AuthServerAutoConfiguration {
 
         @Override
         public void addViewControllers(ViewControllerRegistry registry) {
-            registry.addViewController("/as-login/**").setViewName("as-login.html");
+            registry.addViewController("/as-login").setViewName("as-login.html");
         }
     }
 

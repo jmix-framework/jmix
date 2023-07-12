@@ -18,18 +18,20 @@ package io.jmix.flowui.kit.component;
 
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.provider.HasListDataView;
 import com.vaadin.flow.dom.Element;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
-
 import jakarta.annotation.Nullable;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -59,6 +61,13 @@ public final class ComponentUtils {
         return icon != null ? icon.create() : null;
     }
 
+    /**
+     * @param element    the parent component element to add the components to
+     * @param slot       the name of the slot inside the parent
+     * @param components components to add to the specified slot.
+     * @deprecated {@link com.vaadin.flow.component.shared.SlotUtils#addToSlot(HasElement, String, Component...)} instead
+     */
+    @Deprecated
     public static void addComponentsToSlot(Element element, String slot, Component... components) {
         for (Component component : components) {
             component.getElement().setAttribute("slot", slot);
@@ -66,6 +75,12 @@ public final class ComponentUtils {
         }
     }
 
+    /**
+     * @param element the component element to get children from
+     * @param slot    the name of the slot inside the parent
+     * @deprecated use {@link com.vaadin.flow.component.shared.SlotUtils#clearSlot(HasElement, String)} instead
+     */
+    @Deprecated
     public static void clearSlot(Element element, String slot) {
         element.getChildren()
                 .filter(child -> slot.equals(child.getAttribute("slot")))
@@ -86,6 +101,11 @@ public final class ComponentUtils {
     }
 
     public static <T> void setItemsMap(CheckboxGroup<T> component, Map<T, String> items) {
+        setItemsMapInternal(component, items);
+        component.setItemLabelGenerator(createItemLabelGenerator(items));
+    }
+
+    public static <T> void setItemsMap(RadioButtonGroup<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
     }

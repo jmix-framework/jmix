@@ -16,8 +16,8 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.accordion.AccordionPanel
-import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.orderedlayout.BoxSizing
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
@@ -226,8 +226,8 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
             (tabs[0] as Tab).getId().orElse(null) == "tab1"
             (tabs[0] as Tab).getLabel() == "tab1Label"
-            (childHbox.getComponentAt(0) as Label).text == "tab1Child1"
-            (childHbox.getComponentAt(1) as Label).text == "tab1Child2"
+            (childHbox.getComponentAt(0) as HasText).text == "tab1Child1"
+            (childHbox.getComponentAt(1) as HasText).text == "tab1Child2"
 
             (tabs[0] as Tab).tooltip.text == "tooltipText"
             (tabs[0] as Tab).tooltip.focusDelay == 1

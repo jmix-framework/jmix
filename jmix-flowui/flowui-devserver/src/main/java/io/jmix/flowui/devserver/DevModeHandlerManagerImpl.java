@@ -16,13 +16,12 @@
 
 package io.jmix.flowui.devserver;
 
-import com.vaadin.flow.internal.BrowserLiveReload;
-import com.vaadin.flow.internal.BrowserLiveReloadAccessor;
 import com.vaadin.flow.internal.DevModeHandler;
 import com.vaadin.flow.internal.DevModeHandlerManager;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.Mode;
 import com.vaadin.flow.server.VaadinContext;
+import com.vaadin.flow.server.frontend.ThemeUtils;
 import com.vaadin.flow.server.startup.ApplicationConfiguration;
 import com.vaadin.flow.server.startup.VaadinInitializerException;
 import io.jmix.flowui.devserver.frontend.FrontendUtils;
@@ -33,17 +32,29 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.PARAM_STUDIO_DIR;
+import static io.jmix.flowui.devserver.frontend.FrontendUtils.PARAM_THEME_VALUE;
 
-@SuppressWarnings("unused")
+/**
+ * Provides API to access to the {@link DevModeHandler} instance.
+ * <p>
+ * For internal use only. May be renamed or removed in a future release.
+ *
+ * @author Vaadin Ltd
+ * @since
+ */
 public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
 
     /*
@@ -55,13 +66,14 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
      *
      * Addresses the issue https://github.com/vaadin/spring/issues/502
      */
-    private static final class DevModeHandlerAlreadyStartedAttribute implements Serializable {
-
+    private static final class DevModeHandlerAlreadyStartedAttribute
+            implements Serializable {
     }
 
     private static final Logger log = LoggerFactory.getLogger(DevModeHandlerManagerImpl.class);
     private DevModeHandler devModeHandler;
-    private FileWatcher projectThemeFilesWatcher;
+    private ThemeFilesSynchronizer projectThemeFilesWatcher;
+    final private Set<Closeable> watchers = new HashSet<>();
 
     @Override
     public Class<?>[] getHandlesTypes() {
@@ -85,19 +97,61 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
     }
 
     @Override
-    public void launchBrowserInDevelopmentMode(String url) {
-        // browserLauncher.launchBrowserInDevelopmentMode(url);
-    }
-
-    @Override
     public void initDevModeHandler(Set<Class<?>> classes, VaadinContext context)
             throws VaadinInitializerException {
         setDevModeHandler(
                 DevModeInitializer.initDevModeHandler(classes, context));
-        // startWatchingThemeFolder(context);
-        startWatchingAndSyncThemesFolder(context);
-        setDevModeStarted(context);
+        CompletableFuture.runAsync(() -> {
+            DevModeHandler devModeHandler = getDevModeHandler();
+            if (devModeHandler instanceof AbstractDevServerRunner) {
+                ((AbstractDevServerRunner) devModeHandler).waitForDevServer();
+            }
 
+            ApplicationConfiguration config = ApplicationConfiguration
+                    .get(context);
+
+            startWatchingAndSyncThemesFolder(context);
+            watchExternalDependencies(context, config);
+        });
+        setDevModeStarted(context);
+        // this.browserLauncher = new BrowserLauncher(context);
+    }
+
+    private void watchExternalDependencies(VaadinContext context,
+                                           ApplicationConfiguration config) {
+        File frontendFolder = FrontendUtils.getProjectFrontendDir(config);
+        File jarFrontendResourcesFolder = FrontendUtils
+                .getJarResourcesFolder(frontendFolder);
+        watchers.add(new ExternalDependencyWatcher(context,
+                jarFrontendResourcesFolder));
+
+    }
+
+    private void startWatchingThemeFolder(VaadinContext context,
+                                          ApplicationConfiguration config) {
+
+        if (config.getMode() != Mode.DEVELOPMENT_BUNDLE) {
+            // Theme files are watched by Vite or app runs in prod mode
+            return;
+        }
+
+        try {
+            Optional<String> maybeThemeName = ThemeUtils.getThemeName(context);
+
+            if (maybeThemeName.isEmpty()) {
+                log.debug("Found no custom theme in the project. "
+                        + "Skipping watching the theme files");
+                return;
+            }
+            List<String> activeThemes = ThemeUtils.getActiveThemes(context);
+            for (String themeName : activeThemes) {
+                File themeFolder = ThemeUtils.getThemeFolder(
+                        FrontendUtils.getProjectFrontendDir(config), themeName);
+                watchers.add(new ThemeLiveUpdater(themeFolder, context));
+            }
+        } catch (Exception e) {
+            log.error("Failed to start live-reload for theme files", e);
+        }
     }
 
     @Override
@@ -106,73 +160,28 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
             devModeHandler.stop();
             devModeHandler = null;
         }
-        if (projectThemeFilesWatcher != null) {
+
+        try {
+            projectThemeFilesWatcher.stop();
+        } catch (Exception e) {
+            log.warn("Exception when stopping projectThemeFilesWatcher", e);
+        }
+
+        for (Closeable watcher : watchers) {
             try {
-                projectThemeFilesWatcher.stop();
-            } catch (Exception e) {
+                watcher.close();
+            } catch (IOException e) {
                 String message = "Failed to stop theme files watcher";
                 FrontendUtils.console(FrontendUtils.RED, message + Arrays.toString(e.getStackTrace()));
                 log.error(message, e);
             }
         }
+        watchers.clear();
     }
 
-    private void startWatchingThemeFolder(VaadinContext context) {
-        ApplicationConfiguration config = ApplicationConfiguration.get(context);
-
-        if (config.getMode() != Mode.DEVELOPMENT_BUNDLE) {
-            // Theme files are watched by Vite or app runs in prod mode
-            return;
-        }
-
-        try {
-            File projectFolder = config.getProjectFolder();
-            Optional<String> themeName = FrontendUtils
-                    .getThemeName(projectFolder);
-
-            if (themeName.isEmpty()) {
-                log.debug("Found no custom theme in the project. "
-                        + "Skipping watching the theme files");
-                return;
-            }
-
-            // TODO: frontend folder to be taken from config
-            // see https://github.com/vaadin/flow/pull/15552
-            File watchDirectory = new File(projectFolder,
-                    Path.of(FrontendUtils.FRONTEND,
-                                    Constants.APPLICATION_THEME_ROOT, themeName.get())
-                            .toString());
-
-            Optional<BrowserLiveReload> liveReload = BrowserLiveReloadAccessor
-                    .getLiveReloadFromContext(context);
-            if (liveReload.isPresent()) {
-                projectThemeFilesWatcher = new FileWatcher(
-                        file -> liveReload.get().reload(), watchDirectory);
-                projectThemeFilesWatcher.start();
-            } else {
-                String message = "Browser live reload is not available. Failed to start live-reload for theme files";
-                FrontendUtils.logInFile(message);
-                log.error(message);
-            }
-        } catch (Exception e) {
-            String message = "Failed to start live-reload for theme files";
-            FrontendUtils.logInFile(message + "\n" + Arrays.toString(e.getStackTrace()));
-            log.error(message, e);
-        }
-    }
-
-    private void synchronizeThemesFolders(File projectThemesFolder, File stuidThemesFolder) {
-        try {
-            FrontendUtils.logInFile("Synchronizing themes folder...");
-            FileUtils.copyDirectory(projectThemesFolder, stuidThemesFolder);
-        } catch (IOException e) {
-            FrontendUtils.logInFile(
-                    "Error when trying to synchronize themes folders..." +
-                            "\nProject themes dir:" + projectThemesFolder +
-                            "\nStudio themes dir:" + stuidThemesFolder +
-                            "\nTheme changes cannot by applied by live reload..."
-            );
-        }
+    @Override
+    public void launchBrowserInDevelopmentMode(String url) {
+        // browserLauncher.launchBrowserInDevelopmentMode(url);
     }
 
     private void setDevModeStarted(VaadinContext context) {
@@ -199,12 +208,18 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
     private void startWatchingAndSyncThemesFolder(VaadinContext context) {
         try {
             ApplicationConfiguration config = ApplicationConfiguration.get(context);
-            File projectFolder = config.getProjectFolder();
+            File projectFolder = FrontendUtils.getProjectBaseDir(config);
             File studioFolder = new File(System.getProperty(PARAM_STUDIO_DIR));
-            Optional<String> themeName = FrontendUtils.getThemeName(studioFolder);
+            Optional<String> themeName = Optional.ofNullable(System.getProperty(PARAM_THEME_VALUE));
 
-            // TODO: frontend folder to be taken from config
-            // see https://github.com/vaadin/flow/pull/15552
+            if (themeName.isEmpty()) {
+                String msg = "Found no custom theme in the project. "
+                        + "Skipping watching the theme files";
+                FrontendUtils.logInFile(msg);
+                log.debug(msg);
+                return;
+            }
+
             File projectThemesFolder = new File(projectFolder,
                     Path.of(FrontendUtils.FRONTEND,
                                     Constants.APPLICATION_THEME_ROOT, themeName.orElse(""))
@@ -215,7 +230,7 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
                                     Constants.APPLICATION_THEME_ROOT, themeName.orElse(""))
                             .toString());
 
-            projectThemeFilesWatcher = new FileWatcher(
+            projectThemeFilesWatcher = new ThemeFilesSynchronizer(
                     projectThemeFile -> synchronizeThemesFolders(projectThemesFolder, studioThemesFolder),
                     projectThemesFolder
             );
@@ -225,6 +240,20 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
             String message = "Failed to start synchronizing themes files";
             FrontendUtils.logInFile(message + "\n" + Arrays.toString(e.getStackTrace()));
             log.error(message, e);
+        }
+    }
+
+    private void synchronizeThemesFolders(File projectThemesFolder, File studioThemesFolder) {
+        try {
+            FrontendUtils.logInFile("Synchronizing themes folder...");
+            FileUtils.copyDirectory(projectThemesFolder, studioThemesFolder);
+        } catch (IOException e) {
+            FrontendUtils.logInFile(
+                    "Error when trying to synchronize themes folders..." +
+                            "\nProject themes dir:" + projectThemesFolder +
+                            "\nStudio themes dir:" + studioThemesFolder +
+                            "\nTheme changes cannot by applied by live reload..."
+            );
         }
     }
 }

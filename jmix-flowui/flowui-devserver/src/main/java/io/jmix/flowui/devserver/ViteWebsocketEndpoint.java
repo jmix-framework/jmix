@@ -15,8 +15,18 @@
  */
 package io.jmix.flowui.devserver;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.flow.server.VaadinContext;
 import com.vaadin.flow.server.VaadinServletContext;
+
 import jakarta.servlet.ServletContext;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.DeploymentException;
@@ -25,14 +35,6 @@ import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerContainer;
 import jakarta.websocket.server.ServerEndpointConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The websocket endpoint for Vite.
@@ -47,8 +49,10 @@ public class ViteWebsocketEndpoint extends Endpoint {
     /**
      * Creates the websocket endpoint that Vite connects to.
      *
-     * @param context     the web context
-     * @param viteHandler the Vite handler instance to connect to
+     * @param context
+     *            the web context
+     * @param viteHandler
+     *            the Vite handler instance to connect to
      */
     public static void init(VaadinContext context, ViteHandler viteHandler) {
         ServletContext servletContext = ((VaadinServletContext) context)
@@ -73,6 +77,7 @@ public class ViteWebsocketEndpoint extends Endpoint {
             getLogger().error("Error deploying Vite websocket proxy endpoint",
                     e);
         }
+
     }
 
     @Override

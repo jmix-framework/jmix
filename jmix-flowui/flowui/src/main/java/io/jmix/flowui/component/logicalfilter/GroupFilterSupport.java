@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.component.logicalfilter;
 
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Div;
 import io.jmix.core.annotation.Internal;
 import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 public class GroupFilterSupport {
 
     @Nullable
-    public Label getGroupFilterSummaryComponent(GroupFilter groupFilter) {
+    public Div getGroupFilterSummaryComponent(GroupFilter groupFilter) {
         return groupFilter.getSummaryComponent();
     }
 }

@@ -17,10 +17,19 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import org.dom4j.Element;
+
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.function.Consumer;
 
 public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>> {
+
+    protected static final String DATE_PATTERN = "yyyy-MM-dd";
 
     protected DataLoaderSupport dataLoaderSupport;
 
@@ -40,19 +49,44 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
+        loadDate(element, "max", resultComponent::setMax);
+        loadDate(element, "min", resultComponent::setMin);
 
+        componentLoader().loadDateFormat(element, resultComponent::setI18n);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadOverlayClass(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
+        componentLoader().loadAriaLabel(resultComponent, element);
+    }
+
+    protected void loadDate(Element element, String attributeName, Consumer<LocalDate> setter) {
+        loadString(element, attributeName)
+                .ifPresent(dateString -> {
+                    try {
+                        LocalDate localDate = parseDate(dateString);
+                        setter.accept(localDate);
+                    } catch (ParseException e) {
+                        String errorMessage = String.format("Unparseable date for %s with '%s' id",
+                                resultComponent.getClass().getSimpleName(),
+                                resultComponent.getId().orElse("null"));
+                        throw new GuiDevelopmentException(errorMessage, context);
+                    }
+                });
+    }
+
+    protected LocalDate parseDate(String date) throws ParseException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
+        return LocalDate.parse(date, formatter);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

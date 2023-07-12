@@ -30,6 +30,7 @@ public abstract class AbstractTabLoader extends AbstractContainerLoader<Tab>{
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadAriaLabel(resultComponent, element);
 
         loadSubComponents();
     }

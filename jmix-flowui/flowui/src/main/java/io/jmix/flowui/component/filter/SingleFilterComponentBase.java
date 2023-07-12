@@ -19,10 +19,11 @@ package io.jmix.flowui.component.filter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.customfield.CustomField;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
@@ -40,6 +41,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.lang.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -47,7 +49,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         implements SingleFilterComponent<V>, SupportsLabelPosition, SupportsValidation<V>, HasRequired, HasTooltip,
-        ApplicationContextAware, InitializingBean {
+        HasAriaLabel, ApplicationContextAware, InitializingBean {
 
     protected static final String FILTER_LABEL_CLASS_NAME = "filter-label";
 
@@ -65,7 +67,7 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     protected HorizontalLayout root;
 
-    protected Label label;
+    protected NativeLabel label;
     protected String labelText;
     protected String labelWidth;
     protected boolean labelVisible = true;
@@ -117,7 +119,6 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         root.getThemeList().add("spacing-s");
     }
 
-    // TODO: gg, rename?
     public HorizontalLayout getRoot() {
         return root;
     }
@@ -286,15 +287,14 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         setLabelInternal(labelText);
     }
 
-    protected Label createLabel() {
-        Label label = uiComponents.create(Label.class);
+    protected NativeLabel createLabel() {
+        NativeLabel label = uiComponents.create(NativeLabel.class);
         label.setId(getInnerComponentPrefix() + "label");
         label.setWidth(labelWidth);
         label.setClassName(FILTER_LABEL_CLASS_NAME);
         return label;
     }
 
-    // TODO: gg, try to make it protected
     public abstract String getInnerComponentPrefix();
 
     @Override
@@ -331,7 +331,6 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         super.setWidth(width);
 
         if (valueComponent != null) {
-            // TODO: replace with helper method
             if (Strings.isNullOrEmpty(width)) {
                 // Same as remove expand
                 root.setFlexGrow(0.0, valueComponent);
@@ -376,7 +375,8 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
             ((SupportsStatusChangeHandler<?>) valueComponent).setStatusChangeHandler(this::onFieldStatusChanged);
         }
 
-        // TODO: replace with helper method
+        valueComponent.getElement().addPropertyChangeListener("invalid", this::onFieldInvalidChanged);
+
         String width = getWidth();
         if (!Strings.isNullOrEmpty(width)
                 && Unit.getSize(width) > 0) {
@@ -390,6 +390,12 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     protected void onFieldStatusChanged(SupportsStatusChangeHandler.StatusContext<?> statusContext) {
         setErrorMessage(statusContext.getDescription());
+    }
+
+    protected void onFieldInvalidChanged(PropertyChangeEvent event) {
+        if (event.getValue() instanceof Boolean) {
+            super.setInvalid(((Boolean) event.getValue()));
+        }
     }
 
     @Override
@@ -462,6 +468,34 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
         if (valueComponent instanceof Focusable) {
             ((Focusable<?>) valueComponent).setTabIndex(tabIndex);
+        }
+    }
+
+    @Override
+    public Optional<String> getAriaLabel() {
+        return Optional.ofNullable(getElement().getProperty("accessibleName"));
+    }
+
+    @Override
+    public void setAriaLabel(String ariaLabel) {
+        getElement().setProperty("accessibleName", ariaLabel);
+
+        if (valueComponent instanceof HasAriaLabel) {
+            ((HasAriaLabel) valueComponent).setAriaLabel(ariaLabel);
+        }
+    }
+
+    @Override
+    public Optional<String> getAriaLabelledBy() {
+        return Optional.ofNullable(getElement().getProperty("accessibleNameRef"));
+    }
+
+    @Override
+    public void setAriaLabelledBy(String labelledBy) {
+        getElement().setProperty("accessibleNameRef", labelledBy);
+
+        if (valueComponent instanceof HasAriaLabel) {
+            ((HasAriaLabel) valueComponent).setAriaLabelledBy(labelledBy);
         }
     }
 

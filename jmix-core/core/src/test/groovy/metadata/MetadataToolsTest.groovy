@@ -125,4 +125,9 @@ class MetadataToolsTest extends Specification {
         properties[0] == 'name'
         properties[1] == 'nick'
     }
+
+    def "hasUuid with MappedSuperclass inheritance"() {
+        expect:
+        metadataTools.hasUuid(metadata.getClass(Pet))
+    }
 }

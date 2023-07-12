@@ -72,7 +72,7 @@
                     </vbox>
                     <div id="transformationEditorBox">
                         <div classNames="flex, justify-between">
-                            <label text="msg://parameters.groovyScript.title" setFor="transformationScript"/>
+                            <nativeLabel text="msg://parameters.groovyScript.title" setFor="transformationScript"/>
                             <button id="fullScreenTransformationBtn" text="msg:///fullScreenBtn.title"
                                     themeNames="tertiary-inline"/>
                         </div>
@@ -96,7 +96,7 @@
                               label="msg://parameters.validateFields"
                               property="validationOn"/>
                     <div classNames="flex, justify-between">
-                        <label text="msg://parameters.groovyScript.title" setFor="validationScript"/>
+                        <nativeLabel text="msg://parameters.groovyScript.title" setFor="validationScript"/>
                         <button id="fullScreenValidationBtn" text="msg:///fullScreenBtn.title"
                                 themeNames="tertiary-inline"/>
                     </div>
@@ -116,7 +116,7 @@
             <tab id="lookupSettingsTab" label="msg://parameters.dropdownSettingsTab">
                 <div id="lookupSettingsBox" width="100%">
                     <div classNames="flex, justify-between">
-                        <label text="msg://lookupJoin" setFor="lookupJoinCodeEditor"/>
+                        <nativeLabel text="msg://lookupJoin" setFor="lookupJoinCodeEditor"/>
                         <button id="lookupJoinFullScreenBtn" text="msg:///fullScreenBtn.title"
                                 themeNames="tertiary-inline"/>
                     </div>
@@ -131,7 +131,7 @@
                                 icon="QUESTION_CIRCLE"/>
                     </div>
                     <div classNames="flex, justify-between">
-                        <label text="msg://lookupWhere" setFor="lookupWhereCodeEditor"/>
+                        <nativeLabel text="msg://lookupWhere" setFor="lookupWhereCodeEditor"/>
                         <button id="lookupWhereFullScreenBtn" text="msg:///fullScreenBtn.title"
                                 themeNames="tertiary-inline"/>
                     </div>

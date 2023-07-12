@@ -149,8 +149,6 @@ public class Notifications {
 
         protected static final String COMPONENT_CONTENT_CLASS_NAME = "component-content";
 
-        protected static final String WARNING_THEME_NAME = "warning";
-
         protected Notification notification;
 
         protected String text;
@@ -446,7 +444,7 @@ public class Notifications {
                 case SYSTEM:
                     return NotificationVariant.LUMO_CONTRAST.getVariantName();
                 case WARNING:
-                    return WARNING_THEME_NAME;
+                    return NotificationVariant.LUMO_WARNING.getVariantName();
                 default:
                     throw new IllegalStateException("Unsupported type " + type);
             }

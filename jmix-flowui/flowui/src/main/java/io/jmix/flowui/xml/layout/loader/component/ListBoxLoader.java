@@ -39,6 +39,7 @@ public class ListBoxLoader extends AbstractComponentLoader<JmixListBox<?>> {
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
+        componentLoader().loadAriaLabel(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

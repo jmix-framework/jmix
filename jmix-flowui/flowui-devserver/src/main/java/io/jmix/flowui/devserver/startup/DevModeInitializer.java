@@ -26,7 +26,6 @@ import com.vaadin.flow.server.InitParameters;
 import com.vaadin.flow.server.VaadinContext;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletContext;
-import com.vaadin.flow.server.frontend.FallbackChunk;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder.DefaultClassFinder;
 import com.vaadin.flow.server.startup.ApplicationConfiguration;
@@ -55,7 +54,6 @@ import java.io.UncheckedIOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -79,15 +77,12 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static com.vaadin.flow.server.Constants.PACKAGE_JSON;
 import static com.vaadin.flow.server.Constants.PROJECT_FRONTEND_GENERATED_DIR_TOKEN;
 import static com.vaadin.flow.server.Constants.VAADIN_SERVLET_RESOURCES;
 import static com.vaadin.flow.server.Constants.VAADIN_WEBAPP_RESOURCES;
 import static com.vaadin.flow.server.InitParameters.SERVLET_PARAMETER_DEVMODE_OPTIMIZE_BUNDLE;
-import static io.jmix.flowui.devserver.frontend.FrontendUtils.DEFAULT_FRONTEND_DIR;
-import static io.jmix.flowui.devserver.frontend.FrontendUtils.DEFAULT_GENERATED_DIR;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.DEFAULT_PROJECT_FRONTEND_GENERATED_DIR;
-import static io.jmix.flowui.devserver.frontend.FrontendUtils.PARAM_FRONTEND_DIR;
-import static io.jmix.flowui.devserver.frontend.FrontendUtils.PARAM_GENERATED_DIR;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.PARAM_STUDIO_DIR;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.PARAM_THEME_CLASS;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.PARAM_THEME_VALUE;
@@ -172,11 +167,15 @@ public class DevModeInitializer implements Serializable {
      * Initialize the devmode server if not in production mode or compatibility
      * mode.
      *
-     * @param classes classes to check for npm- and js modules
-     * @param context VaadinContext we are running in
+     * @param classes
+     *            classes to check for npm- and js modules
+     * @param context
+     *            VaadinContext we are running in
      * @return the initialized dev mode handler or {@code null} if none was
-     * created
-     * @throws VaadinInitializerException if dev mode can't be initialized
+     *         created
+     *
+     * @throws VaadinInitializerException
+     *             if dev mode can't be initialized
      */
     public static DevModeHandler initDevModeHandler(Set<Class<?>> classes,
                                                     VaadinContext context) throws VaadinInitializerException {
@@ -187,11 +186,15 @@ public class DevModeInitializer implements Serializable {
             log.debug("Skipping DEV MODE because PRODUCTION MODE is set.");
             return null;
         }
+
         // This needs to be set as there is no "current service" available in
         // this call
-        FeatureFlags.get(context).setPropertiesLocation(config.getJavaResourceFolder());
+        FeatureFlags featureFlags = FeatureFlags.get(context);
+        // LicenseChecker.setStrictOffline(true);
 
-        String baseDir = config.getProjectFolder().getAbsolutePath();
+        featureFlags.setPropertiesLocation(config.getJavaResourceFolder());
+
+        String baseDir = FrontendUtils.getProjectBaseDir(config).getAbsolutePath();
 
 //        // Initialize the usage statistics if enabled
 //        if (config.isUsageStatisticsEnabled()) {
@@ -200,49 +203,41 @@ public class DevModeInitializer implements Serializable {
 //                    new StatisticsSender(storage));
 //        }
 
-        String generatedDir = System.getProperty(PARAM_GENERATED_DIR,
-                Paths.get(config.getBuildFolder(), DEFAULT_GENERATED_DIR).toString());
-        String frontendFolder = config.getStringProperty(PARAM_FRONTEND_DIR,
-                System.getProperty(PARAM_FRONTEND_DIR, DEFAULT_FRONTEND_DIR));
+        String frontendFolder = config.getStringProperty(FrontendUtils.PARAM_FRONTEND_DIR,
+                System.getProperty(FrontendUtils.PARAM_FRONTEND_DIR, FrontendUtils.DEFAULT_FRONTEND_DIR));
 
-        ServletContext servletContext = ((VaadinServletContext) context).getContext();
-        ClassLoader contextClassLoader = servletContext.getClassLoader();
+//        Lookup lookupFromContext = context.getAttribute(Lookup.class);
+//        Lookup lookupForClassFinder = Lookup.of(new DevModeClassFinder(classes),
+//                ClassFinder.class);
         Lookup lookup = configureAndGetLookup(config, context, classes);
 
         Options options = new Options(lookup, new File(baseDir))
-                .withGeneratedFolder(new File(generatedDir))
                 .withFrontendDirectory(new File(frontendFolder))
                 .withBuildDirectory(config.getBuildFolder());
 
         log.info("Starting dev-mode updaters in {} folder.", studioFolder);
         FrontendUtils.logInFile("Starting dev-mode updaters in folder (" + studioFolder + ")", true);
 
-        if (!options.getGeneratedFolder().exists()) {
-            try {
-                FileUtils.forceMkdir(options.getGeneratedFolder());
-            } catch (IOException e) {
-                throw new UncheckedIOException(
-                        String.format("Failed to create directory '%s'",
-                                options.getGeneratedFolder()),
-                        e);
-            }
-        }
-
         // Regenerate Vite configuration, as it may be necessary to
         // update it
         // TODO: make sure target directories are aligned with build
         // config,
         // see https://github.com/vaadin/flow/issues/9082
-
-        File target = new File(baseDir, config.getBuildFolder());
+        File target = new File(studioFolder, config.getBuildFolder());
         options.withWebpack(
                 Paths.get(target.getPath(), "classes", VAADIN_WEBAPP_RESOURCES)
                         .toFile(),
                 Paths.get(target.getPath(), "classes", VAADIN_SERVLET_RESOURCES)
                         .toFile());
 
-        options.createMissingPackageJson(true);
+        // If we are missing either the base or generated package json
+        // files generate those
+        if (!new File(options.getStudioFolder(), PACKAGE_JSON).exists()) {
+            options.createMissingPackageJson(true);
+        }
 
+        ServletContext servletContext = ((VaadinServletContext) context).getContext();
+        ClassLoader contextClassLoader = servletContext.getClassLoader();
         Set<File> frontendLocations = getFrontendLocationsFromClassloader(contextClassLoader);
 
         boolean useByteCodeScanner = config.getBooleanProperty(
@@ -263,11 +258,11 @@ public class DevModeInitializer implements Serializable {
                         InitParameters.ADDITIONAL_POSTINSTALL_PACKAGES, "")
                 .split(",");
 
-        String frontendGeneratedFolderName = config.getStringProperty(
-                PROJECT_FRONTEND_GENERATED_DIR_TOKEN,
-                Paths.get(baseDir, DEFAULT_PROJECT_FRONTEND_GENERATED_DIR)
-                        .toString());
-
+        String frontendGeneratedFolderName = config
+                .getStringProperty(PROJECT_FRONTEND_GENERATED_DIR_TOKEN,
+                        Paths.get(studioFolder.getAbsolutePath(),
+                                DEFAULT_PROJECT_FRONTEND_GENERATED_DIR)
+                                .toString());
         File frontendGeneratedFolder = new File(frontendGeneratedFolderName);
         File jarFrontendResourcesFolder = new File(frontendGeneratedFolder,
                 FrontendUtils.JAR_RESOURCES_FOLDER);
@@ -286,12 +281,12 @@ public class DevModeInitializer implements Serializable {
                 .withEnablePnpm(enablePnpm)
                 .useGlobalPnpm(useGlobalPnpm)
                 .withHomeNodeExecRequired(useHomeNodeExec)
-                .withProductionMode(config.isProductionMode())
+                .withProductionMode(false)
                 // TODO: add link to download Node from Jmix sources
                 //.withNodeDownloadRoot(URI.create("https://www."))
                 .withPostinstallPackages(
                         Arrays.asList(additionalPostinstallPackages))
-                .withDevBundleBuild(true)
+                .withBundleBuild(false)
                 .withThemeValue(System.getProperty(PARAM_THEME_VALUE))
                 .withThemeVariant(System.getProperty(PARAM_THEME_VARIANT))
                 .withThemeClass(System.getProperty(PARAM_THEME_CLASS))
@@ -413,11 +408,6 @@ public class DevModeInitializer implements Serializable {
                                      JsonObject tokenFileData, NodeTasks tasks) {
         try {
             tasks.execute();
-
-            FallbackChunk chunk = FrontendUtils.readFallbackChunk(tokenFileData);
-            if (chunk != null) {
-                vaadinContext.setAttribute(chunk);
-            }
         } catch (ExecutionFailedException exception) {
             String errorMessage = "Could not initialize dev mode handler. One of the node tasks failed. ";
             FrontendUtils.logInFile(errorMessage + exception.getMessage());

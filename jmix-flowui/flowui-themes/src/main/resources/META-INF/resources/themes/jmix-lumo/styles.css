@@ -36,11 +36,11 @@
 @import url('component/vaadin-split-layout.css');
 
 html {
-  --jmix-lumo-warning-background-color: hsla(43, 100%, 74%, 1);
-  --jmix-lumo-warning-background-color-50pct: hsla(43, 100%, 74%, 0.5);
-  --jmix-lumo-warning-background-color-10pct: hsla(43, 100%, 74%, 0.1);
-  --jmix-lumo-warning-primary-text-color: hsl(48, 98%, 59%);
-  --jmix-lumo-warning-color: #3f3f3f;
+  --jmix-lumo-warning-background-color: var(--lumo-warning-color);
+  --jmix-lumo-warning-background-color-50pct: hsla(48, 100%, 50%, 0.5);
+  --jmix-lumo-warning-background-color-10pct: var(--lumo-warning-color-10pct);
+  --jmix-lumo-warning-primary-text-color: var(--lumo-warning-text-color);
+  --jmix-lumo-warning-color: var(--lumo-warning-contrast-color);
 
   --jmix-simple-pagination-gap: 0.3em;
 }

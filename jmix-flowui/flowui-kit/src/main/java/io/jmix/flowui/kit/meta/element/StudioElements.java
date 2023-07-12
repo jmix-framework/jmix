@@ -129,7 +129,9 @@ public interface StudioElements {
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING)
+                    @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "username", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "password", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
     LoginI18n.ErrorMessage loginErrorMessage();
@@ -172,6 +174,8 @@ public interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/tab.svg",
             visible = true,
             properties = {
+                    @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),

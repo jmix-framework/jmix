@@ -32,6 +32,7 @@ import io.jmix.flowui.kit.component.formatter.Formatter;
 import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.vaadin.flow.data.value.ValueChangeMode.eventForMode;
@@ -42,7 +43,7 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
         extends AbstractField<C, V>
         implements SupportsFormatter<V>, SupportsUserAction<V>, HasValidationProperties,
         HasLabel, HasHelper, HasStyle, HasTheme, HasSize, HasPlaceholder,
-        HasTitle, HasAutofocus, HasActions, Focusable<C>, HasTooltip {
+        HasTitle, HasAutofocus, HasActions, Focusable<C>, HasTooltip, HasAriaLabel {
 
     protected static final String PROPERTY_VALUE = "value";
     protected static final String PROPERTY_ALLOW_CUSTOM_VALUE = "allowCustomValue";
@@ -166,6 +167,26 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
 
     protected void setAllowCustomValue(boolean allowCustomValue) {
         this.getElement().setProperty(PROPERTY_ALLOW_CUSTOM_VALUE, allowCustomValue);
+    }
+
+    @Override
+    public Optional<String> getAriaLabel() {
+        return Optional.ofNullable(getElement().getProperty("accessibleName"));
+    }
+
+    @Override
+    public void setAriaLabel(String ariaLabel) {
+        getElement().setProperty("accessibleName", ariaLabel);
+    }
+
+    @Override
+    public Optional<String> getAriaLabelledBy() {
+        return Optional.ofNullable(getElement().getProperty("accessibleNameRef"));
+    }
+
+    @Override
+    public void setAriaLabelledBy(String labelledBy) {
+        getElement().setProperty("accessibleNameRef", labelledBy);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -35,11 +35,13 @@ public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends Abst
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadOverlayClass(resultComponent, element);
         componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
+        componentLoader().loadAriaLabel(resultComponent, element);
     }
 }

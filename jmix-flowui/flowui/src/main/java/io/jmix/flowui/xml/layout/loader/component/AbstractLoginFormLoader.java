@@ -88,6 +88,10 @@ public abstract class AbstractLoginFormLoader<C extends AbstractLogin> extends A
                     context.getMessageGroup(), errorMessage::setTitle);
             loadResourceString(errorMessageElement, "message",
                     context.getMessageGroup(), errorMessage::setMessage);
+            loadResourceString(errorMessageElement, "username",
+                    context.getMessageGroup(), errorMessage::setUsername);
+            loadResourceString(errorMessageElement, "password",
+                    context.getMessageGroup(), errorMessage::setPassword);
 
             i18n.setErrorMessage(errorMessage);
         }

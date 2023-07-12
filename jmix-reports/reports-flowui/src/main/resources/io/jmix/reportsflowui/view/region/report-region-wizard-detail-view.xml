@@ -16,7 +16,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://testEntityDetailView.title"
+      title="msg://EntityDetailView.title"
       focusComponent="form">
     <data>
         <instance id="reportRegionDc"
@@ -31,10 +31,10 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout width="40em">
-        <label id="tipLabel"
-               classNames="report-wizard-tip-label"
-               width="100%"/>
+    <layout expand="mainContent" width="40em">
+        <div id="tipLabel"
+             classNames="report-wizard-tip-label"
+             width="100%"/>
         <hbox id="mainContent" width="100%">
             <formLayout id="treePanel"/>
             <vbox id="btnsControlPanel" margin="false" spacing="false" padding="false" width="AUTO">

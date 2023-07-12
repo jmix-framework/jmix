@@ -64,13 +64,13 @@ public class FrontendTools {
      * the installed version is older than {@link #SUPPORTED_NODE_VERSION}, i.e.
      * {@value #SUPPORTED_NODE_MAJOR_VERSION}.{@value #SUPPORTED_NODE_MINOR_VERSION}.
      */
-    public static final String DEFAULT_NODE_VERSION = "v18.14.1";
+    public static final String DEFAULT_NODE_VERSION = "v18.16.0";
     /**
      * This is the version shipped with the default Node version.
      */
-    public static final String DEFAULT_NPM_VERSION = "9.3.1";
+    public static final String DEFAULT_NPM_VERSION = "9.5.1";
 
-    public static final String DEFAULT_PNPM_VERSION = "5.18.10";
+    public static final String DEFAULT_PNPM_VERSION = "8.3.1";
 
     public static final String INSTALL_NODE_LOCALLY = "%n  $ mvn com.github.eirslett:frontend-maven-plugin:1.10.0:install-node-and-npm "
             + "-DnodeVersion=\"" + DEFAULT_NODE_VERSION + "\" ";
@@ -104,6 +104,9 @@ public class FrontendTools {
             + INSTALL_NODE_LOCALLY + "%n" //
             + FrontendUtils.DISABLE_CHECK //
             + MSG_SUFFIX;
+
+    private static final List<FrontendVersion> BAD_NPM_VERSIONS = Collections
+            .singletonList(new FrontendVersion("9.2.0"));
 
     private static final FrontendVersion WHITESPACE_ACCEPTING_NPM_VERSION = new FrontendVersion(
             7, 0);
@@ -360,9 +363,9 @@ public class FrontendTools {
             ApplicationConfiguration applicationConfiguration,
             File projectRoot) {
         boolean useHomeNodeExec = applicationConfiguration.getBooleanProperty(
-                InitParameters.REQUIRE_HOME_NODE_EXECUTABLE, true);
+                InitParameters.REQUIRE_HOME_NODE_EXECUTABLE, false);
         boolean nodeAutoUpdate = applicationConfiguration
-                .getBooleanProperty(InitParameters.NODE_AUTO_UPDATE, true);
+                .getBooleanProperty(InitParameters.NODE_AUTO_UPDATE, false);
         boolean useGlobalPnpm = applicationConfiguration.getBooleanProperty(
                 InitParameters.SERVLET_PARAMETER_GLOBAL_PNPM, false);
         final String nodeVersion = applicationConfiguration.getStringProperty(
@@ -613,6 +616,7 @@ public class FrontendTools {
                     getNpmExecutable(false).get(0)));
             FrontendUtils.validateToolVersion("npm", foundNpmVersion,
                     SUPPORTED_NPM_VERSION);
+            checkForFaultyNpmVersion(foundNpmVersion);
         } catch (UnknownVersionException e) {
             getLogger().warn("Error checking if npm is new enough", e);
             FrontendUtils.logInFile("Error checking if npm is new enough");
@@ -685,6 +689,15 @@ public class FrontendTools {
         proxyList.addAll(readProxySettingsFromEnvironmentVariables());
 
         return proxyList;
+    }
+
+    void checkForFaultyNpmVersion(FrontendVersion npmVersion) {
+        if (BAD_NPM_VERSIONS.contains(npmVersion)) {
+            String badNpmVersion = buildBadVersionString("npm",
+                    npmVersion.getFullVersion(),
+                    "by updating your global npm installation with `npm install -g npm@latest`");
+            throw new IllegalStateException(badNpmVersion);
+        }
     }
 
     /**
@@ -1084,7 +1097,9 @@ public class FrontendTools {
         for (String instruction : extraUpdateInstructions) {
             extraInstructions.append("%n  - or ").append(instruction);
         }
-        return String.format(BAD_VERSION, tool, version, extraInstructions, FrontendUtils.PARAM_IGNORE_VERSION_CHECKS);
+        return String.format(BAD_VERSION, tool, version,
+                extraInstructions.toString(),
+                FrontendUtils.PARAM_IGNORE_VERSION_CHECKS);
     }
 
     private String getAlternativeDir() {
@@ -1093,7 +1108,7 @@ public class FrontendTools {
 
     /**
      * Gets a path to the used node binary.
-     * <p>
+     *
      * The return value can be used when executing node commands, as the first
      * part of a process builder command.
      *

@@ -84,13 +84,18 @@ public class RoleAssignmentView extends StandardView {
                 (ValueProvider<RoleAssignmentEntity, String>) roleAssignmentEntity -> {
                     BaseRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
                     return role != null ? role.getName() : "";
-                }).setHeader(messageBundle.getMessage("column.roleName.header"));
+                })
+                .setHeader(messageBundle.getMessage("column.roleName.header"))
+                .setResizable(true);
 
         resourceRoleAssignmentsTable.addColumn(
                 (ValueProvider<RoleAssignmentEntity, String>) roleAssignmentEntity -> {
                     ResourceRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
                     return role != null ? String.join(", ", role.getScopes()) : "";
-                }).setHeader(messageBundle.getMessage("column.roleScopes.header"));
+                })
+                .setHeader(messageBundle.getMessage("column.roleScopes.header"))
+                .setResizable(true)
+                .setFlexGrow(0);
 
 
         rowLevelRoleAssignmentsTable.addColumn(

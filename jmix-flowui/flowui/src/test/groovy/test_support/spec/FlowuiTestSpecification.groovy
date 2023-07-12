@@ -136,6 +136,8 @@ class FlowuiTestSpecification extends Specification {
         vaadinSession = new TestVaadinSession(springServlet.getService())
         VaadinSession.setCurrent(vaadinSession)
 
+        vaadinSession.setConfiguration(springServlet.getService().getDeploymentConfiguration());
+
         def request = new TestVaadinRequest(springServlet.getService())
         CurrentInstance.set(VaadinRequest, request)
 

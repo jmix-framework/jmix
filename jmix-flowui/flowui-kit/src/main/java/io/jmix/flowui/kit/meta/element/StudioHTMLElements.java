@@ -86,4 +86,21 @@ public interface StudioHTMLElements {
             }
     )
     DescriptionList.Term term();
+
+    @StudioElement(
+            name = "Html Content",
+            xmlElement = "content",
+            target = "com.vaadin.flow.component.Html"
+    )
+    void htmlContent();
+
+    @StudioElement(
+            name = "File Content",
+            xmlElement = "file",
+            target = "com.vaadin.flow.component.Html",
+            properties = {
+                    @StudioProperty(xmlAttribute = "path", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    void fileContent();
 }

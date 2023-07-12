@@ -17,6 +17,7 @@
 package io.jmix.flowui.devserver.frontend;
 
 import com.vaadin.flow.server.PwaConfiguration;
+import com.vaadin.flow.server.frontend.DevBundleUtils;
 import com.vaadin.flow.server.frontend.FallibleCommand;
 import elemental.json.Json;
 import elemental.json.JsonObject;
@@ -89,14 +90,22 @@ public class TaskUpdateSettingsFile implements FallibleCommand, Serializable {
         }
         String staticOutput = combinePath(webappResources, VAADIN_STATIC_FILES_PATH);
 
+        File devBundleOutputFolder = new File(
+                DevBundleUtils.getDevBundleFolder(npmFolder), "webapp");
+        String devBundleOutputFolderString = FrontendUtils
+                .getUnixPath(devBundleOutputFolder.toPath());
+        String devBundleStatsFolderString = FrontendUtils.getUnixPath(
+                new File(DevBundleUtils.getDevBundleFolder(npmFolder), "config")
+                        .toPath());
+
         settings.put("staticOutput", FrontendUtils.getUnixPath(new File(staticOutput).toPath()));
         settings.put("generatedFolder", "generated");
         settings.put("statsOutput", statsOutput);
         settings.put("frontendBundleOutput", webappResources);
+        settings.put("devBundleOutput", devBundleOutputFolderString);
+        settings.put("devBundleStatsOutput", devBundleStatsFolderString);
         settings.put("jarResourcesFolder",
                 FrontendUtils.getUnixPath(jarFrontendResourcesFolder.toPath()));
-        settings.put("generatedFlowImportsFolder",
-                buildDirectoryPath + "/frontend");
 
         settings.put("themeName", themeName);
 
@@ -106,17 +115,6 @@ public class TaskUpdateSettingsFile implements FallibleCommand, Serializable {
 
         settings.put("offlineEnabled", pwaConfiguration.isOfflineEnabled());
         settings.put("offlinePath", getOfflinePath());
-
-        File devBundleOutputFolder = new File(
-                FrontendUtils.getDevBundleFolder(npmFolder), "webapp");
-        String devBundleOutputFolderString = FrontendUtils
-                .getUnixPath(devBundleOutputFolder.toPath());
-        String devBundleStatsFolderString = FrontendUtils.getUnixPath(
-                new File(FrontendUtils.getDevBundleFolder(npmFolder), "config")
-                        .toPath());
-
-        settings.put("devBundleOutput", devBundleOutputFolderString);
-        settings.put("devBundleStatsOutput", devBundleStatsFolderString);
 
         File settingsFile = new File(buildDirectory, "/" + DEV_SETTINGS_FILE);
 

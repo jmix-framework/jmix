@@ -22,7 +22,7 @@ import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
@@ -338,7 +338,7 @@ public class AppSettingsEntityView extends StandardView {
         }
 
         //add label
-        Label fieldLabel = uiComponents.create(Label.class);
+        Span fieldLabel = uiComponents.create(Span.class);
         fieldLabel.setText(getPropertyCaption(metaClass, metaProperty));
         formLayout.add(fieldLabel);
 

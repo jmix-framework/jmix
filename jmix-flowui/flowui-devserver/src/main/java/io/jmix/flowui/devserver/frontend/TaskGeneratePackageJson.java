@@ -28,6 +28,9 @@ import java.io.UncheckedIOException;
  */
 public class TaskGeneratePackageJson extends NodeUpdater {
 
+    /**
+     * Create an instance of the updater given all configurable parameters.
+     */
     TaskGeneratePackageJson(Options options) {
         super(null, null, options);
     }

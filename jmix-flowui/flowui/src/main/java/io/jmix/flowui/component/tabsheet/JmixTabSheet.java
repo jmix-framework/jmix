@@ -23,6 +23,7 @@ import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.tabs.TabSheetVariant;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.dom.Element;
@@ -30,8 +31,8 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.ComponentContainer;
 import org.apache.commons.lang3.RandomStringUtils;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +42,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [since Vaadin 24.0.3]
+// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [since Vaadin 24.1.1]
 @Tag("jmix-tabsheet")
 @JsModule("./src/tabsheet/jmix-tabsheet.js")
 public class JmixTabSheet extends Component
@@ -60,8 +61,7 @@ public class JmixTabSheet extends Component
     }
 
     protected void initComponent() {
-        tabs.getElement().setAttribute("slot", "tabs");
-        getElement().appendChild(tabs.getElement());
+        SlotUtils.addToSlot(this, "tabs", tabs);
 
         addSelectedChangeListener(e -> {
             getElement().setProperty("selected", tabs.getSelectedIndex());
@@ -105,18 +105,20 @@ public class JmixTabSheet extends Component
     /**
      * Adds a tab with the given content to the given position.
      *
-     * @param tab
-     *            the tab
-     * @param content
-     *            the content related to the tab
-     * @param position
-     *            the position where the tab should be added. If negative, the
-     *            tab is added at the end.
+     * @param tab      the tab
+     * @param content  the content related to the tab
+     * @param position the position where the tab should be added. If negative, the
+     *                 tab is added at the end.
      * @return the added tab
      */
     public Tab add(Tab tab, Component content, int position) {
         Preconditions.checkNotNullArgument(tab, "The tab to be added cannot be null");
         Preconditions.checkNotNullArgument(content, "The content to be added cannot be null");
+
+        if (content instanceof Text) {
+            throw new IllegalArgumentException(
+                    "Text as content is not supported. Consider wrapping the Text inside a Div.");
+        }
 
         if (position < 0) {
             tabs.add(tab);
@@ -164,12 +166,15 @@ public class JmixTabSheet extends Component
     public void remove(Component content) {
         Preconditions.checkNotNullArgument(content, "The content of the tab to be removed cannot be null");
 
-        tabToContent.entrySet()
-                .stream()
-                .filter((entry) -> entry.getValue().equals(content))
-                .map(Map.Entry::getKey)
-                .findAny()
-                .ifPresent(this::remove);
+        if (content instanceof Text) {
+            throw new IllegalArgumentException(
+                    "Text as content is not supported.");
+        }
+
+        Tab tab = getTab(content);
+        if (tab != null) {
+            remove(tab);
+        }
     }
 
     /**
@@ -274,6 +279,40 @@ public class JmixTabSheet extends Component
     }
 
     /**
+     * Returns the {@link Tab} associated with the given component.
+     *
+     * @param content the component to look up, can not be <code>null</code>
+     * @return The tab instance associated with the given component, or
+     * <code>null</code> if the {@link TabSheet} does not contain the
+     * component.
+     */
+    @Nullable
+    public Tab getTab(Component content) {
+        Preconditions.checkNotNullArgument(content,
+                "The component to look for the tab cannot be null");
+
+        return tabToContent.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(content))
+                .map(Map.Entry::getKey).findFirst().orElse(null);
+    }
+
+    /**
+     * Returns the {@link Component} instance associated with the given tab.
+     *
+     * @param tab the tab to look up, can not be <code>null</code>
+     * @return The component instance associated with the given tab, or
+     * <code>null</code> if the {@link TabSheet} does not contain the
+     * tab.
+     */
+    @Nullable
+    public Component getComponent(Tab tab) {
+        Preconditions.checkNotNullArgument(tab,
+                "The tab to look for the component cannot be null");
+
+        return tabToContent.get(tab);
+    }
+
+    /**
      * Adds a listener for {@link SelectedChangeEvent}.
      *
      * @param listener the listener to add, not <code>null</code>
@@ -293,27 +332,6 @@ public class JmixTabSheet extends Component
             });
         });
 
-    }
-
-    /**
-     * Adds the given component as the prefix of this component, replacing any
-     * existing prefix component.
-     *
-     * @param component the component to set, can be {@code null} to remove existing
-     *                  prefix component
-     */
-    public void setPrefixComponent(@Nullable Component component) {
-        SlotUtils.clearSlot(this, "prefix");
-
-        if (component != null) {
-            if (component instanceof Text) {
-                throw new IllegalArgumentException(
-                        "Text as a prefix is not supported. Consider wrapping the Text inside a Div.");
-            }
-
-            component.getElement().setAttribute("slot", "prefix");
-            getElement().appendChild(component.getElement());
-        }
     }
 
     /**

@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta.component;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -144,6 +145,51 @@ public interface StudioLayouts {
             }
     )
     VerticalLayout vbox();
+
+    @StudioComponent(
+            name = "FlexLayout",
+            classFqn = "com.vaadin.flow.component.orderedlayout.FlexLayout",
+            category = "Layouts",
+            xmlElement = "flexLayout",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/hbox.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "expand", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "alignItems", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "STRETCH",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifyContent", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$JustifyContentMode",
+                            setMethod = "setJustifyContentMode", defaultValue = "START",
+                            options = {"START", "END", "CENTER", "BETWEEN", "AROUND", "EVENLY"}),
+                    @StudioProperty(xmlAttribute = "contentAlignment", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexLayout$ContentAlignment",
+                            defaultValue = "STRETCH",
+                            options = {"START", "END", "CENTER", "STRETCH", "SPACE_BETWEEN", "SPACE_AROUND"}),
+                    @StudioProperty(xmlAttribute = "flexDirection", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexLayout$FlexDirection",
+                            defaultValue = "ROW",
+                            options = {"ROW", "ROW_REVERSE", "COLUMN", "COLUMN_REVERSE"}),
+                    @StudioProperty(xmlAttribute = "flexWrap", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexLayout$FlexWrap",
+                            defaultValue = "NOWRAP",
+                            options = {"NOWRAP", "WRAP", "WRAP_REVERSE"})
+            }
+    )
+    FlexLayout flexLayout();
 
     @StudioComponent(
             name = "Scroller",

@@ -114,12 +114,13 @@ public class CrossTabDataGridSupport {
                 dataSetsDc.getMutableItems().add(horizontal);
                 dataSetsDc.getMutableItems().add(vertical);
             }
-
-            // Select first item
-            dataSetsDataGrid.deselectAll();
-            DataSet item = dataSetsDc.getItems().iterator().next();
-            dataSetsDc.setItem(item);
-            dataSetsDataGrid.select(item);
+            if (!dataSetsDc.getItems().isEmpty()) {
+                // Select first item
+                dataSetsDataGrid.deselectAll();
+                DataSet item = dataSetsDc.getItems().iterator().next();
+                dataSetsDc.setItem(item);
+                dataSetsDataGrid.select(item);
+            }
         }
 
         if ("name".equals(event.getProperty()) && bandDefinitionDc.getItem().getOrientation() == Orientation.CROSS) {

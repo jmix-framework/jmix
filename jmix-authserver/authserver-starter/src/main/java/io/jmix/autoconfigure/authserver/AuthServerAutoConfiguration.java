@@ -56,11 +56,18 @@ public class AuthServerAutoConfiguration {
     @Order(AuthorizationServerLoginPageConfiguration.ORDER)
     public static class AuthorizationServerLoginPageConfiguration implements WebMvcConfigurer {
 
+        private final AuthServerProperties authServerProperties;
+
+        public AuthorizationServerLoginPageConfiguration(AuthServerProperties authServerProperties) {
+            this.authServerProperties = authServerProperties;
+        }
+
         public static final int ORDER = 100;
 
         @Override
         public void addViewControllers(ViewControllerRegistry registry) {
-            registry.addViewController("/as-login").setViewName("as-login.html");
+            registry.addViewController(authServerProperties.getLoginPageUrl())
+                    .setViewName(authServerProperties.getLoginPageViewName());
         }
     }
 
@@ -86,7 +93,7 @@ public class AuthServerAutoConfiguration {
                     // authorization endpoint
                     .exceptionHandling((exceptions) -> exceptions
                             .authenticationEntryPoint(
-                                    new LoginUrlAuthenticationEntryPoint("/as-login"))
+                                    new LoginUrlAuthenticationEntryPoint(authServerProperties.getLoginPageUrl()))
                     );
 
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
@@ -98,12 +105,12 @@ public class AuthServerAutoConfiguration {
         public SecurityFilterChain loginFormSecurityFilterChain(HttpSecurity http)
                 throws Exception {
             http
-                    .securityMatcher("/as-login")
+                    .securityMatcher(authServerProperties.getLoginPageUrl())
                     .authorizeHttpRequests(authorize -> {
                         authorize.anyRequest().permitAll();
                     })
                     .formLogin(form -> {
-                        form.loginPage("/as-login");
+                        form.loginPage(authServerProperties.getLoginPageUrl());
                     });
 
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER);

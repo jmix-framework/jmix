@@ -35,11 +35,26 @@ public class AuthServerProperties {
      */
     Map<String, JmixClient> client;
 
+    /**
+     * URL to send users to if login is required
+     */
+    String loginPageUrl;
+
+    /**
+     * A Spring MVC view name for the login page
+     */
+    String loginPageViewName;
+
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
-            @DefaultValue Map<String, JmixClient> client) {
+            @DefaultValue Map<String, JmixClient> client,
+            @DefaultValue("/as-login") String loginPageUrl,
+            @DefaultValue("as-login.html") String loginPageViewName
+            ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.client = client;
+        this.loginPageUrl = loginPageUrl;
+        this.loginPageViewName = loginPageViewName;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -48,6 +63,14 @@ public class AuthServerProperties {
 
     public Map<String, JmixClient> getClient() {
         return client;
+    }
+
+    public String getLoginPageUrl() {
+        return loginPageUrl;
+    }
+
+    public String getLoginPageViewName() {
+        return loginPageViewName;
     }
 
     /**

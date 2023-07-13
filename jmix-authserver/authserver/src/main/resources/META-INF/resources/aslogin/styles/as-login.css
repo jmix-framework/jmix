@@ -1,0 +1,12 @@
+.as-login-form {
+    max-width: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.as-login-form img {
+    width: 72px;
+    height: 72px;
+}

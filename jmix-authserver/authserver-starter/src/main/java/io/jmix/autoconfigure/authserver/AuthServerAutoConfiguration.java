@@ -21,7 +21,10 @@ import io.jmix.authserver.AuthServerProperties;
 import io.jmix.authserver.filter.AsResourceServerEventSecurityFilter;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
 import io.jmix.authserver.introspection.TokenIntrospectorRolesHelper;
-import io.jmix.authserver.roleassignment.*;
+import io.jmix.authserver.roleassignment.InMemoryRegisteredClientRoleAssignmentRepository;
+import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignment;
+import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentPropertiesMapper;
+import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.security.SecurityConfigurers;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -41,7 +44,6 @@ import org.springframework.security.oauth2.server.resource.introspection.OpaqueT
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -105,7 +107,7 @@ public class AuthServerAutoConfiguration {
         public SecurityFilterChain loginFormSecurityFilterChain(HttpSecurity http)
                 throws Exception {
             http
-                    .securityMatcher(authServerProperties.getLoginPageUrl())
+                    .securityMatcher(authServerProperties.getLoginPageUrl(), "/aslogin/styles/**")
                     .authorizeHttpRequests(authorize -> {
                         authorize.anyRequest().permitAll();
                     })

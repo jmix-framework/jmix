@@ -108,7 +108,8 @@ public class JmixJsonDataLoader extends JsonDataLoader {
             jsonSourceText = resources.getResourceAsString(jsonSourceText);
         }
 
-        Map<String, Object> scriptParams = groovyScriptParametersProvider.prepareParameters(reportQuery, parentBand, reportParams);
+        Map<String, Object> scriptParams = groovyScriptParametersProvider.getParametersForDatasetParameters(
+                reportQuery, parentBand, reportParams);
         return scripting.evaluateGroovy(jsonSourceText, scriptParams);
     }
 

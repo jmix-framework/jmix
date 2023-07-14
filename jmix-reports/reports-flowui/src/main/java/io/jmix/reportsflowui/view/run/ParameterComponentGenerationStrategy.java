@@ -176,7 +176,7 @@ public class ParameterComponentGenerationStrategy {
     protected class TextFieldCreator implements FieldCreator<TypedTextField<?>> {
 
         @Override
-        public TypedTextField<?> createField(ReportInputParameter parameter) {
+        public TypedTextField<String> createField(ReportInputParameter parameter) {
             return uiComponents.create(TypedTextField.class);
         }
     }
@@ -314,7 +314,7 @@ public class ParameterComponentGenerationStrategy {
             CollectionContainer collectionContainer = createCollectionContainer(entityMetaClass);
             multiComboBoxPicker.setItems(collectionContainer.getItems());
 
-            EntityLookupAction<?> pickerLookupAction = (EntityLookupAction) actions.create(EntityLookupAction.ID);
+            EntityLookupAction<?> pickerLookupAction = actions.create(EntityLookupAction.ID);
             String screen = parameter.getScreen();
             if (StringUtils.isNotEmpty(screen)) {
                 pickerLookupAction.setViewId(screen);

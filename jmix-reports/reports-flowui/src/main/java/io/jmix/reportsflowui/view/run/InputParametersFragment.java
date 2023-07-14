@@ -238,7 +238,7 @@ public class InputParametersFragment extends Composite<FormLayout>
 
         if (BooleanUtils.isTrue(parameter.getValidationOn())) {
             ((SupportsValidation) field).addValidator(
-                    applicationContext.getBean(ReportParamFieldValidator.class, parameter)
+                    applicationContext.getBean(ReportParamFieldValidator.class, field, parameter)
             );
         }
 

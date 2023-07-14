@@ -16,28 +16,30 @@
 
 package io.jmix.reportsflowui.view.validators;
 
+import com.vaadin.flow.component.Component;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.validation.AbstractValidator;
+import io.jmix.flowui.exception.ComponentValidationException;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportParametersValidationException;
-import io.jmix.reports.exception.ValidationException;
 import io.jmix.reportsflowui.view.ReportParameterValidator;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-@Component("report_ReportParamFieldValidator")
+@org.springframework.stereotype.Component("report_ReportParamFieldValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReportParamFieldValidator extends AbstractValidator<Object> {
 
     protected final ReportInputParameter inputParameter;
+    protected final Component component;
     protected ReportParameterValidator reportParameterValidator;
 
-    public ReportParamFieldValidator(ReportInputParameter inputParameter) {
+    public ReportParamFieldValidator(Component component, ReportInputParameter inputParameter) {
         Preconditions.checkNotNullArgument(inputParameter, "ReportInputParameter is not defined");
 
         this.inputParameter = inputParameter;
+        this.component = component;
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ReportParamFieldValidator extends AbstractValidator<Object> {
             try {
                 reportParameterValidator.validateParameterValue(inputParameter, value);
             } catch (ReportParametersValidationException e) {
-                throw new ValidationException(e.getMessage());
+                throw new ComponentValidationException(e.getMessage(), component);
             }
         }
     }

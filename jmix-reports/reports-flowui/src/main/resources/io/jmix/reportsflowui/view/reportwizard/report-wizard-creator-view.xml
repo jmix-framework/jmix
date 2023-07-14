@@ -32,7 +32,8 @@
                 </responsiveSteps>
                 <comboBox id="entityField"
                           label="msg://entity"
-                          required="true" requiredMessage="msg://metaClassNotFoundDialog.message"
+                          required="true"
+                          requiredMessage="msg://metaClassNotFoundDialog.message"
                           helperText="msg://entityHintMsg" width="100%"/>
                 <comboBox id="templateFileTypeField"
                           property="templateFileType"

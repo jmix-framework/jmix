@@ -38,7 +38,7 @@ import io.jmix.reports.ReportImportExport;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reports.exception.NoTemplateReportingException;
+import io.jmix.reports.exception.EmptyDefaultTemplateException;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
@@ -157,7 +157,7 @@ public class ReportListView extends StandardListView<Report> {
 
             try {
                 fluentRunner.runAndShow();
-            } catch (NoTemplateReportingException e) {
+            } catch (EmptyDefaultTemplateException e) {
                 notifications.create(
                                 messages.getMessage("runningReportError.title"),
                                 messages.getMessage("noDefaultTemplateError.description"))

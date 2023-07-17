@@ -17,7 +17,7 @@
 package io.jmix.reports.runner;
 
 import com.google.common.base.Strings;
-import io.jmix.reports.exception.NoTemplateReportingException;
+import io.jmix.reports.exception.EmptyDefaultTemplateException;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
@@ -228,7 +228,7 @@ public class FluentReportRunner {
         }
         ReportTemplate defaultTemplate = report.getDefaultTemplate();
         if (defaultTemplate == null)
-            throw new NoTemplateReportingException(String.format("No default template specified for report [%s]", report.getName()));
+            throw new EmptyDefaultTemplateException(String.format("No default template specified for report [%s]", report.getName()));
         return defaultTemplate;
     }
 

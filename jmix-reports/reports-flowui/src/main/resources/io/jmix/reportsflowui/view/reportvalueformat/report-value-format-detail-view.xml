@@ -26,7 +26,7 @@
                       property="formatString"
                       label="msg://formatStringMsg"
                       requiredMessage="msg://formatStringMsg"/>
-            <checkbox id="groovyField" property="groovyScript"
+            <checkbox id="groovyField" property="groovyScript" 
                       label="msg://valuesFormats.groovyScript"/>
         </formLayout>
         <div id="groovyCodeEditorBox" visible="false" width="100%">

@@ -16,6 +16,8 @@
 
 <menu-config xmlns="http://jmix.io/schema/flowui/menu" order="2600">
     <menu id="system">
+        <item view="sys_JmxConsoleView"
+              title="msg://io.jmix.flowui.app.jmxconsole/jmxConsoleView.menu"/>
         <item view="sys_LockInfo.list"
               title="msg://io.jmix.flowui.app.pessimisticlocking/pessimisticLockListView.menu"/>
     </menu>

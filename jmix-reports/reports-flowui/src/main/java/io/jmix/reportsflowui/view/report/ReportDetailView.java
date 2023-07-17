@@ -41,7 +41,6 @@ import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.*;
-import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
@@ -53,8 +52,6 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
-import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -70,10 +67,10 @@ import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
-import io.jmix.reportsflowui.constant.ReportStyleConstants;
-import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
+import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
 import io.jmix.security.constraint.PolicyStore;
@@ -113,14 +110,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected CollectionPropertyContainer<ReportInputParameter> parametersDc;
 
-    @ViewComponent
-    protected EntityComboBox<ReportTemplate> defaultTemplateField;
-    @ViewComponent(value = "defaultTemplateField.create")
-    protected SecuredBaseAction defaultTemplateFieldCreateAction;
-    @ViewComponent(value = "defaultTemplateField.upload")
-    protected SecuredBaseAction defaultTemplateFieldUploadAction;
-    @ViewComponent(value = "defaultTemplateField.edit")
-    protected SecuredBaseAction defaultTemplateFieldEditAction;
     @ViewComponent
     protected TreeDataGrid<BandDefinition> bandsTreeDataGrid;
     @ViewComponent
@@ -181,8 +170,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected CodeEditor jsonGroovyCodeEditor;
     @ViewComponent
     protected DataGrid<ReportTemplate> templatesDataGrid;
-    @ViewComponent
-    protected CodeEditor validationScriptCodeEditor;
     @ViewComponent
     protected JmixTextArea localeTextField;
     @ViewComponent
@@ -268,10 +255,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initEntityParamField();
         initFetchPlanNameField();
 
-        defaultTemplateFieldCreateAction.refreshState();
-        defaultTemplateFieldUploadAction.refreshState();
-        defaultTemplateFieldEditAction.refreshState();
-        defaultTemplateField.setReadOnly(!isUpdatePermitted());
         refreshBandActionStates();
         refreshDataSetsActionStates();
         initLocaleDetailReportTextField();
@@ -336,94 +319,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         bandsTreeDataGrid.select(getEditedEntity().getRootBandDefinition());
 
         sortBandDefinitionsByPosition();
-    }
-
-    @Subscribe("defaultTemplateField.create")
-    protected void onDefaultTemplateFieldCreate(ActionPerformedEvent event) {
-        View<?> view = UiComponentUtils.getView(this);
-
-        DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(view, ReportTemplate.class)
-                .withViewClass(ReportTemplateDetailView.class)
-                .withContainer(templatesDc)
-                .newEntity()
-                .withInitializer(item -> {
-                    Report report = reportDc.getItem();
-                    item.setReport(report);
-                })
-                .build();
-        templateDetailViewDialog.addAfterCloseListener(this::onReportTemplateDetailViewDialogClose);
-        templateDetailViewDialog.open();
-    }
-
-    @Subscribe("defaultTemplateField.download")
-    protected void onDefaultTemplateFieldDownload(ActionPerformedEvent event) {
-        ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
-        if (defaultTemplate != null) {
-            if (defaultTemplate.isCustom()) {
-                notifications.create(
-                        messageBundle.getMessage(
-                                "detailsTab.notification.unableToSaveCustomTemplate.text")).show();
-            } else if (isTemplateWithoutFile(defaultTemplate)) {
-                notifications.create(
-                        messageBundle.getMessage(
-                                "detailsTab.notification.unableToSaveSpecificTypes.text")).show();
-            } else {
-                byte[] reportTemplate = defaultTemplate.getContent();
-                downloader.download(
-                        new ByteArrayDownloadDataProvider(reportTemplate,
-                                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
-                                coreProperties.getTempDir()),
-                        defaultTemplate.getName(),
-                        DownloadFormat.getByExtension(defaultTemplate.getExt()));
-            }
-        } else {
-            notifications.create(
-                    messageBundle.getMessage(
-                            "detailsTab.notification.defaultTemplateIsEmpty.text")).show();
-        }
-        defaultTemplateField.focus();
-    }
-
-    @Install(to = "defaultTemplateField.create", subject = "enabledRule")
-    protected boolean defaultTemplateFieldCreateEnabledRule() {
-        return isUpdatePermitted();
-    }
-
-    @Subscribe("defaultTemplateField.upload")
-    protected void onDefaultTemplateFieldUpload(ActionPerformedEvent event) {
-        ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
-        if (defaultTemplate != null) {
-            // todo
-        }
-    }
-
-    @Install(to = "defaultTemplateField.upload", subject = "enabledRule")
-    protected boolean defaultTemplateFieldUploadEnabledRule() {
-        return isUpdatePermitted();
-    }
-
-    @Subscribe("defaultTemplateField.edit")
-    protected void onDefaultTemplateFieldEdit(ActionPerformedEvent event) {
-        Report report = reportDc.getItem();
-        ReportTemplate defaultTemplate = report.getDefaultTemplate();
-        if (defaultTemplate != null) {
-            DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(defaultTemplateField)
-                    .withViewClass(ReportTemplateDetailView.class)
-                    .withContainer(templatesDc)
-                    .editEntity(defaultTemplate)
-                    .build();
-            templateDetailViewDialog.addAfterCloseListener(this::onReportTemplateDetailViewDialogClose);
-            templateDetailViewDialog.open();
-        } else {
-            notifications.create(
-                    messageBundle.getMessage(
-                            "detailsTab.notification.defaultTemplateIsEmpty.text")).show();
-        }
-    }
-
-    @Install(to = "defaultTemplateField.edit", subject = "enabledRule")
-    protected boolean defaultTemplateFieldEditEnabledRule() {
-        return isUpdatePermitted();
     }
 
     @Subscribe("bandsTreeDataGrid.create")
@@ -567,15 +462,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Install(to = "dataSetsDataGrid.remove", subject = "enabledRule")
     protected boolean dataSetsDataGridRemoveEnabledRule() {
         return dataSetsDc.getItems().size() > 1;
-    }
-
-    @Subscribe(id = "reportDc", target = Target.DATA_CONTAINER)
-    protected void onReportDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<Report> event) {
-        boolean validationOnChanged = event.getProperty().equalsIgnoreCase("validationOn");
-
-        if (validationOnChanged) {
-            setValidationScriptGroupBoxCaption(event.getItem().getValidationOn());
-        }
     }
 
     @Subscribe(id = "bandsDc", target = Target.DATA_CONTAINER)
@@ -914,31 +800,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return "dataSet" + (band.getDataSets().size() + 1);
     }
 
-    protected void setValidationScriptGroupBoxCaption(Boolean onOffFlag) {
-        // todo implement
-        /*if (BooleanUtils.isTrue(onOffFlag)) {
-            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOn"));
-        } else {
-            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOff"));
-        }*/
-    }
-
-    protected void onReportTemplateDetailViewDialogClose(DialogWindow.AfterCloseEvent<ReportTemplateDetailView> event) {
-        if (StandardOutcome.SAVE.getCloseAction().equals(event.getCloseAction())) {
-            ReportTemplate item = event.getView().getEditedEntity();
-            reportDc.getItem().setDefaultTemplate(item);
-        }
-        defaultTemplateField.focus();
-    }
-
     protected boolean isUpdatePermitted() {
         return secureOperations.isEntityUpdatePermitted(metadata.getClass(Report.class), policyStore);
-    }
-
-    protected boolean isTemplateWithoutFile(ReportTemplate template) {
-        return template.getOutputType() == JmixReportOutputType.chart ||
-                template.getOutputType() == JmixReportOutputType.table ||
-                template.getOutputType() == JmixReportOutputType.pivot;
     }
 
     protected void orderBandDefinitions(BandDefinition parent) {
@@ -1568,7 +1431,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (selectedTemplate == null) {
             return;
         }
-        DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(defaultTemplateField)
+        DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(templatesDataGrid)
                 .withViewClass(ReportTemplateDetailView.class)
                 .withContainer(templatesDc)
                 .editEntity(selectedTemplate)

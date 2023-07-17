@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://reportTemplateDetailView.title"
-      focusComponent="form">
+      focusComponent="templateForm">
     <data>
         <instance id="reportTemplateDc"
                   class="io.jmix.reports.entity.ReportTemplate">

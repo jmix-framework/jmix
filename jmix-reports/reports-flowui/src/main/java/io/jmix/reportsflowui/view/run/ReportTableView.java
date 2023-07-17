@@ -23,6 +23,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Entity;
+import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.KeyValueEntity;
@@ -32,6 +33,7 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.Actions;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -50,6 +52,7 @@ import io.jmix.reports.entity.JmixTableData;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.exception.NoTemplateReportingException;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.apache.commons.collections4.CollectionUtils;
@@ -64,7 +67,7 @@ import java.util.Set;
 @Route(value = "reports/tables", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportTableView")
 @ViewDescriptor("report-table-view.xml")
-@DialogMode(width = "50em")
+@DialogMode(width = "50em", resizable = true)
 public class ReportTableView extends StandardView {
 
     @ViewComponent
@@ -97,6 +100,11 @@ public class ReportTableView extends StandardView {
     protected DataComponents dataComponents;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
+    @Autowired
+    protected Messages messages;
+    @Autowired
+    protected Notifications notifications;
+
 
     protected Report report;
     protected String templateCode;
@@ -157,7 +165,7 @@ public class ReportTableView extends StandardView {
             parametersFrameHolder.add(inputParametersFrame);
 
             boolean isParameterBoxVisible = report.getInputParameters().stream()
-                            .anyMatch(param -> param.getHidden() == null || !param.getHidden());
+                    .anyMatch(param -> param.getHidden() == null || !param.getHidden());
 
             parametersBox.setVisible(isParameterBoxVisible);
         } else {
@@ -172,14 +180,24 @@ public class ReportTableView extends StandardView {
             if (validationErrors.isEmpty()) {
                 Map<String, Object> parameters = inputParametersFrame.collectParameters();
                 Report report = inputParametersFrame.getReport();
-                if (templateCode == null || templateCode.isEmpty())
+                if (templateCode == null || templateCode.isEmpty()) {
                     templateCode = findTableCode(report);
-                ReportOutputDocument reportResult = reportRunner.byReportEntity(report)
-                        .withParams(parameters)
-                        .withTemplateCode(templateCode)
-                        .run();
-                JmixTableData dto = (JmixTableData) serialization.deserialize(reportResult.getContent());
-                drawTables(dto);
+                }
+
+                try {
+                    ReportOutputDocument reportResult = reportRunner.byReportEntity(report)
+                            .withParams(parameters)
+                            .withTemplateCode(templateCode)
+                            .run();
+                    JmixTableData dto = (JmixTableData) serialization.deserialize(reportResult.getContent());
+                    drawTables(dto);
+                } catch (NoTemplateReportingException e) {
+                    notifications.create(
+                                    messages.getMessage("runningReportError.title"),
+                                    messages.getMessage("noDefaultTemplateError.description"))
+                            .withType(Notifications.Type.ERROR)
+                            .show();
+                }
             } else {
                 viewValidation.showValidationErrors(validationErrors);
             }

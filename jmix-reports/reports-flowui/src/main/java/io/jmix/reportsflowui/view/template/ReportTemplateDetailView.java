@@ -189,6 +189,10 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 reportTemplate.setContent(bytes);
             }
         }
+        Report report = reportTemplate.getReport();
+        if (reportTemplate.equals(report.getDefaultTemplate())) {
+            report.setDefaultTemplate(reportTemplate);
+        }
     }
 
     @Subscribe("templateUploadField")

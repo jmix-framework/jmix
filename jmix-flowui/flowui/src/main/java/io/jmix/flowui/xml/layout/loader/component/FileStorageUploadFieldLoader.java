@@ -17,7 +17,9 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.upload.FileStorageUploadField;
+import io.jmix.flowui.component.upload.UploadFieldI18NSupport;
 import io.jmix.flowui.kit.component.upload.FileStoragePutMode;
+import io.jmix.flowui.kit.component.upload.JmixUploadI18N;
 
 public class FileStorageUploadFieldLoader extends AbstractUploadFieldLoader<FileStorageUploadField> {
 
@@ -36,6 +38,10 @@ public class FileStorageUploadFieldLoader extends AbstractUploadFieldLoader<File
         getLoaderSupport().loadString(element, "fileStorageName", resultComponent::setFileStorageName);
         getLoaderSupport().loadEnum(element, FileStoragePutMode.class, "fileStoragePutMode",
                 resultComponent::setFileStoragePutMode);
+    }
 
+    @Override
+    protected JmixUploadI18N createI18N() {
+        return applicationContext.getBean(UploadFieldI18NSupport.class).getI18nFileStorageUploadField();
     }
 }

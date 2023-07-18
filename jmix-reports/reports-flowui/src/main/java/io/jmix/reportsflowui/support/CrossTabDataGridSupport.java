@@ -37,6 +37,8 @@ import io.jmix.security.constraint.SecureOperations;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Class provides helper methods to work with {@link DataSet}.
  */
@@ -115,10 +117,11 @@ public class CrossTabDataGridSupport {
                 dataSetsDc.getMutableItems().add(vertical);
             }
 
-            if (!dataSetsDc.getItems().isEmpty()) {
+            List<DataSet> items = dataSetsDc.getItems();
+            if (!items.isEmpty()) {
                 // Select first item
                 dataSetsDataGrid.deselectAll();
-                DataSet item = dataSetsDc.getItems().iterator().next();
+                DataSet item = items.iterator().next();
                 dataSetsDc.setItem(item);
                 dataSetsDataGrid.select(item);
             }

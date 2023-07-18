@@ -59,6 +59,7 @@
                         <textField id="nameField" property="name"
                                    requiredMessage="msg://detailsTab.nameField.requiredMessage"/>
                         <entityComboBox id="defaultTemplateField" property="defaultTemplate"
+                                        required="true"
                                         itemsContainer="templatesDc">
                             <actions>
                                 <action id="create" icon="PLUS"
@@ -71,8 +72,8 @@
                                         description="msg://detailsTab.defaultTemplateField.edit.description"/>
                             </actions>
                         </entityComboBox>
-                        <entityComboBox id="groupField" property="group"
-                                        requiredMessage="msg://detailsTab.groupField.requiredMessage"
+                        <entityComboBox id="groupField"
+                                        property="group"
                                         itemsContainer="groupsDc"/>
                         <textField id="codeField" property="code"/>
                         <textArea id="descriptionField" property="description"/>

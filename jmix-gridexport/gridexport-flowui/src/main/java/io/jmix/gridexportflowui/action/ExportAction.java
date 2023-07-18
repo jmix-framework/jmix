@@ -25,7 +25,7 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.ListDataComponent;
-import io.jmix.flowui.data.grid.ContainerDataGridItems;
+import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -209,7 +209,7 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     }
 
     protected boolean isDataLoaderExist(ListDataComponent<?> target) {
-        return target.getItems() instanceof ContainerDataGridItems<?> containerItems
+        return target.getItems() instanceof ContainerDataUnit<?> containerItems
                 && containerItems.getContainer() instanceof HasLoader containerWithLoader
                 && containerWithLoader.getLoader() != null;
     }

@@ -2840,9 +2840,10 @@
     <xs:complexType name="dateTimePickerComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                <xs:sequence>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                    <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+                </xs:sequence>
 
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="dateTimePickerThemeNames"/>

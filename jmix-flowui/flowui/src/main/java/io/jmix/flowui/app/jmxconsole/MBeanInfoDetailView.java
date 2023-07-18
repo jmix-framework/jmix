@@ -82,16 +82,6 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
         initComponents();
     }
 
-    @Subscribe
-    public void onBeforeClose(BeforeCloseEvent event) {
-        event.closedWith(StandardOutcome.DISCARD);
-    }
-
-    @Subscribe
-    public void onBeforeSave(BeforeSaveEvent event) {
-        event.resume();
-    }
-
     protected void initComponents() {
         jmxControl.loadAttributes(getEditedEntity());
 
@@ -164,6 +154,11 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     @Override
     protected void findEntityId(BeforeEnterEvent event) {
         // Because DTO entity cannot be loaded by Id, we need to prevent Id parsing from route parameters
+    }
+
+    @Override
+    public boolean hasUnsavedChanges() {
+        return false;
     }
 
     @Install(to = "attributesDataGrid.edit", subject = "enabledRule")

@@ -24,11 +24,11 @@ import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.ListAction;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.DataGrid;
-import io.jmix.ui.component.Table;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.download.Downloader;
+import io.jmix.ui.model.HasLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -166,14 +166,23 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
         exportCurrentPageAction.setCaption(messages.getMessage(ExportMode.CURRENT_PAGE));
 
         List<AbstractAction> actions = new ArrayList<>();
-        actions.add(exportAllAction);
+
+        if (isDataLoaderExist(target)) {
+            actions.add(exportAllAction);
+        }
+
         actions.add(exportCurrentPageAction);
+
         if (!target.getSelected().isEmpty()) {
             actions.add(exportSelectedAction);
         }
         actions.add(new DialogAction(DialogAction.Type.CANCEL));
 
-        exportAllAction.setPrimary(true);
+        if (actions.contains(exportAllAction)) {
+            exportAllAction.setPrimary(true);
+        } else {
+            exportCurrentPageAction.setPrimary(true);
+        }
 
         Dialogs dialogs = ComponentsHelper.getScreenContext(target).getDialogs();
 
@@ -197,5 +206,13 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
 
     protected String getMessage(String id) {
         return messages.getMessage(getClass(), id);
+    }
+
+    protected boolean isDataLoaderExist(ListComponent<?> target) {
+        DataUnit items = target.getItems();
+
+        return items instanceof ContainerDataUnit<?>
+                && ((ContainerDataUnit<?>) items).getContainer() instanceof HasLoader
+                && ((HasLoader) ((ContainerDataUnit<?>) items).getContainer()).getLoader() != null;
     }
 }

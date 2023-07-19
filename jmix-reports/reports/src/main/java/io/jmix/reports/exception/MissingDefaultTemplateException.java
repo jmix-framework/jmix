@@ -16,9 +16,12 @@
 
 package io.jmix.reports.exception;
 
-public class EmptyDefaultTemplateException extends ReportingException {
+/**
+ * Thrown when a report is run for which default template is not defined
+ */
+public class MissingDefaultTemplateException extends ReportingException {
 
-    public EmptyDefaultTemplateException(String message) {
+    public MissingDefaultTemplateException(String message) {
         super(message);
     }
 }

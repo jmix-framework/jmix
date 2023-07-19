@@ -29,8 +29,8 @@ import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
+import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;
-import io.jmix.reports.exception.EmptyDefaultTemplateException;
 import io.jmix.reports.exception.ReportingException;
 import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
@@ -330,9 +330,10 @@ public class UiReportRunnerImpl implements UiReportRunner {
 
     protected ReportTemplate getDefaultTemplate(Report report) {
         ReportTemplate defaultTemplate = report.getDefaultTemplate();
-        if (defaultTemplate == null)
-            throw new EmptyDefaultTemplateException(String.format("No default template specified for report [%s]",
+        if (defaultTemplate == null) {
+            throw new MissingDefaultTemplateException(String.format("No default template specified for report [%s]",
                     report.getName()));
+        }
         return defaultTemplate;
     }
 

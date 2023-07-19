@@ -27,7 +27,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reports.exception.EmptyDefaultTemplateException;
+import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
@@ -153,10 +153,10 @@ public class InputParametersDialog extends StandardView {
                     } else {
                         fluentRunner.runAndShow();
                     }
-                } catch (EmptyDefaultTemplateException e) {
+                } catch (MissingDefaultTemplateException e) {
                     notifications.create(
                                     messages.getMessage("runningReportError.title"),
-                                    messages.getMessage("noDefaultTemplateError.description"))
+                                    messages.getMessage("missingDefaultTemplateError.description"))
                             .withType(Notifications.Type.ERROR)
                             .show();
                 }

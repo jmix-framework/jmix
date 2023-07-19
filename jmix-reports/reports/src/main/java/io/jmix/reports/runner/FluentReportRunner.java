@@ -17,23 +17,23 @@
 package io.jmix.reports.runner;
 
 import com.google.common.base.Strings;
-import io.jmix.reports.exception.EmptyDefaultTemplateException;
-import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Id;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.ReportingException;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -56,6 +56,8 @@ public class FluentReportRunner {
 
     private static final String REPORT_RUN_FETCH_PLAN = "report.edit";
 
+    private static final Logger log = LoggerFactory.getLogger(FluentReportRunner.class);
+
     private Report report;
     private String reportCode;
     private Map<String, Object> params = new HashMap<>();
@@ -64,11 +66,8 @@ public class FluentReportRunner {
     private ReportOutputType outputType;
     private String outputNamePattern;
 
-    private static final Logger log = LoggerFactory.getLogger(FluentReportRunner.class);
-
     @Autowired
     private DataManager dataManager;
-
     @Autowired
     private EntityStates entityStates;
 
@@ -227,8 +226,9 @@ public class FluentReportRunner {
             return templateByCode;
         }
         ReportTemplate defaultTemplate = report.getDefaultTemplate();
-        if (defaultTemplate == null)
-            throw new EmptyDefaultTemplateException(String.format("No default template specified for report [%s]", report.getName()));
+        if (defaultTemplate == null) {
+            throw new MissingDefaultTemplateException(String.format("No default template specified for report [%s]", report.getName()));
+        }
         return defaultTemplate;
     }
 

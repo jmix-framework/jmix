@@ -52,7 +52,7 @@ import io.jmix.reports.entity.JmixTableData;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reports.exception.EmptyDefaultTemplateException;
+import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.apache.commons.collections4.CollectionUtils;
@@ -191,10 +191,10 @@ public class ReportTableView extends StandardView {
                             .run();
                     JmixTableData dto = (JmixTableData) serialization.deserialize(reportResult.getContent());
                     drawTables(dto);
-                } catch (EmptyDefaultTemplateException e) {
+                } catch (MissingDefaultTemplateException e) {
                     notifications.create(
                                     messages.getMessage("runningReportError.title"),
-                                    messages.getMessage("noDefaultTemplateError.description"))
+                                    messages.getMessage("missingDefaultTemplateError.description"))
                             .withType(Notifications.Type.ERROR)
                             .show();
                 }

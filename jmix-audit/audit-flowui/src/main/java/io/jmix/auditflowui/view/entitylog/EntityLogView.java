@@ -16,6 +16,7 @@
 
 package io.jmix.auditflowui.view.entitylog;
 
+import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -743,7 +744,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         LoggedEntity selectedEntity = loggedEntityDc.getItem();
         final LoggedEntity selected = selectedEntity;
 
-        if (selected.getName() == null) {
+        if (Strings.isNullOrEmpty(selected.getName())) {
             notifications.create(messages.getMessage(EntityLogView.class, "settingEmptyEntity"))
                     .withPosition(Notification.Position.BOTTOM_END)
                     .show();

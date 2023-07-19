@@ -16,7 +16,6 @@
 
 package io.jmix.auditflowui.view.entitylog;
 
-import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -26,6 +25,7 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -469,6 +469,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     protected void enableControls() {
+        entityNameField.setRequired(true);
         loggedEntityTableBox.setEnabled(false);
         loggedEntityMiscBox.setEnabled(true);
         attributesCheckboxGroup.setEnabled(true);
@@ -476,6 +477,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     protected void disableControls() {
+        entityNameField.setRequired(false);
         loggedEntityTableBox.setEnabled(true);
         loggedEntityMiscBox.setEnabled(false);
         attributesCheckboxGroup.setEnabled(false);
@@ -740,8 +742,14 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     protected void onSaveBtnClick(ClickEvent<Button> event) {
         LoggedEntity selectedEntity = loggedEntityDc.getItem();
         final LoggedEntity selected = selectedEntity;
-        if (loggedEntityDc.getItems().stream()
-                .anyMatch(e -> !(selected == e) && Strings.nullToEmpty(e.getName()).equals(selected.getName()))) {
+
+        if (selected.getName() == null) {
+            notifications.create(messages.getMessage(EntityLogView.class, "settingEmptyEntity"))
+                    .withPosition(Notification.Position.BOTTOM_END)
+                    .show();
+            return;
+        } else if (loggedEntityDc.getItems().stream()
+                .anyMatch(e -> !(selected == e) && selected.getName().equals(e.getName()))) {
             notifications.create(messages.getMessage(EntityLogView.class, "settingAlreadyExist"))
                     .withType(Notifications.Type.ERROR)
                     .show();
@@ -815,6 +823,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         loggedEntityDl.load();
         disableControls();
         loggedEntityTable.setEnabled(true);
+        loggedEntityTable.deselectAll();
         loggedEntityTable.focus();
     }
 

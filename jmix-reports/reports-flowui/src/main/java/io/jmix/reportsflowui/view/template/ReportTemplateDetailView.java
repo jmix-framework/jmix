@@ -189,6 +189,9 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 reportTemplate.setContent(bytes);
             }
         }
+
+        // When changing data in an entity with a composition relationship, you must manually update the changes
+        // in the defaultTemplate to correctly display the data when the view is reopened
         Report report = reportTemplate.getReport();
         if (reportTemplate.equals(report.getDefaultTemplate())) {
             report.setDefaultTemplate(reportTemplate);

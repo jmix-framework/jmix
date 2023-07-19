@@ -18,6 +18,7 @@ package io.jmix.flowui.view.builder;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.Views;
+import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
@@ -34,8 +35,9 @@ public class WindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
     public WindowBuilderProcessor(ApplicationContext applicationContext,
                                   Views views,
-                                  ViewRegistry viewRegistry) {
-        super(applicationContext, views, viewRegistry);
+                                  ViewRegistry viewRegistry,
+                                  UiAccessChecker uiAccessChecker) {
+        super(applicationContext, views, viewRegistry, uiAccessChecker);
     }
 
     public <V extends View<?>> DialogWindow<V> build(WindowBuilder<V> builder) {

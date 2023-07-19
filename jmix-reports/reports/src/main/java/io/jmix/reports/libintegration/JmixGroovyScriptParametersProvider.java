@@ -68,7 +68,7 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
         scriptParams.put("reportQuery", reportQuery);
         scriptParams.put("parentBand", parentBand);
         scriptParams.put("params", reportParameters);
-        scriptParams.put("showErrorMessage", throwDatasetValidationException());
+        scriptParams.put("showErrorMessage", createDatasetValidationExceptionCallable());
         scriptParams.put("timeSource", timeSource);
 
         return scriptParams;
@@ -77,7 +77,7 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
     @Override
     public Map<String, Object> getParametersForValidationParameters() {
         Map<String, Object> params = getCommonParameters();
-        params.put("showErrorMessage", throwParameterValidationException());
+        params.put("showErrorMessage", createParameterValidationExceptionCallable());
         return params;
     }
 
@@ -92,7 +92,7 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
         return params;
     }
 
-    protected ExceptionCallable throwParameterValidationException() {
+    protected ExceptionCallable createParameterValidationExceptionCallable() {
         return (arguments) -> {
             String message = (String) Arrays.stream(arguments)
                     .findFirst()
@@ -101,7 +101,7 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
         };
     }
 
-    protected ExceptionCallable throwDatasetValidationException() {
+    protected ExceptionCallable createDatasetValidationExceptionCallable() {
         return (arguments) -> {
             String message = (String) Arrays.stream(arguments)
                     .findFirst()
@@ -110,8 +110,18 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
         };
     }
 
+    /**
+     * Interface that throws exceptions in a Groovy script.
+     */
     @FunctionalInterface
     public interface ExceptionCallable {
+
+        /**
+         * Called when a method is called from a Groovy script.
+         *
+         * @param arguments parameters passed in the method from the Groovy script to be displayed in the notification
+         */
         void call(Object[] arguments) throws Exception;
+
     }
 }

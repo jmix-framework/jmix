@@ -16,6 +16,7 @@
 
 package io.jmix.auditflowui.view.entitylog;
 
+import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -71,10 +72,10 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
-import org.springframework.lang.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -468,14 +469,14 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     protected void enableControls() {
-        loggedEntityTable.setEnabled(false);
+        loggedEntityTableBox.setEnabled(false);
         loggedEntityMiscBox.setEnabled(true);
         attributesCheckboxGroup.setEnabled(true);
         actionsPaneLayout.setVisible(true);
     }
 
     protected void disableControls() {
-        loggedEntityTable.setEnabled(true);
+        loggedEntityTableBox.setEnabled(true);
         loggedEntityMiscBox.setEnabled(false);
         attributesCheckboxGroup.setEnabled(false);
         actionsPaneLayout.setVisible(false);
@@ -740,7 +741,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         LoggedEntity selectedEntity = loggedEntityDc.getItem();
         final LoggedEntity selected = selectedEntity;
         if (loggedEntityDc.getItems().stream()
-                .anyMatch(e -> !(selected == e) && e.getName().equals(selected.getName()))) {
+                .anyMatch(e -> !(selected == e) && Strings.nullToEmpty(e.getName()).equals(selected.getName()))) {
             notifications.create(messages.getMessage(EntityLogView.class, "settingAlreadyExist"))
                     .withType(Notifications.Type.ERROR)
                     .show();

@@ -17,15 +17,18 @@
 package io.jmix.gridexportui.action;
 
 import io.jmix.core.Messages;
+import io.jmix.gridexportui.exporter.ExportMode;
+import io.jmix.gridexportui.exporter.TableExporter;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.download.Downloader;
-import io.jmix.gridexportui.exporter.ExportMode;
-import io.jmix.gridexportui.exporter.TableExporter;
+import io.jmix.ui.model.HasLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -164,7 +167,7 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
         exportCurrentPageAction.setCaption(messages.getMessage(ExportMode.CURRENT_PAGE));
 
         List<AbstractAction> actions = new ArrayList<>();
-        if (isExportAllEnabled()) {
+        if (isExportAllEnabled() && isDataLoaderExist(target)) {
             actions.add(exportAllAction);
         }
         actions.add(exportCurrentPageAction);
@@ -205,5 +208,13 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
 
     protected boolean isExportAllEnabled() {
         return false;
+    }
+
+    protected boolean isDataLoaderExist(ListComponent<?> target) {
+        DataUnit items = target.getItems();
+
+        return items instanceof ContainerDataUnit<?>
+                && ((ContainerDataUnit<?>) items).getContainer() instanceof HasLoader
+                && ((HasLoader) ((ContainerDataUnit<?>) items).getContainer()).getLoader() != null;
     }
 }

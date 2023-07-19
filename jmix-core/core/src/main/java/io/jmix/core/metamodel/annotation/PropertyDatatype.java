@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Explicitly defined datatype that overrides a datatype inferred from the attribute Java type.
  */
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PropertyDatatype {
 

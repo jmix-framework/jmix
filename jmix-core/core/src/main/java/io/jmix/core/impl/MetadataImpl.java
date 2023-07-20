@@ -71,7 +71,9 @@ public class MetadataImpl implements Metadata {
         Class<T> extClass = getSession().getClass(entityClass).getJavaClass();
         try {
             T obj = extClass.getDeclaredConstructor().newInstance();
-            EntityValues.setId(obj, id);
+            if (id != null) {
+                EntityValues.setId(obj, id);
+            }
 
             if (entityInitializers != null) {
                 for (EntityInitializer initializer : entityInitializers) {

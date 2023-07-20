@@ -7,6 +7,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
@@ -75,7 +76,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @ViewComponent
     protected JmixComboBox<PredefinedTransformation> wildcardsField;
     @ViewComponent
-    protected Div predefinedTransformationBox;
+    protected VerticalLayout predefinedTransformationBox;
     @ViewComponent
     protected JmixTextArea localeField;
     @ViewComponent
@@ -473,10 +474,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         screenField.setVisible(isEntity);
         enumerationField.setVisible(isEnum);
         predefinedTransformationBox.setVisible(isText);
+        UiComponentUtils.setValue(isPredefinedTransformationField, isText);
 
-        if (!isText) {
-            isPredefinedTransformationField.setValue(false);
-        }
         initDefaultValueField();
         initCurrentDateTimeField();
     }
@@ -496,11 +495,9 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     protected void initTransformations() {
         ReportInputParameter parameter = getEditedEntity();
+
         UiComponentUtils.setValue(isPredefinedTransformationField, parameter.getPredefinedTransformation() != null);
         enableControlsByTransformationType(parameter.getPredefinedTransformation() != null);
-
-        //todo
-//        isPredefinedTransformationField.setReadOnly(secureOperations.isEntityUpdatePermitted(metadata.getClass(ReportInputParameter.class), policyStore));
     }
 
     protected void enableControlsByTransformationType(boolean hasPredefinedTransformation) {

@@ -58,8 +58,8 @@
                           width="100%" height="20em"/>
             </tab>
             <tab id="processParamTab" label="msg://parameters.transformationTab">
-                <div id="predefinedTransformationBox">
-                    <vbox padding="false" spacing="false">
+                <div>
+                    <vbox id="predefinedTransformationBox" padding="false" spacing="false">
                         <checkbox id="isPredefinedTransformationField"
                                   value="false"
                                   label="msg://parameters.predefinedTransformation"/>

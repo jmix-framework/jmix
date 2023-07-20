@@ -64,10 +64,6 @@ public class ReportExceptionHandler extends AbstractUiExceptionHandler {
             notifications.create(messages.getMessage(getClass(), "reportException.noOpenOfficeFreePorts"))
                     .withType(Notifications.Type.ERROR)
                     .show();
-        } else if (ValidationException.class.getName().equals(className)) {
-            notifications.create(message)
-                    .withType(Notifications.Type.ERROR)
-                    .show();
         } else {
             Throwable rootCause = ExceptionUtils.getRootCause(throwable);
             if (rootCause == null) {

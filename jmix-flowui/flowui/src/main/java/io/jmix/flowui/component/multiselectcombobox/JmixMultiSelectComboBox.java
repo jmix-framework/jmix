@@ -31,10 +31,7 @@ import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsMetaClass;
-import io.jmix.flowui.component.SupportsTypedValue;
-import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.EntityCollectionFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -43,19 +40,20 @@ import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.util.FetchCallbackAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 
 public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
         implements SupportsValueSource<Collection<V>>, SupportsMetaClass, SupportsValidation<Collection<V>>,
         SupportsTypedValue<JmixMultiSelectComboBox<V>, ComponentValueChangeEvent<MultiSelectComboBox<V>, Set<V>>, Collection<V>, Set<V>>,
         SupportsDataProvider<V>, SupportsItemsEnum<V>, SupportsFilterableItemsContainer<V>, HasRequired, HasTitle,
-        ApplicationContextAware, InitializingBean {
+        SupportsItemsFetchCallback<V, String>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -203,6 +201,11 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
         if (dataViewDelegate != null) {
             dataViewDelegate.bind(dataProvider);
         }
+    }
+
+    @Override
+    public void setItemsFetchCallback(FetchCallback<V, String> fetchCallback) {
+        setItems(new FetchCallbackAdapter<>(fetchCallback));
     }
 
     @Nullable

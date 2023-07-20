@@ -42,10 +42,11 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 import io.jmix.flowui.model.CollectionContainer;
-import org.springframework.lang.Nullable;
+import io.jmix.flowui.util.FetchCallbackAdapter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
 import java.util.Collections;
 import java.util.Set;
@@ -54,7 +55,7 @@ import java.util.function.Consumer;
 public class EntityComboBox<V> extends ComboBoxPicker<V>
         implements EntityPickerComponent<V>, LookupComponent<V>, SupportsValidation<V>, SupportsDataProvider<V>,
         SupportsItemsContainer<V>, SupportsFilterableItemsContainer<V>, SupportsStatusChangeHandler<EntityComboBox<V>>,
-        HasRequired, ApplicationContextAware, InitializingBean {
+        HasRequired, SupportsItemsFetchCallback<V, String>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -232,6 +233,11 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
         if (dataViewDelegate != null) {
             dataViewDelegate.bind(dataProvider);
         }
+    }
+
+    @Override
+    public void setItemsFetchCallback(FetchCallback<V, String> fetchCallback) {
+        setItems(new FetchCallbackAdapter<>(fetchCallback));
     }
 
     @Nullable

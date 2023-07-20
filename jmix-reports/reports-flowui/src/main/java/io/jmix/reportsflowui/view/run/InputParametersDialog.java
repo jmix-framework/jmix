@@ -15,21 +15,24 @@
  */
 package io.jmix.reportsflowui.view.run;
 
-import io.jmix.reportsflowui.runner.FluentUiReportRunner;
-import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
-import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.ReportParameterValidator;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.ReportParametersValidationException;
+import io.jmix.reportsflowui.runner.FluentUiReportRunner;
+import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.view.ReportParameterValidator;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -56,6 +59,10 @@ public class InputParametersDialog extends StandardView {
     protected ViewValidation viewValidation;
     @Autowired
     protected UiComponents uiComponents;
+    @Autowired
+    protected Notifications notifications;
+    @Autowired
+    protected Messages messages;
 
     protected String templateCode;
     protected String outputFileName;
@@ -140,10 +147,18 @@ public class InputParametersDialog extends StandardView {
                     fluentRunner.inBackground(this);
                 }
 
-                if (bulkPrint) {
-                    fluentRunner.runMultipleReports(inputParameter.getAlias(), selectedEntities);
-                } else {
-                    fluentRunner.runAndShow();
+                try {
+                    if (bulkPrint) {
+                        fluentRunner.runMultipleReports(inputParameter.getAlias(), selectedEntities);
+                    } else {
+                        fluentRunner.runAndShow();
+                    }
+                } catch (MissingDefaultTemplateException e) {
+                    notifications.create(
+                                    messages.getMessage("runningReportError.title"),
+                                    messages.getMessage("missingDefaultTemplateError.description"))
+                            .withType(Notifications.Type.ERROR)
+                            .show();
                 }
             } else {
                 viewValidation.showValidationErrors(validationErrors);

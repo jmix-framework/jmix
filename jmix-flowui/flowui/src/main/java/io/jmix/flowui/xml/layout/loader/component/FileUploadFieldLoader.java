@@ -17,6 +17,8 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.component.upload.UploadFieldI18NSupport;
+import io.jmix.flowui.kit.component.upload.JmixUploadI18N;
 
 public class FileUploadFieldLoader extends AbstractUploadFieldLoader<FileUploadField> {
 
@@ -33,5 +35,10 @@ public class FileUploadFieldLoader extends AbstractUploadFieldLoader<FileUploadF
         componentLoader().loadValidationAttributes(resultComponent, element, context);
 
         getLoaderSupport().loadString(element, "fileName", resultComponent::setFileName);
+    }
+
+    @Override
+    protected JmixUploadI18N createI18N() {
+        return applicationContext.getBean(UploadFieldI18NSupport.class).getI18nUploadField();
     }
 }

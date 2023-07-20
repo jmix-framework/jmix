@@ -41,8 +41,6 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
 
         loadResourceString(element, "placeholder",
                 context.getMessageGroup(), resultComponent::setPlaceholder);
-        loadResourceString(element, "tooltipText",
-                context.getMessageGroup(), resultComponent::setTooltipText);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);

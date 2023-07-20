@@ -18,60 +18,110 @@ package io.jmix.reports.libintegration;
 
 
 import io.jmix.core.DataManager;
+import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.ReportsProperties;
+import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reports.yarg.exception.ValidationException;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component("report_GroovyParametersProvider")
 public class JmixGroovyScriptParametersProvider implements GroovyScriptParametersProvider {
 
-    @Autowired
-    protected ReportsProperties reportsProperties;
+    protected final ReportsProperties reportsProperties;
+    protected final Metadata metadata;
+    protected final DataManager dataManager;
+    protected final CurrentAuthentication currentAuthentication;
+    protected final TimeSource timeSource;
+    protected final ApplicationContext applicationContext;
+    protected final Messages messages;
 
-    @Autowired
-    protected Metadata metadata;
-
-    @Autowired
-    protected DataManager dataManager;
-
-    @Autowired
-    protected CurrentAuthentication currentAuthentication;
-
-    @Autowired
-    protected TimeSource timeSource;
-
-    @Autowired
-    protected ApplicationContext applicationContext;
+    public JmixGroovyScriptParametersProvider(ReportsProperties reportsProperties,
+                                              Metadata metadata,
+                                              DataManager dataManager,
+                                              CurrentAuthentication currentAuthentication,
+                                              TimeSource timeSource,
+                                              ApplicationContext applicationContext,
+                                              Messages messages) {
+        this.reportsProperties = reportsProperties;
+        this.metadata = metadata;
+        this.dataManager = dataManager;
+        this.currentAuthentication = currentAuthentication;
+        this.timeSource = timeSource;
+        this.applicationContext = applicationContext;
+        this.messages = messages;
+    }
 
     @Override
-    public Map<String, Object> prepareParameters(ReportQuery reportQuery, BandData parentBand, Map<String, Object> reportParameters) {
+    public Map<String, Object> getParametersForDatasetParameters(ReportQuery reportQuery, BandData parentBand, Map<String, Object> reportParameters) {
+        Map<String, Object> scriptParams = getCommonParameters();
 
-        Map<String, Object> scriptParams = new HashMap<>();
         scriptParams.put("reportQuery", reportQuery);
         scriptParams.put("parentBand", parentBand);
         scriptParams.put("params", reportParameters);
-        scriptParams.put("currentAuthentication", currentAuthentication);
-        scriptParams.put("metadata", metadata);
-        scriptParams.put("dataManager", dataManager);
+        scriptParams.put("showErrorMessage", createDatasetValidationExceptionCallable());
         scriptParams.put("timeSource", timeSource);
-        scriptParams.put("applicationContext", applicationContext);
-        //todo replace MethodClosure
-//        scriptParams.put("validationException", new MethodClosure(this, "validationException"));
 
         return scriptParams;
     }
 
-    protected void validationException(String message) {
-        throw new ValidationException(message);
+    @Override
+    public Map<String, Object> getParametersForValidationParameters() {
+        Map<String, Object> params = getCommonParameters();
+        params.put("showErrorMessage", createParameterValidationExceptionCallable());
+        return params;
+    }
+
+    protected Map<String, Object> getCommonParameters() {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("currentAuthentication", currentAuthentication);
+        params.put("applicationContext", applicationContext);
+        params.put("dataManager", dataManager);
+        params.put("metadata", metadata);
+
+        return params;
+    }
+
+    protected ExceptionCallable createParameterValidationExceptionCallable() {
+        return (arguments) -> {
+            String message = (String) Arrays.stream(arguments)
+                    .findFirst()
+                    .orElse(messages.getMessage("validationFieldFail.defaultDescriptionMessage"));
+            throw new ReportParametersValidationException(message);
+        };
+    }
+
+    protected ExceptionCallable createDatasetValidationExceptionCallable() {
+        return (arguments) -> {
+            String message = (String) Arrays.stream(arguments)
+                    .findFirst()
+                    .orElse(messages.getMessage("validationFieldFail.defaultDescriptionMessage"));
+            throw new ValidationException(message);
+        };
+    }
+
+    /**
+     * Interface that throws exceptions in a Groovy script.
+     */
+    @FunctionalInterface
+    public interface ExceptionCallable {
+
+        /**
+         * Called when a method is called from a Groovy script.
+         *
+         * @param arguments parameters passed in the method from the Groovy script to be displayed in the notification
+         */
+        void call(Object[] arguments) throws Exception;
+
     }
 }

@@ -65,7 +65,6 @@
                              tabIndex="3"
                              themeNames="small, align-center"
                              title="titleString"
-                             tooltipText="tooltipTextString"
                              visible="true"
                              width="100px">
             <tooltip text="tooltipText"
@@ -107,7 +106,6 @@
                              tabIndex="3"
                              themeNames="small, align-center"
                              title="titleString"
-                             tooltipText="tooltipTextString"
                              visible="true"
                              width="100px">
             <tooltip text="tooltipText"

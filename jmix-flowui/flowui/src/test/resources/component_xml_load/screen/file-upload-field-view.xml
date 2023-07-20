@@ -77,5 +77,6 @@
                          readOnly="true"/>
         <fileUploadField id="disabledFileUploadField"
                          enabled="false"/>
+        <fileUploadField id="localizedFileUploadField"/>
     </layout>
 </view>

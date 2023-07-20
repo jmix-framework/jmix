@@ -62,8 +62,8 @@
                         </responsiveSteps>
                         <textField id="nameField" property="name"
                                    requiredMessage="msg://detailsTab.nameField.requiredMessage"/>
-                        <entityComboBox id="groupField" property="group"
-                                        requiredMessage="msg://detailsTab.groupField.requiredMessage"
+                        <entityComboBox id="groupField"
+                                        property="group"
                                         itemsContainer="groupsDc"/>
                         <textField id="codeField" property="code"/>
                         <hbox padding="false" alignItems="BASELINE">

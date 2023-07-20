@@ -38,7 +38,6 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
-import io.jmix.flowui.view.MessageBundle;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -65,7 +64,6 @@ public class EntityTreeComposite extends Composite<FormLayout>
     protected Notifications notifications;
     protected MetadataTools metadataTools;
     protected FormLayout formLayout;
-    protected MessageBundle messageBundle;
     protected Messages messages;
     protected Metadata metadata;
     protected CollectionContainer<EntityTreeNode> reportEntityTreeNodeDc;
@@ -113,7 +111,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
         reportPropertyNameSearchButton.addClickListener(event -> {
             reportEntityTreeNodeDl.load();
             if (reportEntityTreeNodeDc.getItems().isEmpty()) {
-                notifications.create(messageBundle.getMessage("valueNotFound"))
+                notifications.create(messages.getMessage(getClass(), "valueNotFound.title"))
                         .show();
             } else {
                 if (StringUtils.isEmpty(reportPropertyName.getValue())) {
@@ -133,10 +131,11 @@ public class EntityTreeComposite extends Composite<FormLayout>
 
         entityTree = uiComponents.create(TreeDataGrid.class);
         entityTree.setDataProvider(new ContainerTreeDataGridItems<>(reportEntityTreeNodeDc, "parent"));
-        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(EntityTreeNode.class), "name");
-        entityTree.addHierarchyColumn("name", metaPropertyPath)
+        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(EntityTreeNode.class), "localizedName");
+        entityTree.addHierarchyColumn("localizedName", metaPropertyPath)
                 .setHeader(messages.getMessage(getClass(), "entityTreeNode.name.header"));
         entityTree.setId("treeDataGrid");
+        entityTree.addValueProvider("name", EntityTreeNode::getLocalizedName);
         formLayout = uiComponents.create(FormLayout.class);
         formLayout.setId("entityTreeFormLayout");
         formLayout.setWidth("30em");
@@ -154,7 +153,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
 
     protected void initComponent() {
         this.uiComponents = applicationContext.getBean(UiComponents.class);
-        this.messageBundle = applicationContext.getBean(MessageBundle.class);
+        this.notifications = applicationContext.getBean(Notifications.class);
         this.messages = applicationContext.getBean(Messages.class);
         this.dataComponents = applicationContext.getBean(DataComponents.class);
         this.metadata = applicationContext.getBean(Metadata.class);

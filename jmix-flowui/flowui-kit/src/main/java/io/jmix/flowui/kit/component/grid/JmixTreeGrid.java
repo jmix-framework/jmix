@@ -20,12 +20,13 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 
 import jakarta.annotation.Nullable;
 import java.util.Collection;
 
-public class JmixTreeGrid<T> extends TreeGrid<T> implements SelectionChangeNotifier<Grid<T>, T>, HasActions {
+public class JmixTreeGrid<T> extends TreeGrid<T> implements SelectionChangeNotifier<Grid<T>, T>, HasActions, HasSubParts {
 
     protected GridActionsSupport<JmixTreeGrid<T>, T> actionsSupport;
 
@@ -53,6 +54,12 @@ public class JmixTreeGrid<T> extends TreeGrid<T> implements SelectionChangeNotif
     @Override
     public Action getAction(String id) {
         return getActionsSupport().getAction(id).orElse(null);
+    }
+
+    @Nullable
+    @Override
+    public Object getSubPart(String name) {
+        return getColumnByKey(name);
     }
 
     public GridActionsSupport<JmixTreeGrid<T>, T> getActionsSupport() {

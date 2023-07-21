@@ -33,14 +33,13 @@ import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.GridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
-import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -197,11 +196,6 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     public Column<E> addColumn(Renderer<E> renderer) {
         Column<E> column = super.addColumn(renderer);
         return gridDelegate.addColumn(column);
-    }
-
-    @Override
-    public List<Column<E>> getVisibleColumns() {
-        return gridDelegate.getVisibleColumns();
     }
 
     /**

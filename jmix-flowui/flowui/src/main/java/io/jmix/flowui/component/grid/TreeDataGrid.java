@@ -32,14 +32,13 @@ import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
-import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -229,11 +228,6 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         if (gridDelegate.isDataGridOwner(column)) {
             super.removeColumn(column);
         }
-    }
-
-    @Override
-    public List<Column<E>> getVisibleColumns() {
-        return gridDelegate.getVisibleColumns();
     }
 
     /**

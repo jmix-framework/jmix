@@ -69,7 +69,7 @@ public final class ComponentUtils {
      * @param components components to add to the specified slot.
      * @deprecated {@link com.vaadin.flow.component.shared.SlotUtils#addToSlot(HasElement, String, Component...)} instead
      */
-    @Deprecated
+    @Deprecated(since = "2.1", forRemoval = true)
     public static void addComponentsToSlot(Element element, String slot, Component... components) {
         for (Component component : components) {
             component.getElement().setAttribute("slot", slot);
@@ -82,7 +82,7 @@ public final class ComponentUtils {
      * @param slot    the name of the slot inside the parent
      * @deprecated use {@link com.vaadin.flow.component.shared.SlotUtils#clearSlot(HasElement, String)} instead
      */
-    @Deprecated
+    @Deprecated(since = "2.1", forRemoval = true)
     public static void clearSlot(Element element, String slot) {
         element.getChildren()
                 .filter(child -> slot.equals(child.getAttribute("slot")))

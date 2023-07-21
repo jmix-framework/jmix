@@ -36,7 +36,10 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
-import org.apache.commons.lang3.ArrayUtils;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +47,9 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nonnull;
-import org.springframework.lang.Nullable;
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.Id;
-import jakarta.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -276,31 +275,6 @@ public class MetadataTools {
         checkNotNullArgument(metaClass);
         checkNotNullArgument(other);
         return metaClass.equals(other) || metaClass.getDescendants().contains(other);
-    }
-
-    /**
-     * Determine whether an object denoted by the given property is merged into persistence context together with the
-     * owning object. This is true if the property is ManyToMany, or if it is OneToMany with certain CascadeType
-     * defined.
-     *
-     * @deprecated use {@link MetadataTools#getCascadeTypes(MetaProperty)} instead
-     */
-    @Deprecated
-    public boolean isCascade(MetaProperty metaProperty) {
-        Objects.requireNonNull(metaProperty, "metaProperty is null");
-        OneToMany oneToMany = metaProperty.getAnnotatedElement().getAnnotation(OneToMany.class);
-        if (oneToMany != null) {
-            CascadeType[] cascadeTypes = oneToMany.cascade();
-            if (ArrayUtils.contains(cascadeTypes, CascadeType.ALL) ||
-                    ArrayUtils.contains(cascadeTypes, CascadeType.MERGE)) {
-                return true;
-            }
-        }
-        ManyToMany manyToMany = metaProperty.getAnnotatedElement().getAnnotation(ManyToMany.class);
-        if (manyToMany != null && StringUtils.isBlank(manyToMany.mappedBy())) {
-            return true;
-        }
-        return false;
     }
 
     public List<CascadeType> getCascadeTypes(MetaProperty metaProperty) {
@@ -895,11 +869,11 @@ public class MetadataTools {
     @Nullable
     public String getUuidPropertyName(MetaClass metaClass) {
         String uuidProperty = (String) metaClass.getAnnotations().get(UUID_KEY_ANN_NAME);
-        if(uuidProperty != null) {
+        if (uuidProperty != null) {
             return uuidProperty;
         } else {
             List<MetaClass> ancestors = metaClass.getAncestors();
-            for(MetaClass ancestor : ancestors) {
+            for (MetaClass ancestor : ancestors) {
                 uuidProperty = (String) ancestor.getAnnotations().get(UUID_KEY_ANN_NAME);
                 if (uuidProperty != null) {
                     return uuidProperty;

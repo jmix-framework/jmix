@@ -449,18 +449,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         return List.copyOf(columns);
     }
 
-    /**
-     * @return a copy of columns that are visible and not hidden by security
-     * @deprecated use {@link Grid#getColumns()} and filter by visibility
-     */
-    @Deprecated
-    public List<Grid.Column<E>> getVisibleColumns() {
-        return columns.stream()
-                .filter(c -> c.isVisible()
-                        && (!propertyColumns.containsKey(c) || isPropertyEnabledBySecurity(propertyColumns.get(c))))
-                .collect(Collectors.toList());
-    }
-
     @Nullable
     public Grid.Column<E> getColumnByKey(String key) {
         if (Strings.isNullOrEmpty(key)) {

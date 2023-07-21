@@ -18,11 +18,11 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.data.provider.HasLazyDataView;
 import com.vaadin.flow.data.provider.Query;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.flowui.component.SupportsItemsFetchCallback;
 import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.data.SupportsValueSource;
@@ -132,7 +132,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
         }
     }
 
-    public void loadQueryItems(HasLazyDataView<?, String, ?> component, Element element) {
+    public void loadQueryItems(SupportsItemsFetchCallback<?, String> component, Element element) {
         Element queryItemsElement = element.element(QUERY_ITEMS_ELEMENT);
         if (queryItemsElement == null) {
             return;
@@ -144,7 +144,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
                         () -> loadValueQueryItemsInternal(component, queryItemsElement));
     }
 
-    public void loadEntityQueryItems(HasLazyDataView<?, String, ?> component, Element element) {
+    public void loadEntityQueryItems(SupportsItemsFetchCallback<?, String> component, Element element) {
         Element queryItemsElement = element.element(QUERY_ITEMS_ELEMENT);
         if (queryItemsElement == null) {
             return;
@@ -160,7 +160,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void loadEntityQueryItemsInternal(HasLazyDataView<?, String, ?> component,
+    protected void loadEntityQueryItemsInternal(SupportsItemsFetchCallback<?, String> component,
                                                 Element queryItemsElement, Class<?> entityClass) {
         String queryString = queryItemsElement.getStringValue();
         String searchStringFormat = loadSearchStringFormat(queryItemsElement);
@@ -169,7 +169,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
         FetchPlan fetchPlan = loadFetchPlan(queryItemsElement, entityClass);
 
         DataManager dataManager = applicationContext.getBean(DataManager.class);
-        component.setItems(query -> {
+        component.setItemsFetchCallback(query -> {
             String searchString = getSearchString(query, searchStringFormat, escapeValue);
 
             FluentLoader.ByQuery loader = dataManager.load(entityClass)
@@ -185,7 +185,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
         });
     }
 
-    public void loadValueQueryItems(HasLazyDataView<?, String, ?> component, Element element) {
+    public void loadValueQueryItems(SupportsItemsFetchCallback<?, String> component, Element element) {
         Element queryItemsElement = element.element(QUERY_ITEMS_ELEMENT);
         if (queryItemsElement == null) {
             return;
@@ -194,13 +194,14 @@ public class DataLoaderSupport implements ApplicationContextAware {
         loadValueQueryItemsInternal(component, queryItemsElement);
     }
 
-    protected void loadValueQueryItemsInternal(HasLazyDataView<?, String, ?> component, Element queryItemsElement) {
+    protected void loadValueQueryItemsInternal(SupportsItemsFetchCallback<?, String> component,
+                                               Element queryItemsElement) {
         String queryString = queryItemsElement.getStringValue();
         String searchStringFormat = loadSearchStringFormat(queryItemsElement);
         boolean escapeValue = loadEscapeValueForLike(queryItemsElement);
 
         DataManager dataManager = applicationContext.getBean(DataManager.class);
-        component.setItems(query -> {
+        component.setItemsFetchCallback(query -> {
             String searchString = getSearchString(query, searchStringFormat, escapeValue);
 
             return dataManager.loadValues(queryString)

@@ -35,7 +35,7 @@ public interface SupportsItemsFetchCallback<T, F> {
      * @param fetchCallback function that returns a stream of items from the backend based on the
      *                      offset, limit and an optional filter provided by the query object
      */
-    void setItemsFetchCallback(FetchCallback<T, String> fetchCallback);
+    void setItemsFetchCallback(FetchCallback<T, F> fetchCallback);
 
     /**
      * Callback interface for fetching a stream of items from a backend based on a query.

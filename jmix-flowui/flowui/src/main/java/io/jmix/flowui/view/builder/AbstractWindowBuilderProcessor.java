@@ -51,7 +51,7 @@ public abstract class AbstractWindowBuilderProcessor {
 
     protected <V extends View<?>> V createView(DialogWindowBuilder<V> builder) {
         Class<V> viewClass = getViewClass(builder);
-        uiAccessChecker.checkAccessView(viewClass);
+        uiAccessChecker.checkViewPermitted(viewClass);
         return views.create(viewClass);
     }
 

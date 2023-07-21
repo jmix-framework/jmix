@@ -80,12 +80,12 @@ public class UiAccessChecker {
 
     /**
      * Checks for access to the view.
-     * Thrown exception if no access
+     * Throws exception if no access.
      *
      * @param target class to check
      * @throws AccessDeniedException if the user does not have access to the view
      */
-    public void checkAccessView(Class<?> target) {
+    public void checkViewPermitted(Class<?> target) {
         if (!isViewPermitted(target)) {
             throw new AccessDeniedException("view", target.getName());
         }

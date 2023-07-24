@@ -63,11 +63,13 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         return {
             theme: {
                 type: String,
+                value: 'textmate',
                 observer: '_onThemeChange'
             },
 
             mode: {
                 type: String,
+                value: 'plain_text',
                 observer: '_onModeChange'
             },
 
@@ -278,6 +280,10 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.setPrintMarginColumn(printMarginColumn);
+    }
+
+    get clearElement() {
+        return null;
     }
 }
 

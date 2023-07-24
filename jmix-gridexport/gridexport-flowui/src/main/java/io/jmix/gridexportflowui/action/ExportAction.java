@@ -24,16 +24,19 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
+import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
+import io.jmix.flowui.model.HasLoader;
 import io.jmix.gridexportflowui.exporter.DataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -148,15 +151,23 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
 
         List<Action> actions = new ArrayList<>();
 
-        actions.add(exportAllAction);
+        if (isDataLoaderExist(target)) {
+            actions.add(exportAllAction);
+        }
+
         actions.add(exportCurrentPageAction);
+
         if (!target.getSelectedItems().isEmpty()) {
             actions.add(exportSelectedAction);
         }
 
         actions.add(new DialogAction(DialogAction.Type.CANCEL));
 
-        exportAllAction.setVariant(ActionVariant.PRIMARY);
+        if (actions.contains(exportAllAction)) {
+            exportAllAction.setVariant(ActionVariant.PRIMARY);
+        } else {
+            exportCurrentPageAction.setVariant(ActionVariant.PRIMARY);
+        }
 
         dialogs.createOptionDialog()
                 .withHeader(getMessage("exportConfirmationDialog.header"))
@@ -195,5 +206,11 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         return new SecuredBaseAction("ExportMode.CURRENT_PAGE")
                 .withText(messages.getMessage(ExportMode.CURRENT_PAGE))
                 .withHandler(event -> doExport(ExportMode.CURRENT_PAGE));
+    }
+
+    protected boolean isDataLoaderExist(ListDataComponent<?> target) {
+        return target.getItems() instanceof ContainerDataUnit<?> containerItems
+                && containerItems.getContainer() instanceof HasLoader containerWithLoader
+                && containerWithLoader.getLoader() != null;
     }
 }

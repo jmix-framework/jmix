@@ -171,12 +171,12 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     @Synchronize(PROPERTY_THEME)
     public CodeEditorTheme getTheme() {
-        return CodeEditorTheme.fromId(getElement().getProperty(PROPERTY_THEME));
+        return CodeEditorTheme.fromId(getElement().getProperty(PROPERTY_THEME, CodeEditorTheme.TEXTMATE.getId()));
     }
 
     /**
      * Sets the visual theme of the editor.
-     * The visual theme is not applied by default.
+     * The visual theme is {@link CodeEditorTheme#TEXTMATE} by default.
      *
      * @param theme the instance of the {@link CodeEditorTheme} to be applied
      */
@@ -189,12 +189,12 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     @Synchronize(PROPERTY_MODE)
     public CodeEditorMode getMode() {
-        return CodeEditorMode.fromId(getElement().getProperty(PROPERTY_MODE));
+        return CodeEditorMode.fromId(getElement().getProperty(PROPERTY_MODE, CodeEditorMode.PLAIN_TEXT.getId()));
     }
 
     /**
      * Sets syntax highlighting for a specific mode.
-     * The syntax highlighting mode is not applied by default.
+     * The syntax highlighting mode is {@link CodeEditorMode#PLAIN_TEXT} by default.
      *
      * @param mode the instance of the {@link CodeEditorMode} to be applied
      */

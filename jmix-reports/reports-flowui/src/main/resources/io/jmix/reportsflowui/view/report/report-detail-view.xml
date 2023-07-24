@@ -56,30 +56,22 @@
             <tab id="detailsTab" label="msg://mainTabSheet.detailsTab.label">
                 <vbox id="detailsTabContent" padding="false">
                     <formLayout id="reportForm" dataContainer="reportDc">
+                        <responsiveSteps>
+                            <responsiveStep minWidth="0em" columns="1"/>
+                            <responsiveStep minWidth="50em" columns="2"/>
+                        </responsiveSteps>
                         <textField id="nameField" property="name"
                                    requiredMessage="msg://detailsTab.nameField.requiredMessage"/>
-                        <entityComboBox id="defaultTemplateField" property="defaultTemplate"
-                                        required="true"
-                                        itemsContainer="templatesDc">
-                            <actions>
-                                <action id="create" icon="PLUS"
-                                        description="msg://detailsTab.defaultTemplateField.create.description"/>
-                                <action id="download" icon="DOWNLOAD"
-                                        description="msg://detailsTab.defaultTemplateField.download.description"/>
-                                <action id="upload" icon="UPLOAD"
-                                        description="msg://detailsTab.defaultTemplateField.upload.description"/>
-                                <action id="edit" icon="PENCIL"
-                                        description="msg://detailsTab.defaultTemplateField.edit.description"/>
-                            </actions>
-                        </entityComboBox>
                         <entityComboBox id="groupField"
                                         property="group"
                                         itemsContainer="groupsDc"/>
                         <textField id="codeField" property="code"/>
-                        <textArea id="descriptionField" property="description"/>
-                        <textArea id="localeTextField" property="localeNames" label="msg://nameLocale"/>
-                        <checkbox id="systemField" property="system"/>
-                        <checkbox id="restAccessField" property="restAccess"/>
+                        <hbox padding="false" alignItems="BASELINE">
+                            <checkbox id="systemField" label="msg://io.jmix.reports.entity/Report.system" property="system"/>
+                            <checkbox id="restAccessField" label="msg://io.jmix.reports.entity/Report.restAccess" property="restAccess"/>
+                        </hbox>
+                        <textArea id="descriptionField" property="description" minHeight="9.5em"/>
+                        <textArea id="localeTextField" property="localeNames" label="msg://nameLocale" minHeight="9.5em"/>
                     </formLayout>
                 </vbox>
             </tab>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-jmix-tabsheet::part(content) {
-  padding: var(--lumo-space-m) 0 0;
+package io.jmix.reports.exception;
+
+/**
+ * Thrown when a report is run for which default template is not defined
+ */
+public class MissingDefaultTemplateException extends ReportingException {
+
+    public MissingDefaultTemplateException(String message) {
+        super(message);
+    }
 }

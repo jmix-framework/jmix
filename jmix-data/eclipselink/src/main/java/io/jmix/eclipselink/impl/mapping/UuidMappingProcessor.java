@@ -16,11 +16,11 @@
 
 package io.jmix.eclipselink.impl.mapping;
 
+import com.google.common.base.Preconditions;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.eclipselink.impl.UuidConverter;
 import io.jmix.eclipselink.impl.dbms.UuidMappingInfo;
 import io.jmix.eclipselink.persistence.MappingProcessor;
 import io.jmix.eclipselink.persistence.MappingProcessorContext;
@@ -28,12 +28,10 @@ import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.mappings.DatabaseMapping;
 import org.eclipse.persistence.mappings.DirectToFieldMapping;
 import org.eclipse.persistence.mappings.OneToOneMapping;
-import org.eclipse.persistence.platform.database.*;
-import org.eclipse.persistence.sessions.Session;
+import org.eclipse.persistence.platform.database.DatabasePlatform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.Types;
 import java.util.UUID;
 
 /**
@@ -48,6 +46,13 @@ public class UuidMappingProcessor implements MappingProcessor {
 
     @Override
     public void process(MappingProcessorContext context) {
+        DatabasePlatform platform = context.getSession().getPlatform();
+        Preconditions.checkState(platform instanceof UuidMappingInfo,
+                "Database platform '%s' doesn't implement %s",
+                platform.getClass().getSimpleName(),
+                UuidMappingInfo.class.getSimpleName());
+
+        UuidMappingInfo mappingInfo = (UuidMappingInfo) platform;
         DatabaseMapping mapping = context.getMapping();
 
         MetaClass metaClass = metadata.getClass(mapping.getDescriptor().getJavaClass());
@@ -55,24 +60,14 @@ public class UuidMappingProcessor implements MappingProcessor {
 
         if (metaProperty.getRange().isDatatype()) {
             if (metaProperty.getJavaType().equals(UUID.class)) {
-                if (context.getSession().getPlatform() instanceof UuidMappingInfo) {
-                    UuidMappingInfo mappingInfo = (UuidMappingInfo) context.getSession().getPlatform();
-                    ((DirectToFieldMapping) mapping).setConverter(mappingInfo.getUuidConverter());
-                    setFieldProperties(mappingInfo, mapping.getField());
-                } else {
-                    ((DirectToFieldMapping) mapping).setConverter(UuidConverter.getInstance());
-                    setDatabaseFieldParameters(context.getSession(), mapping.getField());
-                }
+                ((DirectToFieldMapping) mapping).setConverter(mappingInfo.getUuidConverter());
+                setFieldProperties(mappingInfo, mapping.getField());
             }
         } else if (metaProperty.getRange().isClass() && !metaProperty.getRange().getCardinality().isMany()) {
             MetaProperty refPkProperty = metadataTools.getPrimaryKeyProperty(metaProperty.getRange().asClass());
             if (refPkProperty != null && refPkProperty.getJavaType().equals(UUID.class)) {
                 for (DatabaseField field : ((OneToOneMapping) mapping).getForeignKeyFields()) {
-                    if (context.getSession().getPlatform() instanceof UuidMappingInfo) {
-                        setFieldProperties((UuidMappingInfo) context.getSession().getPlatform(), field);
-                    } else {
-                        setDatabaseFieldParameters(context.getSession(), field);
-                    }
+                    setFieldProperties(mappingInfo, field);
                 }
             }
         }
@@ -82,33 +77,5 @@ public class UuidMappingProcessor implements MappingProcessor {
         field.setSqlType(mappingInfo.getUuidSqlType());
         field.setType(mappingInfo.getUuidType());
         field.setColumnDefinition(mappingInfo.getUuidColumnDefinition());
-    }
-
-    @Deprecated
-    private void setDatabaseFieldParameters(Session session, DatabaseField field) {
-        if (session.getPlatform() instanceof PostgreSQLPlatform) {
-            field.setSqlType(Types.OTHER);
-            field.setType(UUID.class);
-            field.setColumnDefinition("UUID");
-        } else if (session.getPlatform() instanceof MySQLPlatform) {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
-            field.setColumnDefinition("varchar(32)");
-        } else if (session.getPlatform() instanceof HSQLPlatform) {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
-            field.setColumnDefinition("varchar(36)");
-        } else if (session.getPlatform() instanceof SQLServerPlatform) {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
-            field.setColumnDefinition("uniqueidentifier");
-        } else if (session.getPlatform() instanceof OraclePlatform) {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
-            field.setColumnDefinition("varchar2(32)");
-        } else {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
-        }
     }
 }

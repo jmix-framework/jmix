@@ -38,6 +38,7 @@ import io.jmix.reports.ReportImportExport;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
@@ -104,6 +105,8 @@ public class ReportListView extends StandardListView<Report> {
     protected ReportsClientProperties reportsClientProperties;
     @Autowired
     protected ViewNavigators viewNavigators;
+    @Autowired
+    private Messages messages;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -151,7 +154,16 @@ public class ReportListView extends StandardListView<Report> {
             if (reportsClientProperties.getUseBackgroundReportProcessing()) {
                 fluentRunner.inBackground(this);
             }
-            fluentRunner.runAndShow();
+
+            try {
+                fluentRunner.runAndShow();
+            } catch (MissingDefaultTemplateException e) {
+                notifications.create(
+                                messages.getMessage("runningReportError.title"),
+                                messages.getMessage("missingDefaultTemplateError.description"))
+                        .withType(Notifications.Type.ERROR)
+                        .show();
+            }
         }
     }
 

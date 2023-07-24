@@ -2787,7 +2787,6 @@
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="tooltipText" type="resourceString"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
@@ -2896,9 +2895,10 @@
     <xs:complexType name="dateTimePickerComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                <xs:sequence>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                    <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+                </xs:sequence>
 
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="dateTimePickerThemeNames"/>

@@ -215,7 +215,7 @@ public class InputParametersFragment extends Composite<FormLayout>
         Map<String, Object> parameters = new HashMap<>();
         for (Map.Entry<String, AbstractField> parameterEntry : parameterComponents.entrySet()) {
             AbstractField parameterField = parameterEntry.getValue();
-            Object value = parameterField.getValue();
+            Object value = UiComponentUtils.getValue(parameterField);
             parameters.put(parameterEntry.getKey(), value);
         }
         return parameters;
@@ -238,7 +238,7 @@ public class InputParametersFragment extends Composite<FormLayout>
 
         if (BooleanUtils.isTrue(parameter.getValidationOn())) {
             ((SupportsValidation) field).addValidator(
-                    applicationContext.getBean(ReportParamFieldValidator.class, parameter)
+                    applicationContext.getBean(ReportParamFieldValidator.class, field, parameter)
             );
         }
 

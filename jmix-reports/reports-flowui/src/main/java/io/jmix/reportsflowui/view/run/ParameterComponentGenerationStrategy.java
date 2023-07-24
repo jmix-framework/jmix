@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasLabel;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -176,7 +175,7 @@ public class ParameterComponentGenerationStrategy {
     protected class TextFieldCreator implements FieldCreator<TypedTextField<?>> {
 
         @Override
-        public TypedTextField<?> createField(ReportInputParameter parameter) {
+        public TypedTextField<String> createField(ReportInputParameter parameter) {
             return uiComponents.create(TypedTextField.class);
         }
     }
@@ -314,7 +313,7 @@ public class ParameterComponentGenerationStrategy {
             CollectionContainer collectionContainer = createCollectionContainer(entityMetaClass);
             multiComboBoxPicker.setItems(collectionContainer.getItems());
 
-            EntityLookupAction<?> pickerLookupAction = (EntityLookupAction) actions.create(EntityLookupAction.ID);
+            EntityLookupAction<?> pickerLookupAction = actions.create(EntityLookupAction.ID);
             String screen = parameter.getScreen();
             if (StringUtils.isNotEmpty(screen)) {
                 pickerLookupAction.setViewId(screen);

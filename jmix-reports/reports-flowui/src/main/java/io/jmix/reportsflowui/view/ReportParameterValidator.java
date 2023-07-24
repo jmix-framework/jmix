@@ -16,42 +16,30 @@
 
 package io.jmix.reportsflowui.view;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reports.exception.ReportingException;
+import io.jmix.reports.libintegration.GroovyScriptParametersProvider;
+import io.jmix.reports.yarg.util.groovy.Scripting;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.scripting.ScriptEvaluator;
-import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Component("report_ReportParameterValidator")
 public class ReportParameterValidator {
 
-    protected final Metadata metadata;
-    protected final DataManager dataManager;
-    protected final ScriptEvaluator scripting;
-    protected final CurrentAuthentication currentAuthentication;
-    protected final ApplicationContext applicationContext;
 
-    public ReportParameterValidator(Metadata metadata,
-                                    DataManager dataManager,
-                                    ScriptEvaluator scripting,
-                                    CurrentAuthentication currentAuthentication,
-                                    ApplicationContext applicationContext) {
-        this.metadata = metadata;
-        this.dataManager = dataManager;
+    protected final GroovyScriptParametersProvider groovyScriptParametersProvider;
+    protected final Scripting scripting;
+
+
+    public ReportParameterValidator(GroovyScriptParametersProvider groovyScriptParametersProvider,
+                                    Scripting scripting) {
+        this.groovyScriptParametersProvider = groovyScriptParametersProvider;
         this.scripting = scripting;
-        this.currentAuthentication = currentAuthentication;
-        this.applicationContext = applicationContext;
     }
 
     /**
@@ -81,7 +69,7 @@ public class ReportParameterValidator {
     protected void runValidationScript(String groovyScript, Map<String, Object> scriptContext) {
         if (StringUtils.isNotBlank(groovyScript)) {
             try {
-                scripting.evaluate(new StaticScriptSource(groovyScript), scriptContext);
+                scripting.evaluateGroovy(groovyScript, scriptContext);
             } catch (ReportParametersValidationException e) {
                 throw e;
             } catch (Exception e) {
@@ -92,24 +80,8 @@ public class ReportParameterValidator {
     }
 
     protected Map<String, Object> createScriptContext(Map<String, Object> contextParameters) {
-        Map<String, Object> context = new HashMap<>();
+        Map<String, Object> context = groovyScriptParametersProvider.getParametersForValidationParameters();
         context.putAll(contextParameters);
-        addCommonContext(context);
         return context;
-    }
-
-    protected void addCommonContext(Map<String, Object> context) {
-        context.put("currentAuthentication", currentAuthentication);
-        context.put("applicationContext", applicationContext);
-        context.put("dataManager", dataManager);
-        context.put("metadata", metadata);
-        //todo replace MethodClosure
-//        context.put("invalid", new MethodClosure(this, "invalidThrowMethod"));
-    }
-
-    // Used for invalid("") syntax
-    @SuppressWarnings("unused")
-    protected void invalidThrowMethod(String message) {
-        throw new ReportParametersValidationException(message);
     }
 }

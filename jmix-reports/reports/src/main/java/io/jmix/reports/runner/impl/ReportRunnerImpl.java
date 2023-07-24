@@ -190,8 +190,10 @@ public class ReportRunnerImpl implements ReportRunner {
 
     protected ReportTemplate getDefaultTemplate(Report report) {
         ReportTemplate defaultTemplate = report.getDefaultTemplate();
-        if (defaultTemplate == null)
-            throw new ReportingException(String.format("No default template specified for report [%s]", report.getName()));
+        if (defaultTemplate == null) {
+            throw new MissingDefaultTemplateException(String.format("No default template specified for report [%s]",
+                    report.getName()));
+        }
         return defaultTemplate;
     }
 

@@ -24,6 +24,8 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.ListBox;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.provider.HasListDataView;
@@ -106,6 +108,16 @@ public final class ComponentUtils {
     }
 
     public static <T> void setItemsMap(RadioButtonGroup<T> component, Map<T, String> items) {
+        setItemsMapInternal(component, items);
+        component.setItemLabelGenerator(createItemLabelGenerator(items));
+    }
+
+    public static <T> void setItemsMap(ListBox<T> component, Map<T, String> items) {
+        setItemsMapInternal(component, items);
+        component.setItemLabelGenerator(createItemLabelGenerator(items));
+    }
+
+    public static <T> void setItemsMap(MultiSelectListBox<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
     }

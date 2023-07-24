@@ -99,6 +99,26 @@ class FileUploadFieldXmlLoadTest extends FlowuiTestSpecification {
         !view.disabledFileUploadField.enabled
     }
 
+    def "Load default I18N"() {
+        when: "Open view with FileUploadFields"
+        def view = navigateToView(FileUploadFieldView)
+
+        then: "FileUploadField default localization should be loaded"
+        def field = view.localizedFileUploadField
+
+        field.i18n.uploadDialog != null
+        field.i18n.error != null
+        field.i18n.error.fileIsTooBig != null
+        field.i18n.error.incorrectFileType != null
+        field.i18n.uploading != null
+        field.i18n.uploading.status != null
+        field.i18n.uploading.status.connecting != null
+        field.i18n.uploading.status.processing != null
+        field.i18n.uploading.remainingTime != null
+        field.i18n.uploading.remainingTime.prefix != null
+        field.i18n.uploading.remainingTime.unknown != null
+    }
+
     protected DocumentAttachment createAttachment() {
         def attachment = dataManager.create(DocumentAttachment)
         attachment.setName("test")

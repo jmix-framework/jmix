@@ -34,6 +34,7 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.Nested;
+import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -62,8 +63,9 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                                         FetchPlans fetchPlans,
                                         EntityStates entityStates,
                                         ExtendedEntities extendedEntities,
-                                        UiViewProperties viewProperties) {
-        super(applicationContext, views, viewRegistry);
+                                        UiViewProperties viewProperties,
+                                        UiAccessChecker uiAccessChecker) {
+        super(applicationContext, views, viewRegistry, uiAccessChecker);
 
         this.metadata = metadata;
         this.metadataTools = metadataTools;

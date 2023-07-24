@@ -30,6 +30,7 @@ import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.flow.spring.VaadinServletContextInitializer;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.testassist.vaadin.TestServletContext;
 import io.jmix.flowui.testassist.vaadin.TestSpringServlet;
@@ -199,6 +200,7 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
         VaadinService.setCurrent(springServlet.getService());
 
         vaadinSession = new TestVaadinSession(springServlet.getService());
+        vaadinSession.setAttribute(BackgroundTaskManager.class, new BackgroundTaskManager());
         VaadinSession.setCurrent(vaadinSession);
 
         TestVaadinRequest request = new TestVaadinRequest(springServlet.getService());

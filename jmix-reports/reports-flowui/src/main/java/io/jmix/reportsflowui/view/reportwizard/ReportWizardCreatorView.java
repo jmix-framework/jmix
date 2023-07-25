@@ -6,7 +6,6 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -28,7 +27,6 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
-import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
@@ -47,7 +45,6 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
@@ -294,7 +291,8 @@ public class ReportWizardCreatorView extends StandardView {
             }
             fragmentsList = stepFragments;
         }
-        if ("entityName".equals(event.getProperty()) || "templateFileType".equals(event.getProperty())) {
+        if ("entityName".equals(event.getProperty()) || ("templateFileType".equals(event.getProperty())
+                && reportDataDc.getItem().getTemplateFileType() != null)) {
             updateCorrectReportOutputType();
             updateDownloadTemplateFile();
         }
@@ -404,7 +402,7 @@ public class ReportWizardCreatorView extends StandardView {
                 try {
                     ((SupportsValidation<?>) component).executeValidators();
                 } catch (ValidationException e) {
-                    errors.add(messageBundle.getMessage("validationException.message"));
+                    errors.add(e.getMessage() + "\n");
                 }
             }
         });
@@ -526,13 +524,15 @@ public class ReportWizardCreatorView extends StandardView {
     }
 
     protected void updateReportEntity(@Nullable MetaClass prevValue, MetaClass value, ReportData reportData) {
-        needUpdateEntityModel = true;
-        setReportName(reportData, prevValue, value);
+        if (value != null) {
+            needUpdateEntityModel = true;
+            setReportName(reportData, prevValue, value);
 
-        reportRegionsDc.getMutableItems().clear();
-        reportData.setEntityName(value.getName());
+            reportRegionsDc.getMutableItems().clear();
+            reportData.setEntityName(value.getName());
 
-        clearQuery();
+            clearQuery();
+        }
     }
 
     protected void setReportName(ReportData reportData, @Nullable MetaClass prevValue, MetaClass value) {
@@ -540,7 +540,7 @@ public class ReportWizardCreatorView extends StandardView {
         if (StringUtils.isBlank(oldName)) {
             reportData.setName(messageBundle.formatMessage("reportData.reportNamePattern", messageTools.getEntityCaption(value)));
         } else {
-            if (prevValue != null) {
+            if (prevValue != null && value != null) {
                 //if old text contains MetaClass name substring, just replace it
                 String prevEntityCaption = messageTools.getEntityCaption(prevValue);
                 if (StringUtils.contains(oldName, prevEntityCaption)) {
@@ -640,11 +640,6 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe("regionDataGrid.edit")
     public void onRegionDataGridEditItemAction(ActionPerformedEvent event) {
-        editRegion();
-    }
-
-    @Subscribe("regionDataGrid")
-    public void onUsersTableItemClick(final ItemClickEvent<ReportRegion> event) {
         editRegion();
     }
 
@@ -839,19 +834,22 @@ public class ReportWizardCreatorView extends StandardView {
     protected void updateCorrectReportOutputType() {
         ReportOutputType outputFileFormatPrevValue = outputFileFormat.getValue();
         outputFileFormat.setValue(null);
-        Map<String, ReportOutputType> optionsMap = outputFormatTools.getOutputAvailableFormats(reportDataDc.getItem().getTemplateFileType());
-        ComponentUtils.setItemsMap(outputFileFormat, MapUtils.invertMap(optionsMap));
+        Map<String, ReportOutputType> optionsMap = outputFormatTools
+                .getOutputAvailableFormats(reportDataDc.getItem().getTemplateFileType());
+        if (optionsMap != null && !optionsMap.isEmpty()) {
+            ComponentUtils.setItemsMap(outputFileFormat, MapUtils.invertMap(optionsMap));
 
-        if (outputFileFormatPrevValue != null) {
-            if (optionsMap.containsKey(outputFileFormatPrevValue.toString())) {
-                outputFileFormat.setValue(outputFileFormatPrevValue);
+            if (outputFileFormatPrevValue != null) {
+                if (optionsMap.containsKey(outputFileFormatPrevValue.toString())) {
+                    outputFileFormat.setValue(outputFileFormatPrevValue);
+                }
             }
-        }
-        if (outputFileFormat.getValue() == null) {
-            if (optionsMap.size() > 1) {
-                outputFileFormat.setValue(optionsMap.get(reportDataDc.getItem().getTemplateFileType().toString()));
-            } else if (optionsMap.size() == 1) {
-                outputFileFormat.setValue(optionsMap.values().iterator().next());
+            if (outputFileFormat.getValue() == null) {
+                if (optionsMap.size() > 1) {
+                    outputFileFormat.setValue(optionsMap.get(reportDataDc.getItem().getTemplateFileType().toString()));
+                } else if (optionsMap.size() == 1) {
+                    outputFileFormat.setValue(optionsMap.values().iterator().next());
+                }
             }
         }
     }

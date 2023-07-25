@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://reportWizard.title">
+      title=" ">
     <data>
         <instance id="reportDataDc" class="io.jmix.reports.entity.wizard.ReportData">
             <collection id="reportRegionsDc" property="reportRegions">
@@ -26,9 +26,9 @@
     </actions>
     <layout>
         <h3 id="wizardTitleLabel"/>
-        <hr/>
+        <hr minHeight="0.06em"/>
         <span id="wizardDescriptionSpan"/>
-        <hr/>
+        <hr minHeight="0.06em"/>
         <vbox id="detailsVBox" padding="false">
             <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
                 <responsiveSteps>
@@ -41,7 +41,8 @@
                 <comboBox id="templateFileTypeField"
                           property="templateFileType"
                           allowCustomValue="false"
-                          label="msg://templateFileFormat" required="true"
+                          label="msg://templateFileFormat"
+                          required="true"
                           requiredMessage="msg://fillTemplateTypeMsg"
                           helperText="msg://templateTypeHintMsg" width="100%"/>
                 <textField id="reportNameField"

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://editorCaption">
+    <data>
+        <instance id="categoryDc"
+                  class="io.jmix.dynattr.model.Category">
+            <fetchPlan extends="_local">
+                <property name="categoryAttrs" fetchPlan="_local">
+                    <property name="defaultEntity" fetchPlan="_local"/>
+                    <property name="category" fetchPlan="_local"/>
+                </property>
+            </fetchPlan>
+            <loader id="categoryDl"/>
+            <collection id="categoryAttributesDc" property="categoryAttrs"/>
+        </instance>
+    </data>
+
+    <dialogMode height="600"
+                width="800"/>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
+    <layout spacing="true" expand="tabSheet">
+        <tabSheet id="tabSheet" height="100%">
+            <tab id="mainTab" caption="msg://mainTab.caption" spacing="true" margin="true" expand="categoryAttrsBox">
+                <form id="form" dataContainer="categoryDc">
+                    <column width="200px">
+                        <textField id="nameField" property="name" required="true"
+                                   requiredMessage="msg://nameField.required"/>
+                    </column>
+                    <column width="200px">
+                        <comboBox id="entityTypeField" caption="msg://io.jmix.dynattr.model/Category.entityType"
+                                  required="true" requiredMessage="msg://entityTypeField.required"/>
+                    </column>
+                    <column width="200px">
+                        <checkBox id="isDefaultField" property="isDefault"/>
+                    </column>
+                </form>
+                <vbox id="categoryAttrsBox" spacing="true" width="100%">
+                    <label value="msg://io.jmix.dynattr.model/Category.categoryAttrs" stylename="h2"/>
+                </vbox>
+            </tab>
+            <tab id="localizationTab" caption="msg://localizationTab.caption" spacing="true" margin="true"
+                 visible="false">
+                <form dataContainer="categoryDc" editable="false">
+                    <column>
+                        <textField id="localizedNameField" property="name"/>
+                    </column>
+                </form>
+            </tab>
+            <tab id="attributesLocationTab" caption="msg://attributesLocationTab.caption" spacing="true" margin="true"/>
+        </tabSheet>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

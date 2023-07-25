@@ -48,6 +48,8 @@ includeProject('datatools-flowui-starter', 'jmix-datatools/datatools-flowui-star
 
 includeProject('dynattr', 'jmix-dynattr/dynattr')
 includeProject('dynattr-starter', 'jmix-dynattr/dynattr-starter')
+includeProject('dynattr-flowui', 'jmix-dynattr/dynattr-flowui')
+includeProject('dynattr-flowui-starter', 'jmix-dynattr/dynattr-flowui-starter')
 
 includeProject('email', 'jmix-email/email')
 includeProject('email-starter', 'jmix-email/email-starter')

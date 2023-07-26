@@ -19,26 +19,17 @@ import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import com.vaadin.flow.server.frontend.scanner.CssData;
 import com.vaadin.flow.server.frontend.scanner.FrontendDependenciesScanner;
 import com.vaadin.flow.theme.AbstractTheme;
-import com.vaadin.flow.theme.ThemeDefinition;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
-import io.jmix.flowui.devserver.frontend.scanner.ThemeWrapper;
 import org.slf4j.Logger;
 import org.slf4j.helpers.NOPLogger;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.vaadin.flow.server.frontend.FrontendUtils.FALLBACK_IMPORTS_NAME;
-import static com.vaadin.flow.server.frontend.FrontendUtils.IMPORTS_NAME;
+import java.util.Map;
 
 /**
  * Collect generated-flow-imports content for project to use to determine if
@@ -48,29 +39,28 @@ import static com.vaadin.flow.server.frontend.FrontendUtils.IMPORTS_NAME;
  * a dev server.
  */
 public class GenerateMainImports extends AbstractUpdateImports {
-    private final ClassFinder finder;
-    private List<String> lines;
-    private FrontendDependenciesScanner frontendDepScanner;
-    private ThemeDefinition themeDefinition;
     private JsonObject statsJson;
+    private Map<File, List<String>> output;
 
     public GenerateMainImports(ClassFinder classFinder,
                                FrontendDependenciesScanner frontendDepScanner,
                                Options options,
-                               ThemeDefinition themeDefinition,
+                               AbstractTheme theme,
                                JsonObject statsJson) {
-        super(options);
-        finder = classFinder;
-        this.frontendDepScanner = frontendDepScanner;
-        this.themeDefinition = themeDefinition;
+        super(options, frontendDepScanner, classFinder, theme);
         this.statsJson = statsJson;
     }
 
     public List<String> getLines() {
-        if (lines == null) {
+        if (output == null) {
             return Collections.emptyList();
         }
-        return lines;
+        return merge(output);
+    }
+
+    @Override
+    protected void writeOutput(Map<File, List<String>> outputFiles) {
+        this.output = outputFiles;
     }
 
     @Override
@@ -81,68 +71,6 @@ public class GenerateMainImports extends AbstractUpdateImports {
         // moment, so not let the application interrupt and continue with
         // checking the dev-bundle
         return true;
-    }
-
-    @Override
-    protected void writeImportLines(List<String> lines) {
-        // NO-OP. Only store the lines to write
-        this.lines = lines;
-    }
-
-    @Override
-    protected List<String> getModules() {
-        return frontendDepScanner.getModules();
-    }
-
-    @Override
-    protected Set<String> getScripts() {
-        return frontendDepScanner.getScripts();
-    }
-
-    @Override
-    protected URL getResource(String name) {
-        return finder.getResource(name);
-    }
-
-    @Override
-    protected Collection<String> getGeneratedModules() {
-        if (options.getGeneratedFolder() == null) {
-            return Collections.emptySet();
-        }
-        // Exclude generated-flow-imports.js and
-        // generated-flow-imports-fallback.js
-        // as they are not generated modules, but import files.
-        return NodeUpdater
-                .getGeneratedModules(options.getGeneratedFolder(), Stream
-                        .of(new File(options.getGeneratedFolder(), IMPORTS_NAME)
-                                        .getName(),
-                                new File(options.getGeneratedFolder(),
-                                        FALLBACK_IMPORTS_NAME).getName())
-                        .collect(Collectors.toSet()));
-    }
-
-    @Override
-    protected ThemeDefinition getThemeDefinition() {
-        return themeDefinition;
-    }
-
-    @Override
-    protected AbstractTheme getTheme() {
-        try {
-            return new ThemeWrapper(themeDefinition.getTheme());
-        } catch (InstantiationException | IllegalAccessException e) {
-            return frontendDepScanner.getTheme();
-        }
-    }
-
-    @Override
-    protected Set<CssData> getCss() {
-        return frontendDepScanner.getCss();
-    }
-
-    @Override
-    protected Collection<String> getThemeLines() {
-        return Collections.emptyList();
     }
 
     @Override

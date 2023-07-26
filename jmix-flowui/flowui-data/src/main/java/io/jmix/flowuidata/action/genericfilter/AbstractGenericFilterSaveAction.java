@@ -224,7 +224,7 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
 
     protected Component formItemMapper(Component formItem) {
         return formItem.getChildren()
-                .filter(component -> !(component instanceof Label))
+                .filter(component -> !(component instanceof Label)) // FormItem uses Label for... label
                 .findAny()
                 .orElseThrow();
     }

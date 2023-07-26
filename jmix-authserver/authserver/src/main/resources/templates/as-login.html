@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Please sign ins</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          crossorigin="anonymous">
-    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/aslogin/styles/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/aslogin/styles/as-login.css}">
+    <title>Please sign in</title>
 </head>
 <body>
-<div class="container">
-    <form class="form-signin" th:action="@{/as-login}" method="post">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <div class="alert alert-danger" th:if="${param.error}">Bad credentials</div>
-        <div class="form-group">
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required autofocus>
-        </div>
-        <div class="form-group">
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-        </div>
-        <button type="submit" class="btn btn-lg btn-primary btn-block">Sign in</button>
-    </form>
-</div>
+<form class="as-login-form" th:action="@{/as-login}" method="post">
+    <h2>Please sign in</h2>
+    <div class="alert alert-danger" th:if="${param.error}">Bad credentials</div>
+    <div class="mb-3">
+        <label for="username" class="visually-hidden">Username</label>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required autofocus>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="visually-hidden">Password</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Sign in</button>
+</form>
 </body>
 </html>

@@ -22,7 +22,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -161,8 +160,7 @@ public class ExceptionDialog implements InitializingBean {
     protected Component createContent() {
         VerticalLayout layout = new VerticalLayout();
 
-        layout.setWidthFull();
-        layout.setHeightFull();
+        layout.setSizeFull();
         layout.setClassName(DIALOG_CONTENT_CLASS_NAME);
 
         Element messageTextArea = createMessageTextArea(getMessage(throwable));
@@ -187,14 +185,14 @@ public class ExceptionDialog implements InitializingBean {
 
     protected HorizontalLayout createButtonsPanel() {
         HorizontalLayout layout = new HorizontalLayout();
+        layout.setWidthFull();
         layout.add(createCloseButton());
 
         detailsButton = createDetailsButton();
         layout.add(detailsButton);
 
-        layout.addAndExpand(new Label());
-
         copyButton = createCopyButton();
+        copyButton.getStyle().set("margin-inline-start", "auto");
         layout.add(copyButton);
         return layout;
     }

@@ -1,9 +1,6 @@
 package io.jmix.reportsflowui.view.parameter;
 
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
@@ -17,13 +14,18 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsTypedValue;
+import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
+import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
@@ -86,9 +88,10 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     protected JmixCheckbox isPredefinedTransformationField;
     @ViewComponent
     protected Div transformationEditorBox;
-
     @ViewComponent
     protected InstanceContainer<ReportInputParameter> parameterDc;
+    @ViewComponent
+    protected TypedTextField<String> alias;
 
     @Autowired
     protected ParameterClassResolver parameterClassResolver;
@@ -361,6 +364,23 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         }
 
         ComponentUtils.setItemsMap(metaClassField, metaClassesOptionsMap);
+    }
+
+    @Subscribe
+    public void onValidation(final ValidationEvent event) {
+        boolean isValidated = getContent().getComponents().stream().noneMatch(component ->
+                component instanceof SupportsValidation<?>
+                        && component.isVisible()
+                        && ((HasRequired) component).isRequired()
+                        && ((AbstractSinglePropertyField<?, ?>) component).isEmpty());
+        if (!isValidated) {
+            event.addErrors(ValidationErrors.of(messages.getMessage(getClass(), "validationException.message")));
+        }
+        try {
+            reportParamAliasValidator.accept(alias.getValue());
+        } catch (ValidationException e) {
+            event.addErrors(ValidationErrors.of(e.getMessage()));
+        }
     }
 
     @Subscribe

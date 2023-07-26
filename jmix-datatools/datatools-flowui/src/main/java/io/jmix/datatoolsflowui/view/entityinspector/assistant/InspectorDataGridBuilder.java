@@ -16,24 +16,26 @@
 
 package io.jmix.datatoolsflowui.view.entityinspector.assistant;
 
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.shared.Tooltip;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.datatoolsflowui.DatatoolsFlowuiProperties;
+import io.jmix.datatoolsflowui.DatatoolsUiProperties;
 import io.jmix.datatoolsflowui.view.entityinspector.EntityFormLayoutUtils;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.model.CollectionContainer;
+import jakarta.persistence.Convert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.Convert;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class InspectorDataGridBuilder {
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
-    protected DatatoolsFlowuiProperties datatoolsflowuiProperties;
+    protected DatatoolsUiProperties datatoolsUiProperties;
 
     private final MetaClass metaClass;
     private final CollectionContainer<?> collectionContainer;
@@ -108,6 +110,7 @@ public class InspectorDataGridBuilder {
         dataGrid.setSizeFull();
         dataGrid.setAllRowsVisible(true);
         dataGrid.setMinHeight("20em");
+        dataGrid.setColumnReorderingAllowed(true);
 
         dataGrid.setItems(new ContainerDataGridItems(collectionContainer));
 
@@ -123,10 +126,17 @@ public class InspectorDataGridBuilder {
 
         DataGrid.Column<?> column = dataGrid.addColumn(metaPropertyPath);
 
-        column.setHeader(getProperHeader(metaClass, metaProperty));
+        column.setHeader(getPropertyHeader(metaClass, metaProperty));
+
+        column.setResizable(true);
+        column.setAutoWidth(true);
     }
 
-    protected String getProperHeader(MetaClass metaClass, MetaProperty metaProperty) {
-        return messageTools.getPropertyCaption(metaClass, metaProperty.getName());
+    protected com.vaadin.flow.component.Component getPropertyHeader(MetaClass metaClass, MetaProperty metaProperty) {
+        String propertyCaption = messageTools.getPropertyCaption(metaClass, metaProperty.getName());
+
+        Span header = new Span(propertyCaption);
+        Tooltip.forComponent(header).setText(propertyCaption);
+        return header;
     }
 }

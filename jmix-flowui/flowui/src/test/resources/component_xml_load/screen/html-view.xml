@@ -462,23 +462,23 @@
             <orderedList text="orderedListChild"/>
         </orderedList>
 
-        <label id="labelId"
-               classNames="cssClassName1, cssClassName2"
-               enabled="true"
-               height="50px"
-               maxHeight="55px"
-               maxWidth="120px"
-               minHeight="40px"
-               minWidth="80px"
-               setFor="inputId"
-               text="labelText"
-               themeNames="primary, small"
-               title="labelTitle"
-               visible="true"
-               whiteSpace="PRE"
-               width="100px">
-            <label text="labelChild"/>
-        </label>
+        <nativeLabel id="labelId"
+                     classNames="cssClassName1, cssClassName2"
+                     enabled="true"
+                     height="50px"
+                     maxHeight="55px"
+                     maxWidth="120px"
+                     minHeight="40px"
+                     minWidth="80px"
+                     setFor="inputId"
+                     text="labelText"
+                     themeNames="primary, small"
+                     title="labelTitle"
+                     visible="true"
+                     whiteSpace="PRE"
+                     width="100px">
+            <nativeLabel text="labelChild"/>
+        </nativeLabel>
 
         <!--        Components-->
         <hr id="hrId"

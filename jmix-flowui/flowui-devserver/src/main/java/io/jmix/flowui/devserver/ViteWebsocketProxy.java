@@ -15,16 +15,17 @@
  */
 package io.jmix.flowui.devserver;
 
-import jakarta.websocket.MessageHandler;
-import jakarta.websocket.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jakarta.websocket.MessageHandler;
+import jakarta.websocket.Session;
+
 /**
- * Connects a browser-server websocket connection with a server-Vite websocket
+ * Connects a brower-server websocket connection with a server-Vite websocket
  * connection.
  * <p>
  * Forwards all messages from one to the other.
@@ -39,10 +40,14 @@ public class ViteWebsocketProxy implements MessageHandler.Whole<String> {
      * Opens a connection to the Vite server running on the given port and
      * starts forwarding messages.
      *
-     * @param browserSession the websocket connection from the browser
-     * @param vitePort       the port the Vite server is running on
-     * @throws ExecutionException   if there is a problem with the connection
-     * @throws InterruptedException if there is a problem with the connection
+     * @param browserSession
+     *            the websocket connection from the browser
+     * @param vitePort
+     *            the port the Vite server is running on
+     * @throws ExecutionException
+     *             if there is a problem with the connection
+     * @throws InterruptedException
+     *             if there is a problem with the connection
      */
     public ViteWebsocketProxy(Session browserSession, Integer vitePort)
             throws InterruptedException, ExecutionException {

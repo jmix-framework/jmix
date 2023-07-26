@@ -15,18 +15,21 @@
  */
 package io.jmix.flowui.devserver;
 
-import jakarta.websocket.CloseReason.CloseCodes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jakarta.websocket.CloseReason.CloseCodes;
 
 /**
  * Communicates with a Vite server through a websocket connection.
@@ -36,6 +39,7 @@ public class ViteWebsocketConnection implements Listener {
     private final Consumer<String> onMessage;
     private final WebSocket clientWebSocket;
     private final Runnable onClose;
+    private List<CharSequence> parts = new ArrayList<>();
 
     private Logger getLogger() {
         return LoggerFactory.getLogger(getClass());
@@ -45,12 +49,19 @@ public class ViteWebsocketConnection implements Listener {
      * Established a connection with a Vite server running on the given port,
      * using the given sub protocol.
      *
-     * @param port        the port Vite is running on
-     * @param subProtocol the sub protocol to use
-     * @param onMessage   a callback to invoke when a message arrives.
-     * @param onClose     a callback to invoke if the connection to Vite is closed
-     * @throws InterruptedException if there is a problem with the connection
-     * @throws ExecutionException   if there is a problem with the connection
+     * @param port
+     *            the port Vite is running on
+     * @param subProtocol
+     *            the sub protocol to use
+     * @param onMessage
+     *            a callback to invoke when a message arrives.
+     * @param onClose
+     *            a callback to invoke if the connection to Vite is closed
+     *
+     * @throws InterruptedException
+     *             if there is a problem with the connection
+     * @throws ExecutionException
+     *             if there is a problem with the connection
      */
     public ViteWebsocketConnection(int port, String subProtocol,
                                    Consumer<String> onMessage, Runnable onClose)
@@ -84,18 +95,30 @@ public class ViteWebsocketConnection implements Listener {
     public CompletionStage<?> onText(WebSocket webSocket, CharSequence data,
                                      boolean last) {
         // Message from Vite
-        String msg = data.toString();
-        getLogger().debug("Message from Vite: {}", msg);
-        onMessage.accept(msg);
+        if (!last) {
+            getLogger().debug("Partial message from Vite: {}", data);
+            parts.add(data);
+        } else {
+            String msg = "";
+            while (!parts.isEmpty()) {
+                msg += parts.remove(0);
+            }
+            msg += data;
+            getLogger().debug("Message from Vite: {}", msg);
+            onMessage.accept(msg);
+        }
         return Listener.super.onText(webSocket, data, last);
     }
 
     /**
      * Sends the given message to the Vite server.
      *
-     * @param message the message to send
-     * @throws InterruptedException if there is a problem with the connection
-     * @throws ExecutionException   if there is a problem with the connection
+     * @param message
+     *            the message to send
+     * @throws InterruptedException
+     *             if there is a problem with the connection
+     * @throws ExecutionException
+     *             if there is a problem with the connection
      */
     public void send(String message)
             throws InterruptedException, ExecutionException {
@@ -107,8 +130,10 @@ public class ViteWebsocketConnection implements Listener {
     /**
      * Closes the connection.
      *
-     * @throws ExecutionException   if there is a problem with the connection
-     * @throws InterruptedException if there is a problem with the connection
+     * @throws ExecutionException
+     *             if there is a problem with the connection
+     * @throws InterruptedException
+     *             if there is a problem with the connection
      */
     public void close() throws InterruptedException, ExecutionException {
         getLogger().debug("Closing the connection");

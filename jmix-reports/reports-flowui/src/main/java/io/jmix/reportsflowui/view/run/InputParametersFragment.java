@@ -215,7 +215,7 @@ public class InputParametersFragment extends Composite<FormLayout>
         Map<String, Object> parameters = new HashMap<>();
         for (Map.Entry<String, AbstractField> parameterEntry : parameterComponents.entrySet()) {
             AbstractField parameterField = parameterEntry.getValue();
-            Object value = parameterField.getValue();
+            Object value = UiComponentUtils.getValue(parameterField);
             parameters.put(parameterEntry.getKey(), value);
         }
         return parameters;

@@ -22,6 +22,10 @@ import com.vaadin.flow.internal.UsageStatistics;
 import com.vaadin.flow.server.ExecutionFailedException;
 import com.vaadin.flow.server.PwaConfiguration;
 import com.vaadin.flow.server.frontend.FallibleCommand;
+import com.vaadin.flow.server.frontend.TaskCleanFrontendFiles;
+import com.vaadin.flow.server.frontend.TaskGenerateWebComponentBootstrap;
+import com.vaadin.flow.server.frontend.TaskGenerateWebComponentHtml;
+import com.vaadin.flow.server.frontend.TaskPrepareProdBundle;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import com.vaadin.flow.server.frontend.scanner.FrontendDependenciesScanner;
 import com.vaadin.flow.theme.AbstractTheme;
@@ -29,6 +33,8 @@ import com.vaadin.flow.theme.ThemeDefinition;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,20 +53,23 @@ public class NodeTasks implements FallibleCommand {
     // This list keeps the tasks in order so that they are executed
     // without depending on when they are added.
     private static final List<Class<? extends FallibleCommand>> commandOrder =
-            List.of(TaskCopyThemes.class,
+            Collections.unmodifiableList(Arrays.asList(
+                    TaskCopyThemes.class,
                     TaskGeneratePackageJson.class,
                     TaskGenerateIndexHtml.class,
                     TaskGenerateIndexTs.class,
+                    TaskUpdateOldIndexTs.class,
                     TaskGenerateViteDevMode.class,
                     TaskGenerateTsConfig.class,
                     TaskGenerateTsDefinitions.class,
                     TaskGenerateServiceWorker.class,
                     TaskGenerateBootstrap.class,
+                    TaskGenerateWebComponentHtml.class,
+                    TaskGenerateWebComponentBootstrap.class,
                     TaskGenerateFeatureFlags.class,
                     TaskInstallFrontendBuildPlugins.class,
                     TaskUpdatePackages.class,
                     TaskRunNpmInstall.class,
-                    TaskGenerateHilla.class,
                     TaskGenerateOpenAPI.class,
                     TaskGenerateEndpoint.class,
                     TaskCopyFrontendFiles.class,
@@ -70,8 +79,10 @@ public class NodeTasks implements FallibleCommand {
                     TaskUpdateImports.class,
                     TaskUpdateThemeImport.class,
                     TaskCopyTemplateFiles.class,
-                    TaskRunDevBundleBuild.class
-            );
+                    TaskRunDevBundleBuild.class,
+                    TaskPrepareProdBundle.class,
+                    TaskCleanFrontendFiles.class
+        ));
     // @formatter:on
 
     private final List<FallibleCommand> commands = new ArrayList<>();
@@ -93,7 +104,7 @@ public class NodeTasks implements FallibleCommand {
         final FeatureFlags featureFlags = options.getFeatureFlags();
 
         if (options.isFrontendHotdeploy()) {
-            UsageStatistics.markAsUsed("flow/hotdeploy", null);
+            // UsageStatistics.markAsUsed("flow/hotdeploy", null);
         }
 
         if (options.isEnablePackagesUpdate() || options.isEnableImportsUpdate()
@@ -103,32 +114,52 @@ public class NodeTasks implements FallibleCommand {
                             options.isGenerateEmbeddableWebComponents(),
                             featureFlags);
 
-            // The dev bundle check needs the frontendDependencies to be able to
-            // determine if we need a rebuild as the check happens immediately
-            // and no update tasks are executed before it.
-            if (!options.isProductionMode() && options.isDevBundleBuild()) {
-                if (TaskRunDevBundleBuild.needsBuild(options,
-                        frontendDependencies, themeDefinition, classFinder)) {
+            if (options.isProductionMode()) {
+//                boolean needBuild = BundleValidationUtil.needsBuild(options,
+//                        frontendDependencies, classFinder,
+//                        Mode.PRODUCTION_PRECOMPILED_BUNDLE);
+//                options.withRunNpmInstall(needBuild);
+//                options.withBundleBuild(needBuild);
+//                if (!needBuild) {
+//                    commands.add(new TaskPrepareProdBundle(options));
+//                    UsageStatistics.markAsUsed("flow/prod-pre-compiled-bundle",
+//                            null);
+//                } else {
+//                    BundleUtils.copyPackageLockFromBundle(options);
+//                }
+            } else if (options.isBundleBuild()) {
+                // The dev bundle check needs the frontendDependencies to be
+                // able to
+                // determine if we need a rebuild as the check happens
+                // immediately
+                // and no update tasks are executed before it.
+                if (false /*BundleValidationUtil.needsBuild(options,
+                        frontendDependencies, classFinder,
+                        Mode.DEVELOPMENT_BUNDLE)*/) {
+                    commands.add(
+                            new TaskCleanFrontendFiles(options.getNpmFolder()));
                     options.withRunNpmInstall(true);
                     options.withCopyTemplates(true);
-                    UsageStatistics.markAsUsed("flow/app-dev-bundle", null);
+                    // BundleUtils.copyPackageLockFromBundle(options);
+                    // UsageStatistics.markAsUsed("flow/app-dev-bundle", null);
                 } else {
                     // A dev bundle build is not needed after all, skip it
-                    options.withDevBundleBuild(false);
-                    File devBundleFolder = FrontendUtils
-                            .getDevBundleFolder(options.getStudioFolder());
-                    if (devBundleFolder.exists()) {
-                        UsageStatistics.markAsUsed("flow/app-dev-bundle", null);
-                    } else {
-                        UsageStatistics.markAsUsed("flow/dev-bundle", null);
-                    }
+                    options.withBundleBuild(false);
+//                    File devBundleFolder = DevBundleUtils
+//                            .getDevBundleFolder(options.getNpmFolder());
+//                    if (devBundleFolder.exists()) {
+//                        UsageStatistics.markAsUsed("flow/app-dev-bundle", null);
+//                    } else {
+//                        UsageStatistics.markAsUsed("flow/dev-bundle", null);
+//                    }
                 }
             }
 
             if (options.isGenerateEmbeddableWebComponents()) {
                 FrontendWebComponentGenerator generator = new FrontendWebComponentGenerator(classFinder);
                 Set<File> webComponents = generator.generateWebComponents(
-                        options.getGeneratedFolder(),
+                        FrontendUtils.getFlowGeneratedWebComponentsFolder(
+                                options.getFrontendDirectory()),
                         themeDefinition);
 
 //                if (webComponents.size() > 0) {
@@ -157,7 +188,7 @@ public class NodeTasks implements FallibleCommand {
             }
 
             if (packageUpdater != null && options.isDevBundleBuild()) {
-                //commands.add(new TaskRunDevBundleBuild(options));
+                commands.add(new TaskRunDevBundleBuild(options));
             }
 
         }
@@ -172,8 +203,7 @@ public class NodeTasks implements FallibleCommand {
             addGenerateServiceWorkerTask(options,
                     frontendDependencies.getPwaConfiguration());
 
-            if (options.isProductionMode() || options.isFrontendHotdeploy()
-                    || options.isDevBundleBuild()) {
+            if (options.isFrontendHotdeploy() || options.isBundleBuild()) {
                 addGenerateTsConfigTask(options);
             }
         }
@@ -214,17 +244,13 @@ public class NodeTasks implements FallibleCommand {
             pwa = new PwaConfiguration();
         }
         commands.add(new TaskUpdateSettingsFile(options, themeName, pwa));
-        if (options.isProductionMode() || options.isFrontendHotdeploy()
-                || options.isDevBundleBuild()) {
+        if (options.isFrontendHotdeploy() || options.isBundleBuild()) {
             commands.add(new TaskUpdateVite(options, webComponentTags));
         }
 
         if (options.isEnableImportsUpdate()) {
             commands.add(new TaskUpdateImports(classFinder,
-                    frontendDependencies,
-                    finder -> getFallbackScanner(options, finder, featureFlags),
-                    options,
-                    themeDefinition));
+                    frontendDependencies, options, themeDefinition));
 
             commands.add(new TaskUpdateThemeImport(themeDefinition, options));
         }
@@ -237,12 +263,13 @@ public class NodeTasks implements FallibleCommand {
     private void addBootstrapTasks(Options options) {
         commands.add(new TaskGenerateIndexHtml(options));
         if (options.isProductionMode() || options.isFrontendHotdeploy()
-                || options.isDevBundleBuild()) {
+                || options.isBundleBuild()) {
             commands.add(new TaskGenerateIndexTs(options));
             if (!options.isProductionMode()) {
                 commands.add(new TaskGenerateViteDevMode(options));
             }
         }
+        commands.add(new TaskUpdateOldIndexTs(options));
     }
 
     private void addGenerateTsConfigTask(Options options) {
@@ -258,7 +285,7 @@ public class NodeTasks implements FallibleCommand {
 
     private void addGenerateServiceWorkerTask(Options options,
                                               PwaConfiguration pwaConfiguration) {
-        if (pwaConfiguration.isEnabled()) {
+        if (true/*pwaConfiguration.isEnabled()*/) {
             commands.add(new TaskGenerateServiceWorker(options));
         }
     }
@@ -278,18 +305,6 @@ public class NodeTasks implements FallibleCommand {
                         .createTaskGenerateEndpoint(options);
                 commands.add(taskGenerateEndpoint);
             }
-        }
-    }
-
-    private FrontendDependenciesScanner getFallbackScanner(Options options,
-                                                           ClassFinder finder, FeatureFlags featureFlags) {
-        if (options.isUseByteCodeScanner()) {
-            return new FrontendDependenciesScanner.FrontendDependenciesScannerFactory()
-                    .createScanner(true, finder,
-                            options.isGenerateEmbeddableWebComponents(),
-                            featureFlags, true);
-        } else {
-            return null;
         }
     }
 

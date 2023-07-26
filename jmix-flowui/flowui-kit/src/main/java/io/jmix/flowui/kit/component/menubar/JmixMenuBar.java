@@ -29,7 +29,7 @@ import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 import java.util.List;
 import java.util.stream.Stream;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 24.0.3]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBar [last update Vaadin 24.1.1]
 public class JmixMenuBar extends MenuBar
         implements HasMenuItemsEnhanced, Focusable<JmixMenuBar>, HasTooltip {
 
@@ -141,8 +141,15 @@ public class JmixMenuBar extends MenuBar
     }
 
     protected void attachListener(AttachEvent attachEvent) {
-        // TODO: gg, init connector?
+        String appId = attachEvent.getUI().getInternals().getAppId();
+        initConnector(appId);
         resetContent();
+    }
+
+    protected void initConnector(String appId) {
+        getElement().executeJs(
+                "window.Vaadin.Flow.menubarConnector.initLazy(this, $0)",
+                appId);
     }
 
     protected void runBeforeClientResponse(SerializableConsumer<UI> command) {

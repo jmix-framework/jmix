@@ -189,7 +189,7 @@ public class MenuConfig {
                 menuItem.setDescriptor(element);
                 loadIcon(element, menuItem);
                 loadShortcutCombination(menuItem, element);
-                loadClassName(element, menuItem);
+                loadClassNames(element, menuItem);
                 loadOpened(element, menuItem);
                 loadTitle(element, menuItem);
                 loadDescription(element, menuItem);
@@ -270,7 +270,7 @@ public class MenuConfig {
         menuItem.setDescriptor(element);
         loadIcon(element, menuItem);
         loadShortcutCombination(menuItem, element);
-        loadClassName(element, menuItem);
+        loadClassNames(element, menuItem);
         loadTitle(element, menuItem);
         loadDescription(element, menuItem);
 
@@ -328,7 +328,7 @@ public class MenuConfig {
         }
     }
 
-    protected void loadClassName(Element element, MenuItem menuItem) {
+    protected void loadClassNames(Element element, MenuItem menuItem) {
         String className = element.attributeValue("classNames");
 
         if (StringUtils.isNotBlank(className)) {

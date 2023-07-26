@@ -41,13 +41,12 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
 
         loadResourceString(element, "placeholder",
                 context.getMessageGroup(), resultComponent::setPlaceholder);
-        loadResourceString(element, "tooltipText",
-                context.getMessageGroup(), resultComponent::setTooltipText);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadOverlayClass(resultComponent, element);
         componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
@@ -55,6 +54,7 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
+        componentLoader().loadAriaLabel(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

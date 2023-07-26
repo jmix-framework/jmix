@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.server.VaadinRequest;
@@ -60,7 +60,7 @@ public class JmixUI extends UI {
         String location = request.getParameter(LOCATION_REQUEST_PARAM);
         if (location == null || location.isBlank()) {
             if (mainContent != null) {
-                mainContent.add(new Label("location parameter is empty"));
+                mainContent.add(new Span("location parameter is empty"));
             }
             return;
         }
@@ -68,7 +68,7 @@ public class JmixUI extends UI {
         String[] locationSplit = location.split("-");
         if (locationSplit.length != 2) {
             if (mainContent != null) {
-                mainContent.add(new Label("location " + location + " is incorrect format"));
+                mainContent.add(new Span("location " + location + " is incorrect format"));
             }
             return;
         }
@@ -76,7 +76,7 @@ public class JmixUI extends UI {
         String designerType = locationSplit[0];
         if (!designerId.equals(designerType)) {
             if (mainContent != null) {
-                mainContent.add(new Label("Designer with " + designerType + " not found"));
+                mainContent.add(new Span("Designer with " + designerType + " not found"));
             }
             return;
         }
@@ -88,7 +88,7 @@ public class JmixUI extends UI {
             }
         } catch (Throwable e) {
             if (mainContent != null) {
-                mainContent.add(new Label(e.getMessage()));
+                mainContent.add(new Span(e.getMessage()));
             }
         }
     }
@@ -122,12 +122,11 @@ public class JmixUI extends UI {
 
     @Override
     public void connectClient(
-            String clientElementTag,
-            String clientElementId,
             String flowRoutePath,
             String flowRouteQuery,
             String appShellTitle,
-            JsonValue historyState
+            JsonValue historyState,
+            String trigger
     ) {
         // do nothing
     }

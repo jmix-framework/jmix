@@ -158,8 +158,8 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
                 try {
                     validator.accept(value);
                 } catch (ValidationException e) {
-                    setErrorMessage(e.getDetailsMessage());
                     setInvalidInternal(true);
+                    setErrorMessage(e.getDetailsMessage());
                     throw new ComponentValidationException(e.getDetailsMessage(), component, e);
                 }
             }

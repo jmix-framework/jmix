@@ -16,8 +16,6 @@
 
 package io.jmix.flowui.devserver.frontend;
 
-import com.vaadin.flow.server.frontend.FrontendUtils;
-import com.vaadin.flow.server.frontend.TaskInstallFrontendBuildPlugins;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
@@ -111,8 +109,7 @@ class FrontendPluginsUtil {
      * @return resource URL
      */
     protected static URL getResourceUrl(String resource) {
-        ClassLoader cl = TaskInstallFrontendBuildPlugins.class.getClassLoader();
-        return cl.getResource(resource);
+        return FrontendUtils.getResource(resource);
     }
 
     /**
@@ -122,8 +119,7 @@ class FrontendPluginsUtil {
      * @return input stream for resource
      */
     protected static InputStream getResourceAsStream(String resource) {
-        ClassLoader cl = TaskInstallFrontendBuildPlugins.class.getClassLoader();
-        return cl.getResourceAsStream(resource);
+        return FrontendUtils.getResourceAsStream(resource);
     }
 
 }

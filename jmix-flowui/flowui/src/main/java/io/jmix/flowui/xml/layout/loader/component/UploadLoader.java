@@ -19,7 +19,8 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.google.common.base.Splitter;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.upload.Receiver;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
@@ -33,6 +34,7 @@ import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 import org.springframework.beans.BeansException;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
@@ -145,10 +147,10 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
     protected void loadDropLabel(JmixUpload component, Element element) {
         loadResourceString(element, "dropLabel", context.getMessageGroup(),
                 message -> {
-                    Label label = factory.create(Label.class);
-                    label.setText(message);
+                    Span dropLabelComponent = factory.create(Span.class);
+                    dropLabelComponent.setText(message);
 
-                    component.setDropLabel(label);
+                    component.setDropLabel(dropLabelComponent);
                 });
 
         loadIcon(element, "dropLabelIcon", component::setDropLabelIcon);
@@ -157,8 +159,15 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
     protected void loadUploadButton(JmixUpload component, Element element) {
         Button uploadButton = factory.create(Button.class);
 
-        loadResourceString(element, "uploadText", context.getMessageGroup(), uploadButton::setText);
-        loadIcon(element, "uploadIcon", uploadButton::setIcon);
+        Optional<String> uploadText = loadResourceString(element, "uploadText", context.getMessageGroup());
+        Optional<Icon> uploadIcon = loadString(element, "uploadIcon").map(ComponentUtils::parseIcon);
+
+        if (uploadText.isEmpty() && uploadIcon.isEmpty()) {
+            return;
+        }
+
+        uploadIcon.ifPresent(uploadButton::setIcon);
+        uploadText.ifPresent(uploadButton::setText);
 
         component.setUploadButton(uploadButton);
     }

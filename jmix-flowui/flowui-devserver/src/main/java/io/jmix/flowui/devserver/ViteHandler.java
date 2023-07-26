@@ -51,7 +51,6 @@ public final class ViteHandler extends AbstractDevServerRunner {
      * The local installation path of the server node script.
      */
     public static final String VITE_SERVER = "node_modules/vite/bin/vite.js";
-
     /**
      * Files that are loaded from the root path but Vite places them in the
      * VAADIN folder.
@@ -179,8 +178,7 @@ public final class ViteHandler extends AbstractDevServerRunner {
      */
     public String getPathToVaadinInContext() {
         return FrontendUtils.getFrontendServletPath(
-                        getServletContext().getContext())
-                + "/" + VAADIN_MAPPING;
+                getServletContext().getContext()) + "/" + VAADIN_MAPPING;
     }
 
     private String getContextPath() {
@@ -192,4 +190,5 @@ public final class ViteHandler extends AbstractDevServerRunner {
         return (VaadinServletContext) getApplicationConfiguration()
                 .getContext();
     }
+
 }

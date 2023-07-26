@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package io.jmix.flowui.devserver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +34,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
+/**
+ * {@link BrowserLiveReload} implementation class.
+ * <p>
+ * For internal use only. May be renamed or removed in a future release.
+ *
+ * @author Vaadin Ltd
+ */
 public class DebugWindowConnection implements BrowserLiveReload {
 
     private final ClassLoader classLoader;
@@ -48,6 +54,10 @@ public class DebugWindowConnection implements BrowserLiveReload {
             Backend.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    // private IdeIntegration ideIntegration;
+
+    // private ThemeEditorMessageHandler themeEditorMessageHandler;
 
     static {
         IDENTIFIER_CLASSES.put(Backend.JREBEL, Collections.singletonList(
@@ -66,6 +76,9 @@ public class DebugWindowConnection implements BrowserLiveReload {
     DebugWindowConnection(ClassLoader classLoader, VaadinContext context) {
         this.classLoader = classLoader;
         this.context = context;
+//        this.ideIntegration = new IdeIntegration(
+//                ApplicationConfiguration.get(context));
+//        this.themeEditorMessageHandler = new ThemeEditorMessageHandler(context);
     }
 
     @Override
@@ -113,6 +126,11 @@ public class DebugWindowConnection implements BrowserLiveReload {
                 .get(context).getFeatures().stream()
                 .filter(feature -> !feature.equals(FeatureFlags.EXAMPLE))
                 .collect(Collectors.toList())));
+
+//        if (themeEditorMessageHandler.isEnabled()) {
+//            send(resource, ThemeEditorCommand.STATE,
+//                    themeEditorMessageHandler.getState());
+//        }
     }
 
     private void send(AtmosphereResource resource, String command,
@@ -142,17 +160,33 @@ public class DebugWindowConnection implements BrowserLiveReload {
                 .anyMatch(resourceRef -> resource.equals(resourceRef.get()));
     }
 
-    @Override
-    public void reload() {
+    private void send(JsonObject msg) {
         atmosphereResources.forEach(resourceRef -> {
             AtmosphereResource resource = resourceRef.get();
             if (resource != null) {
-                resource.getBroadcaster().broadcast("{\"command\": \"reload\"}",
-                        resource);
+                resource.getBroadcaster().broadcast(msg.toJson(), resource);
             }
         });
+
     }
 
+    @Override
+    public void reload() {
+        JsonObject msg = Json.createObject();
+        msg.put("command", "reload");
+        send(msg);
+    }
+
+    @Override
+    public void update(String path, String content) {
+        JsonObject msg = Json.createObject();
+        msg.put("command", "update");
+        msg.put("path", path);
+        msg.put("content", content);
+        send(msg);
+    }
+
+    @SuppressWarnings("FutureReturnValueIgnored")
     @Override
     public void onMessage(AtmosphereResource resource, String message) {
         if (message.isEmpty()) {
@@ -161,14 +195,62 @@ public class DebugWindowConnection implements BrowserLiveReload {
         }
         JsonObject json = Json.parse(message);
         String command = json.getString("command");
+        JsonObject data = json.getObject("data");
         if ("setFeature".equals(command)) {
-            JsonObject data = json.getObject("data");
             FeatureFlags.get(context).setEnabled(data.getString("featureId"),
                     data.getBoolean("enabled"));
-        } else if ("reportTelemetry".equals(command)) {
-            JsonObject data = json.getObject("data");
-            // TODO: dev server comment
-            //DevModeUsageStatistics.handleBrowserData(data);
+//        } else if ("reportTelemetry".equals(command)) {
+//            // DevModeUsageStatistics.handleBrowserData(data);
+//        } else if ("checkLicense".equals(command)) {
+//            String name = data.getString("name");
+//            String version = data.getString("version");
+//            Product product = new Product(name, version);
+//            boolean ok;
+//            String errorMessage = "";
+//
+//            try {
+//                LicenseChecker.checkLicense(product.getName(),
+//                        product.getVersion(), BuildType.DEVELOPMENT, keyUrl -> {
+//                            send(resource, "license-check-nokey",
+//                                    new ProductAndMessage(product, keyUrl));
+//                        });
+//                ok = true;
+//            } catch (Exception e) {
+//                ok = false;
+//                errorMessage = e.getMessage();
+//            }
+//            if (ok) {
+//                send(resource, "license-check-ok", product);
+//            } else {
+//                ProductAndMessage pm = new ProductAndMessage(product,
+//                        errorMessage);
+//                send(resource, "license-check-failed", pm);
+//            }
+//        } else if ("showComponentCreateLocation".equals(command)
+//                || "showComponentAttachLocation".equals(command)) {
+//            int nodeId = (int) data.getNumber("nodeId");
+//            int uiId = (int) data.getNumber("uiId");
+//            VaadinSession session = VaadinSession.getCurrent();
+//            session.access(() -> {
+//                Element element = session.findElement(uiId, nodeId);
+//                Optional<Component> c = element.getComponent();
+//                if (c.isPresent()) {
+//                    if ("showComponentCreateLocation".equals(command)) {
+//                        ideIntegration.showComponentCreateInIde(c.get());
+//                    } else {
+//                        ideIntegration.showComponentAttachInIde(c.get());
+//                    }
+//                } else {
+//                    getLogger().error(
+//                            "Only component locations are tracked. The given node id refers to an element and not a component");
+//                }
+//            });
+//        } else if (themeEditorMessageHandler.canHandle(command, data)) {
+//            BaseResponse resultData = themeEditorMessageHandler
+//                    .handleDebugMessageData(command, data);
+//            send(resource, ThemeEditorCommand.RESPONSE, resultData);
+//        } else {
+            getLogger().info("Unknown command from the browser: " + command);
         }
     }
 

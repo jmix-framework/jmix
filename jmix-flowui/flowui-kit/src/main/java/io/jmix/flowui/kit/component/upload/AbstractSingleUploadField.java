@@ -25,6 +25,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.component.upload.*;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.dom.Element;
@@ -138,9 +139,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected void attachContent(HasComponents content) {
         content.add(uploadButton, fileNameComponent);
-
-        content.getElement().setAttribute("slot", "input");
-        getElement().appendChild(content.getElement());
+        SlotUtils.addToSlot(this, "input", content.getElement());
     }
 
     protected void initUploadComponent(JmixUploadButton upload) {

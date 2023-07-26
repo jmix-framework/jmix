@@ -21,7 +21,10 @@ import io.jmix.authserver.AuthServerProperties;
 import io.jmix.authserver.filter.AsResourceServerEventSecurityFilter;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
 import io.jmix.authserver.introspection.TokenIntrospectorRolesHelper;
-import io.jmix.authserver.roleassignment.*;
+import io.jmix.authserver.roleassignment.InMemoryRegisteredClientRoleAssignmentRepository;
+import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignment;
+import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentPropertiesMapper;
+import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.security.SecurityConfigurers;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -41,7 +44,6 @@ import org.springframework.security.oauth2.server.resource.introspection.OpaqueT
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -53,12 +55,21 @@ import java.util.Collection;
 public class AuthServerAutoConfiguration {
 
     @Configuration
-    @EnableWebMvc
+    @Order(AuthorizationServerLoginPageConfiguration.ORDER)
     public static class AuthorizationServerLoginPageConfiguration implements WebMvcConfigurer {
+
+        private final AuthServerProperties authServerProperties;
+
+        public AuthorizationServerLoginPageConfiguration(AuthServerProperties authServerProperties) {
+            this.authServerProperties = authServerProperties;
+        }
+
+        public static final int ORDER = 100;
 
         @Override
         public void addViewControllers(ViewControllerRegistry registry) {
-            registry.addViewController("/as-login/**").setViewName("as-login.html");
+            registry.addViewController(authServerProperties.getLoginPageUrl())
+                    .setViewName(authServerProperties.getLoginPageViewName());
         }
     }
 
@@ -84,7 +95,7 @@ public class AuthServerAutoConfiguration {
                     // authorization endpoint
                     .exceptionHandling((exceptions) -> exceptions
                             .authenticationEntryPoint(
-                                    new LoginUrlAuthenticationEntryPoint("/as-login"))
+                                    new LoginUrlAuthenticationEntryPoint(authServerProperties.getLoginPageUrl()))
                     );
 
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
@@ -96,12 +107,12 @@ public class AuthServerAutoConfiguration {
         public SecurityFilterChain loginFormSecurityFilterChain(HttpSecurity http)
                 throws Exception {
             http
-                    .securityMatcher("/as-login")
+                    .securityMatcher(authServerProperties.getLoginPageUrl(), "/aslogin/styles/**")
                     .authorizeHttpRequests(authorize -> {
                         authorize.anyRequest().permitAll();
                     })
                     .formLogin(form -> {
-                        form.loginPage("/as-login");
+                        form.loginPage(authServerProperties.getLoginPageUrl());
                     });
 
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER);

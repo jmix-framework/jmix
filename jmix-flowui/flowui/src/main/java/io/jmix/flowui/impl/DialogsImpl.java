@@ -117,7 +117,9 @@ public class DialogsImpl implements Dialogs {
             button.setText(action.getText());
         }
 
-        button.setIcon(action.getIcon());
+        if (action.getIcon() != null) {
+            button.setIcon(action.getIcon());
+        }
 
         button.addClickListener(event -> {
             action.actionPerform(dialog);

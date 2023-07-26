@@ -28,7 +28,7 @@ import test_support.entity.attachment.DocumentAttachment
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class FileStorageUploadFieldXmlLoadTest extends FlowuiTestSpecification{
+class FileStorageUploadFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Autowired
     private DataManager dataManager
@@ -54,7 +54,7 @@ class FileStorageUploadFieldXmlLoadTest extends FlowuiTestSpecification{
         when: "Open view with FileStorageUploadFields"
         def view = navigateToView(FileStorageUploadFieldView)
 
-        then: "FileUploadField attributes should be loaded"
+        then: "FileStorageUploadFields attributes should be loaded"
         def field = view.xmlFileStorageUploadField
         field.acceptedFileTypes[0] == ".jpg"
         field.classNames[0] == "custom-className"
@@ -98,6 +98,26 @@ class FileStorageUploadFieldXmlLoadTest extends FlowuiTestSpecification{
 
         view.readOnlyFileStorageUploadField.readOnly
         !view.disabledFileStorageUploadField.enabled
+    }
+
+    def "Load default I18N"() {
+        when: "Open view with FileStorageUploadFields"
+        def view = navigateToView(FileStorageUploadFieldView)
+
+        then: "FileStorageUploadFields default localization should be loaded"
+        def field = view.localizedFileStorageUploadField
+
+        field.i18n.uploadDialog != null
+        field.i18n.error != null
+        field.i18n.error.fileIsTooBig != null
+        field.i18n.error.incorrectFileType != null
+        field.i18n.uploading != null
+        field.i18n.uploading.status != null
+        field.i18n.uploading.status.connecting != null
+        field.i18n.uploading.status.processing != null
+        field.i18n.uploading.remainingTime != null
+        field.i18n.uploading.remainingTime.prefix != null
+        field.i18n.uploading.remainingTime.unknown != null
     }
 
     protected DocumentAttachment createAttachment() {

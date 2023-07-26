@@ -80,12 +80,15 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         E entity = initEntity(builder, container);
 
         V view = createView(builder);
+
+        // Setup parent context before setting entity,
+        // because 'setEntityToEdit' immediately processing entity
+        DataContext parentDataContext = setupParentDataContext(builder, view, container);
+
         ((DetailView<E>) view).setEntityToEdit(entity);
 
         DialogWindow<V> dialog = createDialog(view);
         initDialog(builder, dialog);
-
-        DataContext parentDataContext = setupParentDataContext(builder, view, container);
 
         setupListDataComponent(builder, ((DetailView<E>) view), dialog, container, parentDataContext);
         setupField(builder, view, dialog, parentDataContext);

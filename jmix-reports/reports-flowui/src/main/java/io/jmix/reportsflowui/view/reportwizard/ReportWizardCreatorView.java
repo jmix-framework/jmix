@@ -242,7 +242,7 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
-    public void updateRegionDescription() {
+    public void addRegionDescription() {
         fragmentDescriptionMap.put(regionsVBox, getRegionDescription());
     }
 
@@ -278,7 +278,7 @@ public class ReportWizardCreatorView extends StandardView {
             if (Objects.equals(event.getValue(), ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY)) {
                 stepFragments.add(2, queryVBox);
             }
-            updateRegionDescription();
+            addRegionDescription();
             fragmentsList = stepFragments;
         }
         if ("entityName".equals(event.getProperty()) || ("templateFileType".equals(event.getProperty())
@@ -480,7 +480,6 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe("entityField")
     public void onEntityFieldComponentValueChange(AbstractField.ComponentValueChangeEvent<JmixComboBox, MetaClass> event) {
-
         ReportData reportData = reportDataDc.getItem();
         updateReportEntity(event.getOldValue(), event.getValue(), reportData);
     }

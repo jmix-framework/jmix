@@ -24,11 +24,12 @@
         <action id="next" icon="ARROW_RIGHT" text="msg://forward"/>
         <action id="save" icon="CHECK" text="msg://save"/>
     </actions>
-    <layout>
-        <h3 id="wizardTitleLabel"/>
-        <hr/>
-        <span id="wizardDescriptionSpan"/>
-        <hr/>
+    <layout spacing="false">
+        <div width="100%">
+            <hr minHeight="0.06em" classNames="my-s"/>
+            <span id="wizardDescriptionSpan"/>
+            <hr minHeight="0.06em" classNames="my-s"/>
+        </div>
         <vbox id="detailsVBox" padding="false">
             <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
                 <responsiveSteps>
@@ -41,7 +42,8 @@
                 <comboBox id="templateFileTypeField"
                           property="templateFileType"
                           allowCustomValue="false"
-                          label="msg://templateFileFormat" required="true"
+                          label="msg://templateFileFormat"
+                          required="true"
                           requiredMessage="msg://fillTemplateTypeMsg"
                           helperText="msg://templateTypeHintMsg" width="100%"/>
                 <textField id="reportNameField"
@@ -81,33 +83,36 @@
                 </actions>
             </dataGrid>
         </vbox>
-        <vbox id="saveVBox" width="30em" padding="false">
-            <button id="downloadTemplateFile"
-                    classNames="link"
-                    themeNames="icon, tertiary-inline"
-                    icon="DOWNLOAD"
-                    iconAfterText="true"
-                    title="msg://templateHintMsg"/>
-            <textField id="outputFileName" width="100%"
-                       required="true"
-                       requiredMessage="msg://outputFileName.requiredMessage"
-                       label="msg://outputFileName"
-                       dataContainer="reportDataDc"
-                       property="outputNamePattern"
-                       helperText="msg://outputFileNameHintMsg" maxLength="255">
-                <validators>
-                    <custom bean="report_OutputFileNameValidator"/>
-                </validators>
-            </textField>
-            <comboBox id="outputFileFormat"
-                      required="true"
-                      requiredMessage="msg://outputFileFormat.requiredMessage"
-                      width="100%"
-                      label="msg://outputFileFormat"
-                      allowCustomValue="false"
-                      dataContainer="reportDataDc"
-                      property="outputFileType"
-                      helperText="msg://outputFileTypeHintMsg"/>
+        <vbox id="saveVBox" padding="false">
+            <formLayout id="saveBox" dataContainer="reportDataDc" maxWidth="35em">
+                <responsiveSteps>
+                    <responsiveStep minWidth="0" columns="1"/>
+                </responsiveSteps>
+                <button id="downloadTemplateFile"
+                        classNames="link"
+                        themeNames="icon, tertiary-inline"
+                        icon="DOWNLOAD"
+                        iconAfterText="true"
+                        title="msg://templateHintMsg"/>
+                <textField id="outputFileName" width="100%"
+                           required="true"
+                           requiredMessage="msg://outputFileName.requiredMessage"
+                           label="msg://outputFileName"
+                           property="outputNamePattern"
+                           helperText="msg://outputFileNameHintMsg" maxLength="255">
+                    <validators>
+                        <custom bean="report_OutputFileNameValidator"/>
+                    </validators>
+                </textField>
+                <comboBox id="outputFileFormat"
+                          required="true"
+                          requiredMessage="msg://outputFileFormat.requiredMessage"
+                          width="100%"
+                          label="msg://outputFileFormat"
+                          allowCustomValue="false"
+                          property="outputFileType"
+                          helperText="msg://outputFileTypeHintMsg"/>
+            </formLayout>
         </vbox>
         <vbox id="queryVBox" width="40em" padding="false">
             <div classNames="flex, justify-between, buttons-panel">
@@ -133,8 +138,8 @@
                         icon="QUESTION_CIRCLE"/>
             </div>
             <hbox classNames="buttons-panel">
-                <button id="generateParameters" action="reportParameterDataGrid.generate"/>
                 <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
+                <button id="generateParameters" action="reportParameterDataGrid.generate"/>
                 <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>
                 <button id="removeParameterBtn" action="reportParameterDataGrid.remove"/>
             </hbox>
@@ -154,7 +159,7 @@
                 </columns>
             </dataGrid>
         </vbox>
-        <hbox id="buttonPanel" padding="false">
+        <hbox id="buttonPanel" classNames="mt-m" padding="false">
             <button id="backBtn" visible="false" action="back"/>
             <button id="nextBtn" action="next"/>
             <button id="saveBtn" visible="false" themeNames="primary" action="save"/>

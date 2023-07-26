@@ -21,7 +21,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.MsgBundleTools;
-import io.jmix.ui.component.formatter.Formatter;
+import io.jmix.flowui.kit.component.formatter.Formatter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.DecimalFormat;

@@ -16,20 +16,20 @@
 
 package io.jmix.dynattrflowui.view.categoryattr;
 
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.data.selection.SelectionEvent;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.model.CategoryAttribute;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.Action;
-import io.jmix.ui.component.Button;
-import io.jmix.ui.component.GroupTable;
-import io.jmix.ui.component.Label;
-import io.jmix.ui.component.Table;
-import io.jmix.ui.model.CollectionPropertyContainer;
-import io.jmix.ui.screen.*;
+import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.model.CollectionPropertyContainer;
+import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,9 +42,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Set;
 
-@UiController("dynat_CategoryAttribute.fragment")
-@UiDescriptor("category-attrs-fragment.xml")
-public class CategoryAttrsFragment extends ScreenFragment {
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@ViewController("dynat_CategoryAttribute.fragment")
+@ViewDescriptor("category-attrs-fragment.xml")
+public class CategoryAttrsFragment extends StandardView {
 
     @Autowired
     protected Messages messages;
@@ -68,7 +69,7 @@ public class CategoryAttrsFragment extends ScreenFragment {
     @Autowired
     protected CollectionPropertyContainer<CategoryAttribute> categoryAttributesDc;
     @Autowired
-    protected GroupTable<CategoryAttribute> categoryAttrsTable;
+    protected DataGrid<CategoryAttribute> categoryAttrsTable;
     @Autowired
     protected Button moveUpBtn;
     @Autowired
@@ -77,7 +78,7 @@ public class CategoryAttrsFragment extends ScreenFragment {
     protected FormatStringsRegistry formatStringsRegistry;
 
     @Install(to = "categoryAttrsTable.defaultValue", subject = "columnGenerator")
-    protected Label<String> categoryAttrsTableDefaultValueColumnGenerator(CategoryAttribute attribute) {
+    protected Span categoryAttrsTableDefaultValueColumnGenerator(CategoryAttribute attribute) {
         String defaultValue = "";
 
         AttributeType dataType = attribute.getDataType();
@@ -154,8 +155,8 @@ public class CategoryAttrsFragment extends ScreenFragment {
                 break;
         }
 
-        Label<String> defaultValueLabel = uiComponents.create(Label.TYPE_STRING);
-        defaultValueLabel.setValue(defaultValue);
+        Span defaultValueLabel = uiComponents.create(Span.class);
+        defaultValueLabel.setText(defaultValue);
         return defaultValueLabel;
     }
 
@@ -185,8 +186,8 @@ public class CategoryAttrsFragment extends ScreenFragment {
     }
 
     @Subscribe("categoryAttrsTable")
-    protected void onCategoryAttrsTableSelection(Table.SelectionEvent<CategoryAttribute> event) {
-        Set<CategoryAttribute> selected = categoryAttrsTable.getSelected();
+    protected void onCategoryAttrsTableSelection(SelectionEvent<DataGrid<CategoryAttribute>, CategoryAttribute> event) {
+        Set<CategoryAttribute> selected = categoryAttrsTable.getSelectedItems();
         if (selected.isEmpty()) {
             refreshMoveButtonsEnabled(null);
         } else {
@@ -195,8 +196,8 @@ public class CategoryAttrsFragment extends ScreenFragment {
     }
 
     @Subscribe("categoryAttrsTable.moveUp")
-    protected void onCategoryAttrsTableMoveUp(Action.ActionPerformedEvent event) {
-        Set<CategoryAttribute> selectedItem = categoryAttrsTable.getSelected();
+    protected void onCategoryAttrsTableMoveUp(ActionPerformedEvent event) {
+        Set<CategoryAttribute> selectedItem = categoryAttrsTable.getSelectedItems();
         if (selectedItem.isEmpty()) {
             return;
         }
@@ -214,8 +215,8 @@ public class CategoryAttrsFragment extends ScreenFragment {
     }
 
     @Subscribe("categoryAttrsTable.moveDown")
-    protected void onCategoryAttrsTableMoveDown(Action.ActionPerformedEvent event) {
-        Set<CategoryAttribute> selectedItem = categoryAttrsTable.getSelected();
+    protected void onCategoryAttrsTableMoveDown(ActionPerformedEvent event) {
+        Set<CategoryAttribute> selectedItem = categoryAttrsTable.getSelectedItems();
         if (selectedItem.isEmpty()) {
             return;
         }

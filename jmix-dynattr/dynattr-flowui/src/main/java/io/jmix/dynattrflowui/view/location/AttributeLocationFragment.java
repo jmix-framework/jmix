@@ -16,31 +16,24 @@
 
 package io.jmix.dynattrflowui.view.location;
 
-import com.vaadin.data.provider.DataProvider;
-import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.server.SerializablePredicate;
-import com.vaadin.shared.ui.grid.DropLocation;
-import com.vaadin.shared.ui.grid.DropMode;
-import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.components.grid.GridDragSource;
-import com.vaadin.ui.components.grid.GridDragStartEvent;
-import com.vaadin.ui.components.grid.GridDropEvent;
-import com.vaadin.ui.components.grid.GridDropTarget;
-import com.vaadin.ui.dnd.DragSourceExtension;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.function.SerializablePredicate;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.DynAttrUiProperties;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.component.*;
-import io.jmix.ui.screen.ScreenFragment;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
-import io.jmix.ui.widget.JmixGrid;
+import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -48,9 +41,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@UiController("dynat_AttributeLocationFragment")
-@UiDescriptor("attribute-location-fragment.xml")
-public class AttributeLocationFragment extends ScreenFragment {
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@ViewController("dynat_AttributeLocationFragment")
+@ViewDescriptor("attribute-location-fragment.xml")
+// todo name
+public class AttributeLocationFragment extends StandardView {
 
     protected static String EMPTY_CATEGORY_ATTRIBUTE_NAME = "   ";
 
@@ -65,14 +60,14 @@ public class AttributeLocationFragment extends ScreenFragment {
     @Autowired
     protected Messages messages;
 
-    @Autowired
-    protected ComboBox<Integer> columnsCountLookupField;
-    @Autowired
-    protected HBoxLayout targetDataGridBox;
-    @Autowired
+    @ViewComponent
+    protected JmixComboBox<Integer> columnsCountLookupField;
+    @ViewComponent
+    protected HorizontalLayout targetDataGridBox;
+    @ViewComponent
     protected DataGrid<CategoryAttribute> sourceDataGrid;
-    @Autowired
-    private Button saveConfigurationBtn;
+    @ViewComponent
+    private JmixButton saveConfigurationBtn;
 
     protected List<CategoryAttribute> sourceDataContainer;
     protected List<List<CategoryAttribute>> dataContainers;
@@ -80,11 +75,11 @@ public class AttributeLocationFragment extends ScreenFragment {
 
     protected CategoryAttribute draggedItem;
     protected boolean droppedSuccessful;
-    protected Grid<CategoryAttribute> dragSourceGrid;
+    protected DataGrid<CategoryAttribute> dragSourceGrid;
 
     protected List<CategoryAttribute> attributesSourceDataContainer = new ArrayList<>();
     protected DataProvider<CategoryAttribute, SerializablePredicate<CategoryAttribute>> attributesSourceDataProvider;
-    protected Grid<CategoryAttribute> attributesSourceGrid;
+    protected DataGrid<CategoryAttribute> attributesSourceGrid;
 
     protected int[] rowsCounts;
     private boolean isEnabled;
@@ -112,25 +107,25 @@ public class AttributeLocationFragment extends ScreenFragment {
 
     @Subscribe("columnsCountLookupField")
     protected void onColumnsCountLookupFieldValueChange(HasValue.ValueChangeEvent<Integer> event) {
-        if (event.getPrevValue() == null
+        if (event.getOldValue() == null
                 || event.getValue() == null
-                || !event.isUserOriginated()) {
+                || !event.isFromClient()) {
             return;
         }
-        int range = event.getPrevValue() - event.getValue();
+        int range = event.getOldValue() - event.getValue();
         if (range > 0) {
             for (int i = 1; i <= range; i++) {
-                removeColumn(event.getPrevValue() - i);
+                removeColumn(event.getOldValue() - i);
             }
         } else {
             for (int i = 0; i < -range; i++) {
-                addColumn(event.getPrevValue() + i, 0);
+                addColumn(event.getOldValue() + i, 0);
             }
         }
     }
 
     @Subscribe("saveConfigurationBtn")
-    protected void onSaveConfigurationBtnClick(Button.ClickEvent event) {
+    protected void onSaveConfigurationBtnClick(ClickEvent<Button> event) {
         for (List<CategoryAttribute> currentList : dataContainers) {
             for (CategoryAttribute attribute : currentList) {
                 if (!EMPTY_CATEGORY_ATTRIBUTE_NAME.equals(attribute.getName())) {
@@ -159,7 +154,7 @@ public class AttributeLocationFragment extends ScreenFragment {
     protected void refresh() {
         refreshTargetDataGridBox();
         refreshContainers();
-        refreshDataGridDragAndDrop(sourceDataGrid, sourceDataContainer, true);
+//    todo    refreshDataGridDragAndDrop(sourceDataGrid, sourceDataContainer, true);
         refreshRowsCounts();
         refreshColumnsCountLookupField();
         refreshTargetDataGrids(getMaxColumnIndex() + 1);
@@ -206,7 +201,7 @@ public class AttributeLocationFragment extends ScreenFragment {
     }
 
     protected void refreshColumnsCountLookupField() {
-        columnsCountLookupField.setOptionsList(getColumnsCountLookupFieldOptionsList());
+        columnsCountLookupField.setItems(getColumnsCountLookupFieldOptionsList());
         columnsCountLookupField.setValue(getMaxColumnIndex() + 1);
     }
 
@@ -239,17 +234,16 @@ public class AttributeLocationFragment extends ScreenFragment {
         }
         dataContainers.add(dataContainer);
 
-        refreshDataGridDragAndDrop(targetDataGrid, dataContainer, false);
+//   todo     refreshDataGridDragAndDrop(targetDataGrid, dataContainer, false);
     }
 
     protected DataGrid<CategoryAttribute> createDataGrid(int i) {
-        DataGrid<CategoryAttribute> dataGrid = uiComponents.create(DataGrid.NAME);
+        DataGrid<CategoryAttribute> dataGrid = uiComponents.create(DataGrid.class);
         DataGrid.Column<CategoryAttribute> column =
                 dataGrid.addColumn("column",
                         metadataTools.resolveMetaPropertyPathOrNull(metadata.getClass(CategoryAttribute.class), "name"));
         column.setSortable(false);
-        column.setCaption(messages.getMessage(AttributeLocationFragment.class, "targetDataGrid.column.caption") + " " + i);
-        dataGrid.setColumnsCollapsingAllowed(false);
+        column.setHeader(messages.getMessage(AttributeLocationFragment.class, "targetDataGrid.column.caption") + " " + i);
         dataGrid.setWidth("175px");
         return dataGrid;
     }
@@ -288,98 +282,85 @@ public class AttributeLocationFragment extends ScreenFragment {
         sourceDataContainer.removeAll(removeFromSource);
     }
 
-    protected void refreshDataGridDragAndDrop(DataGrid<CategoryAttribute> dataGrid,
-                                              List<CategoryAttribute> dataContainer,
-                                              boolean isSourceDataGrid) {
-        DataProvider<CategoryAttribute, SerializablePredicate<CategoryAttribute>> dataProvider = new ListDataProvider<>(dataContainer);
+//  todo  protected void refreshDataGridDragAndDrop(DataGrid<CategoryAttribute> dataGrid,
+//                                              List<CategoryAttribute> dataContainer,
+//                                              boolean isSourceDataGrid) {
+//        DataProvider<CategoryAttribute, SerializablePredicate<CategoryAttribute>> dataProvider = new ListDataProvider<>(dataContainer);
+//        if (isSourceDataGrid) {
+//            attributesSourceDataContainer = dataContainer;
+//            attributesSourceDataProvider = dataProvider;
+//            attributesSourceGrid = dataGrid.unwrap(JmixGrid.class);
+//        }
+//        dataGrid.withUnwrapped(JmixGrid.class, grid -> {
+//            grid.setDataProvider(dataProvider);
+//            GridDragSource<CategoryAttribute> gridDragSource = new GridDragSource<>(grid);
+//            gridDragSource.addGridDragStartListener(this::onGridDragStart);
+//            GridDropTarget<CategoryAttribute> gridDropTarget = new GridDropTarget<>(grid, DropMode.BETWEEN);
+//            gridDropTarget.addGridDropListener(e -> onGridDrop(e, isSourceDataGrid));
+//        });
+//    }
 
-        if (isSourceDataGrid) {
-            attributesSourceDataContainer = dataContainer;
-            attributesSourceDataProvider = dataProvider;
-            attributesSourceGrid = dataGrid.unwrap(JmixGrid.class);
-        }
+//   todo protected void onGridDragStart(GridDragStartEvent<CategoryAttribute> event) {
+//        if (isEnabled) {
+//            dragSourceGrid = event.getComponent();
+//            draggedItem = event.getDraggedItems().get(0);
+//            droppedSuccessful = false;
+//        }
+//    }
 
-        dataGrid.withUnwrapped(JmixGrid.class, grid -> {
-            grid.setDataProvider(dataProvider);
+//   todo protected void onGridDrop(GridDropEvent<CategoryAttribute> event, boolean isAttributesSourceGrid) {
+//        if (isEnabled) {
+//            event.getDragSourceExtension().ifPresent(source -> {
+//                int dropIndex = addToDestinationGrid(event, isAttributesSourceGrid, source);
+//                removeFromSourceGrid(dragSourceGrid, dragSourceGrid == attributesSourceGrid, event.getComponent(), dropIndex);
+//            });
+//        }
+//    }
 
-            GridDragSource<CategoryAttribute> gridDragSource = new GridDragSource<>(grid);
-            gridDragSource.addGridDragStartListener(this::onGridDragStart);
+//  todo  protected int addToDestinationGrid(GridDropEvent<CategoryAttribute> event, boolean isSourceGrid, DragSourceExtension source) {
+//        if (isSourceGrid && EMPTY_CATEGORY_ATTRIBUTE_NAME.equals(draggedItem.getName())) {
+//            droppedSuccessful = true;
+//            return -1;
+//        }
+//        if (source instanceof GridDragSource) {
+//            //noinspection unchecked
+//            ListDataProvider<CategoryAttribute> dataProvider = (ListDataProvider<CategoryAttribute>)
+//                    event.getComponent().getDataProvider();
+//            List<CategoryAttribute> items = (List<CategoryAttribute>) dataProvider.getItems();
+//            int i = items.size();
+//            if (event.getDropTargetRow().isPresent()) {
+//                i = items.indexOf(event.getDropTargetRow().get())
+//                        + (event.getDropLocation() == DropLocation.BELOW ? 1 : 0);
+//            }
+//            items.add(i, draggedItem);
+//            dataProvider.refreshAll();
+//            droppedSuccessful = true;
+//            return i;
+//        }
+//        return -1;
+//    }
 
-            GridDropTarget<CategoryAttribute> gridDropTarget = new GridDropTarget<>(grid, DropMode.BETWEEN);
-            gridDropTarget.addGridDropListener(e -> onGridDrop(e, isSourceDataGrid));
-        });
-    }
-
-    protected void onGridDragStart(GridDragStartEvent<CategoryAttribute> event) {
-        if (isEnabled) {
-            dragSourceGrid = event.getComponent();
-            draggedItem = event.getDraggedItems().get(0);
-            droppedSuccessful = false;
-        }
-    }
-
-    protected void onGridDrop(GridDropEvent<CategoryAttribute> event, boolean isAttributesSourceGrid) {
-        if (isEnabled) {
-            event.getDragSourceExtension().ifPresent(source -> {
-                int dropIndex = addToDestinationGrid(event, isAttributesSourceGrid, source);
-                removeFromSourceGrid(dragSourceGrid, dragSourceGrid == attributesSourceGrid, event.getComponent(), dropIndex);
-            });
-        }
-    }
-
-    protected int addToDestinationGrid(GridDropEvent<CategoryAttribute> event, boolean isSourceGrid, DragSourceExtension source) {
-        if (isSourceGrid && EMPTY_CATEGORY_ATTRIBUTE_NAME.equals(draggedItem.getName())) {
-            droppedSuccessful = true;
-            return -1;
-        }
-
-        if (source instanceof GridDragSource) {
-            //noinspection unchecked
-            ListDataProvider<CategoryAttribute> dataProvider = (ListDataProvider<CategoryAttribute>)
-                    event.getComponent().getDataProvider();
-            List<CategoryAttribute> items = (List<CategoryAttribute>) dataProvider.getItems();
-
-            int i = items.size();
-            if (event.getDropTargetRow().isPresent()) {
-                i = items.indexOf(event.getDropTargetRow().get())
-                        + (event.getDropLocation() == DropLocation.BELOW ? 1 : 0);
-            }
-
-            items.add(i, draggedItem);
-            dataProvider.refreshAll();
-
-            droppedSuccessful = true;
-
-            return i;
-        }
-
-        return -1;
-    }
-
-    protected void removeFromSourceGrid(Grid<?> currentSourceGrid, boolean isAttributesSourceGrid, AbstractComponent dropComponent, int dropIndex) {
-        if (!droppedSuccessful || draggedItem == null) {
-            return;
-        }
-
-        //noinspection unchecked
-        List<CategoryAttribute> items = (List<CategoryAttribute>) ((ListDataProvider<?>) currentSourceGrid.getDataProvider()).getItems();
-        if (currentSourceGrid.equals(dropComponent) && dropIndex >= 0) {
-            int removeIndex = items.indexOf(draggedItem) == dropIndex
-                    ? items.lastIndexOf(draggedItem)
-                    : items.indexOf(draggedItem);
-            if (removeIndex >= 0 && removeIndex != dropIndex) {
-                items.remove(removeIndex);
-            }
-        } else {
-            items.remove(draggedItem);
-        }
-
-        if (isAttributesSourceGrid && EMPTY_CATEGORY_ATTRIBUTE_NAME.equals(draggedItem.getName())) {
-            attributesSourceDataContainer.add(createEmptyCategoryAttribute());
-        }
-
-        currentSourceGrid.getDataProvider().refreshAll();
-    }
+//  todo  protected void removeFromSourceGrid(DataGrid<?> currentSourceGrid, boolean isAttributesSourceGrid, AbstractComponent dropComponent, int dropIndex) {
+//        if (!droppedSuccessful || draggedItem == null) {
+//            return;
+//        }
+//        //noinspection unchecked
+//        List<CategoryAttribute> items = (List<CategoryAttribute>) ((ListDataProvider<?>) currentSourceGrid.getDataProvider()).getItems();
+//        if (currentSourceGrid.equals(dropComponent) && dropIndex >= 0) {
+//            int removeIndex = items.indexOf(draggedItem) == dropIndex
+//                    ? items.lastIndexOf(draggedItem)
+//                    : items.indexOf(draggedItem);
+//            if (removeIndex >= 0 && removeIndex != dropIndex) {
+//                items.remove(removeIndex);
+//            }
+//        } else {
+//            items.remove(draggedItem);
+//        }
+//        if (isAttributesSourceGrid && EMPTY_CATEGORY_ATTRIBUTE_NAME.equals(draggedItem.getName())) {
+//            attributesSourceDataContainer.add(createEmptyCategoryAttribute());
+//        }
+//        currentSourceGrid.getDataProvider().refreshAll();
+//    }
 
     protected void refreshSourceDataProvider() {
         if (attributesSourceDataProvider != null) {

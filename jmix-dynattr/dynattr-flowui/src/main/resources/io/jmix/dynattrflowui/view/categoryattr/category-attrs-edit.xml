@@ -32,7 +32,7 @@
             <instance id="configurationDc" property="configuration"/>
         </instance>
         <collection id="targetScreensDc"
-                    class="io.jmix.dynattrflowui.impl.model.TargetScreenComponent"
+                    class="io.jmix.dynattrflowui.impl.model.TargetViewComponent"
                     fetchPlan="_local">
             <loader id="targetScreensDl"/>
         </collection>

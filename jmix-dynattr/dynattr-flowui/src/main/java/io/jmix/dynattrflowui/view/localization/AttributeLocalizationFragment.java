@@ -20,18 +20,19 @@ import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
-import io.jmix.ui.component.DataGrid;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.screen.*;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
-@UiController("dynat_AttributeLocalizationFragment")
-@UiDescriptor("attribute-localization-fragment.xml")
-public class AttributeLocalizationFragment extends ScreenFragment {
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@ViewController("dynat_AttributeLocalizationFragment")
+@ViewDescriptor("attribute-localization-fragment.xml")
+public class AttributeLocalizationFragment extends StandardView {
 
     protected static final String NAME_PROPERTY = "name";
     protected static final String DESCRIPTION_PROPERTY = "description";
@@ -47,11 +48,11 @@ public class AttributeLocalizationFragment extends ScreenFragment {
     @Autowired
     protected MessageTools messageTools;
 
-    @Autowired
+    @ViewComponent
     protected CollectionLoader<AttributeLocalizedValue> localizedValuesDl;
-    @Autowired
+    @ViewComponent
     protected CollectionContainer<AttributeLocalizedValue> localizedValuesDc;
-    @Autowired
+    @ViewComponent
     protected DataGrid<AttributeLocalizedValue> localizedValuesDataGrid;
 
     protected List<AttributeLocalizedValue> localizedValues = new ArrayList<>();
@@ -96,11 +97,11 @@ public class AttributeLocalizationFragment extends ScreenFragment {
         return localizedValues;
     }
 
-    @Install(to = "localizedValuesDataGrid.language", subject = "columnGenerator")
-    protected String localizedValuesDataGridLanguageColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedValue> event) {
-        AttributeLocalizedValue localizedValue = event.getItem();
-        return localizedValue.getLanguage() + "|" + localizedValue.getLocale();
-    }
+//  todo  @Install(to = "localizedValuesDataGrid.language", subject = "columnGenerator")
+//    protected String localizedValuesDataGridLanguageColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedValue> event) {
+//        AttributeLocalizedValue localizedValue = event.getItem();
+//        return localizedValue.getLanguage() + "|" + localizedValue.getLocale();
+//    }
 
     @Install(to = "localizedValuesDataGrid", subject = "rowDescriptionProvider")
     protected String localizedValuesDataGridRowDescriptionProvider(AttributeLocalizedValue localizedValue) {
@@ -108,7 +109,7 @@ public class AttributeLocalizationFragment extends ScreenFragment {
     }
 
     protected void initLocalizedValuesDataGrid() {
-        localizedValuesDataGrid.getColumn(DESCRIPTION_PROPERTY).setVisible(descriptionColumnVisible);
+        localizedValuesDataGrid.getColumnByKey(DESCRIPTION_PROPERTY).setVisible(descriptionColumnVisible);
     }
 
     protected void setupFieldsLock() {

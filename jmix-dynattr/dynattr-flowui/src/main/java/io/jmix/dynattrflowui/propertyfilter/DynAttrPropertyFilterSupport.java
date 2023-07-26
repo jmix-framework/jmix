@@ -27,17 +27,12 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalUtils;
-import io.jmix.flowui.component.PropertyFilter;
+import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 
 import java.util.EnumSet;
 
-import static io.jmix.flowui.component.PropertyFilter.Operation.EQUAL;
-import static io.jmix.flowui.component.PropertyFilter.Operation.IN_LIST;
-import static io.jmix.flowui.component.PropertyFilter.Operation.IS_SET;
-import static io.jmix.flowui.component.PropertyFilter.Operation.NOT_EQUAL;
-import static io.jmix.flowui.component.PropertyFilter.Operation.NOT_IN_LIST;
+import static io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation.*;
 
 public class DynAttrPropertyFilterSupport extends PropertyFilterSupport {
 
@@ -61,7 +56,7 @@ public class DynAttrPropertyFilterSupport extends PropertyFilterSupport {
     @Override
     public EnumSet<PropertyFilter.Operation> getAvailableOperations(MetaPropertyPath mpp) {
         if (isEnumerationAttribute(mpp)) {
-            return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
+            return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, CONTAINS, NOT_CONTAINS);
         }
 
         return super.getAvailableOperations(mpp);
@@ -71,7 +66,7 @@ public class DynAttrPropertyFilterSupport extends PropertyFilterSupport {
         MetaProperty metaProperty = mpp.getMetaProperty();
         if (DynAttrUtils.isDynamicAttributeProperty(metaProperty.getName())) {
             AttributeDefinition attribute = dynAttrMetadata.getAttributeByCode(metaProperty.getDomain(),
-                    DynAttrUtils.getAttributeCodeFromProperty(metaProperty.getName()))
+                            DynAttrUtils.getAttributeCodeFromProperty(metaProperty.getName()))
                     .orElse(null);
             return attribute != null && attribute.getDataType() == AttributeType.ENUMERATION;
         }

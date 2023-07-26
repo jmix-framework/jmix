@@ -16,6 +16,10 @@
 
 package io.jmix.dynattrflowui.view.category;
 
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.TabSheet;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -24,23 +28,26 @@ import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattrflowui.view.categoryattr.CategoryAttrsFragment;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationFragment;
 import io.jmix.dynattrflowui.view.location.AttributeLocationFragment;
-import io.jmix.ui.Fragments;
-import io.jmix.ui.component.*;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.DataContext;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.screen.*;
+import io.jmix.flowui.Views;
+import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.tabsheet.JmixTabSheet;
+import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
-@UiController("dynat_Category.edit")
-@UiDescriptor("category-edit.xml")
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@ViewController("dynat_Category.edit")
+@ViewDescriptor("category-edit.xml")
 @EditedEntityContainer("categoryDc")
-public class CategoryEdit extends StandardEditor<Category> {
+public class CategoryEdit extends StandardDetailView<Category> {
 
     protected static final String ATTRIBUTES_LOCATION_TAB = "attributesLocationTab";
 
@@ -51,7 +58,7 @@ public class CategoryEdit extends StandardEditor<Category> {
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected Fragments fragments;
+    protected Views views;
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
@@ -60,11 +67,11 @@ public class CategoryEdit extends StandardEditor<Category> {
     protected FetchPlans fetchPlans;
 
     @Autowired
-    protected ComboBox<MetaClass> entityTypeField;
+    protected JmixComboBox<MetaClass> entityTypeField;
     @Autowired
-    protected VBoxLayout categoryAttrsBox;
+    protected VerticalLayout categoryAttrsBox;
     @Autowired
-    protected TabSheet tabSheet;
+    protected JmixTabSheet tabSheet;
 
     @Autowired
     protected InstanceContainer<Category> categoryDc;
@@ -80,14 +87,13 @@ public class CategoryEdit extends StandardEditor<Category> {
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        CategoryAttrsFragment categoryAttrsFragment = fragments.create(this, CategoryAttrsFragment.class);
-        Fragment fragment = categoryAttrsFragment.getFragment();
-        categoryAttrsBox.add(fragment);
-        categoryAttrsBox.expand(fragment);
+        CategoryAttrsFragment categoryAttrsFragment = views.create(CategoryAttrsFragment.class);
+        categoryAttrsBox.add(categoryAttrsFragment);
+        categoryAttrsBox.expand(categoryAttrsFragment);
     }
 
     @Subscribe
-    protected void onAfterShow(AfterShowEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         initEntityTypeField();
         initLocalizationTab();
         initAttributeLocationTab();
@@ -132,8 +138,8 @@ public class CategoryEdit extends StandardEditor<Category> {
     }
 
     @Subscribe("tabSheet")
-    protected void onTabSheetSelectedTabChange(TabSheet.SelectedTabChangeEvent event) {
-        String tabName = event.getSelectedTab().getName();
+    protected void onTabSheetSelectedTabChange(TabSheet.SelectedChangeEvent event) {
+        String tabName = event.getSelectedTab().getId().orElseThrow();
         if (ATTRIBUTES_LOCATION_TAB.equals(tabName)) {
             attributeLocationFragment.setCategoryAttributes(new ArrayList<>(categoryAttributesDc.getItems()));
         }
@@ -147,7 +153,9 @@ public class CategoryEdit extends StandardEditor<Category> {
             }
             options.put(messageTools.getDetailedEntityCaption(metaClass), metaClass);
         }
-        entityTypeField.setOptionsMap(options);
+        ComponentUtils.setItemsMap(entityTypeField, options.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)));
 
         if (getEditedEntity().getEntityType() != null) {
             entityTypeField.setValue(extendedEntities.getEffectiveMetaClass(getEditedEntity().getEntityType()));
@@ -156,21 +164,20 @@ public class CategoryEdit extends StandardEditor<Category> {
 
     protected void initLocalizationTab() {
         if (coreProperties.getAvailableLocales().size() > 1) {
-            TabSheet.Tab localizationTab = tabSheet.getTab("localizationTab");
+            Tab localizationTab = tabSheet.getTabAt(1); // 0 == "localizationTab
             localizationTab.setVisible(true);
 
             CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
-            VBoxLayout localizationTabComponent = (VBoxLayout) tabSheet.getTabComponent("localizationTab");
-            localizationFragment = fragments.create(this, AttributeLocalizationFragment.class);
+            // todo
+            VerticalLayout localizationTabComponent = (VerticalLayout) tabSheet.getContentByTab(tabSheet.getTabAt(0));
+            localizationFragment = views.create(AttributeLocalizationFragment.class);
             localizationFragment.setNameMsgBundle(getEditedEntity().getLocaleNames());
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
 
-            Fragment fragment = localizationFragment.getFragment();
-            fragment.setWidth(Component.FULL_SIZE);
-            localizationTabComponent.add(fragment);
-            localizationTabComponent.expand(fragment);
+            localizationTabComponent.add(localizationFragment);
+            localizationTabComponent.expand(localizationFragment);
         }
     }
 
@@ -178,17 +185,15 @@ public class CategoryEdit extends StandardEditor<Category> {
         CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
         accessManager.applyRegisteredConstraints(crudEntityContext);
 
-        VBoxLayout attributesLocationTabComponent = (VBoxLayout) tabSheet.getTabComponent(ATTRIBUTES_LOCATION_TAB);
-        attributeLocationFragment = fragments.create(this, AttributeLocationFragment.class);
+        VerticalLayout attributesLocationTabComponent = (VerticalLayout) tabSheet.getContentByTab(tabSheet.getTabAt(1));  // 0 == "attributeLocationTab"
+        attributeLocationFragment = views.create(AttributeLocationFragment.class);
         attributeLocationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
-        Fragment fragment = attributeLocationFragment.getFragment();
-        fragment.setWidth(Component.FULL_SIZE);
-        attributesLocationTabComponent.add(fragment);
-        attributesLocationTabComponent.expand(fragment);
+        attributesLocationTabComponent.add(attributeLocationFragment);
+        attributesLocationTabComponent.expand(attributeLocationFragment);
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
-    protected void onPreCommit(DataContext.PreCommitEvent event) {
+    protected void onPreCommit(BeforeSaveEvent event) { // todo was pre-commit
         if (localizationFragment != null) {
             getEditedEntity().setLocaleNames(localizationFragment.getNameMsgBundle());
         }

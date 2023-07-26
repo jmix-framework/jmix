@@ -20,8 +20,8 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
+import jakarta.persistence.Id;
 
-import javax.persistence.Id;
 import java.util.UUID;
 
 @JmixEntity(name = "dynat_AttributeLocalizedValue")

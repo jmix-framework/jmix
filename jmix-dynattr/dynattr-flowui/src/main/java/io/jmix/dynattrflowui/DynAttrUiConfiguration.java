@@ -21,22 +21,14 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattrflowui.panel.DynamicAttributesPanel;
-import io.jmix.dynattrflowui.panel.DynamicAttributesPanelLoader;
 import io.jmix.dynattrflowui.propertyfilter.DynAttrPropertyFilterSupport;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
-import io.jmix.flowui.sys.registration.ComponentRegistration;
-import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
-
-import java.util.Collections;
 
 @Configuration
 @ComponentScan
@@ -45,34 +37,15 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.dynattrflowui", value = "classpath:/io/jmix/dynattrflowui/module.properties")
 public class DynAttrUiConfiguration {
 
-    @Bean("dynattr_DynAttrUiUiControllers")
-    public FlowuiControllersConfiguration screens(ApplicationContext applicationContext,
-                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        UiDon uiControllers
-                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        uiControllers.setBasePackages(Collections.singletonList("io.jmix.dynattrui"));
-        return uiControllers;
-    }
-
-    @Bean("dynattr_DynAttrPropertyFilterSupport")
+    @Bean("dynat_DynAttrPropertyFilterSupport")
     @Primary
     public PropertyFilterSupport propertyFilterSupport(Messages messages,
                                                        MessageTools messageTools,
                                                        MetadataTools metadataTools,
                                                        DataManager dataManager,
                                                        DatatypeRegistry datatypeRegistry,
-                                                       DynAttrMetadata dynAttrMetadata,
-                                                       DateIntervalUtils dateIntervalUtils) {
+                                                       DynAttrMetadata dynAttrMetadata) {
         return new DynAttrPropertyFilterSupport(messages, messageTools, metadataTools, dataManager, datatypeRegistry,
-                dynAttrMetadata, dateIntervalUtils);
-    }
-
-    @Bean
-    public ComponentRegistration dynamicAttributesPanel() {
-        return ComponentRegistrationBuilder.create(DynamicAttributesPanel.NAME)
-                .withComponentClass(DynamicAttributesPanel.class)
-                .withComponentLoaderClass(DynamicAttributesPanelLoader.class)
-                .withTag("dynamicAttributesPanel")
-                .build();
+                dynAttrMetadata);
     }
 }

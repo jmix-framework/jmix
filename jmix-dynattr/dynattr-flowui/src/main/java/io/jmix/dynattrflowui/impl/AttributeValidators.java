@@ -17,7 +17,7 @@
 package io.jmix.dynattrflowui.impl;
 
 import io.jmix.dynattr.AttributeDefinition;
-import io.jmix.ui.component.validation.*;
+import io.jmix.flowui.component.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -56,9 +56,9 @@ public class AttributeValidators {
 
         // add custom groovy script validator
         if (attribute.getConfiguration().getValidatorGroovyScript() != null) {
-            GroovyScriptValidator validator = applicationContext.getBean(GroovyScriptValidator.class,
+            GroovyScriptValidator<?> validator = applicationContext.getBean(GroovyScriptValidator.class,
                     attribute.getConfiguration().getValidatorGroovyScript());
-            validators.add(validator);
+            validators.add((Validator<?>) validator);
         }
 
         return validators;

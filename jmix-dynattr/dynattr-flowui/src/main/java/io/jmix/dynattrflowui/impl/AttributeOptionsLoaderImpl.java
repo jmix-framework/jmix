@@ -24,14 +24,14 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.OptionsLoaderType;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

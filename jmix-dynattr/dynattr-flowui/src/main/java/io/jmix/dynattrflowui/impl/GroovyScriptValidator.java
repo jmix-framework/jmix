@@ -20,9 +20,9 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.ui.component.ValidationException;
-import io.jmix.ui.component.validation.AbstractValidator;
-import io.jmix.ui.substitutor.StringSubstitutor;
+import io.jmix.flowui.component.validation.AbstractValidator;
+import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.sys.substitutor.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -91,7 +91,7 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
         this.substitutor = substitutor;
     }
 
-    @Autowired
+    @Autowired // todo Could not autowire. No beans of 'ScriptEvaluator' type found.
     protected void setScriptEvaluator(ScriptEvaluator scriptEvaluator) {
         this.scriptEvaluator = scriptEvaluator;
     }

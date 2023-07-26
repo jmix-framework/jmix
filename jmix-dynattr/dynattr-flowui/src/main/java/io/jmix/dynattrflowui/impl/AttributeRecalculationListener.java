@@ -19,11 +19,7 @@ package io.jmix.dynattrflowui.impl;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.HasValue;
-import io.jmix.ui.component.data.HasValueSource;
-import io.jmix.ui.component.data.value.ContainerValueSource;
-import io.jmix.ui.model.InstanceContainer;
+import io.jmix.flowui.data.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -32,7 +28,7 @@ import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class AttributeRecalculationListener implements Consumer<HasValue.ValueChangeEvent> {
+public class AttributeRecalculationListener implements Consumer<ValueSource.ValueChangeEvent> {
 
     protected final AttributeDefinition attribute;
 
@@ -46,28 +42,33 @@ public class AttributeRecalculationListener implements Consumer<HasValue.ValueCh
     }
 
     @Override
-    public void accept(HasValue.ValueChangeEvent valueChangeEvent) {
-        if (Boolean.TRUE.equals(recalculationInProgress.get())) {
-            return;
-        }
-        try {
-            recalculationInProgress.set(true);
-
-            Component component = valueChangeEvent.getComponent();
-            if (component instanceof HasValueSource
-                    && ((HasValueSource<?>) component).getValueSource() instanceof ContainerValueSource) {
-
-                ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) ((HasValueSource<?>) component).getValueSource();
-                InstanceContainer<?> container = valueSource.getContainer();
-
-                Object entity = container.getItem();
-
-                EntityValues.setValue(entity, DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode()), valueChangeEvent.getValue());
-
-                recalculationManager.recalculateByAttribute(entity, attribute);
-            }
-        } finally {
-            recalculationInProgress.remove();
-        }
+    public void accept(ValueSource.ValueChangeEvent valueChangeEvent) {
+        // todo: implement
     }
+
+//    @Override
+//    public void accept(ValueSource.ValueChangeEvent valueChangeEvent) {
+//        if (Boolean.TRUE.equals(recalculationInProgress.get())) {
+//            return;
+//        }
+//        try {
+//            recalculationInProgress.set(true);
+//
+//            Component component = valueChangeEvent.getComponent();
+//            if (component instanceof HasValueSource
+//                    && ((HasValueSource<?>) component).getValueSource() instanceof ContainerValueSource) {
+//
+//                ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) ((HasValueSource<?>) component).getValueSource();
+//                InstanceContainer<?> container = valueSource.getContainer();
+//
+//                Object entity = container.getItem();
+//
+//                EntityValues.setValue(entity, DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode()), valueChangeEvent.getValue());
+//
+//                recalculationManager.recalculateByAttribute(entity, attribute);
+//            }
+//        } finally {
+//            recalculationInProgress.remove();
+//        }
+//    }
 }

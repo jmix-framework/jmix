@@ -20,6 +20,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.TabSheet;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -35,29 +42,36 @@ import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.facet.DynAttrFacet;
-import io.jmix.dynattrflowui.impl.model.TargetScreenComponent;
+import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationFragment;
-import io.jmix.ui.*;
-import io.jmix.ui.action.Action;
-import io.jmix.ui.action.valuepicker.ValueClearAction;
-import io.jmix.ui.action.valuespicker.ValuesSelectAction;
-import io.jmix.ui.builder.LookupBuilder;
-import io.jmix.ui.component.*;
-import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
-import io.jmix.ui.component.autocomplete.Suggestion;
-import io.jmix.ui.component.data.options.ListEntityOptions;
-import io.jmix.ui.component.data.options.MapOptions;
-import io.jmix.ui.component.data.value.ContainerValueSource;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.DataContext;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.screen.*;
-import io.jmix.ui.sys.ScreensHelper;
+import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.valuepicker.ValueClearAction;
+import io.jmix.flowui.action.view.LookupSelectAction;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.codeeditor.CodeEditor;
+import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
+import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.valuepicker.EntityPicker;
+import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.sys.ViewSupport;
+import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import javax.inject.Named;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -67,11 +81,12 @@ import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.dynattr.OptionsLoaderType.*;
 import static java.lang.String.format;
 
-@UiController("dynat_CategoryAttribute.edit")
-@UiDescriptor("category-attrs-edit.xml")
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@ViewController("dynat_CategoryAttribute.edit")
+@ViewDescriptor("category-attrs-edit.xml")
 @EditedEntityContainer("categoryAttributeDc")
-@DialogMode(forceDialog = true)
-public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
+@DialogMode(width = "50em", height = "37.5em") // todo forceDialog = true
+public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 
     protected static final String DATA_TYPE_PROPERTY = "dataType";
     protected static final String DEFAULT_DATE_IS_CURRENT_PROPERTY = "defaultDateIsCurrent";
@@ -146,8 +161,6 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
-    protected Fragments fragments;
-    @Autowired
     protected MetadataTools metadataTools;
     @Autowired
     protected MessageTools messageTools;
@@ -164,82 +177,86 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected ScreenBuilders screenBuilders;
+    protected DialogWindows dialogWindows;
     @Autowired
     protected Dialogs dialogs;
     @Autowired
     protected Notifications notifications;
     @Autowired
-    protected ScreensHelper screensHelper;
+    protected ViewSupport viewSupport;
+    @Autowired
+    protected ViewRegistry viewRegistry;
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;
-
-    @Autowired
-    protected CheckBox lookupField;
-    @Autowired
-    protected DateField<Date> defaultDateField;
-    @Autowired
-    protected DateField<LocalDate> defaultDateWithoutTimeField;
-    @Autowired
-    protected Form optionalAttributeForm;
-    @Autowired
-    protected ComboBox<AttributeType> dataTypeField;
-    @Autowired
-    protected ComboBox<String> entityClassField;
-    @Autowired
-    protected ComboBox<String> screenField;
-    @Autowired
-    protected ComboBox<Boolean> defaultBooleanField;
-    @Autowired
-    protected ComboBox<OptionsLoaderType> optionsLoaderTypeField;
-    @Autowired
-    protected EntityPicker<Object> defaultEntityIdField;
-    @Autowired
-    protected SourceCodeEditor optionsLoaderScriptField;
-    @Autowired
-    protected SourceCodeEditor joinClauseField;
-    @Autowired
-    protected SourceCodeEditor whereClauseField;
-    @Autowired
-    protected SourceCodeEditor validationScriptField;
-    @Autowired
-    protected SourceCodeEditor recalculationScriptField;
-    @Autowired
-    protected GroupTable<TargetScreenComponent> targetScreensTable;
-    @Autowired
-    protected TabSheet tabSheet;
-    @Autowired
-    protected TextField<String> codeField;
-    @Autowired
-    protected TextField<BigDecimal> defaultDecimalField;
-    @Autowired
-    protected TextField<BigDecimal> minDecimalField;
-    @Autowired
-    protected TextField<BigDecimal> maxDecimalField;
-    @Autowired
-    protected ValuesPicker<CategoryAttribute> dependsOnAttributesField;
-    @Autowired
-    protected CollectionContainer<TargetScreenComponent> targetScreensDc;
-    @Autowired
-    protected InstanceContainer<CategoryAttributeConfiguration> configurationDc;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
-    @Autowired
-    protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
+    //    @Autowired
+//    protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
     @Autowired
     protected AccessManager accessManager;
 
+    @ViewComponent
+    protected JmixCheckbox lookupField;
+    @ViewComponent
+    protected TypedDateTimePicker<Date> defaultDateField;
+    @ViewComponent
+    protected TypedDateTimePicker<LocalDate> defaultDateWithoutTimeField;
+    @ViewComponent
+    protected FormLayout optionalAttributeForm;
+    @ViewComponent
+    protected JmixComboBox<AttributeType> dataTypeField;
+    @ViewComponent
+    protected JmixComboBox<String> entityClassField;
+    @ViewComponent
+    protected JmixComboBox<String> screenField;
+    @ViewComponent
+    protected JmixComboBox<Boolean> defaultBooleanField;
+    @ViewComponent
+    protected JmixComboBox<OptionsLoaderType> optionsLoaderTypeField;
+    @ViewComponent
+    protected EntityPicker<Object> defaultEntityIdField;
+    @ViewComponent
+    protected CodeEditor optionsLoaderScriptField;
+    @ViewComponent
+    protected CodeEditor joinClauseField;
+    @ViewComponent
+    protected CodeEditor whereClauseField;
+    @ViewComponent
+    protected CodeEditor validationScriptField;
+    @ViewComponent
+    protected CodeEditor recalculationScriptField;
+    @ViewComponent
+    protected DataGrid<TargetViewComponent> targetScreensTable;
+    @ViewComponent
+    protected TabSheet tabSheet;
+    @ViewComponent
+    protected TypedTextField<String> codeField;
+    @ViewComponent
+    protected TypedTextField<BigDecimal> defaultDecimalField;
+    @ViewComponent
+    protected TypedTextField<BigDecimal> minDecimalField;
+    @ViewComponent
+    protected TypedTextField<BigDecimal> maxDecimalField;
+    @ViewComponent
+    protected JmixMultiSelectComboBox<CategoryAttribute> dependsOnAttributesField;
+    @ViewComponent
+    protected CollectionContainer<TargetViewComponent> targetScreensDc;
+    @ViewComponent
+    protected InstanceContainer<CategoryAttributeConfiguration> configurationDc;
+
+    @ViewComponent("dependsOnAttributesField.clear")
+    private ValueClearAction dependsOnAttributesFieldClear;
+    @ViewComponent("dependsOnAttributesField.select")
+    private LookupSelectAction dependsOnAttributesFieldSelect;
+    @Autowired
+    private JmixButton editEnumerationBtn;
+
     protected AttributeLocalizationFragment localizationFragment;
 
-    protected List<TargetScreenComponent> targetScreens = new ArrayList<>();
-    @Named("dependsOnAttributesField.clear")
-    private ValueClearAction dependsOnAttributesFieldClear;
-    @Named("dependsOnAttributesField.select")
-    private ValuesSelectAction dependsOnAttributesFieldSelect;
-    @Autowired
-    private Button editEnumerationBtn;
+    protected List<TargetViewComponent> targetScreens = new ArrayList<>();
+
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -255,7 +272,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     @Subscribe
-    protected void onAfterShow(AfterShowEvent event) {
+    protected void onAfterShow(BeforeShowEvent event) { //todo
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
         initDependsOnAttributesField();
@@ -267,8 +284,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     @Subscribe("tabSheet")
-    protected void onTabSheetSelectedTabChange(TabSheet.SelectedTabChangeEvent event) {
-        String tabName = event.getSelectedTab().getName();
+    protected void onTabSheetSelectedTabChange(TabSheet.SelectedChangeEvent event) {
+        String tabName = event.getSelectedTab().getId().orElseThrow();
         String dialogWidth;
         if (MAIN_TAB_NAME.equals(tabName) && getEditedEntity().getDataType() != null) {
             dialogWidth = TWO_COLUMNS_WIDTH;
@@ -280,7 +297,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     @Subscribe("defaultEntityIdField")
-    protected void onDefaultEntityIdFieldValueChange(HasValue.ValueChangeEvent<Object> event) {
+    protected void onDefaultEntityIdFieldValueChange(ValueSource.ValueChangeEvent<Object> event) {
         Object entity = event.getValue();
         Object objectDefaultEntityId = null;
         if (entity != null) {
@@ -332,31 +349,31 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     @Subscribe("editEnumerationBtn")
-    protected void onEditEnumerationBtnClick(Button.ClickEvent event) {
-        AttributeEnumerationScreen enumerationScreen = screenBuilders.screen(this)
-                .withScreenClass(AttributeEnumerationScreen.class)
+    protected void onEditEnumerationBtnClick(ClickEvent<Button> event) {
+        DialogWindow<AttributeEnumerationScreen> enumerationScreen = dialogWindows.view(this, AttributeEnumerationScreen.class)
+                .withViewClass(AttributeEnumerationScreen.class)
                 .withAfterCloseListener(afterCloseEvent -> {
-                    if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
-                        AttributeEnumerationScreen screen = afterCloseEvent.getSource();
+                    if (afterCloseEvent.closedWith(StandardOutcome.SAVE)) {
+                        AttributeEnumerationScreen screen = afterCloseEvent.getSource().getView();
                         getEditedEntity().setEnumeration(screen.getEnumeration());
                         getEditedEntity().setEnumerationLocales(screen.getEnumerationLocales());
                     }
                 })
                 .build();
 
-        enumerationScreen.setEnumeration(getEditedEntity().getEnumeration());
-        enumerationScreen.setEnumerationLocales(getEditedEntity().getEnumerationLocales());
-        enumerationScreen.show();
+        enumerationScreen.getView().setEnumeration(getEditedEntity().getEnumeration());
+        enumerationScreen.getView().setEnumerationLocales(getEditedEntity().getEnumerationLocales());
+        enumerationScreen.open();
     }
 
     @Install(to = "targetScreensDl", target = Target.DATA_LOADER)
-    protected List<TargetScreenComponent> targetScreensDlLoadDelegate(LoadContext<TargetScreenComponent> loadContext) {
+    protected List<TargetViewComponent> targetScreensDlLoadDelegate(LoadContext<TargetViewComponent> loadContext) {
         return targetScreens;
     }
 
     @Subscribe("targetScreensTable.create")
-    protected void onTargetScreensTableCreate(Action.ActionPerformedEvent event) {
-        targetScreensDc.getMutableItems().add(metadata.create(TargetScreenComponent.class));
+    protected void onTargetScreensTableCreate(ActionPerformedEvent event) {
+        targetScreensDc.getMutableItems().add(metadata.create(TargetViewComponent.class));
     }
 
     @Install(to = "dependsOnAttributesField", subject = "validator")
@@ -369,61 +386,61 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     protected void initAttributeForm() {
-        defaultBooleanField.setOptionsMap(getBooleanOptions());
-        dataTypeField.setOptionsMap(getDataTypeOptions());
-        entityClassField.setOptionsMap(getEntityOptions());
-        validationScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
-                messages.getMessage(CategoryAttrsEdit.class, "validationScript"),
-                messages.getMessage(CategoryAttrsEdit.class, "validationScriptHelp")
-        ));
+        ComponentUtils.setItemsMap(defaultBooleanField, getBooleanOptions());
+        ComponentUtils.setItemsMap(dataTypeField, getDataTypeOptions());
+        ComponentUtils.setItemsMap(entityClassField, getEntityOptions());
+//        validationScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
+//                messages.getMessage(CategoryAttrsEdit.class, "validationScript"),
+//                messages.getMessage(CategoryAttrsEdit.class, "validationScriptHelp")
+//        ));
     }
 
     protected void initCalculatedValuesAndOptionsForm() {
-        recalculationScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
-                messages.getMessage(CategoryAttrsEdit.class, "recalculationScript"),
-                messages.getMessage(CategoryAttrsEdit.class, "recalculationScriptHelp")
-        ));
+//        recalculationScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
+//                messages.getMessage(CategoryAttrsEdit.class, "recalculationScript"),
+//                messages.getMessage(CategoryAttrsEdit.class, "recalculationScriptHelp")
+//        ));
 
-        whereClauseField.setSuggester((source, text, cursorPosition) -> requestHint(whereClauseField, cursorPosition));
-        joinClauseField.setSuggester((source, text, cursorPosition) -> requestHint(joinClauseField, cursorPosition));
+//    todo https://github.com/jmix-framework/jmix/issues/1678    whereClauseField.setSuggester((source, text, cursorPosition) -> requestHint(whereClauseField, cursorPosition));
+//        joinClauseField.setSuggester((source, text, cursorPosition) -> requestHint(joinClauseField, cursorPosition));
     }
 
     protected void initTargetScreensTable() {
         loadTargetScreens();
 
         Category category = getEditedEntity().getCategory();
-        if (category != null) {
-            MetaClass categorizedEntityMetaClass = metadata.findClass(getEditedEntity().getCategory().getEntityType());
-            Map<String, String> availableScreensMap = categorizedEntityMetaClass != null ?
-                    new HashMap<>(screensHelper.getAvailableScreens(categorizedEntityMetaClass.getJavaClass(),
-                            Collections.singletonList(DynAttrFacet.FACET_NAME), true)) : new HashMap<>();
-
-            targetScreensTable.addGeneratedColumn(
-                    "screen",
-                    entity -> {
-                        ComboBox<String> screenField = uiComponents.create(ComboBox.class);
-                        screenField.setValueSource(new ContainerValueSource<>(targetScreensTable.getInstanceContainer(entity), "screen"));
-                        screenField.setOptionsMap(availableScreensMap);
-                        screenField.setEnterPressHandler(enterPressEvent -> {
-                            String text = enterPressEvent.getText();
-                            if (!availableScreensMap.containsKey(text)) {
-                                availableScreensMap.put(text, text);
-                                screenField.setValue(text);
-                            }
-                        });
-                        screenField.setRequired(true);
-                        screenField.setWidth("100%");
-                        return screenField;
-                    }
-            );
-        }
+//        if (category != null) {
+//            MetaClass categorizedEntityMetaClass = metadata.findClass(getEditedEntity().getCategory().getEntityType());
+//      todo      Map<String, String> availableScreensMap = categorizedEntityMetaClass != null ?
+//                    new HashMap<>(screensHelper.getAvailableScreens(categorizedEntityMetaClass.getJavaClass(),
+//                            Collections.singletonList(DynAttrFacet.FACET_NAME), true)) : new HashMap<>();
+//
+//            targetScreensTable.addGeneratedColumn(
+//                    "screen",
+//                    entity -> {
+//                        ComboBox<String> screenField = uiComponents.create(ComboBox.class);
+//                        screenField.setValueSource(new ContainerValueSource<>(targetScreensTable.getInstanceContainer(entity), "screen"));
+//                        screenField.setOptionsMap(availableScreensMap);
+//                        screenField.setEnterPressHandler(enterPressEvent -> {
+//                            String text = enterPressEvent.getText();
+//                            if (!availableScreensMap.containsKey(text)) {
+//                                availableScreensMap.put(text, text);
+//                                screenField.setValue(text);
+//                            }
+//                        });
+//                        screenField.setRequired(true);
+//                        screenField.setWidth("100%");
+//                        return screenField;
+//                    }
+//            );
+//        }
     }
 
     protected void loadTargetScreens() {
         targetScreens.clear();
         Set<String> targetScreensSet = getEditedEntity().getTargetScreensSet();
         for (String targetScreen : targetScreensSet) {
-            TargetScreenComponent targetScreenComponent = metadata.create(TargetScreenComponent.class);
+            TargetViewComponent targetViewComponent = metadata.create(TargetViewComponent.class);
             String screen;
             String component = null;
 
@@ -435,10 +452,10 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                 screen = targetScreen;
             }
 
-            targetScreenComponent.setScreen(screen);
-            targetScreenComponent.setComponent(component);
+            targetViewComponent.setScreen(screen);
+            targetViewComponent.setComponent(component);
 
-            targetScreens.add(targetScreenComponent);
+            targetScreens.add(targetViewComponent);
         }
     }
 
@@ -455,7 +472,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
 
     protected void initLocalizationTab() {
         if (coreProperties.getAvailableLocales().size() > 1) {
-            TabSheet.Tab localizationTab = tabSheet.getTab("localizationTab");
+            Tab localizationTab = tabSheet.getTab("localizationTab");
             localizationTab.setVisible(true);
 
             CrudEntityContext crudEntityContext = new CrudEntityContext(configurationDc.getEntityMetaClass());
@@ -725,19 +742,19 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         }
     }
 
-    protected Map<String, Boolean> getBooleanOptions() {
-        Map<String, Boolean> booleanOptions = new TreeMap<>();
-        booleanOptions.put(messages.getMessage("trueString"), Boolean.TRUE);
-        booleanOptions.put(messages.getMessage("falseString"), Boolean.FALSE);
+    protected Map<Boolean, String> getBooleanOptions() {
+        Map<Boolean, String> booleanOptions = new TreeMap<>();
+        booleanOptions.put(Boolean.TRUE, messages.getMessage("trueString"));
+        booleanOptions.put(Boolean.FALSE, messages.getMessage("falseString"));
         return booleanOptions;
     }
 
-    protected Map<String, AttributeType> getDataTypeOptions() {
-        Map<String, AttributeType> options = new TreeMap<>();
+    protected Map<AttributeType, String> getDataTypeOptions() {
+        Map<AttributeType, String> options = new TreeMap<>();
         AttributeType[] types = AttributeType.values();
         for (AttributeType attributeType : types) {
             String key = AttributeType.class.getSimpleName() + "." + attributeType.toString();
-            options.put(messages.getMessage(AttributeType.class, key), attributeType);
+            options.put(attributeType, messages.getMessage(AttributeType.class, key));
         }
         return options;
     }
@@ -960,12 +977,12 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected void preCommitTargetScreensField(DataContext.PreCommitEvent event) {
         CategoryAttribute attribute = getEditedEntity();
         StringBuilder stringBuilder = new StringBuilder();
-        for (TargetScreenComponent targetScreenComponent : targetScreensDc.getItems()) {
-            if (StringUtils.isNotBlank(targetScreenComponent.getScreen())) {
-                stringBuilder.append(targetScreenComponent.getScreen());
-                if (StringUtils.isNotBlank(targetScreenComponent.getComponent())) {
+        for (TargetViewComponent targetViewComponent : targetScreensDc.getItems()) {
+            if (StringUtils.isNotBlank(targetViewComponent.getScreen())) {
+                stringBuilder.append(targetViewComponent.getScreen());
+                if (StringUtils.isNotBlank(targetViewComponent.getComponent())) {
                     stringBuilder.append("#");
-                    stringBuilder.append(targetScreenComponent.getComponent());
+                    stringBuilder.append(targetViewComponent.getComponent());
                 }
                 stringBuilder.append(",");
             }

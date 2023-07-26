@@ -17,27 +17,28 @@
 package io.jmix.dynattrflowui.view.category;
 
 import com.google.common.io.Files;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Span;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.entity.ReferenceToEntity;
-import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.Action;
-import io.jmix.ui.component.*;
-import io.jmix.ui.download.DownloadFormat;
-import io.jmix.ui.download.Downloader;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.InstanceLoader;
-import io.jmix.ui.screen.LookupComponent;
-import io.jmix.ui.screen.*;
-import org.apache.commons.lang3.BooleanUtils;
+import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.download.DownloadFormat;
+import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.InstanceLoader;
+import io.jmix.flowui.view.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +46,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
-import static io.jmix.ui.download.DownloadFormat.JSON;
-import static io.jmix.ui.download.DownloadFormat.ZIP;
+import static io.jmix.flowui.download.DownloadFormat.JSON;
+import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
-@UiController("dynat_Category.browse")
-@UiDescriptor("category-browse.xml")
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@ViewController("dynat_Category.browse")
+@ViewDescriptor("category-browse.xml")
 @LookupComponent("categoriesTable")
-public class CategoryBrowse extends StandardLookup<Category> {
+public class CategoryBrowse extends StandardListView<Category> {
 
     private static final Logger log = LoggerFactory.getLogger(CategoryBrowse.class);
 
@@ -79,62 +82,60 @@ public class CategoryBrowse extends StandardLookup<Category> {
     @Autowired
     protected FileUploadField importField;
 
-    @Autowired
-    protected GroupTable<Category> categoriesTable;
-    @Autowired
+    @ViewComponent
+    protected DataGrid<Category> categoriesTable;
+    @ViewComponent
     protected CollectionContainer<CategoryAttribute> attributesDc;
-    @Autowired
+    @ViewComponent
     protected InstanceContainer<Category> categoryDc;
-    @Autowired
+    @ViewComponent
     protected InstanceLoader<Category> categoryDl;
-    @Autowired
+    @ViewComponent
     private CollectionLoader<Category> categoriesDl;
-    @Autowired
+    @ViewComponent
     private AccessManager accessManager;
-    @Autowired
+    @ViewComponent
     private Button applyChangesBtn;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
-        attributesDc.getSorter().sort(Sort.by(Sort.Direction.ASC, "orderNo"));
+        Objects.requireNonNull(attributesDc.getSorter()).sort(Sort.by(Sort.Direction.ASC, "orderNo"));
         setupFieldsLock();
     }
 
     @Subscribe("categoriesTable.applyChanges")
-    protected void onCategoriesTableApplyChanges(Action.ActionPerformedEvent event) {
+    protected void onCategoriesTableApplyChanges(ActionPerformedEvent event) {
         dynAttrMetadata.reload();
-        notifications.create(Notifications.NotificationType.TRAY)
-                .withCaption(messages.getMessage(CategoryBrowse.class, "notification.changesApplied"))
+        notifications.create(messages.getMessage(CategoryBrowse.class, "notification.changesApplied"))
+                .withType(Notifications.Type.WARNING)
                 .show();
     }
 
     @Install(to = "categoriesTable.entityType", subject = "columnGenerator")
-    protected Label<String> categoriesTableEntityTypeColumnGenerator(Category category) {
-        Label<String> dataTypeLabel = uiComponents.create(Label.NAME);
+    protected Span categoriesTableEntityTypeColumnGenerator(Category category) {
+        Span dataTypeLabel = uiComponents.create(Span.class);
         MetaClass metaClass = metadata.getSession().getClass(category.getEntityType());
-        dataTypeLabel.setValue(messageTools.getEntityCaption(metaClass));
+        dataTypeLabel.setText(messageTools.getEntityCaption(metaClass));
         return dataTypeLabel;
     }
 
-    @Install(to = "attributesTable.dataType", subject = "columnGenerator")
-    protected Table.PlainTextCell attributesTableDataTypeColumnGenerator(CategoryAttribute categoryAttribute) {
-        String labelContent;
-        if (BooleanUtils.isTrue(categoryAttribute.getIsEntity())) {
-            Class<?> clazz = categoryAttribute.getJavaType();
-
-            if (clazz != null) {
-                MetaClass metaClass = metadata.getSession().getClass(clazz);
-                labelContent = messageTools.getEntityCaption(metaClass);
-            } else {
-                labelContent = "";
-            }
-        } else {
-            String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
-            labelContent = messages.getMessage(AttributeType.class, key);
-        }
-
-        return new Table.PlainTextCell(labelContent);
-    }
+//  todo  @Install(to = "attributesTable.dataType", subject = "columnGenerator")
+//    protected Table.PlainTextCell attributesTableDataTypeColumnGenerator(CategoryAttribute categoryAttribute) {
+//        String labelContent;
+//        if (BooleanUtils.isTrue(categoryAttribute.getIsEntity())) {
+//            Class<?> clazz = categoryAttribute.getJavaType();
+//            if (clazz != null) {
+//                MetaClass metaClass = metadata.getSession().getClass(clazz);
+//                labelContent = messageTools.getEntityCaption(metaClass);
+//            } else {
+//                labelContent = "";
+//            }
+//        } else {
+//            String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
+//            labelContent = messages.getMessage(AttributeType.class, key);
+//        }
+//        return new Table.PlainTextCell(labelContent);
+//    }
 
     @Install(to = "categoriesTable.edit", subject = "afterCommitHandler")
     private void categoriesTableEditAfterCommitHandler(Category category) {
@@ -166,24 +167,24 @@ public class CategoryBrowse extends StandardLookup<Category> {
     }
 
     @Subscribe("exportBtn.exportJSON")
-    public void onExportBtnExportJSON(Action.ActionPerformedEvent event) {
+    public void onExportBtnExportJSON(ActionPerformedEvent event) {
         export(JSON);
     }
 
     @Subscribe("exportBtn.exportZIP")
-    public void onExportBtnExportZIP(Action.ActionPerformedEvent event) {
+    public void onExportBtnExportZIP(ActionPerformedEvent event) {
         export(ZIP);
     }
 
     protected void export(DownloadFormat downloadFormat) {
-        Collection<Category> selected = categoriesTable.getSelected();
+        Collection<Category> selected = categoriesTable.getSelectedItems();
         if (selected.isEmpty() && categoriesTable.getItems() != null) {
             selected = categoriesTable.getItems().getItems();
         }
 
         if (selected.isEmpty()) {
-            notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withDescription(messages.getMessage(CategoryBrowse.class, "nothingToExport"))
+            notifications.create(messages.getMessage(CategoryBrowse.class, "nothingToExport"))
+                    .withType(Notifications.Type.DEFAULT)
                     .show();
             return;
         }
@@ -198,9 +199,8 @@ public class CategoryBrowse extends StandardLookup<Category> {
             downloader.download(data, String.format("Categories.%s", downloadFormat.getFileExt()), downloadFormat);
         } catch (Exception e) {
             log.warn("Unable to export categories", e);
-            notifications.create(Notifications.NotificationType.ERROR)
-                    .withCaption(messages.getMessage(CategoryBrowse.class, "exportFailed"))
-                    .withDescription(e.getMessage())
+            notifications.create(messages.getMessage(CategoryBrowse.class, "exportFailed"), e.getMessage())
+                    .withType(Notifications.Type.ERROR)
                     .show();
         }
     }
@@ -213,7 +213,7 @@ public class CategoryBrowse extends StandardLookup<Category> {
     }
 
     @Subscribe("importField")
-    public void onImportFieldFileUploadSucceed(SingleFileUploadField.FileUploadSucceedEvent event) {
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
         try {
             byte[] bytes = importField.getValue();
             Collection<Object> importedEntities;
@@ -225,15 +225,14 @@ public class CategoryBrowse extends StandardLookup<Category> {
 
             if (importedEntities.size() > 0) {
                 categoriesDl.load();
-                notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withDescription(messages.getMessage(CategoryBrowse.class, "importSuccessful"))
+                notifications.create(messages.getMessage(CategoryBrowse.class, "importSuccessful"))
+                        .withType(Notifications.Type.DEFAULT)
                         .show();
             }
         } catch (Exception e) {
             log.warn("Unable to import categories", e);
-            notifications.create(Notifications.NotificationType.ERROR)
-                    .withCaption(messages.getMessage(CategoryBrowse.class, "importFailed"))
-                    .withDescription(e.getMessage())
+            notifications.create(messages.getMessage(CategoryBrowse.class, "importFailed"), e.getMessage())
+                    .withType(Notifications.Type.ERROR)
                     .show();
         }
     }

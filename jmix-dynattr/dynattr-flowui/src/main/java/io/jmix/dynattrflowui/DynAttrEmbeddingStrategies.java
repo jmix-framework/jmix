@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @Internal
-@org.springframework.stereotype.Component("dynattr_DynAttrEmbeddingStrategies")
+@org.springframework.stereotype.Component("dynat_DynAttrEmbeddingStrategies")
 public class DynAttrEmbeddingStrategies {
 
     @Autowired(required = false)

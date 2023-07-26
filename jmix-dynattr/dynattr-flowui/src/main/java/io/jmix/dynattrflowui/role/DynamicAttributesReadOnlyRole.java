@@ -22,15 +22,21 @@ import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattr.model.CategoryAttributeValue;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
-import io.jmix.dynattrflowui.impl.model.TargetScreenComponent;
+import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
+import io.jmix.dynattrflowui.view.category.CategoryBrowse;
+import io.jmix.dynattrflowui.view.category.CategoryEdit;
+import io.jmix.dynattrflowui.view.categoryattr.AttributeEnumerationScreen;
+import io.jmix.dynattrflowui.view.categoryattr.CategoryAttrsEdit;
+import io.jmix.dynattrflowui.view.categoryattr.CategoryAttrsFragment;
+import io.jmix.dynattrflowui.view.localization.AttributeLocalizationFragment;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
-import io.jmix.securityui.role.annotation.MenuPolicy;
-import io.jmix.securityui.role.annotation.ScreenPolicy;
+import io.jmix.securityflowui.role.annotation.MenuPolicy;
+import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
 @ResourceRole(name = "Dynamic Attributes: read-only access", code = DynamicAttributesReadOnlyRole.CODE, scope = SecurityScope.UI)
 public interface DynamicAttributesReadOnlyRole {
@@ -40,7 +46,7 @@ public interface DynamicAttributesReadOnlyRole {
     @EntityPolicy(entityClass = CategoryAttribute.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = CategoryAttributeValue.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = CategoryAttributeConfiguration.class, actions = {EntityPolicyAction.READ})
-    @EntityPolicy(entityClass = TargetScreenComponent.class, actions = {EntityPolicyAction.READ})
+    @EntityPolicy(entityClass = TargetViewComponent.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = AttributeLocalizedEnumValue.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = AttributeLocalizedValue.class, actions = {EntityPolicyAction.READ})
 
@@ -48,12 +54,12 @@ public interface DynamicAttributesReadOnlyRole {
     @EntityAttributePolicy(entityClass = CategoryAttribute.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = CategoryAttributeValue.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = CategoryAttributeConfiguration.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
-    @EntityAttributePolicy(entityClass = TargetScreenComponent.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityAttributePolicy(entityClass = TargetViewComponent.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = AttributeLocalizedEnumValue.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = AttributeLocalizedValue.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
 
-    @ScreenPolicy(screenIds = {"dynat_Category.browse", "dynat_Category.edit", "dynat_CategoryAttribute.edit",
-            "dynat_CategoryAttribute.fragment", "dynat_AttributeEnumerationScreen", "dynat_AttributeLocalizationFragment"})
+    @ViewPolicy(viewClasses = {CategoryBrowse.class, CategoryEdit.class, CategoryAttrsEdit.class,
+            CategoryAttrsFragment.class, AttributeEnumerationScreen.class, AttributeLocalizationFragment.class})
     @MenuPolicy(menuIds = {"dynat_Category.browse"})
     void dynamicAttributes();
 }

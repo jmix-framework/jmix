@@ -19,6 +19,13 @@ package io.jmix.dynattrflowui.view.categoryattr;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.IconFactory;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.LoadContext;
@@ -27,17 +34,20 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationFragment;
-import io.jmix.ui.Fragments;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.Action;
-import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.component.*;
-import io.jmix.ui.icon.Icons;
-import io.jmix.ui.icon.JmixIcon;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.screen.*;
+import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.Views;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -46,13 +56,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@UiController("dynat_AttributeEnumerationScreen")
-@UiDescriptor("attribute-enumeration-screen.xml")
-@DialogMode(forceDialog = true)
-public class AttributeEnumerationScreen extends Screen {
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@ViewController("dynat_AttributeEnumerationScreen")
+@ViewDescriptor("attribute-enumeration-screen.xml")
+@DialogMode() //todo forceDialog = true
+public class AttributeEnumerationScreen extends StandardView {
 
-    @Autowired
-    protected Fragments fragments;
+//    @Autowired
+//    protected Fragments fragments;
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
@@ -62,23 +73,24 @@ public class AttributeEnumerationScreen extends Screen {
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
-    protected Icons icons;
+    private AccessManager accessManager;
+    @Autowired
+    private Views views;
 
-    @Autowired
-    protected VBoxLayout localizationBox;
-    @Autowired
-    protected TextField<String> valueField;
-    @Autowired
+    @ViewComponent
+    protected VerticalLayout localizationBox;
+    @ViewComponent
+    protected TypedTextField<String> valueField;
+    @ViewComponent
     protected CollectionLoader<AttributeLocalizedEnumValue> localizedEnumValuesDl;
-    @Autowired
+    @ViewComponent
     protected CollectionContainer<AttributeLocalizedEnumValue> localizedEnumValuesDc;
 
     protected String enumeration;
     protected String enumerationLocales;
     protected AttributeLocalizationFragment localizationFragment;
     protected List<AttributeLocalizedEnumValue> localizedEnumValues = new ArrayList<>();
-    @Autowired
-    private AccessManager accessManager;
+
 
     public void setEnumeration(String enumeration) {
         this.enumeration = enumeration;
@@ -104,11 +116,12 @@ public class AttributeEnumerationScreen extends Screen {
     }
 
     @Subscribe
-    protected void onAfterShow(AfterShowEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         initLocalizedEnumValuesDataGrid();
         initLocalizationFragment();
         localizedEnumValuesDl.load();
     }
+
 
     @Install(to = "localizedEnumValuesDl", target = Target.DATA_LOADER)
     protected List<AttributeLocalizedEnumValue> localizedEnumValuesDlLoadDelegate(LoadContext<AttributeLocalizedEnumValue> loadContext) {
@@ -116,12 +129,12 @@ public class AttributeEnumerationScreen extends Screen {
     }
 
     @Subscribe("valueField")
-    protected void onValueFieldEnterPress(TextInputField.EnterPressEvent event) {
-        addEnumerationValue((String) event.getSource().getValue());
+    protected void onValueFieldEnterPress(HasValue.ValueChangeEvent<String> event) {
+        addEnumerationValue(event.getValue());
     }
 
     @Subscribe("localizedEnumValuesDataGrid.add")
-    protected void onLocalizedEnumValuesDataGridAdd(Action.ActionPerformedEvent event) {
+    protected void onLocalizedEnumValuesDataGridAdd(ActionPerformedEvent event) {
         addEnumerationValue(valueField.getValue());
         valueField.focus();
     }
@@ -135,18 +148,18 @@ public class AttributeEnumerationScreen extends Screen {
         }
     }
 
-    @Install(to = "localizedEnumValuesDataGrid.removeItem", subject = "columnGenerator")
-    protected LinkButton localizedEnumValuesDataGridRemoveItemColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedEnumValue> event) {
-        LinkButton linkButton = uiComponents.create(LinkButton.class);
-        Action removeAction = new BaseAction("remove_item_" + event.getItem().getValue())
-                .withHandler(actionPerformedEvent -> {
-                    localizedEnumValues.remove(event.getItem());
-                    localizedEnumValuesDl.load();
-                })
-                .withIcon(icons.get(JmixIcon.REMOVE));
-        linkButton.setAction(removeAction);
-        return linkButton;
-    }
+//   todo @Install(to = "localizedEnumValuesDataGrid.removeItem", subject = "columnGenerator")
+//    protected JmixButton localizedEnumValuesDataGridRemoveItemColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedEnumValue> event) {
+//        JmixButton linkButton = uiComponents.create(JmixButton.class);
+//        Action removeAction = new BaseAction("remove_item_" + event.getItem().getValue())
+//                .withHandler(actionPerformedEvent -> {
+//                    localizedEnumValues.remove(event.getItem());
+//                    localizedEnumValuesDl.load();
+//                })
+//                .withIcon(VaadinIcon.CLIPBOARD_CROSS.create());
+//        linkButton.setAction(removeAction);
+//        return linkButton;
+//    }
 
     @Subscribe(id = "localizedEnumValuesDc", target = Target.DATA_CONTAINER)
     protected void onLocalizedEnumValuesDcItemChange(InstanceContainer.ItemChangeEvent<AttributeLocalizedEnumValue> event) {
@@ -160,16 +173,16 @@ public class AttributeEnumerationScreen extends Screen {
             if (localizedEnumValue != null) {
                 String localizedValues = msgBundleTools.convertEnumMsgBundleToMsgBundle(localizedEnumValue.getLocalizedValues());
                 localizationFragment.setNameMsgBundle(localizedValues);
-                localizationFragment.getFragment().setEnabled(true);
+//          todo      localizationFragment.getFragment().setEnabled(true);
             } else {
                 localizationFragment.setNameMsgBundle(null);
-                localizationFragment.getFragment().setEnabled(false);
+//          todo      localizationFragment.getFragment().setEnabled(false);
             }
         }
     }
 
     @Subscribe("commitBtn")
-    protected void onCommitBtnClick(Button.ClickEvent event) {
+    protected void onCommitBtnClick(ClickEvent<Button> event) {
         if (localizationFragment != null) {
             AttributeLocalizedEnumValue lastSelectedValue = localizedEnumValuesDc.getItemOrNull();
             if (lastSelectedValue != null) {
@@ -178,11 +191,11 @@ public class AttributeEnumerationScreen extends Screen {
             }
         }
 
-        close(StandardOutcome.COMMIT);
+        close(StandardOutcome.SAVE);
     }
 
     @Subscribe("cancelBtn")
-    protected void onCancelBtnClick(Button.ClickEvent event) {
+    protected void onCancelBtnClick(ClickEvent<Button> event) {
         close(StandardOutcome.CLOSE);
     }
 
@@ -206,15 +219,12 @@ public class AttributeEnumerationScreen extends Screen {
             CrudEntityContext crudEntityContext = new CrudEntityContext(localizedEnumValuesDc.getEntityMetaClass());
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
-            localizationFragment = fragments.create(this, AttributeLocalizationFragment.class);
+            localizationFragment = views.create(AttributeLocalizationFragment.class);
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
 
-            Fragment fragment = localizationFragment.getFragment();
-            fragment.setWidth(Component.FULL_SIZE);
-            fragment.setHeight(Component.FULL_SIZE);
-            fragment.setEnabled(false);
-            localizationBox.add(fragment);
-            localizationBox.expand(fragment);
+            localizationFragment.setEnabled(false);
+            localizationBox.add(localizationFragment);
+            localizationBox.expand(localizationFragment);
         }
     }
 

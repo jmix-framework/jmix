@@ -782,6 +782,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="gridMultiSortPriority">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="APPEND"/>
+            <xs:enumeration value="PREPEND"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="gridNestedNullBehaviorEnum">
         <xs:restriction base="xs:string">
             <xs:enumeration value="THROW"/>
@@ -2576,6 +2583,9 @@
                 <xs:attribute name="columnReorderingAllowed" type="xs:boolean"/>
                 <xs:attribute name="nestedNullBehavior" type="gridNestedNullBehaviorEnum"/>
                 <xs:attribute name="columnRendering" type="gridColumnRendering"/>
+                <xs:attribute name="multiSort" type="xs:boolean"/>
+                <xs:attribute name="multiSortPriority" type="gridMultiSortPriority"/>
+                <xs:attribute name="multiSortOnShiftClickOnly" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>

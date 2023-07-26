@@ -51,8 +51,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.datatype.DatatypeElementFactory;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -90,6 +90,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadData();
+        loadMultiSort();
 
         getActionLoaderSupport().loadActions(resultComponent, element);
     }
@@ -120,6 +121,17 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
 
         setupDataProvider(holder);
+    }
+
+    protected void loadMultiSort() {
+        boolean multiSort = loadBoolean(element, "multiSort")
+                .orElse(false);
+        Grid.MultiSortPriority multiSortPriority = loadEnum(element, Grid.MultiSortPriority.class, "multiSortPriority")
+                .orElse(Grid.MultiSortPriority.PREPEND);
+        boolean multiSortOnShiftClickOnly = loadBoolean(element, "multiSortOnShiftClickOnly")
+                .orElse(false);
+
+        resultComponent.setMultiSort(multiSort, multiSortPriority, multiSortOnShiftClickOnly);
     }
 
     protected void loadColumns(T resultComponent, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {

@@ -66,6 +66,7 @@
                         <comboBox id="wildcardsField"
                                   label="msg://parameters.wildcards"
                                   required="true"
+                                  requiredMessage="msg://parameters.requiredWildcards"
                                   dataContainer="parameterDc"
                                   property="predefinedTransformation"
                                   width="100%"/>

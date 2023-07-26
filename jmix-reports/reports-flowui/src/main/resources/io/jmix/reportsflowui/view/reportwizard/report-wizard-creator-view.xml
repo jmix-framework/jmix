@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title=" ">
+      title="msg://reportWizard.title">
     <data>
         <instance id="reportDataDc" class="io.jmix.reports.entity.wizard.ReportData">
             <collection id="reportRegionsDc" property="reportRegions">
@@ -25,10 +25,9 @@
         <action id="save" icon="CHECK" text="msg://save"/>
     </actions>
     <layout>
-        <h3 id="wizardTitleLabel"/>
-        <hr minHeight="0.06em"/>
+        <hr minHeight="0.06em" classNames="my-s"/>
         <span id="wizardDescriptionSpan"/>
-        <hr minHeight="0.06em"/>
+        <hr minHeight="0.06em" classNames="my-s"/>
         <vbox id="detailsVBox" padding="false">
             <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
                 <responsiveSteps>
@@ -82,7 +81,7 @@
                 </actions>
             </dataGrid>
         </vbox>
-        <vbox id="saveVBox" width="30em" padding="false">
+        <vbox id="saveVBox" padding="false">
             <button id="downloadTemplateFile"
                     classNames="link"
                     themeNames="icon, tertiary-inline"

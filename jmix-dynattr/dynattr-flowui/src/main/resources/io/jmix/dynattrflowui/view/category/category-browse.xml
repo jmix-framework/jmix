@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   ~ Copyright 2020 Haulmont.
   ~
@@ -14,9 +13,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
-<window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://browseCaption">
+<view>
     <data readOnly="true">
         <collection id="categoriesDc"
                     class="io.jmix.dynattr.model.Category"
@@ -36,10 +33,6 @@
             <collection id="attributesDc" property="categoryAttrs"/>
         </instance>
     </data>
-
-    <dialogMode height="600"
-                width="800"
-                resizable="true"/>
 
     <facets>
         <dataLoadCoordinator auto="true"/>
@@ -101,4 +94,4 @@
             </vbox>
         </split>
     </layout>
-</window>
+</view>

@@ -20,11 +20,11 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
 import io.jmix.core.*;
@@ -35,19 +35,16 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
+import io.jmix.core.suggestion.QuerySuggestions;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
-import io.jmix.dynattrflowui.facet.DynAttrFacet;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationFragment;
-import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.*;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.action.view.LookupSelectAction;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -57,6 +54,7 @@ import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
@@ -65,9 +63,9 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -185,6 +183,8 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
     @Autowired
     protected ViewSupport viewSupport;
     @Autowired
+    protected Views views;
+    @Autowired
     protected ViewRegistry viewRegistry;
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;
@@ -260,8 +260,6 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        setDialogWindowWidth(ONE_COLUMN_WIDTH);
-
         initAttributeForm();
         initCalculatedValuesAndOptionsForm();
     }
@@ -279,7 +277,6 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 
         setupNumberFormat();
         refreshAttributesUI();
-        centerDialogWindow();
         setupFieldsLock();
     }
 
@@ -292,8 +289,6 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
         } else {
             dialogWidth = ONE_COLUMN_WIDTH;
         }
-        setDialogWindowWidth(dialogWidth);
-        centerDialogWindow();
     }
 
     @Subscribe("defaultEntityIdField")
@@ -320,7 +315,6 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 
         if (event.getPrevValue() == null
                 && DATA_TYPE_PROPERTY.equals(property)) {
-            centerDialogWindow();
         }
 
         if (NAME_PROPERTY.equals(property)) {
@@ -409,13 +403,13 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
         loadTargetScreens();
 
         Category category = getEditedEntity().getCategory();
-//        if (category != null) {
-//            MetaClass categorizedEntityMetaClass = metadata.findClass(getEditedEntity().getCategory().getEntityType());
-//      todo      Map<String, String> availableScreensMap = categorizedEntityMetaClass != null ?
+        if (category != null) {
+            MetaClass categorizedEntityMetaClass = metadata.findClass(getEditedEntity().getCategory().getEntityType());
+//            Map<String, String> availableScreensMap = categorizedEntityMetaClass != null ?
 //                    new HashMap<>(screensHelper.getAvailableScreens(categorizedEntityMetaClass.getJavaClass(),
 //                            Collections.singletonList(DynAttrFacet.FACET_NAME), true)) : new HashMap<>();
-//
-//            targetScreensTable.addGeneratedColumn(
+
+//        todo    targetScreensTable.addGeneratedColumn(
 //                    "screen",
 //                    entity -> {
 //                        ComboBox<String> screenField = uiComponents.create(ComboBox.class);
@@ -433,7 +427,7 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 //                        return screenField;
 //                    }
 //            );
-//        }
+        }
     }
 
     protected void loadTargetScreens() {
@@ -472,44 +466,41 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 
     protected void initLocalizationTab() {
         if (coreProperties.getAvailableLocales().size() > 1) {
-            Tab localizationTab = tabSheet.getTab("localizationTab");
+            Tab localizationTab = tabSheet.getTabAt(0); // 0 == "localizationTab"
             localizationTab.setVisible(true);
 
             CrudEntityContext crudEntityContext = new CrudEntityContext(configurationDc.getEntityMetaClass());
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
-            VBoxLayout localizationTabComponent = (VBoxLayout) tabSheet.getTabComponent("localizationTab");
-            localizationFragment = fragments.create(this, AttributeLocalizationFragment.class);
+            VerticalLayout localizationTabComponent = (VerticalLayout) tabSheet.getComponent(localizationTab);
+            localizationFragment = views.create(AttributeLocalizationFragment.class);
             localizationFragment.setNameMsgBundle(getEditedEntity().getNameMsgBundle());
             localizationFragment.setDescriptionMsgBundle(getEditedEntity().getDescriptionsMsgBundle());
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
 
-            Fragment fragment = localizationFragment.getFragment();
-            fragment.setWidth(Component.FULL_SIZE);
-            fragment.setHeight("250px");
-            localizationTabComponent.add(fragment);
+            localizationTabComponent.add(localizationFragment);
         }
     }
 
     @SuppressWarnings("unchecked")
     protected void initDependsOnAttributesField() {
-        ValuesSelectAction<CategoryAttribute> selectAction =
-                (ValuesSelectAction<CategoryAttribute>) dependsOnAttributesField.getActionNN("select");
-        selectAction.setOptions(new ListEntityOptions<>(getAttributesOptions(), metadata));
-
-        if (getEditedEntity().getConfiguration() != null
-                && getEditedEntity().getConfiguration().getDependsOnAttributeCodes() != null) {
-            dependsOnAttributesField.setValue(getAttributesOptions().stream().filter(o ->
-                    getEditedEntity().getConfiguration().getDependsOnAttributeCodes().contains(o.getCode()))
-                    .collect(Collectors.toList()));
-        }
-        CrudEntityContext crudEntityContext = new CrudEntityContext(configurationDc.getEntityMetaClass());
-        accessManager.applyRegisteredConstraints(crudEntityContext);
-        if (!crudEntityContext.isUpdatePermitted()) {
-            dependsOnAttributesField.setEnabled(false);
-            dependsOnAttributesFieldClear.setEnabled(false);
-            dependsOnAttributesFieldSelect.setEnabled(false);
-        }
+//        ValuesSelectAction<CategoryAttribute> selectAction =
+//                (ValuesSelectAction<CategoryAttribute>) dependsOnAttributesField.getActionNN("select");
+//        selectAction.setOptions(new ListEntityOptions<>(getAttributesOptions(), metadata));
+//
+//        if (getEditedEntity().getConfiguration() != null
+//                && getEditedEntity().getConfiguration().getDependsOnAttributeCodes() != null) {
+//            dependsOnAttributesField.setValue(getAttributesOptions().stream().filter(o ->
+//                    getEditedEntity().getConfiguration().getDependsOnAttributeCodes().contains(o.getCode()))
+//                    .collect(Collectors.toList()));
+//        }
+//        CrudEntityContext crudEntityContext = new CrudEntityContext(configurationDc.getEntityMetaClass());
+//        accessManager.applyRegisteredConstraints(crudEntityContext);
+//        if (!crudEntityContext.isUpdatePermitted()) {
+//            dependsOnAttributesField.setEnabled(false);
+//            dependsOnAttributesFieldClear.setEnabled(false);
+//            dependsOnAttributesFieldSelect.setEnabled(false);
+//        }
     }
 
     protected void setupNumberFormat() {
@@ -537,7 +528,7 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 
         AttributeType attributeType = dataTypeField.getValue();
         Collection<String> visibleFields = FIELDS_VISIBLE_FOR_TYPES.get(attributeType);
-        for (Component component : optionalAttributeForm.getComponents()) {
+        for (Component component : optionalAttributeForm.getChildren().toList()) {
             boolean visible = visibleFields.contains(component.getId());
             component.setVisible(visible);
 
@@ -546,8 +537,7 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
             }
         }
 
-        if (MAIN_TAB_NAME.equals(tabSheet.getSelectedTab().getName()) && !visibleFields.isEmpty()) {
-            setDialogWindowWidth(TWO_COLUMNS_WIDTH);
+        if (MAIN_TAB_NAME.equals(tabSheet.getSelectedTab().getId()) && !visibleFields.isEmpty()) {
             optionalAttributeForm.setVisible(true);
         }
 
@@ -558,14 +548,14 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
                 if (javaClass != null) {
                     defaultEntityIdField.setMetaClass(metadata.getClass(javaClass));
                     // todo: filter support FilteringLookupAction
-                    //dynamicAttributesGuiTools.initEntityPickerField(defaultEntityId, attribute);
-                    screenField.setOptionsMap(screensHelper.getAvailableBrowserScreens(javaClass));
+                    //todo dynamicAttributesGuiTools.initEntityPickerField(defaultEntityId, attribute);
+//                   todo screenField.setOptionsMap(screensHelper.getAvailableBrowserScreens(javaClass));
                     refreshDefaultEntityIdFieldValue();
                 }
             } else {
-                defaultEntityIdField.setEditable(false);
+                defaultEntityIdField.setEnabled(false);
             }
-            screenField.setVisible(!lookupField.isChecked());
+            screenField.setVisible(!lookupField.getValue());
         }
 
         if (DATE.equals(attributeType)) {
@@ -586,55 +576,55 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
                 || optionsType == GROOVY;
         optionsLoaderScriptField.setVisible(scriptLoaderVisible);
 
-        if (optionsType == GROOVY) {
-            optionsLoaderScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
-                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderGroovyScript"),
-                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderGroovyScriptHelp")));
-            optionsLoaderScriptField.setMode(SourceCodeEditor.Mode.Groovy);
-        } else if (optionsType == SQL) {
-            optionsLoaderScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
-                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderSqlScript"),
-                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderSqlScriptHelp")));
-            optionsLoaderScriptField.setMode(SourceCodeEditor.Mode.SQL);
-        } else if (optionsType == JPQL) {
-            joinClauseField.setContextHelpIconClickHandler(e -> showMessageDialog(
-                    messages.getMessage(CategoryAttrsEdit.class, "joinClause"),
-                    messages.getMessage(CategoryAttrsEdit.class, "joinClauseHelp")));
-            whereClauseField.setContextHelpIconClickHandler(e -> showMessageDialog(
-                    messages.getMessage(CategoryAttrsEdit.class, "whereClause"),
-                    messages.getMessage(CategoryAttrsEdit.class, "whereClauseHelp")));
-        } else {
-            optionsLoaderScriptField.setContextHelpIconClickHandler(null);
-            optionsLoaderScriptField.setMode(SourceCodeEditor.Mode.Text);
-        }
+//     todo   if (optionsType == GROOVY) {
+//            optionsLoaderScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
+//                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderGroovyScript"),
+//                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderGroovyScriptHelp")));
+//            optionsLoaderScriptField.setMode(SourceCodeEditor.Mode.Groovy);
+//        } else if (optionsType == SQL) {
+//            optionsLoaderScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
+//                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderSqlScript"),
+//                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderSqlScriptHelp")));
+//            optionsLoaderScriptField.setMode(SourceCodeEditor.Mode.SQL);
+//        } else if (optionsType == JPQL) {
+//            joinClauseField.setContextHelpIconClickHandler(e -> showMessageDialog(
+//                    messages.getMessage(CategoryAttrsEdit.class, "joinClause"),
+//                    messages.getMessage(CategoryAttrsEdit.class, "joinClauseHelp")));
+//            whereClauseField.setContextHelpIconClickHandler(e -> showMessageDialog(
+//                    messages.getMessage(CategoryAttrsEdit.class, "whereClause"),
+//                    messages.getMessage(CategoryAttrsEdit.class, "whereClauseHelp")));
+//        } else {
+//            optionsLoaderScriptField.setContextHelpIconClickHandler(null);
+//            optionsLoaderScriptField.setMode(SourceCodeEditor.Mode.Text);
+//        }
 
         optionsLoaderTypeField.setEnabled(Boolean.TRUE.equals(categoryAttribute.getLookup()));
         optionsLoaderTypeField.setRequired(Boolean.TRUE.equals(categoryAttribute.getLookup()));
-        optionsLoaderTypeField.setOptionsMap(getLoaderOptions());
+        ComponentUtils.setItemsMap(optionsLoaderTypeField, getLoaderOptions());
     }
 
     @Subscribe("screenField")
     public void onScreenFieldValueChange(HasValue.ValueChangeEvent event) {
         if (Strings.isNullOrEmpty(screenField.getValue())) {
-            this.defaultEntityIdField.setEditable(false);
+            this.defaultEntityIdField.setEnabled(false);
         } else {
-            this.defaultEntityIdField.setEditable(true);
+            this.defaultEntityIdField.setEnabled(true);
         }
     }
 
     @Subscribe("defaultEntityIdField.lookup")
-    public void onDefaultEntityIdFieldLookup(Action.ActionPerformedEvent event) {
-        LookupBuilder lookup = screenBuilders.lookup(defaultEntityIdField);
+    public void onDefaultEntityIdFieldLookup(ActionPerformedEvent event) {
+        LookupWindowBuilder<Object, View<?>> lookup = dialogWindows.lookup(defaultEntityIdField);
         if (!Strings.isNullOrEmpty(screenField.getValue())) {
-            lookup.withScreenId(screenField.getValue());
+            lookup.withViewId(screenField.getValue());
         }
         try {
-            lookup.build().show();
+            lookup
+                    .build()
+                    .open();
         } catch (AccessDeniedException ex) {
-            notifications.create()
-                    .withCaption(messages.getMessage(CategoryAttrsEdit.class,
-                            "entityScreenAccessDeniedMessage"))
-                    .withType(Notifications.NotificationType.ERROR)
+            notifications.create(messages.getMessage(CategoryAttrsEdit.class, "entityScreenAccessDeniedMessage"))
+                    .withType(Notifications.Type.ERROR)
                     .show();
         }
     }
@@ -655,8 +645,8 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 
         if (ENTITY.equals(attributeType)) {
             if (!Strings.isNullOrEmpty(categoryAttribute.getEntityClass())) {
-                Map<String, String> options = ((MapOptions<String>) screenField.getOptions()).getItemsCollection();
-                categoryAttribute.setScreen(options.containsValue(categoryAttribute.getScreen()) ? categoryAttribute.getScreen() : null);
+//           todo     Map<String, String> options = ((MapOptions<String>) screenField.getDataProvider()).getItemsCollection();
+//                categoryAttribute.setScreen(options.containsValue(categoryAttribute.getScreen()) ? categoryAttribute.getScreen() : null);
             }
             if (configuration.getOptionsLoaderType() == SQL) {
                 configuration.setOptionsLoaderType(JPQL);
@@ -773,9 +763,9 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
         return optionsMap;
     }
 
-    protected Map<String, OptionsLoaderType> getLoaderOptions() {
+    protected Map<OptionsLoaderType, String> getLoaderOptions() {
         CategoryAttribute attribute = getEditedEntity();
-        Map<String, OptionsLoaderType> options = new TreeMap<>();
+        Map<OptionsLoaderType, String> options = new TreeMap<>();
         for (OptionsLoaderType type : OptionsLoaderType.values()) {
             if (attribute.getDataType() != ENTITY && type == JPQL) {
                 continue;
@@ -784,7 +774,7 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
                 continue;
             }
             String key = OptionsLoaderType.class.getSimpleName() + "." + type.toString();
-            options.put(messages.getMessage(OptionsLoaderType.class, key), type);
+            options.put(type, messages.getMessage(OptionsLoaderType.class, key));
         }
         return options;
     }
@@ -803,15 +793,14 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 
     protected void showMessageDialog(String caption, String message) {
         dialogs.createMessageDialog()
-                .withCaption(caption)
-                .withMessage(message)
-                .withContentMode(ContentMode.HTML)
+                .withText(caption)
+                .withContent(new Html(message))
                 .withModal(false)
                 .withWidth(MESSAGE_DIALOG_WIDTH)
-                .show();
+                .open();
     }
 
-    protected List<Suggestion> requestHint(SourceCodeEditor sender, int senderCursorPosition) {
+    protected List<QuerySuggestions> requestHint(CodeEditor sender, int senderCursorPosition) {
         String joinStr = joinClauseField.getValue();
         String whereStr = whereClauseField.getValue();
 
@@ -849,17 +838,8 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
         String query = queryBuilder.toString();
         query = query.replace("{E}", entityAlias);
 
-        return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
-    }
-
-    protected void centerDialogWindow() {
-        DialogWindow dialogWindow = (DialogWindow) getWindow();
-        dialogWindow.center();
-    }
-
-    protected void setDialogWindowWidth(String width) {
-        DialogWindow dialogWindow = (DialogWindow) getWindow();
-        dialogWindow.setDialogWidth(width);
+//   todo     return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
+        return new ArrayList<>();
     }
 
     @Subscribe
@@ -961,20 +941,20 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
-    protected void onPreCommit(DataContext.PreCommitEvent event) {
+    protected void onPreCommit(BeforeSaveEvent event) {
         preCommitLocalizationFields(event);
         preCommitTargetScreensField(event);
         preCommitConfiguration(event);
     }
 
-    protected void preCommitLocalizationFields(DataContext.PreCommitEvent event) {
+    protected void preCommitLocalizationFields(BeforeSaveEvent event) {
         if (localizationFragment != null) {
             getEditedEntity().setLocaleNames(localizationFragment.getNameMsgBundle());
             getEditedEntity().setLocaleDescriptions(localizationFragment.getDescriptionMsgBundle());
         }
     }
 
-    protected void preCommitTargetScreensField(DataContext.PreCommitEvent event) {
+    protected void preCommitTargetScreensField(BeforeSaveEvent event) {
         CategoryAttribute attribute = getEditedEntity();
         StringBuilder stringBuilder = new StringBuilder();
         for (TargetViewComponent targetViewComponent : targetScreensDc.getItems()) {
@@ -994,7 +974,7 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
         attribute.setTargetScreens(stringBuilder.toString());
     }
 
-    protected void preCommitConfiguration(DataContext.PreCommitEvent event) {
+    protected void preCommitConfiguration(BeforeSaveEvent event) {
         CategoryAttribute attribute = getEditedEntity();
         if (attribute.getConfiguration() != null) {
             if (dependsOnAttributesField.getValue() != null) {
@@ -1006,12 +986,11 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
                 attribute.getConfiguration().setDependsOnAttributeCodes(Collections.emptyList());
             }
         }
-        if (getScreenData().getDataContext().isModified(attribute.getConfiguration())) {
+        if (getViewData().getDataContext().isModified(attribute.getConfiguration())) {
             CategoryAttributeConfiguration configuration = configurationDc.getItemOrNull();
             if (configuration != null) {
                 attribute.setConfiguration((CategoryAttributeConfiguration) configuration.clone());
-                //noinspection unchecked
-                event.getModifiedInstances().add(attribute);
+                event.getDataContext().getModified().add(attribute);
             }
         }
     }

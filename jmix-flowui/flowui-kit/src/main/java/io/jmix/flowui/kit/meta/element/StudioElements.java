@@ -271,6 +271,7 @@ public interface StudioElements {
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.listbox.JmixListBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.listbox.JmixMultiSelectListBox",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
@@ -530,4 +531,64 @@ public interface StudioElements {
             }
     )
     void properties();
+
+    @StudioElement(
+            name = "ItemsQuery",
+            xmlElement = "itemsQuery",
+            icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            target = {"io.jmix.flowui.component.combobox.JmixComboBox"},
+            unsupportedTarget = {
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false")
+            }
+    )
+    void valueItemsQuery();
+
+    @StudioElement(
+            name = "ItemsQuery",
+            xmlElement = "itemsQuery",
+            icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            target = {"io.jmix.flowui.component.combobox.EntityComboBox"},
+            unsupportedTarget = {
+                    "io.jmix.flowui.component.combobox.JmixComboBox",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS, required = true),
+                    @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
+            }
+    )
+    void entityItemsQuery();
+
+    @StudioElement(
+            name = "ItemsQuery",
+            xmlElement = "itemsQuery",
+            icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            target = {
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker"
+            },
+            unsupportedTarget = {
+                    "io.jmix.flowui.component.combobox.JmixComboBox",
+                    "io.jmix.flowui.component.combobox.EntityComboBox"
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS),
+                    @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
+            }
+    )
+    void itemsQuery();
 }

@@ -2418,6 +2418,39 @@
         </xs:sequence>
     </xs:group>
 
+    <xs:complexType name="baseComboBoxItemsQueryType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="searchStringFormat" type="xs:string"/>
+                <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="comboBoxItemsQueryType">
+        <xs:simpleContent>
+            <xs:extension base="baseComboBoxItemsQueryType"/>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="entityComboBoxItemsQueryType">
+        <xs:simpleContent>
+            <xs:extension base="baseComboBoxItemsQueryType">
+                <xs:attribute name="class" type="xs:string" use="required"/>
+                <xs:attribute name="fetchPlan" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="multiSelectComboBoxItemsQueryType">
+        <xs:simpleContent>
+            <xs:extension base="baseComboBoxItemsQueryType">
+                <xs:attribute name="class" type="xs:string"/>
+                <xs:attribute name="fetchPlan" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
     <!-- Components -->
 
     <!-- ListMenu -->
@@ -2768,9 +2801,10 @@
     <xs:complexType name="comboBoxComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                <xs:sequence>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                    <xs:element name="itemsQuery" minOccurs="0" type="comboBoxItemsQueryType"/>
+                </xs:sequence>
 
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
@@ -2796,9 +2830,10 @@
     <xs:complexType name="multiSelectComboBoxComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
-                <xs:choice minOccurs="0">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="itemsQuery" type="multiSelectComboBoxItemsQueryType"/>
                     <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
@@ -2828,6 +2863,7 @@
         <xs:complexContent>
             <xs:extension base="multiSelectComboBoxComponent">
                 <xs:sequence>
+                    <xs:element name="itemsQuery" type="multiSelectComboBoxItemsQueryType"/>
                     <xs:element name="actions" minOccurs="0">
                         <xs:complexType>
                             <xs:sequence>
@@ -2846,6 +2882,10 @@
     <xs:complexType name="entityComboBoxComponent">
         <xs:complexContent>
             <xs:extension base="baseComboBoxPickerComponent">
+                <xs:sequence>
+                    <xs:element name="itemsQuery" minOccurs="0" type="entityComboBoxItemsQueryType"/>
+                </xs:sequence>
+
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
 

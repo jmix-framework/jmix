@@ -28,6 +28,7 @@ import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanProperty;
 import io.jmix.core.Metadata;
@@ -39,20 +40,22 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.loader.component.datagrid.RendererProvider;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.datatype.DatatypeElementFactory;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -282,20 +285,29 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     protected void loadColumn(T component, Element element, MetaClass metaClass) {
         String property = loadString(element, "property")
-                .orElseThrow(() ->
-                        new GuiDevelopmentException("A column must have specified property",
-                                context, "Component ID", component.getId())
-                );
+                .orElse(null);
 
-        MetaPropertyPath metaPropertyPath = getMetaDataTools().resolveMetaPropertyPathOrNull(metaClass, property);
-        if (metaPropertyPath == null) {
-            throw new GuiDevelopmentException("Cannot resolve the property path: " + property,
-                    context, "Component ID", component.getId());
-        }
+        MetaPropertyPath metaPropertyPath = property != null
+                ? getMetaDataTools().resolveMetaPropertyPathOrNull(metaClass, property)
+                : null;
 
-        String key = loadString(element, "key").orElse(property);
+        String key = loadString(element, "key")
+                .orElseGet(() -> {
+                    // We check 'metaPropertyPath' but returns 'property', because we need
+                    // a string that matches the meta property, i.e. if 'metaPropertyPath'
+                    // is found for `property` then this `property` can be used as a key.
+                    if (metaPropertyPath != null) {
+                        return property;
+                    } else {
+                        throw new GuiDevelopmentException("Either key or property must be defined for a column",
+                                context, "Component ID", component.getId());
+                    }
+                });
 
-        Column column = addColumn(key, metaPropertyPath);
+        Column<?> column = metaPropertyPath != null
+                ? addColumn(key, metaPropertyPath)
+                : addEmptyColumn(key);
+
         loadString(element, "width", column::setWidth);
         loadResourceString(element, "header", context.getMessageGroup(), column::setHeader);
         loadResourceString(element, "footer", context.getMessageGroup(), column::setFooter);
@@ -308,6 +320,34 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
 
         loadColumnEditable(element, column, property);
+
+        loadRenderer(element, metaPropertyPath)
+                .ifPresent(column::setRenderer);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Column<?> addEmptyColumn(String key) {
+        return resultComponent.addColumn(new EmptyValueProvider<>())
+                .setKey(key);
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected Optional<Renderer> loadRenderer(Element columnElement, @Nullable MetaPropertyPath metaPropertyPath) {
+        if (columnElement.elements().isEmpty()
+                || metaPropertyPath == null) {
+            return Optional.empty();
+        }
+
+        Map<String, RendererProvider> providers = applicationContext.getBeansOfType(RendererProvider.class);
+        for (RendererProvider<?> provider : providers.values()) {
+            for (Element element : columnElement.elements()) {
+                if (provider.supports(element.getName())) {
+                    return Optional.of(provider.createRenderer(element, metaPropertyPath, context));
+                }
+            }
+        }
+
+        return Optional.empty();
     }
 
     protected void loadColumnEditable(Element element, Column<?> column, String property) {
@@ -326,12 +366,12 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    protected Column addColumn(String key, MetaPropertyPath metaPropertyPath) {
+    protected Column<?> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         return resultComponent.addColumn(key, metaPropertyPath);
     }
 
-    protected Collection<String> getAppliedProperties(Element columnsElement, @Nullable FetchPlan fetchPlan, MetaClass metaClass) {
+    protected Collection<String> getAppliedProperties(Element columnsElement,
+                                                      @Nullable FetchPlan fetchPlan, MetaClass metaClass) {
         String exclude = loadString(columnsElement, "exclude").orElse(null);
         List<String> excludes = exclude == null ? Collections.emptyList() :
                 Splitter.on(",").omitEmptyStrings().trimResults().splitToList(exclude);

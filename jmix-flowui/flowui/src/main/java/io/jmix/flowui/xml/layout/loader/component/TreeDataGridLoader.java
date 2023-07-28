@@ -62,9 +62,8 @@ public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    protected Grid.Column addColumn(String key, MetaPropertyPath metaPropertyPath) {
+    protected Grid.Column<?> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         String hierarchyColumn = loadString(element, "hierarchyColumn").orElse(null);
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
 

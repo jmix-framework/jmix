@@ -2403,6 +2403,21 @@
         <xs:attribute name="position" type="tooltipPosition"/>
     </xs:complexType>
 
+    <xs:complexType name="formattableRendererType">
+        <xs:attribute name="format" type="resourceString" use="required"/>
+        <xs:attribute name="nullRepresentation" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:group name="renderers">
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="numberRenderer" minOccurs="0" type="formattableRendererType"/>
+                <xs:element name="localDateRenderer" minOccurs="0" type="formattableRendererType"/>
+                <xs:element name="localDateTimeRenderer" minOccurs="0" type="formattableRendererType"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
     <!-- Components -->
 
     <!-- ListMenu -->
@@ -2522,6 +2537,10 @@
 
     <!-- Grid.Column-->
     <xs:complexType name="dataGridColumnComponent">
+        <xs:choice minOccurs="0">
+            <xs:group ref="renderers" maxOccurs="0"/>
+        </xs:choice>
+
         <xs:attribute name="key" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="width" type="xs:string"/>

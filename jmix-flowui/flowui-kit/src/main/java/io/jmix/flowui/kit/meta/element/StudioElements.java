@@ -115,6 +115,51 @@ public interface StudioElements {
     Grid.Column column();
 
     @StudioElement(
+            name = "LocalDateRenderer",
+            classFqn = "com.vaadin.flow.data.renderer.LocalDateRenderer",
+            xmlElement = "localDateRenderer",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "format",
+                            type = StudioPropertyType.LOCALIZED_STRING, required = true),
+                    @StudioProperty(xmlAttribute = "nullRepresentation",
+                            type = StudioPropertyType.LOCALIZED_STRING)
+
+            }
+    )
+    void localDateRenderer();
+
+    @StudioElement(
+            name = "LocalDateTimeRenderer",
+            classFqn = "com.vaadin.flow.data.renderer.LocalDateTimeRenderer",
+            xmlElement = "localDateTimeRenderer",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "format",
+                            type = StudioPropertyType.LOCALIZED_STRING, required = true),
+                    @StudioProperty(xmlAttribute = "nullRepresentation",
+                            type = StudioPropertyType.LOCALIZED_STRING)
+
+            }
+    )
+    void localDateTimeRenderer();
+
+    @StudioElement(
+            name = "NumberRenderer",
+            classFqn = "com.vaadin.flow.data.renderer.NumberRenderer",
+            xmlElement = "numberRenderer",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "format",
+                            type = StudioPropertyType.LOCALIZED_STRING, required = true),
+                    @StudioProperty(xmlAttribute = "nullRepresentation",
+                            type = StudioPropertyType.LOCALIZED_STRING)
+
+            }
+    )
+    void numberRenderer();
+
+    @StudioElement(
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = "componentItem",
@@ -408,7 +453,7 @@ public interface StudioElements {
             name = "Condition",
             classFqn = "io.jmix.flowui.kit.component.stub.JpqlFilterCondition",
             xmlElement = "condition",
-            target = { "io.jmix.flowui.component.jpqlfilter.JpqlFilter"},
+            target = {"io.jmix.flowui.component.jpqlfilter.JpqlFilter"},
             unlimitedCount = false
     )
     void jpqlFilterCondition();
@@ -419,7 +464,7 @@ public interface StudioElements {
             xmlns = "http://jmix.io/schema/flowui/jpql-condition",
             xmlElement = "jpql",
             xmlnsAlias = "c",
-            target = { "io.jmix.flowui.kit.component.stub.JpqlFilterCondition"},
+            target = {"io.jmix.flowui.kit.component.stub.JpqlFilterCondition"},
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.JPQL_FILTER_JOIN),

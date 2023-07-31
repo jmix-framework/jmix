@@ -17,7 +17,10 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Splitter;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnRendering;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -27,8 +30,10 @@ import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanProperty;
 import io.jmix.core.Metadata;
@@ -38,9 +43,13 @@ import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
+import io.jmix.core.querycondition.PropertyConditionUtils;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.data.provider.EmptyValueProvider;
+import io.jmix.flowui.component.propertyfilter.PropertyFilter;
+import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -66,11 +75,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
+    public static final String COLUMN_FILTER_POPUP_CLASSNAME = "column-filter-popup";
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected MetadataTools metaDataTools;
     protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
     protected FetchPlanRepositoryImpl fetchPlanRepository;
+    protected UiComponents uiComponents;
+    protected PropertyFilterSupport propertyFilterSupport;
 
     @Override
     public void loadComponent() {
@@ -120,7 +132,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 fetchPlan = getFetchPlanRepository().getFetchPlan(holder.getMetaClass(), FetchPlan.LOCAL);
             }
 
-            loadColumns(resultComponent, columns, holder.getMetaClass(), fetchPlan);
+            loadColumns(resultComponent, columns, holder, fetchPlan);
         }
 
         setupDataProvider(holder);
@@ -137,32 +149,31 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         resultComponent.setMultiSort(multiSort, multiSortPriority, multiSortOnShiftClickOnly);
     }
 
-    protected void loadColumns(T resultComponent, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
+    protected void loadColumns(T resultComponent, Element columnsElement, GridDataHolder holder, FetchPlan fetchPlan) {
         Boolean includeAll = loadBoolean(columnsElement, "includeAll").orElse(false);
+        boolean filterable = loadBoolean(columnsElement, "filterable")
+                .orElse(false);
 
         if (includeAll) {
-            loadColumnsByInclude(resultComponent, columnsElement, metaClass, fetchPlan);
+            loadColumnsByInclude(resultComponent, columnsElement, holder, fetchPlan, filterable);
             // In case of includeAll, EditorActionsColumn will be place at the end
             loadEditorActionsColumns(resultComponent, columnsElement);
         } else {
             List<Element> columnElements = columnsElement.elements();
             for (Element columnElement : columnElements) {
-                loadColumnsElementChild(resultComponent, columnElement, metaClass);
+                loadColumnsElementChild(resultComponent, columnElement, holder, filterable);
             }
         }
     }
 
-    protected void loadColumnsElementChild(T resultComponent, Element columnElement, MetaClass metaClass) {
+    protected void loadColumnsElementChild(T resultComponent, Element columnElement, GridDataHolder holder,
+                                           boolean filterableColumns) {
         switch (columnElement.getName()) {
-            case COLUMN_ELEMENT_NAME:
-                loadColumn(resultComponent, columnElement, metaClass);
-                break;
-            case EDITOR_ACTIONS_COLUMN_ELEMENT_NAME:
-                loadEditorActionsColumn(resultComponent, columnElement);
-                break;
-            default:
-                throw new GuiDevelopmentException("Unknown columns' child element: " + columnElement.getName(),
-                        context, "Component ID", resultComponent.getId());
+            case COLUMN_ELEMENT_NAME -> loadColumn(resultComponent, columnElement, holder.getDataLoader(),
+                    Objects.requireNonNull(holder.getMetaClass()), filterableColumns);
+            case EDITOR_ACTIONS_COLUMN_ELEMENT_NAME -> loadEditorActionsColumn(resultComponent, columnElement);
+            default -> throw new GuiDevelopmentException("Unknown columns' child element: " + columnElement.getName(),
+                    context, "Component ID", resultComponent.getId());
         }
     }
 
@@ -257,13 +268,16 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         return null;
     }
 
-    protected void loadColumnsByInclude(T component, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
+    protected void loadColumnsByInclude(T component, Element columnsElement, GridDataHolder holder,
+                                        FetchPlan fetchPlan, boolean filterableColumns) {
+        MetaClass metaClass = Objects.requireNonNull(holder.getMetaClass());
         Collection<String> appliedProperties = getAppliedProperties(columnsElement, fetchPlan, metaClass);
 
         List<Element> columnElements = columnsElement.elements(COLUMN_ELEMENT_NAME);
         Set<Element> overriddenColumns = new HashSet<>();
 
         DocumentFactory documentFactory = DatatypeElementFactory.getInstance();
+        DataLoader dataLoader = holder.getDataLoader();
 
         for (String property : appliedProperties) {
             Element column = getOverriddenColumn(columnElements, property);
@@ -274,7 +288,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 overriddenColumns.add(column);
             }
 
-            loadColumn(component, column, metaClass);
+            loadColumn(component, column, dataLoader, metaClass, filterableColumns);
         }
 
         // load remains columns
@@ -289,13 +303,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             if (propertyId != null) {
                 MetaPropertyPath propertyPath = metaClass.getPropertyPath(propertyId);
                 if (propertyPath == null || getMetaDataTools().fetchPlanContainsProperty(fetchPlan, propertyPath)) {
-                    loadColumn(component, column, metaClass);
+                    loadColumn(component, column, dataLoader, metaClass, filterableColumns);
                 }
             }
         }
     }
 
-    protected void loadColumn(T component, Element element, MetaClass metaClass) {
+    protected void loadColumn(T component, Element element, @Nullable DataLoader dataLoader, MetaClass metaClass,
+                              boolean filterableColumns) {
         String property = loadString(element, "property")
                 .orElse(null);
 
@@ -331,6 +346,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(element, "visible", column::setVisible);
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
 
+        loadColumnFilterable(element, column, dataLoader, metaClass, property, filterableColumns);
         loadColumnEditable(element, column, property);
 
         loadRenderer(element, metaPropertyPath)
@@ -362,6 +378,86 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         return Optional.empty();
     }
 
+    protected void loadColumnFilterable(Element element, Column<?> column, @Nullable DataLoader dataLoader,
+                                        MetaClass metaClass, String property, boolean filterableColumns) {
+        Optional<Boolean> filterable = loadBoolean(element, "filterable");
+
+        if (filterableColumns && filterable.isEmpty()
+                || filterable.isPresent() && filterable.get()) {
+            if (dataLoader == null) {
+                throw new GuiDevelopmentException(resultComponent.getClass().getSimpleName() +
+                        " with a filterable column must have a DataLoader",
+                        context, "Component ID", resultComponent.getId());
+            }
+
+            setFilterComponent(column, dataLoader, metaClass, property);
+        }
+    }
+
+    protected void setFilterComponent(Column<?> column, DataLoader dataLoader,
+                                      MetaClass metaClass, String property) {
+        PropertyFilter<?> propertyFilter = createPropertyFilter(dataLoader, metaClass, property);
+        Component filterButton = createFilterButton(propertyFilter);
+
+        Component headerComponent = createHeaderComponent(column.getHeaderText(), filterButton);
+        column.setHeader(headerComponent);
+    }
+
+    protected PropertyFilter<?> createPropertyFilter(DataLoader dataLoader, MetaClass metaClass, String property) {
+        PropertyFilter<?> propertyFilter = getUiComponents().create(PropertyFilter.class);
+
+        propertyFilter.setDataLoader(dataLoader);
+        propertyFilter.setProperty(property);
+
+        propertyFilter.setOperation(getPropertyFilterSupport().getDefaultOperation(metaClass, property));
+        propertyFilter.setOperationEditable(true);
+        propertyFilter.setParameterName(PropertyConditionUtils.generateParameterName(property));
+        propertyFilter.setWidthFull();
+
+        return propertyFilter;
+    }
+
+    protected Component createFilterButton(PropertyFilter<?> propertyFilter) {
+        JmixButton filterButton = getUiComponents().create(JmixButton.class);
+        filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
+        filterButton.setIcon(VaadinIcon.FILTER.create());
+        filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
+
+        // Workaround (waiting for overlay component)
+        Dialog overlay = createOverlay(propertyFilter);
+
+        filterButton.addClickListener(__ -> {
+            overlay.open();
+            overlay.getElement().executeJs(getOverlayPositionExpression(), overlay, filterButton);
+        });
+
+        propertyFilter.addValueChangeListener(event -> {
+            if (event.getValue() != null) {
+                filterButton.setClassName(LumoUtility.TextColor.TERTIARY, false);
+            } else {
+                filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
+            }
+        });
+
+        return filterButton;
+    }
+
+    protected Dialog createOverlay(PropertyFilter<?> propertyFilter) {
+        Dialog dialog = new Dialog(propertyFilter);
+        dialog.addClassName(COLUMN_FILTER_POPUP_CLASSNAME);
+        return dialog;
+    }
+
+    protected Component createHeaderComponent(String headerText, Component filterButton) {
+        HorizontalLayout layout = getUiComponents().create(HorizontalLayout.class);
+        layout.setPadding(false);
+        layout.setSpacing(false);
+        layout.setClassName(LumoUtility.Gap.XSMALL);
+
+        layout.add(new Span(headerText), filterButton);
+        return layout;
+    }
+
     protected void loadColumnEditable(Element element, Column<?> column, String property) {
         loadBoolean(element, "editable", editable -> {
             if (Boolean.TRUE.equals(editable)) {
@@ -373,8 +469,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected void setDefaultEditComponent(Column<?> column, String property) {
         Editor<?> editor = resultComponent.getEditor();
-        if (editor instanceof DataGridEditor) {
-            ((DataGridEditor) editor).initColumnDefaultEditorComponent(column, property);
+        if (editor instanceof DataGridEditor dataGridEditor) {
+            dataGridEditor.initColumnDefaultEditorComponent(column, property);
         }
     }
 
@@ -382,11 +478,13 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         return resultComponent.addColumn(key, metaPropertyPath);
     }
 
-    protected Collection<String> getAppliedProperties(Element columnsElement,
-                                                      @Nullable FetchPlan fetchPlan, MetaClass metaClass) {
-        String exclude = loadString(columnsElement, "exclude").orElse(null);
-        List<String> excludes = exclude == null ? Collections.emptyList() :
-                Splitter.on(",").omitEmptyStrings().trimResults().splitToList(exclude);
+    protected Collection<String> getAppliedProperties(Element columnsElement, @Nullable FetchPlan fetchPlan,
+                                                      MetaClass metaClass) {
+        String exclude = loadString(columnsElement, "exclude")
+                .orElse(null);
+        List<String> excludes = exclude == null
+                ? Collections.emptyList()
+                : Splitter.on(",").omitEmptyStrings().trimResults().splitToList(exclude);
 
         Stream<String> properties;
         if (getMetaDataTools().isJpaEntity(metaClass) && fetchPlan != null) {
@@ -417,10 +515,10 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected void initMasterDataLoaderListener(CollectionPropertyContainer<?> collectionContainer) {
         DataLoader masterDataLoader = DataLoadersHelper.getMasterDataLoader(collectionContainer);
 
-        masterDataLoaderPostLoadListener = masterDataLoader instanceof InstanceLoader
-                ? ((InstanceLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
-                : masterDataLoader instanceof CollectionLoader
-                ? ((CollectionLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
+        masterDataLoaderPostLoadListener = masterDataLoader instanceof InstanceLoader<?> instanceLoader
+                ? instanceLoader.addPostLoadListener(this::onMasterDataLoaderPostLoad)
+                : masterDataLoader instanceof CollectionLoader<?> collectionLoader
+                ? collectionLoader.addPostLoadListener(this::onMasterDataLoaderPostLoad)
                 : null;
     }
 
@@ -442,13 +540,13 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             throw new GuiDevelopmentException("Not a CollectionContainer: " + containerId, context);
         }
 
-        if (collectionContainer instanceof CollectionPropertyContainer) {
-            initMasterDataLoaderListener((CollectionPropertyContainer<?>) collectionContainer);
+        if (collectionContainer instanceof CollectionPropertyContainer<?> collectionPropertyContainer) {
+            initMasterDataLoaderListener(collectionPropertyContainer);
         }
 
-        if (collectionContainer instanceof HasLoader) {
+        if (collectionContainer instanceof HasLoader hasLoaderContainer) {
             //noinspection ConstantConditions
-            holder.setDataLoader(((HasLoader) collectionContainer).getLoader());
+            holder.setDataLoader(hasLoaderContainer.getLoader());
         }
 
         holder.setMetaClass(collectionContainer.getEntityMetaClass());
@@ -540,6 +638,32 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             metaDataTools = applicationContext.getBean(MetadataTools.class, context);
         }
         return metaDataTools;
+    }
+
+    protected UiComponents getUiComponents() {
+        if (uiComponents == null) {
+            uiComponents = applicationContext.getBean(UiComponents.class, context);
+        }
+        return uiComponents;
+    }
+
+    protected PropertyFilterSupport getPropertyFilterSupport() {
+        if (propertyFilterSupport == null) {
+            propertyFilterSupport = applicationContext.getBean(PropertyFilterSupport.class, context);
+        }
+        return propertyFilterSupport;
+    }
+
+    protected String getOverlayPositionExpression() {
+        return "$0.$.overlay.$.overlay.style['top'] = $1.getBoundingClientRect().top + 'px';" +
+                "const sum = $1.getBoundingClientRect().left + $1.getBoundingClientRect().width " +
+                "+ $0.$.overlay.$.overlay.getBoundingClientRect().width;" +
+                "if (sum < window.innerWidth) { " +
+                    "$0.$.overlay.$.overlay.style['left'] = $1.getBoundingClientRect().left + 'px'; " +
+                "} else { " +
+                    "$0.$.overlay.$.overlay.style['right'] = window.innerWidth - $1.getBoundingClientRect().left " +
+                        "- $1.getBoundingClientRect().width + 'px';" +
+                "}";
     }
 
     protected abstract void setupDataProvider(GridDataHolder holder);

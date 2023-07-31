@@ -1,3 +1,16 @@
 vaadin-grid[theme~='no-header']::part(header-cell) {
   display: none;
 }
+
+vaadin-dialog-overlay[class~='column-filter-popup']::part(backdrop) {
+  background: unset;
+}
+
+vaadin-dialog-overlay[class~='column-filter-popup']::part(content) {
+  padding: var(--lumo-space-wide-m);
+}
+
+vaadin-dialog-overlay[class~='column-filter-popup']::part(overlay) {
+  align-self: flex-start;
+  position: absolute;
+}

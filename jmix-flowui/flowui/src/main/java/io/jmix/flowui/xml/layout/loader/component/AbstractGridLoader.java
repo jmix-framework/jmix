@@ -93,6 +93,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadData();
+        loadMultiSort();
 
         getActionLoaderSupport().loadActions(resultComponent, element);
     }
@@ -123,6 +124,17 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
 
         setupDataProvider(holder);
+    }
+
+    protected void loadMultiSort() {
+        boolean multiSort = loadBoolean(element, "multiSort")
+                .orElse(false);
+        Grid.MultiSortPriority multiSortPriority = loadEnum(element, Grid.MultiSortPriority.class, "multiSortPriority")
+                .orElse(Grid.MultiSortPriority.PREPEND);
+        boolean multiSortOnShiftClickOnly = loadBoolean(element, "multiSortOnShiftClickOnly")
+                .orElse(false);
+
+        resultComponent.setMultiSort(multiSort, multiSortPriority, multiSortOnShiftClickOnly);
     }
 
     protected void loadColumns(T resultComponent, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {

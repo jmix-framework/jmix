@@ -77,6 +77,9 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             maxWidth == "120px"
             minHeight == "40px"
             minWidth == "80px"
+            multiSort
+            element.getProperty("multiSortOnShiftClick", false)
+            element.getAttribute("multi-sort-priority") == "append"
             nestedNullBehavior == Grid.NestedNullBehavior.THROW
             pageSize == 20
             rowsDraggable
@@ -137,6 +140,9 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             maxWidth == "120px"
             minHeight == "40px"
             minWidth == "80px"
+            multiSort
+            element.getProperty("multiSortOnShiftClick", false)
+            element.getAttribute("multi-sort-priority") == "append"
             nestedNullBehavior == Grid.NestedNullBehavior.THROW
             pageSize == 20
             rowsDraggable

@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
+import com.google.common.primitives.Booleans;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.data.event.SortEvent;
@@ -50,8 +51,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -395,16 +396,22 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         if (sortOrders.isEmpty()) {
             dataProvider.resetSortOrder();
         } else {
-            GridSortOrder<E> sortOrder = sortOrders.get(0);
+            Map<Object, Boolean> sortedColumnMap = new LinkedHashMap<>();
 
-            Grid.Column<E> column = sortOrder.getSorted();
-            if (column != null) {
-                MetaPropertyPath mpp = propertyColumns.get(column);
-                if (mpp != null) {
-                    boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
-                    dataProvider.sort(new Object[]{mpp}, new boolean[]{ascending});
+            for (GridSortOrder<E> sortOrder : sortOrders) {
+                Grid.Column<E> column = sortOrder.getSorted();
+
+                if (column != null) {
+                    MetaPropertyPath mpp = propertyColumns.get(column);
+
+                    if (mpp != null) {
+                        boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
+                        sortedColumnMap.put(mpp, ascending);
+                    }
                 }
             }
+
+            dataProvider.sort(sortedColumnMap.keySet().toArray(), Booleans.toArray(sortedColumnMap.values()));
         }
     }
 

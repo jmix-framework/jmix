@@ -17,13 +17,14 @@
 package io.jmix.ui.settings.component.binder;
 
 import com.vaadin.data.provider.GridSortOrder;
+import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.Grid;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.component.impl.DataGridSettingsUtils;
 import io.jmix.ui.component.impl.DataGridImpl;
+import io.jmix.ui.component.impl.DataGridSettingsUtils;
 import io.jmix.ui.component.impl.WrapperUtils;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
@@ -35,7 +36,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -83,10 +83,26 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
                 return;
             }
 
-            String sortColumnId = dataGridSettings.getSortColumnId();
-            if (StringUtils.isNotEmpty(sortColumnId)) {
+            Map<String, DataGrid.SortDirection> sortedColumnMap = dataGridSettings.getSortedColumnMap();
+            if (!sortedColumnMap.isEmpty()) {
+
                 Grid grid = getGrid(dataGrid);
-                Grid.Column column = grid.getColumn(sortColumnId);
+                if (dataGrid.getItems() instanceof DataGridItems.Sortable) {
+                    ((DataGridItems.Sortable) dataGrid.getItems()).suppressSorting();
+                }
+
+                grid.clearSortOrder();
+                List<GridSortOrder> sortOrders = convertSortedColumnMapToList(sortedColumnMap, grid);
+                grid.setSortOrder(sortOrders);
+
+                if (dataGrid.getItems() instanceof DataGridItems.Sortable) {
+                    ((DataGridItems.Sortable) dataGrid.getItems()).enableSorting();
+                }
+            } else if (StringUtils.isNotEmpty(dataGridSettings.getSortColumnId())) {
+                // Parsing settings for backwards compatibility
+                Grid grid = getGrid(dataGrid);
+                Grid.Column column = grid.getColumn(dataGridSettings.getSortColumnId());
+
                 if (column != null) {
                     if (dataGrid.getItems() instanceof DataGridItems.Sortable) {
                         ((DataGridItems.Sortable) dataGrid.getItems()).suppressSorting();
@@ -113,16 +129,9 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
     public boolean saveSettings(DataGrid dataGrid, SettingsWrapper wrapper) {
         DataGridSettings settings = wrapper.getSettings();
 
-        String sortColumnId = null;
-        DataGrid.SortDirection sortDirection = null;
-
-        if (settings.getColumns() != null) {
-            sortColumnId = settings.getSortColumnId();
-            sortDirection = settings.getSortDirection();
-        }
-
+        Map<String, DataGrid.SortDirection> sortedColumnMap = settings.getSortedColumnMap();
         boolean commonSettingsChanged = isCommonDataGridSettingsChanged(dataGrid, settings);
-        boolean sortChanged = isSortPropertySettingsChanged(dataGrid, sortColumnId, sortDirection);
+        boolean sortChanged = isSortPropertySettingsChanged(dataGrid, sortedColumnMap);
 
         boolean settingsChanged = commonSettingsChanged || sortChanged;
 
@@ -133,10 +142,19 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
             // DataGrid does not allow to reset sorting if once it were set,
             // so we don't save null sorting
             if (!sortOrders.isEmpty()) {
-                GridSortOrder sortOrder = sortOrders.get(0);
+                // Removing old settings
+                if (settings.getSortColumnId() != null) {
+                    settings.setSortColumnId(null);
+                }
+                if (settings.getSortDirection() != null) {
+                    settings.setSortDirection(null);
+                }
 
-                settings.setSortColumnId(sortOrder.getSorted().getId());
-                settings.setSortDirection(WrapperUtils.convertToDataGridSortDirection(sortOrder.getDirection()));
+                settings.clearSortedColumnMap();
+                sortOrders.forEach(sortOrder ->
+                        settings.addSortedColumn(sortOrder.getSorted().getId(),
+                                WrapperUtils.convertToDataGridSortDirection(sortOrder.getDirection()))
+                );
             }
         }
 
@@ -152,10 +170,10 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
 
         List<GridSortOrder> sortOrders = getGrid(dataGrid).getSortOrder();
         if (!sortOrders.isEmpty()) {
-            GridSortOrder sortOrder = sortOrders.get(0);
-
-            settings.setSortColumnId(sortOrder.getSorted().getId());
-            settings.setSortDirection(WrapperUtils.convertToDataGridSortDirection(sortOrder.getDirection()));
+            sortOrders.forEach(sortOrder ->
+                    settings.addSortedColumn(sortOrder.getSorted().getId(),
+                            WrapperUtils.convertToDataGridSortDirection(sortOrder.getDirection()))
+            );
         }
 
         return settings;
@@ -191,7 +209,8 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
         return false;
     }
 
-    protected void applyColumnSettings(DataGrid dataGrid, DataGridSettings settings, Collection<DataGrid.Column> oldColumns) {
+    protected void applyColumnSettings(DataGrid dataGrid, DataGridSettings settings,
+                                       Collection<DataGrid.Column> oldColumns) {
         Grid grid = getGrid(dataGrid);
 
         List<DataGridSettings.ColumnSettings> columnsSettings = CollectionUtils.isEmpty(settings.getColumns())
@@ -245,19 +264,10 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
         if (dataGrid.isSortable() && !isApplyDataLoadingSettings(dataGrid)) {
             // apply sorting
             grid.clearSortOrder();
-            String sortColumnId = settings.getSortColumnId();
-            if (StringUtils.isNotEmpty(sortColumnId)) {
-                Grid.Column column = grid.getColumn(sortColumnId);
-                if (column != null) {
-                    DataGrid.SortDirection sortDirection = settings.getSortDirection();
-                    if (sortDirection != null) {
-                        List<GridSortOrder> sortOrders = Collections.singletonList(
-                                new GridSortOrder(column, WrapperUtils.convertToGridSortDirection(sortDirection))
-                        );
-                        grid.setSortOrder(sortOrders);
-                    }
-                }
-            }
+            Map<String, DataGrid.SortDirection> sortedColumnMap = settings.getSortedColumnMap();
+
+            List<GridSortOrder> sortOrders = convertSortedColumnMapToList(sortedColumnMap, grid);
+            grid.setSortOrder(sortOrders);
         }
     }
 
@@ -304,24 +314,33 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
         return false;
     }
 
-    protected boolean isSortPropertySettingsChanged(DataGrid dataGrid, @Nullable String settingsSortColumnId, @Nullable DataGrid.SortDirection settingsSort) {
+    protected boolean isSortPropertySettingsChanged(DataGrid dataGrid,
+                                                    Map<String, DataGrid.SortDirection> sortedColumnMap) {
         List<GridSortOrder> sortOrders = getGrid(dataGrid).getSortOrder();
-
-        String columnId = null;
-        com.vaadin.shared.data.sort.SortDirection sort = null;
+        Map<String, DataGrid.SortDirection> currentSortedColumnMap = new LinkedHashMap<>();
 
         if (!sortOrders.isEmpty()) {
-            GridSortOrder sortOrder = sortOrders.get(0);
-
-            columnId = sortOrder.getSorted().getId();
-            sort = sortOrder.getDirection();
+            sortOrders.forEach(sortOrder ->
+                    currentSortedColumnMap.put(sortOrder.getSorted().getId(),
+                            WrapperUtils.convertToDataGridSortDirection(sortOrder.getDirection()))
+            );
         }
 
-        com.vaadin.shared.data.sort.SortDirection settingsGridSort =
-                settingsSort != null ? WrapperUtils.convertToGridSortDirection(settingsSort) : null;
+        return !Arrays.deepEquals(sortedColumnMap.entrySet().toArray(), currentSortedColumnMap.entrySet().toArray());
+    }
 
-        return !Objects.equals(columnId, settingsSortColumnId)
-                || !Objects.equals(sort, settingsGridSort);
+    protected List<GridSortOrder> convertSortedColumnMapToList(Map<String, DataGrid.SortDirection> sortedColumnMap,
+                                                               Grid grid) {
+        return sortedColumnMap.entrySet()
+                .stream()
+                .collect(ArrayList::new,
+                        (list, entry) -> {
+                            Grid.Column column = grid.getColumn(entry.getKey());
+                            SortDirection direction = WrapperUtils.convertToGridSortDirection(entry.getValue());
+
+                            list.add(new GridSortOrder<>(column, direction));
+                        },
+                        ArrayList::addAll);
     }
 
     protected DataGridSettings createSettings() {

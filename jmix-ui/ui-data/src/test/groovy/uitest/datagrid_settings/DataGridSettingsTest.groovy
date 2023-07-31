@@ -56,8 +56,7 @@ class DataGridSettingsTest extends UiDataTestSpecification {
         def settingsOpt = reopenedScreen.facet.settings
                 .getSettings(screen.projectsDataGrid.id, DataGridSettings)
 
-        settingsOpt.get().sortColumnId == "name"
-        settingsOpt.get().sortDirection == DataGrid.SortDirection.ASCENDING
+        settingsOpt.get().getSortedColumnMap().get("name") == DataGrid.SortDirection.ASCENDING
         settingsOpt.get().columns.get(4).id == "budget"
         settingsOpt.get().columns.get(3).collapsed
     }

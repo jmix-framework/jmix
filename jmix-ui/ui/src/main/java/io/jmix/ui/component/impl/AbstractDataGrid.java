@@ -17,6 +17,7 @@
 package io.jmix.ui.component.impl;
 
 import com.google.common.base.Strings;
+import com.google.common.primitives.Booleans;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.SelectionModel;
 import com.vaadin.data.ValidationResult;
@@ -393,15 +394,21 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
             if (sortOrders.isEmpty()) {
                 dataProvider.resetSortOrder();
             } else {
-                GridSortOrder<E> sortOrder = sortOrders.get(0);
+                Map<Object, Boolean> sortedColumnMap = new LinkedHashMap<>();
 
-                Column<E> column = getColumnByGridColumn(sortOrder.getSorted());
-                if (column != null) {
-                    MetaPropertyPath propertyPath = column.getPropertyPath();
-                    boolean ascending = com.vaadin.shared.data.sort.SortDirection.ASCENDING
-                            .equals(sortOrder.getDirection());
-                    dataProvider.sort(new Object[]{propertyPath}, new boolean[]{ascending});
+                for (GridSortOrder<E> sortOrder : sortOrders) {
+                    Column<E> column = getColumnByGridColumn(sortOrder.getSorted());
+
+                    if (column != null) {
+                        MetaPropertyPath propertyPath = column.getPropertyPath();
+                        boolean ascending = com.vaadin.shared.data.sort.SortDirection.ASCENDING
+                                .equals(sortOrder.getDirection());
+
+                        sortedColumnMap.put(propertyPath, ascending);
+                    }
                 }
+
+                dataProvider.sort(sortedColumnMap.keySet().toArray(), Booleans.toArray(sortedColumnMap.values()));
             }
         }
 

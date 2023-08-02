@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Splitter;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -47,9 +48,9 @@ import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
-import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
+import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -76,6 +77,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
     public static final String COLUMN_FILTER_POPUP_CLASSNAME = "column-filter-popup";
+    public static final String COLUMN_FILTER_BUTTON_DEFAULT_ROLE = "column-filter-button";
+    public static final String COLUMN_FILTER_BUTTON_ACTIVATED_ROLE = "column-filter-activated";
+    public static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected MetadataTools metaDataTools;
@@ -422,20 +426,25 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
         filterButton.setIcon(VaadinIcon.FILTER.create());
         filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
+        filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_DEFAULT_ROLE);
 
-        // Workaround (waiting for overlay component)
+        // Workaround (waiting for overlay component),
+        // when device is small - standard dialog is used
         Dialog overlay = createOverlay(propertyFilter);
 
         filterButton.addClickListener(__ -> {
             overlay.open();
-            overlay.getElement().executeJs(getOverlayPositionExpression(), overlay, filterButton);
+
+            if (!isSmallDevice()) {
+                overlay.getElement().executeJs(getOverlayPositionExpression(), overlay, filterButton);
+            }
         });
 
         propertyFilter.addValueChangeListener(event -> {
             if (event.getValue() != null) {
-                filterButton.setClassName(LumoUtility.TextColor.TERTIARY, false);
+                filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ACTIVATED_ROLE);
             } else {
-                filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
+                filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_DEFAULT_ROLE);
             }
         });
 
@@ -444,7 +453,10 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     protected Dialog createOverlay(PropertyFilter<?> propertyFilter) {
         Dialog dialog = new Dialog(propertyFilter);
-        dialog.addClassName(COLUMN_FILTER_POPUP_CLASSNAME);
+        if (!isSmallDevice()) {
+            dialog.addClassName(COLUMN_FILTER_POPUP_CLASSNAME);
+        }
+
         return dialog;
     }
 
@@ -659,11 +671,17 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 "const sum = $1.getBoundingClientRect().left + $1.getBoundingClientRect().width " +
                 "+ $0.$.overlay.$.overlay.getBoundingClientRect().width;" +
                 "if (sum < window.innerWidth) { " +
-                    "$0.$.overlay.$.overlay.style['left'] = $1.getBoundingClientRect().left + 'px'; " +
+                "$0.$.overlay.$.overlay.style['left'] = $1.getBoundingClientRect().left + 'px'; " +
                 "} else { " +
-                    "$0.$.overlay.$.overlay.style['right'] = window.innerWidth - $1.getBoundingClientRect().left " +
-                        "- $1.getBoundingClientRect().width + 'px';" +
+                "$0.$.overlay.$.overlay.style['right'] = window.innerWidth - $1.getBoundingClientRect().left " +
+                "- $1.getBoundingClientRect().width + 'px';" +
                 "}";
+    }
+
+    protected boolean isSmallDevice() {
+        // magic number from vaadin-app-layout.js
+        // '--vaadin-app-layout-touch-optimized' style property
+        return UI.getCurrent().getInternals().getExtendedClientDetails().getScreenWidth() < 801;
     }
 
     protected abstract void setupDataProvider(GridDataHolder holder);

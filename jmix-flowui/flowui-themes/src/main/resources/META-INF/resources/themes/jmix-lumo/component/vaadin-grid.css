@@ -2,6 +2,7 @@ vaadin-grid[theme~='no-header']::part(header-cell) {
   display: none;
 }
 
+/* Dialog overlay style like a popup */
 vaadin-dialog-overlay[class~='column-filter-popup']::part(backdrop) {
   background: unset;
 }
@@ -13,4 +14,17 @@ vaadin-dialog-overlay[class~='column-filter-popup']::part(content) {
 vaadin-dialog-overlay[class~='column-filter-popup']::part(overlay) {
   align-self: flex-start;
   position: absolute;
+}
+
+/* Styles for the column-filter button */
+[jmix-role='column-filter-button']:hover {
+  color: var(--lumo-contrast);
+}
+
+[jmix-role='column-filter-button'] {
+  color: var(--lumo-tertiary-text-color);
+}
+
+[jmix-role='column-filter-activated'] {
+  color: var(--lumo-primary-text-color);
 }

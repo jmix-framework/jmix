@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.google.common.primitives.Booleans;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
@@ -33,20 +34,26 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EntityDataUnit;
+import io.jmix.flowui.data.aggregation.Aggregation;
+import io.jmix.flowui.data.aggregation.Aggregations;
+import io.jmix.flowui.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.component.HasActions;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -68,6 +75,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected MessageTools messageTools;
     protected UiComponents uiComponents;
     protected AccessManager accessManager;
+    protected Aggregations aggregations;
+    protected AggregatableDelegate<Object> aggregatableDelegate;
 
     protected ITEMS dataGridItems;
 
@@ -77,6 +86,13 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected Set<SelectionListener<Grid<E>, E>> selectionListeners = new HashSet<>();
     protected Consumer<ColumnSecurityContext<E>> afterColumnSecurityApplyHandler;
+
+    protected boolean aggregatable;
+    protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.TOP;
+    protected Map<Grid.Column<E>, AggregationInfo> aggregationMap = new LinkedHashMap<>();
+
+    protected HeaderRow aggregationHeader;
+    protected FooterRow aggregationFooter;
 
     /**
      * Columns that are bounded with data container (loaded from descriptor or
@@ -110,6 +126,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         messageTools = applicationContext.getBean(MessageTools.class);
         uiComponents = applicationContext.getBean(UiComponents.class);
         accessManager = applicationContext.getBean(AccessManager.class);
+        aggregations = applicationContext.getBean(Aggregations.class);
     }
 
     protected void initComponent() {
@@ -130,6 +147,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             this.dataGridItems = dataGridItems;
 
             bind(dataGridItems);
+            updateAggregationRow();
 
             applySecurityToPropertyColumns();
         }
@@ -160,6 +178,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected void itemsItemSetChanged(DataGridItems.ItemSetChangeEvent<E> event) {
         closeEditorIfOpened();
         component.getDataCommunicator().reset();
+        updateAggregationRow();
     }
 
     protected void closeEditorIfOpened() {
@@ -194,6 +213,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         }
 
         component.getDataCommunicator().refresh(event.getItem());
+        updateAggregationRow();
     }
 
     protected boolean itemIsBeingEdited(E item) {
@@ -272,6 +292,191 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 detachSelectionListener();
             }
         };
+    }
+
+    public boolean isAggregatable() {
+        return aggregatable;
+    }
+
+    public void setAggregatable(boolean aggregatable) {
+        this.aggregatable = aggregatable;
+
+        updateAggregationRow();
+    }
+
+    public EnhancedDataGrid.AggregationPosition getAggregationPosition() {
+        return aggregationPosition;
+    }
+
+    public void setAggregationPosition(EnhancedDataGrid.AggregationPosition position) {
+        this.aggregationPosition = position;
+    }
+
+    public void addAggregationInfo(Grid.Column<E> column, AggregationInfo info) {
+        if (aggregationMap.containsKey(column)) {
+            throw new IllegalStateException(String.format("Aggregation property %s already exists", column.getKey()));
+        }
+
+        aggregationMap.put(column, info);
+    }
+
+    public void removeAggregationInfo(Grid.Column<E> column) {
+        aggregationMap.remove(column);
+    }
+
+    public Map<Grid.Column<E>, Object> getAggregationResults() {
+        return aggregateValues();
+    }
+
+    protected Map<Grid.Column<E>, String> aggregate() {
+        if (!isAggregatable() || getItems() == null) {
+            throw new IllegalStateException(String.format("%s must be aggregatable and items must not be null in " +
+                    "order to use aggregation", component.getClass().getSimpleName()));
+        }
+
+        List<AggregationInfo> aggregationInfos = getAggregationInfos();
+
+        Map<AggregationInfo, String> aggregationInfoMap = getAggregatableDelegate().aggregate(
+                aggregationInfos.toArray(new AggregationInfo[0]),
+                getItems().getItems().stream()
+                        .map(EntityValues::getId)
+                        .toList()
+        );
+
+        return convertAggregationKeyMapToColumnMap(aggregationInfoMap);
+    }
+
+    protected Map<Grid.Column<E>, Object> aggregateValues() {
+        if (!isAggregatable() || getItems() == null) {
+            throw new IllegalStateException("DataGrid must be aggregatable and items must not be null in order to " +
+                    "use aggregation");
+        }
+
+        List<AggregationInfo> aggregationInfos = getAggregationInfos();
+
+        Map<AggregationInfo, Object> aggregationInfoMap = getAggregatableDelegate().aggregateValues(
+                aggregationInfos.toArray(new AggregationInfo[0]),
+                getItems().getItems().stream()
+                        .map(EntityValues::getId)
+                        .toList()
+        );
+
+        return convertAggregationKeyMapToColumnMap(aggregationInfoMap);
+    }
+
+    protected <V> Map<Grid.Column<E>, V> convertAggregationKeyMapToColumnMap(Map<AggregationInfo, V> aggregationInfos) {
+        return aggregationMap.entrySet()
+                .stream()
+                .collect(LinkedHashMap::new,
+                        (map, entry) -> map.put(entry.getKey(), aggregationInfos.get(entry.getValue())),
+                        LinkedHashMap::putAll);
+    }
+
+    protected List<AggregationInfo> getAggregationInfos() {
+        return aggregationMap.values()
+                .stream()
+                .filter(this::checkAggregation)
+                .toList();
+    }
+
+    protected boolean checkAggregation(AggregationInfo aggregationInfo) {
+        AggregationInfo.Type aggregationType = aggregationInfo.getType();
+        if (aggregationType == AggregationInfo.Type.CUSTOM) {
+            return true;
+        }
+
+        MetaPropertyPath propertyPath = aggregationInfo.getPropertyPath();
+        if (propertyPath == null) {
+            throw new IllegalArgumentException("Unable to aggregate column without property");
+        }
+
+        Class<?> javaType = propertyPath.getMetaProperty().getJavaType();
+        Aggregation<?> aggregation = aggregations.get(javaType);
+
+        if (aggregation != null && aggregation.getSupportedAggregationTypes().contains(aggregationType)) {
+            return true;
+        }
+
+        String message = String.format("Unable to aggregate column \"%s\" with data type %s " +
+                        "with default aggregation strategy: %s",
+                propertyPath, propertyPath.getRange(), aggregationInfo.getType());
+
+        throw new IllegalArgumentException(message);
+    }
+
+    @SuppressWarnings("DuplicatedCode")
+    protected void fillAggregationRow(Map<Grid.Column<E>, String> values) {
+        switch (getAggregationPosition()) {
+            case TOP -> {
+                if (aggregationHeader == null) {
+                    aggregationHeader = component.appendHeaderRow();
+                }
+
+                for (Map.Entry<Grid.Column<E>, String> entry : values.entrySet()) {
+                    Grid.Column<E> column = entry.getKey();
+                    HeaderRow.HeaderCell cell = aggregationHeader.getCell(column);
+                    String cellTitle = aggregationMap.get(column).getCellTitle();
+
+                    if (cellTitle != null) {
+                        Span headerSpan = new Span(entry.getValue());
+                        headerSpan.setTitle(cellTitle);
+
+                        cell.setComponent(headerSpan);
+                    } else {
+                        cell.setText(entry.getValue());
+                    }
+                }
+            }
+            case BOTTOM -> {
+                if (aggregationFooter == null) {
+                    aggregationFooter = component.prependFooterRow();
+                }
+
+                for (Map.Entry<Grid.Column<E>, String> entry : values.entrySet()) {
+                    Grid.Column<E> column = entry.getKey();
+                    FooterRow.FooterCell cell = aggregationFooter.getCell(column);
+                    String cellTitle = aggregationMap.get(column).getCellTitle();
+
+                    if (cellTitle != null) {
+                        Span footerSpan = new Span(entry.getValue());
+                        footerSpan.setTitle(cellTitle);
+
+                        cell.setComponent(footerSpan);
+                    } else {
+                        cell.setText(entry.getValue());
+                    }
+                }
+            }
+        }
+    }
+
+    protected void updateAggregationRow() {
+        if (isAggregatable()
+                && getItems() != null
+                && MapUtils.isNotEmpty(aggregationMap)) {
+            Map<Grid.Column<E>, String> results = aggregate();
+            fillAggregationRow(results);
+        } else {
+            removeAggregationRow();
+        }
+    }
+
+    protected void removeAggregationRow() {
+        //TODO: kremnevda, doesn't work? 04.08.2023
+        switch (getAggregationPosition()) {
+            case TOP -> {
+                if (aggregationHeader != null) {
+                    component.getHeaderRows().remove(aggregationHeader);
+                    aggregationHeader = null;
+                }
+            }
+            case BOTTOM -> {
+                if (aggregationFooter != null) {
+                    component.getFooterRows().remove(aggregationFooter);
+                    aggregationFooter = null;
+                }
+            }
+        }
     }
 
     @Nullable
@@ -483,6 +688,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         columns.remove(column);
 
         propertyColumns.keySet().remove(column);
+        removeAggregationInfo(column);
     }
 
     public boolean isDataGridOwner(Grid.Column<E> column) {
@@ -504,6 +710,19 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         List<Grid.Column<E>> newColumnOrder = deleteHiddenColumns(columns);
 
         component.setColumnOrder(newColumnOrder);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected AggregatableDelegate<Object> getAggregatableDelegate() {
+        if (aggregatableDelegate == null) {
+            aggregatableDelegate = applicationContext.getBean(AggregatableDelegate.class);
+        }
+
+        if (getItems() != null) {
+            aggregatableDelegate.setItemProvider(getItems()::getItem);
+            aggregatableDelegate.setItemValueProvider(getItems()::getItemValue);
+        }
+        return aggregatableDelegate;
     }
 
     @Nullable

@@ -19,8 +19,11 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+import io.jmix.flowui.component.AggregationInfo;
 import org.springframework.lang.Nullable;
+
 import java.util.List;
+import java.util.Map;
 
 public interface EnhancedDataGrid<T> {
 
@@ -39,4 +42,51 @@ public interface EnhancedDataGrid<T> {
      */
     @Deprecated
     List<Grid.Column<T>> getVisibleColumns();
+
+
+    /**
+     * @return true if DataGrid is aggregatable
+     */
+    boolean isAggregatable();
+
+    /**
+     * Set to true if aggregation should be enabled. Default value is false.
+     *
+     * @param aggregatable whether to aggregate DataGrid columns
+     */
+    void setAggregatable(boolean aggregatable);
+
+    /**
+     * @return return aggregation row position
+     */
+    AggregationPosition getAggregationPosition();
+
+    /**
+     * Sets aggregation row position. Default value is {@link AggregationPosition#TOP}.
+     *
+     * @param position position: {@link AggregationPosition#TOP} or {@link AggregationPosition#BOTTOM}
+     */
+    void setAggregationPosition(AggregationPosition position);
+
+    /**
+     * Add an aggregation info in order to perform aggregation for column.
+     *
+     * @param column column for aggregation
+     * @param info aggregation info
+     * @see DataGrid#setAggregatable(boolean)
+     */
+    void addAggregation(Grid.Column<T> column, AggregationInfo info);
+
+    /**
+     * @return aggregated values for columns
+     */
+    Map<Grid.Column<T>, Object> getAggregationResults();
+
+    /**
+     * Defines the position of aggregation row.
+     */
+    enum AggregationPosition {
+        TOP,
+        BOTTOM
+    }
 }

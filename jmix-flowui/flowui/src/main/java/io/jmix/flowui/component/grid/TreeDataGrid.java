@@ -26,23 +26,24 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
-import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
@@ -231,9 +232,40 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         }
     }
 
+    @Deprecated
     @Override
     public List<Column<E>> getVisibleColumns() {
         return gridDelegate.getVisibleColumns();
+    }
+
+    @Override
+    public boolean isAggregatable() {
+        return gridDelegate.isAggregatable();
+    }
+
+    @Override
+    public void setAggregatable(boolean aggregatable) {
+        gridDelegate.setAggregatable(aggregatable);
+    }
+
+    @Override
+    public AggregationPosition getAggregationPosition() {
+        return gridDelegate.getAggregationPosition();
+    }
+
+    @Override
+    public void setAggregationPosition(AggregationPosition aggregationPosition) {
+        gridDelegate.setAggregationPosition(aggregationPosition);
+    }
+
+    @Override
+    public void addAggregation(Column<E> column, AggregationInfo info) {
+        gridDelegate.addAggregationInfo(column, info);
+    }
+
+    @Override
+    public Map<Grid.Column<E>, Object> getAggregationResults() {
+        return gridDelegate.getAggregationResults();
     }
 
     /**

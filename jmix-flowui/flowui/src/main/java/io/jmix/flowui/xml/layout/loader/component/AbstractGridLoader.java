@@ -29,17 +29,16 @@ import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanProperty;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
+import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
@@ -56,6 +55,7 @@ import org.dom4j.Element;
 import org.dom4j.datatype.DatatypeElementFactory;
 import org.springframework.lang.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -71,6 +71,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected MetadataTools metaDataTools;
     protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
     protected FetchPlanRepositoryImpl fetchPlanRepository;
+    protected ClassManager classManager;
 
     @Override
     public void loadComponent() {
@@ -84,6 +85,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadEnum(element, NestedNullBehavior.class, "nestedNullBehavior", resultComponent::setNestedNullBehavior);
         loadBoolean(element, "editorBuffered", editorBuffered ->
                 resultComponent.getEditor().setBuffered(editorBuffered));
+        loadBoolean(element, "aggregatable", resultComponent::setAggregatable);
+        loadEnum(element, EnhancedDataGrid.AggregationPosition.class, "aggregationPosition",
+                resultComponent::setAggregationPosition);
         loadEnum(element, ColumnRendering.class, "columnRendering", resultComponent::setColumnRendering);
 
         componentLoader().loadEnabled(resultComponent, element);
@@ -332,6 +336,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
 
         loadColumnEditable(element, column, property);
+        loadAggregationInfo(element, column);
 
         loadRenderer(element, metaPropertyPath)
                 .ifPresent(column::setRenderer);
@@ -368,6 +373,50 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 setDefaultEditComponent(column, property);
             }
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void loadAggregationInfo(Element columnElement, Column<?> column) {
+        Element aggregationElement = columnElement.element("aggregation");
+
+        if (aggregationElement != null) {
+            AggregationInfo aggregation = new AggregationInfo();
+
+            aggregation.setPropertyPath(resultComponent.getColumnMetaPropertyPath(column));
+
+            loadEnum(aggregationElement, AggregationInfo.Type.class, "type", aggregation::setType);
+            loadResourceString(aggregationElement, "cellTitle", context.getMessageGroup(), aggregation::setCellTitle);
+            loadStrategyClassFqn(aggregation, aggregationElement);
+            componentLoader().loadFormatter(aggregation, aggregationElement);
+
+            resultComponent.addAggregation(column, aggregation);
+
+            if (aggregation.getType() == null && aggregation.getStrategy() == null) {
+                throw new GuiDevelopmentException("Incorrect aggregation - type or strategyClass is required", context);
+            }
+        }
+    }
+
+    protected void loadStrategyClassFqn(AggregationInfo aggregation, Element element) {
+        loadString(element, "strategyClass")
+                .ifPresent(strategyClass -> {
+                    Class<?> aggregationClass = getClassManager().findClass(strategyClass);
+
+                    if (aggregationClass == null) {
+                        String message = String.format("Aggregation class %s is not found", strategyClass);
+                        throw new GuiDevelopmentException(message, context);
+                    }
+
+                    try {
+                        Constructor<?> constructor = aggregationClass.getDeclaredConstructor();
+                        AggregationStrategy<?, ?> customStrategy =
+                                (AggregationStrategy<?, ?>) constructor.newInstance();
+                        applicationContext.getAutowireCapableBeanFactory().autowireBean(customStrategy);
+                        aggregation.setStrategy(customStrategy);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Unable to instantiate strategy for aggregation", e);
+                    }
+                });
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -540,6 +589,13 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             metaDataTools = applicationContext.getBean(MetadataTools.class, context);
         }
         return metaDataTools;
+    }
+
+    protected ClassManager getClassManager() {
+        if (classManager == null) {
+            classManager = applicationContext.getBean(ClassManager.class);
+        }
+        return classManager;
     }
 
     protected abstract void setupDataProvider(GridDataHolder holder);

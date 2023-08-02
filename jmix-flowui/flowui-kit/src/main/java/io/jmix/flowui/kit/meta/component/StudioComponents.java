@@ -984,6 +984,11 @@ public interface StudioComponents {
             xmlElement = "dataGrid",
             icon = "io/jmix/flowui/kit/meta/icon/component/dataGrid.svg",
             properties = {
+                    @StudioProperty(xmlAttribute = "aggregatable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "aggregationPosition", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.grid.EnhancedDataGrid$AggregationPosition",
+                            defaultValue = "TOP", options = {"TOP", "BOTTOM"}),
                     @StudioProperty(xmlAttribute = "allRowsVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),

@@ -115,6 +115,21 @@ public interface StudioElements {
     Grid.Column column();
 
     @StudioElement(
+            name = "Aggregation",
+            classFqn = "io.jmix.flowui.component.AggregationInfo",
+            xmlElement = "aggregation",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "cellTitle", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "strategy", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.AggregationInfo$Type",
+                            options = {"SUM", "COUNT", "AVG", "MIN", "MAX"})
+            }
+    )
+    void aggregationInfo();
+
+    @StudioElement(
             name = "LocalDateRenderer",
             classFqn = "com.vaadin.flow.data.renderer.LocalDateRenderer",
             xmlElement = "localDateRenderer",

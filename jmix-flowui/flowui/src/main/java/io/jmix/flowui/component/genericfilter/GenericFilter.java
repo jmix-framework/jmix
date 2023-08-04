@@ -378,6 +378,19 @@ public class GenericFilter extends Composite<JmixDetails>
         }
     }
 
+    /**
+     * @return {@link KeyCombination} that is used to apply the filter
+     */
+    @Nullable
+    public KeyCombination getApplyShortcut() {
+        return applyButton.getShortcutCombination();
+    }
+
+    /**
+     * Sets a new {@link KeyCombination} to apply the filter.
+     *
+     * @param applyShortcut string representation of a {@link KeyCombination}
+     */
     public void setApplyShortcut(String applyShortcut) {
         if (!Objects.equals(this.applyShortcut, applyShortcut)) {
             this.applyShortcut = applyShortcut;

@@ -62,7 +62,7 @@ public interface EnhancedDataGrid<T> {
     AggregationPosition getAggregationPosition();
 
     /**
-     * Sets aggregation row position. Default value is {@link AggregationPosition#TOP}.
+     * Sets aggregation row position. Default value is {@link AggregationPosition#BOTTOM}.
      *
      * @param position position: {@link AggregationPosition#TOP} or {@link AggregationPosition#BOTTOM}
      */

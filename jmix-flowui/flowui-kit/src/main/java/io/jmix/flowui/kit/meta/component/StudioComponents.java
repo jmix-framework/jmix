@@ -988,7 +988,7 @@ public interface StudioComponents {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "aggregationPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.component.grid.EnhancedDataGrid$AggregationPosition",
-                            defaultValue = "TOP", options = {"TOP", "BOTTOM"}),
+                            defaultValue = "BOTTOM", options = {"TOP", "BOTTOM"}),
                     @StudioProperty(xmlAttribute = "allRowsVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),

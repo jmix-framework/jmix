@@ -88,7 +88,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected Consumer<ColumnSecurityContext<E>> afterColumnSecurityApplyHandler;
 
     protected boolean aggregatable;
-    protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.TOP;
+    protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.BOTTOM;
     protected Map<Grid.Column<E>, AggregationInfo> aggregationMap = new LinkedHashMap<>();
 
     protected HeaderRow aggregationHeader;

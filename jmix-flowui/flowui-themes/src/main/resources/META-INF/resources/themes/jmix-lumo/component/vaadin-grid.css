@@ -17,14 +17,14 @@ vaadin-dialog-overlay[class~='column-filter-popup']::part(overlay) {
 }
 
 /* Styles for the column-filter button */
-[jmix-role='column-filter-button']:hover {
+[jmix-role='column-filter-button']:not([activated]):hover {
   color: var(--lumo-contrast);
 }
 
-[jmix-role='column-filter-button'] {
+[jmix-role='column-filter-button']:not([activated]) {
   color: var(--lumo-tertiary-text-color);
 }
 
-[jmix-role='column-filter-activated'] {
+[jmix-role='column-filter-button']:is([activated]) {
   color: var(--lumo-primary-text-color);
 }

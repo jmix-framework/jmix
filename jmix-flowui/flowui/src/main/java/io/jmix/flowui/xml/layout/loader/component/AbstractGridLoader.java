@@ -77,9 +77,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
     public static final String COLUMN_FILTER_POPUP_CLASSNAME = "column-filter-popup";
-    public static final String COLUMN_FILTER_BUTTON_DEFAULT_ROLE = "column-filter-button";
-    public static final String COLUMN_FILTER_BUTTON_ACTIVATED_ROLE = "column-filter-activated";
     public static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
+    public static final String COLUMN_FILTER_BUTTON_ROLE = "column-filter-button";
+    public static final String COLUMN_FILTER_BUTTON_ACTIVATED_ATTRIBUTE_NAME = "activated";
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected MetadataTools metaDataTools;
@@ -426,7 +426,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
         filterButton.setIcon(VaadinIcon.FILTER.create());
         filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
-        filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_DEFAULT_ROLE);
+        filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ROLE);
 
         // Workaround (waiting for overlay component),
         // when device is small - standard dialog is used
@@ -440,13 +440,10 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             }
         });
 
-        propertyFilter.addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ACTIVATED_ROLE);
-            } else {
-                filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_DEFAULT_ROLE);
-            }
-        });
+        propertyFilter.addValueChangeListener(event ->
+                filterButton.getElement().setAttribute(COLUMN_FILTER_BUTTON_ACTIVATED_ATTRIBUTE_NAME,
+                        event.getValue() != null)
+        );
 
         return filterButton;
     }

@@ -275,7 +275,8 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             //     com.vaadin.flow.component.upload.Upload#setAutoUpload
             // fixed in https://github.com/vaadin/flow/issues/15847
             // waiting for Vaadin 24.0
-            !autoUpload
+            // Backported to 23.3 used for Phoenix support
+            autoUpload
 
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             dropAllowed

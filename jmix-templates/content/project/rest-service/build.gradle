@@ -13,8 +13,7 @@ jmix {
 group = '${project_group}'
 version = '${project_version}'
 
-repositories {
-    mavenCentral()<%if (project_additionalRepositories) {
+repositories {<%if (project_additionalRepositories) {
     project_additionalRepositories.each { additionalRepository ->%>
 ${additionalRepository}<%}}%>
 }

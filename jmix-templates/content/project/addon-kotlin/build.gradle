@@ -16,8 +16,7 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'io.jmix'
 
-    repositories {
-        mavenCentral()<%if (project_additionalRepositories) {
+    repositories {<%if (project_additionalRepositories) {
         project_additionalRepositories.each { additionalRepository ->%>
     ${additionalRepository}<%}}%>
     }

@@ -32,6 +32,7 @@ dependencies {
     api 'com.vaadin:vaadin-client'
     api('com.vaadin:vaadin-client-compiler') {
         exclude(group: 'org.mortbay.jasper', module: 'apache-jsp')
+        exclude(group: 'net.sourceforge.htmlunit', module: 'htmlunit')
     }
     api 'com.vaadin:vaadin-compatibility-client'
 }

@@ -56,7 +56,8 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework:spring-webflux'
 
-    testImplementation 'com.squareup.retrofit2:converter-scalars:2.8.1'
+    testImplementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    testImplementation 'com.squareup.okio:okio:3.4.0'
 
     testImplementation 'io.rest-assured:rest-assured'
 

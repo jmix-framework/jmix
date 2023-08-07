@@ -39,7 +39,7 @@ dependencies {
     api project(':datatools-starter')
     api project(':datatools-ui-starter')
 
-    api 'com.thoughtworks.xstream:xstream:1.4.13'
+    api 'com.thoughtworks.xstream:xstream:1.4.20'
     api 'org.perf4j:perf4j:0.9.16'
     api 'org.freemarker:freemarker:2.3.30'
 

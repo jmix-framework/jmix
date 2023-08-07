@@ -391,7 +391,7 @@ public class GenericFilter extends Composite<JmixDetails>
      *
      * @param applyShortcut string representation of a {@link KeyCombination}
      */
-    public void setApplyShortcut(String applyShortcut) {
+    public void setApplyShortcut(@Nullable String applyShortcut) {
         if (!Objects.equals(this.applyShortcut, applyShortcut)) {
             this.applyShortcut = applyShortcut;
 

@@ -219,21 +219,13 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         if (!Objects.equals(oldValue, applyShortcut)) {
             this.applyShortcut = applyShortcut;
 
-            if (applyShortcut != null) {
-                searchButton.setShortcutCombination(applyShortcut);
-            } else {
-                searchButton.setShortcut(null);
-            }
+            searchButton.setShortcutCombination(applyShortcut);
         }
     }
 
     @Override
     public void setApplyShortcut(@Nullable String applyShortcut) {
-        if (applyShortcut != null) {
-            setApplyShortcutCombination(KeyCombination.create(applyShortcut));
-        } else {
-            setApplyShortcutCombination(null);
-        }
+        setApplyShortcutCombination(KeyCombination.create(applyShortcut));
     }
 
     @Override

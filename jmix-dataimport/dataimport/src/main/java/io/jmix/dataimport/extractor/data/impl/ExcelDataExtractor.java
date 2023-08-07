@@ -39,7 +39,7 @@ public class ExcelDataExtractor implements ImportedDataExtractor {
     public ImportedData extract(ImportConfiguration importConfiguration, InputStream inputStream) {
         Workbook workbook;
         try {
-            workbook = HSSFWorkbookFactory.create(inputStream);
+            workbook = WorkbookFactory.create(inputStream);
         } catch (IOException e) {
             throw new ImportException(e, "I/O error occurs during Excel data reading:" + e.getMessage());
         }
@@ -50,7 +50,7 @@ public class ExcelDataExtractor implements ImportedDataExtractor {
     public ImportedData extract(ImportConfiguration importConfiguration, byte[] inputData) {
         Workbook workbook;
         try {
-            workbook = HSSFWorkbookFactory.create(new ByteArrayInputStream(inputData));
+            workbook = WorkbookFactory.create(new ByteArrayInputStream(inputData));
         } catch (IOException e) {
             throw new ImportException(e, "I/O error occurs during Excel data reading:" + e.getMessage());
         }

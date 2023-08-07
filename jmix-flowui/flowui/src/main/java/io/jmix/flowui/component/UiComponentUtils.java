@@ -20,12 +20,13 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -87,6 +88,13 @@ public final class UiComponentUtils {
             } else if (isContainer(component)) {
                 Optional<Component> innerComponent =
                         getComponentRecursively(getOwnComponents(component), id);
+                if (innerComponent.isPresent()) {
+                    return innerComponent;
+                }
+            } else if (component instanceof HasSubParts hasSubPartsComponent) {
+                Optional<Component> innerComponent =
+                        Optional.ofNullable(((Component) hasSubPartsComponent.getSubPart(id)));
+
                 if (innerComponent.isPresent()) {
                     return innerComponent;
                 }

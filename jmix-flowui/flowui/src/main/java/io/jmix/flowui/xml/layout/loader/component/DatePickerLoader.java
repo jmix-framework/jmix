@@ -52,7 +52,7 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
         loadDate(element, "max", resultComponent::setMax);
         loadDate(element, "min", resultComponent::setMin);
 
-        componentLoader().loadDateFormat(element, resultComponent::setI18n);
+        componentLoader().loadDatePickerI18n(element, resultComponent::setI18n);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);

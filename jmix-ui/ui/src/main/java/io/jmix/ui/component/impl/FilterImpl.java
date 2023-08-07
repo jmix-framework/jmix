@@ -45,10 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -81,6 +78,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
     protected boolean autoApply;
+    protected KeyCombination applyShortcut;
     protected int columnsCount;
     protected CaptionPosition captionPosition = CaptionPosition.LEFT;
     protected Predicate<MetaPropertyPath> propertiesFilterPredicate;
@@ -139,6 +137,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     public void setUiComponentProperties(UiComponentProperties componentProperties) {
         this.columnsCount = componentProperties.getFilterColumnsCount();
         this.autoApply = componentProperties.isFilterAutoApply();
+        this.applyShortcut = KeyCombination.create(componentProperties.getFilterApplyShortcut());
     }
 
     @Autowired
@@ -205,6 +204,35 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                     .getRootLogicalFilterComponent()
                     .getOwnFilterComponents()
                     .forEach(filterComponent -> filterComponent.setAutoApply(autoApply));
+        }
+    }
+
+    @Nullable
+    @Override
+    public KeyCombination getShortcutCombination() {
+        return searchButton.getShortcutCombination();
+    }
+
+    @Override
+    public void setApplyShortcutCombination(@Nullable KeyCombination applyShortcut) {
+        KeyCombination oldValue = this.applyShortcut;
+        if (!Objects.equals(oldValue, applyShortcut)) {
+            this.applyShortcut = applyShortcut;
+
+            if (applyShortcut != null) {
+                searchButton.setShortcutCombination(applyShortcut);
+            } else {
+                searchButton.setShortcut(null);
+            }
+        }
+    }
+
+    @Override
+    public void setApplyShortcut(@Nullable String applyShortcut) {
+        if (applyShortcut != null) {
+            setApplyShortcutCombination(KeyCombination.create(applyShortcut));
+        } else {
+            setApplyShortcutCombination(null);
         }
     }
 
@@ -538,6 +566,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
     protected void initSearchButton() {
         searchButton.addClickListener(clickEvent -> getDataLoader().load());
+        searchButton.setShortcutCombination(applyShortcut);
         updateSearchButtonCaption(isAutoApply());
     }
 

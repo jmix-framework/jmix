@@ -4130,6 +4130,7 @@
             <xs:extension base="baseLayout">
                 <xs:attributeGroup ref="hasId"/>
                 <xs:attribute name="visible" type="xs:boolean"/>
+                <xs:attribute name="colspan" type="xs:integer"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

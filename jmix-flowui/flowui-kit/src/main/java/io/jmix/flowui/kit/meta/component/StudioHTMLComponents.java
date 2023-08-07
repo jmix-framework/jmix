@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.kit.meta.component;
 
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.*;
 import io.jmix.flowui.kit.meta.*;
 

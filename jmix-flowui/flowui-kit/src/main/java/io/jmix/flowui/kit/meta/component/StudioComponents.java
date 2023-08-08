@@ -2002,6 +2002,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autoUpload", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "dropAllowed", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "dropLabel", type = StudioPropertyType.LOCALIZED_STRING),
@@ -2167,6 +2168,7 @@ public interface StudioComponents {
             icon = "io/jmix/flowui/kit/meta/icon/component/genericFilter.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "autoApply", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "applyShortcut", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "dataLoader", type = StudioPropertyType.DATA_LOADER_REF,

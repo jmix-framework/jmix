@@ -46,7 +46,6 @@ import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.core.Ordered;
-
 import org.springframework.lang.Nullable;
 
 @org.springframework.stereotype.Component("appsettings_AppSettingsComponentGenerationStrategy")
@@ -54,7 +53,6 @@ public class AppSettingsComponentGenerationStrategy
         extends AbstractComponentGenerationStrategy implements Ordered {
 
     private static final int MAX_TEXT_FIELD_STRING_LENGTH = 255;
-
 
     public AppSettingsComponentGenerationStrategy(UiComponents uiComponents,
                                                   Metadata metadata,
@@ -66,10 +64,13 @@ public class AppSettingsComponentGenerationStrategy
         super(uiComponents, metadata, metadataTools, actions, datatypeRegistry, messages, entityFieldCreationSupport);
     }
 
+    @SuppressWarnings("rawtypes")
     @Nullable
     @Override
     public Component createComponent(ComponentGenerationContext context) {
-        if (AppSettingsEntity.class.isAssignableFrom(context.getMetaClass().getJavaClass())) {
+        if (context.getMetaClass() != null
+                && context.getProperty() != null
+                && AppSettingsEntity.class.isAssignableFrom(context.getMetaClass().getJavaClass())) {
             MetaProperty metaProperty = context.getMetaClass().getProperty(context.getProperty());
             Range range = metaProperty.getRange();
 
@@ -104,13 +105,15 @@ public class AppSettingsComponentGenerationStrategy
             }
             return field;
         }
-        return null;
 
+        return null;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected Select<?> createEnumField(Range range) {
         JmixSelect enumField = uiComponents.create(JmixSelect.class);
         enumField.setItems(range.asEnumeration().getJavaClass());
+
         return enumField;
     }
 
@@ -124,7 +127,8 @@ public class AppSettingsComponentGenerationStrategy
     }
 
     protected Select<Boolean> createBooleanField() {
-        Select<Boolean> field = uiComponents.create(JmixSelect.class);
+        //noinspection unchecked
+        JmixSelect<Boolean> field = uiComponents.create(JmixSelect.class);
 
         ComponentUtils.setItemsMap(field, ImmutableMap.of(
                 Boolean.TRUE, messages.getMessage("trueString"),
@@ -134,6 +138,7 @@ public class AppSettingsComponentGenerationStrategy
         return field;
     }
 
+    @SuppressWarnings("rawtypes")
     protected AbstractField createPasswordField() {
         return uiComponents.create(JmixPasswordField.class);
     }
@@ -170,5 +175,4 @@ public class AppSettingsComponentGenerationStrategy
     public int getOrder() {
         return JmixOrder.HIGHEST_PRECEDENCE + 100;
     }
-
 }

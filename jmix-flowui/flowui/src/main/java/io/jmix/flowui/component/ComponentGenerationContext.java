@@ -21,7 +21,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.model.CollectionContainer;
 import org.dom4j.Element;
-
 import org.springframework.lang.Nullable;
 
 /**
@@ -48,7 +47,7 @@ public class ComponentGenerationContext {
      * @param metaClass the entity for which the component is created
      * @param property  the entity attribute for which the component is created
      */
-    public ComponentGenerationContext(MetaClass metaClass, String property) {
+    public ComponentGenerationContext(@Nullable MetaClass metaClass, @Nullable String property) {
         this.metaClass = metaClass;
         this.property = property;
     }
@@ -56,6 +55,7 @@ public class ComponentGenerationContext {
     /**
      * @return the entity for which the component is created
      */
+    @Nullable
     public MetaClass getMetaClass() {
         return metaClass;
     }
@@ -63,6 +63,7 @@ public class ComponentGenerationContext {
     /**
      * @return the entity attribute for which the component is created
      */
+    @Nullable
     public String getProperty() {
         return property;
     }

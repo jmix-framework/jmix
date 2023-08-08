@@ -30,7 +30,8 @@
     <layout>
         <genericFilter id="genericFilterId"
                        dataLoader="ordersDl"
-                       autoApply="true"
+                       autoApply="false"
+                       applyShortcut="ALT-P"
                        classNames="cssClassName1, cssClassName2"
                        enabled="false"
                        height="50px"

@@ -2094,6 +2094,10 @@
         <xs:anyAttribute namespace="##other" processContents="lax"/>
     </xs:complexType>
 
+    <xs:complexType name="prefixOrSuffixComponent">
+        <xs:group ref="singleLayoutOrComponent" minOccurs="0"/>
+    </xs:complexType>
+
     <xs:complexType name="baseAction">
         <xs:sequence>
             <xs:element name="properties" type="actionProperties" minOccurs="0"/>
@@ -2210,6 +2214,9 @@
             <xs:extension base="validatableBaseFieldComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:choice>
 
                 <xs:attribute name="value" type="xs:string"/>
@@ -2245,6 +2252,7 @@
                     </xs:element>
 
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -2494,6 +2502,9 @@
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:choice>
 
                 <xs:attribute name="action" type="xs:string"/>
@@ -2520,6 +2531,9 @@
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:choice>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>
@@ -2814,6 +2828,8 @@
                 <xs:sequence>
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                     <xs:element name="itemsQuery" minOccurs="0" type="comboBoxItemsQueryType"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="pattern" type="xs:string"/>
@@ -2912,6 +2928,8 @@
                 <xs:sequence>
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="timeDatatypeEnum"/>
@@ -2938,6 +2956,8 @@
                 <xs:sequence>
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
                 <xs:attribute name="name" type="xs:string"/>
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -3103,6 +3123,9 @@
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:choice>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>
@@ -3159,6 +3182,9 @@
                     </xs:element>
                     <xs:element name="formatter" minOccurs="0" type="formatterType"/>
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
                 <xs:attribute name="invalid" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="xs:string"/>
@@ -3276,6 +3302,11 @@
     <xs:complexType name="tabSheetComponent">
         <xs:complexContent>
             <xs:extension base="baseTabsComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                </xs:sequence>
+
                 <xs:attribute name="themeNames" type="tabSheetThemeNames"/>
             </xs:extension>
         </xs:complexContent>
@@ -3303,9 +3334,10 @@
     <xs:complexType name="selectComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
+                <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                </xs:sequence>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="emptySelectionCaption" type="resourceString"/>

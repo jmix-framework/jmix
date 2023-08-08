@@ -69,7 +69,7 @@ public class UserSettingsCacheImpl implements UserSettingsCache {
     }
 
     @Override
-    public void set(String key, @Nullable String value) {
+    public void put(String key, @Nullable String value) {
         Preconditions.checkNotNullArgument(key);
 
         getCache().put(key, Optional.ofNullable(value));

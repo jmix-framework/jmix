@@ -3905,6 +3905,7 @@
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="dataLoadCoordinator" type="dataLoadCoordinatorType" minOccurs="0"/>
                 <xs:element name="urlQueryParameters" type="urlQueryParametersType" minOccurs="0"/>
+                <xs:element name="settings" type="settingsFacetType" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -4003,6 +4004,28 @@
         <xs:attribute name="param" type="xs:string"/>
     </xs:complexType>
 
+    <!-- SettingsFacet -->
+
+    <xs:complexType name="settingsFacetType">
+        <xs:sequence>
+            <xs:element name="components" minOccurs="0" type="screenSettingsComponentsType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="auto" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="screenSettingsComponentsType">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="component" type="screenSettingsComponentType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="screenSettingsComponentType">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="enabled" type="xs:boolean"/>
+    </xs:complexType>
+    
     <!--  -->
 
     <xs:group name="standardComponent">

@@ -34,12 +34,12 @@ public interface UserSettingsCache {
     String get(String key);
 
     /**
-     * Sets a setting to the cache and store.
+     * Adds a value associated with a key to the cache and store.
      *
      * @param key  setting identifier
      * @param value setting value
      */
-    void set(String key, @Nullable String value);
+    void put(String key, @Nullable String value);
 
     /**
      * Deletes setting from cache and store.

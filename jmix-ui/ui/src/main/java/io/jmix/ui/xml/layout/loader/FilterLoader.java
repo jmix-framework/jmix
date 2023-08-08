@@ -16,6 +16,7 @@
 
 package io.jmix.ui.xml.layout.loader;
 
+import com.google.common.base.Strings;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.filter.FilterAction;
@@ -64,6 +65,7 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
 
         loadDataLoader(resultComponent, element);
         loadBoolean(element, "autoApply", resultComponent::setAutoApply);
+        loadApplyShortcut(resultComponent, element);
 
         loadCollapsible(resultComponent, element, true);
         loadInteger(element, "columnsCount", resultComponent::setColumnsCount);
@@ -206,5 +208,13 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
                 .setDataLoader(resultComponent.getDataLoader());
         filterComponentLoader.loadComponent();
         return (FilterComponent) filterComponentLoader.getResultComponent();
+    }
+
+    protected void loadApplyShortcut(Filter component, Element element) {
+        String applyShortcutAttribute = element.attributeValue("applyShortcut");
+        if (!Strings.isNullOrEmpty(applyShortcutAttribute)) {
+            String shortcut = loadShortcut(applyShortcutAttribute);
+            component.setApplyShortcut(shortcut);
+        }
     }
 }

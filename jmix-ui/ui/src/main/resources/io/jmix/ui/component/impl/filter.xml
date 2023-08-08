@@ -29,8 +29,7 @@
                                width="100%">
                         <button id="filter_searchButton"
                                 icon="SEARCH"
-                                stylename="friendly"
-                                shortcut="SHIFT-ENTER"/>
+                                stylename="friendly"/>
                         <popupButton id="filter_selectConfigurationButton"
                                      stylename="icon-only friendly"/>
                     </cssLayout>

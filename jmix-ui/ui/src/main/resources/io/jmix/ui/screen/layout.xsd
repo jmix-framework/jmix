@@ -4137,6 +4137,7 @@
 
                 <xs:attribute name="dataLoader" type="xs:string" use="required"/>
                 <xs:attribute name="autoApply" type="xs:boolean"/>
+                <xs:attribute name="applyShortcut" type="xs:string"/>
                 <xs:attribute name="collapsable" type="xs:boolean"/>
                 <xs:attribute name="collapsed" type="xs:boolean"/>
                 <xs:attribute name="columnsCount" type="xs:int"/>

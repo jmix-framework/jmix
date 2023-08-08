@@ -408,7 +408,11 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public Optional<String> loadShortcutCombination(Element element) {
-        return loaderSupport.loadString(element, "shortcutCombination")
+        return loadShortcut(element,"shortcutCombination");
+    }
+
+    public Optional<String> loadShortcut(Element element, String attributeName) {
+        return loaderSupport.loadString(element, attributeName)
                 .map(shortcutCombination -> {
                     if (shortcutCombination.startsWith("${") && shortcutCombination.endsWith("}")) {
                         if (isShortcutCombinationFQN(shortcutCombination)) {

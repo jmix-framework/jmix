@@ -40,6 +40,7 @@ public class ValuePickerButton extends Component
 
     protected Component iconComponent;
     protected ShortcutRegistration shortcutRegistration;
+    protected KeyCombination shortcutCombination;
 
     @Override
     public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
@@ -104,22 +105,15 @@ public class ValuePickerButton extends Component
     @Nullable
     @Override
     public KeyCombination getShortcutCombination() {
-        if (shortcutRegistration == null) {
-            return null;
-        }
-
-        KeyModifier[] keyModifiers = shortcutRegistration.getModifiers().stream()
-                .filter(key -> key instanceof KeyModifier)
-                .map(key -> (KeyModifier) key)
-                .toArray(KeyModifier[]::new);
-
-        return KeyCombination.create(shortcutRegistration.getKey(), keyModifiers);
+        return shortcutCombination;
     }
 
     @Override
     public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
         KeyCombination oldValue = getShortcutCombination();
         if (!Objects.equals(oldValue, shortcutCombination)) {
+            this.shortcutCombination = shortcutCombination;
+
             if (shortcutRegistration != null) {
                 shortcutRegistration.remove();
                 shortcutRegistration = null;

@@ -3743,6 +3743,7 @@
 
                 <xs:attribute name="dataLoader" type="xs:string" use="required"/>
                 <xs:attribute name="autoApply" type="xs:boolean"/>
+                <xs:attribute name="applyShortcut" type="xs:string"/>
                 <xs:attribute name="summaryText" type="resourceString"/>
                 <xs:attribute name="themeNames" type="detailsThemeNames"/>
                 <xs:attribute name="opened" type="xs:boolean"/>

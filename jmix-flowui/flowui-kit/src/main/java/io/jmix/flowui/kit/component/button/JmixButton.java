@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.kit.component.button;
 
-import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.ShortcutRegistration;
 import com.vaadin.flow.component.button.Button;
 import io.jmix.flowui.kit.action.Action;
@@ -24,14 +23,15 @@ import io.jmix.flowui.kit.component.HasAction;
 import io.jmix.flowui.kit.component.HasShortcutCombination;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.KeyCombination;
-
 import jakarta.annotation.Nullable;
+
 import java.util.Objects;
 
 public class JmixButton extends Button implements HasTitle, HasAction, HasShortcutCombination {
 
     protected JmixButtonActionSupport actionSupport;
     protected ShortcutRegistration shortcutRegistration;
+    protected KeyCombination shortcutCombination;
 
     @Override
     public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
@@ -55,22 +55,15 @@ public class JmixButton extends Button implements HasTitle, HasAction, HasShortc
     @Nullable
     @Override
     public KeyCombination getShortcutCombination() {
-        if (shortcutRegistration == null) {
-            return null;
-        }
-
-        KeyModifier[] keyModifiers = shortcutRegistration.getModifiers().stream()
-                .filter(key -> key instanceof KeyModifier)
-                .map(key -> (KeyModifier) key)
-                .toArray(KeyModifier[]::new);
-
-        return KeyCombination.create(shortcutRegistration.getKey(), keyModifiers);
+        return shortcutCombination;
     }
 
     @Override
     public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
         KeyCombination oldValue = getShortcutCombination();
         if (!Objects.equals(oldValue, shortcutCombination)) {
+            this.shortcutCombination = shortcutCombination;
+
             if (shortcutRegistration != null) {
                 shortcutRegistration.remove();
                 shortcutRegistration = null;

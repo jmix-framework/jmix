@@ -19,13 +19,15 @@ package io.jmix.flowui.component;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -88,6 +90,24 @@ public final class UiComponentUtils {
                 Optional<Component> innerComponent =
                         getComponentRecursively(getOwnComponents(component), id);
                 if (innerComponent.isPresent()) {
+                    return innerComponent;
+                }
+            }
+
+            if (component instanceof HasPrefix hasPrefixComponent) {
+                Optional<Component> innerComponent =
+                        Optional.ofNullable(hasPrefixComponent.getPrefixComponent());
+
+                if (innerComponent.isPresent() && sameId(innerComponent.get(), id)) {
+                    return innerComponent;
+                }
+            }
+
+            if (component instanceof HasSuffix hasSuffixComponent) {
+                Optional<Component> innerComponent =
+                        Optional.ofNullable(hasSuffixComponent.getSuffixComponent());
+
+                if (innerComponent.isPresent() && sameId(innerComponent.get(), id)) {
                     return innerComponent;
                 }
             }

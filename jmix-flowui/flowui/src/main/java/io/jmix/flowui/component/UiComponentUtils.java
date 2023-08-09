@@ -94,20 +94,22 @@ public final class UiComponentUtils {
                 }
             }
 
-            if (component instanceof HasPrefix hasPrefixComponent) {
+            if (component instanceof HasPrefix hasPrefixComponent
+                    && hasPrefixComponent.getPrefixComponent() != null) {
                 Optional<Component> innerComponent =
-                        Optional.ofNullable(hasPrefixComponent.getPrefixComponent());
+                        getComponentRecursively(Collections.singleton(hasPrefixComponent.getPrefixComponent()), id);
 
-                if (innerComponent.isPresent() && sameId(innerComponent.get(), id)) {
+                if (innerComponent.isPresent()) {
                     return innerComponent;
                 }
             }
 
-            if (component instanceof HasSuffix hasSuffixComponent) {
+            if (component instanceof HasSuffix hasSuffixComponent
+                    && hasSuffixComponent.getSuffixComponent() != null) {
                 Optional<Component> innerComponent =
-                        Optional.ofNullable(hasSuffixComponent.getSuffixComponent());
+                        getComponentRecursively(Collections.singleton(hasSuffixComponent.getSuffixComponent()), id);
 
-                if (innerComponent.isPresent() && sameId(innerComponent.get(), id)) {
+                if (innerComponent.isPresent()) {
                     return innerComponent;
                 }
             }

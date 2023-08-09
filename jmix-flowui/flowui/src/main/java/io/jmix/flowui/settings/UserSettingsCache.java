@@ -17,8 +17,7 @@
 package io.jmix.flowui.settings;
 
 import io.jmix.core.annotation.Internal;
-
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Provides saving/loading settings using the cache.

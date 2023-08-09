@@ -15,7 +15,8 @@
  */
 package io.jmix.flowui.settings;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 
 /**

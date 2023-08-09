@@ -16,7 +16,9 @@
 
 package io.jmix.flowui.facet.settings;
 
-import javax.annotation.Nullable;
+import io.jmix.flowui.facet.settings.component.JmixDetailsSettings;
+import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 
 public interface ViewSettings {
@@ -41,7 +43,7 @@ public interface ViewSettings {
      * @param id    e.g. component id
      * @param key   key with which associated provided value, e.g. component's width or some state
      * @param value {@link String} value
-     * @return current instance of settings
+     * @return current instance of {@link ViewSettings}
      */
     ViewSettings put(String id, String key, @Nullable String value);
 
@@ -51,7 +53,7 @@ public interface ViewSettings {
      * @param id    e.g. component id
      * @param key   key with which associated provided value, e.g. component's property or some state
      * @param value {@link Integer} value
-     * @return current instance of settings
+     * @return current instance of {@link ViewSettings}
      */
     ViewSettings put(String id, String key, @Nullable Integer value);
 
@@ -61,7 +63,7 @@ public interface ViewSettings {
      * @param id    e.g. component id
      * @param key   key with which associated provided value, e.g. component's property or some state
      * @param value {@link Long} value
-     * @return current instance of settings
+     * @return current instance of {@link ViewSettings}
      */
     ViewSettings put(String id, String key, @Nullable Long value);
 
@@ -71,7 +73,7 @@ public interface ViewSettings {
      * @param id    e.g. component id
      * @param key   key with which associated provided value, e.g. component's property or some state
      * @param value {@link Double} value
-     * @return current instance of settings
+     * @return current instance of {@link ViewSettings}
      */
     ViewSettings put(String id, String key, @Nullable Double value);
 
@@ -81,24 +83,24 @@ public interface ViewSettings {
      * @param id    e.g. component id
      * @param key   key with which associated provided value, e.g. component's property or some state
      * @param value {@link Boolean} value
-     * @return current instance of settings
+     * @return current instance of {@link ViewSettings}
      */
     ViewSettings put(String id, String key, @Nullable Boolean value);
 
     /**
-     * Puts component's settings, e.g {@link TableSettings}. If setting with provided id already exist it will be
+     * Puts component's settings, e.g {@link JmixDetailsSettings}. If setting with provided id already exist it will be
      * replaced.
      *
-     * @param settings component settings
-     * @return current instance of settings
+     * @param settings object of settings
+     * @return current instance of {@link ViewSettings}
      */
-    ViewSettings put(ComponentSettings settings);
+    ViewSettings put(Settings settings);
 
     /**
      * Deletes component's settings by identifier if they exist.
      *
      * @param id id to remove, e.g. component id
-     * @return current instance of settings
+     * @return current instance of {@link ViewSettings}
      */
     ViewSettings delete(String id);
 
@@ -107,7 +109,7 @@ public interface ViewSettings {
      *
      * @param id  e.g. component id
      * @param key object's key to remove
-     * @return current instance of screen settings
+     * @return current instance of {@link ViewSettings}
      */
     ViewSettings delete(String id, String key);
 
@@ -147,20 +149,22 @@ public interface ViewSettings {
     Optional<Boolean> getBoolean(String id, String key);
 
     /**
-     * @param componentId   component id
+     * @param id            e.g. component id
      * @param settingsClass settings class
-     * @param <T>           type of component settings class
+     * @param <T>           type of settings class
      * @return component settings wrapped in {@code Optional}
      */
-    <T extends ComponentSettings> Optional<T> getSettings(String componentId, Class<T> settingsClass);
+    <T extends Settings> Optional<T> getSettings(String id, Class<T> settingsClass);
 
     /**
-     * @param componentId   component id
+     * @param id            e.g. component id
      * @param settingsClass settings class
-     * @param <T>           type of component settings class
-     * @return component settings if exist otherwise return created settings with corresponding id
+     * @param <T>           type of settings class
+     * @return object of settings if exists otherwise return created settings with corresponding id
      */
-    <T extends ComponentSettings> T getSettingsOrCreate(String componentId, Class<T> settingsClass);
+    <T extends Settings> T getSettingsOrCreate(String id, Class<T> settingsClass);
 
     void initialize(@Nullable String rawSettings);
+
+    String serialize();
 }

@@ -17,13 +17,10 @@
 package io.jmix.flowui.facet.settings;
 
 import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import io.jmix.core.common.util.Preconditions;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class ViewSettingsJson extends AbstractViewSettings {
@@ -34,6 +31,13 @@ public class ViewSettingsJson extends AbstractViewSettings {
 
     public ViewSettingsJson(String viewId) {
         super(viewId);
+
+        initGson();
+    }
+
+    protected void initGson() {
+        gson = new GsonBuilder()
+                .create();
     }
 
     @Override
@@ -102,7 +106,7 @@ public class ViewSettingsJson extends AbstractViewSettings {
     }
 
     @Override
-    public ViewSettings put(ComponentSettings settings) {
+    public ViewSettings put(Settings settings) {
         Preconditions.checkNotNullArgument(settings);
 
         if (settings.getId() == null) {
@@ -238,11 +242,11 @@ public class ViewSettingsJson extends AbstractViewSettings {
     }
 
     @Override
-    public <T extends ComponentSettings> Optional<T> getSettings(String componentId, Class<T> settingsClass) {
-        Preconditions.checkNotNullArgument(componentId);
+    public <T extends Settings> Optional<T> getSettings(String id, Class<T> settingsClass) {
+        Preconditions.checkNotNullArgument(id);
         Preconditions.checkNotNullArgument(settingsClass);
 
-        JsonObject json = getObject(componentId);
+        JsonObject json = getObject(id);
         if (json == null)
             return Optional.empty();
 
@@ -250,21 +254,27 @@ public class ViewSettingsJson extends AbstractViewSettings {
     }
 
     @Override
-    public <T extends ComponentSettings> T getSettingsOrCreate(String componentId, Class<T> settingsClass) {
-        Preconditions.checkNotNullArgument(componentId);
+    public <T extends Settings> T getSettingsOrCreate(String id, Class<T> settingsClass) {
+        Preconditions.checkNotNullArgument(id);
         Preconditions.checkNotNullArgument(settingsClass);
 
-        return getSettings(componentId, settingsClass).orElseGet(() -> {
+        return getSettings(id, settingsClass).orElseGet(() -> {
             JsonObject json = new JsonObject();
-            json.addProperty("id", componentId);
+            json.addProperty("id", id);
             return settingsClass.cast(gson.fromJson(json, settingsClass));
         });
     }
 
     @Override
     public void initialize(@Nullable String raw) {
-        root = Strings.isNullOrEmpty(raw) ?
-                gson.fromJson(raw, JsonArray.class) : new JsonArray();
+        root = Strings.isNullOrEmpty(raw)
+                ? new JsonArray()
+                : gson.fromJson(raw, JsonArray.class);
+    }
+
+    @Override
+    public String serialize() {
+        return gson.toJson(root);
     }
 
     protected void put(JsonElement json, String id) {

@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 
 import java.util.Collection;
 
-public interface ViewSettingsManager {
+public interface ViewSettingsComponentManager {
 
     void applySettings(Collection<Component> components, ViewSettings viewSettings);
 

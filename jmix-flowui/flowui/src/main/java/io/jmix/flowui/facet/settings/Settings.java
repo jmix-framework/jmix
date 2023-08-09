@@ -16,9 +16,9 @@
 
 package io.jmix.flowui.facet.settings;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
-public interface ComponentSettings {
+public interface Settings {
 
     @Nullable
     String getId();
@@ -26,7 +26,7 @@ public interface ComponentSettings {
     void setId(@Nullable String id);
 
     @SuppressWarnings("unchecked")
-    default <T extends ComponentSettings> T as() {
+    default <T extends Settings> T as() {
         return (T) this;
     }
 }

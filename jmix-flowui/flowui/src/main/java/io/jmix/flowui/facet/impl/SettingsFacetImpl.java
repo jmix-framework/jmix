@@ -25,7 +25,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.settings.ViewSettings;
 import io.jmix.flowui.facet.settings.ViewSettingsJson;
-import io.jmix.flowui.facet.settings.ViewSettingsManager;
+import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector;
 import io.jmix.flowui.view.View;
@@ -33,8 +33,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.util.*;
 import java.util.function.Consumer;
@@ -45,7 +45,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     private static final Logger log = LoggerFactory.getLogger(SettingsFacetImpl.class);
 
     protected ViewControllerReflectionInspector reflectionInspector;
-    protected ViewSettingsManager settingsManager;
+    protected ViewSettingsComponentManager settingsManager;
     protected UserSettingsCache userSettingsCache;
 
     protected Set<String> componentIds;
@@ -61,7 +61,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     public SettingsFacetImpl(ViewControllerReflectionInspector reflectionInspector,
                              UserSettingsCache userSettingsCache,
-                             @Autowired(required = false) ViewSettingsManager settingsManager) {
+                             @Autowired(required = false) ViewSettingsComponentManager settingsManager) {
         this.reflectionInspector = reflectionInspector;
         this.settingsManager = settingsManager;
         this.userSettingsCache = userSettingsCache;
@@ -202,12 +202,15 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     }
 
     protected void onViewBeforeShow(ComponentEvent<?> event) {
+        applyDataLoadingSettings();
     }
 
     protected void onViewReady(ComponentEvent<?> event) {
+        applySettings();
     }
 
     protected void onViewDetach(ComponentEvent<?> event) {
+        saveSettings();
     }
 
     protected void applyViewSettings(Collection<Component> components) {

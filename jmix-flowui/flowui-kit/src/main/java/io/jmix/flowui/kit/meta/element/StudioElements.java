@@ -591,4 +591,18 @@ public interface StudioElements {
             }
     )
     void itemsQuery();
+
+    @StudioElement(
+            name = "Prefix",
+            xmlElement = "prefix",
+            target = {"com.vaadin.flow.component.shared.HasPrefix"}
+    )
+    void prefix();
+
+    @StudioElement(
+            name = "Suffix",
+            xmlElement = "suffix",
+            target = {"com.vaadin.flow.component.shared.HasSuffix"}
+    )
+    void suffix();
 }

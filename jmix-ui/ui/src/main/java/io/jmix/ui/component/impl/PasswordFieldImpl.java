@@ -17,6 +17,7 @@
 package io.jmix.ui.component.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.CapsLockIndicator;
 import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.data.ConversionException;
@@ -28,6 +29,8 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
+
+import java.util.function.Consumer;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -154,6 +157,46 @@ public class PasswordFieldImpl extends AbstractField<JmixPasswordField, String, 
         } else {
             component.setCapsLockIndicator(null);
         }
+    }
+
+    @Override
+    protected void componentValueChanged(String prevComponentValue, String newComponentValue, boolean isUserOriginated) {
+        if (isUserOriginated) {
+            fireTextChangeEvent(newComponentValue);
+        }
+
+        super.componentValueChanged(prevComponentValue, newComponentValue, isUserOriginated);
+    }
+
+    protected void fireTextChangeEvent(String newComponentValue) {
+        // call it before value change due to compatibility with the previous versions
+        TextChangeEvent event = new TextChangeEvent(this, newComponentValue, component.getCursorPosition());
+        publish(TextChangeEvent.class, event);
+    }
+
+    @Override
+    public void setTextChangeTimeout(int timeout) {
+        component.setValueChangeTimeout(timeout);
+    }
+
+    @Override
+    public Subscription addTextChangeListener(Consumer<TextChangeEvent> listener) {
+        return getEventHub().subscribe(TextChangeEvent.class, listener);
+    }
+
+    @Override
+    public int getTextChangeTimeout() {
+        return component.getValueChangeTimeout();
+    }
+
+    @Override
+    public TextChangeEventMode getTextChangeEventMode() {
+        return WrapperUtils.toTextChangeEventMode(component.getValueChangeMode());
+    }
+
+    @Override
+    public void setTextChangeEventMode(TextChangeEventMode mode) {
+        component.setValueChangeMode(WrapperUtils.toVaadinValueChangeEventMode(mode));
     }
 
     @Nullable

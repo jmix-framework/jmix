@@ -51,6 +51,7 @@ public interface PasswordField
         extends TextInputField<String>,
         TextInputField.MaxLengthLimited,
         HasInputPrompt,
+        TextInputField.TextChangeNotifier,
         TextInputField.HtmlNameSupported {
 
     String NAME = "passwordField";

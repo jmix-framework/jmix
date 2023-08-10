@@ -41,6 +41,7 @@ public class PasswordFieldLoader extends AbstractTextFieldLoader<PasswordField> 
 
         loadAutoComplete(resultComponent, element);
         loadCapsLockIndicator(resultComponent, element);
+        loadTextChangeEventProperties(resultComponent, element);
         loadHtmlName(resultComponent, element);
     }
 

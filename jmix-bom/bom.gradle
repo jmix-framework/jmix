@@ -335,8 +335,6 @@ dependencies {
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
 
-        api 'net.sourceforge.htmlunit:htmlunit:2.70.0'
-
         api 'org.yaml:snakeyaml:1.33'
 
         api 'org.webjars:ace-builds:1.1.9.jmix.1'

@@ -59,6 +59,10 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     protected ViewEventListener readyListener;
     protected ViewEventListener detachListener;
 
+    protected Consumer<SettingsContext> applySettingsDelegate;
+    protected Consumer<SettingsContext> applyDataLoadingSettingsDelegate;
+    protected Consumer<SettingsContext> saveSettingsDelegate;
+
     public SettingsFacetImpl(ViewControllerReflectionInspector reflectionInspector,
                              UserSettingsCache userSettingsCache,
                              @Autowired(required = false) ViewSettingsComponentManager settingsManager) {
@@ -75,6 +79,11 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     @Override
     public void setAuto(boolean auto) {
         this.auto = auto;
+    }
+
+    @Override
+    public ViewSettings getSettings() {
+        return viewSettings;
     }
 
     @Override
@@ -152,6 +161,39 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
         return components;
     }
 
+    @Nullable
+    @Override
+    public Consumer<SettingsContext> getApplySettingsDelegate() {
+        return applySettingsDelegate;
+    }
+
+    @Override
+    public void setApplySettingsDelegate(@Nullable Consumer<SettingsContext> delegate) {
+        this.applySettingsDelegate = delegate;
+    }
+
+    @Nullable
+    @Override
+    public Consumer<SettingsContext> getApplyDataLoadingSettingsDelegate() {
+        return applyDataLoadingSettingsDelegate;
+    }
+
+    @Override
+    public void setApplyDataLoadingSettingsDelegate(@Nullable Consumer<SettingsContext> delegate) {
+        this.applyDataLoadingSettingsDelegate = delegate;
+    }
+
+    @Nullable
+    @Override
+    public Consumer<SettingsContext> getSaveSettingsDelegate() {
+        return saveSettingsDelegate;
+    }
+
+    @Override
+    public void setSaveSettingsDelegate(@Nullable Consumer<SettingsContext> delegate) {
+        this.saveSettingsDelegate = delegate;
+    }
+
     @Override
     public void setOwner(@Nullable View<?> owner) {
         super.setOwner(owner);
@@ -163,6 +205,11 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
             initViewSettings(viewSettings);
 
             subscribeViewLifecycle();
+
+            if (!isSettingsEnabled()) {
+                log.warn(SettingsFacet.class.getSimpleName() + " does not work for '{}' due to starter "
+                        + "that provides the ability to work with settings is not added", owner.getId().orElse(null));
+            }
         }
     }
 
@@ -195,6 +242,8 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     protected void subscribeViewLifecycle() {
         checkAttachedToView();
+        // Used only to hide inspection, cannot be null
+        Objects.requireNonNull(getOwner());
 
         beforeShowListener = new ViewEventListener(getOwner(), View.BeforeShowEvent.class, this::onViewBeforeShow);
         readyListener = new ViewEventListener(getOwner(), View.ReadyEvent.class, this::onViewReady);
@@ -202,15 +251,33 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     }
 
     protected void onViewBeforeShow(ComponentEvent<?> event) {
-        applyDataLoadingSettings();
+        checkAttachedToView();
+
+        if (applyDataLoadingSettingsDelegate != null) {
+            applyDataLoadingSettingsDelegate.accept(createSettingsContext());
+        } else {
+            applyDataLoadingSettings();
+        }
     }
 
     protected void onViewReady(ComponentEvent<?> event) {
-        applySettings();
+        checkAttachedToView();
+
+        if (applySettingsDelegate != null) {
+            applySettingsDelegate.accept(createSettingsContext());
+        } else {
+            applySettings();
+        }
     }
 
     protected void onViewDetach(ComponentEvent<?> event) {
-        saveSettings();
+        checkAttachedToView();
+
+        if (saveSettingsDelegate != null) {
+            saveSettingsDelegate.accept(createSettingsContext());
+        } else {
+            saveSettings();
+        }
     }
 
     protected void applyViewSettings(Collection<Component> components) {
@@ -240,6 +307,11 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     protected boolean isSettingsEnabled() {
         return settingsManager != null;
+    }
+
+    protected SettingsContext createSettingsContext() {
+        // getOwner cannot be null
+        return new SettingsContext(Objects.requireNonNull(getOwner()), getManagedComponents(), viewSettings);
     }
 
     protected class ViewEventListener {

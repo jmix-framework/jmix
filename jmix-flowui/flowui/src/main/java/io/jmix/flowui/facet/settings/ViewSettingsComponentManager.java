@@ -17,14 +17,47 @@
 package io.jmix.flowui.facet.settings;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.flowui.facet.settings.component.binder.DataGridSettingsBinder;
+import io.jmix.flowui.view.View;
 
 import java.util.Collection;
 
+/**
+ * Saves and restores settings for components.
+ */
 public interface ViewSettingsComponentManager {
 
+    /**
+     * Applies settings from {@link ViewSettings} to provided components.
+     * <p>
+     * Note, component should have and id and {@link ComponentSettingsBinder}. Otherwise, it will be skipped
+     * while applying settings. See {@link DataGridSettingsBinder} as an example.
+     *
+     * @param components   components to apply settings
+     * @param viewSettings {@link View} settings
+     */
     void applySettings(Collection<Component> components, ViewSettings viewSettings);
 
+    /**
+     * Applies data loading settings from {@link ViewSettings} to provided components.
+     * <p>
+     * Note, component should have and id and {@link ComponentSettingsBinder}. Otherwise, it will be skipped
+     * while applying settings. See {@link DataGridSettingsBinder} as an example.
+     *
+     * @param components   components to apply settings
+     * @param viewSettings {@link View} settings
+     */
     void applyDataLoadingSettings(Collection<Component> components, ViewSettings viewSettings);
 
+    /**
+     * Persists settings if they are changed or {@link ViewSettings#isModified()} returns {@code true}.
+     * <p>
+     * Note, component should have and id and {@link ComponentSettingsBinder}. Otherwise, it will be skipped
+     * while saving settings. See {@link DataGridSettingsBinder} as an example.
+     *
+     * @param components   components to save settings
+     * @param viewSettings screen settings
+     */
     void saveSettings(Collection<Component> components, ViewSettings viewSettings);
 }

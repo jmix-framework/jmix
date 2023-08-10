@@ -16,15 +16,35 @@
 
 package io.jmix.flowui.facet.settings;
 
+import io.jmix.flowui.facet.settings.component.DataGridSettings;
 import org.springframework.lang.Nullable;
 
+/**
+ * Base interface for POJO classes that represents component settings.
+ * <p>
+ * See {@link DataGridSettings} as an example.
+ */
 public interface Settings {
 
+    /**
+     * @return id of settings or {@code null} if not set
+     */
     @Nullable
     String getId();
 
+    /**
+     * Sets an id of settings.
+     *
+     * @param id id to set
+     */
     void setId(@Nullable String id);
 
+    /**
+     * The convenient method for casting current object to specific settings class.
+     *
+     * @param <T> type of settings
+     * @return this object that is cast to specific settings class
+     */
     @SuppressWarnings("unchecked")
     default <T extends Settings> T as() {
         return (T) this;

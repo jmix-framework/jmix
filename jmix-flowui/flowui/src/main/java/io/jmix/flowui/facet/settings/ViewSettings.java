@@ -17,12 +17,20 @@
 package io.jmix.flowui.facet.settings;
 
 import io.jmix.flowui.facet.settings.component.JmixDetailsSettings;
+import io.jmix.flowui.view.View;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
+/**
+ * Base interface for containing component settings from {@link View}. It provides API for
+ * putting, getting, removing settings.
+ */
 public interface ViewSettings {
 
+    /**
+     * @return a {@link View} id to which settings are corresponded
+     */
     String getViewId();
 
     /**
@@ -164,7 +172,15 @@ public interface ViewSettings {
      */
     <T extends Settings> T getSettingsOrCreate(String id, Class<T> settingsClass);
 
+    /**
+     * Initializes object from serialized settings.
+     *
+     * @param rawSettings serialized settings
+     */
     void initialize(@Nullable String rawSettings);
 
+    /**
+     * @return serialized settings
+     */
     String serialize();
 }

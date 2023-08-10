@@ -29,8 +29,10 @@ import io.jmix.flowui.facet.settings.component.DataGridSettings;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.HasLoader;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.annotation.Order;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,13 +52,37 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
         return DataGridSettings.class;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void applySettings(DataGrid<?> component, DataGridSettings settings) {
         if (isEmpty(settings.getColumns())) {
             return;
         }
 
-        // todo rp set columns order and consider hidden columns by security
+        List<? extends Grid.Column<?>> componentColumns = component.getColumns();
+
+        List<String> componentColumnKeys = componentColumns.stream().map(Grid.Column::getKey).toList();
+        List<String> settingsColumnKeys = settings.getColumns().stream().map(DataGridSettings.Column::getKey).toList();
+
+        // Checks only size of collections and same elements. It does not consider the order in collections.
+        // So settings won't be applied if DataGrid contains columns that are missed in settings.
+        if (CollectionUtils.isEqualCollection(componentColumnKeys, settingsColumnKeys)) {
+            List<Grid.Column<?>> newColumnsOrder = new ArrayList<>(componentColumnKeys.size());
+
+            for (DataGridSettings.Column sColumn : settings.getColumns()) {
+                Grid.Column<?> column = component.getColumnByKey(sColumn.getKey());
+                Objects.requireNonNull(column);
+
+                if (sColumn.getWidth() != null) {
+                    column.setWidth(sColumn.getWidth());
+                }
+                if (sColumn.isVisible() != null) {
+                    column.setVisible(sColumn.isVisible());
+                }
+                newColumnsOrder.add(column);
+            }
+            component.setColumnOrder((List) newColumnsOrder);
+        }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -94,7 +120,7 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
             setSortOrderToSettings(sortOrder, settings);
             changed = true;
         }
-        List<? extends Grid.Column<?>> componentColumns = component.getAllColumns();
+        List<? extends Grid.Column<?>> componentColumns = component.getVisibleColumns();
         if (isColumnSettingsChanged(componentColumns, settings.getColumns())) {
             setColumnsToSettings(componentColumns, settings);
             changed = true;
@@ -109,7 +135,7 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
         settings.setId(component.getId().orElse(null));
 
         setSortOrderToSettings(component.getSortOrder(), settings);
-        setColumnsToSettings(component.getAllColumns(), settings);
+        setColumnsToSettings(component.getVisibleColumns(), settings);
 
         return settings;
     }
@@ -185,6 +211,7 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
             Grid.Column<?> column = componentColumns.get(i);
             DataGridSettings.Column sColumn = settingsColumns.get(i);
 
+            // Check columns order
             if (!Objects.equals(column.getKey(), sColumn.getKey())) {
                 return true;
             }

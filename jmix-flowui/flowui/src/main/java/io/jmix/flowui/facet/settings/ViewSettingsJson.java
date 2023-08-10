@@ -18,11 +18,17 @@ package io.jmix.flowui.facet.settings;
 
 import com.google.common.base.Strings;
 import com.google.gson.*;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.view.View;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
+/**
+ * {@link View} settings that uses JSON structure.
+ */
+@Internal
 public class ViewSettingsJson extends AbstractViewSettings {
 
     protected JsonArray root;

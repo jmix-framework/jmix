@@ -3374,6 +3374,7 @@
 
                 <xs:attribute name="dataContainer" type="xs:string"/>
                 <xs:attribute name="labelsPosition" type="formLabelsPosition"/>
+                <xs:attribute name="columns" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>

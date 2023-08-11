@@ -52,7 +52,7 @@ public class DataGridSettings implements ComponentSettings {
         return sortColumnId;
     }
 
-    public void setSortColumnId(String sortColumnId) {
+    public void setSortColumnId(@Nullable String sortColumnId) {
         this.sortColumnId = sortColumnId;
     }
 
@@ -61,7 +61,7 @@ public class DataGridSettings implements ComponentSettings {
         return sortDirection;
     }
 
-    public void setSortDirection(DataGrid.SortDirection sortDirection) {
+    public void setSortDirection(@Nullable DataGrid.SortDirection sortDirection) {
         this.sortDirection = sortDirection;
     }
 

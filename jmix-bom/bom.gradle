@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.1.0")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.1.2")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -261,6 +261,8 @@ dependencies {
 
         api 'com.icegreen:greenmail:2.0.0'
 
+        api 'com.ibm.icu:icu4j:72.1'
+
         def geoToolsVersion = '24.6'
         api "org.geotools:gt-main:$geoToolsVersion"
         api "org.geotools:gt-geojson:$geoToolsVersion"
@@ -363,6 +365,8 @@ dependencies {
         api 'org.jetbrains:annotations:22.0.0'
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
+
+        api 'xerces:xercesImpl:2.12.2'
 
         api('com.hazelcast:hazelcast') {
             version {

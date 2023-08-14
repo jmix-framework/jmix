@@ -37,15 +37,6 @@
             </suffix>
         </button>
 
-        <drawerToggle id="drawerToggle">
-            <prefix>
-                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
-            </prefix>
-            <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
-            </suffix>
-        </drawerToggle>
-
         <emailField id="emailField">
             <prefix>
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>

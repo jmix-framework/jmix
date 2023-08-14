@@ -46,8 +46,6 @@ public class PrefixSuffixView extends StandardView {
     @ViewComponent
     public JmixButton button;
     @ViewComponent
-    public DrawerToggle drawerToggle;
-    @ViewComponent
     public JmixEmailField emailField;
     @ViewComponent
     public EntityPicker<?> entityPicker;

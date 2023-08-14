@@ -41,7 +41,7 @@ class PrefixSuffixXmlLoadTest extends FlowuiTestSpecification {
         checkPrefixAndSuffix(prefixSuffixView."${hasPrefixAndSuffixComponent}" as Component)
 
         where:
-        hasPrefixAndSuffixComponent << ["bigDecimalField", "button", "drawerToggle", "emailField", "entityPicker",
+        hasPrefixAndSuffixComponent << ["bigDecimalField", "button", "emailField", "entityPicker",
                                         "integerField", "multiValuePicker", "numberField", "passwordField", "textArea",
                                         "textField", "valuePicker", "tabSheet"]
     }

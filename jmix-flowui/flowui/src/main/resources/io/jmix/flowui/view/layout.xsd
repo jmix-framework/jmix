@@ -2531,9 +2531,6 @@
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-
-                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
-                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:choice>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>

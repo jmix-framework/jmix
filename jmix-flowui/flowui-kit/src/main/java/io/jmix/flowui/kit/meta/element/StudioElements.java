@@ -595,14 +595,16 @@ public interface StudioElements {
     @StudioElement(
             name = "Prefix",
             xmlElement = "prefix",
-            target = {"com.vaadin.flow.component.shared.HasPrefix"}
+            target = {"com.vaadin.flow.component.shared.HasPrefix"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"}
     )
     void prefix();
 
     @StudioElement(
             name = "Suffix",
             xmlElement = "suffix",
-            target = {"com.vaadin.flow.component.shared.HasSuffix"}
+            target = {"com.vaadin.flow.component.shared.HasSuffix"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"}
     )
     void suffix();
 }

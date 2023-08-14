@@ -2475,6 +2475,16 @@
         </xs:simpleContent>
     </xs:complexType>
 
+    <xs:complexType name="gridAggregationType">
+        <xs:choice minOccurs="0">
+            <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+        </xs:choice>
+
+        <xs:attribute name="type" type="aggregationType"/>
+        <xs:attribute name="strategyClass" type="xs:string"/>
+        <xs:attribute name="cellTitle" type="resourceString"/>
+    </xs:complexType>
+
     <!-- Components -->
 
     <!-- ListMenu -->
@@ -2595,19 +2605,8 @@
     <!-- Grid.Column-->
     <xs:complexType name="dataGridColumnComponent">
         <xs:sequence minOccurs="0">
-            <xs:element name="aggregation" minOccurs="0">
-                <xs:complexType>
-                    <xs:choice minOccurs="0">
-                        <xs:element name="formatter" minOccurs="0" type="formatterType"/>
-                    </xs:choice>
-
-                    <xs:attribute name="type" type="aggregationType"/>
-                    <xs:attribute name="strategyClass" type="xs:string"/>
-                    <xs:attribute name="cellTitle" type="resourceString"/>
-                </xs:complexType>
-            </xs:element>
-
-            <xs:group ref="renderers" maxOccurs="0"/>
+            <xs:element name="aggregation" type="gridAggregationType"/>
+            <xs:group ref="renderers"/>
         </xs:sequence>
 
         <xs:attribute name="key" type="xs:string"/>

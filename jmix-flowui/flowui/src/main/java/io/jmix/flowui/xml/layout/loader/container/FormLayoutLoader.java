@@ -111,7 +111,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
     protected void loadResponsiveSteps(FormLayout resultComponent, Element element) {
         Element responsiveSteps = element.element("responsiveSteps");
         if (responsiveSteps == null) {
-            resultComponent.setResponsiveSteps(loadDefaultResponsiveSteps(element));
+            resultComponent.setResponsiveSteps(getDefaultResponsiveSteps(element));
             return;
         }
 
@@ -129,7 +129,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         resultComponent.setResponsiveSteps(pendingSetResponsiveSteps);
     }
 
-    protected List<ResponsiveStep> loadDefaultResponsiveSteps(Element element) {
+    protected List<ResponsiveStep> getDefaultResponsiveSteps(Element element) {
         LabelsPosition labelsPosition = loadEnum(element, LabelsPosition.class, "labelsPosition")
                 .orElse(LabelsPosition.TOP);
 

@@ -36,7 +36,6 @@ import org.dom4j.Element;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -112,7 +111,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
     protected void loadResponsiveSteps(FormLayout resultComponent, Element element) {
         Element responsiveSteps = element.element("responsiveSteps");
         if (responsiveSteps == null) {
-            resultComponent.setResponsiveSteps(Collections.singletonList(loadDefaultResponsiveStep(element)));
+            resultComponent.setResponsiveSteps(loadDefaultResponsiveSteps(element));
             return;
         }
 
@@ -130,13 +129,14 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         resultComponent.setResponsiveSteps(pendingSetResponsiveSteps);
     }
 
-    protected ResponsiveStep loadDefaultResponsiveStep(Element element) {
-        Integer columns = loadInteger(element, "columns")
-                .orElse(2);
+    protected List<ResponsiveStep> loadDefaultResponsiveSteps(Element element) {
         LabelsPosition labelsPosition = loadEnum(element, LabelsPosition.class, "labelsPosition")
                 .orElse(LabelsPosition.TOP);
 
-        return new ResponsiveStep("0", columns, labelsPosition);
+        return List.of(
+                new ResponsiveStep("0", 1, labelsPosition),
+                new ResponsiveStep("40em", 2, labelsPosition)
+        );
     }
 
     protected ResponsiveStep loadResponsiveStep(Element element) {

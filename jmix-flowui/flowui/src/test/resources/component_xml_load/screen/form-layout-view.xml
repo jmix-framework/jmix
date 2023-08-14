@@ -22,8 +22,7 @@
             <bigDecimalField/>
         </formLayout>
 
-        <formLayout id="formLayoutCustomColumns"
-                    columns="1"
+        <formLayout id="formLayoutCustomLabelPosition"
                     labelsPosition="ASIDE">
             <textField/>
             <bigDecimalField/>

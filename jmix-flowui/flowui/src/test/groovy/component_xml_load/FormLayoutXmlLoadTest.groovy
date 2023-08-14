@@ -104,16 +104,18 @@ class FormLayoutXmlLoadTest extends FlowuiTestSpecification {
         when: "FormLayout with default steps"
         def defaultSteps = formLayoutView.defaultFormLayout.responsiveSteps
 
-        then: "Only one step with default values must be defined"
-        defaultSteps.size() == 1
-        defaultSteps.first() == new FormLayout.ResponsiveStep("0", 2, FormLayout.ResponsiveStep.LabelsPosition.TOP)
+        then: "Only two steps with default values must be defined"
+        defaultSteps.size() == 2
+        defaultSteps.containsAll([new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
+                                  new FormLayout.ResponsiveStep("40em", 2, FormLayout.ResponsiveStep.LabelsPosition.TOP)])
 
-        when: "FormLayout with custom columns"
-        def customColumnsStep = formLayoutView.formLayoutCustomColumns.responsiveSteps
+        when: "FormLayout with custom label position"
+        def customLabelPosition = formLayoutView.formLayoutCustomColumns.responsiveSteps
 
-        then: "Only one step with custom values must be defined"
-        customColumnsStep.size() == 1
-        defaultSteps.first() == new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE)
+        then: "Only two steps with custom label position must be defined"
+        customLabelPosition.size() == 2
+        customLabelPosition.containsAll([new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE),
+                                  new FormLayout.ResponsiveStep("40em", 2, FormLayout.ResponsiveStep.LabelsPosition.ASIDE)])
 
         when: "FormLayout with defined responsive steps"
         def steps = formLayoutView.formLayoutWithResponsiveSteps.responsiveSteps

@@ -54,7 +54,8 @@ public interface StudioListDataComponentActions {
                     @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
                     @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING),
                     @StudioPropertiesItem(xmlAttribute = "openMode", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.view.OpenMode", options = {"DIALOG", "NAVIGATION"}),
+                            classFqn = "io.jmix.flowui.view.OpenMode", setParameterFqn = "io.jmix.flowui.view.OpenMode",
+                            options = {"DIALOG", "NAVIGATION"}),
             }
     )
     void createAction();
@@ -89,9 +90,12 @@ public interface StudioListDataComponentActions {
                     @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
                     @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING),
                     @StudioPropertiesItem(xmlAttribute = "openMode", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.view.OpenMode", options = {"DIALOG", "NAVIGATION"}),
+                            classFqn = "io.jmix.flowui.view.OpenMode", setParameterFqn = "io.jmix.flowui.view.OpenMode",
+                            options = {"DIALOG", "NAVIGATION"}),
                     @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.core.security.EntityOp", defaultValue = "UPDATE",
+                            classFqn = "io.jmix.core.security.EntityOp",
+                            setParameterFqn = "io.jmix.core.security.EntityOp",
+                            defaultValue = "UPDATE",
                             options = {"READ", "CREATE", "UPDATE", "DELETE"}),
             }
     )
@@ -124,7 +128,9 @@ public interface StudioListDataComponentActions {
                     @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.core.security.EntityOp", defaultValue = "DELETE",
+                            classFqn = "io.jmix.core.security.EntityOp",
+                            setParameterFqn = "io.jmix.core.security.EntityOp",
+                            defaultValue = "DELETE",
                             options = {"READ", "CREATE", "UPDATE", "DELETE"}),
                     @StudioPropertiesItem(xmlAttribute = "confirmation", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -194,6 +200,7 @@ public interface StudioListDataComponentActions {
                             defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.core.security.EntityOp",
+                            setParameterFqn = "io.jmix.core.security.EntityOp",
                             options = {"READ", "CREATE", "UPDATE", "DELETE"}),
                     @StudioPropertiesItem(xmlAttribute = "confirmation", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -233,9 +240,12 @@ public interface StudioListDataComponentActions {
                     @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
                     @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING),
                     @StudioPropertiesItem(xmlAttribute = "openMode", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.view.OpenMode", options = {"DIALOG", "NAVIGATION"}),
+                            classFqn = "io.jmix.flowui.view.OpenMode", setParameterFqn = "io.jmix.flowui.view.OpenMode",
+                            options = {"DIALOG", "NAVIGATION"}),
                     @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.core.security.EntityOp", defaultValue = "READ",
+                            classFqn = "io.jmix.core.security.EntityOp",
+                            setParameterFqn = "io.jmix.core.security.EntityOp",
+                            defaultValue = "READ",
                             options = {"READ", "CREATE", "UPDATE", "DELETE"}),
             }
     )
@@ -296,6 +306,7 @@ public interface StudioListDataComponentActions {
                             defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.core.security.EntityOp",
+                            setParameterFqn = "io.jmix.core.security.EntityOp",
                             options = {"READ", "CREATE", "UPDATE", "DELETE"}),
             }
     )

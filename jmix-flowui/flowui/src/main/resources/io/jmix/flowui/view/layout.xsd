@@ -2822,11 +2822,11 @@
     <xs:complexType name="comboBoxComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
-                <xs:sequence>
-                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
-                    <xs:element name="itemsQuery" minOccurs="0" type="comboBoxItemsQueryType"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="itemsQuery" type="comboBoxItemsQueryType"/>
 
-                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="prefix" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="pattern" type="xs:string"/>
@@ -2885,9 +2885,9 @@
     <xs:complexType name="multiSelectComboBoxPickerComponent">
         <xs:complexContent>
             <xs:extension base="multiSelectComboBoxComponent">
-                <xs:sequence>
+                <xs:sequence minOccurs="0">
                     <xs:element name="itemsQuery" type="multiSelectComboBoxItemsQueryType"/>
-                    <xs:element name="actions" minOccurs="0">
+                    <xs:element name="actions">
                         <xs:complexType>
                             <xs:sequence>
                                 <xs:choice maxOccurs="unbounded">
@@ -3333,7 +3333,7 @@
             <xs:extension base="baseComponent">
                 <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="prefix" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>

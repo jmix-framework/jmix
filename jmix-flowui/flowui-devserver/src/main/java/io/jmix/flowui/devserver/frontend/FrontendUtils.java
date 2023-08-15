@@ -1329,7 +1329,7 @@ public class FrontendUtils {
                 configuration
                         .getProjectFolder()
                         .getAbsolutePath()
-                        .replace(VIEW_DESIGNER_FOLDER, "")
+                        .replace(".jmix" + File.separator + "screen-designer", "")
         );
     }
 }

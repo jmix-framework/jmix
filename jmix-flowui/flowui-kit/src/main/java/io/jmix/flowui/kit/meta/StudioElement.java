@@ -46,4 +46,12 @@ public @interface StudioElement {
     boolean unlimitedCount() default true;
 
     StudioProperty[] properties() default {};
+
+    /**
+     * Array with the components qualified names that
+     * can be contained inside the current component.
+     */
+    String[] possibleChildren() default {};
+
+    int maxCountOfChildren() default -1;
 }

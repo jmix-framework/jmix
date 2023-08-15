@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
@@ -94,8 +95,8 @@ public class AuthServerAutoConfiguration {
                     .exceptionHandling((exceptions) -> exceptions
                             .authenticationEntryPoint(
                                     new LoginUrlAuthenticationEntryPoint(authServerProperties.getLoginPageUrl()))
-                    );
-
+                    )
+                    .cors(Customizer.withDefaults());
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
@@ -151,7 +152,8 @@ public class AuthServerAutoConfiguration {
             http
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .opaqueToken(opaqueToken -> opaqueToken
-                                    .introspector(opaqueTokenIntrospector)));
+                                    .introspector(opaqueTokenIntrospector)))
+                    .cors(Customizer.withDefaults());
             AsResourceServerEventSecurityFilter asResourceServerEventSecurityFilter = new AsResourceServerEventSecurityFilter(applicationEventPublisher);
             http.addFilterBefore(asResourceServerEventSecurityFilter, AuthorizationFilter.class);
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);

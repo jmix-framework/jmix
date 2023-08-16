@@ -18,7 +18,7 @@ package io.jmix.uidata.app.filter.configuration;
 
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.Form;
@@ -41,7 +41,7 @@ import static io.jmix.ui.component.filter.FilterUtils.generateConfigurationId;
 public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
 
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
     @Autowired
     protected UiComponentProperties componentProperties;
     @Autowired
@@ -168,7 +168,7 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
             if (availableForAllField.isChecked()) {
                 editedConfigurationModel.setUsername(null);
             } else {
-                editedConfigurationModel.setUsername(currentAuthentication.getUser().getUsername());
+                editedConfigurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
             }
         }
     }

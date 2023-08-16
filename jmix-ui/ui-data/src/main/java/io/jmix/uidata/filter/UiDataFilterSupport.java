@@ -22,8 +22,8 @@ import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.event.UserRemovedEvent;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.action.filter.FilterAction;
 import io.jmix.ui.action.filter.FilterClearValuesAction;
@@ -69,7 +69,7 @@ public class UiDataFilterSupport extends FilterSupport {
     @Autowired
     protected FilterConfigurationConverter filterConfigurationConverter;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
     @Autowired
     protected DataComponents dataComponents;
     @Autowired
@@ -124,7 +124,7 @@ public class UiDataFilterSupport extends FilterSupport {
     @Nullable
     public FilterConfiguration loadFilterConfigurationModel(Filter filter, String configurationId) {
         String componentId = generateFilterPath(filter);
-        String username = currentAuthentication.getUser().getUsername();
+        String username = currentUserSubstitution.getEffectiveUser().getUsername();
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
                         .add(PropertyCondition.equal("configurationId", configurationId))
@@ -175,7 +175,8 @@ public class UiDataFilterSupport extends FilterSupport {
 
     protected List<FilterConfiguration> loadFilterConfigurationModels(Filter filter) {
         String filterComponentId = generateFilterPath(filter);
-        String username = currentAuthentication.getUser().getUsername();
+        String username = currentUserSubstitution.getEffectiveUser().getUsername();
+
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
                         .add(PropertyCondition.equal("componentId", filterComponentId))
@@ -195,7 +196,7 @@ public class UiDataFilterSupport extends FilterSupport {
 
         if (configurationModel == null) {
             configurationModel = metadata.create(FilterConfiguration.class);
-            configurationModel.setUsername(currentAuthentication.getUser().getUsername());
+            configurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
         }
 
         return configurationModel;
@@ -281,7 +282,7 @@ public class UiDataFilterSupport extends FilterSupport {
         FilterConfiguration configurationModel = metadata.create(FilterConfiguration.class);
         configurationModel.setConfigurationId(configuration.getId());
         configurationModel.setName(configuration.getName());
-        configurationModel.setUsername(currentAuthentication.getUser().getUsername());
+        configurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
         return configurationModel;
     }
 

@@ -35,10 +35,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanProperty;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -67,6 +64,7 @@ import org.dom4j.datatype.DatatypeElementFactory;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -77,6 +75,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
     public static final String COLUMN_FILTER_POPUP_CLASSNAME = "column-filter-popup";
+    public static final String COLUMN_FILTER_DIALOG_CLASSNAME = "column-filter-dialog";
+    public static final String COLUMN_FILTER_FOOTER_SMALL_CLASSNAME = "column-filter-footer-small";
     public static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
     public static final String COLUMN_FILTER_BUTTON_ROLE = "column-filter-button";
     public static final String COLUMN_FILTER_BUTTON_ACTIVATED_ATTRIBUTE_NAME = "activated";
@@ -86,6 +86,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
     protected FetchPlanRepositoryImpl fetchPlanRepository;
     protected UiComponents uiComponents;
+    protected Messages messages;
     protected PropertyFilterSupport propertyFilterSupport;
 
     @Override
@@ -412,6 +413,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         propertyFilter.setDataLoader(dataLoader);
         propertyFilter.setProperty(property);
+        propertyFilter.setAutoApply(false);
 
         propertyFilter.setOperation(getPropertyFilterSupport().getDefaultOperation(metaClass, property));
         propertyFilter.setOperationEditable(true);
@@ -430,7 +432,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         // Workaround (waiting for overlay component),
         // when device is small - standard dialog is used
-        Dialog overlay = createOverlay(propertyFilter);
+        Dialog overlay = createOverlay(propertyFilter, filterButton);
 
         filterButton.addClickListener(__ -> {
             overlay.open();
@@ -440,21 +442,85 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             }
         });
 
-        propertyFilter.addValueChangeListener(event ->
-                filterButton.getElement().setAttribute(COLUMN_FILTER_BUTTON_ACTIVATED_ATTRIBUTE_NAME,
-                        event.getValue() != null)
-        );
-
         return filterButton;
     }
 
-    protected Dialog createOverlay(PropertyFilter<?> propertyFilter) {
+    @SuppressWarnings({"rawtypes"})
+    protected Dialog createOverlay(PropertyFilter propertyFilter, JmixButton filterButton) {
         Dialog dialog = new Dialog(propertyFilter);
+        dialog.addClassName(COLUMN_FILTER_DIALOG_CLASSNAME);
+
         if (!isSmallDevice()) {
             dialog.addClassName(COLUMN_FILTER_POPUP_CLASSNAME);
+        } else {
+            dialog.addClassName(COLUMN_FILTER_FOOTER_SMALL_CLASSNAME);
         }
 
+        AtomicReference appliedValue = new AtomicReference<>();
+
+        dialog.getFooter().add(
+                createApplyButton(propertyFilter, dialog, appliedValue),
+                createCancelButton(propertyFilter, dialog, appliedValue)
+        );
+
+        dialog.addOpenedChangeListener(event -> {
+            if (event.isOpened()) {
+                propertyFilter.focus();
+            } else {
+                filterButton.getElement().setAttribute(COLUMN_FILTER_BUTTON_ACTIVATED_ATTRIBUTE_NAME,
+                        propertyFilter.getValue() != null);
+            }
+        });
+
+        dialog.addDialogCloseActionListener(__ -> doCancel(propertyFilter, dialog, appliedValue));
+
         return dialog;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    protected JmixButton createApplyButton(PropertyFilter propertyFilter, Dialog dialog, AtomicReference appliedValue) {
+        JmixButton applyButton = getUiComponents().create(JmixButton.class);
+        applyButton.setIcon(VaadinIcon.CHECK.create());
+        applyButton.setText(getMessages().getMessage("columnFilter.apply.text"));
+
+        applyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        applyButton.addClickListener(__ -> doApply(propertyFilter, dialog, appliedValue));
+
+        if (isSmallDevice()) {
+            applyButton.getStyle().set("flex-grow", "1");
+        }
+
+        return applyButton;
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected JmixButton createCancelButton(PropertyFilter propertyFilter, Dialog dialog, AtomicReference appliedValue) {
+        JmixButton cancelButton = getUiComponents().create(JmixButton.class);
+        cancelButton.setIcon(VaadinIcon.BAN.create());
+        cancelButton.setText(getMessages().getMessage("columnFilter.cancel.text"));
+
+        cancelButton.addClickListener(__ -> doCancel(propertyFilter, dialog, appliedValue));
+
+        if (isSmallDevice()) {
+            cancelButton.getStyle().set("flex-grow", "1");
+        }
+
+        return cancelButton;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void doApply(PropertyFilter propertyFilter, Dialog dialog, AtomicReference appliedValue) {
+        propertyFilter.getDataLoader().load();
+        appliedValue.set(propertyFilter.getValue());
+
+        dialog.close();
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void doCancel(PropertyFilter propertyFilter, Dialog dialog, AtomicReference appliedValue) {
+        propertyFilter.setValue(appliedValue.get());
+
+        dialog.close();
     }
 
     protected Component createHeaderComponent(String headerText, Component filterButton) {
@@ -462,6 +528,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.setClassName(LumoUtility.Gap.XSMALL);
+        layout.getStyle().set("padding", "2px");
 
         layout.add(new Span(headerText), filterButton);
         return layout;
@@ -661,6 +728,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             propertyFilterSupport = applicationContext.getBean(PropertyFilterSupport.class, context);
         }
         return propertyFilterSupport;
+    }
+
+    protected Messages getMessages() {
+        if (messages == null) {
+            messages = applicationContext.getBean(Messages.class);
+        }
+
+        return messages;
     }
 
     protected String getOverlayPositionExpression() {

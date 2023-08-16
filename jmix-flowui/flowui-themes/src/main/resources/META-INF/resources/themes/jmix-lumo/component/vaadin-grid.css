@@ -7,13 +7,19 @@ vaadin-dialog-overlay[class~='column-filter-popup']::part(backdrop) {
   background: unset;
 }
 
-vaadin-dialog-overlay[class~='column-filter-popup']::part(content) {
+vaadin-dialog-overlay[class~='column-filter-dialog']::part(content) {
   padding: var(--lumo-space-wide-m);
 }
 
 vaadin-dialog-overlay[class~='column-filter-popup']::part(overlay) {
   align-self: flex-start;
   position: absolute;
+}
+
+vaadin-dialog-overlay[class~='column-filter-footer-small']::slotted([slot='footer']) {
+  display: flex;
+  gap: var(--lumo-space-s);
+  width: 100%;
 }
 
 /* Styles for the column-filter button */

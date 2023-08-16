@@ -246,7 +246,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "manual", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "opened", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.shared.Tooltip.TooltipPosition",
+                            classFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition",
                             setParameterFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition",
                             options = {"TOP_START", "TOP", "TOP_END", "BOTTOM_START", "BOTTOM", "BOTTOM_END",
                                     "START_TOP", "START", "START_BOTTOM", "END_TOP", "END", "END_BOTTOM"})

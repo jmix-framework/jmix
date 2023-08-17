@@ -41,6 +41,7 @@ public interface StudioLayouts {
             icon = "io/jmix/flowui/kit/meta/icon/layout/details.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -80,6 +81,7 @@ public interface StudioLayouts {
                             defaultValue = "UNDEFINED",
                             options = {"UNDEFINED", "CONTENT_BOX", "BORDER_BOX"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -126,6 +128,7 @@ public interface StudioLayouts {
                             defaultValue = "UNDEFINED",
                             options = {"UNDEFINED", "CONTENT_BOX", "BORDER_BOX"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -168,6 +171,7 @@ public interface StudioLayouts {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
@@ -211,6 +215,7 @@ public interface StudioLayouts {
             icon = "io/jmix/flowui/kit/meta/icon/layout/scroller.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -237,6 +242,7 @@ public interface StudioLayouts {
             icon = "io/jmix/flowui/kit/meta/icon/layout/split.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -266,6 +272,7 @@ public interface StudioLayouts {
             icon = "io/jmix/flowui/kit/meta/icon/layout/accordion.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -288,6 +295,7 @@ public interface StudioLayouts {
             icon = "io/jmix/flowui/kit/meta/icon/layout/formLayout.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -316,6 +324,7 @@ public interface StudioLayouts {
             icon = "io/jmix/flowui/kit/meta/icon/component/tabSheet.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),

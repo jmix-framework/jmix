@@ -68,6 +68,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "dataGrid"
             allRowsVisible
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             columnReorderingAllowed
             detailsVisibleOnClick
             dropMode == GridDropMode.BETWEEN
@@ -131,6 +132,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "treeDataGrid"
             allRowsVisible
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             columnReorderingAllowed
             detailsVisibleOnClick
             dropMode == GridDropMode.BETWEEN

@@ -45,6 +45,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(htmlContainer) {
             id.get() == "${container}Id"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             maxHeight == "55px"
@@ -132,6 +133,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(htmlComponent) {
             id.get() == "${component}Id"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             height == "50px"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -179,6 +181,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "inputId"
             ariaLabel.get() == "ariaLabelString"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             maxHeight == "55px"
@@ -205,6 +208,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(htmlContainer) {
             id.get() == "imageId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             maxHeight == "55px"

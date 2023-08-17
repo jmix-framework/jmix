@@ -66,6 +66,7 @@ class FormLayoutXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(formLayout) {
             id.get() == "formLayoutId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             maxHeight == "55px"

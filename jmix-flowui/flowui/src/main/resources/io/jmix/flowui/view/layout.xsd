@@ -2089,6 +2089,7 @@
         <xs:attributeGroup ref="hasId"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="colspan" type="xs:integer"/>
+        <xs:attribute name="css" type="xs:string"/>
 
         <!-- enable XSD extension here -->
         <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -3289,6 +3290,7 @@
         </xs:sequence>
 
         <xs:attribute name="themeNames" type="tabThemeNames"/>
+        <xs:attribute name="css" type="xs:string"/>
         <xs:attribute name="flexGrow" type="xs:double"/>
         <xs:attribute name="visible" type="xs:boolean"/>
 
@@ -4132,6 +4134,7 @@
                 <xs:attributeGroup ref="hasId"/>
                 <xs:attribute name="visible" type="xs:boolean"/>
                 <xs:attribute name="colspan" type="xs:integer"/>
+                <xs:attribute name="css" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

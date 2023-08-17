@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
 
-group 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-data'
+package test_support.view;
 
-dependencies {
-    api project(':flowui')
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.app.main.StandardMainView;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
-    api project(':data')
-
-    implementation 'com.google.code.gson:gson'
-
-    testImplementation project(':flowui-test-assist')
-    testImplementation project(':eclipselink')
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+@Route
+@ViewController
+@ViewDescriptor("test-main-view.xml")
+public class TestMainView extends StandardMainView {
 }
+

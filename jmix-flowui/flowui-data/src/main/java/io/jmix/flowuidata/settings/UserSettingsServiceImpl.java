@@ -119,24 +119,14 @@ public class UserSettingsServiceImpl implements UserSettingsService {
         Preconditions.checkNotNullArgument(fromUsername);
         Preconditions.checkNotNullArgument(toUsername);
 
-        // todo rp check security everywhere or do not check at all
-        /*MetaClass metaClass = metadata.getClass(UiSetting.class);
-
-        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
-        accessManager.applyRegisteredConstraints(entityContext);
-
-        if (!entityContext.isCreatePermitted()) {
-            throw new AccessDeniedException("entity", metaClass.getName());
-        }*/
-
         transaction.executeWithoutResult(status ->
-                entityManager.createQuery("delete from ui_Setting s where s.username = ?1")
+                entityManager.createQuery("delete from flowui_UiSetting s where s.username = ?1")
                         .setParameter(1, toUsername)
                         .executeUpdate());
 
         transaction.executeWithoutResult(status -> {
             List<UiSetting> fromUserSettings =
-                    entityManager.createQuery("select s from ui_Setting s where s.username = ?1", UiSetting.class)
+                    entityManager.createQuery("select s from flowui_UiSetting s where s.username = ?1", UiSetting.class)
                             .setParameter(1, fromUsername)
                             .getResultList();
 
@@ -155,27 +145,12 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     @Nullable
     protected UiSetting findUserSettings(String key) {
         List<UiSetting> result = entityManager.createQuery(
-                        "select s from ui_Setting s where s.username = ?1 and s.key =?2",
+                        "select s from flowui_UiSetting s where s.username = ?1 and s.key =?2",
                         UiSetting.class)
                 .setParameter(1, authentication.getUser().getUsername())
                 .setParameter(2, key)
                 .getResultList();
 
         return result.isEmpty() ? null : result.get(0);
-    }
-
-    @Transactional
-    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
-    void onUserRemove(UserRemovedEvent event) {
-        String username = event.getUsername();
-
-        List<UiSetting> settings = entityManager.createQuery(
-                        "select s from ui_Setting s where s.username = ?1", UiSetting.class)
-                .setParameter(1, username)
-                .getResultList();
-
-        for (UiSetting setting : settings) {
-            entityManager.remove(setting);
-        }
     }
 }

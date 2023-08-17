@@ -90,19 +90,21 @@ public class DataGridSettings implements Settings {
             this.key = key;
         }
 
+        @Nullable
         public String getWidth() {
             return width;
         }
 
-        public void setWidth(String width) {
+        public void setWidth(@Nullable String width) {
             this.width = width;
         }
 
+        @Nullable
         public Boolean isVisible() {
             return visible;
         }
 
-        public void setVisible(Boolean visible) {
+        public void setVisible(@Nullable Boolean visible) {
             this.visible = visible;
         }
     }

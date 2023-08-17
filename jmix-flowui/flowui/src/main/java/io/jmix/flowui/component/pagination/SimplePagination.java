@@ -35,12 +35,15 @@ import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.kit.component.pagination.JmixSimplePagination;
 import io.jmix.flowui.model.CollectionChangeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +51,8 @@ import java.util.function.Function;
 
 public class SimplePagination extends JmixSimplePagination implements PaginationComponent<SimplePagination>,
         ApplicationContextAware, InitializingBean {
+
+    private static final Logger log = LoggerFactory.getLogger(SimplePagination.class);
 
     protected enum State {
         FIRST_COMPLETE,     // "63 rows"
@@ -608,5 +613,27 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
         AfterRefreshEvent<SimplePagination> event = new AfterRefreshEvent<>(this);
 
         fireEvent(event);
+    }
+
+    @Nullable
+    protected Integer getItemsPerPageValue() {
+        return isItemsPerPageVisible() ? itemsPerPage.getItemsPerPageValue() : null;
+    }
+
+    protected void setItemsPerPageValue(@Nullable Integer value) {
+        if (!isItemsPerPageVisible()) {
+            return;
+        }
+
+        if (value != null && itemsPerPage.containsItem(value)) {
+            setSilentlyItemsPerPageValue(value);
+            loader.setMaxResults(value);
+        } else if (canSetUnlimitedValue(value)) {
+            setSilentlyItemsPerPageValue(null);
+            loader.setMaxResults(getEntityMaxFetchSize(loader.getEntityMetaClass()));
+        } else {
+            log.debug("Options for items-per-page dropdown list do not contain '{}' value."
+                    + " The value is not set.", value);
+        }
     }
 }

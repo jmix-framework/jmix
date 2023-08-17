@@ -13,21 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
 
-group 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-data'
+@NonNullApi
+package io.jmix.flowui.facet.settings.component.binder;
 
-dependencies {
-    api project(':flowui')
-
-    api project(':data')
-
-    implementation 'com.google.code.gson:gson'
-
-    testImplementation project(':flowui-test-assist')
-    testImplementation project(':eclipselink')
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
-}
+import org.springframework.lang.NonNullApi;

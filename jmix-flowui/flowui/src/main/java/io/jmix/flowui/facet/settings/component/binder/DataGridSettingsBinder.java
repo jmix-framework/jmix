@@ -31,6 +31,7 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.HasLoader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,8 +151,8 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
         return false;
     }
 
-    protected boolean isColumnSortOrderChanged(List<? extends GridSortOrder<?>> componentSortOrder,
-                                               List<DataGridSettings.SortOrder> settingsSortOrder) {
+    protected boolean isColumnSortOrderChanged(@Nullable List<? extends GridSortOrder<?>> componentSortOrder,
+                                               @Nullable List<DataGridSettings.SortOrder> settingsSortOrder) {
         if (isEmpty(componentSortOrder) && isEmpty(settingsSortOrder)) {
             return false;
         }
@@ -195,8 +196,8 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
         settings.setSortOrder(settingsSortOrder);
     }
 
-    protected boolean isColumnSettingsChanged(List<? extends Grid.Column<?>> componentColumns,
-                                              List<DataGridSettings.Column> settingsColumns) {
+    protected boolean isColumnSettingsChanged(@Nullable List<? extends Grid.Column<?>> componentColumns,
+                                              @Nullable List<DataGridSettings.Column> settingsColumns) {
         if (isEmpty(componentColumns) && isEmpty(settingsColumns)) {
             return false;
         }
@@ -225,7 +226,8 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
         return false;
     }
 
-    protected void setColumnsToSettings(List<? extends Grid.Column<?>> componentColumns, DataGridSettings settings) {
+    protected void setColumnsToSettings(@Nullable List<? extends Grid.Column<?>> componentColumns,
+                                        DataGridSettings settings) {
         if (isEmpty(componentColumns)) {
             settings.setColumns(null);
             return;

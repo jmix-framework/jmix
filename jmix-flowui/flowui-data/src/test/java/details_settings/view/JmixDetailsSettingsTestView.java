@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
 
-group 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-data'
+package details_settings.view;
 
-dependencies {
-    api project(':flowui')
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.details.JmixDetails;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.ViewComponent;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
+import test_support.view.TestMainView;
 
-    api project(':data')
-
-    implementation 'com.google.code.gson:gson'
-
-    testImplementation project(':flowui-test-assist')
-    testImplementation project(':eclipselink')
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+@Route(value = "JmixDetailsSettingsTestView", layout = TestMainView.class)
+@ViewController
+@ViewDescriptor("jmix-details-settings-test-view.xml")
+public class JmixDetailsSettingsTestView extends StandardView {
+    @ViewComponent
+    public JmixDetails details;
 }

@@ -64,7 +64,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     protected Consumer<SettingsContext> saveSettingsDelegate;
 
     public SettingsFacetImpl(ViewControllerReflectionInspector reflectionInspector,
-                             UserSettingsCache userSettingsCache,
+                             @Autowired(required = false) UserSettingsCache userSettingsCache,
                              @Autowired(required = false) ViewSettingsComponentManager settingsManager) {
         this.reflectionInspector = reflectionInspector;
         this.settingsManager = settingsManager;
@@ -143,11 +143,13 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     public Collection<Component> getManagedComponents() {
         checkAttachedToView();
 
-        Collection<Component> components = UiComponentUtils.getComponents(
-                Objects.requireNonNull(getOwner()).getContent());
+        Collection<Component> components = Collections.emptyList();
 
-        if (!auto && CollectionUtils.isNotEmpty(componentIds)) {
-            components = components.stream()
+        if (auto) {
+            components = UiComponentUtils.getComponents(Objects.requireNonNull(getOwner()).getContent());
+        } else if (CollectionUtils.isNotEmpty(componentIds)) {
+            components = UiComponentUtils.getComponents(Objects.requireNonNull(getOwner()).getContent())
+                    .stream()
                     .filter(c -> componentIds.contains(c.getId().orElse(null)))
                     .collect(Collectors.toList());
         }
@@ -221,8 +223,10 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     }
 
     protected void initViewSettings(ViewSettings viewSettings) {
-        String rawSettings = userSettingsCache.get(viewSettings.getViewId());
-        viewSettings.initialize(rawSettings);
+        if (isSettingsEnabled()) {
+            String rawSettings = userSettingsCache.get(viewSettings.getViewId());
+            viewSettings.initialize(rawSettings);
+        }
     }
 
     protected void unsubscribeViewLifecycle() {

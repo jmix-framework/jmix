@@ -154,7 +154,7 @@ public interface SettingsFacet extends Facet {
      * <p>
      * For instance:
      * <pre>
-     * &#64;Install(to = "settingsFacet", subject = "applyDataLoafingSettingsDelegate")
+     * &#64;Install(to = "settingsFacet", subject = "applyDataLoadingSettingsDelegate")
      * private void onApplyDataLoadingSettings(SettingsFacet.SettingsContext settingsContext) {
      *     settingsFacet.applyDataLoadingSettings();
      * }

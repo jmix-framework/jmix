@@ -52,12 +52,4 @@ public interface UserSettingsService {
      * Copies all settings to another user.
      */
     void copy(String fromUsername, String toUsername);
-
-    // todo rp delete view settings
-    /**
-     * Delete settings of screens (settings of tables, filters etc) for the current user.
-     *
-     * @param screens    set of window ids, whose settings must be deleted
-     *//*
-    void deleteScreenSettings(Set<String> screens);*/
 }

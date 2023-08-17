@@ -186,6 +186,7 @@ public interface StudioLayouts {
                             setMethod = "setJustifyContentMode", defaultValue = "START",
                             options = {"START", "END", "CENTER", "BETWEEN", "AROUND", "EVENLY"}),
                     @StudioProperty(xmlAttribute = "contentAlignment", type = StudioPropertyType.ENUMERATION,
+                            setMethod = "setAlignContent",
                             setParameterFqn = "com.vaadin.flow.component.orderedlayout.FlexLayout$ContentAlignment",
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexLayout$ContentAlignment",
                             defaultValue = "STRETCH",

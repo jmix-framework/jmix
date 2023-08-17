@@ -41,7 +41,6 @@ public class PrefixSuffixLoaderSupport implements ApplicationContextAware {
     protected ComponentLoader.Context context;
     protected LayoutLoader layoutLoader;
 
-
     protected Collection<ComponentLoader<?>> pendingLoadComponents = new ArrayList<>();
 
     protected ApplicationContext applicationContext;

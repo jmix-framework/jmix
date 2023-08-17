@@ -28,6 +28,11 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component("flowui_PrefixSuffixLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -36,8 +41,8 @@ public class PrefixSuffixLoaderSupport implements ApplicationContextAware {
     protected ComponentLoader.Context context;
     protected LayoutLoader layoutLoader;
 
-    protected ComponentLoader<?> pendingLoadPrefixComponent;
-    protected ComponentLoader<?> pendingLoadSuffixComponent;
+
+    protected Collection<ComponentLoader<?>> pendingLoadComponents = new ArrayList<>();
 
     protected ApplicationContext applicationContext;
 
@@ -52,58 +57,34 @@ public class PrefixSuffixLoaderSupport implements ApplicationContextAware {
 
     public void createPrefixSuffixComponents(Component component, Element element) {
         if (component instanceof HasPrefix hasPrefixComponent) {
-            createPrefixComponent(hasPrefixComponent, element);
+            initPrefixSuffixComponent(element.element("prefix"), hasPrefixComponent::setPrefixComponent);
         }
 
         if (component instanceof HasSuffix hasSuffixComponent) {
-            createSuffixComponent(hasSuffixComponent, element);
+            initPrefixSuffixComponent(element.element("suffix"), hasSuffixComponent::setSuffixComponent);
         }
     }
 
     public void loadPrefixSuffixComponents() {
-        if (pendingLoadPrefixComponent != null) {
-            pendingLoadPrefixComponent.loadComponent();
-        }
-
-        if (pendingLoadSuffixComponent != null) {
-            pendingLoadSuffixComponent.loadComponent();
-        }
+        pendingLoadComponents.forEach(ComponentLoader::loadComponent);
+        pendingLoadComponents.clear();
     }
 
-    protected void createPrefixComponent(HasPrefix hasPrefixComponent, Element hasPrefixElement) {
-        Element prefix = hasPrefixElement.element("prefix");
-
-        if (prefix == null) {
+    protected void initPrefixSuffixComponent(@Nullable Element element, Consumer<Component> setter) {
+        if (element == null) {
             return;
         }
 
-        if (prefix.elements().size() != 1) {
-            throw new GuiDevelopmentException("Only one prefix component can be defined", context);
-        }
-
-        Element prefixComponentElement = prefix.elements().get(0);
-        pendingLoadPrefixComponent = getLayoutLoader().createComponentLoader(prefixComponentElement);
-        pendingLoadPrefixComponent.initComponent();
-
-        hasPrefixComponent.setPrefixComponent(pendingLoadPrefixComponent.getResultComponent());
-    }
-
-    protected void createSuffixComponent(HasSuffix hasSuffix, Element hasSuffixElement) {
-        Element suffix = hasSuffixElement.element("suffix");
-
-        if (suffix == null) {
-            return;
-        }
-
-        if (suffix.elements().size() != 1) {
+        if (element.elements().size() != 1) {
             throw new GuiDevelopmentException("Only one suffix component can be defined", context);
         }
 
-        Element suffixComponentElement = suffix.elements().get(0);
-        pendingLoadSuffixComponent = getLayoutLoader().createComponentLoader(suffixComponentElement);
-        pendingLoadSuffixComponent.initComponent();
+        Element componentElement = element.elements().get(0);
+        ComponentLoader<?> componentLoader = getLayoutLoader().createComponentLoader(componentElement);
+        componentLoader.initComponent();
 
-        hasSuffix.setSuffixComponent(pendingLoadSuffixComponent.getResultComponent());
+        setter.accept(componentLoader.getResultComponent());
+        pendingLoadComponents.add(componentLoader);
     }
 
     protected LayoutLoader getLayoutLoader() {

@@ -28,7 +28,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,11 +55,11 @@ public class PrefixSuffixLoaderSupport implements ApplicationContextAware {
 
     public void createPrefixSuffixComponents(Component component, Element element) {
         if (component instanceof HasPrefix hasPrefixComponent) {
-            initPrefixSuffixComponent(element.element("prefix"), hasPrefixComponent::setPrefixComponent);
+            initPrefixSuffixComponent(element, "prefix", hasPrefixComponent::setPrefixComponent);
         }
 
         if (component instanceof HasSuffix hasSuffixComponent) {
-            initPrefixSuffixComponent(element.element("suffix"), hasSuffixComponent::setSuffixComponent);
+            initPrefixSuffixComponent(element, "suffix", hasSuffixComponent::setSuffixComponent);
         }
     }
 
@@ -69,13 +68,16 @@ public class PrefixSuffixLoaderSupport implements ApplicationContextAware {
         pendingLoadComponents.clear();
     }
 
-    protected void initPrefixSuffixComponent(@Nullable Element element, Consumer<Component> setter) {
+    protected void initPrefixSuffixComponent(Element parentElement, String subElementName, Consumer<Component> setter) {
+        Element element = parentElement.element(subElementName);
+
         if (element == null) {
             return;
         }
 
         if (element.elements().size() != 1) {
-            throw new GuiDevelopmentException("Only one suffix component can be defined", context);
+            throw new GuiDevelopmentException(String.format("Only one %s component can be defined", subElementName),
+                    context);
         }
 
         Element componentElement = element.elements().get(0);

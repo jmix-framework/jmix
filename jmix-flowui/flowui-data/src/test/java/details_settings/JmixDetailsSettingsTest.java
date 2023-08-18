@@ -17,42 +17,34 @@
 package details_settings;
 
 import details_settings.view.JmixDetailsSettingsTestView;
-import io.jmix.core.security.SystemAuthenticator;
-import io.jmix.flowui.ViewNavigators;
-import io.jmix.flowui.facet.settings.ViewSettings;
-import io.jmix.flowui.facet.settings.ViewSettingsJson;
 import io.jmix.flowui.facet.settings.component.JmixDetailsSettings;
-import io.jmix.flowui.settings.UserSettingsService;
+import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
-import io.jmix.flowui.testassist.UiTestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import test_support.AbstractSettingsTest;
 import test_support.FlowuiDataTestConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @UiTest(viewBasePackages = {"details_settings.view", "test_support.view"})
 @SpringBootTest(classes = {FlowuiDataTestConfiguration.class, FlowuiTestAssistConfiguration.class})
-public class JmixDetailsSettingsTest {
+public class JmixDetailsSettingsTest extends AbstractSettingsTest {
 
     @Autowired
-    UserSettingsService userSettingsService;
-    @Autowired
-    SystemAuthenticator authenticator;
-    @Autowired
-    ViewNavigators viewNavigators;
+    UserSettingsCache userSettingsCache;
     @Autowired
     JdbcTemplate jdbc;
 
     @AfterEach
     public void afterEach() {
         jdbc.update("delete from FLOWUI_UI_SETTING");
-        // todo rp View state saved between two tests!?
+        userSettingsCache.clear();
     }
 
     @Test
@@ -60,10 +52,7 @@ public class JmixDetailsSettingsTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void saveSettingsTest() {
         // Open and close View with Details component to save settings
-        viewNavigators.view(JmixDetailsSettingsTestView.class)
-                .navigate();
-
-        JmixDetailsSettingsTestView view = UiTestUtils.getCurrentView();
+        JmixDetailsSettingsTestView view = navigateTo(JmixDetailsSettingsTestView.class);
         view.closeWithDefaultAction();
 
         // Settings of Details should be saved
@@ -76,10 +65,7 @@ public class JmixDetailsSettingsTest {
         assertFalse(detailsSettings.getOpened());
 
         // Open View again, open Details and close View
-        viewNavigators.view(JmixDetailsSettingsTestView.class)
-                .navigate();
-
-        view = UiTestUtils.getCurrentView();
+        view = navigateTo(JmixDetailsSettingsTestView.class);;
         view.details.setOpened(true);
         view.closeWithDefaultAction();
 
@@ -96,32 +82,17 @@ public class JmixDetailsSettingsTest {
     @Test
     @DisplayName("Apply settings")
     public void applySettingsTest() {
-        // Open View with Details, change "open" state to "true" and close View
-        // to save settings
-        viewNavigators.view(JmixDetailsSettingsTestView.class)
-                .navigate();
-
-        JmixDetailsSettingsTestView view = UiTestUtils.getCurrentView();
+        /*
+         * Open View with Details, change "open" state to "true" and close View
+         * to save settings
+         */
+        JmixDetailsSettingsTestView view = navigateTo(JmixDetailsSettingsTestView.class);
         view.details.setOpened(true); // false by default
         view.closeWithDefaultAction();
 
         // Reopen View, Details should be opened
-        viewNavigators.view(JmixDetailsSettingsTestView.class)
-                .navigate();
-
-        view = UiTestUtils.getCurrentView();
+        view = navigateTo(JmixDetailsSettingsTestView.class);
 
         assertTrue(view.details.isOpened());
-    }
-
-    protected ViewSettings loadSettings(String viewId) {
-        String loadedRawSettings = authenticator.withSystem(() ->
-                userSettingsService.load(viewId).orElse(null));
-
-        assertNotNull(loadedRawSettings);
-
-        ViewSettings loadedSettings = new ViewSettingsJson(viewId);
-        loadedSettings.initialize(loadedRawSettings);
-        return loadedSettings;
     }
 }

@@ -60,7 +60,7 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
             return;
         }
 
-        List<? extends Grid.Column<?>> componentColumns = component.getColumns();
+        List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
 
         List<String> componentColumnKeys = componentColumns.stream().map(Grid.Column::getKey).toList();
         List<String> settingsColumnKeys = settings.getColumns().stream().map(DataGridSettings.Column::getKey).toList();
@@ -76,9 +76,6 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
 
                 if (sColumn.getWidth() != null) {
                     column.setWidth(sColumn.getWidth());
-                }
-                if (sColumn.isVisible() != null) {
-                    column.setVisible(sColumn.isVisible());
                 }
                 newColumnsOrder.add(column);
             }
@@ -121,7 +118,7 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
             setSortOrderToSettings(sortOrder, settings);
             changed = true;
         }
-        List<? extends Grid.Column<?>> componentColumns = component.getVisibleColumns();
+        List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
         if (isColumnSettingsChanged(componentColumns, settings.getColumns())) {
             setColumnsToSettings(componentColumns, settings);
             changed = true;
@@ -219,9 +216,6 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
             if (!Objects.equals(column.getWidth(), sColumn.getWidth())) {
                 return true;
             }
-            if (!Objects.equals(column.isVisible(), sColumn.isVisible())) {
-                return true;
-            }
         }
         return false;
     }
@@ -238,7 +232,6 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
                     DataGridSettings.Column sColumn = new DataGridSettings.Column();
                     sColumn.setKey(column.getKey());
                     sColumn.setWidth(column.getWidth());
-                    sColumn.setVisible(column.isVisible());
                     return sColumn;
                 }).toList();
 
@@ -247,5 +240,19 @@ public class DataGridSettingsBinder implements DataLoadingSettingsBinder<DataGri
 
     protected DataGridSettings createSettings() {
         return new DataGridSettings();
+    }
+
+    protected List<? extends Grid.Column<?>> getOrderedColumns(DataGrid<?> dataGrid) {
+        // Gets all (with hidden by security) columns list that has correct order.
+        List<? extends Grid.Column<?>> allColumns = dataGrid.getAllColumns();
+
+        // Gets columns that are added to DataGrid, even with visible=false.
+        List<? extends Grid.Column<?>> columns = dataGrid.getColumns();
+
+        // We need to save the correct user's order and
+        // exclude hidden by security columns.
+        return allColumns.stream()
+                .filter(columns::contains)
+                .toList();
     }
 }

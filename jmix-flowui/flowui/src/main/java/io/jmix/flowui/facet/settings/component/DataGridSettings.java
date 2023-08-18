@@ -80,7 +80,6 @@ public class DataGridSettings implements Settings {
     public static class Column {
         protected String key;
         protected String width;
-        protected Boolean visible;
 
         public String getKey() {
             return key;
@@ -97,15 +96,6 @@ public class DataGridSettings implements Settings {
 
         public void setWidth(@Nullable String width) {
             this.width = width;
-        }
-
-        @Nullable
-        public Boolean isVisible() {
-            return visible;
-        }
-
-        public void setVisible(@Nullable Boolean visible) {
-            this.visible = visible;
         }
     }
 }

@@ -32,6 +32,7 @@ import settings_facet.view.FacetAutoExcludedTestView;
 import settings_facet.view.FacetAutoTestView;
 import settings_facet.view.FacetDelegateTestView;
 import settings_facet.view.FacetManualTestView;
+import test_support.AbstractSettingsTest;
 import test_support.FlowuiDataTestConfiguration;
 
 import java.util.Optional;
@@ -40,10 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @UiTest(viewBasePackages = {"settings_facet.view", "test_support.view"})
 @SpringBootTest(classes = {FlowuiDataTestConfiguration.class, FlowuiTestAssistConfiguration.class})
-public class SettingsFacetTest {
-
-    @Autowired
-    private ViewNavigators viewNavigators;
+public class SettingsFacetTest extends AbstractSettingsTest {
 
     @Autowired
     JdbcTemplate jdbc;
@@ -58,18 +56,11 @@ public class SettingsFacetTest {
     @SuppressWarnings({"OptionalGetWithoutIsPresent", "DataFlowIssue"})
     public void facetAutoMode() {
         // Open View with SettingsFacet and close it to save settings
-        viewNavigators.view(FacetAutoTestView.class)
-                .navigate();
-
-        FacetAutoTestView view = UiTestUtils.getCurrentView();
-
+        FacetAutoTestView view = navigateTo(FacetAutoTestView.class);
         view.closeWithDefaultAction();
 
         // Open View again, settings of DataGrid should be saved
-        viewNavigators.view(FacetAutoTestView.class)
-                .navigate();
-
-        view = UiTestUtils.getCurrentView();
+        view = navigateTo(FacetAutoTestView.class);;
 
         Optional<DataGridSettings> dataGridSettings =
                 view.facet.getSettings()
@@ -83,18 +74,12 @@ public class SettingsFacetTest {
     @SuppressWarnings({"OptionalGetWithoutIsPresent", "DataFlowIssue"})
     public void facetManualMode() {
         // Open View with SettingsFacet and close it to save settings
-        viewNavigators.view(FacetManualTestView.class)
-                .navigate();
-
-        FacetManualTestView view = UiTestUtils.getCurrentView();
+        FacetManualTestView view = navigateTo(FacetManualTestView.class);
         view.closeWithDefaultAction();
 
         // Open View again, settings of DataGrid must not be saved,
         // as it is not included to facet
-        viewNavigators.view(FacetManualTestView.class)
-                .navigate();
-
-        view = UiTestUtils.getCurrentView();
+        view = navigateTo(FacetManualTestView.class);
 
         Optional<DataGridSettings> dataGridSettings =
                 view.facet.getSettings()
@@ -109,8 +94,7 @@ public class SettingsFacetTest {
         view.closeWithDefaultAction();
 
         // Open View again, DataGrid's settings should be saved
-        viewNavigators.view(FacetManualTestView.class)
-                .navigate();
+        view = navigateTo(FacetManualTestView.class);
 
         dataGridSettings = view.facet.getSettings()
                 .getSettings(view.projectsDataGrid.getId().get(), DataGridSettings.class);
@@ -123,10 +107,7 @@ public class SettingsFacetTest {
     @SuppressWarnings({"OptionalGetWithoutIsPresent", "DataFlowIssue"})
     public void facetWithAutoModeAndExcludedComponent() {
         // Open View with SettingsFacet that excluded one component
-        viewNavigators.view(FacetAutoExcludedTestView.class)
-                .navigate();
-
-        FacetAutoExcludedTestView view = UiTestUtils.getCurrentView();
+        FacetAutoExcludedTestView view = navigateTo(FacetAutoExcludedTestView.class);
 
         // Check that facet has excluded components
         assertTrue(view.facet.getExcludedComponentIds().size() > 0);
@@ -135,10 +116,7 @@ public class SettingsFacetTest {
         // Reopen View
         view.closeWithDefaultAction();
 
-        viewNavigators.view(FacetAutoExcludedTestView.class)
-                .navigate();
-
-        view = UiTestUtils.getCurrentView();
+        view = navigateTo(FacetAutoExcludedTestView.class);
 
         // Settings for JmixDetails shouldn't be presented
         Optional<JmixDetailsSettings> detailsSettings = view.facet.getSettings()
@@ -155,10 +133,7 @@ public class SettingsFacetTest {
     @DisplayName("Facet with delegated saving, applying and applyDataLoading")
     public void facetWithDelegatedSavingApplyingAndApplyDataLoading() {
         // Open View with SettingsFacet and check that delegates work
-        viewNavigators.view(FacetDelegateTestView.class)
-                .navigate();
-
-        FacetDelegateTestView view = UiTestUtils.getCurrentView();
+        FacetDelegateTestView view = navigateTo(FacetDelegateTestView.class);
 
         // ApplyDataLoading and Apply delegates should be fired
         assertEquals(2, view.calls);

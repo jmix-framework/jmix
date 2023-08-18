@@ -16,12 +16,9 @@
 
 package view_settings;
 
-import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.flowui.facet.settings.ViewSettings;
-import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.facet.settings.ViewSettingsJson;
 import io.jmix.flowui.facet.settings.component.JmixDetailsSettings;
-import io.jmix.flowui.settings.UserSettingsService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,22 +27,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import test_support.AbstractSettingsTest;
 import test_support.FlowuiDataTestConfiguration;
-
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = FlowuiDataTestConfiguration.class)
-public class ViewSettingsTest {
+public class ViewSettingsTest extends AbstractSettingsTest {
 
-    @Autowired
-    ViewSettingsComponentManager settingsManager;
-    @Autowired
-    UserSettingsService userSettingsService;
-    @Autowired
-    SystemAuthenticator authenticator;
     @Autowired
     JdbcTemplate jdbc;
 
@@ -165,20 +155,5 @@ public class ViewSettingsTest {
         loadedSettings = loadSettings(viewSettings.getViewId());
 
         assertFalse(loadedSettings.getString(primId, "string").isPresent());
-    }
-
-    protected void saveSettings(ViewSettings viewSettings) {
-        authenticator.runWithSystem(() -> settingsManager.saveSettings(Collections.emptyList(), viewSettings));
-    }
-
-    protected ViewSettings loadSettings(String viewId) {
-        String loadedRawSettings = authenticator.withSystem(() ->
-                userSettingsService.load(viewId).orElse(null));
-
-        assertNotNull(loadedRawSettings);
-
-        ViewSettings loadedSettings = new ViewSettingsJson(viewId);
-        loadedSettings.initialize(loadedRawSettings);
-        return loadedSettings;
     }
 }

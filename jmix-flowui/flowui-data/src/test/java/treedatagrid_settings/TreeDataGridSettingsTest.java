@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package datagrid_settings;
+package treedatagrid_settings;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
-import datagrid_settings.view.DataGridSettingsTestView;
 import io.jmix.flowui.facet.settings.component.DataGridSettings;
+import io.jmix.flowui.facet.settings.component.TreeDataGridSettings;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
@@ -32,15 +32,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import test_support.AbstractSettingsTest;
 import test_support.FlowuiDataTestConfiguration;
+import test_support.entity.Folder;
 import test_support.entity.Project;
+import treedatagrid_settings.view.TreeDataGridSettingsTestView;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@UiTest(viewBasePackages = {"datagrid_settings.view", "test_support.view"})
+@UiTest(viewBasePackages = {"treedatagrid_settings.view", "test_support.view"})
 @SpringBootTest(classes = {FlowuiDataTestConfiguration.class, FlowuiTestAssistConfiguration.class})
-public class DataGridSettingsTest extends AbstractSettingsTest {
+public class TreeDataGridSettingsTest extends AbstractSettingsTest {
 
     @Autowired
     UserSettingsCache userSettingsCache;
@@ -58,77 +61,77 @@ public class DataGridSettingsTest extends AbstractSettingsTest {
     @SuppressWarnings({"OptionalGetWithoutIsPresent", "DataFlowIssue"})
     public void saveSettingsTest() {
         // Open and close View
-        DataGridSettingsTestView view = navigateTo(DataGridSettingsTestView.class);
+        TreeDataGridSettingsTestView view = navigateTo(TreeDataGridSettingsTestView.class);
         view.closeWithDefaultAction();
 
-        // DataGrid settings should be saved
+        // TreeDataGrid settings should be saved
         var dataGridSettings = loadSettings(view.getId().get())
-                .getSettings(view.projectsDataGrid.getId().get(), DataGridSettings.class)
+                .getSettings(view.foldersDataGrid.getId().get(), TreeDataGridSettings.class)
                 .orElse(null);
         assertNotNull(dataGridSettings);
 
         // Change settings of DataGrid
-        view = navigateTo(DataGridSettingsTestView.class);
+        view = navigateTo(TreeDataGridSettingsTestView.class);
 
         // Visibility is not saved in settings, it is needed to check that
         // columns size is not changed after saving settings.
-        view.projectsDataGrid.getColumnByKey("active").setVisible(false);
-        view.projectsDataGrid.setColumnPosition(getColumn(view, "budget"), 0);
-        view.projectsDataGrid.sort(List.of(
+        view.foldersDataGrid.getColumnByKey("parent").setVisible(false);
+        view.foldersDataGrid.setColumnPosition(getColumn(view, "size"), 0);
+        view.foldersDataGrid.sort(List.of(
                 new GridSortOrder<>(getColumn(view, "name"), SortDirection.ASCENDING),
-                new GridSortOrder<>(getColumn(view, "description"), SortDirection.DESCENDING)));
+                new GridSortOrder<>(getColumn(view, "size"), SortDirection.DESCENDING)));
 
         view.closeWithDefaultAction();
 
-        // DataGrid settings should be saved
+        // TreeDataGrid settings should be saved
         dataGridSettings = loadSettings(view.getId().get())
-                .getSettings(view.projectsDataGrid.getId().get(), DataGridSettings.class)
+                .getSettings(view.foldersDataGrid.getId().get(), TreeDataGridSettings.class)
                 .orElse(null);
 
         assertNotNull(dataGridSettings);
         assertNotNull(dataGridSettings.getSortOrder());
 
         assertTrue(isSortAscending(dataGridSettings.getSortOrder(), "name"));
-        assertFalse(isSortAscending(dataGridSettings.getSortOrder(), "description"));
+        assertFalse(isSortAscending(dataGridSettings.getSortOrder(), "size"));
 
         assertNotNull(dataGridSettings.getColumns());
 
-        assertEquals("budget", dataGridSettings.getColumns().get(0).getKey());
+        assertEquals("size", dataGridSettings.getColumns().get(0).getKey());
 
         /*
          * Hidden columns by 'visible' property are presented in Grid#getColumns(),
          * so settings also should contain them.
          */
-        assertEquals(5, dataGridSettings.getColumns().size());
+        assertEquals(3, dataGridSettings.getColumns().size());
     }
 
     @Test
     @DisplayName("Apply settings")
     public void applySettingsTest() {
-        // Change settings of DataGrid
-        DataGridSettingsTestView view = navigateTo(DataGridSettingsTestView.class);
+        // Change settings of TreeDataGrid
+        TreeDataGridSettingsTestView view = navigateTo(TreeDataGridSettingsTestView.class);
 
-        view.projectsDataGrid.setColumnPosition(getColumn(view, "budget"), 0);
-        view.projectsDataGrid.sort(List.of(
+        view.foldersDataGrid.setColumnPosition(getColumn(view, "size"), 0);
+        view.foldersDataGrid.sort(List.of(
                 new GridSortOrder<>(getColumn(view, "name"), SortDirection.ASCENDING),
-                new GridSortOrder<>(getColumn(view, "description"), SortDirection.DESCENDING)));
+                new GridSortOrder<>(getColumn(view, "size"), SortDirection.DESCENDING)));
 
         view.closeWithDefaultAction();
 
         // Reopen View
-        view = navigateTo(DataGridSettingsTestView.class);
+        view = navigateTo(TreeDataGridSettingsTestView.class);
 
-        // DataGrid settings should be applied
-        var sortOrder = view.projectsDataGrid.getSortOrder();
+        // TreeDataGrid settings should be applied
+        var sortOrder = view.foldersDataGrid.getSortOrder();
         assertEquals(2, sortOrder.size());
 
         assertEquals("name", sortOrder.get(0).getSorted().getKey());
         assertEquals(SortDirection.ASCENDING, sortOrder.get(0).getDirection());
 
-        assertEquals("description", sortOrder.get(1).getSorted().getKey());
+        assertEquals("size", sortOrder.get(1).getSorted().getKey());
         assertEquals(SortDirection.DESCENDING, sortOrder.get(1).getDirection());
 
-        assertEquals("budget", view.projectsDataGrid.getColumns().get(0).getKey());
+        assertEquals("size", view.foldersDataGrid.getColumns().get(0).getKey());
     }
 
     protected boolean isSortAscending(List<DataGridSettings.SortOrder> sortOrder, String key) {
@@ -138,7 +141,7 @@ public class DataGridSettingsTest extends AbstractSettingsTest {
         return SortDirection.ASCENDING.name().equals(columnSo.getSortDirection());
     }
 
-    protected Grid.Column<Project> getColumn(DataGridSettingsTestView view, String key) {
-        return view.projectsDataGrid.getColumnByKey(key);
+    protected Grid.Column<Folder> getColumn(TreeDataGridSettingsTestView view, String key) {
+        return view.foldersDataGrid.getColumnByKey(key);
     }
 }

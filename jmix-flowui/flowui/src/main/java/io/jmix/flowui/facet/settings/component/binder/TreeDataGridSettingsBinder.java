@@ -19,42 +19,40 @@ package io.jmix.flowui.facet.settings.component.binder;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.JmixOrder;
-import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.facet.settings.Settings;
-import io.jmix.flowui.facet.settings.component.DataGridSettings;
+import io.jmix.flowui.facet.settings.component.TreeDataGridSettings;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.Nullable;
 
 import java.util.List;
 
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-@org.springframework.stereotype.Component("flowui_DataGridSettingsBinder")
-public class DataGridSettingsBinder extends AbstractGridSettingsBinder<DataGrid<?>, DataGridSettings> {
+@org.springframework.stereotype.Component("flowui_TreeDataGridSettingsBinder")
+public class TreeDataGridSettingsBinder extends AbstractGridSettingsBinder<TreeDataGrid<?>, TreeDataGridSettings> {
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return DataGrid.class;
+        return TreeDataGrid.class;
     }
 
     @Override
     public Class<? extends Settings> getSettingsClass() {
-        return DataGridSettings.class;
+        return TreeDataGridSettings.class;
     }
 
     @Override
-    protected DataGridSettings createSettings() {
-        return new DataGridSettings();
+    protected TreeDataGridSettings createSettings() {
+        return new TreeDataGridSettings();
     }
 
-    @Nullable
     @Override
-    protected DataGridItems<?> getGridItems(DataGrid<?> grid) {
+    protected DataGridItems<?> getGridItems(TreeDataGrid<?> grid) {
         return grid.getItems();
     }
 
     @Override
-    protected List<? extends Grid.Column<?>> getAllColumns(DataGrid<?> grid) {
+    protected List<? extends Grid.Column<?>> getAllColumns(TreeDataGrid<?> grid) {
         return grid.getAllColumns();
     }
 }

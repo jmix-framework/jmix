@@ -380,6 +380,32 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 });
     }
 
+    /**
+     * @deprecated use {@link ComponentLoaderSupport#loadDateFormat(DatePicker.DatePickerI18n, Element)} instead.
+     */
+    @Deprecated
+    public void loadDateFormat(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
+        loaderSupport.loadResourceString(element, "dateFormat", context.getMessageGroup())
+                .ifPresent(dateFormatString -> {
+                    List<String> dateFormatList = split(dateFormatString);
+
+                    DatePicker.DatePickerI18n datePickerI18n = new DatePicker.DatePickerI18n();
+
+                    if (dateFormatList.size() == 1) {
+                        datePickerI18n.setDateFormat(dateFormatList.get(0));
+                    } else {
+                        datePickerI18n.setDateFormats(
+                                dateFormatList.get(0),
+                                dateFormatList.stream()
+                                        .skip(1)
+                                        .toArray(String[]::new)
+                        );
+                    }
+
+                    setter.accept(datePickerI18n);
+                });
+    }
+
     public Optional<Icon> loadIcon(Element element) {
         return loaderSupport.loadString(element, "icon")
                 .map(ComponentUtils::parseIcon);
@@ -447,7 +473,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                     }
                 });
     }
-
 
     protected void loadFirstDayOfWeek(DatePicker.DatePickerI18n datePickerI18n, Element element) {
         loaderSupport.loadBoolean(element, "weekNumbersVisible", weekNumbersVisible -> {

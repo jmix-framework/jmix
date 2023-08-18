@@ -18,13 +18,7 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.component.autocomplete.AutoCompleteSupport;
 import io.jmix.ui.component.autocomplete.Suggester;
-import io.jmix.ui.meta.CanvasBehaviour;
-import io.jmix.ui.meta.PropertiesConstraint;
-import io.jmix.ui.meta.PropertiesGroup;
-import io.jmix.ui.meta.PropertyType;
-import io.jmix.ui.meta.StudioComponent;
-import io.jmix.ui.meta.StudioProperties;
-import io.jmix.ui.meta.StudioProperty;
+import io.jmix.ui.meta.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -56,16 +50,120 @@ public interface SourceCodeEditor extends Field<String>, Component.Focusable {
     String NAME = "sourceCodeEditor";
 
     enum Mode implements HighlightMode {
-        Java("java"),
-        HTML("html"),
-        XML("xml"),
-        Groovy("groovy"),
-        SQL("sql"),
-        JavaScript("javascript"),
-        Properties("properties"),
+
+        ABAP("abap"),
+        ABC("abc"),
+        ActionScript("actionscript"),
+        ADA("ada"),
+        ApacheConf("apache_conf"),
+        AsciiDoc("asciidoc"),
+        AssemblyX86("assembly_x86"),
+        AutoHot("autohotkey"),
+        BatchFile("batchfile"),
+        C9SearchResults("c9search"),
+        Clojure("clojure"),
+        Cobol("cobol"),
+        CoffeeScript("coffee"),
+        ColdFusion("coldfusion"),
+        CSharp("csharp"),
         CSS("css"),
+        Curly("curly"),
+        CCpp("c_cpp"),
+        D("d"),
+        Dart("dart"),
+        Diff("diff"),
+        Django("django"),
+        Dot("dot"),
+        EJS("ejs"),
+        Elixir("elixir"),
+        Elm("elm"),
+        Erlang("erlang"),
+        Forth("forth"),
+        FreeMarker("ftl"),
+        Glsl("glsl"),
+        Go("golang"),
+        Groovy("groovy"),
+        HAML("haml"),
+        Handlebars("handlebars"),
+        Haskell("haskell"),
+        HaXe("haxe"),
+        HTML("html"),
+        HTMLCompletions("html_completions"),
+        HTMLRuby("html_ruby"),
+        INI("ini"),
+        Jack("jack"),
+        Jade("jade"),
+        Java("java"),
+        JavaScript("javascript"),
+        JSON("json"),
+        JSONiq("jsoniq"),
+        JSP("jsp"),
+        JSX("jsx"),
+        Julia("julia"),
+        LaTeX("latex"),
+        Lean("lean"),
+        LESS("less"),
+        Liquid("liquid"),
+        Lisp("lisp"),
+        LiveScript("livescript"),
+        LogiQL("logiql"),
+        LSL("lsl"),
+        Lua("lua"),
+        LuaPage("luapage"),
+        Lucene("lucene"),
+        Makefile("makefile"),
+        Markdown("markdown"),
+        MATLAB("matlab"),
+        MEL("mel"),
+        MIPSAssembler("mips_assembler"),
+        MUSHCode("mushcode"),
+        MUSHCodeHighRules("mushcode_high_rules"),
+        MySQL("mysql"),
+        Nix("nix"),
+        ObjectiveC("objectivec"),
+        OCaml("ocaml"),
+        Pascal("pascal"),
+        Perl("perl"),
+        PgSQL("pgsql"),
+        PHP("php"),
+        PlainText("plain_text"),
+        Powershell("powershell"),
+        Prolog("prolog"),
+        Properties("properties"),
+        Protobuf("protobuf"),
+        Python("python"),
+        R("r"),
+        RDoc("rdoc"),
+        RHTML("rhtml"),
+        Ruby("ruby"),
+        Rust("rust"),
+        SASS("sass"),
+        SCAD("scad"),
+        Scala("scala"),
+        Scheme("scheme"),
         SCSS("scss"),
-        Text("text");
+        SH("sh"),
+        SJS("sjs"),
+        Snippets("snippets"),
+        SoyTemplate("soy_template"),
+        Space("space"),
+        SQL("sql"),
+        Stylus("stylus"),
+        SVG("svg"),
+        Tcl("tcl"),
+        Tex("tex"),
+        Text("text"),
+        Textile("textile"),
+        Toml("toml"),
+        Twig("twig"),
+        Typescript("typescript"),
+        VBScript("vbscript"),
+        Velocity("velocity"),
+        Verilog("verilog"),
+        VHDL("vhdl"),
+        XML("xml"),
+        XQuery("xquery"),
+        YAML("yaml");
 
         protected String id;
 
@@ -95,7 +193,18 @@ public interface SourceCodeEditor extends Field<String>, Component.Focusable {
     HighlightMode getMode();
 
     @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "Text",
-            options = {"Java", "HTML", "CSS", "SCSS", "XML", "Groovy", "SQL", "JavaScript", "Properties", "Text"})
+            options = {"ABAP", "ABC", "ActionScript", "ADA", "ApacheConf", "AsciiDoc", "AssemblyX86", "AutoHot",
+                    "BatchFile", "C9SearchResults", "Clojure", "Cobol", "CoffeeScript", "ColdFusion", "CSharp", "CSS",
+                    "Curly", "CCpp", "D", "Dart", "Diff", "Django", "Dot", "EJS", "Elixir", "Elm", "Erlang", "Forth",
+                    "FreeMarker", "Glsl", "Go", "Groovy", "HAML", "Handlebars", "Haskell", "HaXe", "HTML",
+                    "HTMLCompletions", "HTMLRuby", "INI", "Jack", "Jade", "Java", "JavaScript", "JSON", "JSONiq", "JSP",
+                    "JSX", "Julia", "LaTeX", "Lean", "LESS", "Liquid", "Lisp", "LiveScript", "LogiQL", "LSL", "Lua",
+                    "LuaPage", "Lucene", "Makefile", "Markdown", "MATLAB", "MEL", "MIPSAssembler", "MUSHCode",
+                    "MUSHCodeHighRules", "MySQL", "Nix", "ObjectiveC", "OCaml", "Pascal", "Perl", "PgSQL", "PHP",
+                    "PlainText", "Powershell", "Prolog", "Properties", "Protobuf", "Python", "R", "RDoc", "RHTML",
+                    "Ruby", "Rust", "SASS", "SCAD", "Scala", "Scheme", "SCSS", "SH", "SJS", "Snippets", "SoyTemplate",
+                    "Space", "SQL", "Stylus", "SVG", "Tcl", "Tex", "Text", "Textile", "Toml", "Twig", "Typescript",
+                    "VBScript", "Velocity", "Verilog", "VHDL", "XML", "XQuery", "YAML"})
     void setMode(HighlightMode mode);
 
     @Nullable

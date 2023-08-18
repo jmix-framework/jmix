@@ -19,6 +19,8 @@ package io.jmix.flowui.component;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
@@ -94,6 +96,26 @@ public final class UiComponentUtils {
             } else if (component instanceof HasSubParts hasSubPartsComponent) {
                 Optional<Component> innerComponent =
                         Optional.ofNullable(((Component) hasSubPartsComponent.getSubPart(id)));
+
+                if (innerComponent.isPresent()) {
+                    return innerComponent;
+                }
+            }
+
+            if (component instanceof HasPrefix hasPrefixComponent
+                    && hasPrefixComponent.getPrefixComponent() != null) {
+                Optional<Component> innerComponent =
+                        getComponentRecursively(Collections.singleton(hasPrefixComponent.getPrefixComponent()), id);
+
+                if (innerComponent.isPresent()) {
+                    return innerComponent;
+                }
+            }
+
+            if (component instanceof HasSuffix hasSuffixComponent
+                    && hasSuffixComponent.getSuffixComponent() != null) {
+                Optional<Component> innerComponent =
+                        getComponentRecursively(Collections.singleton(hasSuffixComponent.getSuffixComponent()), id);
 
                 if (innerComponent.isPresent()) {
                     return innerComponent;

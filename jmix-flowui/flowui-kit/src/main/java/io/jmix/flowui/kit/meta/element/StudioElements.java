@@ -597,4 +597,24 @@ public interface StudioElements {
             }
     )
     void itemsQuery();
+
+    @StudioElement(
+            name = "Prefix",
+            xmlElement = "prefix",
+            target = {"com.vaadin.flow.component.shared.HasPrefix"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            possibleChildren = {"com.vaadin.flow.component.Component"},
+            maxCountOfChildren = 1
+    )
+    void prefix();
+
+    @StudioElement(
+            name = "Suffix",
+            xmlElement = "suffix",
+            target = {"com.vaadin.flow.component.shared.HasSuffix"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            possibleChildren = {"com.vaadin.flow.component.Component"},
+            maxCountOfChildren = 1
+    )
+    void suffix();
 }

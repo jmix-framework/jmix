@@ -15,8 +15,7 @@
   ~ limitations under the License.
   -->
 
-<mainView xmlns="http://jmix.io/schema/flowui/main-view"
-          title="msg://MainView.title">
+<mainView xmlns="http://jmix.io/schema/flowui/main-view">
     <actions>
         <action id="logout" type="logout"/>
     </actions>
@@ -25,19 +24,16 @@
             <header id="header" classNames="jmix-main-view-header">
                 <drawerToggle id="drawerToggle"
                               classNames="jmix-main-view-drawer-toggle"
-                              themeNames="contrast"
-                              ariaLabel="msg://drawerToggle.ariaLabel"/>
+                              themeNames="contrast"/>
                 <h1 id="viewTitle" classNames="jmix-main-view-title"/>
             </header>
         </navigationBar>
         <drawerLayout>
             <section id="section" classNames="jmix-main-view-section">
                 <h2 id="applicationTitle"
-                    text="msg://applicationTitle.text"
                     classNames="jmix-main-view-application-title"/>
                 <nav id="navigation"
-                     classNames="jmix-main-view-navigation"
-                     ariaLabel="msg://navigation.ariaLabel">
+                     classNames="jmix-main-view-navigation">
                 </nav>
                 <footer id="footer" classNames="jmix-main-view-footer">
                     <userIndicator id="userIndicator"/>

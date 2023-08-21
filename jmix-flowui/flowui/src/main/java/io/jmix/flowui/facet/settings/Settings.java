@@ -20,7 +20,7 @@ import io.jmix.flowui.facet.settings.component.DataGridSettings;
 import org.springframework.lang.Nullable;
 
 /**
- * Base interface for POJO classes that represents component settings.
+ * Base interface for POJO classes that describe component settings.
  * <p>
  * See {@link DataGridSettings} as an example.
  */

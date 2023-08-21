@@ -24,7 +24,7 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 
 /**
- * Base interface for containing component settings from {@link View}. It provides API for
+ * Base interface for classes that collect component settings from {@link View}. It provides API for
  * putting, getting, removing settings.
  *
  * @see SettingsFacet

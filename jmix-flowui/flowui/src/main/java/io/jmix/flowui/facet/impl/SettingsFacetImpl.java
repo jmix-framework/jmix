@@ -246,7 +246,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     protected void subscribeViewLifecycle() {
         checkAttachedToView();
-        // Used only to hide inspection, cannot be null
+        // Used only to hide inspection, cannot be null here
         Objects.requireNonNull(getOwner());
 
         beforeShowListener = new ViewEventListener(getOwner(), View.BeforeShowEvent.class, this::onViewBeforeShow);
@@ -314,8 +314,11 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     }
 
     protected SettingsContext createSettingsContext() {
-        // getOwner cannot be null
-        return new SettingsContext(Objects.requireNonNull(getOwner()), getManagedComponents(), viewSettings);
+        checkAttachedToView();
+        // Used only to hide inspection, cannot be null here
+        View<?> owner = Objects.requireNonNull(getOwner());
+
+        return new SettingsContext(owner, getManagedComponents(), viewSettings);
     }
 
     protected class ViewEventListener {

@@ -33,7 +33,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import test_support.AbstractSettingsTest;
 import test_support.FlowuiDataTestConfiguration;
 import test_support.entity.Folder;
-import test_support.entity.Project;
 import treedatagrid_settings.view.TreeDataGridSettingsTestView;
 
 import java.util.List;

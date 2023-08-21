@@ -25,6 +25,7 @@ import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -98,12 +99,11 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
     }
 
     protected Map<String, Boolean> loadComponents(ComponentLoader.ComponentContext context, Element root) {
-        Element componentsElement = root.element("components");
-        if (componentsElement == null) {
+        List<Element> components = root.elements("component");
+        if (CollectionUtils.isEmpty(components)) {
             return Collections.emptyMap();
         }
 
-        List<Element> components = componentsElement.elements("component");
         Map<String, Boolean> result = new HashMap<>(components.size());
 
         for (Element element : components) {

@@ -54,7 +54,7 @@ public class UserSettingsCacheImpl implements UserSettingsCache {
         if (cached.isPresent()) {
             String value = cached.get();
 
-            log.trace("Got from cache by key: '{}', value: '{}'", key, value);
+            log.debug("Got from cache by key: '{}', value: '{}'", key, value);
 
             return value;
         }
@@ -63,7 +63,7 @@ public class UserSettingsCacheImpl implements UserSettingsCache {
 
         settings.put(key, Optional.ofNullable(value));
 
-        log.trace("Cache does not contain key: '{}', loaded from store value: '{}'", key, value);
+        log.debug("Cache does not contain key: '{}', loaded from store: '{}'", key, value);
 
         return value;
     }
@@ -75,6 +75,8 @@ public class UserSettingsCacheImpl implements UserSettingsCache {
         getCache().put(key, Optional.ofNullable(value));
 
         userSettingsService.save(key, value);
+
+        log.debug("Put key: '{}', value: '{}'", key, value);
     }
 
     @Override
@@ -84,6 +86,8 @@ public class UserSettingsCacheImpl implements UserSettingsCache {
         getCache().put(key, Optional.empty());
 
         userSettingsService.delete(key);
+
+        log.debug("key: '{}' is deleted", key);
     }
 
     @Override
@@ -94,6 +98,8 @@ public class UserSettingsCacheImpl implements UserSettingsCache {
         }
 
         session.setAttribute(ATTRIBUTE_NAME, null);
+
+        log.debug("Cache is cleared");
     }
 
     protected Map<String, Optional<String>> getCache() {

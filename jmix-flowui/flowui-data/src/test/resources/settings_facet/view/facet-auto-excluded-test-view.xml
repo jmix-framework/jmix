@@ -24,16 +24,14 @@
     </data>
     <facets>
         <settings id="facet" auto="true">
-            <components>
-                <component id="details" enabled="false"/>
-            </components>
+            <component id="details" enabled="false"/>
         </settings>
     </facets>
     <layout spacing="true">
         <details id="details"/>
         <dataGrid id="projectsDataGrid"
-                    width="100%"
-                    dataContainer="projectsDc">
+                  width="100%"
+                  dataContainer="projectsDc">
             <columns>
                 <column property="name"/>
                 <column property="description"/>

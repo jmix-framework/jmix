@@ -16,10 +16,7 @@
 
 package test_support;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.CoreSecurityConfiguration;
@@ -40,12 +37,14 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import overridden_settings.test_support.TestJmixDetailsSettingsBinder;
 
 import javax.sql.DataSource;
 
@@ -113,6 +112,12 @@ public class FlowuiDataTestConfiguration {
     @Primary
     UserSettingsCache userSettingsCache(UserSettingsService userSettingsService) {
         return new TestUserSettingsCacheImpl(userSettingsService);
+    }
+
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
+    @Bean("test_TestJmixDetailsSettingsBinder")
+    TestJmixDetailsSettingsBinder testJmixDetailsSettingsBinder() {
+        return new TestJmixDetailsSettingsBinder();
     }
 
     @EnableWebSecurity

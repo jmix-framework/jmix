@@ -591,4 +591,15 @@ public interface StudioElements {
             }
     )
     void itemsQuery();
+
+    @StudioElement(
+            name = "Component",
+            xmlElement = "component",
+            target = "io.jmix.flowui.facet.SettingsFacet",
+            properties = {
+                @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
+                @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN)
+            }
+    )
+    void settingsFacetComponent();
 }

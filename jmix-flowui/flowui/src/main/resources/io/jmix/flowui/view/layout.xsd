@@ -4008,20 +4008,14 @@
 
     <xs:complexType name="settingsFacetType">
         <xs:sequence>
-            <xs:element name="components" minOccurs="0" type="screenSettingsComponentsType"/>
+            <xs:element name="component" type="settingsComponentType"/>
         </xs:sequence>
 
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="auto" type="xs:boolean"/>
     </xs:complexType>
 
-    <xs:complexType name="screenSettingsComponentsType">
-        <xs:sequence maxOccurs="unbounded">
-            <xs:element name="component" type="screenSettingsComponentType" minOccurs="0"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="screenSettingsComponentType">
+    <xs:complexType name="settingsComponentType">
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="enabled" type="xs:boolean"/>
     </xs:complexType>

@@ -73,7 +73,7 @@ public abstract class AbstractUploadFieldLoader<C extends AbstractSingleUploadFi
     }
 
     protected void loadI18N(C resultComponent, Element element) {
-        JmixUploadI18N jmixUploadI18n = new JmixUploadI18N();
+        JmixUploadI18N jmixUploadI18n = createI18N();
 
         getLoaderSupport().loadResourceString(element, "fileTooBigText", context.getMessageGroup(),
                 value -> jmixUploadI18n.setError(getOrCreateError(jmixUploadI18n).setFileIsTooBig(value)));
@@ -112,6 +112,10 @@ public abstract class AbstractUploadFieldLoader<C extends AbstractSingleUploadFi
                 value -> jmixUploadI18n.setUploadDialog(getOrCreateUploadDialog(jmixUploadI18n).setCancel(value)));
 
         resultComponent.setI18n(jmixUploadI18n);
+    }
+
+    protected JmixUploadI18N createI18N() {
+        return new JmixUploadI18N();
     }
 
     protected JmixUploadI18N.UploadDialog getOrCreateUploadDialog(JmixUploadI18N jmixUploadI18n) {

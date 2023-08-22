@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
-jmix-tabsheet::part(content) {
-  padding: var(--lumo-space-m) 0 0;
+package io.jmix.flowui.data.provider;
+
+import com.vaadin.flow.function.ValueProvider;
+
+/**
+ * Value provider that returns an empty string for passed item. Can be used as a placeholder
+ * before an actual value provider is set.
+ *
+ * @param <T> item type
+ */
+public class EmptyValueProvider<T> implements ValueProvider<T, String> {
+
+    @Override
+    public String apply(T t) {
+        return "";
+    }
 }

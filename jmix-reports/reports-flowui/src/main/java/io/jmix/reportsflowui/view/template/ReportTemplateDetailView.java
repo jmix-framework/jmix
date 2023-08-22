@@ -30,6 +30,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
@@ -78,6 +79,8 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     protected JmixRadioButtonGroup<Boolean> isGroovyRadioButtonGroup;
     @ViewComponent
     protected JmixCheckbox customField;
+    @ViewComponent
+    protected JmixCheckbox defaultField;
     @ViewComponent
     protected JmixSelect<CustomTemplateDefinedBy> customDefinedByField;
     @ViewComponent
@@ -150,12 +153,13 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
+        ReportTemplate reportTemplate = getEditedEntity();
         reportTemplateDc.addItemPropertyChangeListener(this::onReportTemplateDcItemPropertyChange);
 
         initDescriptionComposites();
-        initUploadField();
+        initUploadField(reportTemplate);
+        initDefaultField(reportTemplate);
 
-        ReportTemplate reportTemplate = getEditedEntity();
         initTemplateEditor(reportTemplate);
         getDescriptionEditors().forEach(controller -> controller.setReportTemplate(reportTemplate));
         setupVisibility(reportTemplate.getCustom(), reportTemplate.getReportOutputType());
@@ -189,6 +193,17 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 reportTemplate.setContent(bytes);
             }
         }
+
+        // The same ReportTemplate instance may be stored both in Report.templates collection
+        // and in the Report.defaultTemplate reference
+        Report report = reportTemplate.getReport();
+        Boolean isDefault = UiComponentUtils.getValue(defaultField);
+        if (Boolean.TRUE.equals(isDefault)) {
+            report.setDefaultTemplate(reportTemplate);
+        }
+        if (Boolean.FALSE.equals(isDefault) && reportTemplate.equals(report.getDefaultTemplate())) {
+            report.setDefaultTemplate(null);
+        }
     }
 
     @Subscribe("templateUploadField")
@@ -218,6 +233,12 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         notifications.create(messageBundle.getMessage("notification.uploadSuccess.header"))
                 .withPosition(Notification.Position.BOTTOM_END)
                 .show();
+    }
+
+    protected void initDefaultField(ReportTemplate currentTemplate) {
+        boolean isDefault = currentTemplate.equals(currentTemplate.getReport().getDefaultTemplate());
+
+        UiComponentUtils.setValue(defaultField, isDefault);
     }
 
     protected void initCustomDefinitionHelpIcon() {
@@ -282,8 +303,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 .open();
     }
 
-    protected void initUploadField() {
-        ReportTemplate reportTemplate = getEditedEntity();
+    protected void initUploadField(ReportTemplate reportTemplate) {
         byte[] templateFile = reportTemplate.getContent();
         if (templateFile != null) {
             templateUploadField.setFileName(reportTemplate.getName());

@@ -38,6 +38,7 @@
                                 classNames="custom-className"
                                 clearButtonAriaLabel="clearButtonAriaLabel"
                                 connectingStatusText="connectingStatusText"
+                                css="color: red;"
                                 dropAllowed="false"
                                 errorMessage="errorMessage"
                                 fileNotSelectedText="fileNotSelectedText"
@@ -78,5 +79,6 @@
                                 readOnly="true"/>
         <fileStorageUploadField id="disabledFileStorageUploadField"
                                 enabled="false"/>
+        <fileStorageUploadField id="localizedFileStorageUploadField"/>
     </layout>
 </view>

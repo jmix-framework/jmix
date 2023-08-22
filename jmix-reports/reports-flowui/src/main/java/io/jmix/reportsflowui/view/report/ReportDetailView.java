@@ -40,8 +40,8 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.*;
-import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
@@ -53,8 +53,6 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
-import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -67,13 +65,18 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
+import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.*;
+import io.jmix.reports.entity.wizard.ReportData;
+import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
-import io.jmix.reportsflowui.constant.ReportStyleConstants;
-import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
+import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
+import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
+import io.jmix.reportsflowui.view.reportwizard.ReportWizard;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
 import io.jmix.security.constraint.PolicyStore;
@@ -113,14 +116,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected CollectionPropertyContainer<ReportInputParameter> parametersDc;
 
-    @ViewComponent
-    protected EntityComboBox<ReportTemplate> defaultTemplateField;
-    @ViewComponent(value = "defaultTemplateField.create")
-    protected SecuredBaseAction defaultTemplateFieldCreateAction;
-    @ViewComponent(value = "defaultTemplateField.upload")
-    protected SecuredBaseAction defaultTemplateFieldUploadAction;
-    @ViewComponent(value = "defaultTemplateField.edit")
-    protected SecuredBaseAction defaultTemplateFieldEditAction;
     @ViewComponent
     protected TreeDataGrid<BandDefinition> bandsTreeDataGrid;
     @ViewComponent
@@ -182,8 +177,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected DataGrid<ReportTemplate> templatesDataGrid;
     @ViewComponent
-    protected CodeEditor validationScriptCodeEditor;
-    @ViewComponent
     protected JmixTextArea localeTextField;
     @ViewComponent
     protected JmixComboBox<String> screenIdField;
@@ -244,6 +237,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected ResourceRoleRepository resourceRoleRepository;
     @Autowired
     protected ViewRegistry viewRegistry;
+    @Autowired
+    protected ReportWizard reportWizard;
+    @Autowired
+    protected FetchPlans fetchPlans;
+    @Autowired
+    protected DataManager dataManager;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -268,10 +267,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initEntityParamField();
         initFetchPlanNameField();
 
-        defaultTemplateFieldCreateAction.refreshState();
-        defaultTemplateFieldUploadAction.refreshState();
-        defaultTemplateFieldEditAction.refreshState();
-        defaultTemplateField.setReadOnly(!isUpdatePermitted());
         refreshBandActionStates();
         refreshDataSetsActionStates();
         initLocaleDetailReportTextField();
@@ -336,94 +331,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         bandsTreeDataGrid.select(getEditedEntity().getRootBandDefinition());
 
         sortBandDefinitionsByPosition();
-    }
-
-    @Subscribe("defaultTemplateField.create")
-    protected void onDefaultTemplateFieldCreate(ActionPerformedEvent event) {
-        View<?> view = UiComponentUtils.getView(this);
-
-        DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(view, ReportTemplate.class)
-                .withViewClass(ReportTemplateDetailView.class)
-                .withContainer(templatesDc)
-                .newEntity()
-                .withInitializer(item -> {
-                    Report report = reportDc.getItem();
-                    item.setReport(report);
-                })
-                .build();
-        templateDetailViewDialog.addAfterCloseListener(this::onReportTemplateDetailViewDialogClose);
-        templateDetailViewDialog.open();
-    }
-
-    @Subscribe("defaultTemplateField.download")
-    protected void onDefaultTemplateFieldDownload(ActionPerformedEvent event) {
-        ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
-        if (defaultTemplate != null) {
-            if (defaultTemplate.isCustom()) {
-                notifications.create(
-                        messageBundle.getMessage(
-                                "detailsTab.notification.unableToSaveCustomTemplate.text")).show();
-            } else if (isTemplateWithoutFile(defaultTemplate)) {
-                notifications.create(
-                        messageBundle.getMessage(
-                                "detailsTab.notification.unableToSaveSpecificTypes.text")).show();
-            } else {
-                byte[] reportTemplate = defaultTemplate.getContent();
-                downloader.download(
-                        new ByteArrayDownloadDataProvider(reportTemplate,
-                                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
-                                coreProperties.getTempDir()),
-                        defaultTemplate.getName(),
-                        DownloadFormat.getByExtension(defaultTemplate.getExt()));
-            }
-        } else {
-            notifications.create(
-                    messageBundle.getMessage(
-                            "detailsTab.notification.defaultTemplateIsEmpty.text")).show();
-        }
-        defaultTemplateField.focus();
-    }
-
-    @Install(to = "defaultTemplateField.create", subject = "enabledRule")
-    protected boolean defaultTemplateFieldCreateEnabledRule() {
-        return isUpdatePermitted();
-    }
-
-    @Subscribe("defaultTemplateField.upload")
-    protected void onDefaultTemplateFieldUpload(ActionPerformedEvent event) {
-        ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
-        if (defaultTemplate != null) {
-            // todo
-        }
-    }
-
-    @Install(to = "defaultTemplateField.upload", subject = "enabledRule")
-    protected boolean defaultTemplateFieldUploadEnabledRule() {
-        return isUpdatePermitted();
-    }
-
-    @Subscribe("defaultTemplateField.edit")
-    protected void onDefaultTemplateFieldEdit(ActionPerformedEvent event) {
-        Report report = reportDc.getItem();
-        ReportTemplate defaultTemplate = report.getDefaultTemplate();
-        if (defaultTemplate != null) {
-            DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(defaultTemplateField)
-                    .withViewClass(ReportTemplateDetailView.class)
-                    .withContainer(templatesDc)
-                    .editEntity(defaultTemplate)
-                    .build();
-            templateDetailViewDialog.addAfterCloseListener(this::onReportTemplateDetailViewDialogClose);
-            templateDetailViewDialog.open();
-        } else {
-            notifications.create(
-                    messageBundle.getMessage(
-                            "detailsTab.notification.defaultTemplateIsEmpty.text")).show();
-        }
-    }
-
-    @Install(to = "defaultTemplateField.edit", subject = "enabledRule")
-    protected boolean defaultTemplateFieldEditEnabledRule() {
-        return isUpdatePermitted();
     }
 
     @Subscribe("bandsTreeDataGrid.create")
@@ -569,15 +476,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return dataSetsDc.getItems().size() > 1;
     }
 
-    @Subscribe(id = "reportDc", target = Target.DATA_CONTAINER)
-    protected void onReportDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<Report> event) {
-        boolean validationOnChanged = event.getProperty().equalsIgnoreCase("validationOn");
-
-        if (validationOnChanged) {
-            setValidationScriptGroupBoxCaption(event.getItem().getValidationOn());
-        }
-    }
-
     @Subscribe(id = "bandsDc", target = Target.DATA_CONTAINER)
     protected void onBandsDcItemChange(InstanceContainer.ItemChangeEvent<BandDefinition> event) {
         updateBandFieldsAvailability(event.getItem());
@@ -696,6 +594,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
         multiDataSetField.setEnabled(bandsDc.getItemOrNull() != null && event.getSource().getItems().size() <= 1);
     }
 
+    @Subscribe(id = "templatesDc", target = Target.DATA_CONTAINER)
+    protected void onTemplatesDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportTemplate> event) {
+        if (event.getSource().getItems().isEmpty()) {
+            Report currentReport = getEditedEntity();
+            currentReport.setDefaultTemplate(null);
+        }
+    }
+
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
     protected void onParametersDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportInputParameter> event) {
         Map<String, String> paramAliases = new HashMap<>();
@@ -751,7 +657,201 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("fetchPlanEditButton")
     protected void onFetchPlanEditButtonClick(ClickEvent<Button> event) {
-        // todo implement RegionEditor (EditFetchPlanAction?)
+        if (dataSetsDataGrid.getSingleSelectedItem() != null) {
+            final DataSet dataSet = dataSetsDataGrid.getSingleSelectedItem();
+            if (DataSetType.SINGLE == dataSet.getType() || DataSetType.MULTI == dataSet.getType()) {
+                MetaClass forEntityTreeModelMetaClass = findMetaClassByAlias(dataSet);
+                if (forEntityTreeModelMetaClass != null) {
+
+                    final EntityTree entityTree = reportWizard.buildEntityTree(forEntityTreeModelMetaClass);
+                    ReportRegion reportRegion = dataSetToReportRegion(dataSet, entityTree);
+
+                    if (reportRegion != null) {
+                        if (reportRegion.getRegionPropertiesRootNode() == null) {
+                            notifications.create(messageBundle.formatMessage("bandsTab.dataSet.entityAliasInvalid.text", getNameForEntityParameter(dataSet)))
+                                    .show();
+                            //without that root node region editor form will not be initialized correctly and became empty. just return
+                        } else {
+                            //Open detail and convert saved in detail ReportRegion item to Fetch plan
+                            reportRegion.setReportData(dataManager.create(ReportData.class));
+                            reportRegion.setBandNameFromReport(dataSet.getName());
+
+                            DialogWindow<ReportRegionWizardDetailView> reportRegionDetailDialog = dialogWindows
+                                    .detail(this, ReportRegion.class)
+                                    .editEntity(reportRegion)
+                                    .withViewClass(ReportRegionWizardDetailView.class)
+                                    .build();
+                            reportRegionDetailDialog.addAfterCloseListener(afterCloseEvent -> {
+                                if (afterCloseEvent.closedWith(StandardOutcome.SAVE)) {
+                                    ReportRegionWizardDetailView editor = afterCloseEvent.getView();
+                                    reportRegion.setRegionProperties(editor.getEditedEntity().getRegionProperties());
+                                    dataSet.setFetchPlan(reportRegionToFetchPlan(entityTree, reportRegion));
+                                }
+                            });
+                            ReportRegionWizardDetailView reportRegionDetailView = reportRegionDetailDialog.getView();
+                            reportRegionDetailView.setParameters(reportRegion.getRegionPropertiesRootNode(),
+                                    true, false, false);
+                            reportRegionDetailView.setShowSaveNotification(false);
+
+                            reportRegionDetailDialog.open();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Nullable
+    protected MetaClass findMetaClassByAlias(DataSet dataSet) {
+        String dataSetAlias = getNameForEntityParameter(dataSet);
+        if (dataSetAlias == null) {
+            notifications.create(messageBundle.getMessage("bandsTab.dataSet.entityAliasNull.text"))
+                    .show();
+            return null;
+        }
+        MetaClass byAliasMetaClass = findMetaClassByDataSetEntityAlias(dataSetAlias, dataSet.getType(),
+                bandsDc.getItem().getReport().getInputParameters());
+
+        if (byAliasMetaClass == null) {
+            notifications.create(messageBundle.formatMessage("bandsTab.dataSet.entityAliasInvalid.text", dataSetAlias))
+                    .show();
+            return null;
+        } else {
+            MetaClass fetchPlanMetaClass = null;
+            if (dataSet.getFetchPlan() != null) {
+                fetchPlanMetaClass = metadata.getClass(dataSet.getFetchPlan().getEntityClass());
+            }
+            if (fetchPlanMetaClass != null && !byAliasMetaClass.getName().equals(fetchPlanMetaClass.getName())) {
+                notifications.create(messageBundle.formatMessage("bandsTab.dataSet.entityWasChanged.text", byAliasMetaClass.getName()))
+                        .show();
+            }
+            return byAliasMetaClass;
+        }
+    }
+
+    @Nullable
+    public MetaClass findMetaClassByDataSetEntityAlias(final String alias, final DataSetType dataSetType, final List<ReportInputParameter> reportInputParameters) {
+        if (reportInputParameters.isEmpty() || StringUtils.isBlank(alias)) {
+            return null;
+        }
+
+        String realAlias = DataSetType.MULTI == dataSetType ? StringUtils.substringBefore(alias, "#") : alias;
+        boolean isCollectionAlias = !alias.equals(realAlias);
+
+        ReportInputParameter reportInputParameter = reportInputParameters.stream()
+                .filter(inputParameter -> realAlias.equals(inputParameter.getAlias()))
+                .filter(inputParameter -> suitableByDataSetType(dataSetType, isCollectionAlias, inputParameter.getType()))
+                .findFirst()
+                .orElse(null);
+
+        return (reportInputParameter != null && !Strings.isNullOrEmpty(reportInputParameter.getEntityMetaClass())) ?
+                metadata.getClass(reportInputParameter.getEntityMetaClass()) :
+                null;
+
+    }
+
+    protected boolean suitableByDataSetType(DataSetType dataSetType, boolean isCollectionAlias, ParameterType type) {
+        if (DataSetType.MULTI == dataSetType) {
+            if (isCollectionAlias) {
+                return ParameterType.ENTITY == type;
+            } else {
+                return ParameterType.ENTITY_LIST == type;
+            }
+        } else if (DataSetType.SINGLE == dataSetType) {
+            return ParameterType.ENTITY == type;
+        }
+        return false;
+    }
+
+    @Nullable
+    protected ReportRegion dataSetToReportRegion(DataSet dataSet, EntityTree entityTree) {
+        boolean isTabulatedRegion;
+        FetchPlan fetchPlan = null;
+        String collectionPropertyName;
+        switch (dataSet.getType()) {
+            case SINGLE:
+                isTabulatedRegion = false;
+                fetchPlan = dataSet.getFetchPlan();
+                collectionPropertyName = null;
+                break;
+            case MULTI:
+                isTabulatedRegion = true;
+                collectionPropertyName = StringUtils.substringAfter(dataSet.getListEntitiesParamName(), "#");
+                if (StringUtils.isBlank(collectionPropertyName) && dataSet.getListEntitiesParamName().contains("#")) {
+                    notifications.create(messageBundle.formatMessage("bandsTab.dataSet.entityAliasInvalid.text", getNameForEntityParameter(dataSet)))
+                            .show();
+                    return null;
+                }
+                if (StringUtils.isNotBlank(collectionPropertyName)) {
+
+                    if (dataSet.getFetchPlan() != null) {
+                        fetchPlan = findSubFetchPlanByCollectionPropertyName(dataSet.getFetchPlan(), collectionPropertyName);
+
+                    }
+                    if (fetchPlan == null) {
+                        //Fetch plan was never created for current dataset.
+                        //We must create minimal fetch plan that contains collection property for ability of creating ReportRegion.regionPropertiesRootNode later
+                        MetaClass metaClass = metadata.getClass(entityTree.getEntityTreeRootNode().getMetaClassName());
+                        MetaProperty metaProperty = metaClass.getProperty(collectionPropertyName);
+                        if (metaProperty.getDomain() != null && metaProperty.getRange().getCardinality().isMany()) {
+                            fetchPlan = fetchPlans.builder(metaProperty.getDomain().getJavaClass()).build();
+                        } else {
+                            notifications.create(messageBundle.formatMessage("bandsTab.dataSet.cantFindCollectionProperty.text",
+                                            collectionPropertyName, metaClass.getName()))
+                                    .show();
+                            return null;
+                        }
+                    }
+                } else {
+                    fetchPlan = dataSet.getFetchPlan();
+                }
+                break;
+            default:
+                return null;
+        }
+        return reportWizard.createReportRegionByFetchPlan(entityTree, isTabulatedRegion, fetchPlan, collectionPropertyName);
+    }
+
+    protected FetchPlan reportRegionToFetchPlan(EntityTree entityTree, ReportRegion reportRegion) {
+        return reportWizard.createFetchPlanByReportRegions(entityTree.getEntityTreeRootNode(), Collections.singletonList(reportRegion));
+    }
+
+    @Nullable
+    public FetchPlan findSubFetchPlanByCollectionPropertyName(@Nullable FetchPlan fetchPlan, final String propertyName) {
+        if (fetchPlan == null) {
+            return null;
+        }
+        for (FetchPlanProperty fetchPlanProperty : fetchPlan.getProperties()) {
+            if (propertyName.equals(fetchPlanProperty.getName())) {
+                if (fetchPlanProperty.getFetchMode() != null) {
+                    return fetchPlanProperty.getFetchPlan();
+                }
+            }
+
+            if (fetchPlanProperty.getFetchMode() != null) {
+                FetchPlan foundFetchPlan = findSubFetchPlanByCollectionPropertyName(fetchPlanProperty.getFetchPlan(), propertyName);
+                if (foundFetchPlan != null) {
+                    return foundFetchPlan;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    protected String getNameForEntityParameter(DataSet dataSet) {
+        String dataSetAlias = null;
+        switch (dataSet.getType()) {
+            case SINGLE:
+                dataSetAlias = dataSet.getEntityParamName();
+                break;
+            case MULTI:
+                dataSetAlias = dataSet.getListEntitiesParamName();
+                break;
+            default:
+                break;
+        }
+        return dataSetAlias;
     }
 
     protected void setupReportXml() {
@@ -914,31 +1014,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return "dataSet" + (band.getDataSets().size() + 1);
     }
 
-    protected void setValidationScriptGroupBoxCaption(Boolean onOffFlag) {
-        // todo implement
-        /*if (BooleanUtils.isTrue(onOffFlag)) {
-            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOn"));
-        } else {
-            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOff"));
-        }*/
-    }
-
-    protected void onReportTemplateDetailViewDialogClose(DialogWindow.AfterCloseEvent<ReportTemplateDetailView> event) {
-        if (StandardOutcome.SAVE.getCloseAction().equals(event.getCloseAction())) {
-            ReportTemplate item = event.getView().getEditedEntity();
-            reportDc.getItem().setDefaultTemplate(item);
-        }
-        defaultTemplateField.focus();
-    }
-
     protected boolean isUpdatePermitted() {
         return secureOperations.isEntityUpdatePermitted(metadata.getClass(Report.class), policyStore);
-    }
-
-    protected boolean isTemplateWithoutFile(ReportTemplate template) {
-        return template.getOutputType() == JmixReportOutputType.chart ||
-                template.getOutputType() == JmixReportOutputType.table ||
-                template.getOutputType() == JmixReportOutputType.pivot;
     }
 
     protected void orderBandDefinitions(BandDefinition parent) {
@@ -1568,7 +1645,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (selectedTemplate == null) {
             return;
         }
-        DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(defaultTemplateField)
+        DialogWindow<ReportTemplateDetailView> templateDetailViewDialog = dialogWindows.detail(templatesDataGrid)
                 .withViewClass(ReportTemplateDetailView.class)
                 .withContainer(templatesDc)
                 .editEntity(selectedTemplate)
@@ -1643,6 +1720,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         templatesDataGrid.focus();
         templatesDataGrid.getDataProvider().refreshAll();
     }
+
 
     protected void setupEntityParamFieldValue(DataSet dataSet) {
         entityParamField.setValue(dataSet.getEntityParamName());

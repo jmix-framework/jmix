@@ -22,8 +22,8 @@ import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.event.UserRemovedEvent;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.genericfilter.GenericFilterClearValuesAction;
@@ -70,7 +70,7 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
 
     protected DataManager dataManager;
     protected GenericFilterConfigurationConverter genericFilterConfigurationConverter;
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
     protected DataComponents dataComponents;
     protected Metadata metadata;
 
@@ -78,13 +78,13 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
                                       UiComponents uiComponents,
                                       DataManager dataManager,
                                       GenericFilterConfigurationConverter genericFilterConfigurationConverter,
-                                      CurrentAuthentication currentAuthentication,
+                                      CurrentUserSubstitution currentUserSubstitution,
                                       DataComponents dataComponents,
                                       Metadata metadata) {
         super(actions, uiComponents);
         this.dataManager = dataManager;
         this.genericFilterConfigurationConverter = genericFilterConfigurationConverter;
-        this.currentAuthentication = currentAuthentication;
+        this.currentUserSubstitution = currentUserSubstitution;
         this.dataComponents = dataComponents;
         this.metadata = metadata;
     }
@@ -188,7 +188,7 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
     @Nullable
     public FilterConfiguration loadFilterConfigurationModel(GenericFilter filter, String configurationId) {
         String componentId = generateFilterPath(filter);
-        String username = currentAuthentication.getUser().getUsername();
+        String username = currentUserSubstitution.getEffectiveUser().getUsername();
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
                         .add(PropertyCondition.equal("configurationId", configurationId))
@@ -202,7 +202,7 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
 
     protected List<FilterConfiguration> loadFilterConfigurationModels(GenericFilter filter) {
         String filterComponentId = generateFilterPath(filter);
-        String username = currentAuthentication.getUser().getUsername();
+        String username = currentUserSubstitution.getEffectiveUser().getUsername();
 
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
@@ -223,7 +223,7 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
 
         if (configurationModel == null) {
             configurationModel = metadata.create(FilterConfiguration.class);
-            configurationModel.setUsername(currentAuthentication.getUser().getUsername());
+            configurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
         }
 
         return configurationModel;
@@ -284,7 +284,7 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
 
         configurationModel.setConfigurationId(configuration.getId());
         configurationModel.setName(configuration.getName());
-        configurationModel.setUsername(currentAuthentication.getUser().getUsername());
+        configurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
 
         return configurationModel;
     }

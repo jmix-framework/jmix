@@ -105,6 +105,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "${picker}Id"
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             helperText == "helperTextString"
@@ -215,6 +216,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
@@ -266,6 +268,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             errorMessage == "errorMessageString"
             height == "50px"

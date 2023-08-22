@@ -18,18 +18,23 @@ package io.jmix.flowui.xml.layout.loader;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.LoaderResolver;
 import io.jmix.flowui.xml.layout.support.ComponentLoaderSupport;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public abstract class AbstractComponentLoader<T extends Component> implements ComponentLoader<T> {
 
@@ -85,6 +90,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         resultComponent = createComponent();
         loadId(resultComponent, element);
         loadVisible(resultComponent, element);
+        loadCss(resultComponent, element);
     }
 
     @Override
@@ -151,6 +157,10 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         loaderSupport.loadBoolean(element, "visible", component::setVisible);
     }
 
+    protected void loadCss(Component component, Element element) {
+        loaderSupport.loadString(element, "css", css -> applyCss(css, component.getStyle()::set));
+    }
+
     protected Optional<Boolean> loadBoolean(Element element, String attributeName) {
         return loaderSupport.loadBoolean(element, attributeName);
     }
@@ -199,5 +209,25 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected <E extends Enum<E>> void loadEnum(Element element, Class<E> type, String attributeName,
                                                 Consumer<E> setter) {
         loaderSupport.loadEnum(element, type, attributeName, setter);
+    }
+
+    protected void applyCss(String css, BiConsumer<String, String> setter) {
+        Arrays.stream(StringUtils.split(css, ';'))
+                .filter(StringUtils::isNotBlank)
+                .forEach(propertyStatement -> {
+                    int separatorIndex = propertyStatement.indexOf(':');
+                    if (separatorIndex < 0) {
+                        throw new GuiDevelopmentException("Incorrect CSS string: " + css, context);
+                    }
+
+                    String propertyName = trimToEmpty(propertyStatement.substring(0, separatorIndex));
+                    String propertyValue = trimToEmpty(propertyStatement.substring(separatorIndex + 1));
+
+                    if (StringUtils.isBlank(propertyName)) {
+                        throw new GuiDevelopmentException("Incorrect CSS string, empty property name: " + css, context);
+                    }
+
+                    setter.accept(propertyName, propertyValue);
+                });
     }
 }

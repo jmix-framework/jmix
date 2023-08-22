@@ -20,7 +20,7 @@ import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.genericfilter.configuration.AbstractConfigurationDetail;
 import io.jmix.flowui.data.value.ContainerValueSource;
@@ -35,7 +35,7 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
     protected static final String AVAILABLE_FOR_ALL_USERS_FIELD_ID = "availableForAllUsersField";
     protected static final String DEFAULT_FOR_ALL_USERS_FIELD_ID = "defaultForAllUsersField";
 
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
     protected AccessManager accessManager;
     protected MessageTools messageTools;
 
@@ -50,7 +50,7 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
     @Override
     protected void autowireDependencies() {
         super.autowireDependencies();
-        currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
+        currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
         accessManager = applicationContext.getBean(AccessManager.class);
         messageTools = applicationContext.getBean(MessageTools.class);
     }
@@ -77,7 +77,7 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
         if (availableForAllUsersField.getValue()) {
             editedConfigurationModel.setUsername(null);
         } else {
-            editedConfigurationModel.setUsername(currentAuthentication.getUser().getUsername());
+            editedConfigurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
         }
     }
 

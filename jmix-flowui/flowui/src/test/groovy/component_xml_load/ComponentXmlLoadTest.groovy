@@ -51,6 +51,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "avatarId"
             abbreviation == "abbreviationString"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             colorIndex == 50
             height == "50px"
             image == "imageString"
@@ -73,6 +74,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.iconId) {
             id.get() == "iconId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             color == "purple"
             getElement().getAttribute("icon") == "vaadin:check"
             getStyle().get(ElementConstants.STYLE_WIDTH) == "2em"
@@ -90,6 +92,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "buttonId"
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             icon.element.getAttribute("icon") ==
                     VaadinIcon.YOUTUBE.create().element.getAttribute("icon")
             disableOnClick
@@ -145,6 +148,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.detailsId) {
             id.get() == "detailsId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             maxHeight == "55px"
@@ -175,6 +179,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.progressBarId) {
             id.get() == "progressBarId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             height == "50px"
             !indeterminate
             max == 95
@@ -198,6 +203,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.dropdownButtonId) {
             id.get() == "dropdownButtonId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             (!dropdownIndicatorVisible)
             enabled
             height == "50px"
@@ -233,6 +239,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "comboButtonId"
             action.getText() == "Action Text"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             getDropdownIcon().element.getAttribute("icon")
                     == VaadinIcon.CHECK.create().element.getAttribute("icon")
             enabled
@@ -269,6 +276,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             acceptedFileTypes.containsAll([".jpg"])
             !autoUpload
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             dropAllowed
             (dropLabel as HasText).getText() == "dropLabelString"
             dropLabelIcon.element.getAttribute("icon") ==

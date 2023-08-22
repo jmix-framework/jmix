@@ -55,7 +55,7 @@
             <entityComboBox id="groupFilter" itemsContainer="reportGroupsDc" metaClass="report_ReportGroup"
                             label="msg://report.reportRunFilterGroup"/>
             <textField id="codeFilter" label="msg://report.reportRunFilterCode"/>
-            <datePicker id="updatedDateFilter" label="msg://report.reportRunFilterUpdatedDate"/>
+            <datePicker id="updatedDateFilter" datatype="localDate" label="msg://report.reportRunFilterUpdatedDate"/>
             <hbox>
                 <button id="searchBtn"
                         text="msg://report.reportFilterButton"

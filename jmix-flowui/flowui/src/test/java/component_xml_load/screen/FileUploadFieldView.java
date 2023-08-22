@@ -38,6 +38,8 @@ public class FileUploadFieldView extends StandardView {
     public FileUploadField readOnlyFileUploadField;
     @ViewComponent
     public FileUploadField disabledFileUploadField;
+    @ViewComponent
+    public FileUploadField localizedFileUploadField;
 
     public boolean vceOccurred;
 

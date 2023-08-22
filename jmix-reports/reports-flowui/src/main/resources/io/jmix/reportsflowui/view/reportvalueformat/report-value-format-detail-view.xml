@@ -24,9 +24,10 @@
             <comboBox id="formatField" required="true"
                       width="100%"
                       property="formatString"
-                      label="msg://formatStringMsg"
-                      requiredMessage="msg://formatStringMsg"/>
-            <checkbox id="groovyField" property="groovyScript" 
+                      allowCustomValue="false"
+                      label="msg://formatStringLabel"
+                      requiredMessage="msg://formatStringRequiredMessage"/>
+            <checkbox id="groovyField" property="groovyScript"
                       label="msg://valuesFormats.groovyScript"/>
         </formLayout>
         <div id="groovyCodeEditorBox" visible="false" width="100%">

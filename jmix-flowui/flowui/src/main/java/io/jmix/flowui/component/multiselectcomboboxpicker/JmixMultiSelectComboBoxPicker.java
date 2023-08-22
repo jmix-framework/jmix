@@ -42,19 +42,20 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBoxPicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.util.FetchCallbackAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 
 public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<V>
         implements EntityMultiPickerComponent<V>, SupportsValueSource<Collection<V>>, SupportsValidation<Collection<V>>,
         SupportsTypedValue<JmixMultiSelectComboBoxPicker<V>, AbstractField.ComponentValueChangeEvent<MultiSelectComboBox<V>, Set<V>>, Collection<V>, Set<V>>,
         SupportsDataProvider<V>, SupportsItemsEnum<V>, SupportsFilterableItemsContainer<V>, HasRequired,
-        ApplicationContextAware, InitializingBean {
+        SupportsItemsFetchCallback<V, String>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -205,6 +206,11 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
     }
 
     @Override
+    public void setItemsFetchCallback(FetchCallback<V, String> fetchCallback) {
+        setItems(new FetchCallbackAdapter<>(fetchCallback));
+    }
+
+    @Override
     public void setValueFromClient(@Nullable Collection<V> value) {
         Set<V> convertedValue = fieldDelegate.convertToPresentation(value);
         setModelValue(convertedValue, true);
@@ -258,10 +264,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
                                     boolean fromClient) {
         try {
             if (modelValue == null && presentationValue != null) {
-                modelValue = fieldDelegate.convertToModel(
-                        presentationValue,
-                        getDataProvider().fetch(new Query<>())
-                );
+                modelValue = convertToModel(presentationValue);
             }
 
             super.setValue(presentationValue);
@@ -274,6 +277,14 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
             }
         } catch (ConversionException e) {
             throw new IllegalArgumentException("Cannot convert value to a model type");
+        }
+    }
+
+    protected Collection<V> convertToModel(Set<V> presentationValue) {
+        if (getDataProvider() != null && getDataProvider().isInMemory()) {
+            return fieldDelegate.convertToModel(presentationValue, getDataProvider().fetch(new Query<>()));
+        } else {
+            return fieldDelegate.convertToModel(presentationValue);
         }
     }
 
@@ -304,10 +315,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
         super.updateSelection(itemsToSelect, Collections.emptySet());
 
-        internalValue = fieldDelegate.convertToModel(
-                super.getSelectedItems(),
-                getDataProvider().fetch(new Query<>())
-        );
+        internalValue = convertToModel(super.getSelectedItems());
     }
 
     @Override
@@ -325,10 +333,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
         super.updateSelection(Collections.emptySet(), itemsToDeselect);
 
-        internalValue = fieldDelegate.convertToModel(
-                super.getSelectedItems(),
-                getDataProvider().fetch(new Query<>())
-        );
+        internalValue = convertToModel(super.getSelectedItems());
     }
 
     @Override
@@ -370,7 +375,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
             Collection<V> value;
             try {
-                value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
+                value = convertToModel(presValue);
 
                 setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
             } catch (ConversionException e) {

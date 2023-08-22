@@ -19,6 +19,13 @@ package io.jmix.searchflowui.utils;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class FullTextFilterUtils {
+
+    /**
+     * Generates a random alphanumeric parameter name with a length of 10 characters.
+     * Parameter name attribute sets the name of the associated query parameter name, used by condition.
+     *
+     * @return A randomly generated parameter name.
+     */
     public static String generateParameterName() {
         return RandomStringUtils.randomAlphabetic(10);
     }

@@ -26,6 +26,7 @@ import io.jmix.flowui.xml.layout.loader.component.AbstractSingleFilterComponentL
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchflowui.component.FullTextFilter;
+import io.jmix.searchflowui.utils.FullTextFilterUtils;
 import org.dom4j.Element;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class FullTextFilterLoader extends AbstractSingleFilterComponentLoader<Fu
     public void loadComponent() {
         super.loadComponent();
         loadSearchStrategy(resultComponent, element);
-        loadString(element, "defaultValue").ifPresent(resultComponent::setValue);
+        loadString(element, "defaultValue", resultComponent::setValue);
     }
 
     protected void loadSearchStrategy(FullTextFilter resultComponent, Element element) {
@@ -85,4 +86,10 @@ public class FullTextFilterLoader extends AbstractSingleFilterComponentLoader<Fu
         return applicationContext.getBean(MetadataTools.class);
     }
 
+    @Override
+    protected void loadAttributesBeforeValueComponent() {
+        super.loadAttributesBeforeValueComponent();
+        resultComponent.setParameterName(loadString(element, "parameterName")
+                .orElse(FullTextFilterUtils.generateParameterName()));
+    }
 }

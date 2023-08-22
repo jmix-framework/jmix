@@ -29,27 +29,21 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchContext;
-import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.searchflowui.view.result.SearchResultsView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import static io.jmix.searchflowui.view.result.SearchResultsView.*;
 
+//todo add studio component annotation
 public class SearchField extends TypedTextField<String> {
-    public static final String NAME = "searchField";
     public static final String SEARCH_FIELD_STYLENAME = "jmix-search-field";
 
-    @Autowired
-    protected EntitySearcher entitySearcher;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -61,9 +55,8 @@ public class SearchField extends TypedTextField<String> {
     @Autowired
     protected DialogWindows dialogWindows;
 
+    //todo add search size parameter?
     protected Icon searchIcon;
-    protected Consumer<SearchCompletedEvent> searchCompletedHandler;
-
     protected SearchStrategy searchStrategy;
     protected List<String> entities;
     protected OpenMode openMode;
@@ -84,17 +77,6 @@ public class SearchField extends TypedTextField<String> {
             String value = valueChangeEvent.getValue();
             setValue(value);
         });
-
-
-        searchCompletedHandler = (event -> {
-            SearchResult searchResult = event.getSearchResult();
-            if (searchResult.isEmpty()) {
-                notifications.create(messages.getMessage(getClass(), "noResults"))
-                        .show();
-            } else {
-                openSearchResultsWindow(event.getSearchResult());
-            }
-        });
     }
 
     protected void initSearchField() {
@@ -108,27 +90,36 @@ public class SearchField extends TypedTextField<String> {
         searchIcon.addClickListener(event -> performSearch());
     }
 
-    protected void openSearchResultsWindow(SearchResult searchResult) {
-        if (openMode.equals(OpenMode.NAVIGATION)) {
+    protected void openSearchResultsWindow(String searchText) {
+        SearchContext searchContext = createSearchContext(searchText, entities,
+                searchProperties.getSearchResultPageSize());
+
+        if (openMode == OpenMode.DIALOG) {
+            DialogWindow<SearchResultsView> searchResultsDialog = dialogWindows.view(UiComponentUtils.getView(this),
+                            SearchResultsView.class)
+                    .build();
+
+            SearchResultsView view = searchResultsDialog.getView();
+            view.initView(new SearchFieldContext(this));
+            searchResultsDialog.open();
+        } else {
             viewNavigators.view(SearchResultsView.class)
                     .withBackwardNavigation(true)
                     .withAfterNavigationHandler(event -> {
-                        event.getView().initView(new SearchFieldContext(this), searchResult);
+                        event.getView().initView(new SearchFieldContext(this));
                     })
                     .withQueryParameters(new QueryParameters(
                             Map.of(QUERY_PARAM_VALUE, List.of(this.getValue()),
                                     QUERY_PARAM_ENTITIES, this.getEntities(),
-                                    QUERY_PARAM_STRATEGY, List.of(this.getSearchStrategy().getName()),
-                                    QUERY_PARAM_NEED_RELOAD, List.of(String.valueOf(Boolean.TRUE)))))
+                                    QUERY_PARAM_STRATEGY, List.of(this.getSearchStrategy().getName()))))
                     .navigate();
-        } else {
-            DialogWindow<SearchResultsView> searchResultsDialog = dialogWindows.view(UiComponentUtils.getView(this),
-                            SearchResultsView.class)
-                    .build();
-            SearchResultsView view = searchResultsDialog.getView();
-            view.initView(new SearchFieldContext(this), searchResult);
-            searchResultsDialog.open();
         }
+    }
+
+    protected SearchContext createSearchContext(String value, List<String> entities, int size) {
+        return new SearchContext(value)
+                .setSize(size)
+                .setEntities(entities);
     }
 
     public void performSearch() {
@@ -138,32 +129,8 @@ public class SearchField extends TypedTextField<String> {
                     .show();
         } else {
             String preparedSearchText = searchText.trim();
-            SearchContext searchContext = new SearchContext(preparedSearchText)
-                    .setSize(searchProperties.getSearchResultPageSize())
-                    .setEntities(entities);
-            SearchResult searchResult = entitySearcher.search(searchContext, searchStrategy);
-            if (searchCompletedHandler != null) {
-                searchCompletedHandler.accept(new SearchCompletedEvent(this, searchResult));
-            }
-        }
-    }
 
-
-    class SearchCompletedEvent {
-        protected SearchField source;
-        protected SearchResult searchResult;
-
-        public SearchCompletedEvent(SearchField source, SearchResult searchResult) {
-            this.source = source;
-            this.searchResult = searchResult;
-        }
-
-        public SearchResult getSearchResult() {
-            return searchResult;
-        }
-
-        public SearchField getSource() {
-            return source;
+            openSearchResultsWindow(preparedSearchText);
         }
     }
 
@@ -189,14 +156,5 @@ public class SearchField extends TypedTextField<String> {
 
     public void setSearchStrategy(SearchStrategy searchStrategy) {
         this.searchStrategy = searchStrategy;
-    }
-
-    public void setSearchCompletedHandler(Consumer<SearchCompletedEvent> handler) {
-        this.searchCompletedHandler = handler;
-    }
-
-    @Nullable
-    public Consumer<SearchCompletedEvent> getSearchCompletedHandler() {
-        return searchCompletedHandler;
     }
 }

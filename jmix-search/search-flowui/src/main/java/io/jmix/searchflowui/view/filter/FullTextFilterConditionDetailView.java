@@ -18,6 +18,7 @@ package io.jmix.searchflowui.view.filter;
 
 import io.jmix.flowui.app.filter.condition.FilterConditionDetailView;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.search.searching.SearchStrategy;
@@ -34,18 +35,18 @@ import java.util.stream.Collectors;
 @ViewController("search_FullTextFilterCondition.detail")
 @ViewDescriptor("full-text-filter-condition-detail-view.xml")
 @EditedEntityContainer("filterConditionDc")
-@DialogMode(width = "56em", resizable = true)
+@DialogMode(width = "40em", resizable = true)
 public class FullTextFilterConditionDetailView extends FilterConditionDetailView<FullTextFilterCondition> {
-
-    @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
-    protected SearchStrategyManager searchStrategyManager;
 
     @ViewComponent
     protected InstanceContainer<FullTextFilterCondition> filterConditionDc;
     @ViewComponent
     protected JmixComboBox<String> searchStrategyNameField;
+
+    @Autowired
+    protected MessageBundle messageBundle;
+    @Autowired
+    protected SearchStrategyManager searchStrategyManager;
 
     @Override
     public InstanceContainer<FullTextFilterCondition> getInstanceContainer() {
@@ -62,9 +63,11 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
         if (Strings.isNullOrEmpty(getEditedEntity().getLabel())) {
             getEditedEntity().setLabel(messageBundle.getMessage("defaultLabel"));
         }
-        if (Strings.isNullOrEmpty(getEditedEntity().getParameterName())) {
-            getEditedEntity().setParameterName(FullTextFilterUtils.generateParameterName());
-        }
+    }
+
+    @Subscribe("parameterNameValuePicker.generateRandomParameterName")
+    protected void onParameterNameValuePickerGenerateActionPerformed(ActionPerformedEvent event) {
+        getEditedEntity().setParameterName(FullTextFilterUtils.generateParameterName());
     }
 
     @Subscribe

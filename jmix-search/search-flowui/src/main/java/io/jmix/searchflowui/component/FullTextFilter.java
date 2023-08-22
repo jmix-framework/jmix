@@ -133,7 +133,6 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
 
     private List<Id> performFullTextSearch(String searchTerm) {
         SearchContext searchContext = new SearchContext(searchTerm);
-//        todo limit size?
         searchContext.setEntities(getDataLoader().getContainer().getEntityMetaClass().getName());
         SearchResult searchResult = entitySearcher.search(searchContext,
                 searchStrategy != null ? searchStrategy : searchStrategyManager.getDefaultSearchStrategy());

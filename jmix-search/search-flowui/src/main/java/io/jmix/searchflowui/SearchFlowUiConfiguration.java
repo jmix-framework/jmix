@@ -79,15 +79,4 @@ public class SearchFlowUiConfiguration {
                         FullTextFilterConverter.class)
                 .build();
     }
-//
-//    /**
-//     * Registers a full-text filter and condition for using in the {@link io.jmix.ui.component.Filter} UI component.
-//     */
-//    @Bean("search_FullTextFilterRegistration")
-//    public FilterComponentRegistration registerFullTextFilter() {
-//        return FilterComponentRegistrationBuilder.create(FullTextFilter.class,
-//                FullTextFilterCondition.class,
-//                FullTextFilterConverter.class)
-//                .build();
-//    }
 }

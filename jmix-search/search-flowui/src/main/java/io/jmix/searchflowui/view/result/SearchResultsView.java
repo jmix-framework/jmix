@@ -32,11 +32,11 @@ import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
-import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.*;
 import io.jmix.searchflowui.component.SearchField;
@@ -52,16 +52,17 @@ import java.util.*;
 @DialogMode(width = "50em", height = "42.5em", resizable = true)
 public class SearchResultsView extends StandardView {
 
-
     public static final String QUERY_PARAM_VALUE = "value";
     public static final String QUERY_PARAM_ENTITIES = "entities";
     public static final String QUERY_PARAM_STRATEGY = "strategy";
-    public static final String QUERY_PARAM_NEED_RELOAD = "needReload";
 
     protected static final Map<String, String> systemFieldLabels = ImmutableMap.<String, String>builder()
             .put("_file_name", "fileName")
             .put("_content", "content")
             .build();
+
+    @ViewComponent
+    protected VerticalLayout contentBoxWithName;
 
     @Autowired
     protected MessageBundle messageBundle;
@@ -81,42 +82,39 @@ public class SearchResultsView extends StandardView {
     protected EntitySearcher entitySearcher;
     @Autowired
     protected SearchStrategyManager searchStrategyManager;
-
-    @ViewComponent
-    protected VerticalLayout contentBoxWithName;
-
-    protected SearchResult searchResult;
-
-    protected SearchStrategy searchStrategy;
-    protected boolean needReload = false;
-    protected List<String> entities = Collections.emptyList();
-    protected String value;
-    @Autowired
-    protected RouteSupport routeSupport;
     @Autowired
     protected SearchProperties searchProperties;
     @Autowired
     protected DialogWindows dialogWindows;
+    @Autowired
+    private Notifications notifications;
 
+    protected SearchResult searchResult;
+    protected SearchStrategy searchStrategy;
+    protected List<String> entities = Collections.emptyList();
+    protected String value;
     protected SearchFieldContext searchFieldContext;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         super.beforeEnter(event);
         parseQueryParameters(event.getLocation().getQueryParameters().getParameters());
-        if (needReload) {
-            initSearchFieldContext();
-            SearchContext searchContext = new SearchContext(value)
-                    .setSize(searchProperties.getSearchResultPageSize())
-                    .setEntities(entities);
-            searchResult = entitySearcher.search(searchContext, searchStrategy);
-            handleSearchResult(searchResult);
+        initSearchFieldContext();
+        SearchContext searchContext = createSearchContext(value, entities, searchProperties.getSearchResultPageSize());
 
-//            SearchContext searchContext = new SearchContext(preparedSearchText)
-//                    .setSize(searchProperties.getSearchResultPageSize())
-//                    .setEntities(entities);
+        searchResult = entitySearcher.search(searchContext, searchStrategy);
+        handleSearchResult(searchResult);
+    }
 
-        }
+    protected SearchContext createSearchContext(String value, List<String> entities, int size) {
+        return new SearchContext(value)
+                .setSize(size)
+                .setEntities(entities);
+    }
+
+    protected SearchContext createSearchContext(SearchFieldContext searchFieldContext) {
+        return createSearchContext(searchFieldContext.getValue(), searchFieldContext.getEntities(),
+                searchProperties.getSearchResultPageSize());
     }
 
     protected void initSearchFieldContext() {
@@ -134,13 +132,6 @@ public class SearchResultsView extends StandardView {
                     .findAny()
                     .ifPresent(parameter -> searchStrategy = searchStrategyManager.getSearchStrategyByName(parameter));
         }
-        if (parameters.containsKey(QUERY_PARAM_NEED_RELOAD)) {
-            parameters.get(QUERY_PARAM_NEED_RELOAD).stream()
-                    .findAny()
-                    .ifPresent(parameter -> needReload = Boolean.parseBoolean(parameter));
-        } else {
-            addNeedReloadParameter();
-        }
         if (parameters.containsKey(QUERY_PARAM_VALUE)) {
             parameters.get(QUERY_PARAM_VALUE).stream()
                     .findAny()
@@ -151,32 +142,11 @@ public class SearchResultsView extends StandardView {
         }
     }
 
-    protected void addNeedReloadParameter() {
-        getUI().ifPresent(ui -> {
-            routeSupport.setQueryParameter(ui, QUERY_PARAM_NEED_RELOAD, Boolean.TRUE);
-        });
-    }
-
-    public void initView(SearchFieldContext searchFieldContext, SearchResult searchResult) {
-        setSearchResult(searchResult);
-        this.searchFieldContext = searchFieldContext;
-        handleSearchResult(searchResult);
-
-    }
-
-    public SearchResultsView setSearchResult(SearchResult searchResult) {
-        this.searchResult = searchResult;
-        return this;
-    }
-
-    @Override
-    public String getPageTitle() {
-        String caption = messageBundle.getMessage("resultViewTitle");
-        if (searchResult != null) {
-            String searchText = searchResult.getSearchText();
-            return caption + ": " + searchText;
-        } else {
-            return super.getPageTitle();
+    public void initView(SearchFieldContext searchFieldContext) {
+        if (this.searchFieldContext == null) {
+            this.searchFieldContext = searchFieldContext;
+            searchResult = entitySearcher.search(createSearchContext(searchFieldContext), searchFieldContext.getSearchStrategy());
+            handleSearchResult(searchResult);
         }
     }
 
@@ -197,15 +167,19 @@ public class SearchResultsView extends StandardView {
 
     protected void renderResult(SearchResult searchResult) {
         contentBoxWithName.removeAll();
-        contentBoxWithName.add(createSearchField());
+        contentBoxWithName.add(createSearchField(searchResult));
+        if (searchResult.isEmpty()) {
+            notifications.create(messageBundle.getMessage("noResults"))
+                    .show();
+        } else {
+            VirtualList<SearchResultEntry> virtualList = uiComponents.create(VirtualList.class);
+            virtualList.setRenderer(searchResultRenderer);
+            virtualList.setItems(searchResult.getAllEntries());
+            virtualList.setWidthFull();
 
-        VirtualList<SearchResultEntry> virtualList = uiComponents.create(VirtualList.class);
-        virtualList.setRenderer(searchResultRenderer);
-        virtualList.setItems(searchResult.getAllEntries());
-        virtualList.setWidthFull();
-
-        contentBoxWithName.expand(virtualList);
-        contentBoxWithName.add(virtualList);
+            contentBoxWithName.expand(virtualList);
+            contentBoxWithName.add(virtualList);
+        }
     }
 
     protected Span createNoSearchTextSpan() {
@@ -221,12 +195,15 @@ public class SearchResultsView extends StandardView {
         return hitSpan;
     }
 
-    protected SearchField createSearchField() {
+    protected SearchField createSearchField(SearchResult searchResult) {
         SearchField searchField = uiComponents.create(SearchField.class);
         searchField.setSearchStrategy(searchFieldContext.getSearchStrategy());
         searchField.setValue(searchFieldContext.getValue());
         searchField.setEntities(searchFieldContext.getEntities());
         searchField.setOpenMode(searchFieldContext.getOpenMode());
+        searchField.setHelperText(messageBundle.formatMessage("searchResultsSize", searchResult.getSize()));
+        searchField.setWidth("100%");
+        searchField.setMaxWidth("50em");
         return searchField;
     }
 
@@ -259,8 +236,11 @@ public class SearchResultsView extends StandardView {
     protected final ComponentRenderer<Component, SearchResultEntry> searchResultRenderer = new ComponentRenderer<>(entry -> {
         VerticalLayout verticalLayout = uiComponents.create(VerticalLayout.class);
         verticalLayout.setWidthFull();
-        verticalLayout.setSpacing(false);
         verticalLayout.setPadding(false);
+        verticalLayout.setSpacing(false);
+        verticalLayout.getThemeList().add("spacing-s");
+        verticalLayout.setMargin(true);
+
         JmixButton instanceBtn = createInstanceButton(entry.getEntityName(), entry);
         verticalLayout.add(instanceBtn);
 
@@ -273,17 +253,19 @@ public class SearchResultsView extends StandardView {
                 uniqueCaptions.add(fieldCaption);
             }
         }
-        Collections.sort(list);
+        VerticalLayout hitLayout = uiComponents.create(VerticalLayout.class);
+        hitLayout.setPadding(false);
+        hitLayout.setSpacing(false);
+        hitLayout.getThemeList().add("spacing-xs");
 
+        Collections.sort(list);
         for (String caption : list) {
             Span hitSpan = createHitSpan(caption);
-            verticalLayout.add(hitSpan);
+            hitLayout.add(hitSpan);
         }
+        verticalLayout.add(hitLayout);
 
         return verticalLayout;
-//            entityDetails.addContent(verticalLayout);
-//        }
-//        return entityDetails;
     });
 
     protected String formatFieldCaption(String entityName, String fieldName) {

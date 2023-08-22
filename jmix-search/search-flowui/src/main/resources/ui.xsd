@@ -23,11 +23,10 @@
     <xs:element name="searchField">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="layout:baseComponent">
+                <xs:extension base="layout:textFieldComponent">
                     <xs:attribute name="strategy" type="searchStrategyType"/>
                     <xs:attribute name="entities" type="xs:string"/>
                     <xs:attribute name="openMode" type="openMode"/>
-                    <xs:attributeGroup ref="layout:hasHelperText"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -37,14 +36,12 @@
 
     <xs:complexType name="fullTextFilterComponent">
         <xs:complexContent>
-            <xs:extension base="layout:baseComponent">
+            <xs:extension base="layout:baseSingleFilterComponent">
                 <xs:attribute name="dataLoader" type="xs:string" use="required"/>
                 <xs:attribute name="searchStrategy" type="searchStrategyType"/>
-                <xs:attribute name="captionWidth" type="xs:string"/>
+                <xs:attribute name="labelWidth" type="layout:componentSize"/>
                 <xs:attribute name="autoApply" type="xs:boolean"/>
-                <xs:attribute name="defaultValue" type="xs:string"/>
-                <xs:attribute name="parameterName" type="xs:string"/>
-                <xs:attributeGroup ref="layout:hasTabIndex"/>
+                <xs:attribute name="labelPosition" type="layout:labelPositionType"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

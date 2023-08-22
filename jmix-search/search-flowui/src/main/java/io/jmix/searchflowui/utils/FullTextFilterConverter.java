@@ -18,18 +18,15 @@ package io.jmix.searchflowui.utils;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.HasValueAndElement;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.converter.AbstractFilterComponentConverter;
 import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.entity.filter.FilterValueComponent;
-import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchflowui.component.FullTextFilter;
@@ -48,10 +45,8 @@ import java.util.Objects;
 public class FullTextFilterConverter extends AbstractFilterComponentConverter<FullTextFilter, FullTextFilterCondition> {
     @Autowired
     protected UiComponents uiComponents;
-
     @Autowired
     protected Metadata metadata;
-
     @Autowired
     protected SearchStrategyManager searchStrategyManager;
     @Autowired
@@ -136,10 +131,7 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
 
         return valueComponent;
     }
-//    protected HasValueAndElement<?, ?> generateValueComponent(FullTextFilterCondition model) {
-//        MetaClass metaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
-//        return singleFilterSupport.generateValueComponent(metaClass, model.getProperty(), model.getOperation());
-//    }
+
     protected HasValueAndElement<?, String> createValueComponent(String componentName) {
         HasValueAndElement<?, String> valueComponent;
         Class componentType = singleFilterSupport.getValueComponentType(componentName);
@@ -151,7 +143,7 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
         valueComponent = ((HasValueAndElement<?, String>) generatedComponent);
         return valueComponent;
     }
-    //done
+
     protected FilterValueComponent convertValueComponentToModel(FullTextFilter component) {
         HasValueAndElement<?, ?> valueField = component.getValueComponent();
 
@@ -166,5 +158,4 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
 
         return valueComponent;
     }
-
 }

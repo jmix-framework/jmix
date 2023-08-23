@@ -55,10 +55,14 @@ public class UiAccessChecker {
      * @return {@code true} if menu item is permitted
      */
     public boolean isMenuPermitted(MenuItem menuItem) {
-        Class<? extends View<?>> controllerClass = getControllerClass(menuItem);
-        boolean hasAccess = accessAnnotationChecker != null && accessAnnotationChecker.hasAccess(controllerClass);
+        if (menuItem.getView() != null) {
+            Class<? extends View<?>> controllerClass = getControllerClass(menuItem);
+            boolean hasAccess = accessAnnotationChecker != null && accessAnnotationChecker.hasAccess(controllerClass);
 
-        return hasAccess || isMenuItemHasSecurityPermission(menuItem);
+            return hasAccess || isMenuItemHasSecurityPermission(menuItem);
+        } else {
+            return isMenuItemHasSecurityPermission(menuItem);
+        }
     }
 
     /**

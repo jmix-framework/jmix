@@ -16,6 +16,7 @@
 
 package io.jmix.gridexportflowui.exporter.excel;
 
+import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
@@ -162,7 +163,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
             for (int c = 0; c < columns.size(); c++) {
                 DataGrid.Column<?> column = columns.get(c);
-                String caption = column.getHeaderText();
+                String caption = getColumnHeaderCaption(column);
 
                 Cell cell = row.createCell(c);
                 RichTextString richTextString = createStringCellValue(caption);
@@ -261,6 +262,19 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
         } finally {
             disposeWorkBook();
+        }
+    }
+
+    protected String getColumnHeaderCaption(DataGrid.Column<?> column) {
+        String caption = column.getHeaderText();
+        if (caption != null) {
+            return caption;
+        } else {
+            com.vaadin.flow.component.Component headerComponent = column.getHeaderComponent();
+            if (headerComponent instanceof HasText hasText) {
+                caption = hasText.getText();
+            }
+            return caption != null ? caption : "";
         }
     }
 

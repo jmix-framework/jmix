@@ -58,6 +58,7 @@ class FileUploadFieldXmlLoadTest extends FlowuiTestSpecification {
         def field = view.xmlFileUploadField
         field.acceptedFileTypes[0] == ".jpg"
         field.classNames[0] == "custom-className"
+        field.style.get("color") == "red"
         field.clearButtonAriaLabel == "clearButtonAriaLabel"
         field.i18n.uploading.status.connecting == "connectingStatusText"
         !field.dropAllowed

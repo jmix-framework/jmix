@@ -19,9 +19,12 @@ package io.jmix.flowui.xml.layout.loader.component;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import org.dom4j.Element;
 
 public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
+
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
     protected JmixButton createComponent() {
@@ -29,7 +32,16 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
     }
 
     @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
+    @Override
     public void loadComponent() {
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
+
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "iconAfterText", resultComponent::setIconAfterText);
         loadBoolean(element, "disableOnClick", resultComponent::setDisableOnClick);
@@ -54,5 +66,12 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
                 .ifPresent(actionId -> getComponentContext().addInitTask(
                         new AssignActionInitTask<>(component, actionId, getComponentContext().getView())
                 ));
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

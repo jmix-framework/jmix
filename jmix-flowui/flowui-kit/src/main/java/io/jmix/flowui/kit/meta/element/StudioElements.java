@@ -41,6 +41,7 @@ public interface StudioElements {
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -224,6 +225,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "flewGrow", type = StudioPropertyType.DOUBLE),
@@ -296,7 +298,8 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "manual", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "opened", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.shared.Tooltip.TooltipPosition",
+                            classFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition",
+                            setParameterFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition",
                             options = {"TOP_START", "TOP", "TOP_END", "BOTTOM_START", "BOTTOM", "BOTTOM_END",
                                     "START_TOP", "START", "START_BOTTOM", "END_TOP", "END", "END_BOTTOM"})
             }
@@ -368,6 +371,7 @@ public interface StudioElements {
             },
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "defaultValue", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -417,6 +421,7 @@ public interface StudioElements {
             },
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "defaultValue", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -484,6 +489,7 @@ public interface StudioElements {
             },
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -591,4 +597,24 @@ public interface StudioElements {
             }
     )
     void itemsQuery();
+
+    @StudioElement(
+            name = "Prefix",
+            xmlElement = "prefix",
+            target = {"com.vaadin.flow.component.shared.HasPrefix"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            possibleChildren = {"com.vaadin.flow.component.Component"},
+            maxCountOfChildren = 1
+    )
+    void prefix();
+
+    @StudioElement(
+            name = "Suffix",
+            xmlElement = "suffix",
+            target = {"com.vaadin.flow.component.shared.HasSuffix"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            possibleChildren = {"com.vaadin.flow.component.Component"},
+            maxCountOfChildren = 1
+    )
+    void suffix();
 }

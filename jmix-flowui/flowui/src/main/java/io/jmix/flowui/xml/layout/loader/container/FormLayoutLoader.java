@@ -44,8 +44,6 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
     protected MetadataTools metaDataTools;
     protected MessageTools messageTools;
 
-    protected LabelsPosition labelsPosition = LabelsPosition.TOP;
-
     @Override
     protected FormLayout createComponent() {
         return factory.create(FormLayout.class);
@@ -56,7 +54,6 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        loadLabelPosition(element);
 
         loadSubComponents();
     }
@@ -81,19 +78,14 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
             String label = getLabel(child);
             if (label == null) {
                 label = generatePropertyLabel(child);
-                setLabel(child, label);
             }
+            setLabel(child, null);
+            setWidthFull(child);
 
-            if (labelsPosition == LabelsPosition.ASIDE) {
-                FormLayout.FormItem formItem = resultComponent.addFormItem(child, label);
-                setLabel(child, null);
-                setWidthFull(child);
-                formItem.setVisible(child.isVisible());
-                colspan.ifPresent(it -> resultComponent.setColspan(formItem, it));
-            } else {
-                resultComponent.add(child);
-                colspan.ifPresent(it -> resultComponent.setColspan(child, it));
-            }
+            FormLayout.FormItem formItem = resultComponent.addFormItem(child, label);
+            formItem.setVisible(child.isVisible());
+            formItem.setEnabled(child.getElement().isEnabled());
+            colspan.ifPresent(it -> resultComponent.setColspan(formItem, it));
         }
     }
 
@@ -119,6 +111,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
     protected void loadResponsiveSteps(FormLayout resultComponent, Element element) {
         Element responsiveSteps = element.element("responsiveSteps");
         if (responsiveSteps == null) {
+            resultComponent.setResponsiveSteps(getDefaultResponsiveSteps(element));
             return;
         }
 
@@ -134,6 +127,16 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         }
 
         resultComponent.setResponsiveSteps(pendingSetResponsiveSteps);
+    }
+
+    protected List<ResponsiveStep> getDefaultResponsiveSteps(Element element) {
+        LabelsPosition labelsPosition = loadEnum(element, LabelsPosition.class, "labelsPosition")
+                .orElse(LabelsPosition.TOP);
+
+        return List.of(
+                new ResponsiveStep("0", 1, labelsPosition),
+                new ResponsiveStep("40em", 2, labelsPosition)
+        );
     }
 
     protected ResponsiveStep loadResponsiveStep(Element element) {
@@ -161,15 +164,6 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         return getMessageTools().getPropertyCaption(propertyMetaClass, propertyName);
     }
 
-    protected void loadLabelPosition(Element element) {
-        loadEnum(element, LabelsPosition.class, "labelsPosition")
-                .ifPresent(this::setLabelsPosition);
-    }
-
-    protected void setLabelsPosition(LabelsPosition labelsPosition) {
-        this.labelsPosition = labelsPosition;
-    }
-
     protected boolean isChildElementIgnored(Element subElement) {
         return "responsiveSteps".equalsIgnoreCase(subElement.getName());
     }
@@ -185,7 +179,6 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         if (messageTools == null) {
             messageTools = applicationContext.getBean(MessageTools.class);
         }
-
         return messageTools;
     }
 }

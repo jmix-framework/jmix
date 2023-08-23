@@ -25,6 +25,7 @@ import io.jmix.flowui.component.jpqlfilter.JpqlFilter
 import io.jmix.flowui.component.logicalfilter.GroupFilter
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
+import io.jmix.flowui.kit.component.KeyCombination
 import io.jmix.flowui.view.ViewControllerUtils
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
@@ -46,8 +47,10 @@ class GenericFilterXmlLoadTest extends FlowuiTestSpecification {
 
             dataLoader == ViewControllerUtils.getViewData(genericFilterView).getLoader("ordersDl")
 
-            autoApply
+            !autoApply
+            applyShortcut == KeyCombination.create("ALT-P")
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             !enabled
             maxHeight == "55px"
             maxWidth == "120px"

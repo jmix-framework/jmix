@@ -50,6 +50,7 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
 
             autoApply
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             value == "1337"
             !enabled
             errorMessage == "errorMessageString"
@@ -125,6 +126,7 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
 
             autoApply
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             //noinspection GrEqualsBetweenInconvertibleTypes
             value == true
             !enabled
@@ -202,6 +204,7 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
 
             autoApply
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             !enabled
             operationTextVisible
             summaryText == "summaryTextString"

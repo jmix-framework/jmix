@@ -40,6 +40,7 @@
                 autoselect="true"
                 classNames="cssClassName1, cssClassName2"
                 clearButtonVisible="true"
+                css="color: red;"
                 enabled="true"
                 errorMessage="errorMessageString"
                 stepButtonsVisible="true"

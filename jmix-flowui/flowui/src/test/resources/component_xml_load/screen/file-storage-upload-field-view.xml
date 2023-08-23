@@ -38,6 +38,7 @@
                                 classNames="custom-className"
                                 clearButtonAriaLabel="clearButtonAriaLabel"
                                 connectingStatusText="connectingStatusText"
+                                css="color: red;"
                                 dropAllowed="false"
                                 errorMessage="errorMessage"
                                 fileNotSelectedText="fileNotSelectedText"

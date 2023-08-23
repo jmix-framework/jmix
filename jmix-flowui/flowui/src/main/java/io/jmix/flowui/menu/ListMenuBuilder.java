@@ -132,6 +132,11 @@ public class ListMenuBuilder {
 
     @Nullable
     protected JmixListMenu.MenuItem createMenuItem(MenuItem menuItem) {
+        if (!isPermitted(menuItem)) {
+            log.debug("Menu item '{}' is not permitted by access constraint", menuItem.getId());
+            return null;
+        }
+
         if (menuItem.getView() != null) {
             return createViewMenuItem(menuItem);
         } else if (menuItem.getBean() != null && menuItem.getBeanMethod() != null) {
@@ -143,11 +148,6 @@ public class ListMenuBuilder {
 
     @Nullable
     protected ListMenu.MenuItem createViewMenuItem(MenuItem menuItem) {
-        if (!isPermitted(menuItem)) {
-            log.debug("Menu item '{}' is not permitted by access constraint", menuItem.getId());
-            return null;
-        }
-
         JmixListMenu.ViewMenuItem listMenuItem = new JmixListMenu.ViewMenuItem(menuItem.getId())
                 .withControllerClass(getControllerClass(menuItem))
                 .withTitle(menuConfig.getItemTitle(menuItem))

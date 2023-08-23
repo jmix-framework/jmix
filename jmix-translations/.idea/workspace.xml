@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="fb40aa98-ae5b-4e34-8fa8-baa5fe567b50" name="Changes" comment="testing">
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/businesscalendar/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/businesscalendarflowui/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/data/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/flowui/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/flowuidata/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/gridexportflowui/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/notifications/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/quartz/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/quartzflowui/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/reportsflowui/messages_ro.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/io/jmix/securityflowui/messages_ro.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/copyright/Apache_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/copyright/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/io/jmix/datatoolsflowui/messages_ro.properties" beforeDir="false" afterPath="$PROJECT_DIR$/content/io/jmix/datatoolsflowui/messages_ro.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/content/io/jmix/appsettings/messages_ro.properties" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/content/io/jmix/datatoolsflowui/messages.properties" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2TL0PRd7vSjrHjNzeEo0x6KrJIh" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/jmix/jmix/jmix-translations/content/io/jmix/securityflowui",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "Errors"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\jmix\jmix\jmix-translations\content\io\jmix\securityflowui" />
+      <recent name="C:\jmix\jmix\jmix-translations\content\io\jmix\reportsflowui" />
+      <recent name="C:\jmix\jmix\jmix-translations\content\io\jmix\quartzflowui" />
+      <recent name="C:\jmix\jmix\jmix-translations\content\io\jmix\quartz" />
+      <recent name="C:\jmix\jmix\jmix-translations\content\io\jmix\notifications" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\jmix\jmix\jmix-translations\content\io\jmix\gridexportflowui" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="jmix-translations [publishToMavenLocal]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="publishToMavenLocal" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.jmix-translations [publishToMavenLocal]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="false" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="fb40aa98-ae5b-4e34-8fa8-baa5fe567b50" name="Changes" comment="" />
+      <created>1690807029176</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1690807029176</updated>
+    </task>
+    <task id="LOCAL-00001" summary="testing">
+      <option name="closed" value="true" />
+      <created>1691049174179</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1691049174179</updated>
+    </task>
+    <task id="LOCAL-00002" summary="testing">
+      <option name="closed" value="true" />
+      <created>1692712781663</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1692712781663</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="testing" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

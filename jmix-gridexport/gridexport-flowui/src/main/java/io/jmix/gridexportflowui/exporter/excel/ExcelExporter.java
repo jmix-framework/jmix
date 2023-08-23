@@ -268,7 +268,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     protected String getColumnHeaderText(DataGrid.Column<?> column) {
         String headerText = column.getHeaderText();
-        if (headerText != null) {
+        if (!Strings.isNullOrEmpty(headerText)) {
             return headerText;
         } else {
             com.vaadin.flow.component.Component headerComponent = column.getHeaderComponent();

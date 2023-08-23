@@ -16,6 +16,7 @@
 
 package io.jmix.gridexportflowui.exporter.excel;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.treegrid.TreeGrid;
@@ -163,15 +164,15 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
             for (int c = 0; c < columns.size(); c++) {
                 DataGrid.Column<?> column = columns.get(c);
-                String caption = getColumnHeaderCaption(column);
+                String columnHeaderText = getColumnHeaderText(column);
 
                 Cell cell = row.createCell(c);
-                RichTextString richTextString = createStringCellValue(caption);
+                RichTextString richTextString = createStringCellValue(columnHeaderText);
                 richTextString.applyFont(boldFont);
                 cell.setCellValue(richTextString);
 
                 ExcelAutoColumnSizer sizer = new ExcelAutoColumnSizer();
-                sizer.notifyCellValue(caption, boldFont);
+                sizer.notifyCellValue(columnHeaderText, boldFont);
                 sizers[c] = sizer;
 
                 cell.setCellStyle(headerCellStyle);
@@ -265,16 +266,16 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         }
     }
 
-    protected String getColumnHeaderCaption(DataGrid.Column<?> column) {
-        String caption = column.getHeaderText();
-        if (caption != null) {
-            return caption;
+    protected String getColumnHeaderText(DataGrid.Column<?> column) {
+        String headerText = column.getHeaderText();
+        if (headerText != null) {
+            return headerText;
         } else {
             com.vaadin.flow.component.Component headerComponent = column.getHeaderComponent();
             if (headerComponent instanceof HasText hasText) {
-                caption = hasText.getText();
+                headerText = hasText.getText();
             }
-            return caption != null ? caption : "";
+            return Strings.nullToEmpty(headerText);
         }
     }
 

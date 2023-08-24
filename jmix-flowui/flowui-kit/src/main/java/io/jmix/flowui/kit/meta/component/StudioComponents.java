@@ -1909,6 +1909,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "itemsPerPageUnlimitedItemVisible", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "autoLoad", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
             }
     )
     JmixSimplePagination simplePagination();

@@ -2383,6 +2383,8 @@
                 <xs:attribute name="itemsPerPageVisible" type="xs:boolean"/>
                 <xs:attribute name="itemsPerPageUnlimitedItemVisible" type="xs:boolean"/>
 
+                <xs:attribute name="autoLoad" type="xs:boolean"/>
+
                 <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>

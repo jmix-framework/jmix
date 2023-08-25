@@ -20,6 +20,7 @@ import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import org.dom4j.Element;
 
 import java.time.LocalTime;
@@ -29,6 +30,7 @@ import java.util.function.Consumer;
 public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
     protected TypedTimePicker<?> createComponent() {
@@ -36,8 +38,16 @@ public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>
     }
 
     @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
+    @Override
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
         componentLoader().loadDatatype(resultComponent, element);
 
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
@@ -88,5 +98,12 @@ public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

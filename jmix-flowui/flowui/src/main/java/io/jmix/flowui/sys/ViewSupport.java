@@ -336,7 +336,7 @@ public class ViewSupport {
         BackwardNavigationTargets targets = vaadinSession.getAttribute(BackwardNavigationTargets.class);
 
         return targets != null && targets.values().stream()
-                .allMatch(pair -> pair.getFirst().equals(viewClass));
+                .anyMatch(pair -> pair.getFirst().equals(viewClass));
     }
 
     protected void doBackwardNavigation(UI ui, View<?> view, QueryParameters returnParams) {

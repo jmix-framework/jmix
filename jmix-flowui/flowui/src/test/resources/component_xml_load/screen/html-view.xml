@@ -20,6 +20,7 @@
         <!--        Containers-->
         <article id="articleId"
                  classNames="cssClassName1, cssClassName2"
+                 css="color: red;"
                  enabled="true"
                  height="50px"
                  maxHeight="55px"
@@ -36,6 +37,7 @@
 
         <aside id="asideId"
                classNames="cssClassName1, cssClassName2"
+               css="color: red;"
                enabled="true"
                height="50px"
                width="100px"
@@ -52,6 +54,7 @@
 
         <descriptionList id="descriptionListId"
                          classNames="cssClassName1, cssClassName2"
+                         css="color: red;"
                          enabled="true"
                          height="50px"
                          width="100px"
@@ -68,6 +71,7 @@
 
         <term id="termId"
               classNames="cssClassName1, cssClassName2"
+              css="color: red;"
               enabled="true"
               height="50px"
               maxHeight="55px"
@@ -84,6 +88,7 @@
 
         <description id="descriptionId"
                      classNames="cssClassName1, cssClassName2"
+                     css="color: red;"
                      enabled="true"
                      height="50px"
                      maxHeight="55px"
@@ -100,6 +105,7 @@
 
         <div id="divId"
              classNames="cssClassName1, cssClassName2"
+             css="color: red;"
              enabled="true"
              height="50px"
              maxHeight="55px"
@@ -116,6 +122,7 @@
 
         <emphasis id="emphasisId"
                   classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
                   enabled="true"
                   height="50px"
                   maxHeight="55px"
@@ -132,6 +139,7 @@
 
         <footer id="footerId"
                 classNames="cssClassName1, cssClassName2"
+                css="color: red;"
                 enabled="true"
                 height="50px"
                 maxHeight="55px"
@@ -148,6 +156,7 @@
 
         <h1 id="h1Id"
             classNames="cssClassName1, cssClassName2"
+            css="color: red;"
             enabled="true"
             height="50px"
             maxHeight="55px"
@@ -164,6 +173,7 @@
 
         <h2 id="h2Id"
             classNames="cssClassName1, cssClassName2"
+            css="color: red;"
             enabled="true"
             height="50px"
             maxHeight="55px"
@@ -180,6 +190,7 @@
 
         <h3 id="h3Id"
             classNames="cssClassName1, cssClassName2"
+            css="color: red;"
             enabled="true"
             height="50px"
             maxHeight="55px"
@@ -196,6 +207,7 @@
 
         <h4 id="h4Id"
             classNames="cssClassName1, cssClassName2"
+            css="color: red;"
             enabled="true"
             height="50px"
             maxHeight="55px"
@@ -212,6 +224,7 @@
 
         <h5 id="h5Id"
             classNames="cssClassName1, cssClassName2"
+            css="color: red;"
             enabled="true"
             height="50px"
             maxHeight="55px"
@@ -228,6 +241,7 @@
 
         <h6 id="h6Id"
             classNames="cssClassName1, cssClassName2"
+            css="color: red;"
             enabled="true"
             height="50px"
             maxHeight="55px"
@@ -244,6 +258,7 @@
 
         <header id="headerId"
                 classNames="cssClassName1, cssClassName2"
+                css="color: red;"
                 enabled="true"
                 height="50px"
                 maxHeight="55px"
@@ -260,6 +275,7 @@
 
         <listItem id="listItemId"
                   classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
                   enabled="true"
                   height="50px"
                   maxHeight="55px"
@@ -276,6 +292,7 @@
 
         <p id="pId"
            classNames="cssClassName1, cssClassName2"
+           css="color: red;"
            enabled="true"
            height="50px"
            maxHeight="55px"
@@ -292,6 +309,7 @@
 
         <pre id="preId"
              classNames="cssClassName1, cssClassName2"
+             css="color: red;"
              enabled="true"
              height="50px"
              maxHeight="55px"
@@ -308,6 +326,7 @@
 
         <section id="sectionId"
                  classNames="cssClassName1, cssClassName2"
+                 css="color: red;"
                  enabled="true"
                  height="50px"
                  maxHeight="55px"
@@ -324,6 +343,7 @@
 
         <span id="spanId"
               classNames="cssClassName1, cssClassName2"
+              css="color: red;"
               enabled="true"
               height="50px"
               maxHeight="55px"
@@ -340,6 +360,7 @@
 
         <unorderedList id="unorderedListId"
                        classNames="cssClassName1, cssClassName2"
+                       css="color: red;"
                        enabled="true"
                        height="50px"
                        maxHeight="55px"
@@ -356,6 +377,7 @@
 
         <anchor id="anchorId"
                 classNames="cssClassName1, cssClassName2"
+                css="color: red;"
                 enabled="true"
                 height="50px"
                 href="anchorHref"
@@ -375,6 +397,7 @@
 
         <htmlObject id="htmlObjectId"
                     classNames="cssClassName1, cssClassName2"
+                    css="color: red;"
                     data="data"
                     enabled="true"
                     height="50px"
@@ -396,6 +419,7 @@
                alternateText="alternativeTextString"
                ariaLabel="ariaLabelString"
                classNames="cssClassName1, cssClassName2"
+               css="color: red;"
                enabled="true"
                height="50px"
                maxHeight="55px"
@@ -414,6 +438,7 @@
         <main id="mainId"
               ariaLabel="ariaLabelString"
               classNames="cssClassName1, cssClassName2"
+              css="color: red;"
               enabled="true"
               height="50px"
               maxHeight="55px"
@@ -431,6 +456,7 @@
         <nav id="navId"
              ariaLabel="ariaLabelString"
              classNames="cssClassName1, cssClassName2"
+             css="color: red;"
              enabled="true"
              height="50px"
              maxHeight="55px"
@@ -447,6 +473,7 @@
 
         <orderedList id="orderedListId"
                      classNames="cssClassName1, cssClassName2"
+                     css="color: red;"
                      enabled="true"
                      height="50px"
                      maxHeight="55px"
@@ -464,6 +491,7 @@
 
         <nativeLabel id="labelId"
                      classNames="cssClassName1, cssClassName2"
+                     css="color: red;"
                      enabled="true"
                      height="50px"
                      maxHeight="55px"
@@ -483,6 +511,7 @@
         <!--        Components-->
         <hr id="hrId"
             classNames="cssClassName1, cssClassName2"
+            css="color: red;"
             height="50px"
             maxHeight="55px"
             maxWidth="120px"
@@ -495,6 +524,7 @@
         <iframe id="iframeId"
                 allow="allowString"
                 classNames="cssClassName1, cssClassName2"
+                css="color: red;"
                 height="50px"
                 importance="HIGH"
                 maxHeight="55px"
@@ -512,6 +542,7 @@
         <input id="inputId"
                ariaLabel="ariaLabelString"
                classNames="cssClassName1, cssClassName2"
+               css="color: red;"
                enabled="true"
                height="50px"
                maxHeight="55px"
@@ -528,6 +559,7 @@
 
         <param id="paramId"
                classNames="cssClassName1, cssClassName2"
+               css="color: red;"
                height="50px"
                maxHeight="55px"
                maxWidth="120px"

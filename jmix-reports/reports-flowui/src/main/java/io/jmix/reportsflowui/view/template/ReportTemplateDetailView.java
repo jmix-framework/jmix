@@ -16,10 +16,8 @@
 
 package io.jmix.reportsflowui.view.template;
 
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -202,6 +200,9 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         Boolean isDefault = UiComponentUtils.getValue(defaultField);
         if (Boolean.TRUE.equals(isDefault)) {
             report.setDefaultTemplate(reportTemplate);
+        }
+        if (Boolean.FALSE.equals(isDefault) && reportTemplate.equals(report.getDefaultTemplate())) {
+            report.setDefaultTemplate(null);
         }
     }
 

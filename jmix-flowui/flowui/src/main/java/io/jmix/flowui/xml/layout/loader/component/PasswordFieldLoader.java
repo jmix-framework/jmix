@@ -19,10 +19,12 @@ package io.jmix.flowui.xml.layout.loader.component;
 import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
 public class PasswordFieldLoader extends AbstractComponentLoader<JmixPasswordField> {
 
     protected DataLoaderSupport dataLoaderSupport;
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
     protected JmixPasswordField createComponent() {
@@ -30,8 +32,16 @@ public class PasswordFieldLoader extends AbstractComponentLoader<JmixPasswordFie
     }
 
     @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
+    @Override
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
         loadString(element, "value", resultComponent::setValue);
         loadString(element, "pattern", resultComponent::setPattern);
@@ -66,5 +76,12 @@ public class PasswordFieldLoader extends AbstractComponentLoader<JmixPasswordFie
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

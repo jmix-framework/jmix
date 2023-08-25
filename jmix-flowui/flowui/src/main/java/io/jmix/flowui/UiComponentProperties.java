@@ -52,6 +52,11 @@ public class UiComponentProperties {
     boolean filterAutoApply;
 
     /**
+     * Shortcut for applying {@link GenericFilter}
+     */
+    String filterApplyShortcut;
+
+    /**
      * Number of nested properties in the {@link AddConditionView}. I.e. if the depth is 2, then you'll be able to
      * select a property "contractor.city.country", if the value is 3, then "contractor.city.country.name", etc.
      */
@@ -75,6 +80,7 @@ public class UiComponentProperties {
             String pickerClearShortcut,
             @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageItems,
             @DefaultValue("true") boolean filterAutoApply,
+            String filterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("false") boolean filterShowConfigurationIdField) {
         this.gridCreateShortcut = gridCreateShortcut;
@@ -92,6 +98,7 @@ public class UiComponentProperties {
         this.paginationItemsPerPageItems = paginationItemsPerPageItems;
 
         this.filterAutoApply = filterAutoApply;
+        this.filterApplyShortcut = filterApplyShortcut;
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
     }
@@ -148,6 +155,13 @@ public class UiComponentProperties {
      */
     public boolean isFilterAutoApply() {
         return filterAutoApply;
+    }
+
+    /**
+     * @see #filterApplyShortcut
+     */
+    public String getFilterApplyShortcut() {
+        return filterApplyShortcut;
     }
 
     /**

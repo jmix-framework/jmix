@@ -594,6 +594,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
         multiDataSetField.setEnabled(bandsDc.getItemOrNull() != null && event.getSource().getItems().size() <= 1);
     }
 
+    @Subscribe(id = "templatesDc", target = Target.DATA_CONTAINER)
+    protected void onTemplatesDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportTemplate> event) {
+        if (event.getSource().getItems().isEmpty()) {
+            Report currentReport = getEditedEntity();
+            currentReport.setDefaultTemplate(null);
+        }
+    }
+
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
     protected void onParametersDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportInputParameter> event) {
         Map<String, String> paramAliases = new HashMap<>();
@@ -1712,6 +1720,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         templatesDataGrid.focus();
         templatesDataGrid.getDataProvider().refreshAll();
     }
+
 
     protected void setupEntityParamFieldValue(DataSet dataSet) {
         entityParamField.setValue(dataSet.getEntityParamName());

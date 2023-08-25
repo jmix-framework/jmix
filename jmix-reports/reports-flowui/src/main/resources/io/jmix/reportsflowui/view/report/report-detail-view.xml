@@ -361,7 +361,7 @@
                         <button action="templatesDataGrid.copy"/>
                     </hbox>
                     <dataGrid id="templatesDataGrid" width="100%" dataContainer="templatesDc"
-                              columnReorderingAllowed="false" detailsVisibleOnClick="false">
+                             columnReorderingAllowed="true"  detailsVisibleOnClick="false">
                         <actions>
                             <action id="create" type="list_create"/>
                             <action id="remove" type="list_remove"/>
@@ -371,10 +371,10 @@
                             <action id="copy" type="list_itemTracking" text="msg://report.template.copy" icon="COPY"/>
                         </actions>
                         <columns>
-                            <column property="name" sortable="false"/>
-                            <column property="code" sortable="false"/>
-                            <column property="reportOutputType" sortable="false"/>
-                            <column property="customDefinition" sortable="false"/>
+                            <column property="name" resizable="true" flexGrow="3" sortable="false"/>
+                            <column property="code" resizable="true" flexGrow="0" sortable="false"/>
+                            <column property="reportOutputType" resizable="true" flexGrow="1" sortable="false"/>
+                            <column property="customDefinition" resizable="true" flexGrow="1" sortable="false"/>
                         </columns>
                     </dataGrid>
                 </vbox>

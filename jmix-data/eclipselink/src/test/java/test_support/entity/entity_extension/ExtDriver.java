@@ -26,7 +26,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Lob;
 
 @JmixEntity
-@Entity(name = "exttest_ExtDriver")
+@Entity
 @ReplaceEntity(Driver.class)
 public class ExtDriver extends Driver {
 

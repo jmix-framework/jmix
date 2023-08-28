@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pagination.view;
+package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.pagination.SimplePagination;
@@ -23,17 +23,11 @@ import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
-@Route("SimplePaginationTestView")
-@ViewController
-@ViewDescriptor("simple-pagination-test-view.xml")
-public class SimplePaginationTestView extends StandardView {
+@Route("SimplePaginationXmlLoadTestView")
+@ViewDescriptor("simple-pagination-xml-load-test-view.xml")
+@ViewController("SimplePaginationXmlLoadTestView")
+public class SimplePaginationXmlLoadTestView extends StandardView {
 
     @ViewComponent
     public SimplePagination simplePagination;
-
-    @ViewComponent
-    public SimplePagination simplePaginationCustomItems;
-
-    @ViewComponent
-    public SimplePagination simplePaginationWithoutLoader;
 }

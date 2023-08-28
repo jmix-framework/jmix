@@ -176,7 +176,9 @@ public class DescriptorGenerationUtils {
                 AnnotationsAttribute attribute = (AnnotationsAttribute) entry.getKey().getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
                 Annotation annotation = attribute.getAnnotation(ENTITY_ANNOTATION_TYPE);
                 StringMemberValue memberValue = (StringMemberValue) annotation.getMemberValue("name");
-                entityEl.addAttribute("name", memberValue.getValue());
+                entityEl.addAttribute("name",
+                        memberValue != null ? memberValue.getValue() : entry.getKey().getSimpleName());
+
 
                 createAttributes(entry, entityEl);
             }

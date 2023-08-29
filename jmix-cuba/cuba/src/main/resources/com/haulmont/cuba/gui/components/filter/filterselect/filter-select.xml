@@ -25,10 +25,10 @@
                 refreshMode="NEVER"/>
     </dsContext>
     <actions>
-        <action id="search" invoke="search" shortcut="ENTER" icon="icons/search.png" caption=""/>
-        <action id="select" invoke="select" shortcut="CTRL-ENTER" icon="icons/ok.png"
+        <action id="search" invoke="search" shortcut="ENTER" icon="SEARCH" caption=""/>
+        <action id="select" invoke="select" shortcut="CTRL-ENTER" icon="OK"
                 caption="mainMsg://actions.Select"/>
-        <action id="cancel" invoke="cancel" shortcut="ESCAPE" icon="icons/cancel.png"
+        <action id="cancel" invoke="cancel" shortcut="ESCAPE" icon="CANCEL"
                 caption="mainMsg://actions.Cancel"/>
     </actions>
     <layout spacing="true" expand="filterEntitiesTable">

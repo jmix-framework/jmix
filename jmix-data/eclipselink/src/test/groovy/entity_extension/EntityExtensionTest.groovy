@@ -43,7 +43,7 @@ class EntityExtensionTest extends DataSpec {
     def "original class"() {
         expect:
         extendedEntities.getOriginalMetaClass(metadata.getClass(ExtDriver)).javaClass == Driver
-        extendedEntities.getOriginalMetaClass('Driver').javaClass == Driver
+        extendedEntities.getOriginalMetaClass('exttest_ExtDriver').javaClass == Driver
         extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(ExtDriver)).javaClass == Driver
 
         extendedEntities.getOriginalMetaClass('exttest_DriverAllocation') == null
@@ -77,7 +77,7 @@ class EntityExtensionTest extends DataSpec {
 
         when:
         def list = dataManager.load(Driver)
-                .query('select d from Driver d where d.id = :id')
+                .query('select d from exttest_Driver d where d.id = :id')
                 .parameter('id', driver.id)
                 .list()
 

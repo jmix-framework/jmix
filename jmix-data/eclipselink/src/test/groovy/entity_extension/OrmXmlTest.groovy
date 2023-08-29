@@ -36,22 +36,23 @@ class OrmXmlTest extends DataSpec {
 
         then:
         //classes count
-        entityMappings.'*'.size() == 10
+        entityMappings.'*'.size() == 11
         entityMappings.'*'.findAll { it.name() == 'mapped-superclass' }.size() == 1
-        entityMappings.'*'.findAll { it.name() == 'entity' }.size() == 8
+        entityMappings.'*'.findAll { it.name() == 'entity' }.size() == 9
         entityMappings.'*'.findAll { it.name() == 'embeddable' }.size() == 1
 
         //classes
         entityMappings.'*'.find { it.name() == 'mapped-superclass' }.'@class' == "test_support.entity.entity_extension.Vehicle"
         entityMappings.'*'.find { it.name() == 'embeddable' }.'@class' == "test_support.entity.entity_extension.Address"
         entityMappings.'*'.find { it.@name == 'exttest_Plant' }.'@class' == "test_support.entity.entity_extension.Plant"
-        entityMappings.'*'.find { it.@name == 'Driver' }.'@class' == "test_support.entity.entity_extension.Driver"
+        entityMappings.'*'.find { it.@name == 'exttest_Driver' }.'@class' == "test_support.entity.entity_extension.Driver"
         entityMappings.'*'.find { it.@name == 'exttest_DriverAllocation' }.'@class' == "test_support.entity.entity_extension.DriverAllocation"
         entityMappings.'*'.find { it.@name == 'exttest_DriverCallsign' }.'@class' == "test_support.entity.entity_extension.DriverCallsign"
         entityMappings.'*'.find { it.@name == 'exttest_Waybill' }.'@class' == "test_support.entity.entity_extension.Waybill"
         entityMappings.'*'.find { it.@name == 'exttest_Bus' }.'@class' == "test_support.entity.entity_extension.Bus"
         entityMappings.'*'.find { it.@name == 'exttest_Doc' }.'@class' == "test_support.entity.entity_extension.Doc"
         entityMappings.'*'.find { it.@name == 'exttest_Station' }.'@class' == "test_support.entity.entity_extension.Station"
+        entityMappings.'*'.find { it.@name == 'ImplicitNameEntity' }.'@class' == "test_support.entity.entity_extension.ImplicitNameEntity"
 
 
         //fetch
@@ -103,7 +104,7 @@ class OrmXmlTest extends DataSpec {
         def entityMappings = getEntityMappings()
         def plant_doc = entityMappings.'*'.find { it.'@name' == 'exttest_Plant' }.'attributes'.'*'.find { it.'@name' == 'doc' }.'join-column'[0]
         def waybill_bus = entityMappings.'*'.find { it.'@name' == 'exttest_Waybill' }.'attributes'.'*'.find { it.'@name' == 'bus' }.'join-column'[0]
-        def driver_platformEntity = entityMappings.'*'.find { it.'@name' == 'Driver' }.'attributes'.'*'.find { it.'@name' == 'platformEntity' }.'join-column'[0]
+        def driver_platformEntity = entityMappings.'*'.find { it.'@name' == 'exttest_Driver' }.'attributes'.'*'.find { it.'@name' == 'platformEntity' }.'join-column'[0]
 
         def plant_models = entityMappings.'*'.find { it.'@name' == 'exttest_Plant' }.'attributes'.'*'.find { it.'@name' == 'models' }.'join-table'[0]
         def waybill_places = entityMappings.'*'.find { it.'@name' == 'exttest_Waybill' }.'attributes'.'*'.find { it.'@name' == 'places' }.'join-table'[0]

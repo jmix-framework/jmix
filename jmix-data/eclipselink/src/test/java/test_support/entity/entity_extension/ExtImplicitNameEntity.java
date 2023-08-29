@@ -13,49 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package test_support.entity.entity_extension;
 
 import io.jmix.core.entity.annotation.ReplaceEntity;
-import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
+import java.util.UUID;
 
 @JmixEntity
-@Entity(name = "exttest_ExtDriver")
-@ReplaceEntity(Driver.class)
-public class ExtDriver extends Driver {
+@Entity
+@ReplaceEntity(ImplicitNameEntity.class)
+public class ExtImplicitNameEntity extends ImplicitNameEntity {
 
-    @Column(name = "INFO", length = 50)
-    protected String info;
+    @Column(name = "DETAILS")
+    protected String details;
 
-    @Column(name = "NOTES")
-    @Lob
-    protected String notes;
-
-    public String getInfo() {
-        return info;
+    public UUID getId() {
+        return id;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public String getNotes() {
-        return notes;
+    public String getDetails() {
+        return details;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    @InstanceName
-    @DependsOnProperties({"name","info"})
-    public String getInstanceName() {
-        return name + ":" + info;
+    public void setDetails(String details) {
+        this.details = details;
     }
 }
+

@@ -21,14 +21,19 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattrflowui.propertyfilter.DynAttrPropertyFilterSupport;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
+
+import java.util.Collections;
 
 @Configuration
 @ComponentScan
@@ -47,5 +52,14 @@ public class DynAttrUiConfiguration {
                                                        DynAttrMetadata dynAttrMetadata) {
         return new DynAttrPropertyFilterSupport(messages, messageTools, metadataTools, dataManager, datatypeRegistry,
                 dynAttrMetadata);
+    }
+
+    @Bean("dynat_ViewControllersConfiguration")
+    public ViewControllersConfiguration views(ApplicationContext applicationContext,
+                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.dynattrflowui.view"));
+        return viewControllers;
     }
 }

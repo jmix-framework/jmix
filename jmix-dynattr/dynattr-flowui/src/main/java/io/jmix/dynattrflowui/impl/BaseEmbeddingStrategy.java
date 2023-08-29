@@ -15,54 +15,48 @@
  */
 
 package io.jmix.dynattrflowui.impl;
-//
-//import io.jmix.core.AccessManager;
-//import io.jmix.core.Metadata;
-//import io.jmix.core.MetadataTools;
-//import io.jmix.core.metamodel.model.MetaClass;
-//import io.jmix.dynattr.*;
-//import io.jmix.ui.accesscontext.UiEntityAttributeContext;
-//import io.jmix.ui.accesscontext.UiEntityContext;
-//import io.jmix.ui.component.Component;
-//import io.jmix.ui.component.Frame;
-//import io.jmix.ui.model.*;
-//import io.jmix.ui.screen.Screen;
-//import io.jmix.ui.screen.UiControllerUtils;
-//import org.springframework.beans.factory.annotation.Autowired;
-//
-//import java.util.Comparator;
-//import java.util.List;
-//import java.util.Set;
-//import java.util.stream.Collectors;
-//
-//public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
-//    protected Metadata metadata;
-//    protected MetadataTools metadataTools;
-//    protected DynAttrMetadata dynAttrMetadata;
-//    protected AccessManager accessManager;
-//
-//    @Autowired
-//    public void setMetadata(Metadata metadata) {
-//        this.metadata = metadata;
-//    }
-//
-//    @Autowired
-//    public void setMetadataTools(MetadataTools metadataTools) {
-//        this.metadataTools = metadataTools;
-//    }
-//
-//    @Autowired
-//    public void setDynAttrMetadata(DynAttrMetadata dynAttrMetadata) {
-//        this.dynAttrMetadata = dynAttrMetadata;
-//    }
-//
-//    @Autowired
-//    public void setAccessManager(AccessManager accessManager) {
-//        this.accessManager = accessManager;
-//    }
-//
-//    @Override
-//    public void embed(Component component, Frame frame) {
+
+import com.vaadin.flow.component.Component;
+import io.jmix.core.AccessManager;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.dynattr.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
+    protected DynAttrMetadata dynAttrMetadata;
+    protected AccessManager accessManager;
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    public void setDynAttrMetadata(DynAttrMetadata dynAttrMetadata) {
+        this.dynAttrMetadata = dynAttrMetadata;
+    }
+
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
+    }
+
+    @Override
+    public void embed(Component component, Component frame) {
 //        if (getWindowId(frame) != null) {
 //
 //            MetaClass entityMetaClass = getEntityMetaClass(component);
@@ -79,8 +73,8 @@ package io.jmix.dynattrflowui.impl;
 //                embed(component, frame, attributes);
 //            }
 //        }
-//    }
-//
+    }
+
 //    protected abstract MetaClass getEntityMetaClass(Component component);
 //
 //    protected abstract void setLoadDynamicAttributes(Component component);
@@ -135,4 +129,4 @@ package io.jmix.dynattrflowui.impl;
 //
 //        return false;
 //    }
-//}
+}

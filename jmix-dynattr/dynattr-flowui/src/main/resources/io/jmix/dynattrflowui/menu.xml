@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  ~ Copyright 2020 Haulmont.
+  ~ Copyright 2022 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
   ~ limitations under the License.
   -->
 
-<menu-config xmlns="http://jmix.io/schema/ui/menu">
-    <menu id="administration">
-        <item screen="dynat_Category.browse"/>
+<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="2300">
+    <menu id="dynat" title="msg://menu-config.dynamicattributes.title" >
+        <item view="dynat_CategoryView.list"
+              title="msg://io.jmix.dynattrflowui.panel/category"/>
     </menu>
 </menu-config>

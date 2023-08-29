@@ -15,13 +15,13 @@
  */
 
 package io.jmix.dynattrflowui.impl;
-
-import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.dynattr.AttributeDefinition;
-import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.flowui.component.UiComponentsGenerator;
+//
+//import com.google.common.base.Strings;
+//import com.vaadin.flow.component.Component;
+//import io.jmix.core.metamodel.model.MetaClass;
+//import io.jmix.dynattr.AttributeDefinition;
+//import io.jmix.dynattr.DynAttrUtils;
+//import io.jmix.flowui.component.UiComponentsGenerator;
 //import io.jmix.ui.component.*;
 //import io.jmix.ui.component.data.ValueSource;
 //import io.jmix.ui.component.data.ValueSourceProvider;

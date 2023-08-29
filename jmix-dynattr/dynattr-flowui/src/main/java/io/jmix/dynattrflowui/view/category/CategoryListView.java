@@ -18,10 +18,9 @@ package io.jmix.dynattrflowui.view.category;
 
 import com.google.common.io.Files;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.model.Category;
@@ -52,12 +51,15 @@ import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-@ViewController("dynat_Category.browse")
-@ViewDescriptor("category-browse.xml")
-@LookupComponent("categoriesTable")
-public class CategoryBrowse extends StandardListView<Category> {
+@Route(value = "dynat/category", layout = DefaultMainViewParent.class)
+@ViewController("dynat_CategoryView.list")
+@ViewDescriptor("category-list-view.xml")
+@PrimaryListView(Category.class)
+@LookupComponent("categoriesGrid")
+@DialogMode(width = "47.5em")
+public class CategoryListView extends StandardListView<Category> {
 
-    private static final Logger log = LoggerFactory.getLogger(CategoryBrowse.class);
+    private static final Logger log = LoggerFactory.getLogger(CategoryListView.class);
 
     @Autowired
     protected Notifications notifications;
@@ -80,10 +82,11 @@ public class CategoryBrowse extends StandardListView<Category> {
     @Autowired
     protected Downloader downloader;
     @Autowired
-    protected FileUploadField importField;
+    private AccessManager accessManager;
+
 
     @ViewComponent
-    protected DataGrid<Category> categoriesTable;
+    protected DataGrid<Category> categoriesGrid;
     @ViewComponent
     protected CollectionContainer<CategoryAttribute> attributesDc;
     @ViewComponent
@@ -93,7 +96,7 @@ public class CategoryBrowse extends StandardListView<Category> {
     @ViewComponent
     private CollectionLoader<Category> categoriesDl;
     @ViewComponent
-    private AccessManager accessManager;
+    protected FileUploadField importField;
     @ViewComponent
     private Button applyChangesBtn;
 
@@ -103,21 +106,21 @@ public class CategoryBrowse extends StandardListView<Category> {
         setupFieldsLock();
     }
 
-    @Subscribe("categoriesTable.applyChanges")
-    protected void onCategoriesTableApplyChanges(ActionPerformedEvent event) {
+    @Subscribe("categoriesGrid.applyChanges")
+    protected void onCategoriesGridApplyChanges(ActionPerformedEvent event) {
         dynAttrMetadata.reload();
-        notifications.create(messages.getMessage(CategoryBrowse.class, "notification.changesApplied"))
+        notifications.create(messages.getMessage(CategoryListView.class, "notification.changesApplied"))
                 .withType(Notifications.Type.WARNING)
                 .show();
     }
 
-    @Install(to = "categoriesTable.entityType", subject = "columnGenerator")
-    protected Span categoriesTableEntityTypeColumnGenerator(Category category) {
-        Span dataTypeLabel = uiComponents.create(Span.class);
-        MetaClass metaClass = metadata.getSession().getClass(category.getEntityType());
-        dataTypeLabel.setText(messageTools.getEntityCaption(metaClass));
-        return dataTypeLabel;
-    }
+//    @Install(to = "categoriesGrid.entityType", subject = "columnGenerator")
+//    protected Span categoriesGridEntityTypeColumnGenerator(Category category) {
+//        Span dataTypeLabel = uiComponents.create(Span.class);
+//        MetaClass metaClass = metadata.getSession().getClass(category.getEntityType());
+//        dataTypeLabel.setText(messageTools.getEntityCaption(metaClass));
+//        return dataTypeLabel;
+//    }
 
 //  todo  @Install(to = "attributesTable.dataType", subject = "columnGenerator")
 //    protected Table.PlainTextCell attributesTableDataTypeColumnGenerator(CategoryAttribute categoryAttribute) {
@@ -137,15 +140,15 @@ public class CategoryBrowse extends StandardListView<Category> {
 //        return new Table.PlainTextCell(labelContent);
 //    }
 
-    @Install(to = "categoriesTable.edit", subject = "afterCommitHandler")
-    private void categoriesTableEditAfterCommitHandler(Category category) {
-        categoriesDl.load();
-    }
-
-    @Install(to = "categoriesTable.create", subject = "afterCommitHandler")
-    private void categoriesTableCreateAfterCommitHandler(Category category) {
-        categoriesDl.load();
-    }
+//    @Install(to = "categoriesGrid.edit", subject = "afterCommitHandler")
+//    private void categoriesGridEditAfterCommitHandler(Category category) {
+//        categoriesDl.load();
+//    }
+//
+//    @Install(to = "categoriesGrid.create", subject = "afterCommitHandler")
+//    private void categoriesGridCreateAfterCommitHandler(Category category) {
+//        categoriesDl.load();
+//    }
 
     @Subscribe(id = "categoriesDc", target = Target.DATA_CONTAINER)
     protected void onCategoriesDcItemChange(InstanceContainer.ItemChangeEvent<Category> event) {
@@ -166,24 +169,24 @@ public class CategoryBrowse extends StandardListView<Category> {
         }
     }
 
-    @Subscribe("exportBtn.exportJSON")
+    @Subscribe("categoriesGrid.exportJSON")
     public void onExportBtnExportJSON(ActionPerformedEvent event) {
         export(JSON);
     }
 
-    @Subscribe("exportBtn.exportZIP")
+    @Subscribe("categoriesGrid.exportZIP")
     public void onExportBtnExportZIP(ActionPerformedEvent event) {
         export(ZIP);
     }
 
     protected void export(DownloadFormat downloadFormat) {
-        Collection<Category> selected = categoriesTable.getSelectedItems();
-        if (selected.isEmpty() && categoriesTable.getItems() != null) {
-            selected = categoriesTable.getItems().getItems();
+        Collection<Category> selected = categoriesGrid.getSelectedItems();
+        if (selected.isEmpty() && categoriesGrid.getItems() != null) {
+            selected = categoriesGrid.getItems().getItems();
         }
 
         if (selected.isEmpty()) {
-            notifications.create(messages.getMessage(CategoryBrowse.class, "nothingToExport"))
+            notifications.create(messages.getMessage(CategoryListView.class, "nothingToExport"))
                     .withType(Notifications.Type.DEFAULT)
                     .show();
             return;
@@ -199,7 +202,7 @@ public class CategoryBrowse extends StandardListView<Category> {
             downloader.download(data, String.format("Categories.%s", downloadFormat.getFileExt()), downloadFormat);
         } catch (Exception e) {
             log.warn("Unable to export categories", e);
-            notifications.create(messages.getMessage(CategoryBrowse.class, "exportFailed"), e.getMessage())
+            notifications.create(messages.getMessage(CategoryListView.class, "exportFailed"), e.getMessage())
                     .withType(Notifications.Type.ERROR)
                     .show();
         }
@@ -216,6 +219,9 @@ public class CategoryBrowse extends StandardListView<Category> {
     public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
         try {
             byte[] bytes = importField.getValue();
+            if (bytes == null) {
+                throw new IllegalStateException("File data is empty");
+            }
             Collection<Object> importedEntities;
             if (JSON.getFileExt().equals(Files.getFileExtension(event.getFileName()))) {
                 importedEntities = entityImportExport.importEntitiesFromJson(new String(bytes, StandardCharsets.UTF_8), createEntityImportPlan());
@@ -223,15 +229,15 @@ public class CategoryBrowse extends StandardListView<Category> {
                 importedEntities = entityImportExport.importEntitiesFromZIP(bytes, createEntityImportPlan());
             }
 
-            if (importedEntities.size() > 0) {
+            if (!importedEntities.isEmpty()) {
                 categoriesDl.load();
-                notifications.create(messages.getMessage(CategoryBrowse.class, "importSuccessful"))
+                notifications.create(messages.getMessage(CategoryListView.class, "importSuccessful"))
                         .withType(Notifications.Type.DEFAULT)
                         .show();
             }
         } catch (Exception e) {
             log.warn("Unable to import categories", e);
-            notifications.create(messages.getMessage(CategoryBrowse.class, "importFailed"), e.getMessage())
+            notifications.create(messages.getMessage(CategoryListView.class, "importFailed"), e.getMessage())
                     .withType(Notifications.Type.ERROR)
                     .show();
         }

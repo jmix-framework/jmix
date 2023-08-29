@@ -16,18 +16,13 @@
 
 package io.jmix.dynattrflowui.facet;
 
-import io.jmix.ui.component.Facet;
-import io.jmix.ui.meta.StudioFacet;
+//import io.jmix.ui.component.Facet;
+//import io.jmix.ui.meta.StudioFacet;
 
-@StudioFacet(
-        xmlElement = "dynamicAttributes",
-        caption = "DynamicAttributes",
-        description = "Shows dynamic attributes on a screen",
-        category = "Facets",
-        icon = "io/jmix/dynattrflowui/icon/facet/dynamicAttributes.svg",
-        xmlns = "http://jmix.io/schema/dynattr/ui",
-        xmlnsAlias = "dynattr"
-)
+import io.jmix.flowui.facet.Facet;
+import io.jmix.flowui.kit.meta.StudioFacet;
+
+
 public interface DynAttrFacet extends Facet {
     String FACET_NAME = "dynamicAttributes";
 }

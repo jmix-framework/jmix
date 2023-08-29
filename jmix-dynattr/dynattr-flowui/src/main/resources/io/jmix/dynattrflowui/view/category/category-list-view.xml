@@ -1,0 +1,98 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://categoryListView.title"
+      focusComponent="categoriesGrid">
+    <data readOnly="true">
+        <collection id="categoriesDc"
+                    class="io.jmix.dynattr.model.Category"
+                    fetchPlan="_local">
+            <loader id="categoriesDl">
+                <query>
+                    <![CDATA[select c from dynat_Category c where c.special is null order by c.createTs]]>
+                </query>
+            </loader>
+        </collection>
+        <instance id="categoryDc"
+                  class="io.jmix.dynattr.model.Category">
+            <fetchPlan extends="_local">
+                <property name="categoryAttrs" fetchPlan="_local"/>
+            </fetchPlan>
+            <loader id="categoryDl"/>
+            <collection id="attributesDc" property="categoryAttrs"/>
+        </instance>
+    </data>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout spacing="true">
+        <!-- TODO filter
+        <filter id="categoriesFilter" dataLoader="categoriesDl" applyTo="categoriesGrid">
+            <properties include=".*"/>
+        </filter>-->
+        <split id="split" orientation="HORIZONTAL" width="100%" minHeight="25em" height="100%">
+            <vbox id="categoryBox" height="100%" expand="categoriesGrid">
+                <hbox id="buttonsPanel" classNames="buttons-panel">
+                    <button id="createBtn" action="categoriesGrid.create"/>
+                    <button id="editBtn" action="categoriesGrid.edit"/>
+                    <button id="removeBtn" action="categoriesGrid.remove"/>
+                    <button id="applyChangesBtn" action="categoriesGrid.applyChanges"/>
+                    <dropdownButton id="exportBtn" icon="DOWNLOAD" text="msg://export">
+                        <items>
+                            <actionItem id="exportJSONButtonAction" ref="categoriesGrid.exportJSON"/>
+                            <actionItem id="exportZIPButtonAction" ref="categoriesGrid.exportZIP"/>
+                        </items>
+                    </dropdownButton>
+                    <fileUploadField id="importField" uploadIcon="UPLOAD" uploadText="msg://import"
+                                     acceptedFileTypes=".json,.zip"/>
+                </hbox>
+                <dataGrid id="categoriesGrid"
+                          width="100%"
+                          minHeight="20em"
+                          dataContainer="categoriesDc">
+                    <actions>
+                        <action id="create" type="list_create" text="msg://categoriesGrid.create"/>
+                        <action id="edit" type="list_edit"/>
+                        <action id="remove" type="list_remove"/>
+                        <action id="applyChanges" text="msg://categoriesGrid.applyChanges" icon="CHECK"/>
+                        <action id="exportJSON" text="msg://exportJSON"/>
+                        <action id="exportZIP" text="msg://exportZIP"/>
+                    </actions>
+                    <columns>
+                        <column property="name" header="msg://categoriesGrid.name"/>
+                        <column property="entityType"/>
+                        <column property="isDefault"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+            <vbox id="attributesBox" height="100%" expand="attributesTable">
+                <h3 text="msg://categoryAttributes.text"/>
+                <dataGrid id="attributesTable"
+                          width="100%"
+                          dataContainer="attributesDc">
+                    <columns>
+                        <column property="name"/>
+                        <column property="code"/>
+                        <column property="dataType"/>
+                        <column property="required"/>
+                        <column property="isCollection"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+        </split>
+    </layout>
+</view>

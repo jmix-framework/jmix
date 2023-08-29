@@ -23,12 +23,12 @@ import io.jmix.dynattr.model.CategoryAttributeValue;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
-import io.jmix.dynattrflowui.view.category.CategoryBrowse;
-import io.jmix.dynattrflowui.view.category.CategoryEdit;
-import io.jmix.dynattrflowui.view.categoryattr.AttributeEnumerationScreen;
-import io.jmix.dynattrflowui.view.categoryattr.CategoryAttrsEdit;
-import io.jmix.dynattrflowui.view.categoryattr.CategoryAttrsFragment;
-import io.jmix.dynattrflowui.view.localization.AttributeLocalizationFragment;
+import io.jmix.dynattrflowui.view.category.CategoryListView;
+import io.jmix.dynattrflowui.view.category.CategoryDetailView;
+import io.jmix.dynattrflowui.view.categoryattr.AttributeEnumerationViewFragment;
+import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesDetailView;
+import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesViewFragment;
+import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
@@ -58,8 +58,8 @@ public interface DynamicAttributesReadOnlyRole {
     @EntityAttributePolicy(entityClass = AttributeLocalizedEnumValue.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = AttributeLocalizedValue.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
 
-    @ViewPolicy(viewClasses = {CategoryBrowse.class, CategoryEdit.class, CategoryAttrsEdit.class,
-            CategoryAttrsFragment.class, AttributeEnumerationScreen.class, AttributeLocalizationFragment.class})
+    @ViewPolicy(viewClasses = {CategoryListView.class, CategoryDetailView.class, CategoryAttributesDetailView.class,
+            CategoryAttributesViewFragment.class, AttributeEnumerationViewFragment.class, AttributeLocalizationViewFragment.class})
     @MenuPolicy(menuIds = {"dynat_Category.browse"})
     void dynamicAttributes();
 }

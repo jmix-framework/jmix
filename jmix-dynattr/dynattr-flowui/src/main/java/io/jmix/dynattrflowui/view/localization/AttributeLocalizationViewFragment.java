@@ -30,9 +30,9 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-@ViewController("dynat_AttributeLocalizationFragment")
-@ViewDescriptor("attribute-localization-fragment.xml")
-public class AttributeLocalizationFragment extends StandardView {
+@ViewController("dynat_AttributeLocalizationViewFragment")
+@ViewDescriptor("attribute-localization-view-fragment.xml")
+public class AttributeLocalizationViewFragment extends StandardView {
 
     protected static final String NAME_PROPERTY = "name";
     protected static final String DESCRIPTION_PROPERTY = "description";
@@ -92,10 +92,10 @@ public class AttributeLocalizationFragment extends StandardView {
         setupFieldsLock();
     }
 
-    @Install(to = "localizedValuesDl", target = Target.DATA_LOADER)
-    protected List<AttributeLocalizedValue> localizedValuesDlLoadDelegate(LoadContext<AttributeLocalizedValue> loadContext) {
-        return localizedValues;
-    }
+//    @Install(to = "localizedValuesDl", target = Target.DATA_LOADER)
+//    protected List<AttributeLocalizedValue> localizedValuesDlLoadDelegate(LoadContext<AttributeLocalizedValue> loadContext) {
+//        return localizedValues;
+//    }
 
 //  todo  @Install(to = "localizedValuesDataGrid.language", subject = "columnGenerator")
 //    protected String localizedValuesDataGridLanguageColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedValue> event) {
@@ -103,10 +103,10 @@ public class AttributeLocalizationFragment extends StandardView {
 //        return localizedValue.getLanguage() + "|" + localizedValue.getLocale();
 //    }
 
-    @Install(to = "localizedValuesDataGrid", subject = "rowDescriptionProvider")
-    protected String localizedValuesDataGridRowDescriptionProvider(AttributeLocalizedValue localizedValue) {
-        return messages.getMessage(AttributeLocalizationFragment.class, "localizedValuesDataGrid.columnDescription");
-    }
+//    @Install(to = "localizedValuesDataGrid", subject = "rowDescriptionProvider")
+//    protected String localizedValuesDataGridRowDescriptionProvider(AttributeLocalizedValue localizedValue) {
+//        return messages.getMessage(AttributeLocalizationViewFragment.class, "localizedValuesDataGrid.columnDescription");
+//    }
 
     protected void initLocalizedValuesDataGrid() {
         localizedValuesDataGrid.getColumnByKey(DESCRIPTION_PROPERTY).setVisible(descriptionColumnVisible);

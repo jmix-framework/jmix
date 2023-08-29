@@ -42,10 +42,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-@ViewController("dynat_AttributeLocationFragment")
-@ViewDescriptor("attribute-location-fragment.xml")
-// todo name
-public class AttributeLocationFragment extends StandardView {
+@ViewController("dynat_AttributeLocationViewFragment")
+@ViewDescriptor("attribute-location-view-fragment.xml")
+public class AttributeLocationViewFragment extends StandardView {
 
     protected static String EMPTY_CATEGORY_ATTRIBUTE_NAME = "   ";
 
@@ -243,7 +242,7 @@ public class AttributeLocationFragment extends StandardView {
                 dataGrid.addColumn("column",
                         metadataTools.resolveMetaPropertyPathOrNull(metadata.getClass(CategoryAttribute.class), "name"));
         column.setSortable(false);
-        column.setHeader(messages.getMessage(AttributeLocationFragment.class, "targetDataGrid.column.caption") + " " + i);
+        column.setHeader(messages.getMessage(AttributeLocationViewFragment.class, "targetDataGrid.column.title") + " " + i);
         dataGrid.setWidth("175px");
         return dataGrid;
     }

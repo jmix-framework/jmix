@@ -23,10 +23,10 @@ import com.google.common.collect.Multimap;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
+import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -43,7 +43,7 @@ import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
-import io.jmix.dynattrflowui.view.localization.AttributeLocalizationFragment;
+import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
 import io.jmix.flowui.*;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.action.view.LookupSelectAction;
@@ -81,10 +81,12 @@ import static java.lang.String.format;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @ViewController("dynat_CategoryAttribute.edit")
-@ViewDescriptor("category-attrs-edit.xml")
+@ViewDescriptor("category-attributes-detail-view.xml")
+@Route(value = "dynat/category/:id/attributes/:id", layout = DefaultMainViewParent.class)
+@PrimaryDetailView(CategoryAttribute.class)
 @EditedEntityContainer("categoryAttributeDc")
 @DialogMode(width = "50em", height = "37.5em") // todo forceDialog = true
-public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
+public class CategoryAttributesDetailView extends StandardDetailView<CategoryAttribute> {
 
     protected static final String DATA_TYPE_PROPERTY = "dataType";
     protected static final String DEFAULT_DATE_IS_CURRENT_PROPERTY = "defaultDateIsCurrent";
@@ -250,10 +252,10 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
     private ValueClearAction dependsOnAttributesFieldClear;
     @ViewComponent("dependsOnAttributesField.select")
     private LookupSelectAction dependsOnAttributesFieldSelect;
-    @Autowired
+    @ViewComponent
     private JmixButton editEnumerationBtn;
 
-    protected AttributeLocalizationFragment localizationFragment;
+    protected AttributeLocalizationViewFragment localizationFragment;
 
     protected List<TargetViewComponent> targetScreens = new ArrayList<>();
 
@@ -344,11 +346,11 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
 
     @Subscribe("editEnumerationBtn")
     protected void onEditEnumerationBtnClick(ClickEvent<Button> event) {
-        DialogWindow<AttributeEnumerationScreen> enumerationScreen = dialogWindows.view(this, AttributeEnumerationScreen.class)
-                .withViewClass(AttributeEnumerationScreen.class)
+        DialogWindow<AttributeEnumerationViewFragment> enumerationScreen = dialogWindows.view(this, AttributeEnumerationViewFragment.class)
+                .withViewClass(AttributeEnumerationViewFragment.class)
                 .withAfterCloseListener(afterCloseEvent -> {
                     if (afterCloseEvent.closedWith(StandardOutcome.SAVE)) {
-                        AttributeEnumerationScreen screen = afterCloseEvent.getSource().getView();
+                        AttributeEnumerationViewFragment screen = afterCloseEvent.getSource().getView();
                         getEditedEntity().setEnumeration(screen.getEnumeration());
                         getEditedEntity().setEnumerationLocales(screen.getEnumerationLocales());
                     }
@@ -375,7 +377,7 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
         if (recalculationScriptField.getValue() != null
                 && CollectionUtils.isEmpty(categoryAttributes)) {
             throw new ValidationException(
-                    messages.getMessage(CategoryAttrsEdit.class, "dependsOnAttributes.validationMsg"));
+                    messages.getMessage(CategoryAttributesDetailView.class, "dependsOnAttributes.validationMsg"));
         }
     }
 
@@ -473,7 +475,7 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
             VerticalLayout localizationTabComponent = (VerticalLayout) tabSheet.getComponent(localizationTab);
-            localizationFragment = views.create(AttributeLocalizationFragment.class);
+            localizationFragment = views.create(AttributeLocalizationViewFragment.class);
             localizationFragment.setNameMsgBundle(getEditedEntity().getNameMsgBundle());
             localizationFragment.setDescriptionMsgBundle(getEditedEntity().getDescriptionsMsgBundle());
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
@@ -623,7 +625,7 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
                     .build()
                     .open();
         } catch (AccessDeniedException ex) {
-            notifications.create(messages.getMessage(CategoryAttrsEdit.class, "entityScreenAccessDeniedMessage"))
+            notifications.create(messages.getMessage(CategoryAttributesDetailView.class, "entityScreenAccessDeniedMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
         }
@@ -883,10 +885,10 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
             for (CategoryAttribute categoryAttribute : category.getCategoryAttrs()) {
                 if (!categoryAttribute.equals(attribute)) {
                     if (categoryAttribute.getName().equals(attribute.getName())) {
-                        validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "uniqueName"));
+                        validationErrors.add(messages.getMessage(CategoryAttributesDetailView.class, "uniqueName"));
                         return;
                     } else if (categoryAttribute.getCode().equals(attribute.getCode())) {
-                        validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "uniqueCode"));
+                        validationErrors.add(messages.getMessage(CategoryAttributesDetailView.class, "uniqueCode"));
                         return;
                     }
                 }
@@ -899,10 +901,10 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
     protected ValidationErrors validateEnumeration(String enumeration, String defaultValue) {
         ValidationErrors validationErrors = new ValidationErrors();
         if (enumeration == null) {
-            validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "enumerationField.required"));
+            validationErrors.add(messages.getMessage(CategoryAttributesDetailView.class, "enumerationField.required"));
         } else if (defaultValue != null) {
             if (Arrays.stream(enumeration.split(",")).noneMatch(defaultValue::equalsIgnoreCase))
-                validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "defaultValueIsNotInEnumeration"));
+                validationErrors.add(messages.getMessage(CategoryAttributesDetailView.class, "defaultValueIsNotInEnumeration"));
         }
         return validationErrors;
     }
@@ -912,16 +914,16 @@ public class CategoryAttrsEdit extends StandardDetailView<CategoryAttribute> {
         if (minNumber != null
                 && maxNumber != null
                 && compareNumbers(type, minNumber, maxNumber) > 0) {
-            validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "minGreaterThanMax"));
+            validationErrors.add(messages.getMessage(CategoryAttributesDetailView.class, "minGreaterThanMax"));
         } else if (defaultNumber != null) {
             if (minNumber != null
                     && compareNumbers(type, minNumber, defaultNumber) > 0) {
-                validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "defaultLessThanMin"));
+                validationErrors.add(messages.getMessage(CategoryAttributesDetailView.class, "defaultLessThanMin"));
             }
 
             if (maxNumber != null
                     && compareNumbers(type, maxNumber, defaultNumber) < 0) {
-                validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "defaultGreaterThanMax"));
+                validationErrors.add(messages.getMessage(CategoryAttributesDetailView.class, "defaultGreaterThanMax"));
             }
         }
 

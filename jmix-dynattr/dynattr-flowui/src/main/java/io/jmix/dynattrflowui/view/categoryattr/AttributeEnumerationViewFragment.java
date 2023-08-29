@@ -22,8 +22,6 @@ import com.google.common.collect.Lists;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.IconFactory;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.AccessManager;
@@ -33,16 +31,13 @@ import io.jmix.core.Metadata;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
-import io.jmix.dynattrflowui.view.localization.AttributeLocalizationFragment;
+import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.Views;
-import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
@@ -57,13 +52,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-@ViewController("dynat_AttributeEnumerationScreen")
-@ViewDescriptor("attribute-enumeration-screen.xml")
+@ViewController("dynat_AttributeEnumerationViewFragment")
+@ViewDescriptor("attribute-enumeration-view-fragment.xml")
 @DialogMode() //todo forceDialog = true
-public class AttributeEnumerationScreen extends StandardView {
+public class AttributeEnumerationViewFragment extends StandardView {
 
-//    @Autowired
-//    protected Fragments fragments;
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
@@ -88,7 +81,7 @@ public class AttributeEnumerationScreen extends StandardView {
 
     protected String enumeration;
     protected String enumerationLocales;
-    protected AttributeLocalizationFragment localizationFragment;
+    protected AttributeLocalizationViewFragment localizationFragment;
     protected List<AttributeLocalizedEnumValue> localizedEnumValues = new ArrayList<>();
 
 
@@ -110,8 +103,8 @@ public class AttributeEnumerationScreen extends StandardView {
     public String getEnumerationLocales() {
         return Strings.emptyToNull(localizedEnumValuesDc.getItems()
                 .stream()
-                .filter(enumValue -> enumValue.getLocalizedValues() != null)
                 .map(AttributeLocalizedEnumValue::getLocalizedValues)
+                .filter(Objects::nonNull)
                 .collect(Collectors.joining()));
     }
 
@@ -148,7 +141,7 @@ public class AttributeEnumerationScreen extends StandardView {
         }
     }
 
-//   todo @Install(to = "localizedEnumValuesDataGrid.removeItem", subject = "columnGenerator")
+//   @Install(to = "localizedEnumValuesDataGrid.removeItem", subject = "columnGenerator")
 //    protected JmixButton localizedEnumValuesDataGridRemoveItemColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedEnumValue> event) {
 //        JmixButton linkButton = uiComponents.create(JmixButton.class);
 //        Action removeAction = new BaseAction("remove_item_" + event.getItem().getValue())
@@ -173,10 +166,10 @@ public class AttributeEnumerationScreen extends StandardView {
             if (localizedEnumValue != null) {
                 String localizedValues = msgBundleTools.convertEnumMsgBundleToMsgBundle(localizedEnumValue.getLocalizedValues());
                 localizationFragment.setNameMsgBundle(localizedValues);
-//          todo      localizationFragment.getFragment().setEnabled(true);
+                localizationFragment.setEnabled(true);
             } else {
                 localizationFragment.setNameMsgBundle(null);
-//          todo      localizationFragment.getFragment().setEnabled(false);
+                localizationFragment.setEnabled(false);
             }
         }
     }
@@ -219,7 +212,7 @@ public class AttributeEnumerationScreen extends StandardView {
             CrudEntityContext crudEntityContext = new CrudEntityContext(localizedEnumValuesDc.getEntityMetaClass());
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
-            localizationFragment = views.create(AttributeLocalizationFragment.class);
+            localizationFragment = views.create(AttributeLocalizationViewFragment.class);
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
 
             localizationFragment.setEnabled(false);

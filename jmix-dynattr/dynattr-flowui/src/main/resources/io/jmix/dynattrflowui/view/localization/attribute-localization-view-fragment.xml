@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<fragment xmlns="http://jmix.io/schema/ui/fragment">
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://enumerationScreen.title">
     <data>
         <collection id="localizedValuesDc"
                     class="io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue"
@@ -23,14 +24,13 @@
             <loader id="localizedValuesDl"/>
         </collection>
     </data>
-    <layout spacing="true">
-        <dataGrid id="localizedValuesDataGrid" dataContainer="localizedValuesDc" width="100%" height="100%"
-                  editorEnabled="true" sortable="false" columnsCollapsingAllowed="false" reorderingAllowed="false">
+    <layout spacing="true" margin="false">
+        <dataGrid id="localizedValuesDataGrid" dataContainer="localizedValuesDc" width="100%" height="100%" editorBuffered="true" >
             <columns>
-                <column id="language" editable="false"/>
-                <column id="name" property="name" editable="true"/>
-                <column id="description" property="description" editable="true"/>
+                <column key="language" editable="false"/>
+                <column key="name" property="name" editable="true"/>
+                <column key="description" property="description" editable="true"/>
             </columns>
         </dataGrid>
     </layout>
-</fragment>
+</view>

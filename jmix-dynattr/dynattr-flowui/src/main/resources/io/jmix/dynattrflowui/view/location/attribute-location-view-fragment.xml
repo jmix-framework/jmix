@@ -14,23 +14,21 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
-<fragment xmlns="http://jmix.io/schema/ui/fragment">
-    <layout spacing="true" expand="configurationBox">
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://enumerationScreen.title">
+    <layout spacing="true" expand="configurationBox" margin="false">
         <hbox spacing="true" expand="saveConfigurationBtn">
-            <comboBox id="columnsCountLookupField" caption="msg://columnsCountLookupField.caption"
-                      nullOptionVisible="false" width="175px"/>
-            <button id="saveConfigurationBtn" caption="msg://saveConfigurationBtn.caption" align="BOTTOM_RIGHT"/>
+            <comboBox id="columnsCountLookupField" title="msg://columnsCountLookupField.title" width="175px"/>
+            <button id="saveConfigurationBtn" title="msg://saveConfigurationBtn.title"/>
         </hbox>
         <hbox id="configurationBox" spacing="true">
-            <dataGrid id="sourceDataGrid" metaClass="dynat_CategoryAttribute" editorEnabled="false" width="175px"
-                      settingsEnabled="false" columnsCollapsingAllowed="false">
+            <dataGrid id="sourceDataGrid" metaClass="dynat_CategoryAttribute" width="11.5em">
                 <columns>
-                    <column id="name" property="name" caption="msg://sourceDataGrid.sourceColumn.caption"
+                    <column key="name" property="name" header="msg://sourceDataGrid.sourceColumn.title"
                             sortable="false"/>
                 </columns>
             </dataGrid>
-             <hbox id="targetDataGridBox"/>
+            <hbox id="targetDataGridBox"/>
         </hbox>
     </layout>
-</fragment>
+</view>

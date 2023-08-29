@@ -135,6 +135,8 @@ dependencies {
 
         api "io.jmix.dynattr:jmix-dynattr:$freeVersion"
         api "io.jmix.dynattr:jmix-dynattr-starter:$freeVersion"
+        api "io.jmix.dynattr:jmix-dynattr-flowui:$freeVersion"
+        api "io.jmix.dynattr:jmix-dynattr-flowui-starter:$freeVersion"
 
         api "io.jmix.email:jmix-email:$freeVersion"
         api "io.jmix.email:jmix-email-flowui:$freeVersion"

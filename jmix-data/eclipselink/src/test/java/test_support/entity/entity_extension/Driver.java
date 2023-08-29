@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @JmixEntity
-@Entity
+@Entity(name = "exttest_Driver")
 @Table(name = "EXTTEST_DRIVER")
 public class Driver {
 

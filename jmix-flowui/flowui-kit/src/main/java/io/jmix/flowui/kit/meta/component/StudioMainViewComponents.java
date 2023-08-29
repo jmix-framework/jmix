@@ -65,6 +65,8 @@ public interface StudioMainViewComponents {
                     @StudioProperty(xmlAttribute = "drawerOpened", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "primarySection", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.applayout.AppLayout$Section",
+                            setParameterFqn = "com.vaadin.flow.component.applayout.AppLayout$Section",
                             options = {"DRAWER", "NAVBAR"}),
             }
     )

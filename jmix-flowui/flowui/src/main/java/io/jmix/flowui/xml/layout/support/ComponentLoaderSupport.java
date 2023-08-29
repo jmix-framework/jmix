@@ -30,13 +30,11 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.DatatypeRegistryImpl;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsDatatype;
-import io.jmix.flowui.component.SupportsResponsiveSteps;
-import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.formatter.FormatterLoadFactory;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.validation.ValidatorLoadFactory;
@@ -382,6 +380,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 });
     }
 
+    /**
+     * @deprecated use {@link ComponentLoaderSupport#loadDateFormat(DatePicker.DatePickerI18n, Element)} instead.
+     */
+    @Deprecated
     public void loadDateFormat(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
         loaderSupport.loadResourceString(element, "dateFormat", context.getMessageGroup())
                 .ifPresent(dateFormatString -> {
@@ -415,7 +417,11 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public Optional<String> loadShortcutCombination(Element element) {
-        return loaderSupport.loadString(element, "shortcutCombination")
+        return loadShortcut(element,"shortcutCombination");
+    }
+
+    public Optional<String> loadShortcut(Element element, String attributeName) {
+        return loaderSupport.loadString(element, attributeName)
                 .map(shortcutCombination -> {
                     if (shortcutCombination.startsWith("${") && shortcutCombination.endsWith("}")) {
                         if (isShortcutCombinationFQN(shortcutCombination)) {
@@ -437,6 +443,49 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
                     return shortcutCombination;
                 });
+    }
+
+    public void loadMetaClass(SupportsMetaClass component, Element element) {
+        loaderSupport.loadString(element, "metaClass")
+                .ifPresent(metaClass ->
+                        component.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
+    }
+
+    public void loadDatePickerI18n(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
+        DatePicker.DatePickerI18n datePickerI18n = new DatePicker.DatePickerI18n();
+
+        loadFirstDayOfWeek(datePickerI18n, element);
+        loadDateFormat(datePickerI18n, element);
+
+        setter.accept(datePickerI18n);
+    }
+
+    protected void loadDateFormat(DatePicker.DatePickerI18n datePickerI18n, Element element) {
+        loaderSupport.loadResourceString(element, "dateFormat", context.getMessageGroup())
+                .ifPresent(dateFormatString -> {
+                    List<String> dateFormatList = split(dateFormatString);
+
+                    if (dateFormatList.size() == 1) {
+                        datePickerI18n.setDateFormat(dateFormatList.get(0));
+                    } else {
+                        datePickerI18n.setDateFormats(
+                                dateFormatList.get(0),
+                                dateFormatList.stream()
+                                        .skip(1)
+                                        .toArray(String[]::new)
+                        );
+                    }
+                });
+    }
+
+    protected void loadFirstDayOfWeek(DatePicker.DatePickerI18n datePickerI18n, Element element) {
+        loaderSupport.loadBoolean(element, "weekNumbersVisible", weekNumbersVisible -> {
+            if (weekNumbersVisible) {
+                // According to the Vaadin documentation: weeksNumbersVisible works only when
+                // the first day of the week is set to Monday (1)
+                datePickerI18n.setFirstDayOfWeek(1);
+            }
+        });
     }
 
     protected boolean isShortcutCombinationFQN(String shortcutCombination) {

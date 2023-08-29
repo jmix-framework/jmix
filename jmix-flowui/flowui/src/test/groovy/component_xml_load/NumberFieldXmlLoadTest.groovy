@@ -67,6 +67,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             stepButtonsVisible
             enabled

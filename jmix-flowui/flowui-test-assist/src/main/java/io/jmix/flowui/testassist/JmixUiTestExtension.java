@@ -282,9 +282,13 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
             }
 
             RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
-            if (Strings.isNullOrEmpty(route.value())
-                    || routeConfiguration.isPathAvailable(route.value())) {
+            if (Strings.isNullOrEmpty(route.value())) {
                 continue;
+            }
+
+            // Provides ability to overriding Views like in ViewRegistry#registerRoute()
+            if (routeConfiguration.isPathAvailable(route.value())) {
+                routeConfiguration.removeRoute(route.value());
             }
 
             if (route.layout() == UI.class) {

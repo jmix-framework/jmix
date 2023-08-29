@@ -44,8 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-
 import org.springframework.lang.Nullable;
+
+import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.*;
 import java.util.List;
@@ -81,6 +82,7 @@ public class ViewControllerDependencyInjector {
         injectElements(controller, viewIntrospectionData);
         initSubscribeListeners(controller, viewIntrospectionData);
         initInstallMethods(controller, viewIntrospectionData);
+        initSupplyMethods(controller, viewIntrospectionData);
         initUiEventListeners(controller, viewIntrospectionData);
     }
 
@@ -148,7 +150,6 @@ public class ViewControllerDependencyInjector {
 
     @Nullable
     protected Object getInjectedInstance(Class<?> type, String name, InjectElement injectElement, View<?> controller) {
-        // TODO: gg, exception?
         if (!(controller.getContent() instanceof ComponentContainer)) {
             return null;
         }
@@ -159,10 +160,8 @@ public class ViewControllerDependencyInjector {
         ComponentContainer content = ((ComponentContainer) controller.getContent());
 
         if (Component.class.isAssignableFrom(type)) {
-            /// if legacy frame - inject controller
             Optional<Component> component = content.findComponent(name);
             // Injecting a UI component
-            // TODO: gg, rework after all types will be handled
             return component.orElse(null);
         } else if (InstanceContainer.class.isAssignableFrom(type)) {
             // Injecting a container
@@ -203,8 +202,6 @@ public class ViewControllerDependencyInjector {
         } else if (MessageBundle.class == type) {
             return createMessageBundle(controller);
         }
-
-        // TODO: gg, handle other types
 
         return null;
     }
@@ -361,32 +358,8 @@ public class ViewControllerDependencyInjector {
 
     @Nullable
     protected Object getInstallTargetInstance(View<?> controller, Install annotation) {
-        Object targetInstance;
-        String target = ViewDescriptorUtils.getInferredProvideId(annotation);
-        if (Strings.isNullOrEmpty(target)) {
-
-            switch (annotation.target()) {
-                // if kept default value
-                case COMPONENT:
-                case CONTROLLER:
-                    targetInstance = controller;
-                    break;
-                case DATA_CONTEXT:
-                    targetInstance = ViewControllerUtils.getViewData(controller).getDataContext();
-                    break;
-
-                default:
-                    throw new UnsupportedOperationException(String.format("Unsupported @%s target %s",
-                            Install.class.getSimpleName(), annotation.target()));
-            }
-        } else if (annotation.target() == Target.DATA_LOADER) {
-            targetInstance = ViewControllerUtils.getViewData(controller).getLoader(target);
-        } else if (annotation.target() == Target.DATA_CONTAINER) {
-            targetInstance = ViewControllerUtils.getViewData(controller).getContainer(target);
-        } else {
-            targetInstance = findMethodTarget(controller, target);
-        }
-        return targetInstance;
+        return getTargetInstance(annotation, controller,
+                ViewDescriptorUtils.getInferredProvideId(annotation), annotation.target());
     }
 
     protected Object createInstallHandler(View<?> controller, Method method, Class<?> targetObjectType) {
@@ -599,9 +572,89 @@ public class ViewControllerDependencyInjector {
         return listener;
     }
 
+    protected void initSupplyMethods(View<?> controller, ViewIntrospectionData viewIntrospectionData) {
+        List<AnnotatedMethod<Supply>> supplyMethods = viewIntrospectionData.getSupplyMethods();
+        for (AnnotatedMethod<Supply> annotatedMethod : supplyMethods) {
+            Supply annotation = annotatedMethod.getAnnotation();
+            Object targetInstance = getSupplyTargetInstance(controller, annotation);
+
+            if (targetInstance == null) {
+                if (annotation.required()) {
+                    throw new DevelopmentException(
+                            String.format("Unable to find @%s target for method '%s' in '%s'",
+                                    Supply.class.getSimpleName(), annotatedMethod.getMethod(), controller.getClass()));
+                }
+
+                log.trace("Skip @{} method {} of {} : it is not required and target not found",
+                        Supply.class.getSimpleName(), annotatedMethod.getMethod().getName(), controller.getClass());
+
+                continue;
+            }
+
+            Class<?> instanceClass = targetInstance.getClass();
+            Method supplyMethod = annotatedMethod.getMethod();
+
+            MethodHandle targetSetterMethod = getSupplyTargetSetterMethod(annotation, instanceClass);
+            Supplier<?> supplier = createSupplierInstance(controller, supplyMethod);
+
+            try {
+                targetSetterMethod.invoke(targetInstance, supplier.get());
+            } catch (Error e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new RuntimeException(String.format("Unable to set declarative @%s supplier for %s",
+                        Supply.class.getSimpleName(), supplyMethod), e);
+            }
+        }
+    }
+
+    protected Supplier<?> createSupplierInstance(View<?> controller, Method method) {
+        return new InstalledSupplier(controller, method);
+    }
+
+    protected MethodHandle getSupplyTargetSetterMethod(Supply annotation, Class<?> instanceClass) {
+        String subjectProperty = annotation.type() != Object.class
+                ? StringUtils.uncapitalize(annotation.type().getSimpleName())
+                : annotation.subject();
+
+        String subjectSetterName = "set" + StringUtils.capitalize(subjectProperty);
+
+        MethodHandle targetSetterMethod =
+                reflectionInspector.getSupplyTargetMethod(instanceClass, subjectSetterName);
+
+        if (targetSetterMethod == null) {
+            throw new DevelopmentException(
+                    String.format("Unable to find @%s target method '%s' in '%s'",
+                            Supply.class.getSimpleName(), subjectProperty, instanceClass)
+            );
+        }
+
+        return targetSetterMethod;
+    }
+
+    @Nullable
+    protected Object getSupplyTargetInstance(View<?> controller, Supply annotation) {
+        return getTargetInstance(annotation, controller,
+                ViewDescriptorUtils.getInferredProvideId(annotation), annotation.target());
+    }
+
+    @Nullable
+    protected <A extends Annotation> Object getTargetInstance(A annotation, View<?> controller,
+                                                              String targetId, Target target) {
+        return Strings.isNullOrEmpty(targetId) ? switch (target) {
+            case COMPONENT, CONTROLLER -> controller;
+            case DATA_CONTEXT -> ViewControllerUtils.getViewData(controller).getDataContext();
+            default -> throw new UnsupportedOperationException(String.format("Unsupported @%s target '%s'",
+                    annotation.getClass().getSimpleName(), target));
+        } : switch (target) {
+            case DATA_LOADER -> ViewControllerUtils.getViewData(controller).getLoader(targetId);
+            case DATA_CONTAINER -> ViewControllerUtils.getViewData(controller).getContainer(targetId);
+            default -> findMethodTarget(controller, targetId);
+        };
+    }
+
     @Nullable
     protected Object findMethodTarget(View<?> controller, String target) {
-        // TODO: gg, exception?
         if (!(controller.getContent() instanceof ComponentContainer)) {
             return null;
         }

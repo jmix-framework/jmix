@@ -28,8 +28,8 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
-
 import jakarta.annotation.Nullable;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -45,6 +45,7 @@ public class ComboButton extends AbstractDropdownButton
 
     protected ComboButtonActionSupport actionSupport;
     protected ShortcutRegistration shortcutRegistration;
+    protected KeyCombination shortcutCombination;
 
     public ComboButton() {
         buttonItem = getContent().addItem("");
@@ -152,6 +153,8 @@ public class ComboButton extends AbstractDropdownButton
     public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
         KeyCombination oldValue = getShortcutCombination();
         if (!Objects.equals(oldValue, shortcutCombination)) {
+            this.shortcutCombination = shortcutCombination;
+
             if (shortcutRegistration != null) {
                 shortcutRegistration.remove();
                 shortcutRegistration = null;
@@ -167,16 +170,7 @@ public class ComboButton extends AbstractDropdownButton
     @Nullable
     @Override
     public KeyCombination getShortcutCombination() {
-        if (shortcutRegistration == null) {
-            return null;
-        }
-
-        KeyModifier[] keyModifiers = shortcutRegistration.getModifiers().stream()
-                .filter(key -> key instanceof KeyModifier)
-                .map(key -> (KeyModifier) key)
-                .toArray(KeyModifier[]::new);
-
-        return KeyCombination.create(shortcutRegistration.getKey(), keyModifiers);
+        return shortcutCombination;
     }
 
     public void addThemeVariants(ComboButtonVariant... variants) {

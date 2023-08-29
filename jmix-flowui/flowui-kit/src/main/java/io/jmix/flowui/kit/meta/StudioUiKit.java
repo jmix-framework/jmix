@@ -28,6 +28,14 @@ import java.lang.annotation.Target;
 public @interface StudioUiKit {
 
     /**
+     * Describes dependencies from module that should be loaded into Studio classloader.
+     * It may be required to display a component in the Designer Preview that uses
+     * a custom return type in its meta description.
+     * The dependency should look like {@code group:name}
+     */
+    String[] studioClassloaderDependencies() default {};
+
+    /**
      * Describes the required dependencies.
      * Optional. If empty the ui kit will be used in Studio.
      * The dependency should look like {@code group:name}

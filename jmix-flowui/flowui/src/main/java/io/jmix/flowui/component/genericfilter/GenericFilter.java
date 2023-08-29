@@ -57,6 +57,7 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.kit.component.combobutton.ComboButtonVariant;
@@ -69,7 +70,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
 
 import java.util.*;
@@ -105,6 +105,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected GroupFilterSupport groupFilterSupport;
 
     protected boolean autoApply;
+    protected String applyShortcut;
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
     protected Predicate<MetaPropertyPath> propertyFiltersPredicate;
@@ -149,7 +150,9 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void initComponent() {
-        this.autoApply = applicationContext.getBean(UiComponentProperties.class).isFilterAutoApply();
+        UiComponentProperties uiComponentProperties = applicationContext.getBean(UiComponentProperties.class);
+        this.autoApply = uiComponentProperties.isFilterAutoApply();
+        this.applyShortcut = uiComponentProperties.getFilterApplyShortcut();
 
         initDefaultResponsiveSteps();
         initEmptyConfiguration();
@@ -266,6 +269,8 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void initApplyButton(ComboButton applyButton) {
         applyButton.addClickListener(this::onApplyButtonClick);
         applyButton.addThemeVariants(ComboButtonVariant.LUMO_SUCCESS, ComboButtonVariant.LUMO_PRIMARY);
+        applyButton.setShortcutCombination(KeyCombination.create(applyShortcut));
+
         updateApplyButtonText(isAutoApply());
 
         initSelectConfigurationDropdown();
@@ -370,6 +375,27 @@ public class GenericFilter extends Composite<JmixDetails>
 
             updateApplyButtonText(autoApply);
             updateCurrentConfigurationAutoApply(autoApply);
+        }
+    }
+
+    /**
+     * @return {@link KeyCombination} that is used to apply the filter
+     */
+    @Nullable
+    public KeyCombination getApplyShortcut() {
+        return applyButton.getShortcutCombination();
+    }
+
+    /**
+     * Sets a new {@link KeyCombination} to apply the filter.
+     *
+     * @param applyShortcut string representation of a {@link KeyCombination}
+     */
+    public void setApplyShortcut(@Nullable String applyShortcut) {
+        if (!Objects.equals(this.applyShortcut, applyShortcut)) {
+            this.applyShortcut = applyShortcut;
+
+            applyButton.setShortcutCombination(KeyCombination.create(applyShortcut));
         }
     }
 

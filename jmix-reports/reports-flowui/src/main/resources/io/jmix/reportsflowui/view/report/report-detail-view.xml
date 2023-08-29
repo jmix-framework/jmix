@@ -56,30 +56,22 @@
             <tab id="detailsTab" label="msg://mainTabSheet.detailsTab.label">
                 <vbox id="detailsTabContent" padding="false">
                     <formLayout id="reportForm" dataContainer="reportDc">
+                        <responsiveSteps>
+                            <responsiveStep minWidth="0em" columns="1"/>
+                            <responsiveStep minWidth="50em" columns="2"/>
+                        </responsiveSteps>
                         <textField id="nameField" property="name"
                                    requiredMessage="msg://detailsTab.nameField.requiredMessage"/>
-                        <entityComboBox id="defaultTemplateField" property="defaultTemplate"
-                                        required="true"
-                                        itemsContainer="templatesDc">
-                            <actions>
-                                <action id="create" icon="PLUS"
-                                        description="msg://detailsTab.defaultTemplateField.create.description"/>
-                                <action id="download" icon="DOWNLOAD"
-                                        description="msg://detailsTab.defaultTemplateField.download.description"/>
-                                <action id="upload" icon="UPLOAD"
-                                        description="msg://detailsTab.defaultTemplateField.upload.description"/>
-                                <action id="edit" icon="PENCIL"
-                                        description="msg://detailsTab.defaultTemplateField.edit.description"/>
-                            </actions>
-                        </entityComboBox>
                         <entityComboBox id="groupField"
                                         property="group"
                                         itemsContainer="groupsDc"/>
                         <textField id="codeField" property="code"/>
-                        <textArea id="descriptionField" property="description"/>
-                        <textArea id="localeTextField" property="localeNames" label="msg://nameLocale"/>
-                        <checkbox id="systemField" property="system"/>
-                        <checkbox id="restAccessField" property="restAccess"/>
+                        <hbox padding="false" alignItems="BASELINE">
+                            <checkbox id="systemField" label="msg://io.jmix.reports.entity/Report.system" property="system"/>
+                            <checkbox id="restAccessField" label="msg://io.jmix.reports.entity/Report.restAccess" property="restAccess"/>
+                        </hbox>
+                        <textArea id="descriptionField" property="description" minHeight="9.5em"/>
+                        <textArea id="localeTextField" property="localeNames" label="msg://nameLocale" minHeight="9.5em"/>
                     </formLayout>
                 </vbox>
             </tab>
@@ -97,7 +89,8 @@
                             <actions>
                                 <action id="create" icon="PLUS" actionVariant="PRIMARY"
                                         description="msg://bandsTab.createBand.tooltipText"/>
-                                <action id="remove" type="list_remove" description="msg://bandsTab.removeBand.tooltipText"/>
+                                <action id="remove" type="list_remove"
+                                        description="msg://bandsTab.removeBand.tooltipText"/>
                                 <action id="upBand" type="list_itemTracking" icon="ARROW_UP"
                                         description="msg://bandsTab.upBand.tooltipText"/>
                                 <action id="downBand" type="list_itemTracking" icon="ARROW_DOWN"
@@ -130,6 +123,7 @@
                                 <!--Movable layout-->
                                 <div id="dataSetTypeLayout" width="100%" height="100%">
                                     <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptCodeEditor"
+                                          spacing="false"
                                           height="100%">
                                         <div width="100%" classNames="flex, justify-end">
                                             <button id="dataSetScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
@@ -137,13 +131,14 @@
                                         </div>
                                         <div width="100%" classNames="flex, items-start">
                                             <codeEditor id="dataSetScriptCodeEditor"
-                                                        title="msg://bandsTab.dataSetTypeLayout.dataSetScriptField.label"
+                                                        label="msg://bandsTab.dataSetTypeLayout.dataSetScriptField.label"
                                                         width="100%"
-                                                        height="20em"
+                                                        height="13em"
                                                         dataContainer="dataSetsDc"
                                                         property="text"/>
                                             <button id="dataSetScriptCodeEditorHelpBtn"
                                                     themeNames="icon, tertiary-inline"
+                                                    classNames="mt-xl"
                                                     icon="QUESTION_CIRCLE"/>
                                         </div>
                                         <formLayout id="textParamsForm" dataContainer="dataSetsDc" width="100%">
@@ -243,7 +238,7 @@
                             <div id="multiDataSetLayout" classNames="report-flex-layout report-multi-data-set-layout"
                                  width="100%" height="100%"
                                  visible="false">
-                                <vbox id="dataSetsDataGridLayout" padding="false" height="100%"
+                                <vbox id="dataSetsDataGridLayout" padding="false" minHeight="15em" maxHeight="100%"
                                       classNames="report-data-sets-data-grid-layout">
                                     <hbox id="dataSetsButtonsLayout">
                                         <button id="createDataSetBtn" action="dataSetsDataGrid.create"/>
@@ -276,7 +271,7 @@
                             <button id="upButton" action="inputParametersDataGrid.up"/>
                             <button id="downButton" action="inputParametersDataGrid.down"/>
                         </hbox>
-                        <dataGrid id="inputParametersDataGrid" dataContainer="parametersDc">
+                        <dataGrid id="inputParametersDataGrid" dataContainer="parametersDc" height="15em">
                             <actions>
                                 <action id="createParameter" type="list_create">
                                     <properties>
@@ -299,7 +294,7 @@
                             </columns>
                         </dataGrid>
                     </vbox>
-                    <vbox classNames="report-parameters-validate-layout" padding="false">
+                    <vbox classNames="report-parameters-validate-layout" padding="false" spacing="false">
                         <h4 text="msg://report.crossParametersValidation"/>
                         <div width="100%" classNames="flex, justify-between">
                             <checkbox id="validationOnCheckBox"
@@ -314,7 +309,8 @@
                             <codeEditor id="validationScriptCodeEditor"
                                         title="msg://validationScript.title"
                                         width="100%"
-                                        height="20em"
+                                        minHeight="10em"
+                                        maxHeight="100%"
                                         mode="GROOVY"
                                         dataContainer="reportDc"
                                         property="validationScript"/>
@@ -365,7 +361,7 @@
                         <button action="templatesDataGrid.copy"/>
                     </hbox>
                     <dataGrid id="templatesDataGrid" width="100%" dataContainer="templatesDc"
-                              columnReorderingAllowed="false" detailsVisibleOnClick="false">
+                             columnReorderingAllowed="true"  detailsVisibleOnClick="false">
                         <actions>
                             <action id="create" type="list_create"/>
                             <action id="remove" type="list_remove"/>
@@ -375,10 +371,10 @@
                             <action id="copy" type="list_itemTracking" text="msg://report.template.copy" icon="COPY"/>
                         </actions>
                         <columns>
-                            <column property="name" sortable="false"/>
-                            <column property="code" sortable="false"/>
-                            <column property="reportOutputType" sortable="false"/>
-                            <column property="customDefinition" sortable="false"/>
+                            <column property="name" resizable="true" flexGrow="3" sortable="false"/>
+                            <column property="code" resizable="true" flexGrow="0" sortable="false"/>
+                            <column property="reportOutputType" resizable="true" flexGrow="1" sortable="false"/>
+                            <column property="customDefinition" resizable="true" flexGrow="1" sortable="false"/>
                         </columns>
                     </dataGrid>
                 </vbox>
@@ -398,7 +394,7 @@
                                   columnReorderingAllowed="false" detailsVisibleOnClick="false">
                             <actions>
                                 <action id="add" type="list_add"/>
-                                <action id="exclude" type="list_exclude" icon="CLOSE"/>
+                                <action id="exclude" type="list_remove" icon="CLOSE"/>
                             </actions>
                             <columns>
                                 <column property="roleName"/>
@@ -408,7 +404,7 @@
                     </vbox>
                     <vbox classNames="report-views-layout" expand="screenDataGrid" padding="false">
                         <h4 text="msg://io.jmix.reportsflowui.view.report/securityTab.views.title"/>
-                        <hbox id="addScreenGroupBox" expand="screenIdField" width="100%">
+                        <hbox id="addScreenGroupBox" expand="screenIdField" width="100%" classNames="margin-inline-end">
                             <comboBox id="screenIdField"/>
                             <button id="addReportScreenBtn" action="screenDataGrid.add"
                                     text="msg://views.add"/>

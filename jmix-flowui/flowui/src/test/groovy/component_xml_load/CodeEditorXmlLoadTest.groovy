@@ -60,6 +60,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.codeEditorId) {
             id.get() == "codeEditorId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             errorMessage == "errorMessageString"
             fontSize == "20"

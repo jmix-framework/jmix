@@ -32,6 +32,7 @@
               alignItems="STRETCH"
               boxSizing="BORDER_BOX"
               classNames="cssClassName1, cssClassName2"
+              css="color: red;"
               enabled="true"
               expand="expanded"
               height="50px"
@@ -52,6 +53,7 @@
               alignItems="STRETCH"
               boxSizing="BORDER_BOX"
               classNames="cssClassName1, cssClassName2"
+              css="color: red;"
               enabled="true"
               expand="expanded"
               height="50px"
@@ -70,6 +72,7 @@
 
         <accordion id="accordionId"
                    classNames="cssClassName1, cssClassName2"
+                   css="color: red;"
                    height="50px"
                    maxHeight="55px"
                    maxWidth="120px"
@@ -79,6 +82,7 @@
                    width="100px">
             <accordionPanel id="accordionPanelId"
                             classNames="cssClassName1, cssClassName2"
+                            css="color: red;"
                             enabled="true"
                             height="50px"
                             maxHeight="55px"
@@ -100,6 +104,7 @@
             </accordionPanel>
             <accordionPanel id="anotherAccordionPanelId"
                             classNames="cssClassName1, cssClassName2"
+                            css="color: red;"
                             enabled="true"
                             height="50px"
                             maxHeight="55px"
@@ -115,6 +120,7 @@
 
         <formLayout id="formLayoutId"
                     classNames="cssClassName1, cssClassName2"
+                    css="color: red;"
                     dataContainer="orderDc"
                     enabled="true"
                     height="50px"
@@ -144,6 +150,7 @@
 
         <scroller id="scrollerId"
                   classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
                   height="50px"
                   maxHeight="55px"
                   maxWidth="120px"
@@ -157,6 +164,7 @@
 
         <split id="splitLayoutId"
                classNames="cssClassName1, cssClassName2"
+               css="color: red;"
                height="50px"
                maxHeight="55px"
                maxWidth="120px"
@@ -173,6 +181,7 @@
 
         <tabs id="tabsId"
               classNames="cssClassName1, cssClassName2"
+              css="color: red;"
               height="50px"
               maxHeight="55px"
               maxWidth="120px"
@@ -184,6 +193,7 @@
               width="100px">
             <tab id="tab1"
                  classNames="cssClassName1, cssClassName2"
+                 css="color: red;"
                  enabled="true"
                  flexGrow="45.54"
                  label="labelString"
@@ -200,6 +210,7 @@
             </tab>
             <tab id="tab2"
                  classNames="cssClassName1, cssClassName2"
+                 css="color: red;"
                  enabled="true"
                  flexGrow="45.44"
                  themeNames="icon-on-top"
@@ -211,6 +222,7 @@
 
         <tabSheet id="tabSheetId"
                   classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
                   height="50px"
                   maxHeight="55px"
                   maxWidth="120px"

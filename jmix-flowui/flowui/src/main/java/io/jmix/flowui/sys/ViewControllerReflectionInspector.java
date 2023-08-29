@@ -28,19 +28,16 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.Install;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
-import org.springframework.lang.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.*;
 import java.lang.reflect.*;
@@ -48,6 +45,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
@@ -135,6 +133,12 @@ public class ViewControllerReflectionInspector {
     @Nullable
     public MethodHandle getInstallTargetMethod(Class<?> clazz, String methodName) {
         Map<String, MethodHandle> methods = targetIntrospectionCache.getUnchecked(clazz).getInstallTargetMethods();
+        return methods.get(methodName);
+    }
+
+    @Nullable
+    public MethodHandle getSupplyTargetMethod(Class<?> clazz, String methodName) {
+        Map<String, MethodHandle> methods = targetIntrospectionCache.getUnchecked(clazz).getSupplyTargetMethods();
         return methods.get(methodName);
     }
 
@@ -259,10 +263,15 @@ public class ViewControllerReflectionInspector {
         List<InjectElement> injectElements = getAnnotatedInjectElementsNotCached(concreteClass);
         List<AnnotatedMethod<Subscribe>> subscribeMethods = getAnnotatedSubscribeMethodsNotCached(methods);
         List<AnnotatedMethod<Install>> installMethods = getAnnotatedInstallMethodsNotCached(methods);
+        List<AnnotatedMethod<Supply>> supplyMethods = getAnnotatedSupplyMethodsNotCached(methods);
         List<Method> eventListenerMethods = getAnnotatedListenerMethodsNotCached(concreteClass, methods);
-//        List<Method> propertySetters = getPropertySettersNotCached(methods);
 
-        return new ViewIntrospectionData(injectElements, eventListenerMethods, subscribeMethods, installMethods/*, propertySetters*/);
+        return new ViewIntrospectionData(
+                injectElements,
+                eventListenerMethods,
+                subscribeMethods,
+                installMethods,
+                supplyMethods);
     }
 
     protected TargetIntrospectionData getTargetIntrospectionDataNotCached(Class<?> concreteClass) {
@@ -270,8 +279,9 @@ public class ViewControllerReflectionInspector {
 
         Map<Class, MethodHandle> addListenerMethods = getAddListenerMethodsNotCached(concreteClass, methods);
         Map<String, MethodHandle> installTargetMethods = getInstallTargetMethodsNotCached(concreteClass, methods);
+        Map<String, MethodHandle> supplyTargetMethods = getSupplyTargetMethodsNotCached(concreteClass, methods);
 
-        return new TargetIntrospectionData(addListenerMethods, installTargetMethods);
+        return new TargetIntrospectionData(addListenerMethods, installTargetMethods, supplyTargetMethods);
     }
 
     protected List<InjectElement> getAnnotatedInjectElementsNotCached(Class<?> clazz) {
@@ -327,10 +337,6 @@ public class ViewControllerReflectionInspector {
 
     @Nullable
     protected Class injectionAnnotation(AnnotatedElement element) {
-        /*if (element.isAnnotationPresent(Resource.class)) {
-            return Resource.class;
-        }*/
-
         if (element.isAnnotationPresent(Autowired.class)) {
             return Autowired.class;
         }
@@ -353,34 +359,43 @@ public class ViewControllerReflectionInspector {
                 .collect(ImmutableList.toImmutableList());
     }
 
+    protected List<AnnotatedMethod<Supply>> getAnnotatedSupplyMethodsNotCached(Method[] uniqueDeclaredMethods) {
+        List<AnnotatedMethod<Supply>> annotatedMethods =
+                getAnnotatedMethodsNotCached(Supply.class, uniqueDeclaredMethods,
+                        method -> method.getParameterCount() == 0);
+        return ImmutableList.copyOf(annotatedMethods);
+    }
+
     protected List<AnnotatedMethod<Install>> getAnnotatedInstallMethodsNotCached(Method[] uniqueDeclaredMethods) {
-        List<AnnotatedMethod<Install>> annotatedMethods = new ArrayList<>();
-
-        for (Method m : uniqueDeclaredMethods) {
-            AnnotatedMethod<Install> annotatedMethod = createAnnotatedMethod(Install.class, m);
-            if (annotatedMethod != null) {
-                annotatedMethods.add(annotatedMethod);
-            }
-        }
-
+        List<AnnotatedMethod<Install>> annotatedMethods =
+                getAnnotatedMethodsNotCached(Install.class, uniqueDeclaredMethods, method -> true);
         return ImmutableList.copyOf(annotatedMethods);
     }
 
     protected List<AnnotatedMethod<Subscribe>> getAnnotatedSubscribeMethodsNotCached(Method[] uniqueDeclaredMethods) {
-        List<AnnotatedMethod<Subscribe>> annotatedMethods = new ArrayList<>();
+        List<AnnotatedMethod<Subscribe>> annotatedMethods =
+                getAnnotatedMethodsNotCached(Subscribe.class, uniqueDeclaredMethods,
+                        m -> m.getParameterCount() == 1
+                                && EventObject.class.isAssignableFrom(m.getParameterTypes()[0]));
+        annotatedMethods.sort(this::compareSubscribeMethods);
 
+        return ImmutableList.copyOf(annotatedMethods);
+    }
+
+    protected <T extends Annotation> List<AnnotatedMethod<T>> getAnnotatedMethodsNotCached(Class<T> aClass,
+                                                                                           Method[] uniqueDeclaredMethods,
+                                                                                           Predicate<Method> filter) {
+        List<AnnotatedMethod<T>> annotatedMethods = new ArrayList<>();
         for (Method m : uniqueDeclaredMethods) {
-            if (m.getParameterCount() == 1 && EventObject.class.isAssignableFrom(m.getParameterTypes()[0])) {
-                AnnotatedMethod<Subscribe> annotatedMethod = createAnnotatedMethod(Subscribe.class, m);
+            if (filter.test(m)) {
+                AnnotatedMethod<T> annotatedMethod = createAnnotatedMethod(aClass, m);
                 if (annotatedMethod != null) {
                     annotatedMethods.add(annotatedMethod);
                 }
             }
         }
 
-        annotatedMethods.sort(this::compareSubscribeMethods);
-
-        return ImmutableList.copyOf(annotatedMethods);
+        return annotatedMethods;
     }
 
     @Nullable
@@ -612,6 +627,33 @@ public class ViewControllerReflectionInspector {
         return ImmutableMap.copyOf(handlesMap);
     }
 
+    protected Map<String, MethodHandle> getSupplyTargetMethodsNotCached(Class<?> clazz,
+                                                                        Method[] uniqueDeclaredMethods) {
+        Map<String, MethodHandle> handlesMap = new HashMap<>();
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+
+        for (Method m : uniqueDeclaredMethods) {
+            if (Modifier.isPublic(m.getModifiers())
+                    && m.getParameterCount() == 1
+                    && (m.getName().startsWith("set"))) {
+
+                if (!m.isAccessible()) {
+                    m.setAccessible(true);
+                }
+                MethodHandle methodHandle;
+                try {
+                    methodHandle = lookup.unreflect(m);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("unable to get method handle " + m);
+                }
+
+                handlesMap.put(m.getName(), methodHandle);
+            }
+        }
+
+        return ImmutableMap.copyOf(handlesMap);
+    }
+
     public static class InjectElement {
         protected final AnnotatedElement element;
         protected final Class annotationClass;
@@ -678,19 +720,18 @@ public class ViewControllerReflectionInspector {
 
         private final List<AnnotatedMethod<Subscribe>> subscribeMethods;
         private final List<AnnotatedMethod<Install>> installMethods;
-
-//        private final List<Method> propertySetters;
+        private final List<AnnotatedMethod<Supply>> supplyMethods;
 
         public ViewIntrospectionData(List<InjectElement> injectElements,
                                      List<Method> eventListenerMethods,
                                      List<AnnotatedMethod<Subscribe>> subscribeMethods,
-                                     List<AnnotatedMethod<Install>> installMethods
-                /*List<Method> propertySetters*/) {
+                                     List<AnnotatedMethod<Install>> installMethods,
+                                     List<AnnotatedMethod<Supply>> supplyMethods) {
             this.injectElements = injectElements;
             this.eventListenerMethods = eventListenerMethods;
             this.subscribeMethods = subscribeMethods;
             this.installMethods = installMethods;
-//            this.propertySetters = propertySetters;
+            this.supplyMethods = supplyMethods;
         }
 
         public List<InjectElement> getInjectElements() {
@@ -705,20 +746,27 @@ public class ViewControllerReflectionInspector {
             return installMethods;
         }
 
+        public List<AnnotatedMethod<Supply>> getSupplyMethods() {
+            return supplyMethods;
+        }
+
         public List<Method> getEventListenerMethods() {
             return eventListenerMethods;
         }
     }
 
     public static class TargetIntrospectionData {
-        private final Map<Class, MethodHandle> addListenerMethods;
 
+        private final Map<Class, MethodHandle> addListenerMethods;
         private final Map<String, MethodHandle> installTargetMethods;
+        private final Map<String, MethodHandle> supplyTargetMethods;
 
         public TargetIntrospectionData(Map<Class, MethodHandle> addListenerMethods,
-                                       Map<String, MethodHandle> installTargetMethods) {
+                                       Map<String, MethodHandle> installTargetMethods,
+                                       Map<String, MethodHandle> supplyTargetMethods) {
             this.addListenerMethods = addListenerMethods;
             this.installTargetMethods = installTargetMethods;
+            this.supplyTargetMethods = supplyTargetMethods;
         }
 
         public Map<Class, MethodHandle> getAddListenerMethods() {
@@ -727,6 +775,10 @@ public class ViewControllerReflectionInspector {
 
         public Map<String, MethodHandle> getInstallTargetMethods() {
             return installTargetMethods;
+        }
+
+        public Map<String, MethodHandle> getSupplyTargetMethods() {
+            return supplyTargetMethods;
         }
     }
 }

@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -40,11 +41,12 @@ public class UiControllersConfigurationSorter {
 
     public List<UiControllersConfiguration> sort(List<UiControllersConfiguration> configurations) {
         List<UiControllersConfiguration> sortedConfigurations = new ArrayList<>(configurations);
+        List<JmixModuleDescriptor> sortedJmixModuleDescriptors = jmixModules.getAll();
         sortedConfigurations.sort((o1, o2) -> {
             JmixModuleDescriptor module1 = evaluateJmixModule(o1.getBasePackages());
             JmixModuleDescriptor module2 = evaluateJmixModule(o2.getBasePackages());
             if (module1 == null || module2 == null) return 0;
-            return module1.dependsOn(module2) ? 1 : -1;
+            return sortedJmixModuleDescriptors.indexOf(module1) - sortedJmixModuleDescriptors.indexOf(module2);
         });
         return sortedConfigurations;
     }

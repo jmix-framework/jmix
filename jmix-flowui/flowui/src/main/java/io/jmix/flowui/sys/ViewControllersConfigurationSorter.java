@@ -40,11 +40,12 @@ public class ViewControllersConfigurationSorter {
 
     public List<ViewControllersConfiguration> sort(List<ViewControllersConfiguration> configurations) {
         List<ViewControllersConfiguration> sortedConfigurations = new ArrayList<>(configurations);
+        List<JmixModuleDescriptor> sortedJmixModuleDescriptors = jmixModules.getAll();
         sortedConfigurations.sort((o1, o2) -> {
             JmixModuleDescriptor module1 = evaluateJmixModule(o1.getBasePackages());
             JmixModuleDescriptor module2 = evaluateJmixModule(o2.getBasePackages());
             if (module1 == null || module2 == null) return 0;
-            return module1.dependsOn(module2) ? 1 : -1;
+            return sortedJmixModuleDescriptors.indexOf(module1) - sortedJmixModuleDescriptors.indexOf(module2);
         });
         return sortedConfigurations;
     }

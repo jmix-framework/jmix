@@ -18,8 +18,8 @@ package test_support.entity.entity_extension;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.UUID;
 
 @JmixEntity

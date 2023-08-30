@@ -213,26 +213,26 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
                                                   @Nullable String localePrefix) {
         List<ManagedField> managedFields = new ArrayList<>();
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (isManagedAttribute(metaClass, metaProperty)) {
-                String fqn = generateFqn(metaProperty, fqnPrefix);
-                String propertyCaption = generatePropertyCaption(metaClass, metaProperty, localePrefix);
+            String fqn = generateFqn(metaProperty, fqnPrefix);
+            String propertyCaption = generatePropertyCaption(metaClass, metaProperty, localePrefix);
 
-                if (!metadataTools.isEmbedded(metaProperty)) {
+            if (!metadataTools.isEmbedded(metaProperty)) {
+                if (isManagedAttribute(metaClass, metaProperty, fqn)) {
                     managedFields.add(new ManagedField(fqn, metaProperty, propertyCaption, fqnPrefix));
-                } else {
-                    List<ManagedField> nestedFields = getManagedFields(metaProperty, fqn, propertyCaption);
-                    if (!nestedFields.isEmpty()) {
-                        managedEmbeddedProperties.add(fqn);
-                    }
-                    managedFields.addAll(nestedFields);
                 }
+            } else {
+                List<ManagedField> nestedFields = getManagedFields(metaProperty, fqn, propertyCaption);
+                if (!nestedFields.isEmpty()) {
+                    managedEmbeddedProperties.add(fqn);
+                }
+                managedFields.addAll(nestedFields);
             }
         }
 
         return managedFields;
     }
 
-    protected boolean isManagedAttribute(MetaClass metaClass, MetaProperty metaProperty) {
+    protected boolean isManagedAttribute(MetaClass metaClass, MetaProperty metaProperty, String fqn) {
         if (metadataTools.isSystem(metaProperty)
                 || (!metadataTools.isJpa(metaProperty) && !isCrossDataStoreReference(metaProperty))
                 || metadataTools.isSystemLevel(metaProperty)
@@ -252,10 +252,10 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
 
         List<String> includeProperties = context.getIncludeProperties();
         if (!includeProperties.isEmpty()) {
-            return includeProperties.contains(metaProperty.getName());
+            return includeProperties.contains(fqn);
         }
 
-        return excludeRegex == null || !excludeRegex.matcher(metaProperty.getName()).matches();
+        return excludeRegex == null || !excludeRegex.matcher(fqn).matches();
     }
 
     protected boolean isCrossDataStoreReference(MetaProperty metaProperty) {

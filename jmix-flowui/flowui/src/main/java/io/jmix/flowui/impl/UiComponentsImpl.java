@@ -106,7 +106,6 @@ public class UiComponentsImpl implements UiComponents {
         register(JmixImage.class, Image.class);
         register(JmixListBox.class, ListBox.class);
         register(JmixMultiSelectListBox.class, MultiSelectListBox.class);
-        register(JmixTabSheet.class, TabSheet.class);
         register(JmixDetails.class, Details.class);
         register(JmixScroller.class, Scroller.class);
         register(JmixSplitLayout.class, SplitLayout.class);

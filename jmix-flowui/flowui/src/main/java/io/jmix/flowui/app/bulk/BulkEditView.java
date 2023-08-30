@@ -22,11 +22,12 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Focusable;
+import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.AccessManager;
@@ -54,8 +55,8 @@ import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.DialogAction.Type;
 import io.jmix.flowui.bulk.BulkEditorDataProvider;
+import io.jmix.flowui.bulk.BulkEditorDataProvider.LoadDescriptor;
 import io.jmix.flowui.component.ComponentGenerationContext;
-import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.UiComponentsGenerator;
@@ -67,7 +68,6 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.DataComponents;
-import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.ChangeTrackerCloseAction;
@@ -81,6 +81,7 @@ import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 import io.jmix.flowui.view.ViewValidation;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.metadata.BeanDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -103,10 +104,11 @@ import static io.jmix.flowui.app.bulk.ColumnsMode.TWO_COLUMNS;
 @ViewController("bulkEditorWindow")
 @ViewDescriptor("bulk-edit-view.xml")
 @Route("bulk-edit")
-@DialogMode(resizable = true, width = "50em", height = "40em")
+@DialogMode(resizable = true, width = "60em", height = "40em", minWidth = "30em")
 public class BulkEditView<E> extends StandardView implements BulkEditorController<E> {
 
-    protected static final String COLUMN_COUNT_STYLENAME = "jmix-bulk-editor-columns-";
+    protected static final String COLUMN_COLLAPSE_MIN_WIDTH = "52em";
+    protected static final String FIELD_MIN_WIDTH = "10em";
 
     protected static final ColumnsMode DEFAULT_COLUMNS_MODE = TWO_COLUMNS;
 
@@ -115,9 +117,9 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
     @ViewComponent
     protected Action applyChanges;
     @ViewComponent
-    protected Span infoLabel;
+    protected Div infoDiv;
     @ViewComponent
-    protected VerticalLayout scrollerContentBox;
+    protected FormLayout fieldLayout;
 
     @Autowired
     protected AccessManager accessManager;
@@ -127,8 +129,6 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
     protected DataComponents dataComponents;
     @Autowired
     protected DataManager dataManager;
-    //    @Autowired
-//    protected DeviceInfoProvider deviceInfoProvider;
     @Autowired
     protected Dialogs dialogs;
     @Autowired
@@ -166,40 +166,32 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
     protected List<String> managedEmbeddedProperties = new ArrayList<>();
     protected Map<String, AbstractField<?, ?>> dataFields = new LinkedHashMap<>();
 
-    protected InstanceContainer<E> instanceContainer;
     protected List<E> items;
 
     protected boolean commitPerformed = false;
     protected FetchPlan fetchPlan;
 
+    @Subscribe
+    protected void onBeforeShow(BeforeShowEvent event) {
+        if (context != null) {
+            if (!Strings.isNullOrEmpty(context.getExclude())) {
+                excludeRegex = Pattern.compile(context.getExclude());
+            }
+
+            for (ManagedField managedField : getManagedFields()) {
+                managedFields.put(managedField.getFqn(), managedField);
+            }
+
+            fetchPlan = createFetchPlan(context.getMetaClass());
+            loadItems();
+
+            createDataComponents();
+        }
+    }
+
     @Override
     public void setBulkEditorContext(BulkEditorContext<E> context) {
         this.context = context;
-
-        if (!Strings.isNullOrEmpty(context.getExclude())) {
-            excludeRegex = Pattern.compile(context.getExclude());
-        }
-
-        for (ManagedField managedField : getManagedFields()) {
-            managedFields.put(managedField.getFqn(), managedField);
-        }
-
-        MetaClass metaClass = context.getMetaClass();
-
-        fetchPlan = createFetchPlan(context.getMetaClass());
-        loadItems();
-
-//        E instance = metadata.create(metaClass.getJavaClass());
-//        createEmbeddedFields(metaClass, instance, null);
-
-//        instanceContainer = dataComponents.createInstanceContainer(metaClass.getJavaClass());
-//        getViewData().registerContainer(metaClass.getName() + "Dc", instanceContainer);
-//        createNestedDataContainers(metaClass, instanceContainer, null);
-
-//        instanceContainer.setItem(instance);
-//        instanceContainer.setFetchPlan(fetchPlan);
-
-        createDataComponents();
     }
 
     protected List<ManagedField> getManagedFields() {
@@ -337,265 +329,6 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
         return fqn;
     }
 
-    protected void loadItems() {
-        BulkEditorDataProvider.LoadDescriptor<E> ld = new BulkEditorDataProvider.LoadDescriptor<>(context.getSelectedItems(),
-                context.getMetaClass(), fetchPlan);
-
-        items = bulkEditorDataProvider.reload(ld);
-    }
-
-    protected void createDataComponents() {
-        if (managedFields.isEmpty()) {
-            infoLabel.setText(messageBundle.getMessage("bulk.noEditableProperties"));
-            applyButton.setVisible(false);
-            applyChanges.setVisible(false);
-            return;
-        }
-
-        List<ManagedField> editFields = new ArrayList<>(managedFields.values());
-
-        // sort fields
-        Comparator<ManagedField> comparator = createManagedFieldComparator(editFields);
-        editFields.sort(comparator);
-
-        HorizontalLayout fieldsLayout = createFieldsLayout();
-
-        int fromField;
-        int toField = 0;
-        int addedColumns = 0;
-        ColumnsMode columnsMode = getColumnsMode();
-
-        for (int col = 0; col < columnsMode.getColumnsCount(); col++) {
-            fromField = toField;
-            toField += getFieldsCountForColumn(
-                    editFields.size() - toField,
-                    columnsMode.getColumnsCount() - col);
-
-            VerticalLayout column = createColumnLayout();
-
-            for (int fieldIndex = fromField; fieldIndex < toField; fieldIndex++) {
-                HorizontalLayout row = createRow(editFields, fieldIndex);
-                column.add(row);
-            }
-
-            fieldsLayout.add(column);
-            // if there is no fields remain
-            if (editFields.size() - toField == 0) {
-                addedColumns = col + 1;
-                break;
-            }
-        }
-
-        fieldsLayout.add(COLUMN_COUNT_STYLENAME + addedColumns);
-        scrollerContentBox.add(fieldsLayout);
-
-        focusFirstPossibleField(dataFields);
-    }
-
-
-    protected HorizontalLayout createFieldsLayout() {
-//        CssLayout fieldsLayout = uiComponents.create(CssLayout.NAME);
-        HorizontalLayout fieldsLayout = uiComponents.create(HorizontalLayout.class);
-        fieldsLayout.addClassName("jmix-bulk-editor-fields-layout");
-//        fieldsLayout.setStyleName("jmix-bulk-editor-fields-layout");
-        fieldsLayout.setWidthFull();
-        fieldsLayout.setHeightFull();
-        return fieldsLayout;
-    }
-
-    protected ColumnsMode getColumnsMode() {
-        return context.getColumnsMode() != null
-                ? context.getColumnsMode()
-                : DEFAULT_COLUMNS_MODE;
-    }
-
-    protected int getFieldsCountForColumn(int remainFields, int remainColumns) {
-        int fieldsForColumn = remainFields / remainColumns;
-        return remainFields % remainColumns == 0 ? fieldsForColumn : ++fieldsForColumn;
-    }
-
-    protected VerticalLayout createColumnLayout() {
-        VerticalLayout column = uiComponents.create(VerticalLayout.class);
-        column.addClassName("jmix-bulk-editor-column");
-//        column.setWidth(Component.AUTO_SIZE);
-        return column;
-    }
-
-    protected HorizontalLayout createRow(List<ManagedField> editFields, int fieldIndex) {
-        ManagedField field = editFields.get(fieldIndex);
-
-        HorizontalLayout row = createRowLayout();
-
-        Span label = createLabel(field);
-        row.add(label);
-
-//        InstanceContainer<?> fieldDc = instanceContainer;
-        MetaProperty metaProperty = field.getMetaProperty();
-
-        // field owner metaclass is embeddable only if field domain embeddable,
-        // so we can check field domain
-//        if (metadataTools.isJpaEmbeddable(metaProperty.getDomain())
-//                && field.getParentFqn() != null) {
-//            fieldDc = getViewData().getContainer(field.getParentFqn() + "Dc");
-//        }
-
-
-        Validator customValidator = context.getFieldValidators().get(field.getFqn());
-        AbstractField<?, ?> editField = createField(metaProperty, customValidator/*, fieldDc*/);
-        dataFields.put(field.getFqn(), editField);
-
-//        if (isEntityPickerWrapperNeeded(editField)) {
-//            CssLayout wrapper = uiComponents.create(CssLayout.NAME);
-//            wrapper.setStyleName("jmix-bulk-editor-picker-field-wrapper");
-//            wrapper.add(editField);
-//            row.add(wrapper);
-//        } else {
-        row.add(editField);
-//        }
-
-        JmixButton clearButton = createClearButton(editField);
-
-        row.add(clearButton);
-        return row;
-    }
-
-    protected HorizontalLayout createRowLayout() {
-//        CssLayout row = uiComponents.create(CssLayout.NAME);
-        HorizontalLayout row = uiComponents.create(HorizontalLayout.class);
-        row.addClassName("jmix-bulk-editor-row");
-        row.setWidth("100%");
-        return row;
-    }
-
-    protected Span createLabel(ManagedField field) {
-        Span label = uiComponents.create(Span.class);
-        label.setText(field.getLocalizedName());
-        label.addClassName("jmix-bulk-editor-label");
-        return label;
-    }
-
-    protected AbstractField<?, ?> createField(MetaProperty metaProperty, @Nullable Validator customFieldValidator/*, InstanceContainer<?> fieldDc*/) {
-        ComponentGenerationContext generationContext =
-                new ComponentGenerationContext(metaProperty.getDomain(), metaProperty.getName());
-//        generationContext.setValueSource(new ContainerValueSource<>(fieldDc, metaProperty.getName()));
-        generationContext.setTargetClass(getClass());
-        AbstractField<?, ?> field = (AbstractField<?, ?>) uiComponentsGenerator.generate(generationContext);
-
-        field.addClassName("jmix-bulk-editor-field");
-        if (field instanceof SupportsValidation<?> supportsValidation) {
-            BulkEditBeanPropertyValidator beanValidator = getBeanPropertyValidator(metaProperty);
-            supportsValidation.addValidator(beanValidator);
-            if (customFieldValidator != null) {
-                supportsValidation.addValidator(customFieldValidator);
-            }
-        }
-        return field;
-    }
-
-    @Nullable
-    protected BulkEditBeanPropertyValidator getBeanPropertyValidator(MetaProperty metaProperty) {
-        MetaClass propertyEnclosingMetaClass = metaProperty.getDomain();
-        Class<?> enclosingJavaClass = propertyEnclosingMetaClass.getJavaClass();
-
-        BeanDescriptor beanDescriptor = validator.getConstraintsForClass(enclosingJavaClass);
-        if (beanDescriptor.isBeanConstrained()) {
-            return beanValidatorProvider.getObject(enclosingJavaClass, metaProperty.getName());
-        } else {
-            return null;
-        }
-    }
-
-    protected JmixButton createClearButton(AbstractField<?, ?> field) {
-        JmixButton clearButton = uiComponents.create(JmixButton.class);
-        clearButton.setIcon(VaadinIcon.TRASH.create());
-        clearButton.setText("");
-        Tooltip.forComponent(clearButton).setText(messageBundle.getMessage("bulk.clearAttribute"));
-
-        if (field instanceof HasRequired hasRequired && hasRequired.isRequired()) {
-            // hidden component for correctly showing layout
-            clearButton.addClassName("jmix-bulk-editor-spacer");
-        } else {
-            clearButton.addClickListener(createClearButtonClickListener(field));
-        }
-
-        return clearButton;
-    }
-
-    protected ComponentEventListener<ClickEvent<Button>> createClearButtonClickListener(AbstractField<?, ?> editField) {
-        return e -> {
-            editField.setEnabled(!editField.isEnabled());
-            Button button = e.getSource();
-
-            button.setIcon(editField.isEnabled() ? VaadinIcon.TRASH.create() : VaadinIcon.EDIT.create());
-            Tooltip.forComponent(button).setText(messageBundle.getMessage(editField.isEnabled()
-                    ? "bulk.clearAttribute"
-                    : "bulk.editAttribute"
-            ));
-
-            if (!editField.isEnabled()) {
-                editField.clear();
-            }
-        };
-    }
-
-    protected void focusFirstPossibleField(Map<String, AbstractField<?, ?>> dataFields) {
-        dataFields.values().stream()
-                .filter(field -> field instanceof Focusable<?>)
-                .findFirst()
-                .ifPresent(field -> ((Focusable<?>) field).focus());
-    }
-
-    protected Comparator<ManagedField> createManagedFieldComparator(List<ManagedField> editFields) {
-        FieldSorter fieldSorter = context.getFieldSorter();
-        Comparator<ManagedField> comparator;
-        if (fieldSorter != null) {
-            Map<MetaProperty, Integer> sorted = fieldSorter.apply(editFields.stream()
-                    .map(ManagedField::getMetaProperty)
-                    .collect(Collectors.toList()));
-            comparator = Comparator.comparingInt(item ->
-                    sorted.get(item.getMetaProperty()));
-        } else {
-            comparator = Comparator.comparing(ManagedField::getLocalizedName);
-        }
-        return comparator;
-    }
-
-/*    protected boolean isEntityPickerWrapperNeeded(Field<?> field) {
-        DeviceInfo deviceInfo = deviceInfoProvider.getDeviceInfo();
-        if (deviceInfo == null) {
-            return false;
-        }
-
-        boolean isPickerField = field instanceof ValuePicker;
-        boolean isAffectedBrowser = deviceInfo.isFirefox()
-                || deviceInfo.isEdge()
-                || deviceInfo.isIE()
-                || deviceInfo.isSafari();
-
-        return isPickerField && isAffectedBrowser;
-    }*/
-
-/*    protected void createNestedDataContainers(MetaClass metaClass,
-                                              InstanceContainer<?> parent, @Nullable String fqnPrefix) {
-        for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (metadataTools.isEmbedded(metaProperty)) {
-                String fqn = generateFqn(metaProperty, fqnPrefix);
-
-                if (managedEmbeddedProperties.contains(fqn)) {
-                    MetaClass propertyMetaClass = metaProperty.getRange().asClass();
-
-                    InstancePropertyContainer<Object> instanceContainer =
-//                            dataComponents.createInstanceContainer(metaClass.getJavaClass(),
-//                                    parent, metaProperty.getName());
-                            dataComponents.createInstanceContainer(propertyMetaClass.getJavaClass(),
-                                    parent, metaProperty.getName());
-                    getViewData().registerContainer(fqn + "Dc", instanceContainer);
-                    createNestedDataContainers(propertyMetaClass, instanceContainer, fqn);
-                }
-            }
-        }
-    }*/
-
     protected boolean isTenantMetaProperty(MetaProperty metaProperty) {
         return metaProperty.getAnnotatedElement().getAnnotation(TenantId.class) != null;
     }
@@ -634,23 +367,164 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
 
         return builder.build();
     }
-/*
-    protected void createEmbeddedFields(MetaClass metaClass, Object item, @Nullable String fqnPrefix) {
-        for (MetaProperty metaProperty : metaClass.getProperties()) {
-            String fqn = generateFqn(metaProperty, fqnPrefix);
 
-            if (managedEmbeddedProperties.contains(fqn)
-                    && metadataTools.isEmbedded(metaProperty)) {
-                MetaClass embeddedMetaClass = metaProperty.getRange().asClass();
-                Object embedded = EntityValues.getValue(item, metaProperty.getName());
-                if (embedded == null) {
-                    embedded = metadata.create(embeddedMetaClass);
-                    EntityValues.setValue(item, metaProperty.getName(), embedded);
-                }
-                createEmbeddedFields(embeddedMetaClass, embedded, fqn);
+    protected void loadItems() {
+        LoadDescriptor<E> ld = new LoadDescriptor<>(context.getSelectedItems(), context.getMetaClass(), fetchPlan);
+        items = bulkEditorDataProvider.reload(ld);
+    }
+
+    protected void createDataComponents() {
+        if (managedFields.isEmpty()) {
+            infoDiv.setText(messageBundle.getMessage("bulk.noEditableProperties"));
+            applyButton.setVisible(false);
+            applyChanges.setVisible(false);
+            return;
+        }
+
+        List<ManagedField> editFields = new ArrayList<>(managedFields.values());
+
+        Comparator<ManagedField> comparator = createManagedFieldComparator(editFields);
+        editFields.sort(comparator);
+
+        setupFormLayout();
+
+        for (ManagedField editField : editFields) {
+            Component fieldComponent = createFieldComponent(editField);
+            fieldLayout.addFormItem(fieldComponent, editField.getLocalizedName());
+        }
+        focusFirstPossibleField(dataFields);
+    }
+
+    protected Comparator<ManagedField> createManagedFieldComparator(List<ManagedField> editFields) {
+        FieldSorter fieldSorter = context.getFieldSorter();
+        Comparator<ManagedField> comparator;
+        if (fieldSorter != null) {
+            Map<MetaProperty, Integer> sorted = fieldSorter.apply(editFields.stream()
+                    .map(ManagedField::getMetaProperty)
+                    .collect(Collectors.toList()));
+            comparator = Comparator.comparingInt(item ->
+                    sorted.get(item.getMetaProperty()));
+        } else {
+            comparator = Comparator.comparing(ManagedField::getLocalizedName);
+        }
+        return comparator;
+    }
+
+    protected void setupFormLayout() {
+        ColumnsMode contextColumnsMode = context.getColumnsMode();
+        ColumnsMode columnsMode = contextColumnsMode != null ? contextColumnsMode : DEFAULT_COLUMNS_MODE;
+
+        List<FormLayout.ResponsiveStep> responsiveSteps = new ArrayList<>();
+        FormLayout.ResponsiveStep step1 = new FormLayout.ResponsiveStep("0em", 1,
+                FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
+        responsiveSteps.add(step1);
+        if (TWO_COLUMNS == columnsMode) {
+            FormLayout.ResponsiveStep step2 = new FormLayout.ResponsiveStep(COLUMN_COLLAPSE_MIN_WIDTH, 2,
+                    FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
+            responsiveSteps.add(step2);
+        }
+        fieldLayout.setResponsiveSteps(responsiveSteps);
+        fieldLayout.addClassName("jmix-bulk-edit-view-form-layout");
+    }
+
+    protected Component createFieldComponent(ManagedField managedField) {
+        HorizontalLayout container = uiComponents.create(HorizontalLayout.class);
+
+        AbstractField<?, ?> editField = createField(managedField);
+        dataFields.put(managedField.getFqn(), editField);
+        container.add(editField);
+
+        JmixButton clearButton = createClearButton(editField, isFieldRequired(managedField));
+        container.add(clearButton);
+
+        return container;
+    }
+
+    protected AbstractField<?, ?> createField(ManagedField managedField) {
+        MetaProperty metaProperty = managedField.getMetaProperty();
+        ComponentGenerationContext generationContext =
+                new ComponentGenerationContext(metaProperty.getDomain(), metaProperty.getName());
+        generationContext.setTargetClass(getClass());
+        AbstractField<?, ?> field = (AbstractField<?, ?>) uiComponentsGenerator.generate(generationContext);
+
+        if (field instanceof SupportsValidation<?> supportsValidation) {
+            BulkEditBeanPropertyValidator beanValidator = getBeanPropertyValidator(metaProperty);
+            if (beanValidator != null) {
+                supportsValidation.addValidator(beanValidator);
+            }
+            //noinspection rawtypes
+            Validator customValidator = context.getFieldValidators().get(managedField.getFqn());
+            if (customValidator != null) {
+                //noinspection unchecked
+                supportsValidation.addValidator(customValidator);
             }
         }
-    }*/
+        if (field instanceof HasSize hasSize) {
+            hasSize.setMinWidth(FIELD_MIN_WIDTH);
+        }
+        return field;
+    }
+
+    @Nullable
+    protected BulkEditBeanPropertyValidator getBeanPropertyValidator(MetaProperty metaProperty) {
+        MetaClass propertyEnclosingMetaClass = metaProperty.getDomain();
+        Class<?> enclosingJavaClass = propertyEnclosingMetaClass.getJavaClass();
+
+        BeanDescriptor beanDescriptor = validator.getConstraintsForClass(enclosingJavaClass);
+        if (beanDescriptor.isBeanConstrained()) {
+            return beanValidatorProvider.getObject(enclosingJavaClass, metaProperty.getName());
+        } else {
+            return null;
+        }
+    }
+
+    protected boolean isFieldRequired(ManagedField managedField) {
+        MetaProperty metaProperty = managedField.getMetaProperty();
+        boolean requiredFromMetaProperty = metaProperty.isMandatory();
+
+        Object notNullUiComponent = metaProperty.getAnnotations()
+                .get(NotNull.class.getName() + "_notnull_ui_component");
+        boolean requiredFromAnnotations = Boolean.TRUE.equals(notNullUiComponent);
+
+        return requiredFromMetaProperty || requiredFromAnnotations;
+    }
+
+    protected JmixButton createClearButton(AbstractField<?, ?> field, boolean isFieldRequired) {
+        JmixButton button = uiComponents.create(JmixButton.class);
+        button.setIcon(VaadinIcon.TRASH.create());
+
+        if (isFieldRequired) {
+            button.getElement().getStyle().set("visibility", "hidden");
+        } else {
+            button.addClickListener(createClearButtonClickListener(field));
+            Tooltip.forComponent(button).setText(messageBundle.getMessage("bulk.clearAttribute"));
+        }
+        return button;
+    }
+
+    protected ComponentEventListener<ClickEvent<Button>> createClearButtonClickListener(AbstractField<?, ?> editField) {
+        return e -> {
+            editField.setEnabled(!editField.isEnabled());
+            Button button = e.getSource();
+
+            button.setIcon(editField.isEnabled() ? VaadinIcon.TRASH.create() : VaadinIcon.EDIT.create());
+            Tooltip.forComponent(button).setText(messageBundle.getMessage(editField.isEnabled()
+                    ? "bulk.clearAttribute"
+                    : "bulk.editAttribute"
+            ));
+
+            if (!editField.isEnabled()) {
+                editField.clear();
+            }
+        };
+    }
+
+    protected void focusFirstPossibleField(Map<String, AbstractField<?, ?>> dataFields) {
+        dataFields.values().stream()
+                .filter(field -> field instanceof Focusable<?>)
+                .findFirst()
+                .ifPresent(field -> ((Focusable<?>) field).focus());
+    }
 
     @Subscribe("cancelChanges")
     protected void onCancelChanges(ActionPerformedEvent event) {

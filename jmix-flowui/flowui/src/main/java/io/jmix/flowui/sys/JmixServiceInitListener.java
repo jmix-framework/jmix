@@ -130,6 +130,9 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         }
         event.getSession().setErrorHandler(uiExceptionHandlers);
         event.getSession().setAttribute(BackgroundTaskManager.class, new BackgroundTaskManager());
+        // UiEventsManager instance should be stored per user session. It cannot be Spring bean
+        // with `VaadinSessionScope` because there are cases when we should get instance for not
+        // current user to publish events, which is not possible with bean.
         event.getSession().setAttribute(UiEventsManager.class, new UiEventsManager());
 
         initCookieLocale(event.getSession());

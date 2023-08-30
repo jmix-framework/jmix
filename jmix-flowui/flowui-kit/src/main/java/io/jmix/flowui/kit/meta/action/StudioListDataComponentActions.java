@@ -345,7 +345,6 @@ public interface StudioListDataComponentActions {
                     @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "loadDynamicAttributes", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "includeProperties", type = StudioPropertyType.STRING),

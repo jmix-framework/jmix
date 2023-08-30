@@ -53,7 +53,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
     protected String exclude;
     protected FieldSorter fieldSorter;
     protected List<String> includeProperties;
-    protected Boolean loadDynamicAttributes;
     protected Boolean useConfirmDialog;
 
     protected boolean visibleBySpecificUiPermission = true;
@@ -125,23 +124,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
      */
     public void setIncludeProperties(List<String> includeProperties) {
         this.includeProperties = includeProperties;
-    }
-
-    /**
-     * Returns true/false if the flag was set by {@link #setLoadDynamicAttributes(Boolean)} or in the screen XML.
-     * Otherwise, returns null.
-     */
-    @Nullable
-    public Boolean getLoadDynamicAttributes() {
-        return loadDynamicAttributes;
-    }
-
-    /**
-     * Sets whether dynamic attributes of the edited entity should be displayed on
-     * the entity's bulk editor screen. The default value is true.
-     */
-    public void setLoadDynamicAttributes(Boolean loadDynamicAttributes) {
-        this.loadDynamicAttributes = loadDynamicAttributes;
     }
 
     /**
@@ -280,11 +262,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
 
     public BulkEditAction<E> withIncludeProperties(List<String> includeProperties) {
         setIncludeProperties(includeProperties);
-        return this;
-    }
-
-    public BulkEditAction<E> withLoadDynamicAttributes(boolean loadDynamicAttributes) {
-        setLoadDynamicAttributes(loadDynamicAttributes);
         return this;
     }
 

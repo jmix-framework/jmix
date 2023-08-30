@@ -19,7 +19,7 @@
     <data>
         <collection id="categoryAttributesDc" class="io.jmix.dynattr.model.CategoryAttribute"/>
     </data>
-    <layout spacing="true" expand="categoryAttrsTable" margin="false">
+    <layout spacing="true" expand="categoryAttrsTable" margin="false" padding="false">
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="categoryAttrsTable.create"/>
             <button id="editBtn" action="categoryAttrsTable.edit"/>

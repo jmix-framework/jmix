@@ -38,21 +38,26 @@
         <action id="windowClose" type="detail_close"/>
     </actions>
     <layout spacing="true" expand="tabSheet">
-        <tabSheet id="tabSheet" height="100%">
+        <tabSheet id="tabSheet" height="100%" width="100%">
             <tab id="mainTab" label="msg://mainTab.title">
                 <vbox margin="false">
                     <formLayout id="form" dataContainer="categoryDc">
+<!--                        <responsiveSteps>-->
+<!--                            <responsiveStep minWidth="0" columns="1"/>-->
+<!--                            <responsiveStep minWidth="28em" columns="2"/>-->
+<!--                            <responsiveStep minWidth="42em" columns="3"/>-->
+<!--                            <responsiveStep minWidth="56em" columns="4"/>-->
+<!--                        </responsiveSteps>-->
                         <textField id="nameField" property="name"
-                                   minWidth="12.5em" required="true" requiredMessage="msg://nameField.required"/>
+                                   required="true" requiredMessage="msg://nameField.required"/>
                         <comboBox id="entityTypeField"
-                                  minWidth="12.5em"
-                                  title="msg://io.jmix.dynattr.model/Category.entityType"
+                                  label="msg://io.jmix.dynattr.model/Category.entityType"
                                   required="true"
                                   requiredMessage="msg://entityTypeField.required"/>
-                        <checkbox id="isDefaultField" property="isDefault" minWidth="12.5em"/>
+                        <checkbox id="isDefaultField" property="isDefault"/>
                     </formLayout>
-                    <vbox id="categoryAttrsBox" margin="false">
-                        <h2 title="msg://io.jmix.dynattr.model/Category.categoryAttrs"/>
+                    <vbox id="categoryAttrsBox" margin="false" padding="false">
+                        <span text="msg://io.jmix.dynattr.model/Category.categoryAttrs"/>
                     </vbox>
                 </vbox>
             </tab>

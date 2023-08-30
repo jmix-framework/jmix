@@ -18,11 +18,14 @@ package io.jmix.dynattrflowui.view.category;
 
 import com.google.common.io.Files;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.flowui.Notifications;
@@ -38,6 +41,7 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.InstanceLoader;
 import io.jmix.flowui.view.*;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,41 +118,39 @@ public class CategoryListView extends StandardListView<Category> {
                 .show();
     }
 
-//    @Install(to = "categoriesGrid.entityType", subject = "columnGenerator")
-//    protected Span categoriesGridEntityTypeColumnGenerator(Category category) {
-//        Span dataTypeLabel = uiComponents.create(Span.class);
-//        MetaClass metaClass = metadata.getSession().getClass(category.getEntityType());
-//        dataTypeLabel.setText(messageTools.getEntityCaption(metaClass));
-//        return dataTypeLabel;
-//    }
+    protected Span categoriesGridEntityTypeColumnGenerator(Category category) {
+        Span dataTypeLabel = uiComponents.create(Span.class);
+        MetaClass metaClass = metadata.getSession().getClass(category.getEntityType());
+        dataTypeLabel.setText(messageTools.getEntityCaption(metaClass));
+        return dataTypeLabel;
+    }
 
-//  todo  @Install(to = "attributesTable.dataType", subject = "columnGenerator")
-//    protected Table.PlainTextCell attributesTableDataTypeColumnGenerator(CategoryAttribute categoryAttribute) {
-//        String labelContent;
-//        if (BooleanUtils.isTrue(categoryAttribute.getIsEntity())) {
-//            Class<?> clazz = categoryAttribute.getJavaType();
-//            if (clazz != null) {
-//                MetaClass metaClass = metadata.getSession().getClass(clazz);
-//                labelContent = messageTools.getEntityCaption(metaClass);
-//            } else {
-//                labelContent = "";
-//            }
-//        } else {
-//            String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
-//            labelContent = messages.getMessage(AttributeType.class, key);
-//        }
-//        return new Table.PlainTextCell(labelContent);
-//    }
+    protected Span attributesTableDataTypeColumnGenerator(CategoryAttribute categoryAttribute) {
+        String labelContent;
+        if (BooleanUtils.isTrue(categoryAttribute.getIsEntity())) {
+            Class<?> clazz = categoryAttribute.getJavaType();
+            if (clazz != null) {
+                MetaClass metaClass = metadata.getSession().getClass(clazz);
+                labelContent = messageTools.getEntityCaption(metaClass);
+            } else {
+                labelContent = "";
+            }
+        } else {
+            String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
+            labelContent = messages.getMessage(AttributeType.class, key);
+        }
+        return new Span(labelContent);
+    }
 
-//    @Install(to = "categoriesGrid.edit", subject = "afterCommitHandler")
-//    private void categoriesGridEditAfterCommitHandler(Category category) {
-//        categoriesDl.load();
-//    }
-//
-//    @Install(to = "categoriesGrid.create", subject = "afterCommitHandler")
-//    private void categoriesGridCreateAfterCommitHandler(Category category) {
-//        categoriesDl.load();
-//    }
+    @Install(to = "categoriesGrid.edit", subject = "afterCommitHandler")
+    private void categoriesGridEditAfterCommitHandler(Category category) {
+        categoriesDl.load();
+    }
+
+    @Install(to = "categoriesGrid.create", subject = "afterCommitHandler")
+    private void categoriesGridCreateAfterCommitHandler(Category category) {
+        categoriesDl.load();
+    }
 
     @Subscribe(id = "categoriesDc", target = Target.DATA_CONTAINER)
     protected void onCategoriesDcItemChange(InstanceContainer.ItemChangeEvent<Category> event) {

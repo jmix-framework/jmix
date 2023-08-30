@@ -23,7 +23,7 @@
             <loader id="localizedEnumValuesDl"/>
         </collection>
     </data>
-    <layout spacing="true" expand="editorBox" margin="false">
+    <layout spacing="true" expand="editorBox" margin="false" padding="false">
         <hbox id="editorBox" margin="false" width="100%">
             <vbox spacing="true" width="100%" height="100%">
                 <hbox spacing="true" width="100%" expand="valueField">

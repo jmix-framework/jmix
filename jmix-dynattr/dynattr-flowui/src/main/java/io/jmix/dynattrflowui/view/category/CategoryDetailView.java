@@ -127,19 +127,16 @@ public class CategoryDetailView extends StandardDetailView<Category> {
             FetchPlan fetchPlan = fetchPlans.builder(Category.class)
                     .add("isDefault")
                     .build();
-            LoadContext<Category> lc = new LoadContext(metadata.getClass(Category.class))
+            LoadContext<Category> loadContext = new LoadContext<Category>(metadata.getClass(Category.class))
                     .setFetchPlan(fetchPlan);
             Category category = getEditedEntity();
-            lc.setQueryString("select c from dynat_Category c where c.entityType = :entityType and not c.id = :id")
+            loadContext.setQueryString("select c from dynat_Category c where c.entityType = :entityType and not c.id = :id")
                     .setParameter("entityType", category.getEntityType())
                     .setParameter("id", category.getId());
-            List<Category> result = dataManager.loadList(lc);
-            for (Category cat : result) {
-                cat.setIsDefault(false);
-            }
+            List<Category> foundCategories = dataManager.loadList(loadContext);
+            foundCategories.forEach(item -> item.setIsDefault(false));
 
-            SaveContext saveContext = new SaveContext().saving(result);
-            dataManager.save(saveContext);
+            dataManager.save(new SaveContext().saving(foundCategories));
         }
     }
 
@@ -152,7 +149,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     }
 
     protected void initEntityTypeField() {
-        Map<String, MetaClass> options = new TreeMap<>();//the map sorts meta classes by the string key
+        Map<String, MetaClass> options = new TreeMap<>(); //the map sorts metaclasses by the string key
         for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
             if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
                 continue;
@@ -196,7 +193,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
-    protected void onPreCommit(DataContext.PreSaveEvent event) { // todo was pre-commit
+    protected void onPreCommit(DataContext.PreSaveEvent event) {
         if (localizationFragment != null) {
             getEditedEntity().setLocaleNames(localizationFragment.getNameMsgBundle());
         }

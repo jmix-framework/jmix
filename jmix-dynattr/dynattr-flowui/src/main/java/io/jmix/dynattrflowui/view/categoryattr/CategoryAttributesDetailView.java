@@ -53,6 +53,8 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
+import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
+import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
@@ -62,6 +64,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.*;
@@ -217,8 +220,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected JmixComboBox<Boolean> defaultBooleanField;
     @ViewComponent
     protected JmixComboBox<OptionsLoaderType> optionsLoaderTypeField;
-    @ViewComponent
-    protected EntityPicker<Object> defaultEntityIdField;
+//    @ViewComponent
+//    protected EntityPicker<Object> defaultEntityIdField;
     @ViewComponent
     protected CodeEditor optionsLoaderScriptField;
     @ViewComponent
@@ -232,7 +235,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     protected DataGrid<TargetViewComponent> targetScreensTable;
     @ViewComponent
-    protected TabSheet tabSheet;
+    protected JmixTabSheet tabSheet;
     @ViewComponent
     protected TypedTextField<String> codeField;
     @ViewComponent
@@ -242,16 +245,16 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     protected TypedTextField<BigDecimal> maxDecimalField;
     @ViewComponent
-    protected JmixMultiSelectComboBox<CategoryAttribute> dependsOnAttributesField;
+    protected JmixMultiSelectComboBoxPicker<CategoryAttribute> dependsOnAttributesField;
     @ViewComponent
     protected CollectionContainer<TargetViewComponent> targetScreensDc;
     @ViewComponent
     protected InstanceContainer<CategoryAttributeConfiguration> configurationDc;
 
-    @ViewComponent("dependsOnAttributesField.clear")
-    private ValueClearAction dependsOnAttributesFieldClear;
-    @ViewComponent("dependsOnAttributesField.select")
-    private LookupSelectAction dependsOnAttributesFieldSelect;
+//    @ViewComponent("dependsOnAttributesField.clear")
+//    private ValueClearAction dependsOnAttributesFieldClear;
+//    @ViewComponent("dependsOnAttributesField.select")
+//    private LookupSelectAction dependsOnAttributesFieldSelect;
     @ViewComponent
     private JmixButton editEnumerationBtn;
 
@@ -283,7 +286,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     }
 
     @Subscribe("tabSheet")
-    protected void onTabSheetSelectedTabChange(TabSheet.SelectedChangeEvent event) {
+    protected void onTabSheetSelectedTabChange(JmixTabSheet.SelectedChangeEvent event) {
         String tabName = event.getSelectedTab().getId().orElseThrow();
         String dialogWidth;
         if (MAIN_TAB_NAME.equals(tabName) && getEditedEntity().getDataType() != null) {
@@ -293,16 +296,16 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    @Subscribe("defaultEntityIdField")
-    protected void onDefaultEntityIdFieldValueChange(ValueSource.ValueChangeEvent<Object> event) {
-        Object entity = event.getValue();
-        Object objectDefaultEntityId = null;
-        if (entity != null) {
-            objectDefaultEntityId = referenceToEntitySupport.getReferenceId(entity);
-        }
-
-        getEditedEntity().setObjectDefaultEntityId(objectDefaultEntityId);
-    }
+//    @Subscribe("defaultEntityIdField")
+//    protected void onDefaultEntityIdFieldValueChange(ValueSource.ValueChangeEvent<Object> event) {
+//        Object entity = event.getValue();
+//        Object objectDefaultEntityId = null;
+//        if (entity != null) {
+//            objectDefaultEntityId = referenceToEntitySupport.getReferenceId(entity);
+//        }
+//
+//        getEditedEntity().setObjectDefaultEntityId(objectDefaultEntityId);
+//    }
 
     @Subscribe(id = "categoryAttributeDc", target = Target.DATA_CONTAINER)
     protected void onCategoryAttributeDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<CategoryAttribute> event) {
@@ -372,14 +375,14 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         targetScreensDc.getMutableItems().add(metadata.create(TargetViewComponent.class));
     }
 
-    @Install(to = "dependsOnAttributesField", subject = "validator")
-    protected void dependsOnAttributesFieldValidator(Collection<CategoryAttribute> categoryAttributes) {
-        if (recalculationScriptField.getValue() != null
-                && CollectionUtils.isEmpty(categoryAttributes)) {
-            throw new ValidationException(
-                    messages.getMessage(CategoryAttributesDetailView.class, "dependsOnAttributes.validationMsg"));
-        }
-    }
+//    @Install(to = "dependsOnAttributesField", subject = "validator")
+//    protected void dependsOnAttributesFieldValidator(Collection<CategoryAttribute> categoryAttributes) {
+//        if (recalculationScriptField.getValue() != null
+//                && CollectionUtils.isEmpty(categoryAttributes)) {
+//            throw new ValidationException(
+//                    messages.getMessage(CategoryAttributesDetailView.class, "dependsOnAttributes.validationMsg"));
+//        }
+//    }
 
     protected void initAttributeForm() {
         ComponentUtils.setItemsMap(defaultBooleanField, getBooleanOptions());
@@ -543,22 +546,22 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             optionalAttributeForm.setVisible(true);
         }
 
-        if (ENTITY.equals(attributeType)) {
-            if (!Strings.isNullOrEmpty(entityClassField.getValue())) {
-                Class<?> javaClass = categoryAttribute.getJavaType();
-
-                if (javaClass != null) {
-                    defaultEntityIdField.setMetaClass(metadata.getClass(javaClass));
-                    // todo: filter support FilteringLookupAction
-                    //todo dynamicAttributesGuiTools.initEntityPickerField(defaultEntityId, attribute);
-//                   todo screenField.setOptionsMap(screensHelper.getAvailableBrowserScreens(javaClass));
-                    refreshDefaultEntityIdFieldValue();
-                }
-            } else {
-                defaultEntityIdField.setEnabled(false);
-            }
-            screenField.setVisible(!lookupField.getValue());
-        }
+//        if (ENTITY.equals(attributeType)) {
+//            if (!Strings.isNullOrEmpty(entityClassField.getValue())) {
+//                Class<?> javaClass = categoryAttribute.getJavaType();
+//
+//                if (javaClass != null) {
+//                    defaultEntityIdField.setMetaClass(metadata.getClass(javaClass));
+//                    // todo: filter support FilteringLookupAction
+//                    //todo dynamicAttributesGuiTools.initEntityPickerField(defaultEntityId, attribute);
+////                   todo screenField.setOptionsMap(screensHelper.getAvailableBrowserScreens(javaClass));
+//                    refreshDefaultEntityIdFieldValue();
+//                }
+//            } else {
+//                defaultEntityIdField.setEnabled(false);
+//            }
+//            screenField.setVisible(!lookupField.getValue());
+//        }
 
         if (DATE.equals(attributeType)) {
             defaultDateField.setVisible(!Boolean.TRUE.equals(categoryAttribute.getDefaultDateIsCurrent()));
@@ -605,37 +608,37 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         ComponentUtils.setItemsMap(optionsLoaderTypeField, getLoaderOptions());
     }
 
-    @Subscribe("screenField")
-    public void onScreenFieldValueChange(HasValue.ValueChangeEvent event) {
-        if (Strings.isNullOrEmpty(screenField.getValue())) {
-            this.defaultEntityIdField.setEnabled(false);
-        } else {
-            this.defaultEntityIdField.setEnabled(true);
-        }
-    }
+//    @Subscribe("screenField")
+//    public void onScreenFieldValueChange(HasValue.ValueChangeEvent event) {
+//        if (Strings.isNullOrEmpty(screenField.getValue())) {
+//            this.defaultEntityIdField.setEnabled(false);
+//        } else {
+//            this.defaultEntityIdField.setEnabled(true);
+//        }
+//    }
 
-    @Subscribe("defaultEntityIdField.lookup")
-    public void onDefaultEntityIdFieldLookup(ActionPerformedEvent event) {
-        LookupWindowBuilder<Object, View<?>> lookup = dialogWindows.lookup(defaultEntityIdField);
-        if (!Strings.isNullOrEmpty(screenField.getValue())) {
-            lookup.withViewId(screenField.getValue());
-        }
-        try {
-            lookup
-                    .build()
-                    .open();
-        } catch (AccessDeniedException ex) {
-            notifications.create(messages.getMessage(CategoryAttributesDetailView.class, "entityScreenAccessDeniedMessage"))
-                    .withType(Notifications.Type.ERROR)
-                    .show();
-        }
-    }
+//    @Subscribe("defaultEntityIdField.lookup")
+//    public void onDefaultEntityIdFieldLookup(ActionPerformedEvent event) {
+//        LookupWindowBuilder<Object, View<?>> lookup = dialogWindows.lookup(defaultEntityIdField);
+//        if (!Strings.isNullOrEmpty(screenField.getValue())) {
+//            lookup.withViewId(screenField.getValue());
+//        }
+//        try {
+//            lookup
+//                    .build()
+//                    .open();
+//        } catch (AccessDeniedException ex) {
+//            notifications.create(messages.getMessage(CategoryAttributesDetailView.class, "entityScreenAccessDeniedMessage"))
+//                    .withType(Notifications.Type.ERROR)
+//                    .show();
+//        }
+//    }
 
     protected void setupFieldsLock() {
         CrudEntityContext crudEntityContext = new CrudEntityContext(configurationDc.getEntityMetaClass());
         accessManager.applyRegisteredConstraints(crudEntityContext);
         if (!crudEntityContext.isUpdatePermitted()) {
-            defaultEntityIdField.setEnabled(false);
+//            defaultEntityIdField.setEnabled(false);
             editEnumerationBtn.setEnabled(false);
         }
     }
@@ -701,27 +704,27 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    protected void refreshDefaultEntityIdFieldValue() {
-        CategoryAttribute attribute = getEditedEntity();
-        Class<?> javaClass = getEditedEntity().getJavaType();
-        if (javaClass != null) {
-            MetaClass metaClass = metadata.getClass(javaClass);
-            if (attribute.getObjectDefaultEntityId() != null) {
-                LoadContext<?> lc = new LoadContext<>(metadata.getClass(attribute.getJavaType()));
-                FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
-                lc.setFetchPlan(fetchPlan);
-                String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
-                lc.setQueryString(format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
-                        .setParameter("entityId", attribute.getObjectDefaultEntityId());
-                Object entity = dataManager.load(lc);
-                if (entity != null) {
-                    defaultEntityIdField.setValue(entity);
-                } else {
-                    defaultEntityIdField.setValue(null);
-                }
-            }
-        }
-    }
+//    protected void refreshDefaultEntityIdFieldValue() {
+//        CategoryAttribute attribute = getEditedEntity();
+//        Class<?> javaClass = getEditedEntity().getJavaType();
+//        if (javaClass != null) {
+//            MetaClass metaClass = metadata.getClass(javaClass);
+//            if (attribute.getObjectDefaultEntityId() != null) {
+//                LoadContext<?> lc = new LoadContext<>(metadata.getClass(attribute.getJavaType()));
+//                FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
+//                lc.setFetchPlan(fetchPlan);
+//                String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
+//                lc.setQueryString(format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
+//                        .setParameter("entityId", attribute.getObjectDefaultEntityId());
+//                Object entity = dataManager.load(lc);
+//                if (entity != null) {
+//                    defaultEntityIdField.setValue(entity);
+//                } else {
+//                    defaultEntityIdField.setValue(null);
+//                }
+//            }
+//        }
+//    }
 
     protected void refreshCodeFieldValue() {
         CategoryAttribute attribute = getEditedEntity();
@@ -943,20 +946,20 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
-    protected void onPreCommit(BeforeSaveEvent event) {
+    protected void onPreCommit(DataContext.PreSaveEvent event) {
         preCommitLocalizationFields(event);
         preCommitTargetScreensField(event);
         preCommitConfiguration(event);
     }
 
-    protected void preCommitLocalizationFields(BeforeSaveEvent event) {
+    protected void preCommitLocalizationFields(DataContext.PreSaveEvent event) {
         if (localizationFragment != null) {
             getEditedEntity().setLocaleNames(localizationFragment.getNameMsgBundle());
             getEditedEntity().setLocaleDescriptions(localizationFragment.getDescriptionMsgBundle());
         }
     }
 
-    protected void preCommitTargetScreensField(BeforeSaveEvent event) {
+    protected void preCommitTargetScreensField(DataContext.PreSaveEvent event) {
         CategoryAttribute attribute = getEditedEntity();
         StringBuilder stringBuilder = new StringBuilder();
         for (TargetViewComponent targetViewComponent : targetScreensDc.getItems()) {
@@ -976,7 +979,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         attribute.setTargetScreens(stringBuilder.toString());
     }
 
-    protected void preCommitConfiguration(BeforeSaveEvent event) {
+    protected void preCommitConfiguration(DataContext.PreSaveEvent event) {
         CategoryAttribute attribute = getEditedEntity();
         if (attribute.getConfiguration() != null) {
             if (dependsOnAttributesField.getValue() != null) {
@@ -992,7 +995,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             CategoryAttributeConfiguration configuration = configurationDc.getItemOrNull();
             if (configuration != null) {
                 attribute.setConfiguration((CategoryAttributeConfiguration) configuration.clone());
-                event.getDataContext().getModified().add(attribute);
+                getViewData().getDataContext().getModified().add(attribute);
             }
         }
     }

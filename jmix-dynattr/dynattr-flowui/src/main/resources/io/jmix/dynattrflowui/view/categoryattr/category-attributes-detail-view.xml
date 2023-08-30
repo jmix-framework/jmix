@@ -44,7 +44,7 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout expand="editActions" spacing="true">
+    <layout expand="editActions" spacing="true" margin="false" padding="false">
         <tabSheet id="tabSheet" width="100%" height="100%">
             <tab id="mainTab" label="msg://mainTab.title">
                 <hbox id="attributeBox" width="100%" spacing="true">
@@ -82,14 +82,14 @@
                                 <max value="40" message="msg://rowsCountField.validationMessage"/>
                             </validators>
                         </textField>
-                        <entityPicker id="defaultEntityIdField"
-                                      metaClass="io.jmix.core.Entity"
-                                      title="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">
-                            <actions>
-                                <action id="lookup" type="entity_lookup"/>
-                                <action id="clear" type="entity_clear"/>
-                            </actions>
-                        </entityPicker>
+<!--                        <entityPicker id="defaultEntityIdField"-->
+<!--                                      dataContainer="entityIdDc"-->
+<!--                                      title="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">-->
+<!--                            <actions>-->
+<!--                                <action id="lookup" type="entity_lookup"/>-->
+<!--                                <action id="clear" type="entity_clear"/>-->
+<!--                            </actions>-->
+<!--                        </entityPicker>-->
                         <hbox id="enumerationBox" spacing="true" expand="enumerationField">
                             <span title="msg://io.jmix.dynattr.model/CategoryAttribute.enumeration"/>
                             <textField id="enumerationField" dataContainer="categoryAttributeDc"
@@ -102,8 +102,8 @@
                         <textField id="defaultDoubleField" property="defaultDouble"/>
                         <textField id="defaultDecimalField" property="defaultDecimal"/>
                         <comboBox id="defaultBooleanField" property="defaultBoolean"/>
-                        <datePicker id="defaultDateField" property="defaultDate"/>
-                        <datePicker id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
+                        <dateTimePicker id="defaultDateField" property="defaultDate"/>
+                        <dateTimePicker id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
                         <checkbox id="defaultDateIsCurrentField" property="defaultDateIsCurrent"/>
 
                         <textField id="numberFormatPatternField" property="configuration.numberFormatPattern"/>

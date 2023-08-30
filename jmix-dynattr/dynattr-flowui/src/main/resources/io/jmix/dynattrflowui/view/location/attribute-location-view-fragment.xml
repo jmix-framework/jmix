@@ -16,7 +16,7 @@
   -->
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://enumerationScreen.title">
-    <layout spacing="true" expand="configurationBox" margin="false">
+    <layout spacing="true" expand="configurationBox" margin="false" padding="false">
         <hbox spacing="true" expand="saveConfigurationBtn">
             <comboBox id="columnsCountLookupField" title="msg://columnsCountLookupField.title" width="175px"/>
             <button id="saveConfigurationBtn" title="msg://saveConfigurationBtn.title"/>

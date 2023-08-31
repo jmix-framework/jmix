@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.app.bulk;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
@@ -30,14 +29,12 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.AccessManager;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntitySet;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanBuilder;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.FetchPlans;
-import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -50,8 +47,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
-import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.DialogAction.Type;
 import io.jmix.flowui.bulk.BulkEditorDataProvider;
@@ -67,7 +62,6 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.ChangeTrackerCloseAction;
@@ -91,12 +85,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static io.jmix.flowui.app.bulk.ColumnsMode.TWO_COLUMNS;
@@ -105,7 +100,7 @@ import static io.jmix.flowui.app.bulk.ColumnsMode.TWO_COLUMNS;
 @ViewDescriptor("bulk-edit-view.xml")
 @Route("bulk-edit")
 @DialogMode(resizable = true, width = "60em", height = "40em", minWidth = "30em")
-public class BulkEditView<E> extends StandardView implements BulkEditorController<E> {
+public class BulkEditView<E> extends StandardView {
 
     protected static final String COLUMN_COLLAPSE_MIN_WIDTH = "52em";
     protected static final String FIELD_MIN_WIDTH = "10em";
@@ -122,11 +117,7 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
     protected FormLayout fieldLayout;
 
     @Autowired
-    protected AccessManager accessManager;
-    @Autowired
     protected BulkEditorDataProvider bulkEditorDataProvider;
-    @Autowired
-    protected DataComponents dataComponents;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -137,8 +128,6 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageTools messageTools;
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
@@ -157,157 +146,47 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
     protected jakarta.validation.Validator validator;
     @Autowired
     protected ObjectProvider<BulkEditBeanPropertyValidator> beanValidatorProvider;
+    @Autowired
+    protected ObjectProvider<BulkEditManagedFieldProvider> managedFieldProviderFactory;
 
-    protected BulkEditorContext<E> context;
-
-    protected Pattern excludeRegex;
+    protected BulkEditManagedFieldProvider managedFieldProvider;
+    protected BulkEditContext<E> context;
 
     protected Map<String, ManagedField> managedFields = new LinkedHashMap<>();
-    protected List<String> managedEmbeddedProperties = new ArrayList<>();
     protected Map<String, AbstractField<?, ?>> dataFields = new LinkedHashMap<>();
 
     protected List<E> items;
-
-    protected boolean commitPerformed = false;
     protected FetchPlan fetchPlan;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         if (context != null) {
-            if (!Strings.isNullOrEmpty(context.getExclude())) {
-                excludeRegex = Pattern.compile(context.getExclude());
-            }
-
-            for (ManagedField managedField : getManagedFields()) {
+            for (ManagedField managedField : managedFieldProvider.getManagedFields(context)) {
                 managedFields.put(managedField.getFqn(), managedField);
             }
 
-            fetchPlan = createFetchPlan(context.getMetaClass());
+            Set<String> managedEmbeddedProperties = managedFields.values().stream()
+                    .map(ManagedField::getParentFqn)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            fetchPlan = createFetchPlan(context.getMetaClass(), managedEmbeddedProperties);
             loadItems();
 
             createDataComponents();
         }
     }
 
-    @Override
-    public void setBulkEditorContext(BulkEditorContext<E> context) {
+    public void setBulkEditorContext(BulkEditContext<E> context) {
         this.context = context;
+        managedFieldProvider = managedFieldProviderFactory.getObject(context);
     }
 
-    protected List<ManagedField> getManagedFields() {
-        MetaClass metaClass = context.getMetaClass();
-
-        return getManagedFields(metaClass, null, null);
-    }
-
-    protected List<ManagedField> getManagedFields(MetaClass metaClass,
-                                                  @Nullable String fqnPrefix,
-                                                  @Nullable String localePrefix) {
-        List<ManagedField> managedFields = new ArrayList<>();
-        for (MetaProperty metaProperty : metaClass.getProperties()) {
-            String fqn = generateFqn(metaProperty, fqnPrefix);
-            String propertyCaption = generatePropertyCaption(metaClass, metaProperty, localePrefix);
-
-            if (!metadataTools.isEmbedded(metaProperty)) {
-                if (isManagedAttribute(metaClass, metaProperty, fqn)) {
-                    managedFields.add(new ManagedField(fqn, metaProperty, propertyCaption, fqnPrefix));
-                }
-            } else {
-                List<ManagedField> nestedFields = getManagedFields(metaProperty, fqn, propertyCaption);
-                if (!nestedFields.isEmpty()) {
-                    managedEmbeddedProperties.add(fqn);
-                }
-                managedFields.addAll(nestedFields);
-            }
-        }
-
-        return managedFields;
-    }
-
-    protected boolean isManagedAttribute(MetaClass metaClass, MetaProperty metaProperty, String fqn) {
-        if (metadataTools.isSystem(metaProperty)
-                || (!metadataTools.isJpa(metaProperty) && !isCrossDataStoreReference(metaProperty))
-                || metadataTools.isSystemLevel(metaProperty)
-                || metaProperty.getRange().getCardinality().isMany()
-                || !isEntityAttributeModifyPermitted(metaClass, metaProperty)) {
-            return false;
-        }
-
-        if (metaProperty.getRange().isDatatype()
-                && (isByteArray(metaProperty) || isUuid(metaProperty))) {
-            return false;
-        }
-
-        if (!isRangeClassPermitted(metaProperty)) {
-            return false;
-        }
-
-        List<String> includeProperties = context.getIncludeProperties();
-        if (!includeProperties.isEmpty()) {
-            return includeProperties.contains(fqn);
-        }
-
-        return excludeRegex == null || !excludeRegex.matcher(fqn).matches();
-    }
-
-    protected boolean isCrossDataStoreReference(MetaProperty metaProperty) {
-        return metadataTools.getCrossDataStoreReferenceIdProperty(metaProperty.getStore().getName(), metaProperty) != null;
-    }
-
-    protected boolean isEntityAttributeModifyPermitted(MetaClass metaClass, MetaProperty metaProperty) {
-        UiEntityAttributeContext attributeContext =
-                new UiEntityAttributeContext(metaClass, metaProperty.getName());
-        accessManager.applyRegisteredConstraints(attributeContext);
-
-        return attributeContext.canModify();
-    }
-
-    protected boolean isByteArray(MetaProperty metaProperty) {
-        return metaProperty.getRange().asDatatype().getJavaClass().equals(byte[].class);
-    }
-
-    protected boolean isUuid(MetaProperty metaProperty) {
-        return metaProperty.getRange().asDatatype().getJavaClass().equals(UUID.class);
-    }
-
-    protected boolean isRangeClassPermitted(MetaProperty metaProperty) {
-        if (metaProperty.getRange().isClass()) {
-            MetaClass propertyMetaClass = metaProperty.getRange().asClass();
-
-            UiEntityContext entityContext = new UiEntityContext(propertyMetaClass);
-            accessManager.applyRegisteredConstraints(entityContext);
-
-            return !metadataTools.isSystemLevel(propertyMetaClass)
-                    && entityContext.isViewPermitted();
-        }
-
-        return true;
-    }
-
-    protected String generatePropertyCaption(MetaClass metaClass,
-                                             MetaProperty metaProperty,
-                                             @Nullable String localePrefix) {
-        String propertyCaption = messageTools.getPropertyCaption(metaClass, metaProperty.getName());
-        if (!Strings.isNullOrEmpty(localePrefix)) {
-            propertyCaption = localePrefix + " " + propertyCaption;
-        }
-
-        return propertyCaption;
-    }
-
-    protected List<ManagedField> getManagedFields(MetaProperty embeddedProperty,
-                                                  String fqnPrefix,
-                                                  String localePrefix) {
-        MetaClass metaClass = embeddedProperty.getRange().asClass();
-
-        return getManagedFields(metaClass, fqnPrefix, localePrefix);
-    }
-
-    protected FetchPlan createFetchPlan(MetaClass metaClass) {
+    protected FetchPlan createFetchPlan(MetaClass metaClass, Collection<String> managedEmbeddedProperties) {
         FetchPlanBuilder builder = fetchPlans.builder(metaClass.getJavaClass());
 
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-            String fqn = generateFqn(metaProperty, null);
+            String fqn = managedFieldProvider.generateFqn(metaProperty, null);
 
             if (!managedFields.containsKey(fqn)
                     && !managedEmbeddedProperties.contains(fqn)
@@ -319,14 +198,6 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
         }
 
         return builder.build();
-    }
-
-    protected String generateFqn(MetaProperty metaProperty, @Nullable String fqnPrefix) {
-        String fqn = metaProperty.getName();
-        if (!Strings.isNullOrEmpty(fqnPrefix)) {
-            fqn = fqnPrefix + "." + fqn;
-        }
-        return fqn;
     }
 
     protected boolean isTenantMetaProperty(MetaProperty metaProperty) {
@@ -356,7 +227,7 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
         FetchPlanBuilder builder = fetchPlans.builder(metaClass.getJavaClass());
 
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-            String fqn = generateFqn(metaProperty, fqnPrefix);
+            String fqn = managedFieldProvider.generateFqn(metaProperty, fqnPrefix);
 
             if (!managedFields.containsKey(fqn)) {
                 continue;
@@ -386,7 +257,7 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
         Comparator<ManagedField> comparator = createManagedFieldComparator(editFields);
         editFields.sort(comparator);
 
-        setupFormLayout();
+        setupFieldLayout();
 
         for (ManagedField editField : editFields) {
             Component fieldComponent = createFieldComponent(editField);
@@ -410,7 +281,7 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
         return comparator;
     }
 
-    protected void setupFormLayout() {
+    protected void setupFieldLayout() {
         ColumnsMode contextColumnsMode = context.getColumnsMode();
         ColumnsMode columnsMode = contextColumnsMode != null ? contextColumnsMode : DEFAULT_COLUMNS_MODE;
 
@@ -533,7 +404,9 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
 
     @Subscribe
     protected void onBeforeClose(BeforeCloseEvent event) {
-        preventUnsavedChanges(event);
+        if (!event.closedWith(StandardOutcome.SAVE)) {
+            preventUnsavedChanges(event);
+        }
     }
 
     protected void preventUnsavedChanges(BeforeCloseEvent event) {
@@ -553,12 +426,10 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
     }
 
     protected boolean hasChanges() {
-        if (!commitPerformed) {
-            for (Map.Entry<String, AbstractField<?, ?>> fieldEntry : dataFields.entrySet()) {
-                AbstractField<?, ?> field = fieldEntry.getValue();
-                if (isFieldChanged(field)) {
-                    return true;
-                }
+        for (Map.Entry<String, AbstractField<?, ?>> fieldEntry : dataFields.entrySet()) {
+            AbstractField<?, ?> field = fieldEntry.getValue();
+            if (isFieldChanged(field)) {
+                return true;
             }
         }
         return false;
@@ -607,8 +478,9 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
     }
 
     protected ValidationErrors validateUiComponents() {
-        List<Component> components = dataFields.values().stream().map(f -> (Component) f).toList();
-        return viewValidation.validateUiComponents(components);
+        Collection<? extends Component> components = dataFields.values();
+        //noinspection unchecked
+        return viewValidation.validateUiComponents((Collection<Component>) components);
     }
 
     protected void applyModelValidators(ValidationErrors errors) {
@@ -709,42 +581,6 @@ public class BulkEditView<E> extends StandardView implements BulkEditorControlle
         notifications.create(messageBundle.formatMessage("bulk.successMessage", saved.size()))
                 .show();
 
-        commitPerformed = true;
-
         close(StandardOutcome.SAVE);
-    }
-
-    protected static class ManagedField {
-
-        protected final String fqn;
-        protected final String parentFqn;
-
-        protected final String localizedName;
-
-        protected final MetaProperty metaProperty;
-
-        public ManagedField(String fqn, MetaProperty metaProperty, String localizedName, @Nullable String parentFqn) {
-            this.fqn = fqn;
-            this.metaProperty = metaProperty;
-            this.localizedName = localizedName;
-            this.parentFqn = parentFqn;
-        }
-
-        public String getFqn() {
-            return fqn;
-        }
-
-        @Nullable
-        public String getParentFqn() {
-            return parentFqn;
-        }
-
-        public String getLocalizedName() {
-            return localizedName;
-        }
-
-        public MetaProperty getMetaProperty() {
-            return metaProperty;
-        }
     }
 }

@@ -84,10 +84,10 @@ public class BulkEditorBuilder<E> {
     /**
      * Sets the list data component that displays the items to be edited.
      *
-     * @param listDataComponent the list component to be used
+     * @param listDataComponent the list data component to be used
      * @return this builder
      */
-    public BulkEditorBuilder<E> withListComponent(ListDataComponent<E> listDataComponent) {
+    public BulkEditorBuilder<E> withListDataComponent(ListDataComponent<E> listDataComponent) {
         this.listDataComponent = listDataComponent;
         return this;
     }
@@ -105,10 +105,10 @@ public class BulkEditorBuilder<E> {
     }
 
     /**
-     * Sets the entity attributes to be included to bulk editor window.
+     * Sets the entity attributes to be included to bulk editor view.
      * If set, other attributes will be ignored.
      *
-     * @param includeProperties the entity attributes to be included to bulk editor window
+     * @param includeProperties the entity attributes to be included to bulk editor view
      * @return this builder
      */
     public BulkEditorBuilder<E> withIncludeProperties(List<String> includeProperties) {
@@ -206,7 +206,7 @@ public class BulkEditorBuilder<E> {
     }
 
     /**
-     * @return the entity attributes to be included to bulk editor window
+     * @return the entity attributes to be included to bulk editor view
      */
     @Nullable
     public List<String> getIncludeProperties() {
@@ -253,6 +253,13 @@ public class BulkEditorBuilder<E> {
     @Nullable
     public ColumnsMode getColumnsMode() {
         return columnsMode;
+    }
+
+    /**
+     * @return origin view
+     */
+    public View<?> getOrigin() {
+        return origin;
     }
 
     /**

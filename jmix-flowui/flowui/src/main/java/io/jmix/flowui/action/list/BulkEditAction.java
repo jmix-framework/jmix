@@ -221,7 +221,7 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
         View<?> origin = UiComponentUtils.getView((Component) target);
 
         BulkEditorBuilder<?> builder = bulkEditors.builder(metaClass, target.getSelectedItems(), origin)
-                .withListComponent(target);
+                .withListDataComponent(target);
 
         if (columnsMode != null) {
             builder = builder.withColumnsMode(columnsMode);

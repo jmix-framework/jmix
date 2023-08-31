@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Focusable;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.app.bulk.BulkEditView;
-import io.jmix.flowui.app.bulk.BulkEditorController.BulkEditorContext;
+import io.jmix.flowui.app.bulk.BulkEditContext;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.DataUnit;
@@ -72,14 +72,14 @@ public class BulkEditors {
         }
 
         //noinspection rawtypes
-        WindowBuilder windowBuilder = dialogWindows.view(builder.origin, BulkEditView.class);
+        WindowBuilder windowBuilder = dialogWindows.view(builder.getOrigin(), BulkEditView.class);
         //noinspection unchecked
         DialogWindow<BulkEditView<E>> dialogWindow = ((WindowBuilder<BulkEditView<E>>) windowBuilder)
                 .withAfterCloseListener(createAfterCloseHandler(builder))
                 .build();
 
 
-        BulkEditorContext<E> context = createBulkEditorContext(builder);
+        BulkEditContext<E> context = createBulkEditorContext(builder);
         BulkEditView<E> bulkEditorWindow = dialogWindow.getView();
         bulkEditorWindow.setBulkEditorContext(context);
 
@@ -116,8 +116,8 @@ public class BulkEditors {
         }
     }
 
-    protected <E> BulkEditorContext<E> createBulkEditorContext(BulkEditorBuilder<E> builder) {
-        BulkEditorContext<E> context = new BulkEditorContext<>(builder.metaClass, builder.entities);
+    protected <E> BulkEditContext<E> createBulkEditorContext(BulkEditorBuilder<E> builder) {
+        BulkEditContext<E> context = new BulkEditContext<>(builder.getMetaClass(), builder.getEntities());
         context.setExclude(builder.getExclude());
         context.setIncludeProperties(builder.getIncludeProperties());
         context.setFieldValidators(builder.getFieldValidators());

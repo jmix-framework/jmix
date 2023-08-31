@@ -54,6 +54,8 @@ public @interface StudioComponent {
 
     StudioPropertiesBinding[] propertiesBindings() default {};
 
+    StudioSupplyHandler[] supplyHandlers() default {};
+
     /**
      * Array with the components qualified names that
      * can be contained inside the current component.

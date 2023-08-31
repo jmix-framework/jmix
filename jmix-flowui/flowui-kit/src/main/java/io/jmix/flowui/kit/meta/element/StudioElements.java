@@ -25,6 +25,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.kit.meta.StudioElement;
+import io.jmix.flowui.kit.meta.StudioSupplyHandler;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
@@ -98,7 +99,8 @@ public interface StudioElements {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "header", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "key", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF, required = true),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF,
+                            typeParameter = "T", required = true),
                     @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,
@@ -111,6 +113,12 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "UNDEFINED"),
                     @StudioProperty(xmlAttribute = "editable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false")
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.Renderer"
+                    )
             }
     )
     Grid.Column column();

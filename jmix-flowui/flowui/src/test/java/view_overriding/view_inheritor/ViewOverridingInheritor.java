@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package pagination.view;
+package view_overriding.view_inheritor;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.pagination.SimplePagination;
-import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
+import view_overriding.view.ViewOverridingOrigin;
 
-@Route("SimplePaginationTestView")
-@ViewController
-@ViewDescriptor("simple-pagination-test-view.xml")
-public class SimplePaginationTestView extends StandardView {
-
-    @ViewComponent
-    public SimplePagination simplePagination;
-
-    @ViewComponent
-    public SimplePagination simplePaginationCustomItems;
-
-    @ViewComponent
-    public SimplePagination simplePaginationWithoutLoader;
+@Route("ViewOverridingOrigin")
+@ViewController("ViewOverridingOrigin")
+@ViewDescriptor("view-overriding-inheritor.xml")
+public class ViewOverridingInheritor extends ViewOverridingOrigin {
 }

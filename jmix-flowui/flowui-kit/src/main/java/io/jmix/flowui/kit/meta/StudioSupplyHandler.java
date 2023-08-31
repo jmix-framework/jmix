@@ -17,10 +17,10 @@
 package io.jmix.flowui.kit.meta;
 
 /**
- * Describes @Supply handler
- * @see io.jmix.flowui.view.Supply
+ * Describes {@code @io.jmix.flowui.view.Supply} handler
  */
 public @interface StudioSupplyHandler {
     String methodName();
+
     String parameterType();
 }

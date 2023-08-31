@@ -28,23 +28,24 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
+import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
-import io.jmix.quartz.model.RepeatMode;
-import io.jmix.quartz.model.ScheduleType;
-import io.jmix.quartz.model.TriggerModel;
+import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
 import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ViewController("quartz_TriggerModel.detail")
 @ViewDescriptor("trigger-model-detail-view.xml")
@@ -55,7 +56,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     protected static long DEFAULT_REPEAT_INTERVAL = 1000L;
 
     @ViewComponent
-    private ComboBox<String> triggerGroupField;
+    private JmixComboBox<String> triggerGroupField;
     @ViewComponent
     private TypedTextField<String> cronExpressionField;
     @ViewComponent
@@ -68,6 +69,10 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     private TypedDateTimePicker<Date> startDateTimePicker;
     @ViewComponent
     private TypedDateTimePicker<Date> endDateTimePicker;
+    @ViewComponent
+    private JmixComboBox<String> misfireInstructionField;
+    @ViewComponent
+    private JmixButton misfireInstructionHelpButton;
     @ViewComponent
     private JmixRadioButtonGroup<RepeatMode> repeatModeSelector;
     @ViewComponent
@@ -83,7 +88,8 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     private UiComponents uiComponents;
     @Autowired
     private Dialogs dialogs;
-
+    @Autowired
+    private Messages messages;
     private List<String> triggerGroupNames;
 
     @Subscribe
@@ -92,6 +98,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         initCronHelperButton();
         initRepeatModeHelperButton();
         initRepeatCountHelperButton();
+        initMisfireInstructionHelperButton();
         setupDateTimePickerDefaultTimeListener(startDateTimePicker);
         setupDateTimePickerDefaultTimeListener(endDateTimePicker);
     }
@@ -103,6 +110,19 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         initRepeatModeFields();
         if (getEditedEntity().getScheduleType() == null) {
             scheduleTypeField.setValue(ScheduleType.CRON_EXPRESSION);
+        }
+
+        String misfireInstructionId = getEditedEntity().getMisfireInstructionId();
+        if (misfireInstructionId == null) {
+            misfireInstructionField.setValue(getDefaultMisfireInstructionId(scheduleTypeField.getValue()));
+        }
+    }
+
+    protected String getDefaultMisfireInstructionId(ScheduleType scheduleType) {
+        if (ScheduleType.SIMPLE.equals(scheduleType)) {
+            return SimpleTriggerMisfireInstruction.SMART_POLICY.getId();
+        } else {
+            return CronTriggerMisfireInstruction.SMART_POLICY.getId();
         }
     }
 
@@ -164,6 +184,24 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
                 .open();
     }
 
+    private void initMisfireInstructionHelperButton() {
+        misfireInstructionHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE_O.create());
+        misfireInstructionHelpButton.addThemeVariants(
+                ButtonVariant.LUMO_SMALL,
+                ButtonVariant.LUMO_TERTIARY,
+                ButtonVariant.LUMO_CONTRAST);
+        misfireInstructionHelpButton.addClickListener(this::onMisfireInstructionHelperButtonClick);
+    }
+
+    private void onMisfireInstructionHelperButtonClick(ClickEvent<Button> event) {
+        dialogs.createMessageDialog()
+                .withContent(new Html(messageBundle.getMessage("triggerMisfireInstructionHelpText")))
+                .withResizable(true)
+                .withModal(false)
+                .withWidth("60em")
+                .open();
+    }
+
     @Subscribe("scheduleTypeField")
     private void onScheduleTypeFieldChange(
             AbstractField.ComponentValueChangeEvent<Select<ScheduleType>, ScheduleType> event) {
@@ -171,6 +209,41 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         if (ScheduleType.SIMPLE.equals(event.getValue())) {
             initRepeatModeSelectorValue();
         }
+
+        ScheduleType oldScheduleType = event.getOldValue();
+        String currentMisfireInstructionId = misfireInstructionField.getValue();
+        if (ScheduleType.SIMPLE.equals(event.getValue())) {
+
+            Map<String, String> map = Arrays.stream(SimpleTriggerMisfireInstruction.values())
+                    .collect(
+                            Collectors.toMap(SimpleTriggerMisfireInstruction::getId, this::getLocalizedEnum, (i1, i2) -> i2, LinkedHashMap::new)
+                    );
+            ComponentUtils.setItemsMap(misfireInstructionField, map);
+
+            if (oldScheduleType != null) {
+                String instruction = map.containsKey(currentMisfireInstructionId)
+                        ? currentMisfireInstructionId
+                        : SimpleTriggerMisfireInstruction.SMART_POLICY.getId();
+                misfireInstructionField.setValue(instruction);
+            }
+        } else {
+            Map<String, String> map = Arrays.stream(CronTriggerMisfireInstruction.values())
+                    .collect(
+                            Collectors.toMap(CronTriggerMisfireInstruction::getId, this::getLocalizedEnum, (i1, i2) -> i2, LinkedHashMap::new)
+                    );
+            ComponentUtils.setItemsMap(misfireInstructionField, map);
+
+            if (oldScheduleType != null) {
+                String instruction = map.containsKey(currentMisfireInstructionId)
+                        ? currentMisfireInstructionId
+                        : CronTriggerMisfireInstruction.SMART_POLICY.getId();
+                misfireInstructionField.setValue(instruction);
+            }
+        }
+    }
+
+    protected String getLocalizedEnum(Enum<?> enumClass) {
+        return messages.getMessage(enumClass);
     }
 
     @Subscribe("startDateTimePicker")

@@ -34,8 +34,8 @@ import java.lang.annotation.RetentionPolicy;
  * parameter for {@link Column#setRenderer(Renderer)}:
  * <pre>
  * &#64;Provide(to = "fooDataGrid.name", subject = "renderer")
- * private Renderer<Foo> nameRenderer() {
- *     return new TextRenderer<>(Foo::getName);
+ * private Renderer&lt;Foo&gt; nameRenderer() {
+ *     return new TextRenderer&lt;&gt;(Foo::getName);
  * }
  * </pre>
  */

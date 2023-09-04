@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component("flowui_BulkEditBeanPropertyValidator")
+@Component("ui_BulkEditBeanPropertyValidator")
 public class BulkEditBeanPropertyValidator implements Validator<Object> {
 
     protected final Class<?> beanClass;

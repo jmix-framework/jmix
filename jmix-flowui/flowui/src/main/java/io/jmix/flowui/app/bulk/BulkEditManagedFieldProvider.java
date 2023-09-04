@@ -36,7 +36,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component("flowui_BulkEditManagedFieldProvider")
+@Component("ui_BulkEditManagedFieldProvider")
 public class BulkEditManagedFieldProvider {
 
     protected final BulkEditContext<?> context;

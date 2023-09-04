@@ -20,7 +20,7 @@ import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
 public class UiBulkEditContext extends SpecificOperationAccessContext {
 
-    public static final String NAME = "flowui.bulkEdit.enabled";
+    public static final String NAME = "ui.bulkEdit.enabled";
 
     public UiBulkEditContext() {
         super(NAME);

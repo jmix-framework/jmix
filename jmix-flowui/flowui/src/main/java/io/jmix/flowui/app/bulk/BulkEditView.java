@@ -26,6 +26,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.router.Route;
@@ -49,8 +50,8 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.DialogAction.Type;
-import io.jmix.flowui.bulk.BulkEditorDataProvider;
-import io.jmix.flowui.bulk.BulkEditorDataProvider.LoadDescriptor;
+import io.jmix.flowui.bulk.BulkEditorDataLoadSupport;
+import io.jmix.flowui.bulk.BulkEditorDataLoadSupport.LoadDescriptor;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
@@ -92,6 +93,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static io.jmix.flowui.app.bulk.ColumnsMode.TWO_COLUMNS;
@@ -99,7 +101,7 @@ import static io.jmix.flowui.app.bulk.ColumnsMode.TWO_COLUMNS;
 @ViewController("bulkEditorWindow")
 @ViewDescriptor("bulk-edit-view.xml")
 @Route("bulk-edit")
-@DialogMode(resizable = true, width = "60em", height = "40em", minWidth = "30em")
+@DialogMode(resizable = true, width = "64em", height = "48em", minWidth = "30em")
 public class BulkEditView<E> extends StandardView {
 
     protected static final String COLUMN_COLLAPSE_MIN_WIDTH = "52em";
@@ -108,7 +110,7 @@ public class BulkEditView<E> extends StandardView {
     protected static final ColumnsMode DEFAULT_COLUMNS_MODE = TWO_COLUMNS;
 
     @ViewComponent
-    protected JmixButton applyButton;
+    protected JmixButton applyBtn;
     @ViewComponent
     protected Action applyChanges;
     @ViewComponent
@@ -117,7 +119,7 @@ public class BulkEditView<E> extends StandardView {
     protected FormLayout fieldLayout;
 
     @Autowired
-    protected BulkEditorDataProvider bulkEditorDataProvider;
+    protected BulkEditorDataLoadSupport dataLoadSupport;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -241,13 +243,13 @@ public class BulkEditView<E> extends StandardView {
 
     protected void loadItems() {
         LoadDescriptor<E> ld = new LoadDescriptor<>(context.getSelectedItems(), context.getMetaClass(), fetchPlan);
-        items = bulkEditorDataProvider.reload(ld);
+        items = dataLoadSupport.reload(ld);
     }
 
     protected void createDataComponents() {
         if (managedFields.isEmpty()) {
             infoDiv.setText(messageBundle.getMessage("bulk.noEditableProperties"));
-            applyButton.setVisible(false);
+            applyBtn.setVisible(false);
             applyChanges.setVisible(false);
             return;
         }
@@ -267,7 +269,7 @@ public class BulkEditView<E> extends StandardView {
     }
 
     protected Comparator<ManagedField> createManagedFieldComparator(List<ManagedField> editFields) {
-        FieldSorter fieldSorter = context.getFieldSorter();
+        Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter = context.getFieldSorter();
         Comparator<ManagedField> comparator;
         if (fieldSorter != null) {
             Map<MetaProperty, Integer> sorted = fieldSorter.apply(editFields.stream()
@@ -286,12 +288,10 @@ public class BulkEditView<E> extends StandardView {
         ColumnsMode columnsMode = contextColumnsMode != null ? contextColumnsMode : DEFAULT_COLUMNS_MODE;
 
         List<FormLayout.ResponsiveStep> responsiveSteps = new ArrayList<>();
-        FormLayout.ResponsiveStep step1 = new FormLayout.ResponsiveStep("0em", 1,
-                FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
+        FormLayout.ResponsiveStep step1 = new FormLayout.ResponsiveStep("0em", 1);
         responsiveSteps.add(step1);
         if (TWO_COLUMNS == columnsMode) {
-            FormLayout.ResponsiveStep step2 = new FormLayout.ResponsiveStep(COLUMN_COLLAPSE_MIN_WIDTH, 2,
-                    FormLayout.ResponsiveStep.LabelsPosition.ASIDE);
+            FormLayout.ResponsiveStep step2 = new FormLayout.ResponsiveStep(COLUMN_COLLAPSE_MIN_WIDTH, 2);
             responsiveSteps.add(step2);
         }
         fieldLayout.setResponsiveSteps(responsiveSteps);
@@ -362,9 +362,10 @@ public class BulkEditView<E> extends StandardView {
 
     protected JmixButton createClearButton(AbstractField<?, ?> field, boolean isFieldRequired) {
         JmixButton button = uiComponents.create(JmixButton.class);
-        button.setIcon(VaadinIcon.TRASH.create());
+        button.setIcon(VaadinIcon.ERASER.create());
 
         if (isFieldRequired) {
+            //use style to add a spacer instead of button
             button.getElement().getStyle().set("visibility", "hidden");
         } else {
             button.addClickListener(createClearButtonClickListener(field));
@@ -378,7 +379,7 @@ public class BulkEditView<E> extends StandardView {
             editField.setEnabled(!editField.isEnabled());
             Button button = e.getSource();
 
-            button.setIcon(editField.isEnabled() ? VaadinIcon.TRASH.create() : VaadinIcon.EDIT.create());
+            button.setIcon(editField.isEnabled() ? VaadinIcon.ERASER.create() : VaadinIcon.EDIT.create());
             Tooltip.forComponent(button).setText(messageBundle.getMessage(editField.isEnabled()
                     ? "bulk.clearAttribute"
                     : "bulk.editAttribute"
@@ -395,11 +396,6 @@ public class BulkEditView<E> extends StandardView {
                 .filter(field -> field instanceof Focusable<?>)
                 .findFirst()
                 .ifPresent(field -> ((Focusable<?>) field).focus());
-    }
-
-    @Subscribe("cancelChanges")
-    protected void onCancelChanges(ActionPerformedEvent event) {
-        close(StandardOutcome.CLOSE);
     }
 
     @Subscribe
@@ -552,9 +548,9 @@ public class BulkEditView<E> extends StandardView {
                             items.size(), StringUtils.join(fields, "\n")))
                     .withActions(new DialogAction(Type.OK)
                                     .withText(messages.getMessage("actions.Apply"))
+                                    .withVariant(ActionVariant.PRIMARY)
                                     .withHandler(event -> commitBulkChanges()),
                             new DialogAction(Type.CANCEL)
-                                    .withVariant(ActionVariant.PRIMARY)
                                     .withHandler(e -> loadItems()))
                     .open();
         } else {
@@ -579,6 +575,8 @@ public class BulkEditView<E> extends StandardView {
                 saved.size(), context.getMetaClass(), StringUtils.join(fields, ", "));
 
         notifications.create(messageBundle.formatMessage("bulk.successMessage", saved.size()))
+                .withType(Notifications.Type.SUCCESS)
+                .withPosition(Notification.Position.TOP_END)
                 .show();
 
         close(StandardOutcome.SAVE);

@@ -15,21 +15,19 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://bulkEditor.caption">
+      title="msg://bulkEditor.title">
     <actions>
         <action id="applyChanges"
                 text="msg:///actions.Apply"
                 icon="CHECK"
-                shortcutCombination="CONTROL-ENTER"/>
-        <action id="cancelChanges"
-                text="msg:///actions.Cancel"
-                icon="BAN"/>
+                actionVariant="PRIMARY"
+                shortcutCombination="${SAVE_SHORTCUT}"/>
+        <action id="viewClose" type="view_close"/>
     </actions>
 
     <layout expand="fieldLayoutScroller">
         <div id="infoDiv"
-             text="msg://bulkEditor.description"
-             themeNames="contrast"/>
+             text="msg://bulkEditor.info"/>
 
         <scroller id="fieldLayoutScroller"
                   scrollBarsDirection="VERTICAL"
@@ -37,12 +35,11 @@
             <formLayout id="fieldLayout"/>
         </scroller>
 
-        <hbox id="buttonsBox"
-              spacing="true">
-            <button id="applyButton"
+        <hbox id="buttonsBox">
+            <button id="applyBtn"
                     action="applyChanges"/>
-            <button id="cancelButton"
-                    action="cancelChanges"/>
+            <button id="cancelBtn"
+                    action="viewClose"/>
         </hbox>
     </layout>
 </view>

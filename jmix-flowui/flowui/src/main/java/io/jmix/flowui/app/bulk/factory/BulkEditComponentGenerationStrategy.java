@@ -40,7 +40,7 @@ import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
 
-@org.springframework.stereotype.Component("flowui_BulkEditComponentGenerationStrategy")
+@org.springframework.stereotype.Component("ui_BulkEditComponentGenerationStrategy")
 public class BulkEditComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
 
     protected static final int MAX_TEXTFIELD_STRING_LENGTH = 255;

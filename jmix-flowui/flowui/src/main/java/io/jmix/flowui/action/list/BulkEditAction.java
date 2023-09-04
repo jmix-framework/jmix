@@ -22,12 +22,12 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.accesscontext.UiBulkEditContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.app.bulk.ColumnsMode;
-import io.jmix.flowui.app.bulk.FieldSorter;
 import io.jmix.flowui.bulk.BulkEditorBuilder;
 import io.jmix.flowui.bulk.BulkEditors;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -39,7 +39,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
+/**
+ * Standard action for changing attribute values for several entity instances at once.
+ * <p>
+ * Should be defined for a list data component in a screen XML descriptor.
+ * <p>
+ * The action instance can be parameterized using the nested {@code properties} XML element or programmatically in the
+ * screen controller.
+ *
+ * @param <E> entity type
+ */
 @ActionType(BulkEditAction.ID)
 public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAction<E>, E> implements ExecutableAction {
 
@@ -51,9 +63,9 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
 
     protected ColumnsMode columnsMode;
     protected String exclude;
-    protected FieldSorter fieldSorter;
+    protected Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter;
     protected List<String> includeProperties;
-    protected Boolean useConfirmDialog;
+    protected boolean useConfirmDialog = true;
 
     protected boolean visibleBySpecificUiPermission = true;
 
@@ -63,12 +75,18 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
 
     public BulkEditAction(String id) {
         super(id);
+    }
+
+    @Override
+    protected void initAction() {
+        super.initAction();
+
         this.icon = ComponentUtils.convertToIcon(VaadinIcon.TABLE);
     }
 
     /**
-     * Returns the columns mode which defines the number of columns either it was set by {@link #setColumnsMode(ColumnsMode)}
-     * or in the screen XML. Otherwise, returns null.
+     * @return the columns mode which defines the number of columns either it was set by {@link #setColumnsMode(ColumnsMode)}
+     * or in the screen XML. Otherwise, returns null
      */
     @Nullable
     public ColumnsMode getColumnsMode() {
@@ -76,8 +94,7 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
     }
 
     /**
-     * Sets the columns mode which defines the number of columns.
-     *
+     * @param columnsMode columns mode which defines the number of columns
      * @see ColumnsMode#ONE_COLUMN
      * @see ColumnsMode#TWO_COLUMNS
      */
@@ -86,8 +103,8 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
     }
 
     /**
-     * Returns a regular expression to exclude fields if it was set by {@link #setExclude(String)} or in the screen XML.
-     * Otherwise, returns null.
+     * @return regular expression to exclude fields if it was set by {@link #setExclude(String)} or in the screen XML.
+     * Otherwise, returns null
      */
     @Nullable
     public String getExclude() {
@@ -95,23 +112,23 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
     }
 
     /**
-     * Sets a regular expression to exclude some fields explicitly
-     * from the list of attributes available for editing.
+     * @param exclude regular expression to exclude some fields explicitly
+     *                from the list of attributes available for editing
      */
     public void setExclude(String exclude) {
         this.exclude = exclude;
     }
 
     /**
-     * Sets field sorter that allows you to sort fields by custom logic.
+     * @param fieldSorter function to sort fields by custom logic
      */
-    public void setFieldSorter(FieldSorter fieldSorter) {
+    public void setFieldSorter(Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter) {
         this.fieldSorter = fieldSorter;
     }
 
     /**
-     * Returns a list entity attributes to be included to bulk editor window if it was set by {@link #setIncludeProperties(List)} or in the screen XML.
-     * Otherwise, returns null.
+     * @return list entity attributes to be included to bulk editor window if it was set by
+     * {@link #setIncludeProperties(List)} or in the screen XML. Otherwise, returns null
      */
     @Nullable
     public List<String> getIncludeProperties() {
@@ -119,25 +136,23 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
     }
 
     /**
-     * Sets the entity attributes to be included to bulk editor window.
-     * If set, other attributes will be ignored.
+     * @param includeProperties entity attributes to be included to bulk editor window.
+     *                          If set, other attributes will be ignored
      */
     public void setIncludeProperties(List<String> includeProperties) {
         this.includeProperties = includeProperties;
     }
 
     /**
-     * Returns true/false if the flag was set by {@link #setUseConfirmDialog(Boolean)} or in the screen XML.
-     * Otherwise, returns null.
+     * @return true/false whether confirmation dialog {@link #setUseConfirmDialog(Boolean)} is used.
      */
-    @Nullable
-    public Boolean getUseConfirmDialog() {
+    public boolean getUseConfirmDialog() {
         return useConfirmDialog;
     }
 
     /**
-     * Sets whether the confirmation dialog should be displayed to
-     * the user before saving the changes. The default value is true.
+     * @param useConfirmDialog flag whether the confirmation dialog should be displayed to
+     *                         the user before saving the changes. The default value is true
      */
     public void setUseConfirmDialog(Boolean useConfirmDialog) {
         this.useConfirmDialog = useConfirmDialog;
@@ -188,6 +203,13 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
             return true;
         }
 
+        UiBulkEditContext context = new UiBulkEditContext();
+        accessManager.applyRegisteredConstraints(context);
+
+        if (!context.isPermitted()) {
+            return false;
+        }
+
         return super.isPermitted();
     }
 
@@ -215,9 +237,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
             throw new IllegalStateException("Target is not bound to entity");
         }
 
-        UiBulkEditContext context = new UiBulkEditContext();
-        accessManager.applyRegisteredConstraints(context);
-
         View<?> origin = UiComponentUtils.getView((Component) target);
 
         BulkEditorBuilder<?> builder = bulkEditors.builder(metaClass, target.getSelectedItems(), origin)
@@ -239,32 +258,45 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
             builder = builder.withIncludeProperties(includeProperties);
         }
 
-        if (useConfirmDialog != null) {
-            builder = builder.withUseConfirmDialog(useConfirmDialog);
-        }
-        builder.create().open();
+        builder = builder.withUseConfirmDialog(useConfirmDialog);
+        builder.open();
     }
 
+    /**
+     * @see #setColumnsMode(ColumnsMode)
+     */
     public BulkEditAction<E> withColumnsMode(ColumnsMode columnsMode) {
         setColumnsMode(columnsMode);
         return this;
     }
 
+    /**
+     * @see #setExclude(String)
+     */
     public BulkEditAction<E> withExclude(String exclude) {
         setExclude(exclude);
         return this;
     }
 
-    public BulkEditAction<E> withFieldSorter(FieldSorter fieldSorter) {
+    /**
+     * @see #setFieldSorter(Function)
+     */
+    public BulkEditAction<E> withFieldSorter(Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter) {
         setFieldSorter(fieldSorter);
         return this;
     }
 
+    /**
+     * @see #setIncludeProperties(List)
+     */
     public BulkEditAction<E> withIncludeProperties(List<String> includeProperties) {
         setIncludeProperties(includeProperties);
         return this;
     }
 
+    /**
+     * @see #setUseConfirmDialog(Boolean)
+     */
     public BulkEditAction<E> withUseConfirmDialog(boolean useConfirmDialog) {
         setUseConfirmDialog(useConfirmDialog);
         return this;

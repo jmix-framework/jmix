@@ -17,6 +17,7 @@
 package io.jmix.flowui.app.bulk;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.component.validation.Validator;
 
 import javax.annotation.Nullable;
@@ -24,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -37,7 +39,7 @@ public class BulkEditContext<V> {
     protected Map<String, Validator<?>> fieldValidators;
     protected List<Validator<V>> modelValidators;
     protected boolean useConfirmDialog;
-    protected FieldSorter fieldSorter;
+    protected Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter;
     protected ColumnsMode columnsMode;
 
     public BulkEditContext(MetaClass metaClass, Collection<V> selectedItems) {
@@ -104,11 +106,11 @@ public class BulkEditContext<V> {
     }
 
     @Nullable
-    public FieldSorter getFieldSorter() {
+    public Function<List<MetaProperty>, Map<MetaProperty, Integer>> getFieldSorter() {
         return fieldSorter;
     }
 
-    public void setFieldSorter(@Nullable FieldSorter fieldSorter) {
+    public void setFieldSorter(@Nullable Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter) {
         this.fieldSorter = fieldSorter;
     }
 

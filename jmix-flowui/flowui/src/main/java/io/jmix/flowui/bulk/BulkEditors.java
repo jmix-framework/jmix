@@ -46,7 +46,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * A bean that creates an instance of {@link BulkEditorBuilder}.
  */
-@Component("flowui_BulkEditors")
+@Component("ui_BulkEditors")
 public class BulkEditors {
 
     private static final Logger log = LoggerFactory.getLogger(BulkEditors.class);
@@ -99,9 +99,9 @@ public class BulkEditors {
         };
     }
 
-    protected void refreshItems(@Nullable DataUnit dataSource) {
-        if (dataSource instanceof ContainerDataUnit) {
-            CollectionContainer<?> container = ((ContainerDataUnit<?>) dataSource).getContainer();
+    protected void refreshItems(@Nullable DataUnit dataUnit) {
+        if (dataUnit instanceof ContainerDataUnit) {
+            CollectionContainer<?> container = ((ContainerDataUnit<?>) dataUnit).getContainer();
 
             DataLoader loader = null;
             if (container instanceof HasLoader) {
@@ -122,7 +122,7 @@ public class BulkEditors {
         context.setIncludeProperties(builder.getIncludeProperties());
         context.setFieldValidators(builder.getFieldValidators());
         context.setModelValidators(builder.getModelValidators());
-        context.setUseConfirmDialog(!Boolean.FALSE.equals(builder.isUseConfirmDialog()));
+        context.setUseConfirmDialog(builder.isUseConfirmDialog());
         context.setFieldSorter(builder.getFieldSorter());
         context.setColumnsMode(builder.getColumnsMode());
 

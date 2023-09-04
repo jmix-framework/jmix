@@ -17,9 +17,9 @@
 package io.jmix.flowui.bulk;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.app.bulk.BulkEditView;
 import io.jmix.flowui.app.bulk.ColumnsMode;
-import io.jmix.flowui.app.bulk.FieldSorter;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.view.DialogWindow;
@@ -49,8 +49,8 @@ public class BulkEditorBuilder<E> {
     protected List<String> includeProperties = Collections.emptyList();
     protected Map<String, Validator<?>> fieldValidators;
     protected List<Validator<E>> modelValidators;
-    protected Boolean useConfirmDialog;
-    protected FieldSorter fieldSorter;
+    protected boolean useConfirmDialog = true;
+    protected Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter;
     protected ColumnsMode columnsMode;
     protected View<?> origin;
 
@@ -151,12 +151,12 @@ public class BulkEditorBuilder<E> {
     }
 
     /**
-     * Sets field sorter that allows you to sort fields by custom logic.
+     * Sets field sorter function that allows you to sort fields by custom logic.
      *
-     * @param fieldSorter field sorter
+     * @param fieldSorter field sorter function
      * @return this builder
      */
-    public BulkEditorBuilder<E> withFieldSorter(FieldSorter fieldSorter) {
+    public BulkEditorBuilder<E> withFieldSorter(Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter) {
         this.fieldSorter = fieldSorter;
         return this;
     }
@@ -232,16 +232,15 @@ public class BulkEditorBuilder<E> {
     /**
      * @return whether the confirmation dialog should be displayed to the user before saving the changes
      */
-    @Nullable
-    public Boolean isUseConfirmDialog() {
+    public boolean isUseConfirmDialog() {
         return useConfirmDialog;
     }
 
     /**
-     * @return field sorter
+     * @return field sorter function
      */
     @Nullable
-    public FieldSorter getFieldSorter() {
+    public Function<List<MetaProperty>, Map<MetaProperty, Integer>> getFieldSorter() {
         return fieldSorter;
     }
 
@@ -263,9 +262,20 @@ public class BulkEditorBuilder<E> {
     }
 
     /**
+     * Builds an instance of DialogWindow for {@link BulkEditView}
      * @return a new instance of DialogWindow for {@link BulkEditView}
      */
-    public DialogWindow<BulkEditView<E>> create() {
+    public DialogWindow<BulkEditView<E>> build() {
         return handler.apply(this);
+    }
+
+    /**
+     * Builds and opens an instance of DialogWindow for {@link BulkEditView}
+     * @return a new instance of DialogWindow for {@link BulkEditView}
+     */
+    public DialogWindow<BulkEditView<E>> open() {
+        DialogWindow<BulkEditView<E>> dialogWindow = build();
+        dialogWindow.open();
+        return dialogWindow;
     }
 }

@@ -28,12 +28,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component("flowui_BulkEditorDataProvider")
-public class BulkEditorDataProvider {
+@Component("ui_BulkEditorDataLoadSupport")
+public class BulkEditorDataLoadSupport {
 
     protected final DataManager dataManager;
 
-    public BulkEditorDataProvider(DataManager dataManager) {
+    public BulkEditorDataLoadSupport(DataManager dataManager) {
         this.dataManager = dataManager;
     }
 

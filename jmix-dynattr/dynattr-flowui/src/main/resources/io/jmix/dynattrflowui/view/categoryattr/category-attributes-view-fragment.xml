@@ -17,7 +17,9 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://enumerationScreen.title">
     <data>
-        <collection id="categoryAttributesDc" class="io.jmix.dynattr.model.CategoryAttribute"/>
+        <collection id="categoryAttributesDc" class="io.jmix.dynattr.model.CategoryAttribute">
+            <loader id="categoryAttributesDl"/>
+        </collection>
         <instance id="categoryDc" class="io.jmix.dynattr.model.Category"/>
     </data>
     <layout spacing="true" expand="categoryAttrsGrid" margin="false" padding="false">
@@ -30,9 +32,9 @@
         </hbox>
         <dataGrid id="categoryAttrsGrid" dataContainer="categoryAttributesDc" width="100%">
             <actions>
-                <action id="create" type="list_create" />
-                <action id="edit" type="list_edit"/>
-                <action id="remove" type="list_remove"/>
+                <action id="create" icon="PLUS" />
+                <action id="edit" icon="PENCIL"/>
+                <action id="remove" icon="TRASH"/>
                 <action id="moveUp" icon="ARROW_UP" />
                 <action id="moveDown" icon="ARROW_DOWN" />
             </actions>

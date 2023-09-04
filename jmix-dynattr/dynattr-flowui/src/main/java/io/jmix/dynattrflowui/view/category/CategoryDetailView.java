@@ -95,16 +95,12 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
 
     @Subscribe
-    protected void onInit(InitEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         CategoryAttributesViewFragment categoryAttributesViewFragment = views.create(CategoryAttributesViewFragment.class);
         categoryAttributesViewFragment.setCategory(this.getEditedEntity());
-        categoryAttributesViewFragment.setParentDataContext(this.getViewData().getDataContext());
+        categoryAttributesViewFragment.setDataContext(this.getViewData().getDataContext());
         categoryAttrsBox.add(categoryAttributesViewFragment);
         categoryAttrsBox.expand(categoryAttributesViewFragment);
-    }
-
-    @Subscribe
-    protected void onBeforeShow(BeforeShowEvent event) {
         initEntityTypeField();
         initLocalizationTab();
         initAttributeLocationTab();

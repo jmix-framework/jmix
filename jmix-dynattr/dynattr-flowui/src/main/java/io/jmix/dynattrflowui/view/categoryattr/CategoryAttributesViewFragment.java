@@ -28,12 +28,11 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,9 +72,13 @@ public class CategoryAttributesViewFragment extends StandardView {
     protected MessageTools messageTools;
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
+    @Autowired
+    protected DialogWindows dialogWindows;
 
     @ViewComponent
     protected CollectionContainer<CategoryAttribute> categoryAttributesDc;
+    @ViewComponent
+    protected CollectionLoader<CategoryAttribute> categoryAttributesDl;
     @ViewComponent
     protected DataGrid<CategoryAttribute> categoryAttrsGrid;
     @ViewComponent
@@ -101,6 +104,7 @@ public class CategoryAttributesViewFragment extends StandardView {
         return new ComponentRenderer<>(this::categoryAttrsGridDefaultValueColumnComponent,
                 this::categoryAttrsGridDefaultValueColumnUpdater);
     }
+
     protected Span categoryAttrsGridDefaultValueColumnComponent() {
         return uiComponents.create(Span.class);
     }
@@ -209,21 +213,27 @@ public class CategoryAttributesViewFragment extends StandardView {
         text.setText(dataType);
     }
 
-    @Install(to = "categoryAttrsGrid.create", subject = "afterCloseHandler")
-    protected void categoryAttrsGridCreateAfterCommitHandler(DialogWindow.AfterCloseEvent<CategoryAttributesDetailView> afterCloseEvent) {
-        if(afterCloseEvent.getView().isCommited) {
-            CategoryAttribute categoryAttribute = afterCloseEvent.getView().getEditedEntity();
-            int orderNo = getMaxOrderNo(categoryAttribute) + 1;
-            categoryAttributesDc.getItem(categoryAttribute.getId()).setOrderNo(orderNo);
-            categoryAttributesDc.getMutableItems().add(categoryAttribute);
-            categoryAttrsGrid.getDataProvider().refreshAll();
-        }
+    @Subscribe("categoryAttrsGrid.create")
+    protected void categoryAttrsGridCreateAfterCommitHandler(ActionPerformedEvent event) {
+        dialogWindows.detail(this, CategoryAttribute.class)
+                .withViewClass(CategoryAttributesDetailView.class)
+                .withAfterCloseListener(e -> {
+                    if (e.getView().isCommited) {
+                        CategoryAttribute categoryAttribute = e.getView().getEditedEntity();
+                        categoryAttribute.setCategory(categoryDc.getItem());
+                        categoryAttributesDc.replaceItem(getViewData().getDataContext().merge(categoryAttribute));
+
+                        int orderNo = getMaxOrderNo(categoryAttribute) + 1;
+                        categoryAttributesDc.getItem(categoryAttribute.getId()).setOrderNo(orderNo);
+                        categoryAttributesDc.getMutableItems().add(categoryAttribute);
+                        categoryAttrsGrid.getDataProvider().refreshAll();
+                    }
+                })
+                .newEntity()
+                .build()
+                .open();
     }
 
-    @Install(to = "categoryAttrsGrid.create", subject = "initializer")
-    private void categoryAttrsGridCreateInitializer(CategoryAttribute categoryAttribute) {
-        categoryAttribute.setCategory(categoryDc.getItem());
-    }
 
     @Subscribe("categoryAttrsGrid")
     protected void onCategoryAttrsGridSelection(SelectionEvent<DataGrid<CategoryAttribute>, CategoryAttribute> event) {
@@ -310,9 +320,12 @@ public class CategoryAttributesViewFragment extends StandardView {
 
     public void setCategory(Category category) {
         categoryDc.setItem(category);
+        categoryAttributesDl.setQuery("select e from dynat_CategoryAttribute e where e.category = :category");
+        categoryAttributesDl.setParameter("category", category);
+        categoryAttributesDl.load();
     }
 
-    public void setParentDataContext(DataContext dataContext) {
-        this.getViewData().getDataContext().setParent(dataContext);
+    public void setDataContext(DataContext dataContext) {
+        this.getViewData().setDataContext(dataContext);
     }
 }

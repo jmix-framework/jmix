@@ -17,7 +17,6 @@
 package io.jmix.dynattrflowui.view.category;
 
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.router.Route;
@@ -85,6 +84,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected VerticalLayout categoryAttrsBox;
     @ViewComponent
     protected JmixTabSheet tabSheet;
+    @ViewComponent
+    protected VerticalLayout attributesLocationTabContainer;
+    @ViewComponent
+    protected VerticalLayout localizationTabContainer;
 
 
     protected AttributeLocalizationViewFragment localizationFragment;
@@ -94,6 +97,8 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     @Subscribe
     protected void onInit(InitEvent event) {
         CategoryAttributesViewFragment categoryAttributesViewFragment = views.create(CategoryAttributesViewFragment.class);
+        categoryAttributesViewFragment.setCategory(this.getEditedEntity());
+        categoryAttributesViewFragment.setParentDataContext(this.getViewData().getDataContext());
         categoryAttrsBox.add(categoryAttributesViewFragment);
         categoryAttrsBox.expand(categoryAttributesViewFragment);
     }
@@ -159,7 +164,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         ComponentUtils.setItemsMap(entityTypeField, options.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)));
-
+        entityTypeField.addValueChangeListener(e -> getEditedEntity().setEntityType(e.getValue().getName()));
         if (getEditedEntity().getEntityType() != null) {
             entityTypeField.setValue(extendedEntities.getEffectiveMetaClass(getEditedEntity().getEntityType()));
         }
@@ -173,12 +178,12 @@ public class CategoryDetailView extends StandardDetailView<Category> {
             CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
-            FormLayout localizationTabComponent = (FormLayout) tabSheet.getContentByTab(tabSheet.getTabAt(0));
             localizationFragment = views.create(AttributeLocalizationViewFragment.class);
             localizationFragment.setNameMsgBundle(getEditedEntity().getLocaleNames());
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
 
-            localizationTabComponent.add(localizationFragment);
+            localizationTabContainer.add(localizationFragment);
+            localizationTabContainer.expand(localizationFragment);
         }
     }
 
@@ -186,10 +191,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
         accessManager.applyRegisteredConstraints(crudEntityContext);
 
-        FormLayout attributesLocationTabComponent = (FormLayout) tabSheet.getContentByTab(tabSheet.getTabAt(1));  // 0 == "attributeLocationTab"
         attributeLocationFragment = views.create(AttributeLocationViewFragment.class);
         attributeLocationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
-        attributesLocationTabComponent.add(attributeLocationFragment);
+        attributesLocationTabContainer.add(attributeLocationFragment);
+        attributesLocationTabContainer.expand(attributeLocationFragment);
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)

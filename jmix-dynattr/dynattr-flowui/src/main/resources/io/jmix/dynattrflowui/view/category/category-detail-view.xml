@@ -16,7 +16,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-        title="msg://categoryDetailsView.title">
+      title="msg://categoryDetailsView.title">
     <data>
         <instance id="categoryDc"
                   class="io.jmix.dynattr.model.Category">
@@ -42,12 +42,11 @@
             <tab id="mainTab" label="msg://mainTab.title">
                 <vbox margin="false">
                     <formLayout id="form" dataContainer="categoryDc">
-<!--                        <responsiveSteps>-->
-<!--                            <responsiveStep minWidth="0" columns="1"/>-->
-<!--                            <responsiveStep minWidth="28em" columns="2"/>-->
-<!--                            <responsiveStep minWidth="42em" columns="3"/>-->
-<!--                            <responsiveStep minWidth="56em" columns="4"/>-->
-<!--                        </responsiveSteps>-->
+                        <responsiveSteps>
+                            <responsiveStep minWidth="0" columns="1"/>
+                            <responsiveStep minWidth="28em" columns="2"/>
+                            <responsiveStep minWidth="42em" columns="3"/>
+                        </responsiveSteps>
                         <textField id="nameField" property="name"
                                    required="true" requiredMessage="msg://nameField.required"/>
                         <comboBox id="entityTypeField"
@@ -62,12 +61,15 @@
                 </vbox>
             </tab>
             <tab id="localizationTab" label="msg://localizationTab.title" visible="false">
-                <formLayout dataContainer="categoryDc">
-                    <textField id="localizedNameField" property="name" readOnly="true"/>
-                </formLayout>
+                <vbox id="localizationTabContainer">
+                    <formLayout dataContainer="categoryDc">
+                        <textField id="localizedNameField" property="name" readOnly="true"/>
+                    </formLayout>
+
+                </vbox>
             </tab>
             <tab id="attributesLocationTab" label="msg://attributesLocationTab.title">
-                <div id="attributesLocationTabContainer"/>
+                <vbox id="attributesLocationTabContainer"/>
             </tab>
         </tabSheet>
         <hbox id="editActions" spacing="true">

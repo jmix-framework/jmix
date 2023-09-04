@@ -20,8 +20,11 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.dnd.GridDragStartEvent;
+import com.vaadin.flow.component.grid.dnd.GridDropEvent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.function.SerializablePredicate;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -88,8 +91,13 @@ public class AttributeLocationViewFragment extends StandardView {
     }
 
     @Subscribe
-    public void onAttach(AttachEvent event) {
+    public void onInit(InitEvent event) {
         setupFieldsLock();
+    }
+
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
+        refresh();
     }
 
     protected void setupFieldsLock() {
@@ -153,7 +161,7 @@ public class AttributeLocationViewFragment extends StandardView {
     protected void refresh() {
         refreshTargetDataGridBox();
         refreshContainers();
-//    todo    refreshDataGridDragAndDrop(sourceDataGrid, sourceDataContainer, true);
+        refreshDataGridDragAndDrop(sourceDataGrid, sourceDataContainer, true);
         refreshRowsCounts();
         refreshColumnsCountLookupField();
         refreshTargetDataGrids(getMaxColumnIndex() + 1);
@@ -233,7 +241,7 @@ public class AttributeLocationViewFragment extends StandardView {
         }
         dataContainers.add(dataContainer);
 
-//   todo     refreshDataGridDragAndDrop(targetDataGrid, dataContainer, false);
+        refreshDataGridDragAndDrop(targetDataGrid, dataContainer, false);
     }
 
     protected DataGrid<CategoryAttribute> createDataGrid(int i) {
@@ -281,85 +289,75 @@ public class AttributeLocationViewFragment extends StandardView {
         sourceDataContainer.removeAll(removeFromSource);
     }
 
-//  todo  protected void refreshDataGridDragAndDrop(DataGrid<CategoryAttribute> dataGrid,
-//                                              List<CategoryAttribute> dataContainer,
-//                                              boolean isSourceDataGrid) {
-//        DataProvider<CategoryAttribute, SerializablePredicate<CategoryAttribute>> dataProvider = new ListDataProvider<>(dataContainer);
-//        if (isSourceDataGrid) {
-//            attributesSourceDataContainer = dataContainer;
-//            attributesSourceDataProvider = dataProvider;
-//            attributesSourceGrid = dataGrid.unwrap(JmixGrid.class);
-//        }
-//        dataGrid.withUnwrapped(JmixGrid.class, grid -> {
-//            grid.setDataProvider(dataProvider);
-//            GridDragSource<CategoryAttribute> gridDragSource = new GridDragSource<>(grid);
-//            gridDragSource.addGridDragStartListener(this::onGridDragStart);
-//            GridDropTarget<CategoryAttribute> gridDropTarget = new GridDropTarget<>(grid, DropMode.BETWEEN);
-//            gridDropTarget.addGridDropListener(e -> onGridDrop(e, isSourceDataGrid));
-//        });
-//    }
+    protected void refreshDataGridDragAndDrop(DataGrid<CategoryAttribute> dataGrid,
+                                              List<CategoryAttribute> dataContainer,
+                                              boolean isSourceDataGrid) {
+        DataProvider<CategoryAttribute, SerializablePredicate<CategoryAttribute>> dataProvider = new ListDataProvider<>(dataContainer);
+        if (isSourceDataGrid) {
+            attributesSourceDataContainer = dataContainer;
+            attributesSourceDataProvider = dataProvider;
+            attributesSourceGrid = dataGrid;
+        }
 
-//   todo protected void onGridDragStart(GridDragStartEvent<CategoryAttribute> event) {
-//        if (isEnabled) {
-//            dragSourceGrid = event.getComponent();
-//            draggedItem = event.getDraggedItems().get(0);
-//            droppedSuccessful = false;
-//        }
-//    }
+        dataGrid.setDataProvider(dataProvider);
+        dataGrid.addDragStartListener(this::onGridDragStart);
+        dataGrid.addDropListener(e -> onGridDrop(e, isSourceDataGrid));
 
-//   todo protected void onGridDrop(GridDropEvent<CategoryAttribute> event, boolean isAttributesSourceGrid) {
-//        if (isEnabled) {
-//            event.getDragSourceExtension().ifPresent(source -> {
-//                int dropIndex = addToDestinationGrid(event, isAttributesSourceGrid, source);
-//                removeFromSourceGrid(dragSourceGrid, dragSourceGrid == attributesSourceGrid, event.getComponent(), dropIndex);
-//            });
-//        }
-//    }
+    }
 
-//  todo  protected int addToDestinationGrid(GridDropEvent<CategoryAttribute> event, boolean isSourceGrid, DragSourceExtension source) {
-//        if (isSourceGrid && EMPTY_CATEGORY_ATTRIBUTE_NAME.equals(draggedItem.getName())) {
-//            droppedSuccessful = true;
-//            return -1;
-//        }
-//        if (source instanceof GridDragSource) {
-//            //noinspection unchecked
-//            ListDataProvider<CategoryAttribute> dataProvider = (ListDataProvider<CategoryAttribute>)
-//                    event.getComponent().getDataProvider();
-//            List<CategoryAttribute> items = (List<CategoryAttribute>) dataProvider.getItems();
-//            int i = items.size();
-//            if (event.getDropTargetRow().isPresent()) {
-//                i = items.indexOf(event.getDropTargetRow().get())
-//                        + (event.getDropLocation() == DropLocation.BELOW ? 1 : 0);
-//            }
-//            items.add(i, draggedItem);
-//            dataProvider.refreshAll();
-//            droppedSuccessful = true;
-//            return i;
-//        }
-//        return -1;
-//    }
+    protected void onGridDragStart(GridDragStartEvent<CategoryAttribute> event) {
+        if (isEnabled) {
+            dragSourceGrid = (DataGrid<CategoryAttribute>) event.getSource();
+            draggedItem = event.getDraggedItems().get(0);
+            droppedSuccessful = false;
+        }
+    }
 
-//  todo  protected void removeFromSourceGrid(DataGrid<?> currentSourceGrid, boolean isAttributesSourceGrid, AbstractComponent dropComponent, int dropIndex) {
-//        if (!droppedSuccessful || draggedItem == null) {
-//            return;
-//        }
-//        //noinspection unchecked
-//        List<CategoryAttribute> items = (List<CategoryAttribute>) ((ListDataProvider<?>) currentSourceGrid.getDataProvider()).getItems();
-//        if (currentSourceGrid.equals(dropComponent) && dropIndex >= 0) {
-//            int removeIndex = items.indexOf(draggedItem) == dropIndex
-//                    ? items.lastIndexOf(draggedItem)
-//                    : items.indexOf(draggedItem);
-//            if (removeIndex >= 0 && removeIndex != dropIndex) {
-//                items.remove(removeIndex);
-//            }
-//        } else {
-//            items.remove(draggedItem);
-//        }
-//        if (isAttributesSourceGrid && EMPTY_CATEGORY_ATTRIBUTE_NAME.equals(draggedItem.getName())) {
-//            attributesSourceDataContainer.add(createEmptyCategoryAttribute());
-//        }
-//        currentSourceGrid.getDataProvider().refreshAll();
-//    }
+    protected void onGridDrop(GridDropEvent<CategoryAttribute> event, boolean isAttributesSourceGrid) {
+        if (isEnabled) {
+            event.getDropTargetItem().ifPresent(source -> {
+                int dropIndex = addToDestinationGrid(event, isAttributesSourceGrid);
+                removeFromSourceGrid(dragSourceGrid, dragSourceGrid == attributesSourceGrid, dropIndex);
+            });
+        }
+    }
+    // todo check drag and drop
+    protected int addToDestinationGrid(GridDropEvent<CategoryAttribute> event, boolean isSourceGrid) {
+        if (isSourceGrid && EMPTY_CATEGORY_ATTRIBUTE_NAME.equals(draggedItem.getName())) {
+            droppedSuccessful = true;
+            return -1;
+        }
+        //noinspection unchecked
+        ListDataProvider<CategoryAttribute> dataProvider = (ListDataProvider<CategoryAttribute>) sourceDataGrid.getDataProvider();
+        List<CategoryAttribute> items = (List<CategoryAttribute>) dataProvider.getItems();
+        int i = event.getDropLocation().ordinal();
+        items.add(i, draggedItem);
+        dataProvider.refreshAll();
+        droppedSuccessful = true;
+        return i;
+    }
+
+    protected void removeFromSourceGrid(DataGrid<?> currentSourceGrid, boolean isAttributesSourceGrid, int dropIndex) {
+        if (!droppedSuccessful || draggedItem == null) {
+            return;
+        }
+        //noinspection unchecked
+        List<CategoryAttribute> items = (List<CategoryAttribute>) ((ListDataProvider<?>) currentSourceGrid.getDataProvider()).getItems();
+        if (dropIndex >= 0) {
+            int removeIndex = items.indexOf(draggedItem) == dropIndex
+                    ? items.lastIndexOf(draggedItem)
+                    : items.indexOf(draggedItem);
+            if (removeIndex >= 0 && removeIndex != dropIndex) {
+                items.remove(removeIndex);
+            }
+        } else {
+            items.remove(draggedItem);
+        }
+        if (isAttributesSourceGrid && EMPTY_CATEGORY_ATTRIBUTE_NAME.equals(draggedItem.getName())) {
+            attributesSourceDataContainer.add(createEmptyCategoryAttribute());
+        }
+        currentSourceGrid.getDataProvider().refreshAll();
+    }
 
     protected void refreshSourceDataProvider() {
         if (attributesSourceDataProvider != null) {

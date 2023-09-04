@@ -22,8 +22,10 @@ import com.google.common.collect.Lists;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.LoadContext;
@@ -34,6 +36,7 @@ import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.Views;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -56,6 +59,7 @@ import java.util.stream.Collectors;
 @ViewDescriptor("attribute-enumeration-view-fragment.xml")
 @DialogMode() //todo forceDialog = true
 public class AttributeEnumerationViewFragment extends StandardView {
+    public static final String REMOVE_ITEM_COLUMN = "removeItem";
 
     @Autowired
     protected CoreProperties coreProperties;
@@ -78,6 +82,8 @@ public class AttributeEnumerationViewFragment extends StandardView {
     protected CollectionLoader<AttributeLocalizedEnumValue> localizedEnumValuesDl;
     @ViewComponent
     protected CollectionContainer<AttributeLocalizedEnumValue> localizedEnumValuesDc;
+    @ViewComponent
+    protected DataGrid<AttributeLocalizedEnumValue> localizedEnumValuesDataGrid;
 
     protected String enumeration;
     protected String enumerationLocales;
@@ -106,6 +112,15 @@ public class AttributeEnumerationViewFragment extends StandardView {
                 .map(AttributeLocalizedEnumValue::getLocalizedValues)
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining()));
+    }
+
+    @Subscribe
+    protected void onInit(InitEvent e) {
+        Grid.Column<AttributeLocalizedEnumValue> removeItemColumn = localizedEnumValuesDataGrid.getColumnByKey(REMOVE_ITEM_COLUMN);
+        if(removeItemColumn == null) {
+            throw new IllegalStateException("No column with key " + REMOVE_ITEM_COLUMN);
+        }
+        removeItemColumn.setRenderer(createRemoveItemColumnRenderer());
     }
 
     @Subscribe
@@ -141,18 +156,24 @@ public class AttributeEnumerationViewFragment extends StandardView {
         }
     }
 
-//   @Install(to = "localizedEnumValuesDataGrid.removeItem", subject = "columnGenerator")
-//    protected JmixButton localizedEnumValuesDataGridRemoveItemColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedEnumValue> event) {
-//        JmixButton linkButton = uiComponents.create(JmixButton.class);
-//        Action removeAction = new BaseAction("remove_item_" + event.getItem().getValue())
-//                .withHandler(actionPerformedEvent -> {
-//                    localizedEnumValues.remove(event.getItem());
-//                    localizedEnumValuesDl.load();
-//                })
-//                .withIcon(VaadinIcon.CLIPBOARD_CROSS.create());
-//        linkButton.setAction(removeAction);
-//        return linkButton;
-//    }
+    protected ComponentRenderer<Button, AttributeLocalizedEnumValue> createRemoveItemColumnRenderer() {
+        return new ComponentRenderer<>(this::createRemoveItemColumnComponent, this::gradeRemoveItemColumnUpdater);
+    }
+
+    protected Button createRemoveItemColumnComponent() {
+        return uiComponents.create(JmixButton.class);
+    }
+
+    protected void gradeRemoveItemColumnUpdater(Button button, AttributeLocalizedEnumValue customer) {
+        JmixButton linkButton = uiComponents.create(JmixButton.class);
+        Action removeAction = new BaseAction("remove_item_" + customer.getValue())
+                .withHandler(actionPerformedEvent -> {
+                    localizedEnumValues.remove(customer);
+                    localizedEnumValuesDl.load();
+                })
+                .withIcon(VaadinIcon.CLIPBOARD_CROSS.create());
+        linkButton.setAction(removeAction);
+    }
 
     @Subscribe(id = "localizedEnumValuesDc", target = Target.DATA_CONTAINER)
     protected void onLocalizedEnumValuesDcItemChange(InstanceContainer.ItemChangeEvent<AttributeLocalizedEnumValue> event) {

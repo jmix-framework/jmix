@@ -142,12 +142,12 @@ public class CategoryListView extends StandardListView<Category> {
         return new Span(labelContent);
     }
 
-    @Install(to = "categoriesGrid.edit", subject = "afterCommitHandler")
+    @Install(to = "categoriesGrid.edit", subject = "afterSaveHandler")
     private void categoriesGridEditAfterCommitHandler(Category category) {
         categoriesDl.load();
     }
 
-    @Install(to = "categoriesGrid.create", subject = "afterCommitHandler")
+    @Install(to = "categoriesGrid.create", subject = "afterSaveHandler")
     private void categoriesGridCreateAfterCommitHandler(Category category) {
         categoriesDl.load();
     }

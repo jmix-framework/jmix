@@ -37,7 +37,7 @@
                     </actions>
                     <columns>
                         <column key="value" property="value" editable="true"/>
-                        <column key="removeItem" editable="false" />
+                        <column key="removeItem" editable="false" header="msg://"/>
                     </columns>
                 </dataGrid>
             </vbox>

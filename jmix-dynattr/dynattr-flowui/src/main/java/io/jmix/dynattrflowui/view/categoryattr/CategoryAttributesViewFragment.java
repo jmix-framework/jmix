@@ -16,20 +16,24 @@
 
 package io.jmix.dynattrflowui.view.categoryattr;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
+import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionPropertyContainer;
+import io.jmix.flowui.model.DataContext;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,121 +77,157 @@ public class CategoryAttributesViewFragment extends StandardView {
     @ViewComponent
     protected CollectionContainer<CategoryAttribute> categoryAttributesDc;
     @ViewComponent
-    protected DataGrid<CategoryAttribute> categoryAttrsTable;
+    protected DataGrid<CategoryAttribute> categoryAttrsGrid;
+    @ViewComponent
+    protected InstanceContainer<Category> categoryDc;
     @ViewComponent
     protected Button moveUpBtn;
     @ViewComponent
     protected Button moveDownBtn;
 
+    @Subscribe
+    public void onInitEvent(InitEvent event) {
+        categoryAttrsGrid
+                .addColumn(createCategoryAttrsGridDataTypeRenderer())
+                .setHeader(messageTools.getPropertyCaption(metadata.getClass(CategoryAttribute.class), "dataType"));
 
-//    @Install(to = "categoryAttrsTable.defaultValue", subject = "columnGenerator")
-//    protected Span categoryAttrsTableDefaultValueColumnGenerator(CategoryAttribute attribute) {
-//        String defaultValue = "";
-//
-//        AttributeType dataType = attribute.getDataType();
-//        switch (dataType) {
-//            case BOOLEAN -> {
-//                Boolean b = attribute.getDefaultBoolean();
-//                if (b != null)
-//                    defaultValue = BooleanUtils.isTrue(b)
-//                            ? messages.getMessage("trueString")
-//                            : messages.getMessage("falseString");
-//            }
-//            case DATE -> {
-//                Date dateTime = attribute.getDefaultDate();
-//                if (dateTime != null) {
-//                    String dateTimeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateTimeFormat();
-//                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateTimeFormat);
-//                    defaultValue = simpleDateFormat.format(dateTime);
-//                } else if (BooleanUtils.isTrue(attribute.getDefaultDateIsCurrent())) {
-//                    defaultValue = messages.getMessage(CategoryAttributesViewFragment.class, "categoryAttrsTable.currentDate");
-//                }
-//            }
-//            case DATE_WITHOUT_TIME -> {
-//                LocalDate dateWoTime = attribute.getDefaultDateWithoutTime();
-//                if (dateWoTime != null) {
-//                    String dateWoTimeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateFormat();
-//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateWoTimeFormat);
-//                    defaultValue = dateWoTime.format(formatter);
-//                } else if (BooleanUtils.isTrue(attribute.getDefaultDateIsCurrent())) {
-//                    defaultValue = messages.getMessage(CategoryAttributesViewFragment.class, "categoryAttrsTable.currentDate");
-//                }
-//            }
-//            case DECIMAL -> {
-//                BigDecimal defaultDecimal = attribute.getDefaultDecimal();
-//                if (defaultDecimal != null) {
-//                    defaultValue = defaultDecimal.toString();
-//                }
-//            }
-//            case DOUBLE -> {
-//                Double defaultDouble = attribute.getDefaultDouble();
-//                if (defaultDouble != null) {
-//                    defaultValue = defaultDouble.toString();
-//                }
-//            }
-//            case ENTITY -> {
-//                Class<?> entityClass = attribute.getJavaType();
-//                if (entityClass != null) {
-//                    defaultValue = "";
-//                    if (attribute.getObjectDefaultEntityId() != null) {
-//                        MetaClass metaClass = metadata.getClass(entityClass);
-//                        LoadContext<?> lc = new LoadContext<>(metadata.getClass(attribute.getJavaType()));
-//                        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
-//                        lc.setFetchPlan(fetchPlan);
-//                        String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
-//                        lc.setQueryString(String.format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
-//                                .setParameter("entityId", attribute.getObjectDefaultEntityId());
-//                        Object entity = dataManager.load(lc);
-//                        if (entity != null) {
-//                            defaultValue = metadataTools.getInstanceName(entity);
-//                        }
-//                    }
-//                } else {
-//                    defaultValue = messages.getMessage(CategoryAttributesViewFragment.class, "categoryAttrsTable.entityNotFound");
-//                }
-//            }
-//            case ENUMERATION, STRING -> defaultValue = attribute.getDefaultString();
-//            case INTEGER -> {
-//                Integer defaultInt = attribute.getDefaultInt();
-//                if (defaultInt != null) {
-//                    defaultValue = defaultInt.toString();
-//                }
-//            }
-//        }
-//
-//        Span defaultValueLabel = uiComponents.create(Span.class);
-//        defaultValueLabel.setText(defaultValue);
-//        return defaultValueLabel;
-//    }
+        categoryAttrsGrid
+                .addColumn(createCategoryAttrsGridDefaultValueRenderer())
+                .setHeader(messages.getMessage(getClass(), "categoryAttrsGrid.defaultValue"));
 
-//    @Install(to = "categoryAttrsTable.dataType", subject = "valueProvider")
-//    protected String categoryAttrsTableDataTypeValueProvider(CategoryAttribute categoryAttribute) {
-//        String dataType;
-//        if (BooleanUtils.isTrue(categoryAttribute.getIsEntity())) {
-//            Class<?> javaType = categoryAttribute.getJavaType();
-//            if (javaType != null) {
-//                MetaClass metaClass = metadata.getClass(javaType);
-//                dataType = messageTools.getEntityCaption(metaClass);
-//            } else {
-//                dataType = messages.getMessage("classNotFound");
-//            }
-//        } else {
-//            String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
-//            dataType = messages.getMessage(AttributeType.class, key);
-//        }
-//
-//        return dataType;
-//    }
+    }
 
-//    @Install(to = "categoryAttrsTable.create", subject = "afterCommitHandler")
-//    protected void categoryAttrsTableCreateAfterCommitHandler(CategoryAttribute categoryAttribute) {
-//        int orderNo = getMaxOrderNo(categoryAttribute) + 1;
-//        categoryAttributesDc.getItem(categoryAttribute.getId()).setOrderNo(orderNo);
-//    }
+    protected ComponentRenderer<Span, CategoryAttribute> createCategoryAttrsGridDefaultValueRenderer() {
+        return new ComponentRenderer<>(this::categoryAttrsGridDefaultValueColumnComponent,
+                this::categoryAttrsGridDefaultValueColumnUpdater);
+    }
+    protected Span categoryAttrsGridDefaultValueColumnComponent() {
+        return uiComponents.create(Span.class);
+    }
 
-    @Subscribe("categoryAttrsTable")
-    protected void onCategoryAttrsTableSelection(SelectionEvent<DataGrid<CategoryAttribute>, CategoryAttribute> event) {
-        Set<CategoryAttribute> selected = categoryAttrsTable.getSelectedItems();
+    protected void categoryAttrsGridDefaultValueColumnUpdater(Span defaultValueLabel, CategoryAttribute attribute) {
+        String defaultValue = "";
+
+        AttributeType dataType = attribute.getDataType();
+        switch (dataType) {
+            case BOOLEAN -> {
+                Boolean b = attribute.getDefaultBoolean();
+                if (b != null)
+                    defaultValue = BooleanUtils.isTrue(b)
+                            ? messages.getMessage("trueString")
+                            : messages.getMessage("falseString");
+            }
+            case DATE -> {
+                Date dateTime = attribute.getDefaultDate();
+                if (dateTime != null) {
+                    String dateTimeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateTimeFormat();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateTimeFormat);
+                    defaultValue = simpleDateFormat.format(dateTime);
+                } else if (BooleanUtils.isTrue(attribute.getDefaultDateIsCurrent())) {
+                    defaultValue = messages.getMessage(CategoryAttributesViewFragment.class, "categoryAttrsGrid.currentDate");
+                }
+            }
+            case DATE_WITHOUT_TIME -> {
+                LocalDate dateWoTime = attribute.getDefaultDateWithoutTime();
+                if (dateWoTime != null) {
+                    String dateWoTimeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateFormat();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateWoTimeFormat);
+                    defaultValue = dateWoTime.format(formatter);
+                } else if (BooleanUtils.isTrue(attribute.getDefaultDateIsCurrent())) {
+                    defaultValue = messages.getMessage(CategoryAttributesViewFragment.class, "categoryAttrsGrid.currentDate");
+                }
+            }
+            case DECIMAL -> {
+                BigDecimal defaultDecimal = attribute.getDefaultDecimal();
+                if (defaultDecimal != null) {
+                    defaultValue = defaultDecimal.toString();
+                }
+            }
+            case DOUBLE -> {
+                Double defaultDouble = attribute.getDefaultDouble();
+                if (defaultDouble != null) {
+                    defaultValue = defaultDouble.toString();
+                }
+            }
+            case ENTITY -> {
+                Class<?> entityClass = attribute.getJavaType();
+                if (entityClass != null) {
+                    defaultValue = "";
+                    if (attribute.getObjectDefaultEntityId() != null) {
+                        MetaClass metaClass = metadata.getClass(entityClass);
+                        LoadContext<?> lc = new LoadContext<>(metadata.getClass(attribute.getJavaType()));
+                        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
+                        lc.setFetchPlan(fetchPlan);
+                        String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
+                        lc.setQueryString(String.format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
+                                .setParameter("entityId", attribute.getObjectDefaultEntityId());
+                        Object entity = dataManager.load(lc);
+                        if (entity != null) {
+                            defaultValue = metadataTools.getInstanceName(entity);
+                        }
+                    }
+                } else {
+                    defaultValue = messages.getMessage(CategoryAttributesViewFragment.class, "categoryAttrsGrid.entityNotFound");
+                }
+            }
+            case ENUMERATION, STRING -> defaultValue = attribute.getDefaultString();
+            case INTEGER -> {
+                Integer defaultInt = attribute.getDefaultInt();
+                if (defaultInt != null) {
+                    defaultValue = defaultInt.toString();
+                }
+            }
+        }
+
+        defaultValueLabel.setText(defaultValue);
+    }
+
+    protected ComponentRenderer<Text, CategoryAttribute> createCategoryAttrsGridDataTypeRenderer() {
+        return new ComponentRenderer<>(this::categoryAttrsGridDataTypeComponent,
+                this::categoryAttrsGridDataTypeUpdater);
+    }
+
+    protected Text categoryAttrsGridDataTypeComponent() {
+        return new Text(null);
+    }
+
+    protected void categoryAttrsGridDataTypeUpdater(Text text, CategoryAttribute categoryAttribute) {
+        String dataType;
+        if (BooleanUtils.isTrue(categoryAttribute.getIsEntity())) {
+            Class<?> javaType = categoryAttribute.getJavaType();
+            if (javaType != null) {
+                MetaClass metaClass = metadata.getClass(javaType);
+                dataType = messageTools.getEntityCaption(metaClass);
+            } else {
+                dataType = messages.getMessage("classNotFound");
+            }
+        } else {
+            String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
+            dataType = messages.getMessage(AttributeType.class, key);
+        }
+
+        text.setText(dataType);
+    }
+
+    @Install(to = "categoryAttrsGrid.create", subject = "afterCloseHandler")
+    protected void categoryAttrsGridCreateAfterCommitHandler(DialogWindow.AfterCloseEvent<CategoryAttributesDetailView> afterCloseEvent) {
+        if(afterCloseEvent.getView().isCommited) {
+            CategoryAttribute categoryAttribute = afterCloseEvent.getView().getEditedEntity();
+            int orderNo = getMaxOrderNo(categoryAttribute) + 1;
+            categoryAttributesDc.getItem(categoryAttribute.getId()).setOrderNo(orderNo);
+            categoryAttributesDc.getMutableItems().add(categoryAttribute);
+            categoryAttrsGrid.getDataProvider().refreshAll();
+        }
+    }
+
+    @Install(to = "categoryAttrsGrid.create", subject = "initializer")
+    private void categoryAttrsGridCreateInitializer(CategoryAttribute categoryAttribute) {
+        categoryAttribute.setCategory(categoryDc.getItem());
+    }
+
+    @Subscribe("categoryAttrsGrid")
+    protected void onCategoryAttrsGridSelection(SelectionEvent<DataGrid<CategoryAttribute>, CategoryAttribute> event) {
+        Set<CategoryAttribute> selected = categoryAttrsGrid.getSelectedItems();
         if (selected.isEmpty()) {
             refreshMoveButtonsEnabled(null);
         } else {
@@ -195,9 +235,9 @@ public class CategoryAttributesViewFragment extends StandardView {
         }
     }
 
-    @Subscribe("categoryAttrsTable.moveUp")
-    protected void onCategoryAttrsTableMoveUp(ActionPerformedEvent event) {
-        Set<CategoryAttribute> selectedItem = categoryAttrsTable.getSelectedItems();
+    @Subscribe("categoryAttrsGrid.moveUp")
+    protected void onCategoryAttrsGridMoveUp(ActionPerformedEvent event) {
+        Set<CategoryAttribute> selectedItem = categoryAttrsGrid.getSelectedItems();
         if (selectedItem.isEmpty()) {
             return;
         }
@@ -209,14 +249,14 @@ public class CategoryAttributesViewFragment extends StandardView {
         if (prevAttribute != null) {
             selectedAttribute.setOrderNo(prevAttribute.getOrderNo());
             prevAttribute.setOrderNo(selectedAttributeOrderNo);
-            sortCategoryAttrsTableByOrderNo();
+            sortCategoryAttrsGridByOrderNo();
             refreshMoveButtonsEnabled(selectedAttribute);
         }
     }
 
-    @Subscribe("categoryAttrsTable.moveDown")
-    protected void onCategoryAttrsTableMoveDown(ActionPerformedEvent event) {
-        Set<CategoryAttribute> selectedItem = categoryAttrsTable.getSelectedItems();
+    @Subscribe("categoryAttrsGrid.moveDown")
+    protected void onCategoryAttrsGridMoveDown(ActionPerformedEvent event) {
+        Set<CategoryAttribute> selectedItem = categoryAttrsGrid.getSelectedItems();
         if (selectedItem.isEmpty()) {
             return;
         }
@@ -228,7 +268,7 @@ public class CategoryAttributesViewFragment extends StandardView {
         if (nextAttribute != null) {
             selectedAttribute.setOrderNo(nextAttribute.getOrderNo());
             nextAttribute.setOrderNo(selectedAttributeOrderNo);
-            sortCategoryAttrsTableByOrderNo();
+            sortCategoryAttrsGridByOrderNo();
             refreshMoveButtonsEnabled(selectedAttribute);
         }
     }
@@ -258,7 +298,7 @@ public class CategoryAttributesViewFragment extends StandardView {
                 .orElse(null);
     }
 
-    protected void sortCategoryAttrsTableByOrderNo() {
+    protected void sortCategoryAttrsGridByOrderNo() {
         Objects.requireNonNull(categoryAttributesDc.getSorter())
                 .sort(Sort.by(Sort.Direction.ASC, "orderNo"));
     }
@@ -266,5 +306,13 @@ public class CategoryAttributesViewFragment extends StandardView {
     protected void refreshMoveButtonsEnabled(@Nullable CategoryAttribute categoryAttribute) {
         moveUpBtn.setEnabled(categoryAttribute != null && getPrevAttribute(categoryAttribute.getOrderNo()) != null);
         moveDownBtn.setEnabled(categoryAttribute != null && getNextAttribute(categoryAttribute.getOrderNo()) != null);
+    }
+
+    public void setCategory(Category category) {
+        categoryDc.setItem(category);
+    }
+
+    public void setParentDataContext(DataContext dataContext) {
+        this.getViewData().getDataContext().setParent(dataContext);
     }
 }

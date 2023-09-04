@@ -24,8 +24,8 @@
             <loader id="localizedValuesDl"/>
         </collection>
     </data>
-    <layout spacing="true" margin="false" padding="false">
-        <dataGrid id="localizedValuesDataGrid" dataContainer="localizedValuesDc" width="100%" height="100%" editorBuffered="true" >
+    <layout spacing="true" margin="false" padding="false" width="100%" height="100%">
+        <dataGrid id="localizedValuesDataGrid" dataContainer="localizedValuesDc" width="100%" minHeight="25em" editorBuffered="true" >
             <columns>
                 <column key="language" editable="false"/>
                 <column key="name" property="name" editable="true"/>

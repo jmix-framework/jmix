@@ -18,29 +18,28 @@
       title="msg://enumerationScreen.title">
     <data>
         <collection id="categoryAttributesDc" class="io.jmix.dynattr.model.CategoryAttribute"/>
+        <instance id="categoryDc" class="io.jmix.dynattr.model.Category"/>
     </data>
-    <layout spacing="true" expand="categoryAttrsTable" margin="false" padding="false">
+    <layout spacing="true" expand="categoryAttrsGrid" margin="false" padding="false">
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createBtn" action="categoryAttrsTable.create"/>
-            <button id="editBtn" action="categoryAttrsTable.edit"/>
-            <button id="removeBtn" action="categoryAttrsTable.remove"/>
-            <button id="moveUpBtn" action="categoryAttrsTable.moveUp"/>
-            <button id="moveDownBtn" action="categoryAttrsTable.moveDown"/>
+            <button id="createBtn" action="categoryAttrsGrid.create"/>
+            <button id="editBtn" action="categoryAttrsGrid.edit"/>
+            <button id="removeBtn" action="categoryAttrsGrid.remove"/>
+            <button id="moveUpBtn" action="categoryAttrsGrid.moveUp"/>
+            <button id="moveDownBtn" action="categoryAttrsGrid.moveDown"/>
         </hbox>
-        <dataGrid id="categoryAttrsTable" dataContainer="categoryAttributesDc" width="100%">
+        <dataGrid id="categoryAttrsGrid" dataContainer="categoryAttributesDc" width="100%">
             <actions>
-                <action id="create" type="list_create"/>
+                <action id="create" type="list_create" />
                 <action id="edit" type="list_edit"/>
                 <action id="remove" type="list_remove"/>
                 <action id="moveUp" icon="ARROW_UP" />
                 <action id="moveDown" icon="ARROW_DOWN" />
             </actions>
             <columns>
-                <column key="name"/>
-                <column key="code"/>
-                <column key="dataType"/>
-                <column key="required"/>
-                <column key="defaultValue" header="msg://categoryAttrsTable.defaultValue"/>
+                <column property="name"/>
+                <column property="code"/>
+                <column property="required"/>
             </columns>
         </dataGrid>
     </layout>

@@ -23,6 +23,7 @@ import com.google.common.collect.Multimap;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
@@ -90,7 +91,6 @@ import static java.lang.String.format;
 @EditedEntityContainer("categoryAttributeDc")
 @DialogMode(width = "50em", height = "37.5em") // todo forceDialog = true
 public class CategoryAttributesDetailView extends StandardDetailView<CategoryAttribute> {
-
     protected static final String DATA_TYPE_PROPERTY = "dataType";
     protected static final String DEFAULT_DATE_IS_CURRENT_PROPERTY = "defaultDateIsCurrent";
     protected static final String ENTITY_CLASS_PROPERTY = "entityClass";
@@ -261,6 +261,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected AttributeLocalizationViewFragment localizationFragment;
 
     protected List<TargetViewComponent> targetScreens = new ArrayList<>();
+
+    protected boolean isCommited = false;
 
 
     @Subscribe
@@ -477,7 +479,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             CrudEntityContext crudEntityContext = new CrudEntityContext(configurationDc.getEntityMetaClass());
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
-            VerticalLayout localizationTabComponent = (VerticalLayout) tabSheet.getComponent(localizationTab);
+            HorizontalLayout localizationTabComponent = (HorizontalLayout) tabSheet.getComponent(localizationTab);
             localizationFragment = views.create(AttributeLocalizationViewFragment.class);
             localizationFragment.setNameMsgBundle(getEditedEntity().getNameMsgBundle());
             localizationFragment.setDescriptionMsgBundle(getEditedEntity().getDescriptionsMsgBundle());
@@ -945,21 +947,24 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    @Subscribe(target = Target.DATA_CONTEXT)
-    protected void onPreCommit(DataContext.PreSaveEvent event) {
-        preCommitLocalizationFields(event);
-        preCommitTargetScreensField(event);
-        preCommitConfiguration(event);
+    @Subscribe("windowCommitAndCloseButton")
+    protected void windowCommitAndCloseClicked(ClickEvent<Button> e) {
+        isCommited = true;
+        preCommitLocalizationFields();
+        preCommitTargetScreensField();
+        preCommitConfiguration();
+        closeWithDiscard();
     }
 
-    protected void preCommitLocalizationFields(DataContext.PreSaveEvent event) {
+    protected void preCommitLocalizationFields() {
+
         if (localizationFragment != null) {
             getEditedEntity().setLocaleNames(localizationFragment.getNameMsgBundle());
             getEditedEntity().setLocaleDescriptions(localizationFragment.getDescriptionMsgBundle());
         }
     }
 
-    protected void preCommitTargetScreensField(DataContext.PreSaveEvent event) {
+    protected void preCommitTargetScreensField() {
         CategoryAttribute attribute = getEditedEntity();
         StringBuilder stringBuilder = new StringBuilder();
         for (TargetViewComponent targetViewComponent : targetScreensDc.getItems()) {
@@ -979,7 +984,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         attribute.setTargetScreens(stringBuilder.toString());
     }
 
-    protected void preCommitConfiguration(DataContext.PreSaveEvent event) {
+    protected void preCommitConfiguration() {
         CategoryAttribute attribute = getEditedEntity();
         if (attribute.getConfiguration() != null) {
             if (dependsOnAttributesField.getValue() != null) {
@@ -995,7 +1000,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             CategoryAttributeConfiguration configuration = configurationDc.getItemOrNull();
             if (configuration != null) {
                 attribute.setConfiguration((CategoryAttributeConfiguration) configuration.clone());
-                getViewData().getDataContext().getModified().add(attribute);
+                getViewData().getDataContext().merge(attribute);
             }
         }
     }

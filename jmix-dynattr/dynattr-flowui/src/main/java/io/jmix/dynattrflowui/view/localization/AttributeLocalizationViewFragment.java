@@ -16,10 +16,15 @@
 
 package io.jmix.dynattrflowui.view.localization;
 
+import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.server.startup.VaadinInitializerException;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
@@ -36,6 +41,7 @@ public class AttributeLocalizationViewFragment extends StandardView {
 
     protected static final String NAME_PROPERTY = "name";
     protected static final String DESCRIPTION_PROPERTY = "description";
+    protected static final String LANG_PROPERTY = "language";
 
     @Autowired
     protected CoreProperties coreProperties;
@@ -47,6 +53,8 @@ public class AttributeLocalizationViewFragment extends StandardView {
     protected Messages messages;
     @Autowired
     protected MessageTools messageTools;
+    @Autowired
+    protected UiComponents uiComponents;
 
     @ViewComponent
     protected CollectionLoader<AttributeLocalizedValue> localizedValuesDl;
@@ -86,30 +94,47 @@ public class AttributeLocalizationViewFragment extends StandardView {
     }
 
     @Subscribe
-    protected void onInit(InitEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         loadLocalizedValues();
         initLocalizedValuesDataGrid();
         setupFieldsLock();
+
+        initDataGrid();
     }
 
-//    @Install(to = "localizedValuesDl", target = Target.DATA_LOADER)
-//    protected List<AttributeLocalizedValue> localizedValuesDlLoadDelegate(LoadContext<AttributeLocalizedValue> loadContext) {
-//        return localizedValues;
-//    }
+    private void initDataGrid() {
+        Grid.Column<AttributeLocalizedValue> languageColumn = localizedValuesDataGrid.getColumnByKey(LANG_PROPERTY);
+        if (languageColumn == null) {
+            throw new IllegalStateException("No language column");
+        }
+        languageColumn.setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), LANG_PROPERTY));
+        languageColumn.setRenderer(createLangColumnComponentRenderer());
+    }
 
-//  todo  @Install(to = "localizedValuesDataGrid.language", subject = "columnGenerator")
-//    protected String localizedValuesDataGridLanguageColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedValue> event) {
-//        AttributeLocalizedValue localizedValue = event.getItem();
-//        return localizedValue.getLanguage() + "|" + localizedValue.getLocale();
-//    }
+    @Install(to = "localizedValuesDl", target = Target.DATA_LOADER)
+    protected List<AttributeLocalizedValue> localizedValuesDlLoadDelegate(LoadContext<AttributeLocalizedValue> loadContext) {
+        return localizedValues;
+    }
 
-//    @Install(to = "localizedValuesDataGrid", subject = "rowDescriptionProvider")
-//    protected String localizedValuesDataGridRowDescriptionProvider(AttributeLocalizedValue localizedValue) {
-//        return messages.getMessage(AttributeLocalizationViewFragment.class, "localizedValuesDataGrid.columnDescription");
-//    }
+    protected ComponentRenderer<Text, AttributeLocalizedValue> createLangColumnComponentRenderer() {
+        return new ComponentRenderer<>(this::createLangColumnComponent, this::langColumnComponentUpdater);
+    }
+
+    protected Text createLangColumnComponent() {
+        return new Text(null);
+    }
+
+    protected void langColumnComponentUpdater(Text text, AttributeLocalizedValue customer) {
+        String value = customer.getLanguage() + "|" + customer.getLocale();
+        text.setText(value);
+    }
 
     protected void initLocalizedValuesDataGrid() {
-        localizedValuesDataGrid.getColumnByKey(DESCRIPTION_PROPERTY).setVisible(descriptionColumnVisible);
+        Grid.Column<AttributeLocalizedValue> descriptionCol = localizedValuesDataGrid.getColumnByKey(DESCRIPTION_PROPERTY);
+        if (descriptionCol == null) {
+            throw new IllegalStateException("No description column");
+        }
+        descriptionCol.setVisible(descriptionColumnVisible);
     }
 
     protected void setupFieldsLock() {

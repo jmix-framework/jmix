@@ -38,7 +38,6 @@
         </collection>
     </data>
     <actions>
-        <action id="windowCommitAndClose" type="detail_saveClose"/>
         <action id="windowClose" type="detail_close"/>
     </actions>
     <facets>
@@ -166,7 +165,7 @@
             </tab>
         </tabSheet>
         <hbox id="editActions" spacing="true">
-            <button action="windowCommitAndClose"/>
+            <button id="windowCommitAndCloseButton"/>
             <button action="windowClose"/>
         </hbox>
     </layout>

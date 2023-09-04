@@ -93,6 +93,9 @@ dependencies {
         api 'cn.jmix:jmixcn-imagecropper:0.2.0'
         api 'cn.jmix:jmixcn-imagecropper-starter:0.2.0'
 
+        api 'dev.warhammster.jmix:miniofs:1.5.0'
+        api 'dev.warhammster.jmix:miniofs-starter:1.5.0'
+
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

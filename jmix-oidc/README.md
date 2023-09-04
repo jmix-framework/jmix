@@ -28,8 +28,8 @@ Before starting the application the client must be configured. "Client" is Jmix 
 spring.security.oauth2.client.registration.keycloak.client-id=<client-id>
 spring.security.oauth2.client.registration.keycloak.client-secret=<client-secret>
 spring.security.oauth2.client.registration.keycloak.scope=openid, profile, email
-spring.security.oauth2.client.provider.keycloak.issuer-uri=http://localhost:8180/auth/realms/<realm>
-spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8180/auth/realms/<realm>
+spring.security.oauth2.client.provider.keycloak.issuer-uri=http://localhost:8180/realms/<realm>
+spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8180/realms/<realm>
 ```
 
 "keycloak" in the property key is the provider id. It may have any value, e.g. `spring.security.oauth2.client.registration.okta.client-id`. Client ID and client secret values must be taken from the OpenID provider. The *issuer-uri* property contains a path to the OpenID Provider [Configuration Endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig).
@@ -212,7 +212,7 @@ public class MySynchronizingOidcUserMapper extends SynchronizingOidcUserMapper<U
 Jmix application may work as a resource server. To specify which authorization server to use, define the following application property:
 
 ```properties
-spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8180/auth/realms/<realm>
+spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8180/realms/<realm>
 ```
 
 The value of the property is the URL contained in the `iss` claim for JWT tokens that the authorization server will issue. See Spring Security [documentation](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html#_specifying_the_authorization_server) for details.
@@ -296,64 +296,17 @@ You want all URLs starting with `/authenticated/` to be protected and all URLs s
 
 One of the most popular OpenID Providers is Keycloak (https://www.keycloak.org/). To get familiar with the jmix-oidc add-on you may run Keycloak locally using Docker.
 
-### Starting Keycloak Using Docker Compose
+### Starting Keycloak Using Docker
 
-Use `docker-compose.yml` to launch Keycloak with Postgres database.
+Use the following comment to start Keycloak instance using Docker on a port 8180:
 
-```dockerfile
-version: '3'
-
-volumes:
-  postgres_data:
-    driver: local
-
-services:
-  postgres:
-    image: 'postgres:alpine'
-    volumes:
-      - ./postgres:/var/lib/postgresql/data
-#    restart: 'always'
-    ports:
-      - 5432:5432
-    environment:
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: keycloak
-      POSTGRES_HOST: postgres
-
-  keycloak:
-    image: jboss/keycloak:16.1.0
-    environment:
-      DB_VENDOR: postgres
-      DB_ADDR: postgres
-      DB_PORT: 5432
-      DB_DATABASE: keycloak
-      DB_USER: keycloak
-      DB_PASSWORD: password
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-      DEBUG: 'true'
-      DEBUG_PORT: 5005
-      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-    volumes:
-      - ./kk_data/data:/opt/jboss/keycloak/standalone/data
-      - ./kk_data/export:/opt/jboss/keycloak/export-dir
-      - ./kk_data/import:/opt/jboss/keycloak/import-dir
-      - ./kk_data/deployments:/opt/jboss/keycloak/standalone/deployments
-    ports:
-      - 8180:8080
-      - 5005:5005
-    depends_on:
-      - postgres
+```shell
+docker run -p 8180:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin --name keycloak quay.io/keycloak/keycloak:22.0 start-dev
 ```
 
-Run the command:
+See [Keycloak documentation](https://www.keycloak.org/getting-started/getting-started-docker) for details.
 
-```
-docker-compose up
-```
-
-Keycloak URL: http://localhost:8180/auth
+Keycloak URL: http://localhost:8180
 
 Admin credentials:
 ```
@@ -371,24 +324,40 @@ Point to the top of the left pane.
 
 Click **Add Realm**.
 
+![create_realm_1.png](images/create_realm_1.png)
+
 Give a name to the new realm, e.g. "sample".
 
-![create_realm.png](images/create_realm.png)
+![create_realm_2.png](images/create_realm_2.png)
 
 ### Creating a Client
 
-In order to connect a Jmix application to Keycloak, we need to create a new client **jmix-app** with the Client Protocol **openid-protocol**.
+In order to connect a Jmix application to Keycloak, we need to create a new client **jmix-app** with the Client type **OpenID Connect**.
 
 ![create_client_1.png](images/create_client_1.png)
 
-Set **Access Type** to `confidential` for the client.
+Enable **Client authentication**.
 
 ![create_client_2.png](images/create_client_2.png)
 
-After saving the new tab **Credentials** will appear. It displays **Client Secret**,
+Enter the Valid redirect URIs:
+
+```
+http://localhost:8080/*
+```
+
+and Web origins:
+
+```
+http://localhost:8080
+```
+
+![create_client_3.png](images/create_client_3.png)
+
+Open the just created client and go to the **Credentials** tab. It displays the **Client Secret**,
 which we need to set up a connection in the Jmix project.
 
-![client_secret.png](images/client_credentials.png)
+![client_credentials.png](images/client_credentials.png)
 
 Client parameters should be used in the `application.properties` file. See the **Configuring Client** section.
 
@@ -414,8 +383,16 @@ In the **Role Mappings** tab assign the **system-full-access** role.
 
 If you want to fill user attributes (e.g. "position") you can do that in **Attributes** tab in the user editor.
 
-### Creating the Mapper
+### Creating the Roles Mapper
 
-In order to return roles information in the ID Token we need to define a mapper for the **jmix-app** client. Open the client editor and switch to the **Mappers** tab. Create a new mapper there. The collection of role names will be returned in the "roles" claim.
+In order to return realm roles information in the ID Token we need to define a mapper for the **jmix-app** client. Open the client editor and switch to the **Client scopes** tab. 
 
-![create_mapper.png](images/create_mapper.png)
+![create_mapper_1.png](images/create_mapper_1.png)
+
+Open the editor of the **jmix-app-dedicated** scope. Add a predefined mapper for the "realm roles" there.
+
+![create_mapper_2.png](images/create_mapper_2.png)
+
+Edit the realm's **Token Claim Name** attribute value and select the **Add to userinfo** checkbox:
+
+![create_mapper_3.png](images/create_mapper_3.png)

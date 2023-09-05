@@ -214,7 +214,7 @@ public class CategoryAttributesViewFragment extends StandardView {
     }
 
     @Subscribe("categoryAttrsGrid.create")
-    protected void categoryAttrsGridCreateAfterCommitHandler(ActionPerformedEvent event) {
+    protected void categoryAttrsGridCreateListener(ActionPerformedEvent event) {
         dialogWindows.detail(this, CategoryAttribute.class)
                 .withViewClass(CategoryAttributesDetailView.class)
                 .withAfterCloseListener(e -> {
@@ -232,6 +232,35 @@ public class CategoryAttributesViewFragment extends StandardView {
                 .newEntity()
                 .build()
                 .open();
+    }
+
+    @Subscribe("categoryAttrsGrid.edit")
+    protected void categoryAttrsGridEditListener(ActionPerformedEvent event) {
+        dialogWindows.detail(this, CategoryAttribute.class)
+                .withViewClass(CategoryAttributesDetailView.class)
+                .withAfterCloseListener(e -> {
+                    if (e.getView().isCommited) {
+                        CategoryAttribute categoryAttribute = e.getView().getEditedEntity();
+                        categoryAttribute.setCategory(categoryDc.getItem());
+                        categoryAttributesDc.replaceItem(getViewData().getDataContext().merge(categoryAttribute));
+
+                        int orderNo = getMaxOrderNo(categoryAttribute) + 1;
+                        categoryAttributesDc.getItem(categoryAttribute.getId()).setOrderNo(orderNo);
+                        categoryAttributesDc.getMutableItems().add(categoryAttribute);
+                        categoryAttrsGrid.getDataProvider().refreshAll();
+                    }
+                })
+                .editEntity(Objects.requireNonNull(categoryAttrsGrid.getSingleSelectedItem()))
+                .build()
+                .open();
+    }
+
+    @Subscribe("categoryAttrsGrid.remove")
+    protected void categoryAttrsGridRemoveListener(ActionPerformedEvent event) {
+        CategoryAttribute selected = Objects.requireNonNull(categoryAttrsGrid.getSingleSelectedItem());
+        categoryAttributesDc.getMutableItems().remove(selected);
+        getViewData().getDataContext().remove(selected);
+        categoryAttrsGrid.getDataProvider().refreshAll();
     }
 
 

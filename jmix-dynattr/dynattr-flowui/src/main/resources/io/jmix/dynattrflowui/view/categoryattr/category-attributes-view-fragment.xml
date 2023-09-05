@@ -32,9 +32,9 @@
         </hbox>
         <dataGrid id="categoryAttrsGrid" dataContainer="categoryAttributesDc" width="100%">
             <actions>
-                <action id="create" icon="PLUS" />
-                <action id="edit" icon="PENCIL"/>
-                <action id="remove" icon="TRASH"/>
+                <action id="create" icon="PLUS" text="msg:///actions.Create"/>
+                <action id="edit" icon="PENCIL" text="msg:///actions.Edit"/>
+                <action id="remove" icon="TRASH" text="msg:///actions.Remove"/>
                 <action id="moveUp" icon="ARROW_UP" />
                 <action id="moveDown" icon="ARROW_DOWN" />
             </actions>

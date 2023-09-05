@@ -356,6 +356,7 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.FormItem",
             xmlElement = "formItem",
             possibleChildren = "com.vaadin.flow.component.Component",
+            maxCountOfChildren = 1,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),

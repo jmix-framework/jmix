@@ -20,13 +20,23 @@ import com.google.common.collect.Sets;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.RoleProvider;
 import io.jmix.security.role.RoleRepository;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Base implementation of the {@link RoleRepository} interface. It searches for roles in {@link RoleProvider}s and
+ * supports roles caching.
+ *
+ * @param <T> the role type supported by the repository
+ */
 public abstract class BaseRoleRepository<T extends BaseRole> implements RoleRepository<T> {
+
+    protected Map<String, T> rolesCache = new ConcurrentHashMap<>();
 
     protected abstract Collection<? extends RoleProvider<T>> getRoleProviders();
 
@@ -34,7 +44,7 @@ public abstract class BaseRoleRepository<T extends BaseRole> implements RoleRepo
 
     @Override
     public T findRoleByCode(String code) {
-        return findRoleByCodeExcludeVisited(code, Sets.newHashSet());
+        return rolesCache.computeIfAbsent(code, k -> findRoleByCodeExcludeVisited(k, Sets.newHashSet()));
     }
 
     @Override
@@ -78,5 +88,10 @@ public abstract class BaseRoleRepository<T extends BaseRole> implements RoleRepo
             }
         }
         return null;
+    }
+
+    @Override
+    public void invalidateCache() {
+        rolesCache.clear();
     }
 }

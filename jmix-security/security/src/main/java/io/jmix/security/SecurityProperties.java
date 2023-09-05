@@ -27,8 +27,16 @@ public class SecurityProperties {
      */
     boolean annotatedRolesHotDeployEnabled;
 
-    public SecurityProperties(@DefaultValue("true") boolean annotatedRolesHotDeployEnabled) {
+    /**
+     * Default prefix for row-level role code stored in the Authentication object
+     */
+    String defaultRowLevelRolePrefix;
+
+    public SecurityProperties(
+            @DefaultValue("true") boolean annotatedRolesHotDeployEnabled,
+            @DefaultValue("ROW_LEVEL_ROLE_") String defaultRowLevelRolePrefix) {
         this.annotatedRolesHotDeployEnabled = annotatedRolesHotDeployEnabled;
+        this.defaultRowLevelRolePrefix = defaultRowLevelRolePrefix;
     }
 
     /**
@@ -36,5 +44,12 @@ public class SecurityProperties {
      */
     public boolean isAnnotatedRolesHotDeployEnabled() {
         return annotatedRolesHotDeployEnabled;
+    }
+
+    /**
+     * @see #defaultRowLevelRolePrefix
+     */
+    public String getDefaultRowLevelRolePrefix() {
+        return defaultRowLevelRolePrefix;
     }
 }

@@ -34,6 +34,11 @@
 
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <screenSettings id="settingsFacet">
+            <components>
+                <component id="reportGroupsTable"/>
+            </components>
+        </screenSettings>
     </facets>
 
     <layout spacing="true" expand="reportGroupsTable">

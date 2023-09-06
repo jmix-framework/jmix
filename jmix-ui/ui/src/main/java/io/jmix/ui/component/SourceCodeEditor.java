@@ -39,7 +39,8 @@ import javax.annotation.Nullable;
                 @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
                 @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "300px"),
-                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "200px")
+                @StudioProperty(name = "colspan", type = PropertyType.INTEGER),
+                @StudioProperty(name = "rowspan", type = PropertyType.INTEGER)
         },
         groups = {
                 @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,

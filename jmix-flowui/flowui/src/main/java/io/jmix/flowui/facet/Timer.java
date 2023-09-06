@@ -15,7 +15,7 @@
  */
 package io.jmix.flowui.facet;
 
-import io.jmix.core.common.event.Subscription;
+import com.vaadin.flow.shared.Registration;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -50,12 +50,12 @@ public interface Timer extends Facet {
     void setDelay(int delayMs);
 
     /**
-     * Starts timer. If timer is already started call will be ignored.
+     * Starts the timer. If the timer is already started call will be ignored.
      */
     void start();
 
     /**
-     * Stops timer if it is running.
+     * Stops the timer if it is running.
      */
     void stop();
 
@@ -63,17 +63,17 @@ public interface Timer extends Facet {
      * Adds {@link TimerActionEvent} listener.
      *
      * @param listener {@link TimerActionEvent} listener
-     * @return subscription
+     * @return listener registration
      */
-    Subscription addTimerActionListener(Consumer<TimerActionEvent> listener);
+    Registration addTimerActionListener(Consumer<TimerActionEvent> listener);
 
     /**
      * Adds {@link TimerStopEvent} listener.
      *
      * @param listener {@link TimerStopEvent} listener
-     * @return subscription
+     * @return listener registration
      */
-    Subscription addTimerStopListener(Consumer<TimerStopEvent> listener);
+    Registration addTimerStopListener(Consumer<TimerStopEvent> listener);
 
     /**
      * Event fired on timer tick.

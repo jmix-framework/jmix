@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.facet.impl;
 
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.shared.Registration;
@@ -30,8 +29,6 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class TimerImpl extends AbstractFacet implements Timer {
-
-    private static final Logger log = LoggerFactory.getLogger(TimerImpl.class);
 
     protected JmixTimer timerImpl;
 
@@ -75,16 +72,14 @@ public class TimerImpl extends AbstractFacet implements Timer {
 
     @Override
     public Registration addTimerActionListener(Consumer<TimerActionEvent> listener) {
-        Consumer<JmixTimer> wrapper = new JmixTimerActionListenerWrapper(listener);
-        timerImpl.addActionListener(wrapper);
-        return () -> timerImpl.removeActionListener(wrapper);
+        ComponentEventListener<JmixTimer.JmixTimerTickEvent> adapter = new JmixTimerActionListenerAdapter(listener);
+        return timerImpl.addActionListener(adapter);
     }
 
     @Override
     public Registration addTimerStopListener(Consumer<TimerStopEvent> listener) {
-        Consumer<JmixTimer> wrapper = new JmixTimerStopListenerWrapper(listener);
-        timerImpl.addStopListener(wrapper);
-        return () -> timerImpl.removeStopListeners(wrapper);
+        ComponentEventListener<JmixTimer.JmixTimerStopEvent> adapter = new JmixTimerStopListenerAdapter(listener);
+        return timerImpl.addStopListener(adapter);
     }
 
     @Override
@@ -98,75 +93,60 @@ public class TimerImpl extends AbstractFacet implements Timer {
         super.setOwner(owner);
 
         if (owner != null) {
-            registerInUI(owner);
+            if (owner.getContent() instanceof HasComponents) {
+                //noinspection unchecked
+                registerInView((View<? extends HasComponents>) owner);
+            }
         }
     }
 
-    protected void registerInUI(View<?> owner) {
+    protected void registerInView(View<? extends HasComponents> owner) {
         if (owner.isAttached()) {
-            attachTimerToUi(owner);
+            attachTimer(owner);
         } else {
             registerOnAttach(owner);
         }
-
         addDetachListener(owner);
     }
 
-    protected void attachTimerToUi(View<?> owner) {
-        HasComponents content = (HasComponents) owner.getContent();
-        content.add(timerImpl);
-
-//        UI.getCurrent().add(timerImpl);
-
-//        owner.getUI().get().add(timerImpl);
-//        AppUI appUI = (AppUI) ownerComponent.getUI();
-//        appUI.addTimer(timerImpl);
-
-        log.trace("Timer '{}' registered in UI ", getId());
+    protected void attachTimer(View<? extends HasComponents> owner) {
+        owner.getContent().add(timerImpl);
     }
 
-    protected void registerOnAttach(View<?> owner) {
-        Registration registration = null;
-        registration = owner.addAttachListener(new ComponentEventListener<>() {
-            @Override
-            public void onComponentEvent(AttachEvent event) {
-                attachTimerToUi(owner);
-                // execute attach listener only once
-//                finalRegistration.remove();
-            }
-        });
+    protected void registerOnAttach(View<? extends HasComponents> owner) {
+        owner.addAttachListener(e -> attachTimer(owner));
     }
 
-    protected void addDetachListener(View<?> owner) {
-        owner.addDetachListener(event -> detachTimer(owner));
+    protected void addDetachListener(View<? extends HasComponents> owner) {
+        owner.addDetachListener(e -> owner.getContent().remove(timerImpl));
     }
 
-    protected void detachTimer(View<?> owner) {
-        HasComponents content = (HasComponents) owner.getContent();
-        content.remove(timerImpl);
+    protected class JmixTimerActionListenerAdapter implements ComponentEventListener<JmixTimer.JmixTimerTickEvent> {
 
-//        UI.getCurrent().remove(timerImpl);
-//        if (timerImpl.getParent().isPresent()) {
-//            timerImpl.remove();
-//        }
-        log.trace("Timer '{}' unregistered from UI ", TimerImpl.this.getId());
-    }
+        private static final Logger log = LoggerFactory.getLogger(JmixTimerActionListenerAdapter.class);
 
-    protected class JmixTimerActionListenerWrapper implements Consumer<JmixTimer> {
+        protected static final int EVENT_PROCESSING_WARNING_TIME_MS = 2000;
 
-        private final Consumer<TimerActionEvent> listener;
+        protected Consumer<TimerActionEvent> listener;
 
-        public JmixTimerActionListenerWrapper(Consumer<TimerActionEvent> listener) {
+        public JmixTimerActionListenerAdapter(Consumer<TimerActionEvent> listener) {
             this.listener = listener;
         }
 
         @Override
-        public void accept(JmixTimer sender) {
-            try {
-                listener.accept(new TimerActionEvent(TimerImpl.this));
-            } catch (RuntimeException e) {
-                throw new RuntimeException("Exception on timer action", e);
+        public void onComponentEvent(JmixTimer.JmixTimerTickEvent event) {
+            long startTime = System.currentTimeMillis();
+
+            listener.accept(new TimerActionEvent(TimerImpl.this));
+
+            long duration = System.currentTimeMillis() - startTime;
+            if (duration > EVENT_PROCESSING_WARNING_TIME_MS) {
+                log.warn("Too long timer {} processing: {} ms ", getTimerIdToLog(event.getSource()), duration);
             }
+        }
+
+        protected String getTimerIdToLog(JmixTimer timer) {
+            return timer.getId().orElse("<noid>");
         }
 
         @Override
@@ -179,7 +159,7 @@ public class TimerImpl extends AbstractFacet implements Timer {
                 return false;
             }
 
-            JmixTimerActionListenerWrapper that = (JmixTimerActionListenerWrapper) obj;
+            JmixTimerActionListenerAdapter that = (JmixTimerActionListenerAdapter) obj;
 
             return this.listener.equals(that.listener);
         }
@@ -190,16 +170,16 @@ public class TimerImpl extends AbstractFacet implements Timer {
         }
     }
 
-    protected class JmixTimerStopListenerWrapper implements Consumer<JmixTimer> {
+    protected class JmixTimerStopListenerAdapter implements ComponentEventListener<JmixTimer.JmixTimerStopEvent> {
 
         private final Consumer<TimerStopEvent> listener;
 
-        public JmixTimerStopListenerWrapper(Consumer<TimerStopEvent> listener) {
+        public JmixTimerStopListenerAdapter(Consumer<TimerStopEvent> listener) {
             this.listener = listener;
         }
 
         @Override
-        public void accept(JmixTimer sender) {
+        public void onComponentEvent(JmixTimer.JmixTimerStopEvent event) {
             listener.accept(new TimerStopEvent(TimerImpl.this));
         }
 
@@ -213,7 +193,7 @@ public class TimerImpl extends AbstractFacet implements Timer {
                 return false;
             }
 
-            JmixTimerStopListenerWrapper that = (JmixTimerStopListenerWrapper) obj;
+            JmixTimerStopListenerAdapter that = (JmixTimerStopListenerAdapter) obj;
 
             return this.listener.equals(that.listener);
         }

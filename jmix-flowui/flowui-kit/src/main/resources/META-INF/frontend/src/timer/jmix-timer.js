@@ -24,13 +24,7 @@ export class JmixTimer extends ElementMixin(PolymerElement) {
     }
 
     static get template() {
-        return html`
-            <style>
-                :host::before {
-                    display: none;
-                }
-            </style>
-        `;
+        return html``;
     }
 
     static get properties() {

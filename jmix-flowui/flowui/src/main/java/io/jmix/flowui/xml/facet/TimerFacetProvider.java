@@ -51,8 +51,8 @@ public class TimerFacetProvider implements FacetProvider<Timer> {
     }
 
     @Override
-    public void loadFromXml(Timer facet, Element element, ComponentLoader.ComponentContext context) {
-        loadTimer(facet, element, context);
+    public void loadFromXml(Timer timer, Element element, ComponentLoader.ComponentContext context) {
+        loadTimer(timer, element, context);
     }
 
     protected void loadTimer(Timer timer, Element element, ComponentLoader.ComponentContext context) {
@@ -60,7 +60,7 @@ public class TimerFacetProvider implements FacetProvider<Timer> {
 
         Optional<Integer> delayOptional = loaderSupport.loadInteger(element, "delay");
 
-        String timerIdToLog = timer.getId() != null ? timer.getId() : "no-id";
+        String timerIdToLog = timer.getId() != null ? timer.getId() : "<noid>";
         if (delayOptional.isEmpty()) {
             throw new GuiDevelopmentException("Timer 'delay' can't be empty", context, "Timer ID", timerIdToLog);
         }

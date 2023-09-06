@@ -18,59 +18,18 @@ package io.jmix.flowui.component.timer;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import com.vaadin.flow.shared.Registration;
 
 @Tag("jmix-timer")
 @JsModule("./src/timer/jmix-timer.js")
 public class JmixTimer extends Component {
 
-    private static final Logger log = LoggerFactory.getLogger(JmixTimer.class);
-
-    protected static final int EVENT_PROCESSING_WARNING_TIME_MS = 2000;
     protected static final String DELAY_PROPERTY_NAME = "delay";
     protected static final String REPEATING_PROPERTY_NAME = "repeating";
-
-    protected List<Consumer<JmixTimer>> actionListeners = new ArrayList<>(1);
-    protected List<Consumer<JmixTimer>> stopListeners; // lazily initialized
-
-    public JmixTimer() {
-        ComponentUtil.addListener(this, JmixTimerTickEvent.class, this::onTimerTick);
-        ComponentUtil.addListener(this, JmixTimerStopEvent.class, this::onTimerStop);
-    }
-
-    protected void onTimerTick(JmixTimerTickEvent event) {
-        long startTime = System.currentTimeMillis();
-
-        for (Consumer<JmixTimer> listener : actionListeners) {
-            listener.accept(this);
-        }
-
-        long duration = System.currentTimeMillis() - startTime;
-        if (duration > EVENT_PROCESSING_WARNING_TIME_MS) {
-            log.warn("Too long timer {} processing: {} ms ", getTimerIdToLog(), duration);
-        }
-    }
-
-    protected String getTimerIdToLog() {
-        return getId().orElse("<noid>");
-    }
-
-    protected void onTimerStop(JmixTimerStopEvent event) {
-        if (stopListeners != null) {
-            for (Consumer<JmixTimer> listener : stopListeners) {
-                listener.accept(this);
-            }
-        }
-    }
 
     public void setRepeating(boolean repeating) {
         getElement().setProperty(REPEATING_PROPERTY_NAME, repeating);
@@ -99,33 +58,16 @@ public class JmixTimer extends Component {
         getElement().callJsFunction("stop");
     }
 
-    public void addActionListener(Consumer<JmixTimer> listener) {
-        if (!actionListeners.contains(listener)) {
-            actionListeners.add(listener);
-        }
+    public Registration addActionListener(ComponentEventListener<JmixTimerTickEvent> listener) {
+        return getEventBus().addListener(JmixTimerTickEvent.class, listener);
     }
 
-    public void removeActionListener(Consumer<JmixTimer> listener) {
-        actionListeners.remove(listener);
-    }
-
-    public void addStopListener(Consumer<JmixTimer> listener) {
-        if (stopListeners == null) {
-            stopListeners = new ArrayList<>();
-        }
-        if (!stopListeners.contains(listener)) {
-            stopListeners.add(listener);
-        }
-    }
-
-    public void removeStopListeners(Consumer<JmixTimer> listener) {
-        if (stopListeners != null) {
-            stopListeners.remove(listener);
-        }
+    public Registration addStopListener(ComponentEventListener<JmixTimerStopEvent> listener) {
+        return getEventBus().addListener(JmixTimerStopEvent.class, listener);
     }
 
     @DomEvent("jmix-timer-tick")
-    protected static class JmixTimerTickEvent extends ComponentEvent<JmixTimer> {
+    public static class JmixTimerTickEvent extends ComponentEvent<JmixTimer> {
 
         public JmixTimerTickEvent(JmixTimer source, boolean fromClient) {
             super(source, fromClient);
@@ -133,7 +75,7 @@ public class JmixTimer extends Component {
     }
 
     @DomEvent("jmix-timer-stop")
-    protected static class JmixTimerStopEvent extends ComponentEvent<JmixTimer> {
+    public static class JmixTimerStopEvent extends ComponentEvent<JmixTimer> {
 
         public JmixTimerStopEvent(JmixTimer source, boolean fromClient) {
             super(source, fromClient);

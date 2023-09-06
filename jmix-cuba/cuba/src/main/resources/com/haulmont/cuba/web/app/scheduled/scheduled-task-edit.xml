@@ -98,7 +98,7 @@
                                     <validator class="com.haulmont.cuba.web.app.scheduled.CronValidator"
                                                message="msg://validation.cronInvalid"/>
                                 </textField>
-                                <linkButton id="cronHelpButton" icon="icons/question-white.png" invoke="getCronHelp"
+                                <linkButton id="cronHelpButton" icon="QUESTION_CIRCLE" invoke="getCronHelp"
                                             align="MIDDLE_LEFT"/>
                             </hbox>
                         </row>

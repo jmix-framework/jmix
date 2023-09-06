@@ -52,7 +52,7 @@
         </groupBox>
         <table id="executionsTable" width="100%">
             <buttonsPanel>
-                <button action="executionsTable.refresh" icon="icons/refresh.png"/>
+                <button action="executionsTable.refresh" icon="REFRESH_ACTION"/>
             </buttonsPanel>
             <rowsCount/>
             <columns>

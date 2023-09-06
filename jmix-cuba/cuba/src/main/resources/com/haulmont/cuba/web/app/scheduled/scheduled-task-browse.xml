@@ -40,10 +40,10 @@
 
         <groupTable id="tasksTable" width="100%" multiselect="true">
             <buttonsPanel>
-                <button action="tasksTable.create" icon="icons/create.png"/>
+                <button action="tasksTable.create" icon="CREATE_ACTION"/>
                 <button id="activateBtn"/>
-                <button action="tasksTable.edit" icon="icons/edit.png"/>
-                <button action="tasksTable.remove" icon="icons/remove.png"/>
+                <button action="tasksTable.edit" icon="EDIT"/>
+                <button action="tasksTable.remove" icon="REMOVE_ACTION"/>
                 <button action="tasksTable.executions"/>
                 <button action="tasksTable.executeOnce" description="msg://button.executeOnce.description"/>
                 <button id="showRunningTasksBtn" caption="msg://runningTasks"/>

@@ -124,7 +124,6 @@ public class BulkEditors {
         context.setModelValidators(builder.getModelValidators());
         context.setUseConfirmDialog(builder.isUseConfirmDialog());
         context.setFieldSorter(builder.getFieldSorter());
-        context.setColumnsMode(builder.getColumnsMode());
 
         return context;
     }

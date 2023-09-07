@@ -21,14 +21,17 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Focusable;
+import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntitySet;
@@ -96,18 +99,13 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static io.jmix.flowui.app.bulk.ColumnsMode.TWO_COLUMNS;
-
 @ViewController("bulkEditorWindow")
 @ViewDescriptor("bulk-edit-view.xml")
 @Route("bulk-edit")
-@DialogMode(resizable = true, width = "64em", height = "48em", minWidth = "30em")
+@DialogMode(resizable = true, width = "64em", height = "48em", minWidth = "18em")
 public class BulkEditView<E> extends StandardView {
 
-    protected static final String COLUMN_COLLAPSE_MIN_WIDTH = "52em";
     protected static final String FIELD_MIN_WIDTH = "10em";
-
-    protected static final ColumnsMode DEFAULT_COLUMNS_MODE = TWO_COLUMNS;
 
     @ViewComponent
     protected JmixButton applyBtn;
@@ -259,11 +257,9 @@ public class BulkEditView<E> extends StandardView {
         Comparator<ManagedField> comparator = createManagedFieldComparator(editFields);
         editFields.sort(comparator);
 
-        setupFieldLayout();
-
         for (ManagedField editField : editFields) {
             Component fieldComponent = createFieldComponent(editField);
-            fieldLayout.addFormItem(fieldComponent, editField.getLocalizedName());
+            fieldLayout.add(fieldComponent);
         }
         focusFirstPossibleField(dataFields);
     }
@@ -283,23 +279,9 @@ public class BulkEditView<E> extends StandardView {
         return comparator;
     }
 
-    protected void setupFieldLayout() {
-        ColumnsMode contextColumnsMode = context.getColumnsMode();
-        ColumnsMode columnsMode = contextColumnsMode != null ? contextColumnsMode : DEFAULT_COLUMNS_MODE;
-
-        List<FormLayout.ResponsiveStep> responsiveSteps = new ArrayList<>();
-        FormLayout.ResponsiveStep step1 = new FormLayout.ResponsiveStep("0em", 1);
-        responsiveSteps.add(step1);
-        if (TWO_COLUMNS == columnsMode) {
-            FormLayout.ResponsiveStep step2 = new FormLayout.ResponsiveStep(COLUMN_COLLAPSE_MIN_WIDTH, 2);
-            responsiveSteps.add(step2);
-        }
-        fieldLayout.setResponsiveSteps(responsiveSteps);
-        fieldLayout.addClassName("jmix-bulk-edit-view-form-layout");
-    }
-
     protected Component createFieldComponent(ManagedField managedField) {
         HorizontalLayout container = uiComponents.create(HorizontalLayout.class);
+        container.setAlignItems(FlexComponent.Alignment.BASELINE);
 
         AbstractField<?, ?> editField = createField(managedField);
         dataFields.put(managedField.getFqn(), editField);
@@ -333,6 +315,9 @@ public class BulkEditView<E> extends StandardView {
         if (field instanceof HasSize hasSize) {
             hasSize.setMinWidth(FIELD_MIN_WIDTH);
         }
+        if (field instanceof HasLabel hasLabel) {
+            hasLabel.setLabel(managedField.getLocalizedName());
+        }
         return field;
     }
 
@@ -365,8 +350,8 @@ public class BulkEditView<E> extends StandardView {
         button.setIcon(VaadinIcon.ERASER.create());
 
         if (isFieldRequired) {
-            //use style to add a spacer instead of button
-            button.getElement().getStyle().set("visibility", "hidden");
+            //set visibility to hidden to add a spacer instead of button
+            button.getElement().getStyle().setVisibility(Style.Visibility.HIDDEN);
         } else {
             button.addClickListener(createClearButtonClickListener(field));
             Tooltip.forComponent(button).setText(messageBundle.getMessage("bulk.clearAttribute"));

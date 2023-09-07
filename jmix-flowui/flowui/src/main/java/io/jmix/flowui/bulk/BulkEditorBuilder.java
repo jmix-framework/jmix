@@ -19,7 +19,6 @@ package io.jmix.flowui.bulk;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.app.bulk.BulkEditView;
-import io.jmix.flowui.app.bulk.ColumnsMode;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.view.DialogWindow;
@@ -51,7 +50,6 @@ public class BulkEditorBuilder<E> {
     protected List<Validator<E>> modelValidators;
     protected boolean useConfirmDialog = true;
     protected Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter;
-    protected ColumnsMode columnsMode;
     protected View<?> origin;
 
     public BulkEditorBuilder(BulkEditorBuilder<E> builder) {
@@ -67,7 +65,6 @@ public class BulkEditorBuilder<E> {
         this.modelValidators = builder.modelValidators;
         this.useConfirmDialog = builder.useConfirmDialog;
         this.fieldSorter = builder.fieldSorter;
-        this.columnsMode = builder.columnsMode;
         this.origin = builder.origin;
     }
 
@@ -162,19 +159,6 @@ public class BulkEditorBuilder<E> {
     }
 
     /**
-     * Sets the columns mode for editor which defines number of columns.
-     *
-     * @param columnsMode columns mode
-     * @return this builder
-     * @see ColumnsMode#ONE_COLUMN
-     * @see ColumnsMode#TWO_COLUMNS
-     */
-    public BulkEditorBuilder<E> withColumnsMode(ColumnsMode columnsMode) {
-        this.columnsMode = columnsMode;
-        return this;
-    }
-
-    /**
      * @return a {@link MetaClass} of items
      */
     public MetaClass getMetaClass() {
@@ -245,16 +229,6 @@ public class BulkEditorBuilder<E> {
     }
 
     /**
-     * @return columns mode
-     * @see ColumnsMode#ONE_COLUMN
-     * @see ColumnsMode#TWO_COLUMNS
-     */
-    @Nullable
-    public ColumnsMode getColumnsMode() {
-        return columnsMode;
-    }
-
-    /**
      * @return origin view
      */
     public View<?> getOrigin() {
@@ -263,6 +237,7 @@ public class BulkEditorBuilder<E> {
 
     /**
      * Builds an instance of DialogWindow for {@link BulkEditView}
+     *
      * @return a new instance of DialogWindow for {@link BulkEditView}
      */
     public DialogWindow<BulkEditView<E>> build() {
@@ -271,6 +246,7 @@ public class BulkEditorBuilder<E> {
 
     /**
      * Builds and opens an instance of DialogWindow for {@link BulkEditView}
+     *
      * @return a new instance of DialogWindow for {@link BulkEditView}
      */
     public DialogWindow<BulkEditView<E>> open() {

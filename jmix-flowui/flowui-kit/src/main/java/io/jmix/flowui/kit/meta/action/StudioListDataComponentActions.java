@@ -334,9 +334,6 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "columnsMode", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.app.bulk.ColumnsMode", defaultValue = "TWO_COLUMNS",
-                            options = {"ONE_COLUMN", "TWO_COLUMNS"}),
                     @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.core.security.EntityOp",
                             setParameterFqn = "io.jmix.core.security.EntityOp",

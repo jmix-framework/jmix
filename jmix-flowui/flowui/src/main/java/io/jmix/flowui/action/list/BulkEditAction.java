@@ -27,7 +27,6 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.accesscontext.UiBulkEditContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
-import io.jmix.flowui.app.bulk.ColumnsMode;
 import io.jmix.flowui.bulk.BulkEditorBuilder;
 import io.jmix.flowui.bulk.BulkEditors;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -61,7 +60,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
     protected BulkEditors bulkEditors;
     protected DialogWindows dialogWindows;
 
-    protected ColumnsMode columnsMode;
     protected String exclude;
     protected Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter;
     protected List<String> includeProperties;
@@ -82,24 +80,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
         super.initAction();
 
         this.icon = ComponentUtils.convertToIcon(VaadinIcon.TABLE);
-    }
-
-    /**
-     * @return the columns mode which defines the number of columns either it was set by {@link #setColumnsMode(ColumnsMode)}
-     * or in the screen XML. Otherwise, returns null
-     */
-    @Nullable
-    public ColumnsMode getColumnsMode() {
-        return columnsMode;
-    }
-
-    /**
-     * @param columnsMode columns mode which defines the number of columns
-     * @see ColumnsMode#ONE_COLUMN
-     * @see ColumnsMode#TWO_COLUMNS
-     */
-    public void setColumnsMode(ColumnsMode columnsMode) {
-        this.columnsMode = columnsMode;
     }
 
     /**
@@ -242,10 +222,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
         BulkEditorBuilder<?> builder = bulkEditors.builder(metaClass, target.getSelectedItems(), origin)
                 .withListDataComponent(target);
 
-        if (columnsMode != null) {
-            builder = builder.withColumnsMode(columnsMode);
-        }
-
         if (exclude != null) {
             builder = builder.withExclude(exclude);
         }
@@ -260,14 +236,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
 
         builder = builder.withUseConfirmDialog(useConfirmDialog);
         builder.open();
-    }
-
-    /**
-     * @see #setColumnsMode(ColumnsMode)
-     */
-    public BulkEditAction<E> withColumnsMode(ColumnsMode columnsMode) {
-        setColumnsMode(columnsMode);
-        return this;
     }
 
     /**

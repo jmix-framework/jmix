@@ -22,17 +22,28 @@
                 icon="CHECK"
                 actionVariant="PRIMARY"
                 shortcutCombination="${SAVE_SHORTCUT}"/>
-        <action id="viewClose" type="view_close"/>
+        <action id="viewClose"
+                type="view_close"/>
     </actions>
 
     <layout expand="fieldLayoutScroller">
         <div id="infoDiv"
-             text="msg://bulkEditor.info"/>
+             text="msg://bulkEditor.info"
+             themeNames="badge"/>
 
         <scroller id="fieldLayoutScroller"
                   scrollBarsDirection="VERTICAL"
                   width="100%">
-            <formLayout id="fieldLayout"/>
+            <formLayout id="fieldLayout">
+                <responsiveSteps>
+                    <responsiveStep minWidth="0em"
+                                    columns="1"/>
+                    <responsiveStep minWidth="30em"
+                                    columns="2"/>
+                    <responsiveStep minWidth="45em"
+                                    columns="3"/>
+                </responsiveSteps>
+            </formLayout>
         </scroller>
 
         <hbox id="buttonsBox">

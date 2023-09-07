@@ -40,7 +40,6 @@ public class BulkEditContext<V> {
     protected List<Validator<V>> modelValidators;
     protected boolean useConfirmDialog;
     protected Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter;
-    protected ColumnsMode columnsMode;
 
     public BulkEditContext(MetaClass metaClass, Collection<V> selectedItems) {
         checkNotNullArgument(metaClass);
@@ -112,14 +111,5 @@ public class BulkEditContext<V> {
 
     public void setFieldSorter(@Nullable Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter) {
         this.fieldSorter = fieldSorter;
-    }
-
-    @Nullable
-    public ColumnsMode getColumnsMode() {
-        return columnsMode;
-    }
-
-    public void setColumnsMode(@Nullable ColumnsMode columnsMode) {
-        this.columnsMode = columnsMode;
     }
 }

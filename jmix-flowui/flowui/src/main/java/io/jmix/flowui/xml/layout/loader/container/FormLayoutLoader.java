@@ -22,6 +22,8 @@ import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep.LabelsPosition;
+import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.shared.SlotUtils;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -37,12 +39,13 @@ import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
 
     protected MetadataTools metaDataTools;
     protected MessageTools messageTools;
+
+    protected LabelsPosition defaultLabelPosition = LabelsPosition.TOP;
 
     @Override
     protected FormLayout createComponent() {
@@ -55,7 +58,13 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
+        loadLabelPosition(element);
         loadSubComponents();
+    }
+
+    protected void loadLabelPosition(Element element) {
+        loadEnum(element, LabelsPosition.class, "labelsPosition")
+                .ifPresent(labelsPosition -> defaultLabelPosition = labelsPosition);
     }
 
     protected void loadSubComponents() {
@@ -73,37 +82,45 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
             componentLoader.loadComponent();
             Component child = componentLoader.getResultComponent();
 
-            Optional<Integer> colspan = loadInteger(subElement, "colspan");
-
             String label = getLabel(child);
             if (label == null) {
                 label = generatePropertyLabel(child);
+                setLabel(child, label);
             }
-            setLabel(child, null);
             setWidthFull(child);
 
-            FormLayout.FormItem formItem = resultComponent.addFormItem(child, label);
-            formItem.setVisible(child.isVisible());
-            formItem.setEnabled(child.getElement().isEnabled());
-            colspan.ifPresent(it -> resultComponent.setColspan(formItem, it));
+            resultComponent.add(child);
+            loadInteger(subElement, "colspan")
+                    .ifPresent(it -> resultComponent.setColspan(child, it));
         }
     }
 
     @Nullable
     protected String getLabel(Component component) {
-        return component instanceof HasLabel hasLabelComponent
-                ? hasLabelComponent.getLabel()
-                : null;
+        if (component instanceof FormLayout.FormItem formItemComponent) {
+            NativeLabel label = (NativeLabel) SlotUtils.getChildInSlot(formItemComponent, "label");
+            return label == null ? null : label.getText();
+        } else if (component instanceof HasLabel hasLabelComponent) {
+            return hasLabelComponent.getLabel();
+        }
+
+        return null;
     }
 
     protected void setLabel(Component component, @Nullable String label) {
-        if (component instanceof HasLabel hasLabelComponent) {
+        if (component instanceof FormLayout.FormItem formItemComponent) {
+            SlotUtils.addToSlot(formItemComponent, "label", new NativeLabel(label));
+        } else if (component instanceof HasLabel hasLabelComponent) {
             hasLabelComponent.setLabel(label);
         }
     }
 
     protected void setWidthFull(Component component) {
-        if (component instanceof HasSize hasSizeComponent) {
+        if (component instanceof FormLayout.FormItem formItemComponent) {
+            formItemComponent.getChildren()
+                    .findAny()
+                    .ifPresent(this::setWidthFull);
+        } else if (component instanceof HasSize hasSizeComponent) {
             hasSizeComponent.setWidthFull();
         }
     }
@@ -111,7 +128,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
     protected void loadResponsiveSteps(FormLayout resultComponent, Element element) {
         Element responsiveSteps = element.element("responsiveSteps");
         if (responsiveSteps == null) {
-            resultComponent.setResponsiveSteps(getDefaultResponsiveSteps(element));
+            resultComponent.setResponsiveSteps(getDefaultResponsiveSteps());
             return;
         }
 
@@ -129,13 +146,10 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         resultComponent.setResponsiveSteps(pendingSetResponsiveSteps);
     }
 
-    protected List<ResponsiveStep> getDefaultResponsiveSteps(Element element) {
-        LabelsPosition labelsPosition = loadEnum(element, LabelsPosition.class, "labelsPosition")
-                .orElse(LabelsPosition.TOP);
-
+    protected List<ResponsiveStep> getDefaultResponsiveSteps() {
         return List.of(
-                new ResponsiveStep("0", 1, labelsPosition),
-                new ResponsiveStep("40em", 2, labelsPosition)
+                new ResponsiveStep("0", 1, defaultLabelPosition),
+                new ResponsiveStep("40em", 2, defaultLabelPosition)
         );
     }
 
@@ -145,13 +159,74 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         Integer columns = loadInteger(element, "columns")
                 .orElse(1);
         LabelsPosition labelsPosition = loadEnum(element, LabelsPosition.class, "labelsPosition")
-                .orElse(null);
+                .orElse(defaultLabelPosition);
 
         return new ResponsiveStep(minWidth, columns, labelsPosition);
     }
 
+    public static class FormItemLoader extends AbstractComponentLoader<FormLayout.FormItem> {
+
+        protected ComponentLoader<?> pendingLoadComponent;
+
+        @Override
+        protected FormLayout.FormItem createComponent() {
+            return new FormLayout.FormItem();
+        }
+
+        @Override
+        public void initComponent() {
+            super.initComponent();
+            createSubComponent(resultComponent, element);
+        }
+
+        @Override
+        public void loadComponent() {
+            loadLabel(resultComponent, element);
+            componentLoader().loadEnabled(resultComponent, element);
+            componentLoader().loadClassNames(resultComponent, element);
+
+            loadSubComponent();
+        }
+
+        protected void loadLabel(FormLayout.FormItem resultComponent, Element element) {
+            loadResourceString(element, "label", context.getMessageGroup())
+                    .ifPresent(label -> SlotUtils.addToSlot(resultComponent, "label", new NativeLabel(label)));
+        }
+
+        protected void createSubComponent(FormLayout.FormItem resultComponent, Element element) {
+            LayoutLoader loader = getLayoutLoader();
+
+            List<Element> childElements = element.elements();
+            if (childElements.size() != 1) {
+                String message = String.format("%s should have only one child component",
+                        FormLayout.FormItem.class.getSimpleName());
+
+                throw new GuiDevelopmentException(message, context,
+                        "Component ID", resultComponent.getId().orElse("null"));
+            }
+
+            ComponentLoader<?> componentLoader = loader.createComponentLoader(childElements.get(0));
+            componentLoader.initComponent();
+            pendingLoadComponent = componentLoader;
+
+            resultComponent.add(componentLoader.getResultComponent());
+        }
+
+        protected void loadSubComponent() {
+            pendingLoadComponent.loadComponent();
+            pendingLoadComponent = null;
+        }
+    }
+
     @Nullable
     protected String generatePropertyLabel(Component component) {
+        if (component instanceof FormLayout.FormItem formItemComponent) {
+            // There should only be one child at this point
+            component = formItemComponent.getChildren()
+                    .findAny()
+                    .orElse(null);
+        }
+
         if (!(component instanceof SupportsValueSource<?> supportsValueSourceComponent)
                 || !(supportsValueSourceComponent.getValueSource() instanceof EntityValueSource<?, ?> entityValueSource)) {
             return null;

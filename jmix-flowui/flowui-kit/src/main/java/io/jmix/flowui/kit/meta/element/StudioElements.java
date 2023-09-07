@@ -24,11 +24,7 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
-import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioSupplyHandler;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
 public interface StudioElements {
@@ -354,6 +350,27 @@ public interface StudioElements {
             }
     )
     FormLayout.ResponsiveStep formLayoutResponsiveStep();
+
+    @StudioElement(
+            name = "FormItem",
+            classFqn = "com.vaadin.flow.component.formlayout.FormLayout.FormItem",
+            xmlElement = "formItem",
+            possibleChildren = "com.vaadin.flow.component.Component",
+            maxCountOfChildren = 1,
+            visible = true,
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+
+    )
+    FormLayout.FormItem formItem();
 
     @StudioElement(
             name = "ResponsiveStep",

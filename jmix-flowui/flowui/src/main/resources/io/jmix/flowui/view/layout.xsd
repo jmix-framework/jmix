@@ -3395,6 +3395,20 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="formItemType">
+        <xs:sequence>
+            <xs:group ref="standardComponent"/>
+        </xs:sequence>
+
+        <xs:attribute name="enabled" type="xs:boolean"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="colspan" type="xs:integer"/>
+
+        <xs:attributeGroup ref="hasLabel"/>
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasClassNames"/>
+    </xs:complexType>
+
     <!-- Form-->
     <xs:complexType name="formLayoutComponent">
         <xs:complexContent>
@@ -3402,6 +3416,7 @@
 
                 <xs:sequence>
                     <xs:element name="responsiveSteps" type="responsiveStepsType" minOccurs="0"/>
+                    <xs:element name="formItem" type="formItemType" minOccurs="0"/>
                     <xs:group ref="standardComponent"/>
                 </xs:sequence>
 

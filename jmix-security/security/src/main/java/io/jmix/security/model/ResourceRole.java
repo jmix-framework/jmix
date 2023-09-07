@@ -16,6 +16,7 @@
 
 package io.jmix.security.model;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -93,7 +94,7 @@ public class ResourceRole extends BaseRole {
      * A data structure that stores role policies grouped by policy type and resource. It simplifies operations like
      * extracting policies for entity access for a sec_User entity.
      */
-    public static class ResourcePoliciesIndex {
+    public static class ResourcePoliciesIndex implements Serializable {
 
         /**
          * The key of external map is policy type. The value is a map of resources to policies.

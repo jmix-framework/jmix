@@ -16,6 +16,7 @@
 
 package io.jmix.security.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -77,7 +78,7 @@ public class RowLevelRole extends BaseRole {
     /**
      * A data structure that stores row-level role policies grouped by entity name.
      */
-    public static class RowLevelPoliciesIndex {
+    public static class RowLevelPoliciesIndex implements Serializable {
 
         private final Map<String, List<RowLevelPolicy>> entityNameToPoliciesMap;
 

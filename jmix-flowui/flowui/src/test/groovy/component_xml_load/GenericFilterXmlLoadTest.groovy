@@ -61,7 +61,7 @@ class GenericFilterXmlLoadTest extends FlowuiTestSpecification {
             themeNames.containsAll(["small", "filled"])
             visible
             width == "100px"
-
+            propertyHierarchyDepth == 5
             actions.size() == 3
         }
     }

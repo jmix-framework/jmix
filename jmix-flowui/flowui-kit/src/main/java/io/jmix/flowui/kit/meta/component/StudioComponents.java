@@ -2223,6 +2223,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "opened", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "propertyHierarchyDepth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "summaryText", type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "Filter"),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,

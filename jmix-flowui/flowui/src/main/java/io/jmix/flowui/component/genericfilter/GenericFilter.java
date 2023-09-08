@@ -127,6 +127,8 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected boolean configurationModifyPermitted;
 
+    protected Integer propertyHierarchyDepth;
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -994,6 +996,30 @@ public class GenericFilter extends Composite<JmixDetails>
                 getDataLoader().removeParameter(singleFilterComponent.getParameterName());
             }
         }
+    }
+
+    /**
+     * @return hierarchy depth of entity properties available for filtering.
+     * @see #setPropertyHierarchyDepth(Integer)
+     */
+    @Nullable
+    public Integer getPropertyHierarchyDepth() {
+        return propertyHierarchyDepth;
+    }
+
+    /**
+     * Sets hierarchy depth of entity properties available for filtering.
+     * This property is used in the 'Add Condition' editor of the filter. For example, if the depth value is 2,
+     * then you can select an entity attribute {@code contractor.city.country},
+     * if the value is 3, then {@code contractor.city.country.name}.
+     *
+     * @param propertyHierarchyDepth hierarchy depth of entity properties available for filtering
+     */
+    public void setPropertyHierarchyDepth(@Nullable Integer propertyHierarchyDepth) {
+        if (propertyHierarchyDepth != null && propertyHierarchyDepth <= 0) {
+            throw new IllegalArgumentException("Property hierarchy depth value must be greater than 0");
+        }
+        this.propertyHierarchyDepth = propertyHierarchyDepth;
     }
 
     /**

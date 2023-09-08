@@ -27,9 +27,10 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
+import io.jmix.flowui.model.DataLoader;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -53,16 +54,24 @@ public class FilterMetadataTools {
         this.metadata = metadata;
     }
 
-    public List<MetaPropertyPath> getPropertyPaths(MetaClass filterMetaClass,
-                                                   String query,
-                                                   @Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
-        return getPropertyPaths(filterMetaClass, query, filterMetaClass, 0, "",
-                propertiesFilterPredicate);
+    public List<MetaPropertyPath> getPropertyPaths(GenericFilter filter) {
+        DataLoader dataLoader = filter.getDataLoader();
+        MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
+        String query = dataLoader.getQuery();
+        Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
+        Integer propertyHierarchyDepth = filter.getPropertyHierarchyDepth();
+
+        int activePropertyHierarchyDepth = propertyHierarchyDepth == null
+                ? componentProperties.getFilterPropertiesHierarchyDepth()
+                : propertyHierarchyDepth;
+        return getPropertyPaths(metaClass, query, metaClass, activePropertyHierarchyDepth, 0,
+                "", propertyFiltersPredicate);
     }
 
     protected List<MetaPropertyPath> getPropertyPaths(MetaClass filterMetaClass,
                                                       String query,
                                                       MetaClass currentMetaClass,
+                                                      int propertyHierarchyDepth,
                                                       int currentDepth,
                                                       String currentPropertyPath,
                                                       @Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
@@ -70,7 +79,7 @@ public class FilterMetadataTools {
         properties.addAll(metadataTools.getAdditionalProperties(currentMetaClass));
 
         List<MetaPropertyPath> paths = new ArrayList<>();
-        if (currentDepth < componentProperties.getFilterPropertiesHierarchyDepth()) {
+        if (currentDepth < propertyHierarchyDepth) {
             for (MetaProperty property : properties) {
                 String propertyPath = Strings.isNullOrEmpty(currentPropertyPath)
                         ? property.getName()
@@ -87,7 +96,7 @@ public class FilterMetadataTools {
                 if (property.getRange().isClass() && !metadataTools.isAdditionalProperty(currentMetaClass, property.getName())) {
                     MetaClass childMetaClass = property.getRange().asClass();
                     List<MetaPropertyPath> childPaths = getPropertyPaths(filterMetaClass, query, childMetaClass,
-                            currentDepth + 1, propertyPath, propertiesFilterPredicate);
+                            propertyHierarchyDepth, currentDepth + 1, propertyPath, propertiesFilterPredicate);
                     paths.addAll(childPaths);
                 }
             }

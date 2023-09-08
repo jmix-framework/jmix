@@ -31,7 +31,6 @@ import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterMetadataTools;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
@@ -41,11 +40,23 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.entity.filter.FilterValueComponent;
 import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.DialogMode;
+import io.jmix.flowui.view.EditedEntityContainer;
+import io.jmix.flowui.view.Install;
+import io.jmix.flowui.view.MessageBundle;
+import io.jmix.flowui.view.Subscribe;
+import io.jmix.flowui.view.ViewComponent;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ViewController("flowui_PropertyFilterCondition.detail")
@@ -79,25 +90,12 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     @Autowired
     protected MessageBundle messageBundle;
 
-    protected MetaClass filterMetaClass;
-    protected String query;
-    protected Predicate<MetaPropertyPath> propertiesFilterPredicate;
-
     @SuppressWarnings("rawtypes")
     protected HasValueAndElement defaultValueField;
 
     @Override
     public InstanceContainer<PropertyFilterCondition> getInstanceContainer() {
         return filterConditionDc;
-    }
-
-    @Override
-    public void setCurrentConfiguration(Configuration currentConfiguration) {
-        super.setCurrentConfiguration(currentConfiguration);
-
-        filterMetaClass = currentConfiguration.getOwner().getDataLoader().getContainer().getEntityMetaClass();
-        query = currentConfiguration.getOwner().getDataLoader().getQuery();
-        propertiesFilterPredicate = currentConfiguration.getOwner().getPropertyFiltersPredicate();
     }
 
     @Subscribe
@@ -108,9 +106,8 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     }
 
     protected void initPropertyField() {
-        if (filterMetaClass != null) {
-            List<String> properties = filterMetadataTools.getPropertyPaths(filterMetaClass, query,
-                            propertiesFilterPredicate).stream()
+        if (currentConfiguration != null) {
+            List<String> properties = filterMetadataTools.getPropertyPaths(currentConfiguration.getOwner()).stream()
                     .map(MetaPropertyPath::toPathString)
                     .collect(Collectors.toList());
 
@@ -125,9 +122,12 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     protected void initOperationField() {
         List<PropertyFilter.Operation> operations;
 
-        if (filterMetaClass != null && getEditedEntity().getProperty() != null) {
+        MetaClass filterMetaClass = getFilterMetaClass();
+        PropertyFilterCondition editedEntity = getEditedEntity();
+
+        if (filterMetaClass != null && editedEntity.getProperty() != null) {
             EnumSet<PropertyFilter.Operation> availableOperations =
-                    propertyFilterSupport.getAvailableOperations(filterMetaClass, getEditedEntity().getProperty());
+                    propertyFilterSupport.getAvailableOperations(filterMetaClass, editedEntity.getProperty());
 
             operations = new ArrayList<>(availableOperations);
         } else {
@@ -140,10 +140,18 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
         previousValue.ifPresent(operationField::setValue);
     }
 
+    @Nullable
+    protected MetaClass getFilterMetaClass() {
+        return currentConfiguration != null
+                ? currentConfiguration.getOwner().getDataLoader().getContainer().getEntityMetaClass()
+                : null;
+    }
+
     @SuppressWarnings({"unchecked"})
     protected void initDefaultValueField() {
         String property = getEditedEntity().getProperty();
         PropertyFilter.Operation operation = getEditedEntity().getOperation();
+        MetaClass filterMetaClass = getFilterMetaClass();
 
         if (filterMetaClass != null && property != null && operation != null) {
             defaultValueField = singleFilterSupport.generateValueComponent(filterMetaClass, property, operation);
@@ -182,8 +190,9 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     @Subscribe("propertyField")
     public void onPropertyFieldComponentValueChange(ComponentValueChangeEvent<JmixSelect<String>, String> event) {
         String property = event.getValue();
+        MetaClass filterMetaClass = getFilterMetaClass();
 
-        if (!Strings.isNullOrEmpty(property) && event.isFromClient()) {
+        if (!Strings.isNullOrEmpty(property) && event.isFromClient() && filterMetaClass != null) {
             String parameterName = PropertyConditionUtils.generateParameterName(property);
             getEditedEntity().setParameterName(parameterName);
 
@@ -217,6 +226,8 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
 
     @Install(to = "propertyField", subject = "itemLabelGenerator")
     protected String propertyFieldItemLabelGenerator(String property) {
+        //can't be null because the field was filled using the metaclass
+        MetaClass filterMetaClass = Objects.requireNonNull(getFilterMetaClass());
         return propertyFilterSupport.getPropertyFilterCaption(filterMetaClass, property);
     }
 
@@ -236,10 +247,12 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     protected void onBeforeSave(BeforeSaveEvent event) {
         String property = getEditedEntity().getProperty();
         PropertyFilter.Operation operation = getEditedEntity().getOperation();
+        MetaClass filterMetaClass = getFilterMetaClass();
 
         if (defaultValueField != null
                 && property != null
-                && operation != null) {
+                && operation != null
+                && filterMetaClass != null) {
 
             MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(filterMetaClass, property);
 

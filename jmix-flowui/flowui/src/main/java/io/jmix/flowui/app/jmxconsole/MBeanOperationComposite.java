@@ -44,11 +44,17 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.jmix.flowui.app.jmxconsole.AttributeHelper.convertTypeToReadableName;
 
+/**
+ * Represents a composite UI component for displaying and invoking
+ * MBean operations. The component includes all relevant controls
+ * and logic for handling JMX MBean operations.
+ */
 public class MBeanOperationComposite extends Composite<JmixDetails>
         implements ApplicationContextAware, HasSize, HasEnabled, InitializingBean, HasComponents {
 
@@ -72,7 +78,7 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
     protected JmixButton invokeBtn;
     protected ManagedBeanOperation operation;
     protected AttributeComponentProvider attributeComponentProvider;
-    protected List<AbstractField> attributeFields = new ArrayList<>();
+    protected Map<Component, String> attributeFieldsTypeMap = new HashMap<>();
 
     @Override
     public void afterPropertiesSet() {
@@ -97,12 +103,15 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
         verticalLayout = uiComponents.create(VerticalLayout.class);
         verticalLayout.addClassName("py-0");
         verticalLayout.setSpacing(false);
+
         operationVbox = uiComponents.create(VerticalLayout.class);
         operationVbox.setPadding(false);
         operationVbox.setMargin(false);
         operationVbox.setSpacing(false);
         operationVbox.setVisible(false);
+
         nameLabel = uiComponents.create(H4.class);
+
         descriptionSpan = uiComponents.create(Span.class);
         descriptionSpan.setVisible(false);
 
@@ -110,10 +119,11 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
         invokeBtn.setText(messages.getMessage(getClass(), "invokeButton.text"));
         invokeBtn.addClickListener(this::onInvokeButtonClick);
 
+        verticalLayout.add(nameLabel, descriptionSpan, operationVbox, invokeBtn);
+
         form = uiComponents.create(JmixDetails.class);
         form.setWidthFull();
         form.setHeightFull();
-        verticalLayout.add(nameLabel, descriptionSpan, operationVbox, invokeBtn);
         form.addContent(verticalLayout);
         form.setOpened(false);
 
@@ -132,10 +142,11 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
             operationVbox.setVisible(true);
 
             for (ManagedBeanOperationParameter param : parameters) {
-                AbstractField attributeField = attributeComponentProvider
+                Component attributeField = attributeComponentProvider
+                        .builder()
                         .withType(param.getType())
                         .build();
-                attributeFields.add(attributeField);
+                attributeFieldsTypeMap.put(attributeField, param.getType());
                 ((HasSize) attributeField).setWidthFull();
                 if (StringUtils.isNotBlank(param.getDescription())) {
                     ((HasHelper) attributeField).setHelperText(param.getDescription());
@@ -151,8 +162,12 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
     protected void onInvokeButtonClick(ClickEvent<Button> buttonClickEvent) {
         Object[] paramValues;
         try {
-            paramValues = attributeFields.stream()
-                    .map(abstractField -> attributeComponentProvider.getFieldConvertedValue(abstractField, true))
+            paramValues = attributeFieldsTypeMap.entrySet()
+                    .stream()
+                    .map(componentTypePair -> attributeComponentProvider
+                            .getFieldConvertedValue((HasValueAndElement<?, ?>) componentTypePair.getKey(),
+                                    componentTypePair.getValue(),
+                                    true))
                     .toArray();
         } catch (Exception e) {
             log.error("Conversion error", e);

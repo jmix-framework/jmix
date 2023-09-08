@@ -26,7 +26,7 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
-        <action id="close" type="detail_discard" text="msg://close"/>
+        <action id="close" type="detail_discard" text="msg://actions.Close"/>
     </actions>
     <layout>
         <span id="mbeanName"/>
@@ -36,28 +36,31 @@
             <button action="attributesDataGrid.refresh"/>
             <button action="attributesDataGrid.edit"/>
         </hbox>
-        <split orientation="VERTICAL" width="100%">
-            <dataGrid id="attributesDataGrid" dataContainer="attrDc" maxHeight="50em" width="100%">
-                <actions>
-                    <action id="refresh" text="msg:///actions.Refresh" type="list_refresh"/>
-                    <action id="edit" text="msg://attribute.edit" icon="PENCIL" type="list_itemTracking"/>
-                </actions>
-                <columns>
-                    <column property="name"/>
-                    <column property="description"/>
-                    <column property="type"/>
-                    <column property="valueString"/>
-                </columns>
-            </dataGrid>
-            <vbox margin="false" padding="false" width="100%">
-                <textField id="operationsSearchField" placeholder="msg://operationsSearchField.placeholder"/>
-                <scroller id="scroller" scrollBarsDirection="VERTICAL" width="100%" height="100%">
-                    <vbox id="operations" spacing="false" margin="false" padding="false" width="100%"/>
-                </scroller>
-            </vbox>
-        </split>
+        <dataGrid id="attributesDataGrid" dataContainer="attrDc" minHeight="20em" maxHeight="50em" width="100%">
+            <actions>
+                <action id="refresh" type="list_refresh"/>
+                <action id="edit" type="list_edit"/>
+            </actions>
+            <columns>
+                <column property="name"/>
+                <column property="description"/>
+                <column property="type"/>
+                <column property="valueString"/>
+            </columns>
+        </dataGrid>
+        <vbox margin="false" padding="false" width="100%">
+            <textField id="operationsSearchField" width="100%" maxWidth="25em"
+                       placeholder="msg://operationsSearchField.placeholder">
+                <suffix>
+                    <icon icon="SEARCH"/>
+                </suffix>
+            </textField>
+            <scroller id="scroller" scrollBarsDirection="VERTICAL" width="100%" height="100%">
+                <vbox id="operations" spacing="false" margin="false" padding="false" width="100%"/>
+            </scroller>
+        </vbox>
         <hbox id="detailActions">
-            <button id="closeBtn" action="close" themeNames="primary"/>
+            <button id="closeBtn" action="close"/>
         </hbox>
     </layout>
 </view>

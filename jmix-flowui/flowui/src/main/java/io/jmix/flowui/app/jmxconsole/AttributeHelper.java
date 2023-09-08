@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.app.jmxconsole;
 
+import javax.annotation.Nullable;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
@@ -30,8 +31,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * A helper class for handling JMX attribute types and values.
+ */
 public class AttributeHelper {
 
+    @Nullable
     public static Object convert(String type, String str) {
         if (str == null)
             return null;
@@ -83,7 +88,7 @@ public class AttributeHelper {
     }
 
     public static boolean isObjectArray(String type) {
-        return type != null && isArray(type) && !isPrimitiveTypeOrString(type);
+        return isArray(type) && !isPrimitiveTypeOrString(type);
     }
 
     public static boolean isPrimitiveTypeOrString(String type) {
@@ -137,24 +142,33 @@ public class AttributeHelper {
             }
         }
         switch (type.substring(0, 2)) {
-            case "[Z":
+            case "[Z" -> {
                 return boolean.class;
-            case "[B":
+            }
+            case "[B" -> {
                 return byte.class;
-            case "[S":
+            }
+            case "[S" -> {
                 return short.class;
-            case "[I":
+            }
+            case "[I" -> {
                 return int.class;
-            case "[J":
+            }
+            case "[J" -> {
                 return long.class;
-            case "[F":
+            }
+            case "[F" -> {
                 return float.class;
-            case "[D":
+            }
+            case "[D" -> {
                 return double.class;
-            case "[C":
+            }
+            case "[C" -> {
                 return char.class;
-            case "[L":
+            }
+            case "[L" -> {
                 return Object.class;     // any non-primitives(Object)
+            }
         }
         throw new RuntimeException("Wrong array type");
     }
@@ -176,6 +190,7 @@ public class AttributeHelper {
         return type != null && Date.class.getName().endsWith(type);
     }
 
+    @Nullable
     public static String convertToString(Object value) {
         if (value == null) {
             return null;
@@ -197,7 +212,7 @@ public class AttributeHelper {
         return value.toString();
     }
 
-    private static String tabularToString(TabularData tabularData) {
+    protected static String tabularToString(TabularData tabularData) {
         TabularType type = tabularData.getTabularType();
         StringBuilder b = new StringBuilder();
         b.append("(").append(type.getTypeName()).append(")\n");
@@ -209,7 +224,7 @@ public class AttributeHelper {
         return b.toString();
     }
 
-    private static String compositeToString(CompositeData compositeData) {
+    protected static String compositeToString(CompositeData compositeData) {
         if (canConvertToTrueObject(compositeData)) {
             try {
                 Object trueObject = convertToTrueObject(compositeData);
@@ -237,7 +252,8 @@ public class AttributeHelper {
      * Try to find factory method with signature like
      * public static VMOption from(CompositeData compositeData) { ... }
      */
-    private static Object convertToTrueObject(CompositeData compositeData) {
+    @Nullable
+    protected static Object convertToTrueObject(CompositeData compositeData) {
         CompositeType type = compositeData.getCompositeType();
         try {
             Class<?> _class = Class.forName(type.getTypeName());
@@ -252,7 +268,7 @@ public class AttributeHelper {
         }
     }
 
-    private static boolean canConvertToTrueObject(CompositeData compositeData) {
+    protected static boolean canConvertToTrueObject(CompositeData compositeData) {
         CompositeType type = compositeData.getCompositeType();
         try {
             Class<?> _class = Class.forName(type.getTypeName());

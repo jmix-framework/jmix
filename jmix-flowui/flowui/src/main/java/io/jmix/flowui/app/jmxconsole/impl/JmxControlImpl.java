@@ -17,7 +17,6 @@
 package io.jmix.flowui.app.jmxconsole.impl;
 
 import io.jmix.core.Metadata;
-import io.jmix.flowui.app.jmxconsole.JmxAction;
 import io.jmix.flowui.app.jmxconsole.JmxControl;
 import io.jmix.flowui.app.jmxconsole.JmxControlException;
 import io.jmix.flowui.app.jmxconsole.model.*;
@@ -26,32 +25,29 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.management.*;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Proxy;
-import java.rmi.UnmarshalException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Implementation of the {@code JmxControl} interface for managing JMX functionality.
+ * This class provides operations to fetch metadata and information for JMX-Managed Beans
+ * and perform related tasks.
+ */
 @Component("ui_JmxControl")
 public class JmxControlImpl implements JmxControl {
-
-    public static final String JMX_PORT_SYSTEM_PROPERTY = "com.sun.management.jmxremote.port";
-
-    public static final String RMI_SERVER_HOSTNAME_SYSTEM_PROPERTY = "java.rmi.server.hostname";
-
-    private final Logger log = LoggerFactory.getLogger(JmxControlImpl.class);
-
-    @Autowired
-    protected Metadata metadata;
 
     /**
      * Constant identifier for the role field in a JMX {@link Descriptor}.
@@ -68,18 +64,32 @@ public class JmxControlImpl implements JmxControl {
      */
     protected static final String ROLE_SETTER = "setter";
 
+    private final Logger log = LoggerFactory.getLogger(JmxControlImpl.class);
+
+    protected ApplicationContext applicationContext;
+    protected Metadata metadata;
+
+    public JmxControlImpl(ApplicationContext applicationContext, Metadata metadata) {
+        this.applicationContext = applicationContext;
+        this.metadata = metadata;
+    }
 
     @Override
     public List<ManagedBeanInfo> getManagedBeans() {
-        //noinspection UnnecessaryLocalVariable
-        List<ManagedBeanInfo> infos = withConnection((connection) -> {
-            Set<ObjectName> names = connection.queryNames(null, null);
+
+        return withConnection((connection) -> {
+            Set<ObjectName> names;
+            try {
+                names = connection.queryNames(null, null);
+            } catch (IOException e) {
+                throw new RuntimeException("Error on loading mbean names ", e);
+            }
             List<ManagedBeanInfo> infoList = new ArrayList<>(names.size());
             for (ObjectName name : names) {
                 MBeanInfo info;
                 try {
                     info = connection.getMBeanInfo(name);
-                } catch (UnmarshalException | InstanceNotFoundException e) {
+                } catch (InstanceNotFoundException | IntrospectionException | ReflectionException | IOException e) {
                     // unable to use this bean, may be ClassNotFoundException
                     continue;
                 }
@@ -93,29 +103,34 @@ public class JmxControlImpl implements JmxControl {
 
             return infoList;
         });
-
-        return infos;
     }
 
     @Override
     public ManagedBeanInfo getManagedBean(final String beanObjectName) {
         checkNotNullArgument(beanObjectName);
 
-        //noinspection UnnecessaryLocalVariable
-        ManagedBeanInfo info = withConnection((connection) -> {
-            Set<ObjectName> names = connection.queryNames(new ObjectName(beanObjectName), null);
+        return withConnection((connection) -> {
+            Set<ObjectName> names;
+            try {
+                names = connection.queryNames(new ObjectName(beanObjectName), null);
+            } catch (IOException | MalformedObjectNameException e) {
+                throw new RuntimeException("Error on loading mbean ", e);
+            }
             ManagedBeanInfo mbi = null;
             if (CollectionUtils.isNotEmpty(names)) {
                 ObjectName name = names.stream().findFirst().get();
-                MBeanInfo info1 = connection.getMBeanInfo(name);
-                mbi = createManagedBeanInfo(name, info1);
-                loadOperations(mbi, info1);
+                MBeanInfo info;
+                try {
+                    info = connection.getMBeanInfo(name);
+                } catch (InstanceNotFoundException | IntrospectionException | ReflectionException | IOException e) {
+                    throw new RuntimeException("Error on loading mbean info ", e);
+                }
+                mbi = createManagedBeanInfo(name, info);
+                loadOperations(mbi, info);
             }
 
             return mbi;
         });
-
-        return info;
     }
 
     protected ManagedBeanInfo createManagedBeanInfo(ObjectName name, MBeanInfo info) {
@@ -130,16 +145,26 @@ public class JmxControlImpl implements JmxControl {
     }
 
     @Override
+    @Nullable
     public void loadAttributes(final ManagedBeanInfo mbinfo) {
         checkNotNullArgument(mbinfo);
 
         withConnection((connection) -> {
-            ObjectName name = new ObjectName(mbinfo.getObjectName());
-            MBeanInfo info = connection.getMBeanInfo(name);
+            ObjectName name;
+            MBeanInfo info;
+            try {
+                name = new ObjectName(mbinfo.getObjectName());
+
+                info = connection.getMBeanInfo(name);
+            } catch (InstanceNotFoundException | MalformedObjectNameException | IntrospectionException |
+                     ReflectionException | IOException e) {
+                throw new JmxControlException(e);
+            }
             MBeanAttributeInfo[] attributes = info.getAttributes();
 
+            ObjectName finalName = name;
             List<ManagedBeanAttribute> attrs = Arrays.stream(attributes)
-                    .map(mBeanAttributeInfo -> createAttribute(connection, name, mBeanAttributeInfo, mbinfo))
+                    .map(mBeanAttributeInfo -> createAttribute(connection, finalName, mBeanAttributeInfo, mbinfo))
                     .sorted(new AttributeComparator())
                     .collect(Collectors.toList());
 
@@ -153,10 +178,16 @@ public class JmxControlImpl implements JmxControl {
         checkNotNullArgument(mbinfo);
         checkNotNullArgument(attributeName);
 
-        //noinspection UnnecessaryLocalVariable
-        ManagedBeanAttribute attribute = withConnection((connection) -> {
-            ObjectName name = new ObjectName(mbinfo.getObjectName());
-            MBeanInfo info = connection.getMBeanInfo(name);
+        return withConnection((connection) -> {
+            ObjectName name;
+            MBeanInfo info;
+            try {
+                name = new ObjectName(mbinfo.getObjectName());
+                info = connection.getMBeanInfo(name);
+            } catch (MalformedObjectNameException | InstanceNotFoundException | IntrospectionException |
+                     ReflectionException | IOException e) {
+                throw new RuntimeException("Error on loading mbean info ", e);
+            }
             ManagedBeanAttribute res = null;
             Optional<MBeanAttributeInfo> foundAttributeInfo = Arrays.stream(info.getAttributes())
                     .filter(mBeanAttributeInfo -> mBeanAttributeInfo.getName().equals(attributeName))
@@ -167,7 +198,6 @@ public class JmxControlImpl implements JmxControl {
 
             return res;
         });
-        return attribute;
     }
 
     protected ManagedBeanAttribute createAttribute(MBeanServerConnection connection, ObjectName name,
@@ -203,12 +233,18 @@ public class JmxControlImpl implements JmxControl {
     }
 
     @Override
+    @Nullable
     public void loadAttributeValue(final ManagedBeanAttribute attribute) {
         checkNotNullArgument(attribute);
         checkNotNullArgument(attribute.getMbean());
 
         withConnection((connection) -> {
-            ObjectName name = new ObjectName(attribute.getMbean().getObjectName());
+            ObjectName name;
+            try {
+                name = new ObjectName(attribute.getMbean().getObjectName());
+            } catch (MalformedObjectNameException e) {
+                throw new RuntimeException("Error on loading mbean attribute value ", e);
+            }
 
             Object value = null;
             if (attribute.getReadable()) {
@@ -243,6 +279,7 @@ public class JmxControlImpl implements JmxControl {
 
 
     @Override
+    @Nullable
     public void saveAttributeValue(final ManagedBeanAttribute attribute) {
         checkNotNullArgument(attribute);
         checkNotNullArgument(attribute.getMbean());
@@ -256,11 +293,11 @@ public class JmxControlImpl implements JmxControl {
                         a.getValue(), a.getName(), name.getCanonicalName()));
 
                 connection.setAttribute(name, a);
-            } catch (Exception e) {
+            } catch (MalformedObjectNameException | InstanceNotFoundException | AttributeNotFoundException |
+                     InvalidAttributeValueException | MBeanException | ReflectionException | IOException e) {
                 log.info(String.format("Unable to set value '%s' to attribute '%s' in '%s'",
                         attribute.getValue(), attribute.getName(), attribute.getMbean().getObjectName()), e);
-
-                throw e;
+                throw new RuntimeException(e);
             }
 
             return null;
@@ -272,8 +309,7 @@ public class JmxControlImpl implements JmxControl {
         checkNotNullArgument(operation);
         checkNotNullArgument(operation.getMbean());
 
-        //noinspection UnnecessaryLocalVariable
-        Object result = withConnection((connection) -> {
+        return withConnection((connection) -> {
             try {
                 ObjectName name = new ObjectName(operation.getMbean().getObjectName());
 
@@ -288,25 +324,26 @@ public class JmxControlImpl implements JmxControl {
             } catch (Exception e) {
                 log.warn(String.format("Error invoking method '%s' from '%s'",
                         operation.getName(), operation.getMbean().getObjectName()), e);
-                throw e;
+                throw new RuntimeException(e);
             }
         });
-
-        return result;
     }
 
     @Override
     public List<ManagedBeanDomain> getDomains() {
-        //noinspection UnnecessaryLocalVariable
-        List<ManagedBeanDomain> domains = withConnection((connection) -> {
-            String[] domainNames = connection.getDomains();
+
+        return withConnection((connection) -> {
+            String[] domainNames;
+            try {
+                domainNames = connection.getDomains();
+            } catch (IOException e) {
+                throw new RuntimeException("Error on loading domains", e);
+            }
 
             return Arrays.stream(domainNames).map(this::createDomain)
                     .sorted(new DomainComparator())
                     .collect(Collectors.toList());
         });
-
-        return domains;
     }
 
     protected boolean equalAttributes(List<ManagedBeanOperationParameter> args, String[] argTypes) {
@@ -445,10 +482,10 @@ public class JmxControlImpl implements JmxControl {
         }
     }
 
-    protected static <T> T withConnection(JmxAction<T> action) {
+    protected static <T> T withConnection(Function<MBeanServerConnection, T> action) {
         try {
-            return action.perform(ManagementFactory.getPlatformMBeanServer());
-        } catch (Exception e) {
+            return action.apply(ManagementFactory.getPlatformMBeanServer());
+        } catch (RuntimeException e) {
             throw new JmxControlException(e);
         }
     }

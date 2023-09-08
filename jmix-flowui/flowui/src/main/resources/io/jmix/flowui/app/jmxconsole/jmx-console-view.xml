@@ -18,21 +18,25 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://jmxConsoleView.title">
     <data>
-        <collection id="mbeanDc" class="io.jmix.flowui.app.jmxconsole.model.ManagedBeanInfo"/>
+        <collection id="mbeanDc" class="io.jmix.flowui.app.jmxconsole.model.ManagedBeanInfo">
+            <loader id="mbeanDl"/>
+        </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <hbox>
-            <textField id="mbeanSearchField" placeholder="msg://mbeanSearchField.placeholder"/>
-            <button id="inspectBtn" action="mbeansDataGrid.inspect"/>
+        <hbox id="searchFieldHbox" width="100%">
+            <textField id="mbeanSearchField" width="25em" placeholder="msg://mbeanSearchField.placeholder">
+                <suffix>
+                    <icon icon="SEARCH"/>
+                </suffix>
+            </textField>
+            <button id="editBtn" action="mbeansDataGrid.edit"/>
         </hbox>
         <dataGrid id="mbeansDataGrid" dataContainer="mbeanDc">
             <actions>
-                <action id="refresh" text="msg://refreshAction.text"/>
-                <action id="inspect" type="list_itemTracking" text="msg://inspectAction.text"/>
-                <action id="edit" type="list_edit"/>
+                <action id="edit" type="list_edit" text="msg://inspectAction.text"/>
             </actions>
             <columns>
                 <column property="domain"/>

@@ -17,21 +17,22 @@
 package io.jmix.flowui.app.jmxconsole;
 
 
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.google.common.base.Strings;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteParameters;
+import io.jmix.core.LoadContext;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.app.jmxconsole.model.ManagedBeanInfo;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,71 +45,53 @@ public class JmxConsoleView extends StandardView {
     @ViewComponent
     protected DataGrid<ManagedBeanInfo> mbeansDataGrid;
     @ViewComponent
-    protected CollectionContainer<ManagedBeanInfo> mbeanDc;
+    protected TypedTextField<String> mbeanSearchField;
     @ViewComponent
-    protected TypedTextField mbeanSearchField;
+    protected CollectionLoader<ManagedBeanInfo> mbeanDl;
 
+    @Autowired
+    protected ViewNavigators viewNavigators;
     @Autowired
     protected JmxControl jmxControl;
     @Autowired
     protected DialogWindows dialogWindows;
     @Autowired
-    protected ViewNavigators viewNavigators;
+    protected UrlParamSerializer urlParamSerializer;
 
-    protected Icon searchIcon;
 
     @Subscribe
     public void onInit(final InitEvent event) {
         initSearchField();
-        reloadMBeans(null);
     }
 
     protected void initSearchField() {
-        createSearchIcon();
-        mbeanSearchField.setSuffixComponent(searchIcon);
-        mbeanSearchField.addKeyPressListener(Key.ENTER, keyPressEvent -> reloadMBeans(mbeanSearchField.getValue()));
+        mbeanSearchField.addTypedValueChangeListener(valueChangeEvent -> mbeanDl.load());
     }
 
-    protected void createSearchIcon() {
-        searchIcon = new Icon(VaadinIcon.SEARCH);
-        searchIcon.addClickListener(event -> reloadMBeans(mbeanSearchField.getValue()));
+    @Install(to = "mbeanDl", target = Target.DATA_LOADER)
+    protected List<ManagedBeanInfo> mbeanDlLoadDelegate(final LoadContext loadContext) {
+        return reloadMBeans(mbeanSearchField.getValue());
     }
 
-    @Subscribe("mbeansDataGrid.inspect")
-    public void onMbeansDataGridInspect(final ActionPerformedEvent event) {
-        showMBeanDetail();
-    }
-
-    protected void showMBeanDetail() {
-        ManagedBeanInfo managedBeanInfo = mbeansDataGrid.getSingleSelectedItem();
-
-        if (managedBeanInfo != null) {
-            viewNavigators.detailView(mbeansDataGrid)
-                    .withViewClass(MBeanInfoDetailView.class)
-                    .navigate();
+    @Nullable
+    @Install(to = "mbeansDataGrid.edit", subject = "routeParametersProvider")
+    public RouteParameters mbeansDataGridEditRouteParametersProvider() {
+        ManagedBeanInfo selectedItem = mbeansDataGrid.getSingleSelectedItem();
+        if (selectedItem != null) {
+            String serializedObjectName = urlParamSerializer.serialize(selectedItem.getObjectName());
+            return new RouteParameters(MBeanInfoDetailView.MBEAN_ROUTE_PARAM_NAME, serializedObjectName);
         }
+
+        return null;
     }
 
-    protected void reloadMBeans(String objectName) {
+    protected List<ManagedBeanInfo> reloadMBeans(String objectName) {
         List<ManagedBeanInfo> managedBeanInfos = jmxControl.getManagedBeans();
 
-        if (StringUtils.isNotEmpty(objectName)) {
-            List<ManagedBeanInfo> res = managedBeanInfos.stream()
-                    .filter(managedBeanInfo -> StringUtils.containsIgnoreCase(managedBeanInfo.getObjectName(), objectName))
-                    .sorted(Comparator.comparing(ManagedBeanInfo::getDomain))
-                    .collect(Collectors.toList());
-
-            setManagedBeans(res);
-        } else {
-            List<ManagedBeanInfo> res = managedBeanInfos.stream()
-                    .sorted(Comparator.comparing(ManagedBeanInfo::getDomain))
-                    .collect(Collectors.toList());
-            setManagedBeans(res);
-        }
-    }
-
-    protected void setManagedBeans(List<ManagedBeanInfo> res) {
-        mbeanDc.getMutableItems().clear();
-        mbeanDc.getMutableItems().addAll(res);
+        return managedBeanInfos.stream()
+                .filter(managedBeanInfo -> Strings.isNullOrEmpty(objectName) ||
+                        StringUtils.containsIgnoreCase(managedBeanInfo.getObjectName(), objectName))
+                .sorted(Comparator.comparing(ManagedBeanInfo::getDomain))
+                .collect(Collectors.toList());
     }
 }

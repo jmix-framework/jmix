@@ -16,6 +16,9 @@
 
 package io.jmix.flowui.app.jmxconsole;
 
+/**
+ * Custom exception class to handle JMX Control-related exceptions.
+ */
 public class JmxControlException extends RuntimeException {
     private static final long serialVersionUID = -7683677050143447151L;
 

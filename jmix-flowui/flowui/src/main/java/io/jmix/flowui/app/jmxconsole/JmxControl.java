@@ -25,27 +25,28 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Interface to provide JMX control functionality for local JMX interfaces
+ * Interface to provide JMX control functionality for local JMX interfaces.
  */
 public interface JmxControl {
 
     /**
-     * Loads the list of managed bean infos
+     * Loads the list of managed bean infos.
      *
      * @return the list with managed beans
      */
     List<ManagedBeanInfo> getManagedBeans();
 
     /**
-     * Loads the managed bean by its ObjectName
+     * Loads the managed bean by its ObjectName.
      *
      * @param beanObjectName exact ObjectName of the bean
      * @return found managed bean, null if no bean found
      */
+    @Nullable
     ManagedBeanInfo getManagedBean(String beanObjectName);
 
     /**
-     * Loads attributes for managed bean descriptor
+     * Loads attributes for managed bean descriptor.
      *
      * @param info managed bean descriptor
      */
@@ -62,14 +63,14 @@ public interface JmxControl {
     ManagedBeanAttribute loadAttribute(ManagedBeanInfo info, String attributeName);
 
     /**
-     * Loads attribute value for managed bean attribute
+     * Loads attribute value for managed bean attribute.
      *
      * @param attribute attribute descriptor
      */
     void loadAttributeValue(ManagedBeanAttribute attribute);
 
     /**
-     * Saves attribute value to JMX node
+     * Saves attribute value to JMX node.
      *
      * @param attribute attribute descriptor
      */
@@ -83,10 +84,11 @@ public interface JmxControl {
      * @param argTypes      operation argument types
      * @return Found operation descriptor, null if not found
      */
+    @Nullable
     ManagedBeanOperation getOperation(ManagedBeanInfo bean, String operationName, @Nullable String[] argTypes);
 
     /**
-     * Invokes method of managed bean
+     * Invokes method of managed bean.
      *
      * @param operation       operation descriptor
      * @param parameterValues array with parameter values
@@ -95,7 +97,7 @@ public interface JmxControl {
     Object invokeOperation(ManagedBeanOperation operation, Object[] parameterValues);
 
     /**
-     * Loads list of managed bean domains
+     * Loads list of managed bean domains.
      *
      * @return the list of managed bean domains
      */

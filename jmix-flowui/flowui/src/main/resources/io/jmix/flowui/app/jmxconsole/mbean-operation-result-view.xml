@@ -18,17 +18,18 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://mbeanOperationResult.title">
     <actions>
-        <action id="closeAction" type="view_close" icon="CHECK" text="msg://close"/>
+        <action id="closeAction" type="view_close" text="msg://actions.Close"/>
+        <action id="exportAction" icon="DOWNLOAD" text="msg://actions.Export"/>
     </actions>
-    <layout width="60em">
-        <vbox id="resultVBox" expand="resultContainer">
+    <layout>
+        <vbox id="resultVBox" padding="false" width="100%">
             <progressBar id="taskProgressBar" width="100%" indeterminate="true"/>
             <h4 id="resultTitle"/>
-            <scroller id="resultContainer" width="100%" scrollBarsDirection="BOTH"/>
+            <vbox id="resultContainer" width="100%"/>
         </vbox>
-        <hbox classNames="buttons-panel">
+        <hbox id="detailActions">
             <button id="closeBtn" action="closeAction"/>
-            <button id="exportBtn" icon="DOWNLOAD" text="msg://actions.Export" enabled="false"/>
+            <button id="exportBtn" action="exportAction" enabled="false"/>
         </hbox>
     </layout>
 </view>

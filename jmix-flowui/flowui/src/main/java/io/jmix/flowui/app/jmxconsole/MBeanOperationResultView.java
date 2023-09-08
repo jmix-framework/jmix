@@ -16,11 +16,9 @@
 
 package io.jmix.flowui.app.jmxconsole;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.orderedlayout.Scroller;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.CoreProperties;
@@ -35,6 +33,7 @@ import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +48,7 @@ import java.text.SimpleDateFormat;
 @Route(value = "system/mbeanresult", layout = DefaultMainViewParent.class)
 @ViewController("sys_MBeanOperationResultView")
 @ViewDescriptor("mbean-operation-result-view.xml")
+@DialogMode(width = "60em", resizable = true)
 public class MBeanOperationResultView extends StandardView {
     @ViewComponent
     protected ProgressBar taskProgressBar;
@@ -57,7 +57,7 @@ public class MBeanOperationResultView extends StandardView {
     @ViewComponent
     protected H4 resultTitle;
     @ViewComponent
-    protected Scroller resultContainer;
+    protected VerticalLayout resultContainer;
 
     @Autowired
     protected JmxControl jmxControl;
@@ -97,8 +97,8 @@ public class MBeanOperationResultView extends StandardView {
         taskHandler.execute();
     }
 
-    @Subscribe("exportBtn")
-    public void onExportBtnClick(final ClickEvent<Button> event) {
+    @Subscribe("exportAction")
+    public void onExportAction(final ActionPerformedEvent event) {
         if (result != null || exception != null) {
             String exportResult = String.format("JMX Method %s : %s result\n",
                     operation.getMbean().getClassName(), operation.getName());
@@ -206,7 +206,7 @@ public class MBeanOperationResultView extends StandardView {
             taskProgressBar.setVisible(false);
             resultTitle.setText(resultMessage);
             if (paragraph != null) {
-                resultContainer.setContent(paragraph);
+                resultContainer.add(paragraph);
             }
             exportBtn.setEnabled(true);
         }

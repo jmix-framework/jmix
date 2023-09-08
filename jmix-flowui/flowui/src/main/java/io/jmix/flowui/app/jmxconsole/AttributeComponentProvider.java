@@ -16,27 +16,32 @@
 
 package io.jmix.flowui.app.jmxconsole;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.textfield.TextField;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.select.JmixSelect;
-import io.jmix.flowui.component.valuepicker.JmixValuePicker;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import javax.annotation.Nullable;
 import java.util.List;
 
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+/**
+ * Provides components for attribute fields.
+ */
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 @org.springframework.stereotype.Component("ui_AttributeComponentProvider")
 public class AttributeComponentProvider {
 
@@ -47,77 +52,101 @@ public class AttributeComponentProvider {
     @Autowired
     protected Actions actions;
 
-    protected String type;
-    protected Object value;
-    protected boolean requestFocus;
-    protected boolean isFixedSize;
+    /**
+     * Builder class for creating attribute components.
+     */
+    public class ComponentBuilder {
+        private String type;
+        private Object value;
+        private String width;
+        private String maxWidth;
 
-    public AttributeComponentProvider withType(String type) {
-        this.type = type;
-        return this;
+        public ComponentBuilder withType(String type) {
+            this.type = type;
+            return this;
+        }
+
+        public ComponentBuilder withValue(Object value) {
+            this.value = value;
+            return this;
+        }
+
+        public ComponentBuilder withWidth(String width) {
+            this.width = width;
+            return this;
+        }
+
+        public ComponentBuilder withMaxWidth(String maxWidth) {
+            this.maxWidth = maxWidth;
+            return this;
+        }
+
+        public AbstractField<?, ?> build() {
+            return AttributeComponentProvider.this.build(this);
+        }
     }
 
-    public AttributeComponentProvider withValue(Object value) {
-        this.value = value;
-        return this;
+    public ComponentBuilder builder() {
+        return new ComponentBuilder();
     }
 
-    public AttributeComponentProvider requestFocus(boolean requestFocus) {
-        this.requestFocus = requestFocus;
-        return this;
-    }
-
-    public AttributeComponentProvider withFixedSize(boolean isFixedSize) {
-        this.isFixedSize = isFixedSize;
-        return this;
-    }
-
-    public AbstractField build() {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected AbstractField<?, ?> build(ComponentBuilder componentBuilder) {
         AbstractField field;
 
-        if (AttributeHelper.isBoolean(type)) {
-            field = uiComponents.create(JmixSelect.class);
-            ((JmixSelect) field).setItems(Boolean.TRUE, Boolean.FALSE);
-        } else if (AttributeHelper.isArrayOrCollection(type)) {
-            field = uiComponents.create(JmixValuePicker.class);
+        if (AttributeHelper.isBoolean(componentBuilder.type)) {
+            JmixSelect select = uiComponents.create(JmixSelect.class);
+            select.setItems(Boolean.TRUE, Boolean.FALSE);
+            field = select;
+        } else if (AttributeHelper.isArrayOrCollection(componentBuilder.type)) {
+            JmixMultiValuePicker multiValuePicker = uiComponents.create(JmixMultiValuePicker.class);
             MultiValueSelectAction<String> multiValueSelectAction = actions.create(MultiValueSelectAction.ID);
             multiValueSelectAction.setJavaClass(String.class);
-            multiValueSelectAction.setTarget((JmixValuePicker) field);
-            ((JmixValuePicker) field).addAction(multiValueSelectAction);
-        } else if (AttributeHelper.isDate(type)) {
+            multiValueSelectAction.setTarget(multiValuePicker);
+            multiValuePicker.addAction(multiValueSelectAction);
+            field = multiValuePicker;
+        } else if (AttributeHelper.isDate(componentBuilder.type)) {
             field = uiComponents.create(DatePicker.class);
         } else {
             field = uiComponents.create(TextField.class);
         }
-        setValue(field, value);
+
+        if (!Strings.isNullOrEmpty(componentBuilder.width)) {
+            ((HasSize) field).setWidth(componentBuilder.width);
+        }
+        if (!Strings.isNullOrEmpty(componentBuilder.maxWidth)) {
+            ((HasSize) field).setMaxWidth(componentBuilder.maxWidth);
+        }
+
+        if (field instanceof TextField) {
+            componentBuilder.value = componentBuilder.value != null ? String.valueOf(componentBuilder.value) : "";
+        }
+
+        UiComponentUtils.setValue(field, componentBuilder.value);
 
         return field;
     }
 
-    protected void setValue(AbstractField field, Object value) {
-        if (value != null) {
-            if (field instanceof TextField) {
-                field.setValue(value.toString());
-            } else {
-                field.setValue(value);
-            }
+    @Nullable
+    public Object getFieldConvertedValue(HasValueAndElement<?, ?> field, String type, boolean allowNull) {
+        Object value = UiComponentUtils.getValue((HasValue<?, ?>) field);
+        if (value == null && allowNull) {
+            return null;
         }
-    }
 
-    public Object getFieldConvertedValue(AbstractField field, boolean allowNull) {
         if (field instanceof TextField) {
-            String strValue = field.getValue().toString();
+            String strValue = value.toString();
             if (allowNull && StringUtils.isBlank(strValue)) {
                 return null;
             } else {
                 return AttributeHelper.convert(type, strValue);
             }
         } else if (field instanceof DatePicker) {
-            LocalDate localDate = (LocalDate) field.getValue();
-            return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-        } else if (field instanceof JmixValuePicker<?>) {
-            return ((List) field.getValue()).toArray(new String[0]);
+            return value;
+        } else if (field instanceof JmixMultiValuePicker<?>) {
+            return ((List) value).toArray(new String[0]);
         }
-        return field.getValue();
+
+        return value;
     }
 }

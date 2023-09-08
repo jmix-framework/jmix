@@ -18,7 +18,6 @@ package io.jmix.flowui.app.jmxconsole;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasLabel;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
@@ -32,6 +31,7 @@ import java.util.Objects;
 @ViewController("ui_ManagedBeanAttribute.detail")
 @ViewDescriptor("mbean-attribute-detail-view.xml")
 @EditedEntityContainer("attrDc")
+@DialogMode(width = "35em", resizable = true)
 public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttribute> {
     @Autowired
     protected JmxControl jmxControl;
@@ -43,9 +43,8 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
     protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
-    @ViewComponent
-    protected Div valueContainerDiv;
-    private AbstractField attributeField;
+
+    protected AbstractField<?, ?> attributeField;
 
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
@@ -53,51 +52,57 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
 
         jmxControl.loadAttributeValue(managedBeanAttribute);
 
-        attributeField = attributeComponentProvider
+        attributeField = attributeComponentProvider.builder()
                 .withValue(managedBeanAttribute.getValue())
                 .withType(managedBeanAttribute.getType())
-                .withFixedSize(true)
-                .requestFocus(true)
+                .withWidth("100%")
+                .withMaxWidth("35em")
                 .build();
-        if (attributeField instanceof HasLabel) {
-            ((HasLabel) attributeField).setLabel("Value");
+
+        if (attributeField instanceof HasLabel hasLabelComponent) {
+            hasLabelComponent.setLabel("Value");
         }
-        valueContainerDiv.add(attributeField);
+
+        getContent().addComponentAsFirst(attributeField);
     }
 
     @Subscribe
     public void onBeforeSave(final BeforeSaveEvent event) {
-        if (!assignValue()) {
+        if (valueNotAssigned()) {
             event.preventSave();
         }
     }
 
-    protected boolean assignValue() {
+    protected boolean valueNotAssigned() {
         ManagedBeanAttribute managedBeanAttribute = getEditedEntity();
 
         Object oldValue = managedBeanAttribute.getValue();
         try {
-            Object newValue = attributeField.getValue() != null ? attributeComponentProvider.getFieldConvertedValue(attributeField, false) : null;
+            Object newValue = attributeField.getValue() != null ?
+                    attributeComponentProvider.getFieldConvertedValue(attributeField, managedBeanAttribute.getType(),
+                            false)
+                    : null;
             if (newValue != null) {
                 if (!Objects.equals(managedBeanAttribute.getValue(), newValue)) {
                     managedBeanAttribute.setValue(newValue);
                     jmxControl.saveAttributeValue(managedBeanAttribute);
                 }
-                return true;
+                return false;
             }
         } catch (Exception e) {
-            dialogs.createMessageDialog()
-                    .withHeader(messageBundle.formatMessage("editAttribute.exception", managedBeanAttribute.getName()))
-                    .withText(e.getClass().getCanonicalName() + " " + e.getMessage() + "\n")
-                    .open();
+            notifications.create(
+                            messageBundle.formatMessage("editAttribute.exception", managedBeanAttribute.getName()),
+                            e.getClass().getCanonicalName() + " " + e.getMessage() + "\n")
+                    .withType(Notifications.Type.ERROR)
+                    .show();
             managedBeanAttribute.setValue(oldValue);
-            return false;
+            return true;
         }
         notifications.create(messageBundle.getMessage("editAttribute.conversionError"))
-                .withType(Notifications.Type.DEFAULT)
+                .withType(Notifications.Type.ERROR)
                 .show();
 
-        return false;
+        return true;
     }
 
     @Override

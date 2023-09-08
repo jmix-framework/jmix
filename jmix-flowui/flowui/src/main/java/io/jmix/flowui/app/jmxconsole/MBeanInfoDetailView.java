@@ -17,13 +17,9 @@
 package io.jmix.flowui.app.jmxconsole;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
@@ -36,18 +32,25 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "system/mbeaninfo", layout = DefaultMainViewParent.class)
+@Route(value = "system/mbeaninfo/:mbean", layout = DefaultMainViewParent.class)
 @ViewController("ui_ManagedBeanInfo.detail")
 @ViewDescriptor("mbean-detail-view.xml")
 @EditedEntityContainer("mbeanDc")
 public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
+
+    public static final String MBEAN_ROUTE_PARAM_NAME = "mbean";
+
     @ViewComponent
     protected DataGrid<ManagedBeanAttribute> attributesDataGrid;
+    @ViewComponent
+    protected InstanceContainer<ManagedBeanInfo> mbeanDc;
     @ViewComponent
     protected CollectionContainer<ManagedBeanAttribute> attrDc;
     @ViewComponent
@@ -73,13 +76,23 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     protected UiComponents uiComponents;
     @Autowired
     protected DialogWindows dialogWindows;
-
-    protected Icon searchIcon;
+    @Autowired
+    protected UrlParamSerializer urlParamSerializer;
 
     @Override
-    public void setEntityToEdit(ManagedBeanInfo entity) {
-        super.setEntityToEdit(entity);
+    protected void initExistingEntity(String mbeanObjectName) {
+        String objectName = urlParamSerializer.deserialize(String.class, mbeanObjectName);
+        ManagedBeanInfo managedBean = jmxControl.getManagedBean(objectName);
+
+        mbeanDc.setItem(managedBean);
+
+
         initComponents();
+    }
+
+    @Override
+    protected String getRouteParamName() {
+        return MBEAN_ROUTE_PARAM_NAME;
     }
 
     protected void initComponents() {
@@ -87,20 +100,13 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
 
         initMbeanSpans();
         initOperationsLayout();
-        initDatagridColumns();
+        initDataGridColumns();
         initSearchField();
     }
 
     protected void initSearchField() {
-        createSearchIcon();
-        operationsSearchField.setSuffixComponent(searchIcon);
-        operationsSearchField.addKeyPressListener(Key.ENTER,
-                keyPressEvent -> reloadOperations(operationsSearchField.getValue()));
-    }
-
-    protected void createSearchIcon() {
-        searchIcon = new Icon(VaadinIcon.SEARCH);
-        searchIcon.addClickListener(event -> reloadOperations(operationsSearchField.getValue()));
+        operationsSearchField.addTypedValueChangeListener(
+                valueChangeEvent -> reloadOperations(operationsSearchField.getValue()));
     }
 
     protected void reloadOperations(String objectName) {
@@ -121,7 +127,7 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
         }
     }
 
-    protected void initDatagridColumns() {
+    protected void initDataGridColumns() {
         attributesDataGrid.addColumn(createStatusComponentRenderer())
                 .setHeader(messageTools.getPropertyCaption(
                         metadata.getClass(ManagedBeanAttribute.class), "readableWriteable"));
@@ -152,17 +158,12 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     }
 
     @Override
-    protected void findEntityId(BeforeEnterEvent event) {
-        // Because DTO entity cannot be loaded by Id, we need to prevent Id parsing from route parameters
-    }
-
-    @Override
     public boolean hasUnsavedChanges() {
         return false;
     }
 
     @Install(to = "attributesDataGrid.edit", subject = "enabledRule")
-    private boolean attributesDataGridEditEnabledRule() {
+    protected boolean attributesDataGridEditEnabledRule() {
         ManagedBeanAttribute managedBeanAttribute = attributesDataGrid.getSingleSelectedItem();
         return managedBeanAttribute != null && managedBeanAttribute.getWriteable();
     }

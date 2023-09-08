@@ -28,7 +28,6 @@
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
-        <div id="valueContainerDiv"/>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveCloseAction"/>
             <button id="closeBtn" action="closeAction"/>

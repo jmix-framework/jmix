@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.timer;
+package io.jmix.flowui.kit.component.timer;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;

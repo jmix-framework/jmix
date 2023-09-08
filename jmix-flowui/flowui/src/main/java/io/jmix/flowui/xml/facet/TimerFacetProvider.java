@@ -24,8 +24,6 @@ import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component("ui_TimerFacetProvider")
 public class TimerFacetProvider implements FacetProvider<Timer> {
 
@@ -56,26 +54,20 @@ public class TimerFacetProvider implements FacetProvider<Timer> {
     }
 
     protected void loadTimer(Timer timer, Element element, ComponentLoader.ComponentContext context) {
-        loaderSupport.loadString(element, "id", timer::setId);
+        String id = loaderSupport.loadString(element, "id")
+                .orElseThrow(() -> new IllegalStateException("Timer id must be defined"));
+        timer.setId(id);
 
-        Optional<Integer> delayOptional = loaderSupport.loadInteger(element, "delay");
-
-        String timerIdToLog = timer.getId() != null ? timer.getId() : "<noid>";
-        if (delayOptional.isEmpty()) {
-            throw new GuiDevelopmentException("Timer 'delay' can't be empty", context, "Timer ID", timerIdToLog);
-        }
-
-        int delay = delayOptional.get();
+        int delay = loaderSupport.loadInteger(element, "delay").orElse(-1);
         if (delay <= 0) {
-            throw new GuiDevelopmentException("Timer 'delay' must be greater than 0", context, "Timer ID", timerIdToLog);
+            throw new GuiDevelopmentException("Timer 'delay' must be greater than 0", context, "Timer ID", id);
         }
-
         timer.setDelay(delay);
 
         loaderSupport.loadBoolean(element, "repeating", timer::setRepeating);
 
-        Optional<Boolean> autostartOptional = loaderSupport.loadBoolean(element, "autostart");
-        if (autostartOptional.isPresent() && autostartOptional.get()) {
+        boolean autostart = loaderSupport.loadBoolean(element, "autostart").orElse(false);
+        if (autostart) {
             timer.start();
         }
     }

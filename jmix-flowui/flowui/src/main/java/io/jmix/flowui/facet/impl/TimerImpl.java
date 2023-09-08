@@ -19,7 +19,7 @@ package io.jmix.flowui.facet.impl;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.timer.JmixTimer;
+import io.jmix.flowui.kit.component.timer.JmixTimer;
 import io.jmix.flowui.facet.Timer;
 import io.jmix.flowui.view.View;
 import org.slf4j.Logger;

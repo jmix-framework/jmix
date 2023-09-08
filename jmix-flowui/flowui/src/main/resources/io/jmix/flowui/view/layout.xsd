@@ -4040,8 +4040,8 @@
 
     <!--    Timer-->
     <xs:complexType name="timerType">
-        <xs:attribute name="id" type="xs:string"/>
-        <xs:attribute name="delay" type="xs:integer"/>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="delay" type="xs:integer" use="required"/>
         <xs:attribute name="autostart" type="xs:boolean"/>
         <xs:attribute name="repeating" type="xs:boolean"/>
     </xs:complexType>

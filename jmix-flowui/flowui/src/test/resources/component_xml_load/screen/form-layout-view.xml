@@ -24,13 +24,21 @@
 
         <formLayout id="formLayoutCustomLabelPosition"
                     labelsPosition="ASIDE">
-            <textField/>
-            <bigDecimalField/>
+            <formItem>
+                <textField/>
+            </formItem>
+            <formItem>
+                <bigDecimalField/>
+            </formItem>
         </formLayout>
 
         <formLayout id="formLayoutWithResponsiveSteps">
-            <textField/>
-            <bigDecimalField/>
+            <formItem>
+                <textField/>
+            </formItem>
+            <formItem>
+                <bigDecimalField/>
+            </formItem>
             <responsiveSteps>
                 <responsiveStep minWidth="0" labelsPosition="TOP" columns="1"/>
                 <responsiveStep minWidth="10em" labelsPosition="ASIDE" columns="1"/>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,42 +16,37 @@
 
 package io.jmix.securityflowui.action;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.google.common.base.Preconditions;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
-import io.jmix.securityflowui.view.roleassignment.RoleAssignmentView;
+import io.jmix.securitydata.entity.UserSubstitutionEntity;
+import io.jmix.securityflowui.view.usersubstitution.UserSubstitutionView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@ActionType(ShowRoleAssignmentsAction.ID)
-public class ShowRoleAssignmentsAction<E extends UserDetails>
-        extends SecuredListDataComponentAction<ShowRoleAssignmentsAction<E>, E>
+@ActionType(ShowUserSubstitutionsAction.ID)
+public class ShowUserSubstitutionsAction<E extends UserDetails>
+        extends SecuredListDataComponentAction<ShowUserSubstitutionsAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "sec_showRoleAssignments";
+    public static final String ID = "sec_showUserSubstitutions";
 
     protected ViewNavigators viewNavigators;
     protected RouteSupport routeSupport;
 
-    public ShowRoleAssignmentsAction() {
+    public ShowUserSubstitutionsAction() {
         this(ID);
     }
 
-    public ShowRoleAssignmentsAction(String id) {
+    public ShowUserSubstitutionsAction(String id) {
         super(id);
-    }
-
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.SHIELD);
     }
 
     @Autowired
@@ -65,8 +60,32 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
     }
 
     @Autowired
-    public void setMessages(Messages messages) {
-        this.text = messages.getMessage("actions.showRoleAssignments");
+    protected void setMessages(Messages messages) {
+        this.text = messages.getMessage("actions.showUserSubstitutions");
+    }
+
+    @Override
+    protected boolean isPermitted() {
+        if (target == null || !(target.getItems() instanceof EntityDataUnit entityDataUnitItems)) {
+            return false;
+        }
+
+        MetaClass metaClass = entityDataUnitItems.getEntityMetaClass();
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        if (!entityContext.isViewPermitted()) {
+            return false;
+        }
+
+        UiEntityContext userSubstitutionContext = new UiEntityContext(metadata.getClass(UserSubstitutionEntity.class));
+        accessManager.applyRegisteredConstraints(userSubstitutionContext);
+
+        if (!userSubstitutionContext.isViewPermitted()) {
+            return false;
+        }
+
+        return super.isPermitted();
     }
 
     @Override
@@ -75,16 +94,15 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
         checkTargetItems(EntityDataUnit.class);
 
         E selectedItem = target.getSingleSelectedItem();
-        if (selectedItem == null) {
-            throw new IllegalStateException(String.format("There is not selected item in %s target",
-                    getClass().getSimpleName()));
-        }
+        Preconditions.checkState(selectedItem != null,
+                "There is not selected item in %s target",
+                getClass().getSimpleName());
 
         navigate(selectedItem);
     }
 
     protected void navigate(E selectedItem) {
-        viewNavigators.view(RoleAssignmentView.class)
+        viewNavigators.view(UserSubstitutionView.class)
                 .withRouteParameters(routeSupport.createRouteParameters("username", selectedItem.getUsername()))
                 .withBackwardNavigation(true)
                 .navigate();

@@ -49,10 +49,14 @@ public class UserIndicator<V> extends Composite<Div> implements SupportsFormatte
         getContent().add(userComponent);
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void updateUserIndicatorLabel(V user) {
-        if (userComponent instanceof HasText) {
-            String userTitle = generateUserTitle(user);
-            ((HasText) userComponent).setText(userTitle);
+        String userTitle = generateUserTitle(user);
+
+        if (userComponent instanceof HasText hasTextComponent) {
+            hasTextComponent.setText(userTitle);
+        } else if (userComponent instanceof HasValue hasValueComponent) {
+            hasValueComponent.setValue(user);
         }
     }
 

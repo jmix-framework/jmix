@@ -18,10 +18,42 @@ package io.jmix.autoconfigure.security;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RowLevelRoleRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+
+import javax.cache.Cache;
+import javax.cache.configuration.MutableConfiguration;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class, SecurityConfiguration.class})
 public class SecurityAutoConfiguration {
+
+    @Bean
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    JCacheManagerCustomizer resourceRolesCacheCustomizer() {
+        return cacheManager -> {
+            Cache<Object, Object> cache = cacheManager.getCache(ResourceRoleRepository.RESOURCE_ROLES_CACHE_NAME);
+            if (cache == null) {
+                MutableConfiguration configuration = new MutableConfiguration();
+                cacheManager.createCache(ResourceRoleRepository.RESOURCE_ROLES_CACHE_NAME, configuration);
+            }
+        };
+    }
+
+    @Bean
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    JCacheManagerCustomizer rowLevelRolesCacheCustomizer() {
+        return cacheManager -> {
+            Cache<Object, Object> cache = cacheManager.getCache(RowLevelRoleRepository.ROW_LEVEL_ROLES_CACHE_NAME);
+            if (cache == null) {
+                MutableConfiguration configuration = new MutableConfiguration();
+                cacheManager.createCache(RowLevelRoleRepository.ROW_LEVEL_ROLES_CACHE_NAME, configuration);
+            }
+        };
+    }
+
 }

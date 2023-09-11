@@ -78,6 +78,10 @@
               code="multiselect"
               step="1"
               propertyType="BOOLEAN"/>
+    <property caption="Labels position aside"
+              code="asideLabelsPosition"
+              step="1"
+              propertyType="BOOLEAN"/>
     <property caption="List view fetch plan"
               step="2"
               code="listFetchPlan"

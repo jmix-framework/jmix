@@ -22,8 +22,7 @@ import io.jmix.core.accesscontext.CrudEntityContext
 import io.jmix.core.accesscontext.EntityAttributeContext
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.role.ResourceRoleRepository
+import io.jmix.security.role.RoleGrantedAuthorityUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -44,13 +43,13 @@ class ExtendedEntityRoleTest extends SecurityDataSpecification {
     InMemoryUserRepository userRepository
 
     @Autowired
-    ResourceRoleRepository roleRepository
-
-    @Autowired
     Metadata metadata
 
     @Autowired
     AccessManager accessManager
+
+    @Autowired
+    RoleGrantedAuthorityUtils roleGrantedAuthorityUtils
 
     UserDetails user1
 
@@ -60,7 +59,7 @@ class ExtendedEntityRoleTest extends SecurityDataSpecification {
         user1 = User.builder()
                 .username("user1")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofResourceRole(roleRepository.getRoleByCode(TestExtBarRole.CODE)))
+                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(TestExtBarRole.CODE))
                 .build()
 
         userRepository.addUser(user1)

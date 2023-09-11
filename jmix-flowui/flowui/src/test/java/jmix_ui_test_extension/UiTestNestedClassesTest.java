@@ -16,11 +16,11 @@
 
 package jmix_ui_test_extension;
 
-import com.vaadin.flow.router.NotFoundException;
 import component.image.view.JmixImageTestView;
 import component.listmenu.view.ListMenuTestView;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
@@ -86,7 +86,7 @@ public class UiTestNestedClassesTest {
         @Test
         @DisplayName("Checks that view base packages are not changed")
         public void checkViewBasePackages() {
-            Assertions.assertThrows(NotFoundException.class, () ->
+            Assertions.assertThrows(NoSuchViewException.class, () ->
                     viewNavigators.view(ListMenuTestView.class).navigate());
 
             viewNavigators.view(JmixImageTestView.class)

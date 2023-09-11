@@ -220,6 +220,8 @@ dependencies {
         api "io.jmix.translations:jmix-translations-ckb:$freeVersion"
         api "io.jmix.translations:jmix-translations-nl:$freeVersion"
         api "io.jmix.translations:jmix-translations-it:$freeVersion"
+        api "io.jmix.translations:jmix-translations-ar:$freeVersion"
+        api "io.jmix.translations:jmix-translations-tr:$freeVersion"
 
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"

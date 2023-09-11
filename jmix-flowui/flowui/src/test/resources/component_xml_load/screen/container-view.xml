@@ -131,15 +131,17 @@
                     visible="true"
                     width="100px"
                     labelsPosition="ASIDE">
-                <textField id="forNumber" property="number"
-                           colspan="3"
-                           enabled="true"
-                           visible="true"/>
-                <bigDecimalField id="forAmount" property="amount"
-                                 colspan="2"
-                                 enabled="true"
-                                 label="amountLabel"
-                                 visible="true"/>
+            <formItem colspan="3"
+                      enabled="false"
+                      visible="false">
+                <textField id="forNumber" property="number"/>
+            </formItem>
+            <formItem colspan="2"
+                      enabled="false"
+                      label="amountLabel"
+                      visible="false">
+                <bigDecimalField id="forAmount" property="amount"/>
+            </formItem>
             <responsiveSteps>
                 <responsiveStep
                         columns="5"

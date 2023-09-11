@@ -124,7 +124,7 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
     }
 
     /**
-     * @return true/false whether confirmation dialog {@link #setUseConfirmDialog(Boolean)} is used.
+     * @return true/false whether confirmation dialog {@link #setUseConfirmDialog(boolean)} is used.
      */
     public boolean getUseConfirmDialog() {
         return useConfirmDialog;
@@ -134,7 +134,7 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
      * @param useConfirmDialog flag whether the confirmation dialog should be displayed to
      *                         the user before saving the changes. The default value is true
      */
-    public void setUseConfirmDialog(Boolean useConfirmDialog) {
+    public void setUseConfirmDialog(boolean useConfirmDialog) {
         this.useConfirmDialog = useConfirmDialog;
     }
 
@@ -263,7 +263,7 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
     }
 
     /**
-     * @see #setUseConfirmDialog(Boolean)
+     * @see #setUseConfirmDialog(boolean)
      */
     public BulkEditAction<E> withUseConfirmDialog(boolean useConfirmDialog) {
         setUseConfirmDialog(useConfirmDialog);

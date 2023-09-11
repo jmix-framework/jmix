@@ -36,11 +36,11 @@
                   width="100%">
             <formLayout id="fieldLayout">
                 <responsiveSteps>
-                    <responsiveStep minWidth="0em"
+                    <responsiveStep minWidth="0"
                                     columns="1"/>
-                    <responsiveStep minWidth="30em"
+                    <responsiveStep minWidth="60em"
                                     columns="2"/>
-                    <responsiveStep minWidth="45em"
+                    <responsiveStep minWidth="120em"
                                     columns="3"/>
                 </responsiveSteps>
             </formLayout>

@@ -142,7 +142,7 @@ public class BulkEditorBuilder<E> {
      * @param useConfirmDialog whether the confirmation dialog should be displayed
      * @return this builder
      */
-    public BulkEditorBuilder<E> withUseConfirmDialog(Boolean useConfirmDialog) {
+    public BulkEditorBuilder<E> withUseConfirmDialog(boolean useConfirmDialog) {
         this.useConfirmDialog = useConfirmDialog;
         return this;
     }

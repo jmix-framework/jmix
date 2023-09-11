@@ -50,6 +50,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static io.jmix.ui.component.filter.FilterUtils.generateConfigurationId;
@@ -183,6 +184,14 @@ public class FilterSaveAsAction extends FilterAction {
                     if (filter.getConfiguration(id) != null) {
                         return ValidationErrors.of(messages.getMessage(LogicalFilterConditionEdit.class,
                                 "logicalFilterConditionEdit.uniqueConfigurationId"));
+                    }
+
+                    String name = validationContext.getValue("nameField");
+                    boolean configurationWithSameNameExists = filter.getConfigurations().stream()
+                            .anyMatch(conf -> Objects.equals(name, conf.getName()));
+                    if (configurationWithSameNameExists) {
+                        return ValidationErrors.of(messages.getMessage(FilterSaveAsAction.class,
+                                "saveFilterConfigurationInputDialog.nameField.nonUniqueName"));
                     }
 
                     return ValidationErrors.none();

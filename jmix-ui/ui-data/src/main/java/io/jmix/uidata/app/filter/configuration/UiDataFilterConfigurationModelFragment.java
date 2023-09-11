@@ -18,21 +18,35 @@ package io.jmix.uidata.app.filter.configuration;
 
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.CheckBox;
+import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.Form;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.UiComponentProperties;
-import io.jmix.ui.screen.*;
+import io.jmix.ui.screen.ReadOnlyAwareScreen;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenFragment;
+import io.jmix.ui.screen.StandardEditor;
+import io.jmix.ui.screen.StandardOutcome;
+import io.jmix.ui.screen.Subscribe;
+import io.jmix.ui.screen.Target;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 import io.jmix.uidata.accesscontext.UiFilterModifyGlobalConfigurationContext;
+import io.jmix.uidata.action.filter.FilterSaveAsAction;
 import io.jmix.uidata.entity.FilterConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Objects;
 
 import static io.jmix.ui.component.filter.FilterUtils.generateConfigurationId;
 
@@ -50,6 +64,8 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     protected UiComponents uiComponents;
     @Autowired
     protected MessageTools messageTools;
+    @Autowired
+    protected Messages messages;
 
     @Autowired
     protected InstanceContainer<FilterConfiguration> configurationDc;
@@ -66,6 +82,8 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     protected CheckBox generatedIdField;
 
     protected boolean defaultForMeFieldVisible = true;
+    protected Filter filter;
+    protected String originalConfigurationId;
 
     public void setDefaultForMeFieldVisible(boolean visible) {
         defaultForMeFieldVisible = visible;
@@ -80,6 +98,8 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
         initFirstConfigurationFormRow();
         initSecondConfigurationFormRow();
         initThirdConfigurationFormRow();
+
+        initOriginalConfigurationId();
     }
 
     protected void initFirstConfigurationFormRow() {
@@ -145,6 +165,10 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
         generatedIdField.setVisible(componentProperties.isFilterShowConfigurationIdField());
     }
 
+    protected void initOriginalConfigurationId() {
+        originalConfigurationId = configurationDc.getItem().getConfigurationId();
+    }
+
     @Subscribe("availableForAllField")
     protected void onAvailableForAllFieldValueChange(HasValue.ValueChangeEvent<Boolean> event) {
         boolean isAvailableForAll = BooleanUtils.isTrue(event.getValue());
@@ -171,5 +195,28 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
                 editedConfigurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
             }
         }
+    }
+
+    public void setFilter(Filter filter) {
+        this.filter = filter;
+    }
+
+    @Subscribe(target = Target.PARENT_CONTROLLER)
+    protected void onValidationEvent(StandardEditor.ValidationEvent event) {
+        if (configurationWithSameNameExists()) {
+            ValidationErrors errors = ValidationErrors.of(messages.getMessage(FilterSaveAsAction.class,
+                    "saveFilterConfigurationInputDialog.nameField.nonUniqueName"));
+            event.addErrors(errors);
+        }
+    }
+
+    protected boolean configurationWithSameNameExists() {
+        String editedConfigurationName = configurationDc.getItem().getName();
+        return filter != null && filter.getConfigurations().stream()
+                .anyMatch(conf ->
+                        Objects.equals(editedConfigurationName, conf.getName())
+                                //skip itself the configuration being checked
+                                && !Objects.equals(originalConfigurationId, conf.getId())
+                );
     }
 }

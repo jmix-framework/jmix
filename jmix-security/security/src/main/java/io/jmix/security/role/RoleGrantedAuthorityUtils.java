@@ -27,13 +27,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 /**
- * Utility class for working with Jmix-related {@link GrantedAuthority}
+ * Utility class for working with Jmix-related {@link GrantedAuthority}. Use this class when you need to
+ * programmatically create an instance of the granted authority for resource or row-level role.
  */
 @Component("sec_RoleGrantedAuthorityUtils")
 public class RoleGrantedAuthorityUtils {
 
     private GrantedAuthorityDefaults grantedAuthorityDefaults;
-    private SecurityProperties securityProperties;
+    private final SecurityProperties securityProperties;
     private String defaultRolePrefix = "ROLE_";
 
     public RoleGrantedAuthorityUtils(SecurityProperties securityProperties) {
@@ -81,8 +82,8 @@ public class RoleGrantedAuthorityUtils {
     }
 
     /**
-     * Returns the role prefix for the resource role. It is taken from the {@link GrantedAuthorityDefaults} if the
-     * bean of this type is defined. Otherwise, the default ROLE_ value is returned.
+     * Returns the role prefix for the resource role. It is taken from the {@link GrantedAuthorityDefaults} if the bean
+     * of this type is defined. Otherwise, the default ROLE_ value is returned.
      */
     public String getDefaultRolePrefix() {
         return defaultRolePrefix;

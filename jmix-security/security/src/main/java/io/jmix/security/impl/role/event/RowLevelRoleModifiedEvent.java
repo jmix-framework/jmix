@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.security.role;
+package io.jmix.security.impl.role.event;
 
-import io.jmix.security.model.ResourceRole;
+import org.springframework.context.ApplicationEvent;
 
-public interface ResourceRoleRepository extends RoleRepository<ResourceRole> {
-
-    String RESOURCE_ROLES_CACHE_NAME = "resource-roles-cache";
-
+/**
+ * Event is fired when a {@link io.jmix.security.model.RowLevelRole} has been changed.
+ */
+public class RowLevelRoleModifiedEvent extends ApplicationEvent {
+    public RowLevelRoleModifiedEvent(Object source) {
+        super(source);
+    }
 }

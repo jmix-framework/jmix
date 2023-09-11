@@ -16,16 +16,13 @@
 
 package repository
 
-
 import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Metadata
 import io.jmix.core.UnconstrainedDataManager
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.role.ResourceRoleRepository
-import io.jmix.security.role.RowLevelRoleRepository
+import io.jmix.security.role.RoleGrantedAuthorityUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -54,13 +51,9 @@ class RepositorySecurityTest extends SecurityDataSpecification {
     @Autowired
     InMemoryUserRepository userRepository
     @Autowired
-    RowLevelRoleRepository rowLevelRoleRepository
-    @Autowired
     DataSource dataSource
     @Autowired
     UnconstrainedDataManager unsafeDataManager
-    @Autowired
-    ResourceRoleRepository resourceRoleRepository
     @Autowired
     FetchPlanRepository fetchPlanRepository
     @Autowired
@@ -69,6 +62,8 @@ class RepositorySecurityTest extends SecurityDataSpecification {
     SecondRepository secondRepository
     @Autowired
     ThirdRepository thirdRepository
+    @Autowired
+    RoleGrantedAuthorityUtils roleGrantedAuthorityUtils
 
     public static final String PASSWORD = "123"
     Authentication systemAuthentication
@@ -80,12 +75,10 @@ class RepositorySecurityTest extends SecurityDataSpecification {
         user1 = User.builder()
                 .username("user1")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.
-                        withRowLevelRoleProvider({ rowLevelRoleRepository.getRoleByCode(it) })
-                        .withResourceRoleProvider({ resourceRoleRepository.getRoleByCode(it) })
-                        .withRowLevelRoles(TestDataManagerReadQueryRole.NAME)
-                        .withResourceRoles(TestDataManagerReadQueryRole.NAME)
-                        .build())
+                .authorities(
+                        roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(TestDataManagerReadQueryRole.NAME),
+                        roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(TestDataManagerReadQueryRole.NAME)
+                )
                 .build()
         userRepository.addUser(user1)
 

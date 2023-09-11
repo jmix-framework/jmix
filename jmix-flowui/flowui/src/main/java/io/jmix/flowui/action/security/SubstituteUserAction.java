@@ -126,16 +126,21 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
         Preconditions.checkNotNullArgument(newSubstitutedUser);
 
         findCurrentOpenedView()
-                .ifPresentOrElse(this::openDiscardCurrentViewDialog, this::doSubstituteUser);
+                .ifPresentOrElse(this::prepareViewToClose, this::doSubstituteUser);
+    }
+
+    protected void prepareViewToClose(View<?> view) {
+        // Suppress page reload warning if necessary
+        if (view.isPreventBrowserTabClosing()) {
+            // Required to open the dialog only after making an asynchronous js-function call
+            WebBrowserTools.allowBrowserTabClosing(view)
+                    .then(__ -> openDiscardCurrentViewDialog(view));
+        } else {
+            openDiscardCurrentViewDialog(view);
+        }
     }
 
     protected void openDiscardCurrentViewDialog(View<?> view) {
-        // Suppress page reload warning if necessary
-        boolean preventBrowserTabClosing = view.isPreventBrowserTabClosing();
-        if (preventBrowserTabClosing) {
-            UI.getCurrent().access(() -> WebBrowserTools.allowBrowserTabClosing(view));
-        }
-
         if (view instanceof StandardDetailView<?> standardDetailView && standardDetailView.hasUnsavedChanges()) {
             dialogs.createOptionDialog()
                     .withHeader(messages.getMessage("dialogs.closeUnsaved.title"))
@@ -149,8 +154,8 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
                                     }),
                             new DialogAction(DialogAction.Type.CANCEL)
                                     .withHandler(__ -> {
-                                        // Suppression rollback
-                                        if (preventBrowserTabClosing) {
+                                        // Page reload warning suppression rollback
+                                        if (view.isPreventBrowserTabClosing()) {
                                             WebBrowserTools.preventBrowserTabClosing(standardDetailView);
                                         }
 

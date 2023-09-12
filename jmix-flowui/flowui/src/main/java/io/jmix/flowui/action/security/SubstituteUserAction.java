@@ -16,14 +16,16 @@
 
 package io.jmix.flowui.action.security;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.internal.AnnotationReader;
+import com.vaadin.flow.router.Route;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.UiProperties;
-import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.ExecutableAction;
@@ -34,6 +36,7 @@ import io.jmix.flowui.util.WebBrowserTools;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
+import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -55,8 +58,8 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
     public static final String ID = "substituteUser";
 
     protected ApplicationContext applicationContext;
+    protected ServletContext servletContext;
     protected UserSubstitutionManager userSubstitutionManager;
-    protected ViewNavigators viewNavigators;
     protected ViewRegistry viewRegistry;
     protected Dialogs dialogs;
     protected Messages messages;
@@ -81,13 +84,13 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
     }
 
     @Autowired
-    public void setUserSubstitutionManager(UserSubstitutionManager userSubstitutionManager) {
-        this.userSubstitutionManager = userSubstitutionManager;
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
     @Autowired
-    public void setViewNavigators(ViewNavigators viewNavigators) {
-        this.viewNavigators = viewNavigators;
+    public void setUserSubstitutionManager(UserSubstitutionManager userSubstitutionManager) {
+        this.userSubstitutionManager = userSubstitutionManager;
     }
 
     @Autowired
@@ -183,16 +186,25 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
 
     protected void doSubstituteUser() {
         userSubstitutionManager.substituteUser(newSubstitutedUser.getUsername());
-
-        viewNavigators.view(viewRegistry.getViewInfo(mainViewId).getControllerClass())
-                .withAfterNavigationHandler(__ -> UI.getCurrent().access(() -> UI.getCurrent().getPage().reload()))
-                .navigate();
+        UI.getCurrent().getPage().setLocation(getMainViewLocation());
     }
 
     protected void doCancel() {
         for (Consumer<UserDetails> action : cancelHandlers) {
             action.accept(prevSubstitutedUser);
         }
+    }
+
+    protected String getMainViewLocation() {
+        Class<? extends View<?>> mainViewControllerClass = viewRegistry.getViewInfo(mainViewId).getControllerClass();
+        String mainViewRouteValue = AnnotationReader.getAnnotationFor(mainViewControllerClass, Route.class)
+                .map(Route::value)
+                .orElse("");
+
+        String contextPath = servletContext == null ? null : servletContext.getContextPath();
+        return Strings.isNullOrEmpty(contextPath)
+                ? "/" + mainViewRouteValue
+                : contextPath + "/" + mainViewRouteValue;
     }
 
     public SubstituteUserAction withUsers(UserDetails prevSubstitutedUser, UserDetails newSubstitutedUser) {

@@ -23,7 +23,11 @@ import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
 
-
+/**
+ * Describes all Misfire Instruction options available for Quartz {@link CronTrigger}.
+ * Each option relates to some MISFIRE_INSTRUCTION constant and can call corresponding method of the Schedule builder
+ * to apply target misfire instruction.
+ */
 public enum CronTriggerMisfireInstruction implements EnumClass<String> {
 
     SMART_POLICY("smart_policy", builder -> {}, CronTrigger.MISFIRE_INSTRUCTION_SMART_POLICY),
@@ -40,6 +44,12 @@ public enum CronTriggerMisfireInstruction implements EnumClass<String> {
     private final Consumer<CronScheduleBuilder> consumer;
     private final int code;
 
+    /**
+     * Creates new misfire instruction option.
+     * @param id internal enum id
+     * @param consumer action to perform on {@link CronScheduleBuilder} to apply target misfire instruction
+     * @param code Quartz-specific integer number of target misfire instruction (MISFIRE_INSTRUCTION constant value)
+     */
     CronTriggerMisfireInstruction(String id, Consumer<CronScheduleBuilder> consumer, int code) {
         this.id = id;
         this.consumer = consumer;
@@ -54,6 +64,10 @@ public enum CronTriggerMisfireInstruction implements EnumClass<String> {
         return code;
     }
 
+    /**
+     * Calls necessary method of {@link CronScheduleBuilder} to apply target misfire instruction
+     * @param builder schedule builder
+     */
     public void applyInstruction(CronScheduleBuilder builder) {
         consumer.accept(builder);
     }

@@ -25,8 +25,8 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBoxBase;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
@@ -60,9 +60,15 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     @ViewComponent
     private TypedTextField<String> cronExpressionField;
     @ViewComponent
+    private FormLayout.FormItem cronExpressionFormItem;
+    @ViewComponent
     private TypedTextField<Integer> repeatCountField;
     @ViewComponent
+    private FormLayout.FormItem repeatCountFormItem;
+    @ViewComponent
     private TypedTextField<Long> repeatIntervalField;
+    @ViewComponent
+    private FormLayout.FormItem repeatIntervalFormItem;
     @ViewComponent
     private Select<ScheduleType> scheduleTypeField;
     @ViewComponent
@@ -78,7 +84,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     @ViewComponent
     private JmixButton repeatModeSelectorHelpButton;
     @ViewComponent
-    private HorizontalLayout repeatModeBox;
+    private FormLayout.FormItem repeatModeFormItem;
 
     @Autowired
     private QuartzService quartzService;
@@ -310,26 +316,26 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
 
     private void initRepeatFieldsVisibility(boolean isSimpleTrigger, RepeatMode currentRepeatMode) {
         if (!isSimpleTrigger) {
-            repeatModeBox.setVisible(false);
-            repeatCountField.setVisible(false);
-            repeatIntervalField.setVisible(false);
+            repeatModeFormItem.setVisible(false);
+            repeatCountFormItem.setVisible(false);
+            repeatIntervalFormItem.setVisible(false);
         } else {
-            repeatModeBox.setVisible(true);
+            repeatModeFormItem.setVisible(true);
             if (currentRepeatMode == null) {
                 return;
             }
             switch (currentRepeatMode) {
                 case EXECUTE_ONCE -> {
-                    repeatCountField.setVisible(false);
-                    repeatIntervalField.setVisible(false);
+                    repeatCountFormItem.setVisible(false);
+                    repeatIntervalFormItem.setVisible(false);
                 }
                 case EXECUTE_FOREVER -> {
-                    repeatCountField.setVisible(false);
-                    repeatIntervalField.setVisible(true);
+                    repeatCountFormItem.setVisible(false);
+                    repeatIntervalFormItem.setVisible(true);
                 }
                 case FINITE_REPEATS -> {
-                    repeatCountField.setVisible(true);
-                    repeatIntervalField.setVisible(true);
+                    repeatCountFormItem.setVisible(true);
+                    repeatIntervalFormItem.setVisible(true);
                 }
             }
         }
@@ -358,7 +364,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
 
     private void initFieldVisibility() {
         boolean isSimpleTrigger = getEditedEntity().getScheduleType() == ScheduleType.SIMPLE;
-        cronExpressionField.setVisible(!isSimpleTrigger);
+        cronExpressionFormItem.setVisible(!isSimpleTrigger);
         initRepeatFieldsVisibility(isSimpleTrigger, repeatModeSelector.getValue());
     }
 

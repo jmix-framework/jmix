@@ -17,14 +17,17 @@
 package io.jmix.quartz.model;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
-
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.SimpleTrigger;
 import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
 
-
+/**
+ * Describes all Misfire Instruction options available for Quartz {@link SimpleTrigger}.
+ * Each option relates to some MISFIRE_INSTRUCTION constant and can call corresponding method of the Schedule builder
+ * to apply target misfire instruction.
+ */
 public enum SimpleTriggerMisfireInstruction implements EnumClass<String> {
 
     SMART_POLICY("smart_policy", builder -> {}, SimpleTrigger.MISFIRE_INSTRUCTION_SMART_POLICY),
@@ -51,6 +54,12 @@ public enum SimpleTriggerMisfireInstruction implements EnumClass<String> {
     private final Consumer<SimpleScheduleBuilder> consumer;
     private final int code;
 
+    /**
+     * Creates new misfire instruction option.
+     * @param id internal enum id
+     * @param consumer action to perform on {@link SimpleScheduleBuilder} to apply target misfire instruction
+     * @param code Quartz-specific integer number of target misfire instruction (MISFIRE_INSTRUCTION constant value)
+     */
     SimpleTriggerMisfireInstruction(String id, Consumer<SimpleScheduleBuilder> consumer, int code) {
         this.id = id;
         this.consumer = consumer;
@@ -65,6 +74,10 @@ public enum SimpleTriggerMisfireInstruction implements EnumClass<String> {
         return code;
     }
 
+    /**
+     * Calls necessary method of {@link SimpleScheduleBuilder} to apply target misfire instruction
+     * @param builder schedule builder
+     */
     public void applyInstruction(SimpleScheduleBuilder builder) {
         consumer.accept(builder);
     }

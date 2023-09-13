@@ -112,7 +112,7 @@ public class QuartzService {
                 : ScheduleType.CRON_EXPRESSION;
         int miCode = trigger.getMisfireInstruction();
         String misfireInstructionId;
-        if(ScheduleType.SIMPLE.equals(scheduleType)) {
+        if (ScheduleType.SIMPLE.equals(scheduleType)) {
             misfireInstructionId = Optional.ofNullable(SimpleTriggerMisfireInstruction.fromCode(miCode))
                     .orElse(SimpleTriggerMisfireInstruction.SMART_POLICY)
                     .getId();
@@ -254,14 +254,14 @@ public class QuartzService {
 
         if (triggerModel.getScheduleType() == ScheduleType.CRON_EXPRESSION) {
             String cronExpression = triggerModel.getCronExpression();
-            if(cronExpression == null) {
+            if (cronExpression == null) {
                 throw new IllegalStateException("Cron trigger has null cron expression");
             }
             CronScheduleBuilder cronScheduleBuilder = cronSchedule(cronExpression);
             String misfireInstructionId = triggerModel.getMisfireInstructionId();
-            if(misfireInstructionId != null) {
+            if (misfireInstructionId != null) {
                 CronTriggerMisfireInstruction misfireInstruction = CronTriggerMisfireInstruction.fromId(misfireInstructionId);
-                if(misfireInstruction == null) {
+                if (misfireInstruction == null) {
                     log.warn("No misfire instruction has been found for id '{}'. Default one will be used", misfireInstructionId);
                 } else {
                     misfireInstruction.applyInstruction(cronScheduleBuilder);
@@ -272,9 +272,9 @@ public class QuartzService {
             SimpleScheduleBuilder simpleScheduleBuilder = simpleSchedule()
                     .withIntervalInMilliseconds(triggerModel.getRepeatInterval());
             String misfireInstructionId = triggerModel.getMisfireInstructionId();
-            if(misfireInstructionId != null) {
+            if (misfireInstructionId != null) {
                 SimpleTriggerMisfireInstruction misfireInstruction = SimpleTriggerMisfireInstruction.fromId(misfireInstructionId);
-                if(misfireInstruction == null) {
+                if (misfireInstruction == null) {
                     log.warn("No misfire instruction has been found for id '{}'. Default one will be used", misfireInstructionId);
                 } else {
                     misfireInstruction.applyInstruction(simpleScheduleBuilder);

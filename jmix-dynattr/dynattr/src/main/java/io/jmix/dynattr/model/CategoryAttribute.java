@@ -119,7 +119,7 @@ public class CategoryAttribute implements Serializable {
     private ReferenceToEntity defaultEntity;
 
     @Column(name = "ORDER_NO")
-    private Integer orderNo;
+    private Integer orderNo = 0;
 
     @Column(name = "SCREEN")
     private String screen;

@@ -16,7 +16,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://enumerationScreen.title">
+      title="msg://categoryAttributeDetailView.title">
     <data>
         <instance id="categoryAttributeDc"
                   class="io.jmix.dynattr.model.CategoryAttribute">
@@ -43,7 +43,7 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout expand="editActions" spacing="true" margin="false" padding="false">
+    <layout expand="editActions" spacing="true" >
         <tabSheet id="tabSheet" width="100%" height="100%">
             <tab id="mainTab" label="msg://mainTab.title">
                 <hbox id="attributeBox" width="100%" spacing="true">
@@ -127,7 +127,7 @@
                     </multiSelectComboBoxPicker>
                     <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                     <codeEditor id="optionsLoaderScriptField" property="configuration.optionsLoaderScript"
-                                      showGutter="false"/>
+                                      showGutter="false" />
                     <codeEditor id="joinClauseField" property="joinClause" highlightActiveLine="false"
                                       showGutter="false" height="70px"/>
                     <codeEditor id="whereClauseField" property="whereClause" highlightActiveLine="false"
@@ -138,14 +138,16 @@
             </tab>
             <tab id="localizationTab" label="msg://localizationTab.title"
                  visible="false">
-                <formLayout id="categoryAttrLocalizationForm" dataContainer="categoryAttributeDc" width="100%">
-                    <textField id="localizedNameField" property="name" readOnly="true"/>
-                    <textField id="localizedDescriptionField" property="description" readOnly="true"/>
-                </formLayout>
+                <vbox id="localizationContainer">
+                    <formLayout id="categoryAttrLocalizationForm" dataContainer="categoryAttributeDc" width="100%">
+                        <textField id="localizedNameField" property="name" readOnly="true"/>
+                        <textField id="localizedDescriptionField" property="description" readOnly="true"/>
+                    </formLayout>
+                </vbox>
             </tab>
             <tab id="visibilityTab" label="msg://visibilityTab.title">
                 <vbox margin="false">
-                    <span text="msg://visibilityTab.help"/>
+                    <html content="msg://visibilityTab.help"/>
                     <hbox classNames="buttons-panel">
                         <button id="createBtn" action="targetScreensTable.create"/>
                         <button id="removeBtn" action="targetScreensTable.remove"/>
@@ -153,19 +155,19 @@
                     <dataGrid id="targetScreensTable" dataContainer="targetScreensDc" width="100%" height="250px"
                               editorBuffered="true">
                         <actions>
-                            <action id="create" type="list_create" text="msg://targetScreensTable.create"/>
-                            <action id="remove" type="list_remove" text="msg://targetScreensTable.remove"/>
+                            <action id="create" type="list_create" text="msg:///actions.Create"/>
+                            <action id="remove" type="list_remove" text="msg:///actions.Remove" actionVariant="DANGER"/>
                         </actions>
                         <columns>
-                            <column property="screen" editable="true"/>
-                            <column property="component" editable="true"/>
+                            <column key="view" header="msg://io.jmix.dynattrflowui.impl.model/TargetViewComponent.view"/>
+                            <column key="component" header="msg://io.jmix.dynattrflowui.impl.model/TargetViewComponent.component"/>
                         </columns>
                     </dataGrid>
                 </vbox>
             </tab>
         </tabSheet>
-        <hbox id="editActions" spacing="true">
-            <button id="windowCommitAndCloseButton"/>
+        <hbox id="editActions" spacing="true" margin="true">
+            <button id="windowCommitAndCloseButton" icon="CHECK" text="msg:///actions.Ok"/>
             <button action="windowClose"/>
         </hbox>
     </layout>

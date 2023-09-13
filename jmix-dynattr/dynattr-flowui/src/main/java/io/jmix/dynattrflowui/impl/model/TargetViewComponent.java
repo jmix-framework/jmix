@@ -24,7 +24,7 @@ import jakarta.persistence.Id;
 
 import java.util.UUID;
 
-@JmixEntity(name = "dynat_TargetScreenComponent")
+@JmixEntity(name = "dynat_TargetViewComponent")
 @SystemLevel
 public class TargetViewComponent {
 
@@ -33,7 +33,7 @@ public class TargetViewComponent {
     protected UUID id;
 
     @JmixProperty
-    protected String screen;
+    protected String view;
 
     @JmixProperty
     protected String component;
@@ -46,12 +46,12 @@ public class TargetViewComponent {
         this.id = id;
     }
 
-    public String getScreen() {
-        return screen;
+    public String getView() {
+        return view;
     }
 
-    public void setScreen(String screen) {
-        this.screen = screen;
+    public void setView(String view) {
+        this.view = view;
     }
 
     public String getComponent() {

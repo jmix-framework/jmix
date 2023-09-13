@@ -16,11 +16,8 @@
 
 package io.jmix.dynattrflowui.facet;
 
-//import io.jmix.ui.component.Facet;
-//import io.jmix.ui.meta.StudioFacet;
 
 import io.jmix.flowui.facet.Facet;
-import io.jmix.flowui.kit.meta.StudioFacet;
 
 
 public interface DynAttrFacet extends Facet {

@@ -28,11 +28,15 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
+import io.jmix.dynattrflowui.utils.GridHelper;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.model.*;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.model.DataContext;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +78,8 @@ public class CategoryAttributesViewFragment extends StandardView {
     protected FormatStringsRegistry formatStringsRegistry;
     @Autowired
     protected DialogWindows dialogWindows;
+    @Autowired
+    protected GridHelper gridHelper;
 
     @ViewComponent
     protected CollectionContainer<CategoryAttribute> categoryAttributesDc;
@@ -90,6 +96,7 @@ public class CategoryAttributesViewFragment extends StandardView {
 
     @Subscribe
     public void onInitEvent(InitEvent event) {
+        sortCategoryAttrsGridByOrderNo();
         categoryAttrsGrid
                 .addColumn(createCategoryAttrsGridDataTypeRenderer())
                 .setHeader(messageTools.getPropertyCaption(metadata.getClass(CategoryAttribute.class), "dataType"));
@@ -221,11 +228,12 @@ public class CategoryAttributesViewFragment extends StandardView {
                     if (e.getView().isCommited) {
                         CategoryAttribute categoryAttribute = e.getView().getEditedEntity();
                         categoryAttribute.setCategory(categoryDc.getItem());
-                        categoryAttributesDc.replaceItem(getViewData().getDataContext().merge(categoryAttribute));
+                        getViewData().getDataContext().merge(categoryAttribute);
 
-                        int orderNo = getMaxOrderNo(categoryAttribute) + 1;
-                        categoryAttributesDc.getItem(categoryAttribute.getId()).setOrderNo(orderNo);
-                        categoryAttributesDc.getMutableItems().add(categoryAttribute);
+                        categoryAttributesDc.replaceItem(categoryAttribute);
+
+//                        int orderNo = getMaxOrderNo(categoryAttribute) + 1;
+//                        categoryAttributesDc.getItem(categoryAttribute.getId()).setOrderNo(orderNo);
                         categoryAttrsGrid.getDataProvider().refreshAll();
                     }
                 })
@@ -241,12 +249,9 @@ public class CategoryAttributesViewFragment extends StandardView {
                 .withAfterCloseListener(e -> {
                     if (e.getView().isCommited) {
                         CategoryAttribute categoryAttribute = e.getView().getEditedEntity();
-                        categoryAttribute.setCategory(categoryDc.getItem());
-                        categoryAttributesDc.replaceItem(getViewData().getDataContext().merge(categoryAttribute));
-
-                        int orderNo = getMaxOrderNo(categoryAttribute) + 1;
-                        categoryAttributesDc.getItem(categoryAttribute.getId()).setOrderNo(orderNo);
-                        categoryAttributesDc.getMutableItems().add(categoryAttribute);
+                        getViewData().getDataContext().setModified(categoryAttribute, true);
+                        getViewData().getDataContext().merge(categoryAttribute);
+                        categoryAttributesDc.replaceItem(categoryAttribute);
                         categoryAttrsGrid.getDataProvider().refreshAll();
                     }
                 })
@@ -276,49 +281,23 @@ public class CategoryAttributesViewFragment extends StandardView {
 
     @Subscribe("categoryAttrsGrid.moveUp")
     protected void onCategoryAttrsGridMoveUp(ActionPerformedEvent event) {
-        Set<CategoryAttribute> selectedItem = categoryAttrsGrid.getSelectedItems();
-        if (selectedItem.isEmpty()) {
-            return;
-        }
+        gridHelper.moveTableItemUp(categoryAttributesDc, categoryAttrsGrid, () ->
+                categoryAttributesDc.getMutableItems().forEach(item -> {
+                    item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item));
+                    getViewData().getDataContext().setModified(item, true);
+                    getViewData().getDataContext().merge(item);
+                }));
 
-        CategoryAttribute selectedAttribute = selectedItem.iterator().next();
-        Integer selectedAttributeOrderNo = selectedAttribute.getOrderNo();
-
-        CategoryAttribute prevAttribute = getPrevAttribute(selectedAttributeOrderNo);
-        if (prevAttribute != null) {
-            selectedAttribute.setOrderNo(prevAttribute.getOrderNo());
-            prevAttribute.setOrderNo(selectedAttributeOrderNo);
-            sortCategoryAttrsGridByOrderNo();
-            refreshMoveButtonsEnabled(selectedAttribute);
-        }
     }
 
     @Subscribe("categoryAttrsGrid.moveDown")
     protected void onCategoryAttrsGridMoveDown(ActionPerformedEvent event) {
-        Set<CategoryAttribute> selectedItem = categoryAttrsGrid.getSelectedItems();
-        if (selectedItem.isEmpty()) {
-            return;
-        }
-
-        CategoryAttribute selectedAttribute = selectedItem.iterator().next();
-        Integer selectedAttributeOrderNo = selectedAttribute.getOrderNo();
-
-        CategoryAttribute nextAttribute = getNextAttribute(selectedAttributeOrderNo);
-        if (nextAttribute != null) {
-            selectedAttribute.setOrderNo(nextAttribute.getOrderNo());
-            nextAttribute.setOrderNo(selectedAttributeOrderNo);
-            sortCategoryAttrsGridByOrderNo();
-            refreshMoveButtonsEnabled(selectedAttribute);
-        }
-    }
-
-    protected int getMaxOrderNo(CategoryAttribute categoryAttribute) {
-        return categoryAttributesDc.getItems()
-                .stream()
-                .filter(attribute -> !attribute.equals(categoryAttribute))
-                .mapToInt(CategoryAttribute::getOrderNo)
-                .max()
-                .orElse(0);
+        gridHelper.moveTableItemDown(categoryAttributesDc, categoryAttrsGrid, () ->
+                categoryAttributesDc.getMutableItems().forEach(item -> {
+                    item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item));
+                    getViewData().getDataContext().setModified(item, true);
+                    getViewData().getDataContext().merge(item);
+                }));
     }
 
     protected CategoryAttribute getPrevAttribute(Integer orderNo) {
@@ -356,5 +335,9 @@ public class CategoryAttributesViewFragment extends StandardView {
 
     public void setDataContext(DataContext dataContext) {
         this.getViewData().setDataContext(dataContext);
+    }
+
+    public CollectionContainer<CategoryAttribute> getAttributes() {
+        return categoryAttributesDc;
     }
 }

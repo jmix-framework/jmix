@@ -20,45 +20,35 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.dynattrflowui.impl.AttributeDefaultValues;
 import io.jmix.flowui.facet.impl.AbstractFacet;
+import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
+import jakarta.annotation.Nullable;
 
-//import javax.annotation.Nullable;
-//
-//@Internal
-//public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {
-//    protected AttributeDefaultValues attributeDefaultValues;
-//
-//    @Override
-//    public void setOwner(@Nullable View owner) {
-//        super.setOwner(owner);
-//        subscribe();
-//    }
-//
-//    public void setAttributeDefaultValues(AttributeDefaultValues attributeDefaultValues) {
-//        this.attributeDefaultValues = attributeDefaultValues;
-//    }
-//
-//    private void subscribe() {
-//        View view = getOwner();
-//        if (view == null) {
-//            throw new IllegalStateException("DynAttrFacet is not attached to Frame");
-//        }
-//
-//        if (view instanceof StandardView) {
-//            EventHub screenEvents = UiControllerUtils.getEventHub(screen);
-//            screenEvents.subscribe(View.InitEvent.class, this::initEntityInStandardEditor);
-//        } else if (screen instanceof MasterDetailScreen) {
-//            EventHub screenEvents = UiControllerUtils.getEventHub(screen);
-//            screenEvents.subscribe(MasterDetailScreen.InitEntityEvent.class, this::initEntityInMasterDetailScreen);
-//        }
-//    }
-//
-//    protected void initEntityInStandardEditor(StandardEditor.InitEntityEvent<?> e) {
-//        attributeDefaultValues.initDefaultAttributeValues(e.getEntity());
-//    }
-//
-//    protected void initEntityInMasterDetailScreen(MasterDetailScreen.InitEntityEvent<?> e) {
-//        attributeDefaultValues.initDefaultAttributeValues(e.getEntity());
-//    }
-//}
+
+@Internal
+public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {
+    protected AttributeDefaultValues attributeDefaultValues;
+
+    @Override
+    public void setOwner(@Nullable View owner) {
+        super.setOwner(owner);
+        subscribe();
+    }
+
+    public void setAttributeDefaultValues(AttributeDefaultValues attributeDefaultValues) {
+        this.attributeDefaultValues = attributeDefaultValues;
+    }
+
+    private void subscribe() {
+        View<?> view = getOwner();
+        if (view == null) {
+            throw new IllegalStateException("DynAttrFacet is not attached to Frame");
+        }
+
+        if (view instanceof StandardDetailView<?>) {
+            ViewControllerUtils.addInitEntityEvent((StandardDetailView)view, e -> attributeDefaultValues.initDefaultAttributeValues(e.getEntity()));
+        }
+    }
+}

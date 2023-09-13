@@ -14,8 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://enumerationScreen.title">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data>
         <collection id="categoryAttributesDc" class="io.jmix.dynattr.model.CategoryAttribute">
             <loader id="categoryAttributesDl"/>
@@ -32,9 +31,9 @@
         </hbox>
         <dataGrid id="categoryAttrsGrid" dataContainer="categoryAttributesDc" width="100%">
             <actions>
-                <action id="create" icon="PLUS" text="msg:///actions.Create"/>
+                <action id="create" icon="PLUS" text="msg:///actions.Create" actionVariant="PRIMARY"/>
                 <action id="edit" icon="PENCIL" text="msg:///actions.Edit"/>
-                <action id="remove" icon="TRASH" text="msg:///actions.Remove"/>
+                <action id="remove" icon="TRASH" text="msg:///actions.Remove" actionVariant="DANGER"/>
                 <action id="moveUp" icon="ARROW_UP" />
                 <action id="moveDown" icon="ARROW_DOWN" />
             </actions>

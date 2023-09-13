@@ -92,11 +92,12 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
     protected AttributeLocalizationViewFragment localizationFragment;
     protected AttributeLocationViewFragment attributeLocationFragment;
+    CategoryAttributesViewFragment categoryAttributesViewFragment;
 
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
-        CategoryAttributesViewFragment categoryAttributesViewFragment = views.create(CategoryAttributesViewFragment.class);
+        categoryAttributesViewFragment = views.create(CategoryAttributesViewFragment.class);
         categoryAttributesViewFragment.setCategory(this.getEditedEntity());
         categoryAttributesViewFragment.setDataContext(this.getViewData().getDataContext());
         categoryAttrsBox.add(categoryAttributesViewFragment);
@@ -145,7 +146,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected void onTabSheetSelectedTabChange(JmixTabSheet.SelectedChangeEvent event) {
         String tabName = event.getSelectedTab().getId().orElseThrow();
         if (ATTRIBUTES_LOCATION_TAB.equals(tabName)) {
-            attributeLocationFragment.setCategoryAttributes(new ArrayList<>(categoryAttributesDc.getItems()));
+            attributeLocationFragment.setAttributes(categoryAttributesViewFragment.getAttributes());
         }
     }
 
@@ -176,7 +177,9 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
             localizationFragment = views.create(AttributeLocalizationViewFragment.class);
             localizationFragment.setNameMsgBundle(getEditedEntity().getLocaleNames());
+            localizationFragment.removeDescriptionColumn();
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
+            localizationFragment.setDataContext(getViewData().getDataContext());
 
             localizationTabContainer.add(localizationFragment);
             localizationTabContainer.expand(localizationFragment);
@@ -188,7 +191,8 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         accessManager.applyRegisteredConstraints(crudEntityContext);
 
         attributeLocationFragment = views.create(AttributeLocationViewFragment.class);
-        attributeLocationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
+        attributeLocationFragment.setAttributes(categoryAttributesViewFragment.getAttributes());
+        attributeLocationFragment.setDataContext(getViewData().getDataContext());
         attributesLocationTabContainer.add(attributeLocationFragment);
         attributesLocationTabContainer.expand(attributeLocationFragment);
     }

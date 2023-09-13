@@ -52,8 +52,8 @@ package io.jmix.dynattrflowui.impl.factory;
 //import java.time.LocalDate;
 //import java.util.*;
 //import java.util.stream.Collectors;
-//
-//import static io.jmix.dynattr.AttributeType.*;
+
+import static io.jmix.dynattr.AttributeType.*;
 //
 //@org.springframework.stereotype.Component("dynat_DynAttrComponentGenerationStrategy")
 //public class DynAttrComponentGenerationStrategy implements ComponentGenerationStrategy, Ordered {

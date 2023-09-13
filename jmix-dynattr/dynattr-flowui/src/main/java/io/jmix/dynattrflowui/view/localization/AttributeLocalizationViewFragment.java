@@ -28,6 +28,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -65,8 +66,6 @@ public class AttributeLocalizationViewFragment extends StandardView {
 
     protected List<AttributeLocalizedValue> localizedValues = new ArrayList<>();
 
-    protected boolean descriptionColumnVisible = false;
-
     protected boolean isEnabled;
 
     public void setEnabled(boolean enabled) {
@@ -82,7 +81,10 @@ public class AttributeLocalizationViewFragment extends StandardView {
 
     public void setDescriptionMsgBundle(String descriptionMsgBundle) {
         setMsgBundle(descriptionMsgBundle, DESCRIPTION_PROPERTY);
-        descriptionColumnVisible = true;
+    }
+
+    public void removeDescriptionColumn() {
+        localizedValuesDataGrid.removeColumn(localizedValuesDataGrid.getColumnByKey("description"));
     }
 
     public String getNameMsgBundle() {
@@ -96,7 +98,6 @@ public class AttributeLocalizationViewFragment extends StandardView {
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         loadLocalizedValues();
-        initLocalizedValuesDataGrid();
         setupFieldsLock();
 
         initDataGrid();
@@ -127,14 +128,6 @@ public class AttributeLocalizationViewFragment extends StandardView {
     protected void langColumnComponentUpdater(Text text, AttributeLocalizedValue customer) {
         String value = customer.getLanguage() + "|" + customer.getLocale();
         text.setText(value);
-    }
-
-    protected void initLocalizedValuesDataGrid() {
-        Grid.Column<AttributeLocalizedValue> descriptionCol = localizedValuesDataGrid.getColumnByKey(DESCRIPTION_PROPERTY);
-        if (descriptionCol == null) {
-            throw new IllegalStateException("No description column");
-        }
-        descriptionCol.setVisible(descriptionColumnVisible);
     }
 
     protected void setupFieldsLock() {
@@ -197,5 +190,9 @@ public class AttributeLocalizationViewFragment extends StandardView {
         }
 
         return msgBundleTools.getMsgBundle(properties);
+    }
+
+    public void setDataContext(DataContext dataContext) {
+        getViewData().setDataContext(dataContext);
     }
 }

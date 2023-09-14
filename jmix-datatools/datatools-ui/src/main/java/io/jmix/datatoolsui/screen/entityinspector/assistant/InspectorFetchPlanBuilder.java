@@ -95,9 +95,6 @@ public class InspectorFetchPlanBuilder {
                     break;
                 case ASSOCIATION:
                 case COMPOSITION:
-                    if (withEmbedded) {
-                        break;
-                    }
                     if (isMany(metaProperty)) {
                         if (withCollections) {
                             fetchPlanBuilder.add(metaProperty.getName(),

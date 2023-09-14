@@ -16,10 +16,7 @@
 
 package io.jmix.datatoolsui.screen.entityinspector;
 
-import io.jmix.core.AccessManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -37,7 +34,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.list.*;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.*;
-import io.jmix.ui.model.impl.NoopDataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -84,7 +80,6 @@ public class EntityInspectorEditor extends StandardEditor {
     @Autowired
     protected TabSheet tablesTabSheet;
 
-    private DataContext parentDataContext;
     private DataContext dataContext;
 
     protected Boolean isNew = true;
@@ -93,20 +88,18 @@ public class EntityInspectorEditor extends StandardEditor {
 
     @Subscribe
     protected void onInit(InitEvent initEvent) {
+        dataContext = dataComponents.createDataContext();
+
         if (initEvent.getOptions() instanceof MapScreenOptions) {
             MapScreenOptions screenOptions = (MapScreenOptions) initEvent.getOptions();
             Map<String, Object> params = screenOptions.getParams();
             if (params.get(PARENT_CONTEXT_PARAM) != null) {
-                parentDataContext = (DataContext) params.get(PARENT_CONTEXT_PARAM);
-                dataContext = new NoopDataContext(getApplicationContext());
-            } else {
-                dataContext = dataComponents.createDataContext();
+                dataContext.setParent((DataContext) params.get(PARENT_CONTEXT_PARAM));
             }
             parentProperty = (String) params.get(PARENT_PROPERTY_PARAM);
             createNewItemByMetaClass(params);
-        } else {
-            dataContext = dataComponents.createDataContext();
         }
+
         getScreenData().setDataContext(dataContext);
     }
 
@@ -114,13 +107,6 @@ public class EntityInspectorEditor extends StandardEditor {
     protected void beforeShow(BeforeShowEvent event) {
         createForm(getEditedEntityContainer());
         setWindowCaption();
-    }
-
-    @Subscribe
-    protected void afterCommit(AfterCommitChangesEvent event) {
-        if (parentDataContext != null) {
-            parentDataContext.merge(getEditedEntity());
-        }
     }
 
     @Override
@@ -140,12 +126,21 @@ public class EntityInspectorEditor extends StandardEditor {
         if (!entityStates.isNew(entity)) {
             InstanceLoader loader = dataComponents.createInstanceLoader();
             loader.setDataContext(dataContext);
-            loader.setFetchPlan(InspectorFetchPlanBuilder.of(getApplicationContext(), entity.getClass())
+
+            FetchPlan fetchPlan = InspectorFetchPlanBuilder.of(getApplicationContext(), entity.getClass())
                     .withCollections(true)
                     .withEmbedded(true)
                     .withSystemProperties(true)
-                    .build());
-            loader.setEntityId(EntityValues.getId(entity));
+                    .build();
+
+            loader.setFetchPlan(fetchPlan);
+            container.setFetchPlan(fetchPlan);
+
+            Object id = EntityValues.getId(entity);
+            if (id != null) {
+                loader.setEntityId(id);
+            }
+
             loader.setHint(PersistenceHints.SOFT_DELETION, false);
             loader.setContainer(container);
             loader.load();
@@ -326,7 +321,7 @@ public class EntityInspectorEditor extends StandardEditor {
             if (inverseProperty != null) {
                 editorParams.put(PARENT_PROPERTY_PARAM, inverseProperty.getName());
             }
-            editorParams.put(PARENT_CONTEXT_PARAM, parentDataContext != null ? parentDataContext : dataContext);
+            editorParams.put(PARENT_CONTEXT_PARAM, dataContext);
             return new MapScreenOptions(editorParams);
 
         });

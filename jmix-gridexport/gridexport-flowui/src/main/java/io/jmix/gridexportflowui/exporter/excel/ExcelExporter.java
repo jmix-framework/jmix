@@ -41,22 +41,38 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
+import io.jmix.gridexportflowui.exporter.AllRecordsExporter;
+import io.jmix.gridexportflowui.exporter.EntityExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -98,15 +114,15 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     protected GridExportProperties gridExportProperties;
 
-    protected ExcelAllRecordsExporter excelAllRecordsExporter;
+    protected AllRecordsExporter allRecordsExporter;
 
     protected Notifications notifications;
 
     public ExcelExporter(GridExportProperties gridExportProperties,
-                         ExcelAllRecordsExporter excelAllRecordsExporter,
+                         AllRecordsExporter allRecordsExporter,
                          Notifications notifications) {
         this.gridExportProperties = gridExportProperties;
-        this.excelAllRecordsExporter = excelAllRecordsExporter;
+        this.allRecordsExporter = allRecordsExporter;
         this.notifications = notifications;
     }
 
@@ -226,18 +242,22 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(dataGrid instanceof TreeDataGrid);
 
-                excelAllRecordsExporter.exportAll(
-                        ((ListDataComponent<?>) dataGrid).getItems(),
-                        (context) -> createDataGridRowForEntityInstance(
+                EntityExporter entityExporter = (entity, entityNumber) -> {
+                    if (checkIsRowNumberExceed(entityNumber)) {
+                        return false;
+                    } else {
+                        createDataGridRowForEntityInstance(
                                 dataGrid,
                                 columns,
                                 0,
-                                context.getRowNumber(),
-                                context.getEntity(),
+                                entityNumber,
+                                entity,
                                 addLevelPadding
-                        ),
-                        this::checkIsRowNumberExceed
-                );
+                        );
+                        return true;
+                    }
+                };
+                allRecordsExporter.exportAll(((ListDataComponent<?>) dataGrid).getItems(), entityExporter);
             }
 
             for (int c = 0; c < columns.size(); c++) {

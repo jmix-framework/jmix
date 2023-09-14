@@ -1,23 +1,25 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-  ~ Copyright 2023 Haulmont.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<%
+def containerXml = api.processSnippet('bpm_container.xml',
+        ['variables': processFormVariables, 'api': api])
+def formXml = api.processSnippet('bpm_processform.xml',
+        ['variables': processFormVariables,
+        'api': api])
+def buttonsXml = api.processSnippet('bpm_buttons.xml',
+        ['outputes': processFormOutcomes,
+        'api': api])
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="${messageKeys['title']}">
-    <layout>
-
+    ${containerXml}
+    <layout><%if (bpmTaskName != null && bpmTaskName.trim() != '') {%>
+        <h1 text="$bpmTaskName"/><%}%><%if (bpmTaskDetails != null && bpmTaskDetails.trim() != '') {%>
+        <details summaryText="Task details">
+            <p text="$bpmTaskDetails"/>
+        </details><%}%>
+        ${formXml}
+        <hbox id="actionsPanel">
+            ${buttonsXml}
+        </hbox>
     </layout>
 </view>

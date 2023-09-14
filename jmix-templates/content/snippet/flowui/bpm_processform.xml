@@ -1,0 +1,91 @@
+<%
+class Field {
+    def tag = "textField"
+    def attrs = [:]
+    def text = null
+
+    def printAttrs() {
+
+        return attrs.findAll {it.key != 'tag'}.toSorted {a, b ->
+            if (a.key == "id")
+                return -1
+            else return a.key <=> b.key
+        }.collect {it ->
+            def attrName = it.key
+            if (attrName == 'metaClazz') {
+                attrName = 'metaClass'
+            }
+            return "$attrName=\"${it.value}\""
+        }.join(" ")
+    }
+}
+
+def createTag(variable) {
+    def field = new Field()
+    field.tag = api.getTagByBpmField(variable)
+    def fieldAttrs = [id: variable.id,
+        label: variable.caption]
+
+    def datatype = variable.type.datatype
+    if (datatype != null) {
+        def datatypeName = datatype.label
+        if (datatypeName != 'Boolean') {
+            fieldAttrs['datatype'] = api.camelCase(datatypeName)
+        }
+    }
+
+    if (!variable.editable) {
+        fieldAttrs['enabled'] = 'false'
+    }
+    if (variable.required) {
+        fieldAttrs['required'] = 'true'
+    }
+
+    if (variable.type.id == 'platformEnum') {
+        def enumClass = variable.getProperty("enumClass")
+        if (enumClass != null) {
+            fieldAttrs['itemsEnum'] = enumClass
+        }
+    }
+
+    if (variable.type.id == 'entity' || variable.type.id == 'entity-list') {
+        def entityName = ''
+
+        if (variable.getProperty("uiComponent") == 'comboBox') {
+            entityName = variable.getProperty("entityName")
+            fieldAttrs['itemsContainer'] = api.camelCase(entityName) + 'Dc'
+        } else {
+            def fqn = variable.getProperty("entityName")
+            if (fqn != null) {
+                def entity = api.findEntity(fqn)
+                if (entity != null) {
+                    entityName = entity.getName()
+                }
+            }
+        }
+
+        fieldAttrs['metaClazz'] = entityName
+
+        StringBuilder builder = new StringBuilder()
+        builder.append("<actions>")
+        builder.append("<action id=\"entityLookup\" type=\"entity_lookup\"/>")
+        builder.append("<action id=\"entityClear\" type=\"entity_clear\"/>")
+        builder.append("</actions>")
+
+        field.text = builder.toString()
+    }
+
+    field.attrs = fieldAttrs
+
+    return field
+}
+
+%>
+<formLayout>
+    <%variables.each { v ->
+        def field = createTag(v)%>
+        <${field.tag} ${field.printAttrs()}<%if(field.text == null) {%>/><% } else {%>>
+        ${field.text}
+    </${field.tag}><%}%>
+    <%}%>
+</formLayout>

@@ -1,27 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-  ~ Copyright 2023 Haulmont.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_blank.svg"
           order="1000"
           name="Bpm process form">
     <tags>
         <tag>BPM</tag>
-        <tag>addon:io.jmix.bpmflowui.BpmFlowUiConfiguration</tag>
     </tags>
     <description>
         <![CDATA[<html>Bpm process form.</html>]]>
@@ -31,6 +13,22 @@
             <![CDATA[${studioUtils.makeScreenNaturalCaption(id, project)}]]>
         </message>
     </locMessages>
+
+    <steps>
+        <step name="BPM process form" order="0"/>
+        <step name="BPM process form variables" order="1"/>
+        <step name="BPM process form outcomes" order="2"/>
+    </steps>
+
+    <property caption="Process form id"
+              code="processFormId"
+              propertyType="PROCESS_FORM_ID"
+              required="false"/>
+
+    <property caption="Process form type"
+              code="processFormType"
+              propertyType="PROCESS_FORM_TYPE"
+              required="true"/>
 
     <property caption="Descriptor name"
               code="descriptorName"
@@ -69,6 +67,30 @@
               valueTemplate="${api.evaluateScript('controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
         <dependency code="descriptorName"/>
     </property>
+
+    <property caption="Task name"
+              code="bpmTaskName"
+              propertyType="PROCESS_FORM_TASK_NAME"
+              advanced="true"
+              required="false"/>
+
+    <property caption="Task details"
+              code="bpmTaskDetails"
+              propertyType="PROCESS_FORM_TASK_DETAILS"
+              advanced="true"
+              required="false"/>
+
+    <property caption="Process form variables"
+              code="processFormVariables"
+              step="1"
+              propertyType="PROCESS_FORM_VARIABLES"
+              required="false"/>
+
+    <property caption="Process form outcomes"
+              code="processFormOutcomes"
+              step="2"
+              propertyType="PROCESS_FORM_OUTCOMES"
+              required="false"/>
 
     <source fileExt="xml"
             name="descriptor"/>

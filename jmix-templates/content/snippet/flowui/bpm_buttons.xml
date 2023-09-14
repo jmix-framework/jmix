@@ -1,0 +1,8 @@
+<%
+def buttons = []
+
+outputes.each { o ->
+    def buttonText = "<button id=\"${o.id}Btn\" icon=\"${o.icon}\" text=\"${o.caption}\"/>"
+    buttons << buttonText
+}
+%><%buttons.each {%>$it<%}%>

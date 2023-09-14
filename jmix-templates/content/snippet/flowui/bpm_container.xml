@@ -1,0 +1,57 @@
+<%
+def hasComboBox = false
+StringBuilder facetsBuilder = new StringBuilder()
+facetsBuilder.append("<facets>")
+facetsBuilder.append("<dataLoadCoordinator auto=\"true\"/>")
+facetsBuilder.append("</facets>")
+def facetBlock = facetsBuilder.toString()
+
+def containers = []
+
+variables.each { v ->
+    if (v.type.id == 'entity') {
+        def entityName = ''
+        def fqn = ''
+        if (v.getProperty('uiComponent') == 'comboBox') {
+            hasComboBox = true
+            entityName = v.getProperty("entityName")
+            if (entityName != null) {
+                def entity = api.findEntityByName(entityName)
+                if (entity != null) {
+                    fqn = entity.getFqn()
+                }
+            }
+        } else {
+            fqn = v.getProperty("entityName")
+            if (fqn != null) {
+                def entity = api.findEntity(fqn)
+                if (entity != null) {
+                    entityName = entity.name
+                }
+            }
+        }
+
+        def entity = api.findEntityByName(entityName)
+        if (entity != null) {
+            StringBuilder containerBuilder = new StringBuilder()
+            containerBuilder.append("<collection id=\"${api.camelCase(entityName)}Dc\" class=\"$fqn\">")
+            containerBuilder.append("<fetchPlan extends=\"_base\"/>")
+            containerBuilder.append("<loader id=\"${api.camelCase(entityName)}Dl\" readOnly=\"true\">")
+            containerBuilder.append("<query>")
+            containerBuilder.append("<![CDATA[select e from ${entityName} e]]>")
+            containerBuilder.append("</query>")
+            containerBuilder.append("</loader>")
+            containerBuilder.append("</collection>")
+            containers << containerBuilder.toString()
+        }
+    }
+}
+%>
+<%if (!containers.isEmpty()) {%>
+<data>
+    <%containers.each {%>
+        $it
+    <%}%>
+</data>
+<%if (hasComboBox) {%>$facetsBuilder<%}%>
+<%}%>

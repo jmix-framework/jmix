@@ -47,6 +47,7 @@ public class GroupTableLoader extends AbstractTableLoader<GroupTable> {
         if (StringUtils.isNotEmpty(fixedGroupingString)) {
             resultComponent.setFixedGrouping(Boolean.parseBoolean(fixedGroupingString));
         }
+        loadBoolean(element, "sortOnGroupEnabled", resultComponent::setSortOnGroupEnabled);
     }
 
     @SuppressWarnings("rawtypes")

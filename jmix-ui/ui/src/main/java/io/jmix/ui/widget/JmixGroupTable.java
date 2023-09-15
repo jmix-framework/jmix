@@ -50,6 +50,8 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
 
     protected String focusGroupAggregationInputColumnKey;
 
+    protected boolean sortOnGroupEnabled = false;
+
     /**
      * Attention: this method is copied from the parent class: Table.setColumnOrder(Object[])
      */
@@ -567,6 +569,17 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
             refreshRenderedCells();
             markAsDirty();
         }
+        if (sortOnGroupEnabled) {
+            sortByGroupingProperties(properties);
+        }
+    }
+
+    protected void sortByGroupingProperties(Object[] properties) {
+        if (isSortEnabled()) {
+            boolean[] sortDirections = new boolean[properties.length];
+            Arrays.fill(sortDirections, true);
+            sort(properties, sortDirections);
+        }
     }
 
     // hook to implement in Web impl
@@ -746,6 +759,14 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
 
     public interface GroupPropertyValueFormatter {
         String format(Object groupId, @Nullable Object value);
+    }
+
+    public boolean isSortOnGroupEnabled() {
+        return sortOnGroupEnabled;
+    }
+
+    public void setSortOnGroupEnabled(boolean sortOnGroupEnabled) {
+        this.sortOnGroupEnabled = sortOnGroupEnabled;
     }
 
     public static class GroupAggregationContext extends Context {

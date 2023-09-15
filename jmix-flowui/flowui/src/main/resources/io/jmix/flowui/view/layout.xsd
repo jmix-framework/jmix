@@ -3396,6 +3396,20 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="formItemType">
+        <xs:sequence>
+            <xs:group ref="standardComponent"/>
+        </xs:sequence>
+
+        <xs:attribute name="enabled" type="xs:boolean"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="colspan" type="xs:integer"/>
+
+        <xs:attributeGroup ref="hasLabel"/>
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasClassNames"/>
+    </xs:complexType>
+
     <!-- Form-->
     <xs:complexType name="formLayoutComponent">
         <xs:complexContent>
@@ -3403,6 +3417,7 @@
 
                 <xs:sequence>
                     <xs:element name="responsiveSteps" type="responsiveStepsType" minOccurs="0"/>
+                    <xs:element name="formItem" type="formItemType" minOccurs="0"/>
                     <xs:group ref="standardComponent"/>
                 </xs:sequence>
 
@@ -3940,6 +3955,7 @@
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="dataLoadCoordinator" type="dataLoadCoordinatorType" minOccurs="0"/>
                 <xs:element name="urlQueryParameters" type="urlQueryParametersType" minOccurs="0"/>
+                <xs:element name="timer" type="timerType" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -4036,6 +4052,14 @@
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="component" type="xs:string" use="required"/>
         <xs:attribute name="param" type="xs:string"/>
+    </xs:complexType>
+
+    <!--    Timer-->
+    <xs:complexType name="timerType">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="delay" type="xs:integer" use="required"/>
+        <xs:attribute name="autostart" type="xs:boolean"/>
+        <xs:attribute name="repeating" type="xs:boolean"/>
     </xs:complexType>
 
     <!--  -->

@@ -17,6 +17,8 @@
 package component_xml_load
 
 import com.vaadin.flow.component.formlayout.FormLayout
+import com.vaadin.flow.component.html.NativeLabel
+import com.vaadin.flow.component.shared.SlotUtils
 import com.vaadin.flow.component.textfield.BigDecimalField
 import component_xml_load.screen.ContainerView
 import component_xml_load.screen.FormLayoutView
@@ -83,17 +85,18 @@ class FormLayoutXmlLoadTest extends FlowuiTestSpecification {
                 .findAll { it instanceof FormLayout.FormItem }
 
         verifyAll(formItems[0] as FormLayout.FormItem) {
-            enabled
-            visible
+            !enabled
+            !visible
             (children.findAny().get() as TypedTextField<?>).value == order.number
             formLayout.getColspan(it) == 3
         }
 
         verifyAll(formItems[1] as FormLayout.FormItem) {
-            enabled
-            visible
+            !enabled
+            !visible
             (children.findAny().get() as BigDecimalField).value == order.amount
             formLayout.getColspan(it) == 2
+            (SlotUtils.getChildInSlot(it, "label") as NativeLabel).getText() == "amountLabel"
         }
     }
 

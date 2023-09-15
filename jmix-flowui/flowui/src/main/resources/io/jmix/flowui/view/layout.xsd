@@ -1496,6 +1496,24 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="bigDecimalFieldValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:sequence>
+                    <xs:element name="digits" minOccurs="0" type="digitsValidatorType"/>
+                    <xs:element name="decimalMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="decimalMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
+                    <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="constraintValidatorType">
         <xs:complexContent>
             <xs:extension base="stringValidatorType">
@@ -2571,6 +2589,9 @@
     <xs:complexType name="emailFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="maxLength" type="xs:integer"/>
@@ -2613,6 +2634,10 @@
     <xs:complexType name="bigDecimalFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="bigDecimalFieldValidatorType"/>
+                </xs:sequence>
+
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
         </xs:complexContent>
@@ -2778,6 +2803,10 @@
     <xs:complexType name="entityComboBoxComponent">
         <xs:complexContent>
             <xs:extension base="baseComboBoxPickerComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
 
@@ -3424,8 +3453,8 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
-                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
-                    <xs:element name="validators" type="constraintValidatorType" minOccurs="0"/>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
                 </xs:sequence>
 
                 <xs:attribute name="highlightActiveLine" type="xs:boolean"/>

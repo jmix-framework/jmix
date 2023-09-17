@@ -81,6 +81,7 @@ public class AttributeLocalizationViewFragment extends StandardView {
 
     public void setDescriptionMsgBundle(String descriptionMsgBundle) {
         setMsgBundle(descriptionMsgBundle, DESCRIPTION_PROPERTY);
+        localizedValuesDl.load();
     }
 
     public void removeDescriptionColumn() {

@@ -21,7 +21,7 @@
         </collection>
         <instance id="categoryDc" class="io.jmix.dynattr.model.Category"/>
     </data>
-    <layout spacing="true" expand="categoryAttrsGrid" margin="false" padding="false">
+    <layout spacing="true" expand="categoryAttrsGrid" margin="false" padding="false" height="100%">
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="categoryAttrsGrid.create"/>
             <button id="editBtn" action="categoryAttrsGrid.edit"/>
@@ -29,13 +29,14 @@
             <button id="moveUpBtn" action="categoryAttrsGrid.moveUp"/>
             <button id="moveDownBtn" action="categoryAttrsGrid.moveDown"/>
         </hbox>
-        <dataGrid id="categoryAttrsGrid" dataContainer="categoryAttributesDc" width="100%">
+        <dataGrid id="categoryAttrsGrid" dataContainer="categoryAttributesDc" width="100%" minHeight="20em"
+                  height="100%">
             <actions>
                 <action id="create" icon="PLUS" text="msg:///actions.Create" actionVariant="PRIMARY"/>
                 <action id="edit" icon="PENCIL" text="msg:///actions.Edit"/>
                 <action id="remove" icon="TRASH" text="msg:///actions.Remove" actionVariant="DANGER"/>
-                <action id="moveUp" icon="ARROW_UP" />
-                <action id="moveDown" icon="ARROW_DOWN" />
+                <action id="moveUp" icon="ARROW_UP"/>
+                <action id="moveDown" icon="ARROW_DOWN"/>
             </actions>
             <columns>
                 <column property="name"/>

@@ -30,14 +30,16 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.impl.CategoryAttributeConfigurationConvertor;
+import jakarta.annotation.Nullable;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -189,7 +191,7 @@ public class CategoryAttribute implements Serializable {
     protected CategoryAttributeConfiguration configuration;
 
     @PostConstruct
-    public void init(Metadata metadata) {
+    public void init(@NotNull Metadata metadata) {
         defaultEntity = metadata.create(ReferenceToEntity.class);
     }
 
@@ -375,8 +377,9 @@ public class CategoryAttribute implements Serializable {
         defaultEntity.setObjectEntityId(entity);
     }
 
+    @Nullable
     public Object getObjectDefaultEntityId() {
-        return defaultEntity.getObjectEntityId();
+        return defaultEntity != null ? defaultEntity.getObjectEntityId() : null;
     }
 
     public Integer getOrderNo() {

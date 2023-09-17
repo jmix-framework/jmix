@@ -30,7 +30,7 @@
                 <column key="language" property="language" editable="false"/>
                 <column key="name" property="name" editable="true"/>
                 <column key="description" property="description" editable="true"/>
-                <editorActionsColumn key="bufferedEditorColumn" width="7em">
+                <editorActionsColumn key="bufferedEditorColumn" width="7em" header="msg://localizedValuesDataGrid.actions">
                     <editButton text="Edit" icon="PENCIL"/>
                     <saveButton icon="CHECK" themeNames="success"/>
                     <cancelButton icon="CLOSE" themeNames="error"/>

@@ -26,10 +26,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import io.jmix.core.AccessManager;
-import io.jmix.core.CoreProperties;
-import io.jmix.core.LoadContext;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
@@ -40,6 +37,7 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
@@ -55,10 +53,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-@ViewController("dynat_AttributeEnumerationViewFragment")
-@ViewDescriptor("attribute-enumeration-view-fragment.xml")
-@DialogMode() //todo forceDialog = true
-public class AttributeEnumerationViewFragment extends StandardView {
+@ViewController("dynat_AttributeEnumerationDetailView")
+@ViewDescriptor("attribute-enumeration-detail-view.xml")
+@DialogMode(width = "55em", height = "45em", resizable = true) // todo forceDialog = true
+public class AttributeEnumerationDetailView extends StandardView {
     public static final String REMOVE_ITEM_COLUMN = "removeItem";
 
     @Autowired
@@ -71,6 +69,8 @@ public class AttributeEnumerationViewFragment extends StandardView {
     protected UiComponents uiComponents;
     @Autowired
     private AccessManager accessManager;
+    @Autowired
+    protected Messages messages;
     @Autowired
     private Views views;
 
@@ -156,23 +156,23 @@ public class AttributeEnumerationViewFragment extends StandardView {
         }
     }
 
-    protected ComponentRenderer<Button, AttributeLocalizedEnumValue> createRemoveItemColumnRenderer() {
+    protected ComponentRenderer<JmixButton, AttributeLocalizedEnumValue> createRemoveItemColumnRenderer() {
         return new ComponentRenderer<>(this::createRemoveItemColumnComponent, this::gradeRemoveItemColumnUpdater);
     }
 
-    protected Button createRemoveItemColumnComponent() {
+    protected JmixButton createRemoveItemColumnComponent() {
         return uiComponents.create(JmixButton.class);
     }
 
-    protected void gradeRemoveItemColumnUpdater(Button button, AttributeLocalizedEnumValue customer) {
-        JmixButton linkButton = uiComponents.create(JmixButton.class);
+    protected void gradeRemoveItemColumnUpdater(JmixButton button, AttributeLocalizedEnumValue customer) {
         Action removeAction = new BaseAction("remove_item_" + customer.getValue())
                 .withHandler(actionPerformedEvent -> {
                     localizedEnumValues.remove(customer);
                     localizedEnumValuesDl.load();
                 })
-                .withIcon(VaadinIcon.CLIPBOARD_CROSS.create());
-        linkButton.setAction(removeAction);
+                .withVariant(ActionVariant.DANGER)
+                .withIcon(VaadinIcon.CLOSE.create());
+        button.setAction(removeAction);
     }
 
     @Subscribe(id = "localizedEnumValuesDc", target = Target.DATA_CONTAINER)
@@ -235,6 +235,7 @@ public class AttributeEnumerationViewFragment extends StandardView {
 
             localizationFragment = views.create(AttributeLocalizationViewFragment.class);
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
+            localizationFragment.removeDescriptionColumn();
 
             localizationFragment.setEnabled(false);
             localizationBox.add(localizationFragment);

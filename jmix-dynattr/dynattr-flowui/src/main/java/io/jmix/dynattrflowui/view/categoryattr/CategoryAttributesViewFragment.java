@@ -32,9 +32,9 @@ import io.jmix.dynattrflowui.utils.GridHelper;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
@@ -46,10 +46,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @ViewController("dynat_CategoryAttribute.fragment")
@@ -83,8 +80,6 @@ public class CategoryAttributesViewFragment extends StandardView {
 
     @ViewComponent
     protected CollectionContainer<CategoryAttribute> categoryAttributesDc;
-    @ViewComponent
-    protected CollectionLoader<CategoryAttribute> categoryAttributesDl;
     @ViewComponent
     protected DataGrid<CategoryAttribute> categoryAttrsGrid;
     @ViewComponent
@@ -225,7 +220,7 @@ public class CategoryAttributesViewFragment extends StandardView {
         dialogWindows.detail(this, CategoryAttribute.class)
                 .withViewClass(CategoryAttributesDetailView.class)
                 .withAfterCloseListener(e -> {
-                    if (e.getView().isCommited) {
+                    if (e.getView().isCommitted()) {
                         CategoryAttribute categoryAttribute = e.getView().getEditedEntity();
                         categoryAttribute.setCategory(categoryDc.getItem());
                         getViewData().getDataContext().merge(categoryAttribute);
@@ -238,24 +233,34 @@ public class CategoryAttributesViewFragment extends StandardView {
                     }
                 })
                 .newEntity()
+                .withInitializer(e -> {
+                    e.setCategory(categoryDc.getItem());
+                })
                 .build()
                 .open();
     }
 
     @Subscribe("categoryAttrsGrid.edit")
     protected void categoryAttrsGridEditListener(ActionPerformedEvent event) {
+        CategoryAttribute categoryAttributeSelected = categoryAttrsGrid.getSingleSelectedItem();
+
+        /* todo idk why but categoryAttrsGrid in UI has actual values after changes (editing),
+        *   but editor with single selected has outdated entity value,
+        *   also categoryAttributesDc has actual, it can be selected from it, BUT
+        *   it also doesnt change anything (in detail view value is outdated) */
+
         dialogWindows.detail(this, CategoryAttribute.class)
                 .withViewClass(CategoryAttributesDetailView.class)
                 .withAfterCloseListener(e -> {
-                    if (e.getView().isCommited) {
+                    if (e.getView().isCommitted()) {
                         CategoryAttribute categoryAttribute = e.getView().getEditedEntity();
                         getViewData().getDataContext().setModified(categoryAttribute, true);
                         getViewData().getDataContext().merge(categoryAttribute);
                         categoryAttributesDc.replaceItem(categoryAttribute);
-                        categoryAttrsGrid.getDataProvider().refreshAll();
+                        categoryAttrsGrid.setDataProvider(new ContainerDataProvider<>(categoryAttributesDc));
                     }
                 })
-                .editEntity(Objects.requireNonNull(categoryAttrsGrid.getSingleSelectedItem()))
+                .editEntity(categoryAttributeSelected)
                 .build()
                 .open();
     }
@@ -328,9 +333,10 @@ public class CategoryAttributesViewFragment extends StandardView {
 
     public void setCategory(Category category) {
         categoryDc.setItem(category);
-        categoryAttributesDl.setQuery("select e from dynat_CategoryAttribute e where e.category = :category");
-        categoryAttributesDl.setParameter("category", category);
-        categoryAttributesDl.load();
+        categoryAttributesDc.setItems(dataManager.load(CategoryAttribute.class)
+                .query("select e from dynat_CategoryAttribute e where e.category = :category")
+                .parameter("category", category)
+                .list());
     }
 
     public void setDataContext(DataContext dataContext) {

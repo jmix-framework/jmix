@@ -82,10 +82,10 @@ public class FilterSupport {
 
     public ScreenFragment createFilterConfigurationFragment(FrameOwner owner,
                                                             boolean isNewConfiguration,
-                                                            Filter filter) {
+                                                            Filter.Configuration currentConfiguration) {
         Fragments fragments = UiControllerUtils.getScreenContext(owner).getFragments();
         FilterConfigurationModelFragment fragment = fragments.create(owner, FilterConfigurationModelFragment.class);
-        initFilterConfigurationFragment(fragment, isNewConfiguration, filter.getCurrentConfiguration());
+        initFilterConfigurationFragment(fragment, isNewConfiguration, currentConfiguration);
         return fragment;
     }
 

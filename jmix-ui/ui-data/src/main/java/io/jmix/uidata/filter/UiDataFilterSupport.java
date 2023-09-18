@@ -107,8 +107,7 @@ public class UiDataFilterSupport extends FilterSupport {
     @Override
     public ScreenFragment createFilterConfigurationFragment(FrameOwner owner,
                                                             boolean isNewConfiguration,
-                                                            Filter filter) {
-        Filter.Configuration currentConfiguration = filter.getCurrentConfiguration();
+                                                            Filter.Configuration currentConfiguration) {
         FilterConfiguration configurationModel = loadFilterConfigurationModel(isNewConfiguration, currentConfiguration);
         boolean defaultForMeFieldVisible = isDefaultForMeFieldVisible(currentConfiguration, configurationModel);
         registerConfigurationDc(configurationModel, owner);
@@ -118,7 +117,7 @@ public class UiDataFilterSupport extends FilterSupport {
                 UiDataFilterConfigurationModelFragment.class);
 
         fragment.setDefaultForMeFieldVisible(defaultForMeFieldVisible);
-        fragment.setFilter(filter);
+        fragment.setFilter(currentConfiguration.getOwner());
 
         return fragment;
     }

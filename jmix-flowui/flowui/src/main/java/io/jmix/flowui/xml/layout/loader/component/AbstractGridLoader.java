@@ -174,11 +174,16 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected void loadColumnsElementChild(T resultComponent, Element columnElement, GridDataHolder holder,
                                            boolean filterableColumns) {
         switch (columnElement.getName()) {
-            case COLUMN_ELEMENT_NAME -> loadColumn(resultComponent, columnElement, holder.getDataLoader(),
-                    Objects.requireNonNull(holder.getMetaClass()), filterableColumns);
-            case EDITOR_ACTIONS_COLUMN_ELEMENT_NAME -> loadEditorActionsColumn(resultComponent, columnElement);
-            default -> throw new GuiDevelopmentException("Unknown columns' child element: " + columnElement.getName(),
-                    context, "Component ID", resultComponent.getId());
+            case COLUMN_ELEMENT_NAME:
+                loadColumn(resultComponent, columnElement, holder.dataLoader,
+                        Objects.requireNonNull(holder.getMetaClass()), filterableColumns);
+                break;
+            case EDITOR_ACTIONS_COLUMN_ELEMENT_NAME:
+                loadEditorActionsColumn(resultComponent, columnElement);
+                break;
+            default:
+                throw new GuiDevelopmentException("Unknown columns' child element: " + columnElement.getName(),
+                        context, "Component ID", resultComponent.getId());
         }
     }
 
@@ -463,18 +468,22 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 createCancelButton(propertyFilter, dialog, appliedValue)
         );
 
-        dialog.addOpenedChangeListener(event -> {
-            if (event.isOpened()) {
-                propertyFilter.focus();
-            } else {
-                filterButton.getElement().setAttribute(COLUMN_FILTER_BUTTON_ACTIVATED_ATTRIBUTE_NAME,
-                        propertyFilter.getValue() != null);
-            }
-        });
+        dialog.addOpenedChangeListener(event -> onDialogOpen(event, propertyFilter, filterButton));
 
         dialog.addDialogCloseActionListener(__ -> doCancel(propertyFilter, dialog, appliedValue));
 
         return dialog;
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected void onDialogOpen(Dialog.OpenedChangeEvent event, PropertyFilter propertyFilter,
+                                JmixButton filterButton) {
+        if (event.isOpened()) {
+            propertyFilter.focus();
+        } else {
+            filterButton.getElement().setAttribute(COLUMN_FILTER_BUTTON_ACTIVATED_ATTRIBUTE_NAME,
+                    propertyFilter.getValue() != null);
+        }
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -528,7 +537,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.setClassName(LumoUtility.Gap.XSMALL);
-        layout.getStyle().set("padding", "2px");
 
         layout.add(new Span(headerText), filterButton);
         return layout;
@@ -545,8 +553,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected void setDefaultEditComponent(Column<?> column, String property) {
         Editor<?> editor = resultComponent.getEditor();
-        if (editor instanceof DataGridEditor dataGridEditor) {
-            dataGridEditor.initColumnDefaultEditorComponent(column, property);
+        if (editor instanceof DataGridEditor) {
+            ((DataGridEditor) editor).initColumnDefaultEditorComponent(column, property);
         }
     }
 
@@ -554,13 +562,11 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         return resultComponent.addColumn(key, metaPropertyPath);
     }
 
-    protected Collection<String> getAppliedProperties(Element columnsElement, @Nullable FetchPlan fetchPlan,
-                                                      MetaClass metaClass) {
-        String exclude = loadString(columnsElement, "exclude")
-                .orElse(null);
-        List<String> excludes = exclude == null
-                ? Collections.emptyList()
-                : Splitter.on(",").omitEmptyStrings().trimResults().splitToList(exclude);
+    protected Collection<String> getAppliedProperties(Element columnsElement,
+                                                      @Nullable FetchPlan fetchPlan, MetaClass metaClass) {
+        String exclude = loadString(columnsElement, "exclude").orElse(null);
+        List<String> excludes = exclude == null ? Collections.emptyList() :
+                Splitter.on(",").omitEmptyStrings().trimResults().splitToList(exclude);
 
         Stream<String> properties;
         if (getMetaDataTools().isJpaEntity(metaClass) && fetchPlan != null) {
@@ -591,10 +597,10 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected void initMasterDataLoaderListener(CollectionPropertyContainer<?> collectionContainer) {
         DataLoader masterDataLoader = DataLoadersHelper.getMasterDataLoader(collectionContainer);
 
-        masterDataLoaderPostLoadListener = masterDataLoader instanceof InstanceLoader<?> instanceLoader
-                ? instanceLoader.addPostLoadListener(this::onMasterDataLoaderPostLoad)
-                : masterDataLoader instanceof CollectionLoader<?> collectionLoader
-                ? collectionLoader.addPostLoadListener(this::onMasterDataLoaderPostLoad)
+        masterDataLoaderPostLoadListener = masterDataLoader instanceof InstanceLoader
+                ? ((InstanceLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
+                : masterDataLoader instanceof CollectionLoader
+                ? ((CollectionLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
                 : null;
     }
 
@@ -616,13 +622,13 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             throw new GuiDevelopmentException("Not a CollectionContainer: " + containerId, context);
         }
 
-        if (collectionContainer instanceof CollectionPropertyContainer<?> collectionPropertyContainer) {
-            initMasterDataLoaderListener(collectionPropertyContainer);
+        if (collectionContainer instanceof CollectionPropertyContainer) {
+            initMasterDataLoaderListener((CollectionPropertyContainer<?>) collectionContainer);
         }
 
-        if (collectionContainer instanceof HasLoader hasLoaderContainer) {
+        if (collectionContainer instanceof HasLoader) {
             //noinspection ConstantConditions
-            holder.setDataLoader(hasLoaderContainer.getLoader());
+            holder.setDataLoader(((HasLoader) collectionContainer).getLoader());
         }
 
         holder.setMetaClass(collectionContainer.getEntityMetaClass());

@@ -121,7 +121,7 @@ public class FilterEditAction extends FilterAction {
         applyScreenConfigurer(editScreen);
 
         ScreenFragment screenFragment = filterSupport.createFilterConfigurationFragment(
-                editScreen.getWindow().getFrameOwner(), isNewConfiguration, filter);
+                editScreen.getWindow().getFrameOwner(), isNewConfiguration, currentConfiguration);
         Fragment fragment = screenFragment.getFragment();
         fragment.setWidthFull();
         editScreen.getWindow().add(fragment, 0);

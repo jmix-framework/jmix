@@ -66,7 +66,7 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
 
     @Autowired
     public void setMessages(Messages messages) {
-        this.text = messages.getMessage("actions.showRoleAssignments");
+        this.text = messages.getMessage("actions.ShowRoleAssignments");
     }
 
     @Override

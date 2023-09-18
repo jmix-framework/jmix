@@ -35,6 +35,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 @Route(value = "sec/usersubstitution/:username", layout = DefaultMainViewParent.class)
 @ViewController("sec_UserSubstitution.view")
 @ViewDescriptor("user-substitution-view.xml")
+@DialogMode(width = "64em")
 public class UserSubstitutionView extends StandardView {
 
     public static final String ROUTE_PARAM_NAME = "username";

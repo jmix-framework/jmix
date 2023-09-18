@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<view xmlns="http://jmix.io/schema/flowui/view">
+<view xmlns="http://jmix.io/schema/flowui/view"
+      focusComponent="substitutionDataGrid">
     <data>
         <collection id="userSubstitutionsDc"
                     class="io.jmix.securitydata.entity.UserSubstitutionEntity">
@@ -41,8 +42,7 @@
         <action id="saveAction" text="msg:///actions.Ok"
                 icon="CHECK"
                 actionVariant="PRIMARY"/>
-        <action id="closeAction" text="msg:///actions.Cancel"
-                icon="BAN"/>
+        <action id="closeAction" type="view_close"/>
     </actions>
     <layout>
         <genericFilter id="genericFilter"

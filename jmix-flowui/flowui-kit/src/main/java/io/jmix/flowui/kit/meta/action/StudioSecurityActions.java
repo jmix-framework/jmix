@@ -38,7 +38,7 @@ public interface StudioSecurityActions {
                             initialValue = "showRoleAssignments"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.showRoleAssignments"),
+                            defaultValue = "msg:///actions.ShowRoleAssignments"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {

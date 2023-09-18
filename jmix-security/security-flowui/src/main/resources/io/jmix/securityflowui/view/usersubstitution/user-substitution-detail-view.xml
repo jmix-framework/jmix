@@ -36,6 +36,8 @@
             <textField id="usernameField" property="username"
                        label="msg://usernameField.label" readOnly="true"/>
             <comboBox id="substitutedUsernameField" property="substitutedUsername"
+                      label="msg://substitutedUsernameField.label"
+                      requiredMessage="msg://substitutedUsernameField.requiredMessage"
                       placeholder="msg://substitutedUsernameField.placeholder" required="true"/>
             <datePicker id="startDatePicker" property="startDate"/>
             <datePicker id="endDatePicker" property="endDate"/>

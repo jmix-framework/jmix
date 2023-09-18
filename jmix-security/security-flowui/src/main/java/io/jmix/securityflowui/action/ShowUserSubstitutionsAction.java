@@ -31,6 +31,13 @@ import io.jmix.securityflowui.view.usersubstitution.UserSubstitutionView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/**
+ * Standard action for displaying the user substitutions. Opens {@link UserSubstitutionView} that provides CRUD
+ * operations for the user substitutions.
+ * <p>
+ * Should be defined for a list component ({@code Table}, {@code DataGrid}, etc.).
+ * @param <E> type of the user entity
+ */
 @ActionType(ShowUserSubstitutionsAction.ID)
 public class ShowUserSubstitutionsAction<E extends UserDetails>
         extends SecuredListDataComponentAction<ShowUserSubstitutionsAction<E>, E>

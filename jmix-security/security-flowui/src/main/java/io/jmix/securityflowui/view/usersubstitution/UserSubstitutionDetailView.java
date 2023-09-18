@@ -22,7 +22,6 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.view.*;
 import io.jmix.securitydata.entity.UserSubstitutionEntity;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -32,6 +31,7 @@ import java.util.stream.Stream;
 @ViewController("sec_UserSubstitution.detail")
 @ViewDescriptor("user-substitution-detail-view.xml")
 @EditedEntityContainer("userSubstitutionDc")
+@DialogMode(width = "37.5em")
 public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitutionEntity> {
 
     @ViewComponent
@@ -52,19 +52,13 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
     @Install(to = "substitutedUsernameField", subject = "itemsFetchCallback")
     protected Stream<String> substitutedUsernameFieldItemsFetchCallback(Query<String, String> query) {
         String enteredValue = query.getFilter()
-                .orElse(null);
-        int offset = query.getOffset();
-        int limit = query.getLimit();
+                .orElse("");
 
-        if (StringUtils.isNotBlank(enteredValue)) {
-            return userRepository.getByUsernameLike(enteredValue).stream()
-                    .map(UserDetails::getUsername)
-                    .filter(name -> !name.equals(getEditedEntity().getUsername()))
-                    .skip(offset)
-                    .limit(limit);
-        }
-
-        return Stream.empty();
+        return userRepository.getByUsernameLike(enteredValue).stream()
+                .map(UserDetails::getUsername)
+                .filter(name -> !name.equals(getEditedEntity().getUsername()))
+                .skip(query.getOffset())
+                .limit(query.getLimit());
     }
 
     @Subscribe

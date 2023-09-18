@@ -50,6 +50,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Makes UI-specific preparations to user substitution and performs it using {@link UserSubstitutionManager}
+ * Checks if there are unsaved changes on the current view and shows dialog with options:
+ * <ol>
+ *     <li><b>Discard changes</b> (close current view, cleanups background tasks, then performs
+ *     substitution and navigates to {@code MainView})</li>
+ *     <li><b>Cancel</b> (invokes all {@code cancelAction}s)</li>
+ * </ol>
+ */
 @ActionType(SubstituteUserAction.ID)
 public class SubstituteUserAction extends BaseAction implements ExecutableAction, ApplicationContextAware {
 

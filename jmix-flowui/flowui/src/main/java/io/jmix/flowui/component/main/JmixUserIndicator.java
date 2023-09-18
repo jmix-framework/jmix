@@ -19,6 +19,8 @@ package io.jmix.flowui.component.main;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.renderer.TextRenderer;
@@ -33,6 +35,7 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.security.SubstituteUserAction;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.main.UserIndicator;
@@ -155,6 +158,17 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
                                 .withHandler(cancelEvent -> updateUserIndicatorLabel(prevUser))
                 )
                 .open();
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void updateUserIndicatorLabel(UserDetails user) {
+        if (userComponent instanceof HasText hasTextComponent) {
+            String userTitle = generateUserTitle(user);
+            hasTextComponent.setText(userTitle);
+        } else if (userComponent instanceof HasValue hasValueComponent) {
+            UiComponentUtils.setValue(hasValueComponent, user);
+        }
     }
 
     protected String generateUserTitle(UserDetails user) {

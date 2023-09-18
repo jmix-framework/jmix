@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.app;
+package io.jmix.flowui.app.listener;
 
 import io.jmix.core.usersubstitution.event.UiUserSubstitutionsChangedEvent;
 import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
@@ -23,6 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * Publishes a {@link UiUserSubstitutionsChangedEvent} for the UI scope.
+ * The event should be handled in the components or the views.
+ */
 @Component("ui_UserSubstitutionsChangedListener")
 public class UserSubstitutionsChangedListener {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.app.bulk;
+package io.jmix.bulkeditor.view;
 
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.validation.bean.BeanPropertyValidator;
@@ -27,8 +27,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component("ui_BulkEditBeanPropertyValidator")
-public class BulkEditBeanPropertyValidator implements Validator<Object> {
+@Component("bulked_BulkEditViewBeanPropertyValidator")
+public class BulkEditViewBeanPropertyValidator implements Validator<Object> {
 
     protected final Class<?> beanClass;
     protected final String beanProperty;
@@ -36,7 +36,7 @@ public class BulkEditBeanPropertyValidator implements Validator<Object> {
     protected ObjectProvider<BeanPropertyValidator> delegateProvider;
     protected BeanPropertyValidator delegate;
 
-    public BulkEditBeanPropertyValidator(Class<?> beanClass, String beanProperty) {
+    public BulkEditViewBeanPropertyValidator(Class<?> beanClass, String beanProperty) {
         this.beanClass = beanClass;
         this.beanProperty = beanProperty;
     }

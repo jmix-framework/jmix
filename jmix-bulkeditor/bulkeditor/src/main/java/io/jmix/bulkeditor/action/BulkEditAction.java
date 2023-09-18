@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.action.list;
+package io.jmix.bulkeditor.action;
 
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import io.jmix.bulkeditor.view.builder.BulkEditorBuilder;
+import io.jmix.bulkeditor.view.builder.BulkEditors;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.accesscontext.UiBulkEditContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
-import io.jmix.flowui.bulk.BulkEditorBuilder;
-import io.jmix.flowui.bulk.BulkEditors;
+import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -54,7 +54,7 @@ import java.util.function.Function;
 @ActionType(BulkEditAction.ID)
 public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAction<E>, E> implements ExecutableAction {
 
-    public static final String ID = "list_bulkEdit";
+    public static final String ID = "bulked_edit";
 
     protected Messages messages;
     protected BulkEditors bulkEditors;

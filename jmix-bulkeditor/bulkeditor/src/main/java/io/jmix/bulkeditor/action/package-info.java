@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.flowui.app.bulk.factory;
+package io.jmix.bulkeditor.action;
 
 import org.springframework.lang.NonNullApi;

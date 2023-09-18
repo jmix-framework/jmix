@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.app.bulk;
+package io.jmix.bulkeditor.view;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -33,6 +33,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Route;
+import io.jmix.bulkeditor.view.BulkEditViewDataLoadSupport.LoadDescriptor;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntitySet;
 import io.jmix.core.FetchPlan;
@@ -53,8 +54,6 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.DialogAction.Type;
-import io.jmix.flowui.bulk.BulkEditorDataLoadSupport;
-import io.jmix.flowui.bulk.BulkEditorDataLoadSupport.LoadDescriptor;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
@@ -117,7 +116,7 @@ public class BulkEditView<E> extends StandardView {
     protected FormLayout fieldLayout;
 
     @Autowired
-    protected BulkEditorDataLoadSupport dataLoadSupport;
+    protected BulkEditViewDataLoadSupport dataLoadSupport;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -145,14 +144,14 @@ public class BulkEditView<E> extends StandardView {
     @Autowired
     protected jakarta.validation.Validator validator;
     @Autowired
-    protected ObjectProvider<BulkEditBeanPropertyValidator> beanValidatorProvider;
+    protected ObjectProvider<BulkEditViewBeanPropertyValidator> beanValidatorProvider;
     @Autowired
-    protected ObjectProvider<BulkEditManagedFieldProvider> managedFieldProviderFactory;
+    protected ObjectProvider<BulkEditViewManagedFieldProvider> managedFieldProviderFactory;
 
-    protected BulkEditManagedFieldProvider managedFieldProvider;
-    protected BulkEditContext<E> context;
+    protected BulkEditViewManagedFieldProvider managedFieldProvider;
+    protected BulkEditViewContext<E> context;
 
-    protected Map<String, ManagedField> managedFields = new LinkedHashMap<>();
+    protected Map<String, BulkEditViewManagedField> managedFields = new LinkedHashMap<>();
     protected Map<String, AbstractField<?, ?>> dataFields = new LinkedHashMap<>();
 
     protected List<E> items;
@@ -161,12 +160,12 @@ public class BulkEditView<E> extends StandardView {
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         if (context != null) {
-            for (ManagedField managedField : managedFieldProvider.getManagedFields(context)) {
+            for (BulkEditViewManagedField managedField : managedFieldProvider.getManagedFields(context)) {
                 managedFields.put(managedField.getFqn(), managedField);
             }
 
             Set<String> managedEmbeddedProperties = managedFields.values().stream()
-                    .map(ManagedField::getParentFqn)
+                    .map(BulkEditViewManagedField::getParentFqn)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
 
@@ -177,7 +176,7 @@ public class BulkEditView<E> extends StandardView {
         }
     }
 
-    public void setBulkEditorContext(BulkEditContext<E> context) {
+    public void setBulkEditorContext(BulkEditViewContext<E> context) {
         this.context = context;
         managedFieldProvider = managedFieldProviderFactory.getObject(context);
     }
@@ -252,34 +251,35 @@ public class BulkEditView<E> extends StandardView {
             return;
         }
 
-        List<ManagedField> editFields = new ArrayList<>(managedFields.values());
+        List<BulkEditViewManagedField> editFields = new ArrayList<>(managedFields.values());
 
-        Comparator<ManagedField> comparator = createManagedFieldComparator(editFields);
+        Comparator<BulkEditViewManagedField> comparator = createManagedFieldComparator(editFields);
         editFields.sort(comparator);
 
-        for (ManagedField editField : editFields) {
+        for (BulkEditViewManagedField editField : editFields) {
             Component fieldComponent = createFieldComponent(editField);
             fieldLayout.add(fieldComponent);
         }
         focusFirstPossibleField(dataFields);
     }
 
-    protected Comparator<ManagedField> createManagedFieldComparator(List<ManagedField> editFields) {
+    protected Comparator<BulkEditViewManagedField> createManagedFieldComparator(
+            List<BulkEditViewManagedField> editFields) {
         Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter = context.getFieldSorter();
-        Comparator<ManagedField> comparator;
+        Comparator<BulkEditViewManagedField> comparator;
         if (fieldSorter != null) {
             Map<MetaProperty, Integer> sorted = fieldSorter.apply(editFields.stream()
-                    .map(ManagedField::getMetaProperty)
+                    .map(BulkEditViewManagedField::getMetaProperty)
                     .collect(Collectors.toList()));
             comparator = Comparator.comparingInt(item ->
                     sorted.get(item.getMetaProperty()));
         } else {
-            comparator = Comparator.comparing(ManagedField::getLocalizedName);
+            comparator = Comparator.comparing(BulkEditViewManagedField::getLocalizedName);
         }
         return comparator;
     }
 
-    protected Component createFieldComponent(ManagedField managedField) {
+    protected Component createFieldComponent(BulkEditViewManagedField managedField) {
         HorizontalLayout container = uiComponents.create(HorizontalLayout.class);
         container.setAlignItems(FlexComponent.Alignment.BASELINE);
 
@@ -293,7 +293,7 @@ public class BulkEditView<E> extends StandardView {
         return container;
     }
 
-    protected AbstractField<?, ?> createField(ManagedField managedField) {
+    protected AbstractField<?, ?> createField(BulkEditViewManagedField managedField) {
         MetaProperty metaProperty = managedField.getMetaProperty();
         ComponentGenerationContext generationContext =
                 new ComponentGenerationContext(metaProperty.getDomain(), metaProperty.getName());
@@ -301,7 +301,7 @@ public class BulkEditView<E> extends StandardView {
         AbstractField<?, ?> field = (AbstractField<?, ?>) uiComponentsGenerator.generate(generationContext);
 
         if (field instanceof SupportsValidation<?> supportsValidation) {
-            BulkEditBeanPropertyValidator beanValidator = getBeanPropertyValidator(metaProperty);
+            BulkEditViewBeanPropertyValidator beanValidator = getBeanPropertyValidator(metaProperty);
             if (beanValidator != null) {
                 supportsValidation.addValidator(beanValidator);
             }
@@ -322,7 +322,7 @@ public class BulkEditView<E> extends StandardView {
     }
 
     @Nullable
-    protected BulkEditBeanPropertyValidator getBeanPropertyValidator(MetaProperty metaProperty) {
+    protected BulkEditViewBeanPropertyValidator getBeanPropertyValidator(MetaProperty metaProperty) {
         MetaClass propertyEnclosingMetaClass = metaProperty.getDomain();
         Class<?> enclosingJavaClass = propertyEnclosingMetaClass.getJavaClass();
 
@@ -334,7 +334,7 @@ public class BulkEditView<E> extends StandardView {
         }
     }
 
-    protected boolean isFieldRequired(ManagedField managedField) {
+    protected boolean isFieldRequired(BulkEditViewManagedField managedField) {
         MetaProperty metaProperty = managedField.getMetaProperty();
         boolean requiredFromMetaProperty = metaProperty.isMandatory();
 

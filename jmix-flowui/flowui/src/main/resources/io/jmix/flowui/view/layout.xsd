@@ -1155,7 +1155,6 @@
                     <xs:enumeration value="value_clear"/>
                     <xs:enumeration value="list_itemTracking"/>
                     <xs:enumeration value="multi_value_select"/>
-                    <xs:enumeration value="list_bulkEdit"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

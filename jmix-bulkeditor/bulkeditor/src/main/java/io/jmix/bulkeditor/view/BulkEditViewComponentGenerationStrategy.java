@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.app.bulk.factory;
+package io.jmix.bulkeditor.view;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.select.Select;
@@ -28,7 +28,6 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.app.bulk.BulkEditView;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.factory.AbstractComponentGenerationStrategy;
@@ -40,19 +39,19 @@ import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
 
-@org.springframework.stereotype.Component("ui_BulkEditComponentGenerationStrategy")
-public class BulkEditComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
+@org.springframework.stereotype.Component("bulked_BulkEditViewComponentGenerationStrategy")
+public class BulkEditViewComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
 
     protected static final int MAX_TEXTFIELD_STRING_LENGTH = 255;
     protected static final String TEXT_AREA_HEIGHT = "5em";
 
-    public BulkEditComponentGenerationStrategy(UiComponents uiComponents,
-                                               Metadata metadata,
-                                               MetadataTools metadataTools,
-                                               Actions actions,
-                                               DatatypeRegistry datatypeRegistry,
-                                               Messages messages,
-                                               EntityFieldCreationSupport entityFieldCreationSupport) {
+    public BulkEditViewComponentGenerationStrategy(UiComponents uiComponents,
+                                                   Metadata metadata,
+                                                   MetadataTools metadataTools,
+                                                   Actions actions,
+                                                   DatatypeRegistry datatypeRegistry,
+                                                   Messages messages,
+                                                   EntityFieldCreationSupport entityFieldCreationSupport) {
         super(uiComponents, metadata, metadataTools, actions, datatypeRegistry, messages, entityFieldCreationSupport);
     }
 

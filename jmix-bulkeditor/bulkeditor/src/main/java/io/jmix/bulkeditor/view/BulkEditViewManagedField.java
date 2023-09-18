@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.app.bulk;
+package io.jmix.bulkeditor.view;
 
 import io.jmix.core.metamodel.model.MetaProperty;
 
 import javax.annotation.Nullable;
 
-public class ManagedField {
+public class BulkEditViewManagedField {
 
-    protected final String fqn;
-    protected final String parentFqn;
+    protected String fqn;
+    protected String parentFqn;
 
-    protected final String localizedName;
+    protected String localizedName;
 
-    protected final MetaProperty metaProperty;
+    protected MetaProperty metaProperty;
 
-    public ManagedField(String fqn, MetaProperty metaProperty, String localizedName, @Nullable String parentFqn) {
+    public BulkEditViewManagedField(String fqn, MetaProperty metaProperty, String localizedName, @Nullable String parentFqn) {
         this.fqn = fqn;
         this.metaProperty = metaProperty;
         this.localizedName = localizedName;

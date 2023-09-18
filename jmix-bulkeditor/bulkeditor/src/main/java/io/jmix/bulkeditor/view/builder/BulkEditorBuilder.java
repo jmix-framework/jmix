@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.bulk;
+package io.jmix.bulkeditor.view.builder;
 
+import io.jmix.bulkeditor.view.BulkEditView;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.app.bulk.BulkEditView;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.view.DialogWindow;

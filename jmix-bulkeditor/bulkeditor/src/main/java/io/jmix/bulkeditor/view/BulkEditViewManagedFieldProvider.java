@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.app.bulk;
+package io.jmix.bulkeditor.view;
 
 import com.google.common.base.Strings;
 import io.jmix.core.AccessManager;
@@ -36,17 +36,17 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component("ui_BulkEditManagedFieldProvider")
-public class BulkEditManagedFieldProvider {
+@Component("bulked_BulkEditViewManagedFieldProvider")
+public class BulkEditViewManagedFieldProvider {
 
-    protected final BulkEditContext<?> context;
+    protected final BulkEditViewContext<?> context;
     protected final Pattern excludeRegexPattern;
 
     protected AccessManager accessManager;
     protected MetadataTools metadataTools;
     protected MessageTools messageTools;
 
-    public BulkEditManagedFieldProvider(BulkEditContext<?> context) {
+    public BulkEditViewManagedFieldProvider(BulkEditViewContext<?> context) {
         this.context = context;
         String exclude = context.getExclude();
         excludeRegexPattern = exclude == null ? null : Pattern.compile(exclude);
@@ -67,26 +67,26 @@ public class BulkEditManagedFieldProvider {
         this.messageTools = messageTools;
     }
 
-    public List<ManagedField> getManagedFields(BulkEditContext<?> context) {
+    public List<BulkEditViewManagedField> getManagedFields(BulkEditViewContext<?> context) {
         MetaClass metaClass = context.getMetaClass();
 
         return getManagedFields(metaClass, null, null);
     }
 
-    protected List<ManagedField> getManagedFields(MetaClass metaClass,
-                                                  @Nullable String fqnPrefix,
-                                                  @Nullable String localePrefix) {
-        List<ManagedField> managedFields = new ArrayList<>();
+    protected List<BulkEditViewManagedField> getManagedFields(MetaClass metaClass,
+                                                              @Nullable String fqnPrefix,
+                                                              @Nullable String localePrefix) {
+        List<BulkEditViewManagedField> managedFields = new ArrayList<>();
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             String fqn = generateFqn(metaProperty, fqnPrefix);
             String propertyCaption = generatePropertyCaption(metaClass, metaProperty, localePrefix);
 
             if (!metadataTools.isEmbedded(metaProperty)) {
                 if (isManagedAttribute(metaClass, metaProperty, fqn)) {
-                    managedFields.add(new ManagedField(fqn, metaProperty, propertyCaption, fqnPrefix));
+                    managedFields.add(new BulkEditViewManagedField(fqn, metaProperty, propertyCaption, fqnPrefix));
                 }
             } else {
-                List<ManagedField> nestedFields = getManagedFields(metaProperty, fqn, propertyCaption);
+                List<BulkEditViewManagedField> nestedFields = getManagedFields(metaProperty, fqn, propertyCaption);
                 managedFields.addAll(nestedFields);
             }
         }
@@ -173,9 +173,9 @@ public class BulkEditManagedFieldProvider {
         return propertyCaption;
     }
 
-    protected List<ManagedField> getManagedFields(MetaProperty embeddedProperty,
-                                                  String fqnPrefix,
-                                                  String localePrefix) {
+    protected List<BulkEditViewManagedField> getManagedFields(MetaProperty embeddedProperty,
+                                                              String fqnPrefix,
+                                                              String localePrefix) {
         MetaClass metaClass = embeddedProperty.getRange().asClass();
 
         return getManagedFields(metaClass, fqnPrefix, localePrefix);

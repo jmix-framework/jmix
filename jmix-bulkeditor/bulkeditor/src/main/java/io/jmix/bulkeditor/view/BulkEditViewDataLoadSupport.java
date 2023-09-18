@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.bulk;
+package io.jmix.bulkeditor.view;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
@@ -28,12 +28,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component("ui_BulkEditorDataLoadSupport")
-public class BulkEditorDataLoadSupport {
+@Component("bulked_BulkEditViewDataLoadSupport")
+public class BulkEditViewDataLoadSupport {
 
     protected final DataManager dataManager;
 
-    public BulkEditorDataLoadSupport(DataManager dataManager) {
+    public BulkEditViewDataLoadSupport(DataManager dataManager) {
         this.dataManager = dataManager;
     }
 
@@ -58,9 +58,9 @@ public class BulkEditorDataLoadSupport {
 
     public static class LoadDescriptor<E> implements Serializable {
 
-        protected final Collection<E> selectedItems;
-        protected final MetaClass metaClass;
-        protected final FetchPlan fetchPlan;
+        protected Collection<E> selectedItems;
+        protected MetaClass metaClass;
+        protected FetchPlan fetchPlan;
 
         public LoadDescriptor(Collection<E> selectedItems, MetaClass metaClass, FetchPlan fetchPlan) {
             this.selectedItems = selectedItems;

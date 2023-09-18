@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.app.bulk;
+package io.jmix.bulkeditor.view;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -29,7 +29,7 @@ import java.util.function.Function;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class BulkEditContext<V> {
+public class BulkEditViewContext<V> {
 
     protected final MetaClass metaClass;
     protected final Collection<V> selectedItems;
@@ -41,7 +41,7 @@ public class BulkEditContext<V> {
     protected boolean useConfirmDialog;
     protected Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter;
 
-    public BulkEditContext(MetaClass metaClass, Collection<V> selectedItems) {
+    public BulkEditViewContext(MetaClass metaClass, Collection<V> selectedItems) {
         checkNotNullArgument(metaClass);
         checkNotNullArgument(selectedItems);
 

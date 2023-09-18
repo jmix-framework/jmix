@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.flowui.app.bulk;
+package io.jmix.bulkeditor.action;
 
-import org.springframework.lang.NonNullApi;
+import io.jmix.core.accesscontext.SpecificOperationAccessContext;
+
+public class UiBulkEditContext extends SpecificOperationAccessContext {
+
+    public static final String NAME = "bulkeditor.edit.enabled";
+
+    public UiBulkEditContext() {
+        super(NAME);
+    }
+}

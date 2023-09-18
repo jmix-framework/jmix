@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.bulk;
+package io.jmix.bulkeditor.view.builder;
 
 import com.vaadin.flow.component.Focusable;
+import io.jmix.bulkeditor.view.BulkEditViewContext;
+import io.jmix.bulkeditor.view.BulkEditView;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.app.bulk.BulkEditView;
-import io.jmix.flowui.app.bulk.BulkEditContext;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.DataUnit;
@@ -46,7 +46,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * A bean that creates an instance of {@link BulkEditorBuilder}.
  */
-@Component("ui_BulkEditors")
+@Component("bulked_BulkEditors")
 public class BulkEditors {
 
     private static final Logger log = LoggerFactory.getLogger(BulkEditors.class);
@@ -79,7 +79,7 @@ public class BulkEditors {
                 .build();
 
 
-        BulkEditContext<E> context = createBulkEditorContext(builder);
+        BulkEditViewContext<E> context = createBulkEditorContext(builder);
         BulkEditView<E> bulkEditorWindow = dialogWindow.getView();
         bulkEditorWindow.setBulkEditorContext(context);
 
@@ -116,8 +116,8 @@ public class BulkEditors {
         }
     }
 
-    protected <E> BulkEditContext<E> createBulkEditorContext(BulkEditorBuilder<E> builder) {
-        BulkEditContext<E> context = new BulkEditContext<>(builder.getMetaClass(), builder.getEntities());
+    protected <E> BulkEditViewContext<E> createBulkEditorContext(BulkEditorBuilder<E> builder) {
+        BulkEditViewContext<E> context = new BulkEditViewContext<>(builder.getMetaClass(), builder.getEntities());
         context.setExclude(builder.getExclude());
         context.setIncludeProperties(builder.getIncludeProperties());
         context.setFieldValidators(builder.getFieldValidators());

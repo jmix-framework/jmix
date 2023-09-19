@@ -146,6 +146,7 @@ public class UiDataFilterSupport extends FilterSupport {
 
         Filter.Configuration resultConfiguration = initFilterConfiguration(configurationModel.getConfigurationId(),
                 configurationModel.getName(), configuration, isNewConfiguration, rootFilterComponent);
+        resultConfiguration.setAvailableForAllUsers(configurationModel.getUsername() == null);
 
         saveConfigurationModel(resultConfiguration, configurationModel);
         return resultConfiguration;
@@ -283,7 +284,9 @@ public class UiDataFilterSupport extends FilterSupport {
         FilterConfiguration configurationModel = metadata.create(FilterConfiguration.class);
         configurationModel.setConfigurationId(configuration.getId());
         configurationModel.setName(configuration.getName());
-        configurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
+        if (!configuration.isAvailableForAllUsers()) {
+            configurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
+        }
         return configurationModel;
     }
 

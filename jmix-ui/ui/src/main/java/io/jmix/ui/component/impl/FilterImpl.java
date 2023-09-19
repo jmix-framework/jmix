@@ -58,6 +58,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
     protected static final String FILTER_STYLENAME = "jmix-filter";
     protected static final String FILTER_ROOT_COMPONENT_STYLENAME = "jmix-filter-root-component";
+    protected static final String GLOBAL_CONFIGURATION_CAPTION_POSTFIX = " *";
 
     protected Actions actions;
     protected CurrentAuthentication currentAuthentication;
@@ -650,6 +651,9 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
             if (caption == null) {
                 caption = configuration.getId();
             }
+        }
+        if (configuration.isAvailableForAllUsers()) {
+            caption = caption + GLOBAL_CONFIGURATION_CAPTION_POSTFIX;
         }
 
         return caption;

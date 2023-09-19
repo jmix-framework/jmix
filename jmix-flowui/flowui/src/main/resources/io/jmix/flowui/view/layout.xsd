@@ -1359,6 +1359,23 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="aggregationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SUM"/>
+            <xs:enumeration value="COUNT"/>
+            <xs:enumeration value="AVG"/>
+            <xs:enumeration value="MIN"/>
+            <xs:enumeration value="MAX"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="aggregationPosition">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="BOTTOM"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="componentSize">
         <xs:union>
             <xs:simpleType>
@@ -2485,6 +2502,16 @@
         </xs:simpleContent>
     </xs:complexType>
 
+    <xs:complexType name="gridAggregationType">
+        <xs:choice minOccurs="0">
+            <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+        </xs:choice>
+
+        <xs:attribute name="type" type="aggregationType"/>
+        <xs:attribute name="strategyClass" type="xs:string"/>
+        <xs:attribute name="cellTitle" type="resourceString"/>
+    </xs:complexType>
+
     <!-- Components -->
 
     <!-- ListMenu -->
@@ -2609,9 +2636,10 @@
 
     <!-- Grid.Column-->
     <xs:complexType name="dataGridColumnComponent">
-        <xs:choice minOccurs="0">
-            <xs:group ref="renderers" maxOccurs="0"/>
-        </xs:choice>
+        <xs:sequence minOccurs="0">
+            <xs:element name="aggregation" type="gridAggregationType"/>
+            <xs:group ref="renderers"/>
+        </xs:sequence>
 
         <xs:attribute name="key" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
@@ -2667,6 +2695,8 @@
                 <xs:attribute name="columnReorderingAllowed" type="xs:boolean"/>
                 <xs:attribute name="nestedNullBehavior" type="gridNestedNullBehaviorEnum"/>
                 <xs:attribute name="columnRendering" type="gridColumnRendering"/>
+                <xs:attribute name="aggregatable" type="xs:boolean"/>
+                <xs:attribute name="aggregationPosition" type="aggregationPosition"/>
                 <xs:attribute name="multiSort" type="xs:boolean"/>
                 <xs:attribute name="multiSortPriority" type="gridMultiSortPriority"/>
                 <xs:attribute name="multiSortOnShiftClickOnly" type="xs:boolean"/>

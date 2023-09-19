@@ -15,7 +15,14 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view">
-    <layout>
+    <layout classNames="foo-bar"
+            minHeight="10em"
+            height="15em"
+            maxHeight="20em"
+            minWidth="10em"
+            width="15em"
+            maxWidth="20em"
+            enabled="false">
         <button id="simpleBtn"/>
     </layout>
 </view>

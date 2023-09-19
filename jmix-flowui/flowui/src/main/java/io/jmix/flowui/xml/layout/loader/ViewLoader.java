@@ -15,9 +15,7 @@
  */
 package io.jmix.flowui.xml.layout.loader;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasComponents;
-import com.vaadin.flow.component.HasEnabled;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
@@ -63,8 +61,15 @@ public class ViewLoader extends AbstractViewLoader<View<?>> implements Component
         Component rootComponent = resultComponent.getContent();
 
         loadThemableAttributes(rootComponent, layoutElement);
-        loadFlexibleAttributes(rootComponent, layoutElement);
-        loadEnabled(rootComponent, layoutElement);
+        // in case of standard root component
+        if (rootComponent instanceof FlexComponent flexComponent) {
+            componentLoader().loadFlexibleAttributes(flexComponent, layoutElement);
+        } else {
+            // for some custom root components, e.g. View<Div>
+            componentLoader().loadClassNames(rootComponent, layoutElement);
+            loadEnabled(rootComponent, layoutElement);
+            loadSizeAttributes(rootComponent, layoutElement);
+        }
 
         if (rootComponent instanceof HasComponents) {
             loadSubComponentsAndExpand(((HasComponents) rootComponent), layoutElement);
@@ -77,15 +82,15 @@ public class ViewLoader extends AbstractViewLoader<View<?>> implements Component
         }
     }
 
-    private void loadFlexibleAttributes(Component rootComponent, Element layoutElement) {
-        if (rootComponent instanceof FlexComponent) {
-            componentLoader().loadFlexibleAttributes(((FlexComponent) rootComponent), layoutElement);
-        }
-    }
-
     private void loadEnabled(Component rootComponent, Element layoutElement) {
         if (rootComponent instanceof HasEnabled) {
             componentLoader().loadEnabled(((HasEnabled) rootComponent), layoutElement);
+        }
+    }
+
+    private void loadSizeAttributes(Component rootComponent, Element layoutElement) {
+        if (rootComponent instanceof HasSize hasSize) {
+            componentLoader().loadSizeAttributes(hasSize, layoutElement);
         }
     }
 

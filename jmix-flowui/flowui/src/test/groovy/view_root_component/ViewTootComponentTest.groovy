@@ -16,6 +16,7 @@
 
 package view_root_component
 
+import com.vaadin.flow.component.html.Div
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 import view_root_component.view.ViewRootComponentView
@@ -34,5 +35,18 @@ class ViewTootComponentTest extends FlowuiTestSpecification {
 
         then:
         noExceptionThrown()
+
+        when:
+        def content = view.getContent()
+
+        then:
+        !content.isEnabled()
+        content.getClassName() == "foo-bar"
+        content.getMinHeight() == "10em"
+        content.getHeight() == "15em"
+        content.getMaxHeight() == "20em"
+        content.getMinWidth() == "10em"
+        content.getWidth() == "15em"
+        content.getMaxWidth() == "20em"
     }
 }

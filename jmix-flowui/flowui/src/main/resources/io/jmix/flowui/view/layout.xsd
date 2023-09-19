@@ -2649,6 +2649,7 @@
         <xs:attribute name="frozen" type="xs:boolean"/>
         <xs:attribute name="property" type="xs:string"/>
         <xs:attribute name="sortable" type="xs:boolean"/>
+        <xs:attribute name="filterable" type="xs:boolean"/>
         <xs:attribute name="flexGrow" type="xs:integer"/>
         <xs:attribute name="resizable" type="xs:boolean"/>
         <xs:attribute name="autoWidth" type="xs:boolean"/>
@@ -2677,7 +2678,9 @@
                                 <xs:element name="editorActionsColumn" type="dataGridEditorActionsColumn"
                                             minOccurs="0"/>
                             </xs:sequence>
+
                             <xs:attributeGroup ref="columnsLoadType"/>
+                            <xs:attribute name="filterable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
                 </xs:all>

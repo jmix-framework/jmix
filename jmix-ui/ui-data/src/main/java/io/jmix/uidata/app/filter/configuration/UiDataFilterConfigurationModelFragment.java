@@ -40,7 +40,6 @@ import io.jmix.ui.screen.Target;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import io.jmix.uidata.accesscontext.UiFilterModifyGlobalConfigurationContext;
-import io.jmix.uidata.action.filter.FilterSaveAsAction;
 import io.jmix.uidata.entity.FilterConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -203,20 +202,35 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
 
     @Subscribe(target = Target.PARENT_CONTROLLER)
     protected void onValidationEvent(StandardEditor.ValidationEvent event) {
-        if (configurationWithSameNameExists()) {
-            ValidationErrors errors = ValidationErrors.of(messages.getMessage(FilterSaveAsAction.class,
-                    "saveFilterConfigurationInputDialog.nameField.nonUniqueName"));
-            event.addErrors(errors);
+        if (componentProperties.isFilterConfigurationUniqueNames()) {
+            event.addErrors(validateConfigurationName());
         }
     }
 
-    protected boolean configurationWithSameNameExists() {
+    protected ValidationErrors validateConfigurationName() {
         String editedConfigurationName = configurationDc.getItem().getName();
-        return filter != null && filter.getConfigurations().stream()
-                .anyMatch(conf ->
-                        Objects.equals(editedConfigurationName, conf.getName())
-                                //skip itself the configuration being checked
-                                && !Objects.equals(originalConfigurationId, conf.getId())
-                );
+        if (filter == null) {
+            return ValidationErrors.none();
+        } else {
+            boolean availableForAllUsers = availableForAllField.isChecked();
+            boolean configurationWithSameNameExists = filter.getConfigurations().stream()
+                    .anyMatch(conf ->
+                            Objects.equals(editedConfigurationName, conf.getName())
+                                    && (availableForAllUsers == conf.isAvailableForAllUsers())
+                                    //skip itself the configuration being checked
+                                    && !Objects.equals(originalConfigurationId, conf.getId())
+                    );
+            if (configurationWithSameNameExists) {
+                if (availableForAllUsers) {
+                    return ValidationErrors.of(messages.getMessage(getClass(),
+                            "uiDataFilterConfigurationModelFragment.nameField.nonUniqueGlobalName"));
+                } else {
+                    return ValidationErrors.of(messages.getMessage(getClass(),
+                            "uiDataFilterConfigurationModelFragment.nameField.nonUniqueUserName"));
+                }
+            } else {
+                return ValidationErrors.none();
+            }
+        }
     }
 }

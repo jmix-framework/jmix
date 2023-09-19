@@ -166,6 +166,7 @@ public class FilterSupport {
             resultConfiguration.setRootLogicalFilterComponent(rootFilterComponent);
         }
         resultConfiguration.setName(name);
+        resultConfiguration.setAvailableForAllUsers(existedConfiguration.isAvailableForAllUsers());
 
         return resultConfiguration;
     }

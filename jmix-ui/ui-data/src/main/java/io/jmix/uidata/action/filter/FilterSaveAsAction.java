@@ -186,12 +186,14 @@ public class FilterSaveAsAction extends FilterAction {
                                 "logicalFilterConditionEdit.uniqueConfigurationId"));
                     }
 
-                    String name = validationContext.getValue("nameField");
-                    boolean configurationWithSameNameExists = filter.getConfigurations().stream()
-                            .anyMatch(conf -> Objects.equals(name, conf.getName()));
-                    if (configurationWithSameNameExists) {
-                        return ValidationErrors.of(messages.getMessage(FilterSaveAsAction.class,
-                                "saveFilterConfigurationInputDialog.nameField.nonUniqueName"));
+                    if (componentProperties.isFilterConfigurationUniqueNames()) {
+                        String name = validationContext.getValue("nameField");
+                        boolean configurationWithSameNameExists = filter.getConfigurations().stream()
+                                .anyMatch(conf -> Objects.equals(name, conf.getName()) && !conf.isAvailableForAllUsers());
+                        if (configurationWithSameNameExists) {
+                            return ValidationErrors.of(messages.getMessage(UiDataFilterConfigurationModelFragment.class,
+                                    "uiDataFilterConfigurationModelFragment.nameField.nonUniqueUserName"));
+                        }
                     }
 
                     return ValidationErrors.none();

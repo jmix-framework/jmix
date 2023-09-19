@@ -23,9 +23,9 @@ import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 
-public abstract class BasicNumberAggregation<T extends Number> extends BasicAggregation<T> {
+public abstract class AbstractNumberAggregation<T extends Number> extends AbstractAggregation<T> {
 
-    protected BasicNumberAggregation(Class<T> clazz) {
+    protected AbstractNumberAggregation(Class<T> clazz) {
         super(clazz);
     }
 

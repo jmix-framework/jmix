@@ -35,7 +35,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@Component("flowui_AggregatableDelegate")
+@Component("ui_AggregatableDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class AggregatableDelegate<K> {
 

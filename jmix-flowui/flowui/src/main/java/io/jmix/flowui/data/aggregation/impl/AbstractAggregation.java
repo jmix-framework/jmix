@@ -23,11 +23,11 @@ import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 
-public class BasicAggregation<T> implements Aggregation<T> {
+public abstract class AbstractAggregation<T> implements Aggregation<T> {
 
     protected Class<T> clazz;
 
-    public BasicAggregation(Class<T> clazz) {
+    public AbstractAggregation(Class<T> clazz) {
         this.clazz = clazz;
     }
 

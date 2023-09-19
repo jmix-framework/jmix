@@ -16,19 +16,9 @@
 
 package io.jmix.flowui.data.aggregation.impl;
 
-import org.springframework.lang.Nullable;
+public class CountAggregation<T> extends AbstractAggregation<T> {
 
-public class LongAggregation extends AbstractNumberAggregation<Long> {
-
-    public LongAggregation() {
-        super(Long.class);
-    }
-
-    @Nullable
-    @Override
-    protected Long convert(@Nullable Double result) {
-        return result != null
-                ? result.longValue()
-                : null;
+    public CountAggregation(Class<T> clazz) {
+        super(clazz);
     }
 }

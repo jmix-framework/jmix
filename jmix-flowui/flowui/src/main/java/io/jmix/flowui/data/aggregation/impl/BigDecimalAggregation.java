@@ -20,7 +20,7 @@ import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 
-public class BigDecimalAggregation extends BasicNumberAggregation<BigDecimal> {
+public class BigDecimalAggregation extends AbstractNumberAggregation<BigDecimal> {
 
     public BigDecimalAggregation() {
         super(BigDecimal.class);

@@ -21,7 +21,7 @@ import org.springframework.lang.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class BigIntegerAggregation extends BasicNumberAggregation<BigInteger> {
+public class BigIntegerAggregation extends AbstractNumberAggregation<BigInteger> {
 
     public BigIntegerAggregation() {
         super(BigInteger.class);

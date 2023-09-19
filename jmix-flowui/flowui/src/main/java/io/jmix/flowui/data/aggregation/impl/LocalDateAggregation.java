@@ -20,45 +20,46 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.data.aggregation.NumberAggregationHelper;
 import org.springframework.lang.Nullable;
 
-import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.EnumSet;
 
-public class DateAggregation extends CountAggregation<Date> {
+public class LocalDateAggregation extends CountAggregation<LocalDate> {
 
-    public DateAggregation() {
-        super(Date.class);
+    public LocalDateAggregation() {
+        super(LocalDate.class);
     }
 
     @Nullable
     @Override
-    public Date min(Collection<Date> items) {
+    public LocalDate min(Collection<LocalDate> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        for (final LocalDate item : items) {
             if (item != null) {
-                helper.addItem(((double) item.getTime()));
+                helper.addItem(((double) item.getLong(ChronoField.EPOCH_DAY)));
             }
         }
         Double result = helper.min();
 
         return result != null
-                ? new Date(result.longValue())
+                ? LocalDate.ofEpochDay(result.longValue())
                 : null;
     }
 
     @Nullable
     @Override
-    public Date max(Collection<Date> items) {
+    public LocalDate max(Collection<LocalDate> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        for (final LocalDate item : items) {
             if (item != null) {
-                helper.addItem(((double) item.getTime()));
+                helper.addItem(((double) item.getLong(ChronoField.EPOCH_DAY)));
             }
         }
         Double result = helper.max();
 
         return result != null
-                ? new Date(result.longValue())
+                ? LocalDate.ofEpochDay(result.longValue())
                 : null;
     }
 

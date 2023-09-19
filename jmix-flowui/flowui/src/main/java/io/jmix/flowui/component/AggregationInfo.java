@@ -17,12 +17,16 @@
 package io.jmix.flowui.component;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.kit.component.SupportsFormatter;
 import io.jmix.flowui.kit.component.formatter.Formatter;
 import io.jmix.flowui.kit.meta.StudioIgnore;
 import org.springframework.lang.Nullable;
 
+/**
+ * POJO to store all information needed to create aggregation in {@link DataGrid}.
+ */
 public class AggregationInfo implements SupportsFormatter<Object> {
 
     public enum Type {

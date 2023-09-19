@@ -18,7 +18,7 @@ package io.jmix.flowui.data.aggregation.impl;
 
 import org.springframework.lang.Nullable;
 
-public class DoubleAggregation extends BasicNumberAggregation<Double> {
+public class DoubleAggregation extends AbstractNumberAggregation<Double> {
 
     public DoubleAggregation() {
         super(Double.class);

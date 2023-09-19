@@ -20,45 +20,54 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.data.aggregation.NumberAggregationHelper;
 import org.springframework.lang.Nullable;
 
-import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.EnumSet;
 
-public class DateAggregation extends CountAggregation<Date> {
+public class LocalDateTimeAggregation extends CountAggregation<LocalDateTime> {
 
-    public DateAggregation() {
-        super(Date.class);
+    public LocalDateTimeAggregation() {
+        super(LocalDateTime.class);
     }
 
     @Nullable
     @Override
-    public Date min(Collection<Date> items) {
+    public LocalDateTime min(Collection<LocalDateTime> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        ZoneId zoneId = ZoneId.systemDefault();
+
+        for (final LocalDateTime item : items) {
             if (item != null) {
-                helper.addItem(((double) item.getTime()));
+                long epochMilli = ZonedDateTime.of(item, zoneId).toInstant().toEpochMilli();
+                helper.addItem(((double) epochMilli));
             }
         }
         Double result = helper.min();
 
         return result != null
-                ? new Date(result.longValue())
+                ? LocalDateTime.ofInstant(Instant.ofEpochMilli(result.longValue()), zoneId)
                 : null;
     }
 
     @Nullable
     @Override
-    public Date max(Collection<Date> items) {
+    public LocalDateTime max(Collection<LocalDateTime> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        ZoneId zoneId = ZoneId.systemDefault();
+
+        for (final LocalDateTime item : items) {
             if (item != null) {
-                helper.addItem(((double) item.getTime()));
+                long epochMilli = ZonedDateTime.of(item, zoneId).toInstant().toEpochMilli();
+                helper.addItem(((double) epochMilli));
             }
         }
         Double result = helper.max();
 
         return result != null
-                ? new Date(result.longValue())
+                ? LocalDateTime.ofInstant(Instant.ofEpochMilli(result.longValue()), zoneId)
                 : null;
     }
 

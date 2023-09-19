@@ -20,13 +20,13 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.data.aggregation.NumberAggregationHelper;
 import org.springframework.lang.Nullable;
 
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.EnumSet;
 
-public class DateAggregation extends CountAggregation<Date> {
+public class DateTimeAggregation extends AbstractAggregation<Date> {
 
-    public DateAggregation() {
+    public DateTimeAggregation() {
         super(Date.class);
     }
 
@@ -34,7 +34,7 @@ public class DateAggregation extends CountAggregation<Date> {
     @Override
     public Date min(Collection<Date> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        for (final Date item : items) {
             if (item != null) {
                 helper.addItem(((double) item.getTime()));
             }
@@ -50,7 +50,7 @@ public class DateAggregation extends CountAggregation<Date> {
     @Override
     public Date max(Collection<Date> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        for (final Date item : items) {
             if (item != null) {
                 helper.addItem(((double) item.getTime()));
             }

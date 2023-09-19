@@ -20,45 +20,46 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.data.aggregation.NumberAggregationHelper;
 import org.springframework.lang.Nullable;
 
-import java.sql.Date;
+import java.time.LocalTime;
+import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.EnumSet;
 
-public class DateAggregation extends CountAggregation<Date> {
+public class LocalTimeAggregation extends CountAggregation<LocalTime> {
 
-    public DateAggregation() {
-        super(Date.class);
+    public LocalTimeAggregation() {
+        super(LocalTime.class);
     }
 
     @Nullable
     @Override
-    public Date min(Collection<Date> items) {
+    public LocalTime min(Collection<LocalTime> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        for (final LocalTime item : items) {
             if (item != null) {
-                helper.addItem(((double) item.getTime()));
+                helper.addItem(((double) item.getLong(ChronoField.NANO_OF_DAY)));
             }
         }
         Double result = helper.min();
 
         return result != null
-                ? new Date(result.longValue())
+                ? LocalTime.ofNanoOfDay(result.longValue())
                 : null;
     }
 
     @Nullable
     @Override
-    public Date max(Collection<Date> items) {
+    public LocalTime max(Collection<LocalTime> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        for (final LocalTime item : items) {
             if (item != null) {
-                helper.addItem(((double) item.getTime()));
+                helper.addItem(((double) item.getLong(ChronoField.NANO_OF_DAY)));
             }
         }
         Double result = helper.max();
 
         return result != null
-                ? new Date(result.longValue())
+                ? LocalTime.ofNanoOfDay(result.longValue())
                 : null;
     }
 

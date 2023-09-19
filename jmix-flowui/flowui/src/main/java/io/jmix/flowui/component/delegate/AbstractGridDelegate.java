@@ -412,40 +412,48 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                     aggregationHeader = component.appendHeaderRow();
                 }
 
-                for (Map.Entry<Grid.Column<E>, String> entry : values.entrySet()) {
-                    Grid.Column<E> column = entry.getKey();
-                    HeaderRow.HeaderCell cell = aggregationHeader.getCell(column);
-                    String cellTitle = aggregationMap.get(column).getCellTitle();
-
-                    if (cellTitle != null) {
-                        Span headerSpan = new Span(entry.getValue());
-                        headerSpan.setTitle(cellTitle);
-
-                        cell.setComponent(headerSpan);
-                    } else {
-                        cell.setText(entry.getValue());
-                    }
-                }
+                fillHeaderRow(values);
             }
             case BOTTOM -> {
                 if (aggregationFooter == null) {
                     aggregationFooter = component.prependFooterRow();
                 }
 
-                for (Map.Entry<Grid.Column<E>, String> entry : values.entrySet()) {
-                    Grid.Column<E> column = entry.getKey();
-                    FooterRow.FooterCell cell = aggregationFooter.getCell(column);
-                    String cellTitle = aggregationMap.get(column).getCellTitle();
+                fillFooterRow(values);
+            }
+        }
+    }
 
-                    if (cellTitle != null) {
-                        Span footerSpan = new Span(entry.getValue());
-                        footerSpan.setTitle(cellTitle);
+    protected void fillHeaderRow(Map<Grid.Column<E>, String> values) {
+        for (Map.Entry<Grid.Column<E>, String> entry : values.entrySet()) {
+            Grid.Column<E> column = entry.getKey();
+            HeaderRow.HeaderCell cell = aggregationHeader.getCell(column);
+            String cellTitle = aggregationMap.get(column).getCellTitle();
 
-                        cell.setComponent(footerSpan);
-                    } else {
-                        cell.setText(entry.getValue());
-                    }
-                }
+            if (cellTitle != null) {
+                Span headerSpan = new Span(entry.getValue());
+                headerSpan.setTitle(cellTitle);
+
+                cell.setComponent(headerSpan);
+            } else {
+                cell.setText(entry.getValue());
+            }
+        }
+    }
+
+    protected void fillFooterRow(Map<Grid.Column<E>, String> values) {
+        for (Map.Entry<Grid.Column<E>, String> entry : values.entrySet()) {
+            Grid.Column<E> column = entry.getKey();
+            FooterRow.FooterCell cell = aggregationFooter.getCell(column);
+            String cellTitle = aggregationMap.get(column).getCellTitle();
+
+            if (cellTitle != null) {
+                Span footerSpan = new Span(entry.getValue());
+                footerSpan.setTitle(cellTitle);
+
+                cell.setComponent(footerSpan);
+            } else {
+                cell.setText(entry.getValue());
             }
         }
     }
@@ -456,26 +464,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 && MapUtils.isNotEmpty(aggregationMap)) {
             Map<Grid.Column<E>, String> results = aggregate();
             fillAggregationRow(results);
-        } else {
-            removeAggregationRow();
-        }
-    }
-
-    protected void removeAggregationRow() {
-        //TODO: kremnevda, doesn't work? 04.08.2023
-        switch (getAggregationPosition()) {
-            case TOP -> {
-                if (aggregationHeader != null) {
-                    component.getHeaderRows().remove(aggregationHeader);
-                    aggregationHeader = null;
-                }
-            }
-            case BOTTOM -> {
-                if (aggregationFooter != null) {
-                    component.getFooterRows().remove(aggregationFooter);
-                    aggregationFooter = null;
-                }
-            }
         }
     }
 

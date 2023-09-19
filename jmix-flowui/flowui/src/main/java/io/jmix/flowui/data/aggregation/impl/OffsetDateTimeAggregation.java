@@ -20,45 +20,51 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.data.aggregation.NumberAggregationHelper;
 import org.springframework.lang.Nullable;
 
-import java.sql.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.EnumSet;
 
-public class DateAggregation extends CountAggregation<Date> {
+public class OffsetDateTimeAggregation extends CountAggregation<OffsetDateTime> {
 
-    public DateAggregation() {
-        super(Date.class);
+    protected ZoneOffset currentOffset = ZoneId.systemDefault().getRules().getOffset(Instant.now());
+
+    public OffsetDateTimeAggregation() {
+        super(OffsetDateTime.class);
     }
 
     @Nullable
     @Override
-    public Date min(Collection<Date> items) {
+    public OffsetDateTime min(Collection<OffsetDateTime> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        for (final OffsetDateTime item : items) {
             if (item != null) {
-                helper.addItem(((double) item.getTime()));
+                helper.addItem(((double) item.toInstant().toEpochMilli()));
             }
         }
         Double result = helper.min();
 
+
         return result != null
-                ? new Date(result.longValue())
+                ? Instant.ofEpochMilli(result.longValue()).atOffset(currentOffset)
                 : null;
     }
 
     @Nullable
     @Override
-    public Date max(Collection<Date> items) {
+    public OffsetDateTime max(Collection<OffsetDateTime> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
-        for (final java.util.Date item : items) {
+        for (final OffsetDateTime item : items) {
             if (item != null) {
-                helper.addItem(((double) item.getTime()));
+                helper.addItem(((double) item.toInstant().toEpochMilli()));
             }
         }
         Double result = helper.max();
 
         return result != null
-                ? new Date(result.longValue())
+                ? Instant.ofEpochMilli(result.longValue()).atOffset(currentOffset)
                 : null;
     }
 

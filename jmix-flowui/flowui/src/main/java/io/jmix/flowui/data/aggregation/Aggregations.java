@@ -25,12 +25,14 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Time;
+import java.time.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Component("flowui_Aggregations")
+@Component("ui_Aggregations")
 public class Aggregations {
 
     protected DatatypeRegistry datatypeRegistry;
@@ -55,6 +57,7 @@ public class Aggregations {
 
     protected void registerDatatypes() {
         datatypeToAggregation = new HashMap<>();
+
         register(datatypeRegistry.get(BigDecimal.class), new BigDecimalAggregation());
         register(datatypeRegistry.get(BigInteger.class), new BigIntegerAggregation());
         register(datatypeRegistry.get(Long.class), new LongAggregation());
@@ -62,11 +65,20 @@ public class Aggregations {
         register(datatypeRegistry.get(Short.class), new LongAggregation());
         register(datatypeRegistry.get(Double.class), new DoubleAggregation());
         register(datatypeRegistry.get(Float.class), new DoubleAggregation());
-        register(datatypeRegistry.get(Date.class), new DateAggregation());
-        register(datatypeRegistry.get(Boolean.class), new BasicAggregation<>(Boolean.class));
-        register(datatypeRegistry.get(byte[].class), new BasicAggregation<>(byte[].class));
-        register(datatypeRegistry.get(String.class), new BasicAggregation<>(String.class));
-        register(datatypeRegistry.get(UUID.class), new BasicAggregation<>(UUID.class));
+
+        register(datatypeRegistry.get(java.sql.Date.class), new DateAggregation());
+        register(datatypeRegistry.get(Date.class), new DateTimeAggregation());
+        register(datatypeRegistry.get(LocalDate.class), new LocalDateAggregation());
+        register(datatypeRegistry.get(LocalDateTime.class), new LocalDateTimeAggregation());
+        register(datatypeRegistry.get(LocalTime.class), new LocalTimeAggregation());
+        register(datatypeRegistry.get(OffsetDateTime.class), new OffsetDateTimeAggregation());
+        register(datatypeRegistry.get(OffsetTime.class), new OffsetTimeAggregation());
+        register(datatypeRegistry.get(Time.class), new TimeAggregation());
+
+        register(datatypeRegistry.get(Boolean.class), new CountAggregation<>(Boolean.class));
+        register(datatypeRegistry.get(byte[].class), new CountAggregation<>(byte[].class));
+        register(datatypeRegistry.get(String.class), new CountAggregation<>(String.class));
+        register(datatypeRegistry.get(UUID.class), new CountAggregation<>(UUID.class));
     }
 
     protected <T> void register(Datatype<?> datatype, Aggregation<T> aggregation) {

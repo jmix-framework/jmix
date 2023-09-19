@@ -20,8 +20,8 @@ import io.jmix.core.*
 import io.jmix.core.security.AccessDeniedException
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.ResourceRoleRepository
+import io.jmix.security.role.RoleGrantedAuthorityUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
@@ -62,6 +62,9 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
     @Autowired
     DataSource dataSource
 
+    @Autowired
+    RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+
     UserDetails user1, user2
     TestOrder order
 
@@ -73,7 +76,7 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
         user1 = User.builder()
                 .username("user1")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofResourceRole(roleRepository.getRoleByCode(TestDataManagerEntityOperationsCascadeRole.NAME)))
+                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(TestDataManagerEntityOperationsCascadeRole.NAME))
                 .build()
 
         userRepository.addUser(user1)
@@ -81,7 +84,7 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
         user2 = User.builder()
                 .username("user2")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofResourceRole(roleRepository.getRoleByCode(TestDataManagerEntityOperationsRole.NAME)))
+                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(TestDataManagerEntityOperationsRole.NAME))
                 .build()
         userRepository.addUser(user2)
 

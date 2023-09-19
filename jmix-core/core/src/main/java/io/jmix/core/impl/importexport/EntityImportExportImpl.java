@@ -151,6 +151,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         LoadContext.Query query = new LoadContext.Query("select e from " + metaClass.getName() + " e where e.id in :ids")
                 .setParameter("ids", ids);
         LoadContext<?> ctx = new LoadContext(metadata.getClass(fetchPlan.getEntityClass()))
+                .setHint("jmix.softDeletion", false)
                 .setQuery(query)
                 .setFetchPlan(fetchPlan);
 

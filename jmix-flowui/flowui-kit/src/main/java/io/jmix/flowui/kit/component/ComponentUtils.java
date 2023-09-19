@@ -19,9 +19,11 @@ package io.jmix.flowui.kit.component;
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.ListBox;
@@ -148,6 +150,28 @@ public final class ComponentUtils {
     public static boolean isAutoSize(@Nullable String size) {
         // TODO: gg, implement
         return false;
+    }
+
+    public static void setVisible(Component component, boolean visible) {
+        component.setVisible(visible);
+
+        component.getParent().ifPresent(parent -> {
+            if (parent instanceof FormLayout.FormItem) {
+                parent.setVisible(visible);
+            }
+        });
+    }
+
+    public static void setEnabled(HasEnabled hasEnabled, boolean enabled) {
+        hasEnabled.setEnabled(enabled);
+
+        if (hasEnabled instanceof Component component) {
+            component.getParent().ifPresent(parent -> {
+                if (parent instanceof FormLayout.FormItem formItem) {
+                    formItem.setEnabled(enabled);
+                }
+            });
+        }
     }
 
     public static boolean isVisible(Object component) {

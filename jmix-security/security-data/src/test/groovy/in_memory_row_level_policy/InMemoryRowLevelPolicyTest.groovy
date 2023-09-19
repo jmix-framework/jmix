@@ -21,9 +21,8 @@ import io.jmix.core.Metadata
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.core.security.SystemAuthenticator
-import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.model.ResourceRole
 import io.jmix.security.role.ResourceRoleRepository
+import io.jmix.security.role.RoleGrantedAuthorityUtils
 import io.jmix.security.role.RowLevelRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -68,6 +67,9 @@ class InMemoryRowLevelPolicyTest extends SecurityDataSpecification {
     @Autowired
     SystemAuthenticator systemAuthenticator
 
+    @Autowired
+    RoleGrantedAuthorityUtils roleGrantedAuthorityUtils
+
     UserDetails user1, user2, user3
 
     TestOrder order1, order2
@@ -80,7 +82,7 @@ class InMemoryRowLevelPolicyTest extends SecurityDataSpecification {
         user1 = User.builder()
                 .username("user1")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofResourceRole(testOrderFullAccessRole))
+                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(testOrderFullAccessRole))
                 .build()
 
         userRepository.addUser(user1)
@@ -90,8 +92,10 @@ class InMemoryRowLevelPolicyTest extends SecurityDataSpecification {
         user2 = User.builder()
                 .username("user2")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofResourceRole(testOrderFullAccessRole),
-                        RoleGrantedAuthority.ofRowLevelRole(testInMemoryRowLevelConstraintsRole))
+                .authorities(
+                        roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(testOrderFullAccessRole),
+                        roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(testInMemoryRowLevelConstraintsRole)
+                )
                 .build()
         userRepository.addUser(user2)
 
@@ -100,8 +104,10 @@ class InMemoryRowLevelPolicyTest extends SecurityDataSpecification {
         user3 = User.builder()
                 .username("user3")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofResourceRole(testOrderFullAccessRole),
-                        RoleGrantedAuthority.ofRowLevelRole(testInMemoryRowLevelConstraintsMethodArgsRole))
+                .authorities(
+                        roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(testOrderFullAccessRole),
+                        roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(testInMemoryRowLevelConstraintsMethodArgsRole)
+                )
                 .build()
         userRepository.addUser(user3)
 

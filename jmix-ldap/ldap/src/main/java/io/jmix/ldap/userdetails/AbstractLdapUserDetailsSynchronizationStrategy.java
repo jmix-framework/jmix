@@ -16,12 +16,13 @@
 
 package io.jmix.ldap.userdetails;
 
+import com.google.common.base.Strings;
 import io.jmix.core.SaveContext;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.UserRepository;
 import io.jmix.ldap.LdapProperties;
-import io.jmix.security.authentication.RoleGrantedAuthority;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.slf4j.Logger;
@@ -62,6 +63,9 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
 
     @Autowired
     protected LdapProperties ldapProperties;
+
+    @Autowired
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -119,16 +123,17 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
     protected Collection<RoleAssignmentEntity> buildRoleAssignments(Collection<GrantedAuthority> grantedAuthorities,
                                                                     String username) {
         List<RoleAssignmentEntity> roleAssignmentEntities = new ArrayList<>();
+        String defaultRolePrefix = roleGrantedAuthorityUtils.getDefaultRolePrefix();
+        String defaultRowLevelRolePrefix = roleGrantedAuthorityUtils.getDefaultRowLevelRolePrefix();
         for (GrantedAuthority grantedAuthority : grantedAuthorities) {
-            if (grantedAuthority instanceof RoleGrantedAuthority) {
-                RoleGrantedAuthority roleGrantedAuthority = (RoleGrantedAuthority) grantedAuthority;
-                String roleCode = roleGrantedAuthority.getAuthority();
-                String roleType;
-                if (roleCode.startsWith(ROW_LEVEL_ROLE_PREFIX)) {
+            String roleCode = grantedAuthority.getAuthority();
+            if (!Strings.isNullOrEmpty(roleCode)) {
+                String roleType = RoleAssignmentRoleType.RESOURCE;
+                if (roleCode.startsWith(defaultRolePrefix)) {
+                    roleCode = roleCode.substring(defaultRolePrefix.length());
+                } else if (roleCode.startsWith(defaultRowLevelRolePrefix)) {
+                    roleCode = roleCode.substring(defaultRowLevelRolePrefix.length());
                     roleType = RoleAssignmentRoleType.ROW_LEVEL;
-                    roleCode = roleCode.substring(ROW_LEVEL_ROLE_PREFIX.length());
-                } else {
-                    roleType = RoleAssignmentRoleType.RESOURCE;
                 }
                 RoleAssignmentEntity roleAssignmentEntity = dataManager.create(RoleAssignmentEntity.class);
                 roleAssignmentEntity.setRoleCode(roleCode);

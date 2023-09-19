@@ -19,10 +19,12 @@ package io.jmix.flowui.xml.layout.loader.component;
 import io.jmix.flowui.component.textfield.JmixNumberField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
 public class NumberFieldLoader extends AbstractComponentLoader<JmixNumberField> {
 
     protected DataLoaderSupport dataLoaderSupport;
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
     protected JmixNumberField createComponent() {
@@ -30,8 +32,16 @@ public class NumberFieldLoader extends AbstractComponentLoader<JmixNumberField> 
     }
 
     @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
+    @Override
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
         loadDouble(element, "max", resultComponent::setMax);
         loadDouble(element, "min", resultComponent::setMin);
@@ -68,5 +78,12 @@ public class NumberFieldLoader extends AbstractComponentLoader<JmixNumberField> 
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

@@ -19,8 +19,13 @@ package io.jmix.security.role;
 import io.jmix.security.model.BaseRole;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 
+/**
+ * Interface for roles repository. Implementations of the interface are responsible for finding roles of different
+ * types: resource, row-level, etc.
+ */
 public interface RoleRepository<T extends BaseRole> {
 
     T getRoleByCode(String code);
@@ -31,4 +36,10 @@ public interface RoleRepository<T extends BaseRole> {
     boolean deleteRole(String code);
 
     Collection<T> getAllRoles();
+
+    /**
+     * Invalidates role cache. The method must be invoked after each role modification, for example, when database role
+     * is changed with the UI or annotated role is hot deployed.
+     */
+    void invalidateCache();
 }

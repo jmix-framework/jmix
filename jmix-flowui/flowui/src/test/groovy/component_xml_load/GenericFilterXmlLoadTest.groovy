@@ -50,6 +50,7 @@ class GenericFilterXmlLoadTest extends FlowuiTestSpecification {
             !autoApply
             applyShortcut == KeyCombination.create("ALT-P")
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             !enabled
             maxHeight == "55px"
             maxWidth == "120px"

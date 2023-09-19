@@ -20,8 +20,8 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.DevelopmentException;
-import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
@@ -102,7 +102,8 @@ public class ViewControllerDependencyInjector {
         if (instance != null) {
             assignValue(injectElement.getElement(), instance, controller);
         } else {
-            // TODO: gg, implement?
+            log.trace("Skip injection {} of {} because instance not found",
+                    name, controller.getClass());
         }
     }
 
@@ -149,17 +150,14 @@ public class ViewControllerDependencyInjector {
 
     @Nullable
     protected Object getInjectedInstance(Class<?> type, String name, InjectElement injectElement, View<?> controller) {
-        if (!(controller.getContent() instanceof ComponentContainer)) {
-            return null;
+        Component viewLayout = controller.getContent();
+        if (!UiComponentUtils.isContainer(viewLayout)) {
+            throw new IllegalStateException(View.class.getSimpleName() + "'s layout component " +
+                    "doesn't support child components");
         }
 
-        AnnotatedElement element = injectElement.getElement();
-        Class<?> annotationClass = injectElement.getAnnotationClass();
-
-        ComponentContainer content = ((ComponentContainer) controller.getContent());
-
         if (Component.class.isAssignableFrom(type)) {
-            Optional<Component> component = content.findComponent(name);
+            Optional<Component> component = UiComponentUtils.findComponent(viewLayout, name);
             // Injecting a UI component
             return component.orElse(null);
         } else if (InstanceContainer.class.isAssignableFrom(type)) {
@@ -183,8 +181,7 @@ public class ViewControllerDependencyInjector {
             }
 
             String prefix = pathPrefix(elements);
-            Optional<HasActions> hasActions = content
-                    .findComponent(prefix)
+            Optional<HasActions> hasActions = UiComponentUtils.findComponent(viewLayout, prefix)
                     .filter(c -> c instanceof HasActions)
                     .map(c -> ((HasActions) c));
             if (hasActions.isPresent()) {
@@ -260,7 +257,8 @@ public class ViewControllerDependencyInjector {
                     .map(m -> new UiEventListenerMethodAdapter(controller, controller.getClass(), m, applicationContext))
                     .collect(Collectors.toList());
 
-            UiEventsManager eventsMulticaster = applicationContext.getBean(UiEventsManager.class);
+
+            UiEventsManager eventsMulticaster = VaadinSession.getCurrent().getAttribute(UiEventsManager.class);
             for (ApplicationListener<?> listener : listeners) {
                 eventsMulticaster.addApplicationListener(controller, listener);
             }
@@ -653,14 +651,15 @@ public class ViewControllerDependencyInjector {
 
     @Nullable
     protected Object findMethodTarget(View<?> controller, String target) {
-        if (!(controller.getContent() instanceof ComponentContainer)) {
-            return null;
+        Component viewLayout = controller.getContent();
+        if (!UiComponentUtils.isContainer(viewLayout)) {
+            throw new IllegalStateException(View.class.getSimpleName() + "'s layout component " +
+                    "doesn't support child components");
         }
 
         ViewFacets viewFacets = ViewControllerUtils.getViewFacets(controller);
 
         String[] elements = parse(target);
-        ComponentContainer viewLayout = ((ComponentContainer) controller.getContent());
         if (elements.length == 1) {
             ViewActions viewActions = ViewControllerUtils.getViewActions(controller);
             Action action = viewActions.getAction(target);
@@ -668,7 +667,7 @@ public class ViewControllerDependencyInjector {
                 return action;
             }
 
-            Optional<Component> component = viewLayout.findComponent(target);
+            Optional<Component> component = UiComponentUtils.findComponent(viewLayout, target);
             if (component.isPresent()) {
                 return component.get();
             }
@@ -681,7 +680,7 @@ public class ViewControllerDependencyInjector {
 
             String id = elements[elements.length - 1];
 
-            Optional<Component> componentOpt = viewLayout.findComponent(pathPrefix(elements));
+            Optional<Component> componentOpt = UiComponentUtils.findComponent(viewLayout, pathPrefix(elements));
 
             if (componentOpt.isPresent()) {
                 Component component = componentOpt.get();
@@ -718,11 +717,11 @@ public class ViewControllerDependencyInjector {
     }
 
     @Nullable
-    protected Object findSubTargetRecursively(ComponentContainer viewLayout, String[] elements) {
+    protected Object findSubTargetRecursively(Component viewLayout, String[] elements) {
         String parentComponentId = pathPrefix(elements, elements.length - 1);
         String[] subTargets = parse(pathSuffix(elements));
 
-        Optional<Component> component = viewLayout.findComponent(parentComponentId);
+        Optional<Component> component = UiComponentUtils.findComponent(viewLayout, parentComponentId);
 
         if (component.isPresent()) {
             Object subTarget = component.get();

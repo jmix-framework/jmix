@@ -24,10 +24,7 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
-import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
 public interface StudioElements {
@@ -41,6 +38,7 @@ public interface StudioElements {
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -99,7 +97,8 @@ public interface StudioElements {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "header", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "key", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF, required = true),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF,
+                            typeParameter = "T", required = true),
                     @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,
@@ -112,9 +111,30 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "UNDEFINED"),
                     @StudioProperty(xmlAttribute = "editable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false")
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.Renderer"
+                    )
             }
     )
     Grid.Column column();
+
+    @StudioElement(
+            name = "Aggregation",
+            classFqn = "io.jmix.flowui.component.AggregationInfo",
+            xmlElement = "aggregation",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "cellTitle", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "strategy", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.AggregationInfo$Type",
+                            options = {"SUM", "COUNT", "AVG", "MIN", "MAX"})
+            }
+    )
+    void aggregationInfo();
 
     @StudioElement(
             name = "LocalDateRenderer",
@@ -226,6 +246,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "flewGrow", type = StudioPropertyType.DOUBLE),
@@ -298,7 +319,8 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "manual", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "opened", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.shared.Tooltip.TooltipPosition",
+                            classFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition",
+                            setParameterFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition",
                             options = {"TOP_START", "TOP", "TOP_END", "BOTTOM_START", "BOTTOM", "BOTTOM_END",
                                     "START_TOP", "START", "START_BOTTOM", "END_TOP", "END", "END_BOTTOM"})
             }
@@ -347,6 +369,27 @@ public interface StudioElements {
     FormLayout.ResponsiveStep formLayoutResponsiveStep();
 
     @StudioElement(
+            name = "FormItem",
+            classFqn = "com.vaadin.flow.component.formlayout.FormLayout.FormItem",
+            xmlElement = "formItem",
+            possibleChildren = "com.vaadin.flow.component.Component",
+            maxCountOfChildren = 1,
+            visible = true,
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+
+    )
+    FormLayout.FormItem formItem();
+
+    @StudioElement(
             name = "ResponsiveStep",
             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
             xmlElement = "responsiveStep",
@@ -370,6 +413,7 @@ public interface StudioElements {
             },
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "defaultValue", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -419,6 +463,7 @@ public interface StudioElements {
             },
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "defaultValue", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -486,6 +531,7 @@ public interface StudioElements {
             },
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -593,4 +639,24 @@ public interface StudioElements {
             }
     )
     void itemsQuery();
+
+    @StudioElement(
+            name = "Prefix",
+            xmlElement = "prefix",
+            target = {"com.vaadin.flow.component.shared.HasPrefix"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            possibleChildren = {"com.vaadin.flow.component.Component"},
+            maxCountOfChildren = 1
+    )
+    void prefix();
+
+    @StudioElement(
+            name = "Suffix",
+            xmlElement = "suffix",
+            target = {"com.vaadin.flow.component.shared.HasSuffix"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            possibleChildren = {"com.vaadin.flow.component.Component"},
+            maxCountOfChildren = 1
+    )
+    void suffix();
 }

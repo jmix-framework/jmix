@@ -1,17 +1,16 @@
 package io.jmix.oidc.claimsmapper;
 
-import io.jmix.oidc.OidcProperties;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * {@link ClaimsRolesMapper} that can be used as super-class for your own {@link ClaimsRolesMapper} implementations. The
@@ -27,11 +26,15 @@ public class BaseClaimsRolesMapper implements ClaimsRolesMapper {
 
     protected ResourceRoleRepository resourceRoleRepository;
 
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+
     //todo setter injection?
     public BaseClaimsRolesMapper(ResourceRoleRepository resourceRoleRepository,
-                                 RowLevelRoleRepository rowLevelRoleRepository) {
+                                 RowLevelRoleRepository rowLevelRoleRepository,
+                                 RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
         this.rowLevelRoleRepository = rowLevelRoleRepository;
         this.resourceRoleRepository = resourceRoleRepository;
+        this.roleGrantedAuthorityUtils = roleGrantedAuthorityUtils;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class BaseClaimsRolesMapper implements ClaimsRolesMapper {
             if (jmixRole != null) {
                 roles.add(jmixRole);
             } else {
-                log.warn("Resource role {} not found", jmixRoleCode);
+                log.warn("Row-level role {} not found", jmixRoleCode);
             }
         }
         return roles;
@@ -70,5 +73,22 @@ public class BaseClaimsRolesMapper implements ClaimsRolesMapper {
 
     protected Collection<String> getRowLevelRoleCodes(Map<String, Object> claims) {
         return Collections.emptySet();
+    }
+
+    /**
+     * Transforms collection of roles returned by {@link #toResourceRoles(Map)} and {@link #toRowLevelRoles(Map)} into a
+     * collection of {@link GrantedAuthority}.
+     *
+     * @param claims pieces of information about the user returned by the OpenID Provider
+     * @return a collection of granted authorities that contain information about resource and row-level roles available
+     * to the user
+     */
+    @Override
+    public Collection<? extends GrantedAuthority> toGrantedAuthorities(Map<String, Object> claims) {
+        Stream<GrantedAuthority> resourceRoleAuthoritiesStream = toResourceRoles(claims).stream()
+                .map(roleGrantedAuthorityUtils::createResourceRoleGrantedAuthority);
+        Stream<GrantedAuthority> rowLevelRoleAuthoritiesStream = toRowLevelRoles(claims).stream()
+                .map(roleGrantedAuthorityUtils::createRowLevelRoleGrantedAuthority);
+        return Stream.concat(resourceRoleAuthoritiesStream, rowLevelRoleAuthoritiesStream).toList();
     }
 }

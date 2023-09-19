@@ -18,20 +18,19 @@ package io.jmix.securityflowui.impl.constraint;
 
 import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.security.authentication.PolicyAwareGrantedAuthority;
-import io.jmix.security.authentication.ResourcePolicyIndex;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
+import io.jmix.security.model.ResourceRole;
+import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.securityflowui.constraint.UiPolicyStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component("sec_AuthenticationUiPolicyStore")
@@ -40,32 +39,47 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
     @Autowired
     protected CurrentAuthentication currentAuthentication;
 
+    @Autowired
+    protected ResourceRoleRepository resourceRoleRepository;
+
+    @Autowired
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+
     @Override
     public Stream<ResourcePolicy> getViewResourcePolicies(String viewId) {
-        return extractFromAuthenticationByScope(authority ->
-                authority.getResourcePoliciesByIndex(ViewResourcePolicyByIdIndex.class,
-                        index -> index.getPolicies(viewId)));
+        return extractFromAuthenticationByScope(role ->
+                role.getResourcePolicies().stream()
+                                .filter(resourcePolicy -> ResourcePolicyType.SCREEN.equals(resourcePolicy.getType()) &&
+                                        resourcePolicy.getResource().equals(viewId)));
     }
 
     @Override
     public Stream<ResourcePolicy> getMenuResourcePolicies(String menuId) {
-        return extractFromAuthenticationByScope(authority ->
-                authority.getResourcePoliciesByIndex(MenuResourcePolicyByIdIndex.class,
-                        index -> index.getPolicies(menuId)));
+        return extractFromAuthenticationByScope(role ->
+                role.getResourcePolicies().stream()
+                        .filter(resourcePolicy -> ResourcePolicyType.MENU.equals(resourcePolicy.getType()) &&
+                                resourcePolicy.getResource().equals(menuId)));
     }
 
-    protected <T> Stream<T> extractFromAuthenticationByScope(Function<PolicyAwareGrantedAuthority, Stream<T>> extractor) {
+    protected <T> Stream<T> extractFromAuthenticationByScope(Function<ResourceRole, Stream<T>> extractor) {
         Stream<T> stream = Stream.empty();
 
         Authentication authentication = currentAuthentication.getAuthentication();
         String scope = getScope(authentication);
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if (authority instanceof PolicyAwareGrantedAuthority) {
-                PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
-                if (isAppliedForScope(policyAwareAuthority, scope)) {
-                    Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
-                    if (extractedStream != null) {
-                        stream = Stream.concat(stream, extractedStream);
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if (grantedAuthority.getAuthority() != null) {
+                String roleCode = grantedAuthority.getAuthority();
+                String defaultRolePrefix = roleGrantedAuthorityUtils.getDefaultRolePrefix();
+                if (roleCode.startsWith(defaultRolePrefix)) {
+                    roleCode = roleCode.substring(defaultRolePrefix.length());
+                    ResourceRole resourceRole = resourceRoleRepository.findRoleByCode(roleCode);
+                    if (resourceRole != null) {
+                        if (isAppliedForScope(resourceRole, scope)) {
+                            Stream<T> extractedStream = extractor.apply(resourceRole);
+                            if (extractedStream != null) {
+                                stream = Stream.concat(stream, extractedStream);
+                            }
+                        }
                     }
                 }
             }
@@ -83,41 +97,7 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
         return null;
     }
 
-    protected boolean isAppliedForScope(PolicyAwareGrantedAuthority policyAwareAuthority, @Nullable String scope) {
-        return scope == null || policyAwareAuthority.getScopes().contains(scope);
-    }
-
-    public static class ViewResourcePolicyByIdIndex implements ResourcePolicyIndex {
-        private static final long serialVersionUID = -2668694174861058682L;
-
-        protected Map<String, List<ResourcePolicy>> policyById;
-
-        @Override
-        public void indexAll(Collection<ResourcePolicy> resourcePolicies) {
-            policyById = resourcePolicies.stream()
-                    .filter(p -> Objects.equals(p.getType(), ResourcePolicyType.SCREEN))
-                    .collect(Collectors.groupingBy(ResourcePolicy::getResource));
-        }
-
-        public Stream<ResourcePolicy> getPolicies(String name) {
-            return policyById.getOrDefault(name, Collections.emptyList()).stream();
-        }
-    }
-
-    public static class MenuResourcePolicyByIdIndex implements ResourcePolicyIndex {
-        private static final long serialVersionUID = 5018128694788321319L;
-
-        protected Map<String, List<ResourcePolicy>> policyById;
-
-        @Override
-        public void indexAll(Collection<ResourcePolicy> resourcePolicies) {
-            policyById = resourcePolicies.stream()
-                    .filter(p -> Objects.equals(p.getType(), ResourcePolicyType.MENU))
-                    .collect(Collectors.groupingBy(ResourcePolicy::getResource));
-        }
-
-        public Stream<ResourcePolicy> getPolicies(String name) {
-            return policyById.getOrDefault(name, Collections.emptyList()).stream();
-        }
+    protected boolean isAppliedForScope(ResourceRole resourceRole, @Nullable String scope) {
+        return scope == null || resourceRole.getScopes().contains(scope);
     }
 }

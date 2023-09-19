@@ -20,6 +20,7 @@ import com.vaadin.flow.data.provider.AbstractDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EmptyDataUnit;
 
@@ -33,7 +34,7 @@ import java.util.stream.Stream;
 public class EmptyDataGridItems<T> extends AbstractDataProvider<T, Void>
         implements EntityDataGridItems<T>, DataGridItems.Sortable<T>, EmptyDataUnit {
 
-    private MetaClass metaClass;
+    private final MetaClass metaClass;
 
     public EmptyDataGridItems(MetaClass metaClass) {
         this.metaClass = metaClass;
@@ -42,6 +43,18 @@ public class EmptyDataGridItems<T> extends AbstractDataProvider<T, Void>
     @Override
     public Collection<T> getItems() {
         return Collections.emptyList();
+    }
+
+    @Nullable
+    @Override
+    public T getItem(Object itemId) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Object getItemValue(Object itemId, MetaPropertyPath propertyId) {
+        return null;
     }
 
     @Override

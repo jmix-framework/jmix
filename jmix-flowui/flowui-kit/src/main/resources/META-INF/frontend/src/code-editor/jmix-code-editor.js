@@ -63,8 +63,8 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         return {
             theme: {
                 type: String,
-                value: 'textmate',
-                observer: '_onThemeChange'
+                observer: '_onThemeChange',
+                notify: true
             },
 
             mode: {
@@ -116,7 +116,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
 
             /** @private */
             _editor: {
-                type: Object,
+                type: Object
             }
         }
     }
@@ -131,6 +131,10 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
 
         const editor = this.shadowRoot.querySelector('[part="input-field"]');
 
+        if (this.theme === undefined) {
+            this.initApplicationThemeObserver();
+        }
+
         this._editor = ace.edit(editor, {
             theme: "ace/theme/" + this.theme,
             mode: "ace/mode/" + this.mode,
@@ -144,7 +148,6 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             useWorker: false
         });
 
-
         this._tooltipController = new TooltipController(this);
         this._tooltipController.setPosition('top');
         this.addController(this._tooltipController);
@@ -155,7 +158,45 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         });
     }
 
-    /** @protected */
+    initApplicationThemeObserver() {
+        // Apply current application theme as initial value
+        this._applyTheme()
+
+        this._applicationThemeObserver = new MutationObserver(mutations => {
+            if (mutations.filter(mutation =>
+                mutation.type === "attributes" && mutation.attributeName === "theme").length !== 0) {
+                this._applyTheme()
+            }
+        });
+
+        this._applicationThemeObserver.observe(document.documentElement, {
+            attributes: true
+        });
+    }
+
+    /**
+     * @protected
+     */
+    _applyTheme() {
+        const currentTheme = this._getCurrentApplicationTheme();
+
+        if (currentTheme === "dark") {
+            this.theme = "nord_dark";
+        } else if (currentTheme === "") {
+            this.theme = "textmate";
+        }
+    }
+
+    /**
+     * @protected
+     */
+    _getCurrentApplicationTheme() {
+        return document.documentElement.getAttribute("theme");
+    }
+
+    /**
+     * @protected
+     */
     _disabledChanged(disabled, readonly, editor) {
         if (disabled === undefined || readonly === undefined || editor === undefined) {
             return;

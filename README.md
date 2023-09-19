@@ -25,10 +25,10 @@
 </div>
 
 <p align="center">
-<a href="https://twitter.com/Jmix_framework" target="_blank"><img src="img/icon-tw.svg" height="36px" alt="" title=""></a>
+<a href="https://twitter.com/JmixPlatform" target="_blank"><img src="img/icon-tw.svg" height="36px" alt="" title=""></a>
 <a href="https://www.facebook.com/JmixFramework" target="_blank"><img src="img/icon-fb.svg" height="36px" margin-left="20px" alt="" title=""></a>
-<a href="https://www.linkedin.com/company/jmix-framework/" target="_blank"><img src="img/icon-link.svg" height="36px" margin-left="20px" alt="" title=""></a>
-<a href="https://www.youtube.com/c/JmixFramework" target="_blank"><img src="img/icon-yt.svg" height="36px" margin-left="20px" alt="" title=""></a>
+<a href="https://www.linkedin.com/company/jmix-platform/" target="_blank"><img src="img/icon-link.svg" height="36px" margin-left="20px" alt="" title=""></a>
+<a href="https://www.youtube.com/c/JmixPlatform" target="_blank"><img src="img/icon-yt.svg" height="36px" margin-left="20px" alt="" title=""></a>
 </p>
 
 ## Description

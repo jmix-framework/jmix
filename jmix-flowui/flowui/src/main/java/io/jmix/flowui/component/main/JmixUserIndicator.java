@@ -24,6 +24,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.renderer.TextRenderer;
+import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
@@ -73,6 +74,8 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
     @Override
     public void afterPropertiesSet() throws Exception {
         autowireDependencies();
+
+        initUiUserSubstitutionChangeListener();
     }
 
     protected void autowireDependencies() {
@@ -84,11 +87,10 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         dialogs = applicationContext.getBean(Dialogs.class);
         messages = applicationContext.getBean(Messages.class);
         actions = applicationContext.getBean(Actions.class);
-
-        initUiUserSubstitutionChangeListener(applicationContext.getBean(UiEventsManager.class));
     }
 
-    protected void initUiUserSubstitutionChangeListener(UiEventsManager uiEventsManager) {
+    protected void initUiUserSubstitutionChangeListener() {
+        UiEventsManager uiEventsManager = VaadinSession.getCurrent().getAttribute(UiEventsManager.class);
         uiEventsManager.addApplicationListener(this,
                 (ApplicationListener<UiUserSubstitutionsChangedEvent>) this::onUserSubstitutionsChanged);
     }

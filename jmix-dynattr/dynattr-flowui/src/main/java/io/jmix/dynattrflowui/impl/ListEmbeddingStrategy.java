@@ -17,6 +17,9 @@
 package io.jmix.dynattrflowui.impl;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Text;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
@@ -78,5 +81,13 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
             };
         }
         return null;
+    }
+
+    protected Renderer getColumnRenderer(AttributeDefinition attribute) {
+        Renderer renderer = new ComponentRenderer(c -> {
+            String formatted = getColumnFormatter(attribute).apply(c);
+            return new Text(formatted);
+        });
+        return renderer;
     }
 }

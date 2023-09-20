@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattrflowui.impl;
+@NonNullApi
+package io.jmix.flowui.component.layout;
 
-import com.vaadin.flow.component.Component;
-import io.jmix.flowui.view.View;
-
-public interface EmbeddingStrategy {
-
-    boolean supportComponent(Component component);
-
-    void embed(Component component, View owner);
-}
+import org.springframework.lang.NonNullApi;

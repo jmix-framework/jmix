@@ -22,6 +22,10 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.*;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
+import io.jmix.flowui.model.*;
+import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Comparator;
@@ -56,77 +60,76 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
     }
 
     @Override
-    public void embed(Component component, Component frame) {
-//        if (getWindowId(frame) != null) {
-//
-//            MetaClass entityMetaClass = getEntityMetaClass(component);
-//            if (metadataTools.isJpaEntity(entityMetaClass)) {
-//
-//                List<AttributeDefinition> attributes = findVisibleAttributes(
-//                        entityMetaClass,
-//                        getWindowId(frame), component.getId());
-//
-//                if (!attributes.isEmpty()) {
-//                    setLoadDynamicAttributes(component);
-//                }
-//
-//                embed(component, frame, attributes);
-//            }
-//        }
+    public void embed(Component component, View owner) {
+        if (getWindowId(owner) != null) {
+
+            MetaClass entityMetaClass = getEntityMetaClass(component);
+            if (metadataTools.isJpaEntity(entityMetaClass)) {
+
+                List<AttributeDefinition> attributes = findVisibleAttributes(
+                        entityMetaClass,
+                        getWindowId(owner), component.getId().orElseThrow());
+
+                if (!attributes.isEmpty()) {
+                    setLoadDynamicAttributes(component);
+                }
+
+                embed(component, owner, attributes);
+            }
+        }
     }
 
-//    protected abstract MetaClass getEntityMetaClass(Component component);
-//
-//    protected abstract void setLoadDynamicAttributes(Component component);
-//
-//    protected abstract void embed(Component component, Frame frame, List<AttributeDefinition> attributes);
-//
-//    protected String getWindowId(Frame frame) {
-//        Screen screen = UiControllerUtils.getScreen(frame.getFrameOwner());
-//        return screen.getId();
-//    }
-//
-//    protected void setLoadDynamicAttributes(InstanceContainer container) {
-//        if (container instanceof HasLoader) {
-//            DataLoader dataLoader = ((HasLoader) container).getLoader();
-//            if (dataLoader instanceof InstanceLoader) {
-//                ((InstanceLoader<?>) dataLoader).setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
-//            } else if (dataLoader instanceof CollectionLoader) {
-//                ((CollectionLoader<?>) dataLoader).setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
-//            }
-//        }
-//    }
-//
-//    protected List<AttributeDefinition> findVisibleAttributes(MetaClass entityMetaClass, String windowId, String componentId) {
-//        return dynAttrMetadata.getAttributes(entityMetaClass).stream()
-//                .filter(attr -> isVisibleAttribute(attr, windowId, componentId))
-//                .filter(attr -> checkPermissions(attr, entityMetaClass))
-//                .sorted(Comparator.comparingInt(AttributeDefinition::getOrderNo))
-//                .collect(Collectors.toList());
-//    }
-//
-//    protected boolean isVisibleAttribute(AttributeDefinition attributeDefinition, String screen, String componentId) {
-//        Set<String> screens = attributeDefinition.getConfiguration().getScreens();
-//        return screens.contains(screen) || screens.contains(screen + "#" + componentId);
-//    }
-//
-//    protected boolean checkPermissions(AttributeDefinition attributeDefinition, MetaClass entityMetaClass) {
-//        UiEntityAttributeContext uiEntityAttributeContext =
-//                new UiEntityAttributeContext(metadataTools.resolveMetaPropertyPath(entityMetaClass,
-//                        DynAttrUtils.getPropertyFromAttributeCode(attributeDefinition.getCode())));
-//
-//        accessManager.applyRegisteredConstraints(uiEntityAttributeContext);
-//
-//        if (uiEntityAttributeContext.canView()) {
-//            if (attributeDefinition.getDataType() == AttributeType.ENTITY) {
-//                MetaClass referenceEntityClass = metadata.getClass(attributeDefinition.getJavaType());
-//                UiEntityContext uiEntityContext = new UiEntityContext(referenceEntityClass);
-//                accessManager.applyRegisteredConstraints(uiEntityContext);
-//                return uiEntityContext.isViewPermitted();
-//            }
-//            return true;
-//        }
-//
-//        return false;
-//    }
+    protected abstract MetaClass getEntityMetaClass(Component component);
+
+    protected abstract void setLoadDynamicAttributes(Component component);
+
+    protected abstract void embed(Component component, View owner, List<AttributeDefinition> attributes);
+
+    protected String getWindowId(View view) {
+        return view.getId().orElseThrow().toString();
+    }
+
+    protected void setLoadDynamicAttributes(InstanceContainer container) {
+        if (container instanceof HasLoader) {
+            DataLoader dataLoader = ((HasLoader) container).getLoader();
+            if (dataLoader instanceof InstanceLoader) {
+                ((InstanceLoader<?>) dataLoader).setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
+            } else if (dataLoader instanceof CollectionLoader) {
+                ((CollectionLoader<?>) dataLoader).setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
+            }
+        }
+    }
+
+    protected List<AttributeDefinition> findVisibleAttributes(MetaClass entityMetaClass, String windowId, String componentId) {
+        return dynAttrMetadata.getAttributes(entityMetaClass).stream()
+                .filter(attr -> isVisibleAttribute(attr, windowId, componentId))
+                .filter(attr -> checkPermissions(attr, entityMetaClass))
+                .sorted(Comparator.comparingInt(AttributeDefinition::getOrderNo))
+                .collect(Collectors.toList());
+    }
+
+    protected boolean isVisibleAttribute(AttributeDefinition attributeDefinition, String screen, String componentId) {
+        Set<String> screens = attributeDefinition.getConfiguration().getScreens();
+        return screens.contains(screen) || screens.contains(screen + "#" + componentId);
+    }
+
+    protected boolean checkPermissions(AttributeDefinition attributeDefinition, MetaClass entityMetaClass) {
+        UiEntityAttributeContext uiEntityAttributeContext =
+                new UiEntityAttributeContext(metadataTools.resolveMetaPropertyPath(entityMetaClass,
+                        DynAttrUtils.getPropertyFromAttributeCode(attributeDefinition.getCode())));
+
+        accessManager.applyRegisteredConstraints(uiEntityAttributeContext);
+
+        if (uiEntityAttributeContext.canView()) {
+            if (attributeDefinition.getDataType() == AttributeType.ENTITY) {
+                MetaClass referenceEntityClass = metadata.getClass(attributeDefinition.getJavaType());
+                UiEntityContext uiEntityContext = new UiEntityContext(referenceEntityClass);
+                accessManager.applyRegisteredConstraints(uiEntityContext);
+                return uiEntityContext.isViewPermitted();
+            }
+            return true;
+        }
+
+        return false;
+    }
 }

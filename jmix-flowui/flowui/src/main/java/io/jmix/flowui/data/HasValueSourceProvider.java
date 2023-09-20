@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattrflowui.impl;
+package io.jmix.flowui.data;
 
-import com.vaadin.flow.component.Component;
-import io.jmix.flowui.view.View;
+import javax.annotation.Nullable;
 
-public interface EmbeddingStrategy {
+/**
+ * An object having a ValueSourceProvider.
+ */
+public interface HasValueSourceProvider {
 
-    boolean supportComponent(Component component);
+    @Nullable
+    ValueSourceProvider getValueSourceProvider();
 
-    void embed(Component component, View owner);
+    void setValueSourceProvider(@Nullable ValueSourceProvider provider);
 }
+

@@ -106,6 +106,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected boolean autoApply;
     protected String applyShortcut;
+    protected int propertyHierarchyDepth;
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
     protected Predicate<MetaPropertyPath> propertyFiltersPredicate;
@@ -126,8 +127,6 @@ public class GenericFilter extends Composite<JmixDetails>
     protected List<FilterComponent> conditions;
 
     protected boolean configurationModifyPermitted;
-
-    protected Integer propertyHierarchyDepth;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -155,6 +154,7 @@ public class GenericFilter extends Composite<JmixDetails>
         UiComponentProperties uiComponentProperties = applicationContext.getBean(UiComponentProperties.class);
         this.autoApply = uiComponentProperties.isFilterAutoApply();
         this.applyShortcut = uiComponentProperties.getFilterApplyShortcut();
+        this.propertyHierarchyDepth = uiComponentProperties.getFilterPropertiesHierarchyDepth();
 
         initDefaultResponsiveSteps();
         initEmptyConfiguration();
@@ -1000,10 +1000,9 @@ public class GenericFilter extends Composite<JmixDetails>
 
     /**
      * @return hierarchy depth of entity properties available for filtering.
-     * @see #setPropertyHierarchyDepth(Integer)
+     * @see #setPropertyHierarchyDepth(int)
      */
-    @Nullable
-    public Integer getPropertyHierarchyDepth() {
+    public int getPropertyHierarchyDepth() {
         return propertyHierarchyDepth;
     }
 
@@ -1015,8 +1014,8 @@ public class GenericFilter extends Composite<JmixDetails>
      *
      * @param propertyHierarchyDepth hierarchy depth of entity properties available for filtering
      */
-    public void setPropertyHierarchyDepth(@Nullable Integer propertyHierarchyDepth) {
-        if (propertyHierarchyDepth != null && propertyHierarchyDepth <= 0) {
+    public void setPropertyHierarchyDepth(int propertyHierarchyDepth) {
+        if (propertyHierarchyDepth <= 0) {
             throw new IllegalArgumentException("Property hierarchy depth value must be greater than 0");
         }
         this.propertyHierarchyDepth = propertyHierarchyDepth;

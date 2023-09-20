@@ -54,17 +54,22 @@ public class FilterMetadataTools {
         this.metadata = metadata;
     }
 
+    public List<MetaPropertyPath> getPropertyPaths(MetaClass filterMetaClass,
+                                                   String query,
+                                                   @Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
+        int propertyHierarchyDepth = componentProperties.getFilterPropertiesHierarchyDepth();
+        return getPropertyPaths(filterMetaClass, query, filterMetaClass, propertyHierarchyDepth, 0,
+                "", propertiesFilterPredicate);
+    }
+
     public List<MetaPropertyPath> getPropertyPaths(GenericFilter filter) {
         DataLoader dataLoader = filter.getDataLoader();
         MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
         String query = dataLoader.getQuery();
         Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
-        Integer propertyHierarchyDepth = filter.getPropertyHierarchyDepth();
 
-        int activePropertyHierarchyDepth = propertyHierarchyDepth == null
-                ? componentProperties.getFilterPropertiesHierarchyDepth()
-                : propertyHierarchyDepth;
-        return getPropertyPaths(metaClass, query, metaClass, activePropertyHierarchyDepth, 0,
+        int propertyHierarchyDepth = filter.getPropertyHierarchyDepth();
+        return getPropertyPaths(metaClass, query, metaClass, propertyHierarchyDepth, 0,
                 "", propertyFiltersPredicate);
     }
 

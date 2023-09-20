@@ -53,7 +53,14 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -84,7 +91,14 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -113,7 +127,13 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             xmlElement = "digits",
@@ -146,8 +166,14 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -178,8 +204,14 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -209,7 +241,12 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {
@@ -229,14 +266,18 @@ public interface StudioValidatorsElements {
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -261,14 +302,18 @@ public interface StudioValidatorsElements {
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -295,7 +340,13 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -322,7 +373,13 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -349,7 +406,12 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -371,7 +433,12 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -392,7 +459,12 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {
@@ -413,7 +485,10 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {
@@ -447,14 +522,18 @@ public interface StudioValidatorsElements {
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -479,14 +558,18 @@ public interface StudioValidatorsElements {
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -513,7 +596,12 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -535,7 +623,12 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -556,7 +649,12 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {
@@ -582,7 +680,10 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {

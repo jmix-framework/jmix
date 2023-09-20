@@ -1574,6 +1574,38 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="numberFieldValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:sequence>
+                    <xs:element name="doubleMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="doubleMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="integerFieldValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:sequence>
+                    <xs:element name="digits" minOccurs="0" type="digitsValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
+                    <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="constraintValidatorType">
         <xs:complexContent>
             <xs:extension base="stringValidatorType">
@@ -2761,6 +2793,9 @@
     <xs:complexType name="passwordFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
@@ -2773,6 +2808,10 @@
     <xs:complexType name="numberFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="numberFieldValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
@@ -2801,6 +2840,10 @@
     <xs:complexType name="integerFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="integerFieldValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
@@ -2917,6 +2960,7 @@
                 <xs:sequence minOccurs="0">
                     <xs:element name="itemsQuery" type="multiSelectComboBoxItemsQueryType"/>
                     <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="validators" type="collectionValidatorType"/>
                 </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -3182,6 +3226,7 @@
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
 
                     <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                     <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
@@ -3220,6 +3265,10 @@
     <xs:complexType name="entityPickerComponent">
         <xs:complexContent>
             <xs:extension base="valuePickerComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="metaClass" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
@@ -3895,6 +3944,7 @@
                 <xs:sequence>
                     <xs:group ref="layoutOrComponent"/>
                     <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
+                    <xs:element name="validators" type="constraintValidatorType" minOccurs="0"/>
                 </xs:sequence>
                 <xs:attribute name="parameterName" type="xs:string"/>
 

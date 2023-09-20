@@ -83,8 +83,7 @@ public interface StudioElementsGroups {
                     "io.jmix.flowui.kit.component.upload.AbstractSingleUploadField",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
                     "io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup",
-                    "io.jmix.flowui.component.select.JmixSelect",
-                    "io.jmix.flowui.component.textarea.JmixTextArea"
+                    "io.jmix.flowui.component.select.JmixSelect"
             }
     )
     void validator();

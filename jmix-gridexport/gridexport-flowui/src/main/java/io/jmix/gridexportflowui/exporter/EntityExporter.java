@@ -17,7 +17,7 @@
 package io.jmix.gridexportflowui.exporter;
 
 /**
- * Entity exporter which is used by {@link AllRecordsExporter} to export entities one by one
+ * Entity exporter which is used by {@link AbstractAllRecordsExporter} to export entities one by one
  */
 public interface EntityExporter {
 

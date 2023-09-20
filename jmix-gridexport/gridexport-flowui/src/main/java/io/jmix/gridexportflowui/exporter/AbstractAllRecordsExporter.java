@@ -36,18 +36,13 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.KeyValueCollectionLoader;
 import io.jmix.gridexportflowui.GridExportProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Class is used by {@link io.jmix.gridexportflowui.action.ExportAction} for exporting all records from the database.
- */
-@Component("grdexp_AllRecordsExporter")
-public class AllRecordsExporter {
+public abstract class AbstractAllRecordsExporter {
 
     protected static String LAST_LOADED_PK_CONDITION_PARAMETER_NAME = "lastLoadedPkValue";
 
@@ -56,41 +51,45 @@ public class AllRecordsExporter {
     protected PlatformTransactionManager platformTransactionManager;
     protected GridExportProperties gridExportProperties;
 
-    public AllRecordsExporter(MetadataTools metadataTools,
-                              DataManager dataManager,
-                              PlatformTransactionManager platformTransactionManager,
-                              GridExportProperties gridExportProperties) {
+    public AbstractAllRecordsExporter(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    public AbstractAllRecordsExporter(MetadataTools metadataTools,
+                                      DataManager dataManager,
+                                      PlatformTransactionManager platformTransactionManager,
+                                      GridExportProperties gridExportProperties) {
         this.metadataTools = metadataTools;
         this.dataManager = dataManager;
         this.platformTransactionManager = platformTransactionManager;
         this.gridExportProperties = gridExportProperties;
     }
 
+    public void setDataManager(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
+
+    public void setPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
+        this.platformTransactionManager = platformTransactionManager;
+    }
+
+    public void setGridExportProperties(GridExportProperties gridExportProperties) {
+        this.gridExportProperties = gridExportProperties;
+    }
+
     /**
-     * Method loads all entity instances associated with the given {@code dataUnit} and calls the
-     * {@code entityExporter} to export each loaded entity instance. Creation of the output file object is the
-     * responsibility of the function. Data is loaded in batches, the batch size is configured by the
-     * {@link GridExportProperties#getExportAllBatchSize()}.
+     * Generates the load context using the given {@code DataUnit}.
      *
-     * @param dataUnit        data unit linked with the data
-     * @param entityExporter function that is being applied to each loaded instance
+     * @param dataUnit data unit linked with the data
      */
-    public void exportAll(DataUnit dataUnit, EntityExporter entityExporter) {
-        Preconditions.checkNotNullArgument(entityExporter, "Cannot export all rows. EntityExporter can't be null");
-
+    @SuppressWarnings("rawtypes")
+    public LoadContext generateLoadContext(DataUnit dataUnit) {
         DataLoader dataLoader = getDataLoader(dataUnit);
-        int loadBatchSize = gridExportProperties.getExportAllBatchSize();
+        if (!(dataLoader instanceof CollectionLoader collectionLoader)) {
+            throw new RuntimeException("Cannot export all rows. Data loader must be an instance of CollectionLoader.");
+        }
 
-        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
-        transactionTemplate.executeWithoutResult(transactionStatus -> {
-            if (dataLoader instanceof CollectionLoader<?> collectionLoader) {
-                exportEntities(collectionLoader, entityExporter, loadBatchSize);
-            } else if (dataLoader instanceof KeyValueCollectionLoader keyValueCollectionLoader) {
-                exportKeyValueEntities(keyValueCollectionLoader, entityExporter, loadBatchSize);
-            } else {
-                throw new IllegalArgumentException("Cannot export all rows. Loader type is not supported.");
-            }
-        });
+        return generateLoadContext(collectionLoader);
     }
 
     protected DataLoader getDataLoader(DataUnit dataUnit) {
@@ -104,43 +103,6 @@ public class AllRecordsExporter {
         return hasLoader.getLoader();
     }
 
-    protected void exportEntities(CollectionLoader<?> collectionLoader, EntityExporter entityExporter, int loadBatchSize) {
-        int rowNumber = 0;
-        boolean initialLoading = true;
-        Object lastLoadedPkValue = null;
-        boolean proceedToExport = true;
-        boolean lastBatchLoaded = false;
-
-        while (!lastBatchLoaded && proceedToExport) {
-            LoadContext<?> loadContext = generateLoadContext(collectionLoader);
-            //query is not null - checked when generated load context
-            LoadContext.Query query = Objects.requireNonNull(loadContext.getQuery());
-
-            if (initialLoading) {
-                initialLoading = false;
-            } else {
-                query.setParameter(LAST_LOADED_PK_CONDITION_PARAMETER_NAME, lastLoadedPkValue);
-            }
-            query.setMaxResults(loadBatchSize);
-
-            List<?> entities = dataManager.loadList(loadContext);
-            for (Object entity : entities) {
-                proceedToExport = entityExporter.export(entity, ++rowNumber);
-                if (!proceedToExport) {
-                    break;
-                }
-            }
-
-            int loadedEntitiesAmount = entities.size();
-            if (loadedEntitiesAmount > 0) {
-                Object lastEntity = entities.get(loadedEntitiesAmount - 1);
-                lastLoadedPkValue = Id.of(lastEntity).getValue();
-            }
-            lastBatchLoaded = loadedEntitiesAmount == 0 || loadedEntitiesAmount < loadBatchSize;
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
     protected LoadContext generateLoadContext(CollectionLoader loader) {
         LoadContext loadContext = loader.createLoadContext();
         LoadContext.Query query = loadContext.getQuery();
@@ -178,6 +140,69 @@ public class AllRecordsExporter {
         query.setFirstResult(0);
 
         return loadContext;
+    }
+
+    /**
+     * Method loads all entity instances associated with the given {@code dataUnit} and calls the
+     * {@code entityExporter} to export each loaded entity instance. Creation of the output file object is the
+     * responsibility of the function. Data is loaded in batches, the batch size is configured by the
+     * {@link GridExportProperties#getExportAllBatchSize()}.
+     *
+     * @param dataUnit       data unit linked with the data
+     * @param entityExporter function that is applied to each loaded instance
+     */
+    public void exportAll(DataUnit dataUnit, EntityExporter entityExporter) {
+        Preconditions.checkNotNullArgument(entityExporter, "Cannot export all rows. EntityExporter can't be null");
+
+        DataLoader dataLoader = getDataLoader(dataUnit);
+        int loadBatchSize = gridExportProperties.getExportAllBatchSize();
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        transactionTemplate.executeWithoutResult(transactionStatus -> {
+            if (dataLoader instanceof CollectionLoader<?> collectionLoader) {
+                exportEntities(collectionLoader, entityExporter, loadBatchSize);
+            } else if (dataLoader instanceof KeyValueCollectionLoader keyValueCollectionLoader) {
+                exportKeyValueEntities(keyValueCollectionLoader, entityExporter, loadBatchSize);
+            } else {
+                throw new IllegalArgumentException("Cannot export all rows. Loader type is not supported.");
+            }
+        });
+    }
+
+    protected void exportEntities(CollectionLoader<?> collectionLoader, EntityExporter entityExporter, int loadBatchSize) {
+        int rowNumber = 0;
+        boolean initialLoading = true;
+        Object lastLoadedPkValue = null;
+        boolean proceedToExport = true;
+        boolean lastBatchLoaded = false;
+
+        while (!lastBatchLoaded && proceedToExport) {
+            LoadContext<?> loadContext = generateLoadContext(collectionLoader);
+            //query is not null - checked when generated load context
+            LoadContext.Query query = Objects.requireNonNull(loadContext.getQuery());
+
+            if (initialLoading) {
+                initialLoading = false;
+            } else {
+                query.setParameter(LAST_LOADED_PK_CONDITION_PARAMETER_NAME, lastLoadedPkValue);
+            }
+            query.setMaxResults(loadBatchSize);
+
+            List<?> entities = dataManager.loadList(loadContext);
+            for (Object entity : entities) {
+                proceedToExport = entityExporter.export(entity, ++rowNumber);
+                if (!proceedToExport) {
+                    break;
+                }
+            }
+
+            int loadedEntitiesAmount = entities.size();
+            if (loadedEntitiesAmount > 0) {
+                Object lastEntity = entities.get(loadedEntitiesAmount - 1);
+                lastLoadedPkValue = Id.of(lastEntity).getValue();
+            }
+            lastBatchLoaded = loadedEntitiesAmount == 0 || loadedEntitiesAmount < loadBatchSize;
+        }
     }
 
     protected void exportKeyValueEntities(KeyValueCollectionLoader loader,

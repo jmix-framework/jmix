@@ -30,8 +30,6 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
-import io.jmix.gridexportflowui.exporter.AllRecordsExporter;
-import io.jmix.gridexportflowui.exporter.EntityExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -52,13 +50,13 @@ import java.util.stream.Collectors;
 public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 
     protected Metadata metadata;
-    protected AllRecordsExporter allRecordsExporter;
+    protected JsonAllRecordsExporter jsonAllRecordsExporter;
 
     protected Function<GsonBuilder, GsonBuilder> gsonConfigurer;
 
-    public JsonExporter(Metadata metadata, AllRecordsExporter allRecordsExporter) {
+    public JsonExporter(Metadata metadata, JsonAllRecordsExporter jsonAllRecordsExporter) {
         this.metadata = metadata;
-        this.allRecordsExporter = allRecordsExporter;
+        this.jsonAllRecordsExporter = jsonAllRecordsExporter;
     }
 
     /**
@@ -78,12 +76,11 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
         JsonArray jsonElements = new JsonArray();
 
         if (exportMode == ExportMode.ALL_ROWS) {
-            EntityExporter entityExporter = (entity, unused) -> {
-                JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
-                jsonElements.add(jsonObject);
-                return true;
-            };
-            allRecordsExporter.exportAll(((ListDataComponent<?>) dataGrid).getItems(), entityExporter);
+            jsonAllRecordsExporter.exportAll(((ListDataComponent<?>) dataGrid).getItems(),
+                    entity -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                        jsonElements.add(jsonObject);
+                    });
         } else {
             Collection<Object> items = getItems(dataGrid, exportMode);
 
@@ -136,8 +133,11 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
                 : dataGrid.getSelectedItems();
     }
 
+    @SuppressWarnings("unchecked")
     protected Collection<Object> getDataGridItems(Grid<Object> dataGrid) {
-        if (dataGrid instanceof TreeDataGrid<Object> treeDataGrid) {
+        if (dataGrid instanceof TreeDataGrid) {
+            TreeDataGrid<Object> treeDataGrid = (TreeDataGrid<Object>) dataGrid;
+
             return new ArrayList<>(
                     ((ContainerTreeDataGridItems<Object>) treeDataGrid.getItems()).getContainer().getItems());
         }

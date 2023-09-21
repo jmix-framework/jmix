@@ -195,6 +195,9 @@ dependencies {
         api "io.jmix.reports:jmix-reports-flowui:$freeVersion"
         api "io.jmix.reports:jmix-reports-flowui-starter:$freeVersion"
 
+        api "io.jmix.jmxconsole:jmix-jmxconsole:$freeVersion"
+        api "io.jmix.jmxconsole:jmix-jmxconsole-starter:$freeVersion"
+
         api "io.jmix.rest:jmix-rest:$freeVersion"
         api "io.jmix.rest:jmix-rest-starter:$freeVersion"
 

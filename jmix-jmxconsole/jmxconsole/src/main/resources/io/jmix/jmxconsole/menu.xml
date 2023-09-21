@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   ~ Copyright 2022 Haulmont.
   ~
@@ -14,9 +15,9 @@
   ~ limitations under the License.
   -->
 
-<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="2600">
-    <menu id="system">
-        <item view="sys_LockInfo.list"
-              title="msg://io.jmix.flowui.app.pessimisticlocking/pessimisticLockListView.menu"/>
+<menu-config xmlns="http://jmix.io/schema/flowui/menu">
+
+    <menu id="jmxconsole"  title="msg://io.jmix.jmxconsole/title">
+        <item view="jmxcon_JmxConsoleView" title="msg://io.jmix.jmxconsole/title"/>
     </menu>
 </menu-config>

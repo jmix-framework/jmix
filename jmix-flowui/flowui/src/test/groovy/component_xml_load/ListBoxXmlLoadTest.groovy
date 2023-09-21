@@ -60,6 +60,7 @@ class ListBoxXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(listBoxView.listBox) {
             id.get() == "listBox"
             classNames.containsAll(["className", "className1"])
+            style.get("color") == "red"
             enabled
             height == "100%"
             maxHeight == "200px"
@@ -88,6 +89,7 @@ class ListBoxXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(listBoxView.multiSelectListBox) {
             id.get() == "multiSelectListBox"
             classNames.containsAll(["className", "className1"])
+            style.get("color") == "red"
             enabled
             height == "100%"
             maxHeight == "200px"

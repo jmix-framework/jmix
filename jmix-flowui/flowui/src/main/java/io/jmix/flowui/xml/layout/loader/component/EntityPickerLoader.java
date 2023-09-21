@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.core.Metadata;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 
@@ -38,7 +37,7 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker<?
         componentLoader().loadValidationAttributes(resultComponent, element, context);
 
         if (resultComponent.getValueSource() == null) {
-            loadMetaClass();
+            componentLoader().loadMetaClass(resultComponent, element);
 
             if (resultComponent.getMetaClass() == null) {
                 String message = String.format(
@@ -50,11 +49,5 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker<?
                         context, "Component ID", resultComponent.getId().orElse("null"));
             }
         }
-    }
-
-    protected void loadMetaClass() {
-        loadString(element, "metaClass")
-                .ifPresent(metaClass ->
-                        resultComponent.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
     }
 }

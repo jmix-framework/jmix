@@ -16,13 +16,13 @@
 
 package io.jmix.reports.libintegration;
 
+import io.jmix.core.Resources;
 import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.exception.ValidationException;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.reports.yarg.util.groovy.Scripting;
-import io.jmix.core.Resources;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,7 +48,8 @@ public class JmixGroovyDataLoader implements ReportDataLoader {
     public List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> params) {
         try {
             String script = reportQuery.getScript();
-            Map<String, Object> scriptParams = groovyScriptParametersProvider.prepareParameters(reportQuery, parentBand, params);
+            Map<String, Object> scriptParams = groovyScriptParametersProvider.getParametersForDatasetParameters(
+                    reportQuery, parentBand, params);
 
             script = StringUtils.trim(script);
             if (script.endsWith(".groovy")) {
@@ -58,7 +59,8 @@ public class JmixGroovyDataLoader implements ReportDataLoader {
         } catch (ValidationException e) {
             throw e;
         } catch (Throwable e) {
-            throw new DataLoadingException(String.format("An error occurred while loading data for data set [%s]", reportQuery.getName()), e);
+            throw new DataLoadingException(String.format("An error occurred while loading data for data set [%s]",
+                    reportQuery.getName()), e);
         }
     }
 }

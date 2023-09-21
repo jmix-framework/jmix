@@ -18,16 +18,16 @@ package io.jmix.flowui.sys;
 
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import io.jmix.core.AccessManager;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.accesscontext.UiMenuContext;
 import io.jmix.flowui.accesscontext.UiShowViewContext;
 import io.jmix.flowui.menu.MenuItem;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.view.ViewController;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 /**
  * Class checks UI access permission.
@@ -55,10 +55,14 @@ public class UiAccessChecker {
      * @return {@code true} if menu item is permitted
      */
     public boolean isMenuPermitted(MenuItem menuItem) {
-        Class<? extends View<?>> controllerClass = getControllerClass(menuItem);
-        boolean hasAccess = accessAnnotationChecker != null && accessAnnotationChecker.hasAccess(controllerClass);
+        if (menuItem.getView() != null) {
+            Class<? extends View<?>> controllerClass = getControllerClass(menuItem);
+            boolean hasAccess = accessAnnotationChecker != null && accessAnnotationChecker.hasAccess(controllerClass);
 
-        return hasAccess || isMenuItemHasSecurityPermission(menuItem);
+            return hasAccess || isMenuItemHasSecurityPermission(menuItem);
+        } else {
+            return isMenuItemHasSecurityPermission(menuItem);
+        }
     }
 
     /**
@@ -76,6 +80,19 @@ public class UiAccessChecker {
         }
 
         return hasAccess;
+    }
+
+    /**
+     * Checks for access to the view.
+     * Throws exception if no access.
+     *
+     * @param target class to check
+     * @throws AccessDeniedException if the user does not have access to the view
+     */
+    public void checkViewPermitted(Class<?> target) {
+        if (!isViewPermitted(target)) {
+            throw new AccessDeniedException("view", target.getName());
+        }
     }
 
     protected Class<? extends View<?>> getControllerClass(MenuItem menuItem) {

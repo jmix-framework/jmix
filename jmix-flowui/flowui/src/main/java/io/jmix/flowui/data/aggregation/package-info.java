@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
-jmix-tabsheet::part(content) {
-  padding: var(--lumo-space-m) 0 0;
-}
+@NonNullApi
+package io.jmix.flowui.data.aggregation;
+
+import org.springframework.lang.NonNullApi;

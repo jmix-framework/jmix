@@ -19,10 +19,12 @@ package io.jmix.flowui.xml.layout.loader.component;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
 public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
     protected TypedTextField<?> createComponent() {
@@ -30,8 +32,16 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
     }
 
     @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
+    @Override
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
         componentLoader().loadDatatype(resultComponent, element);
         loadString(element, "value", resultComponent::setValue);
@@ -68,5 +78,12 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

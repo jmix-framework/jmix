@@ -18,11 +18,23 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.combobox.ComboBox;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
 public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends AbstractComponentLoader<T> {
 
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
+
+    @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
     @Override
     public void loadComponent() {
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
+
         loadBoolean(element, "opened", resultComponent::setOpened);
         loadString(element, "pattern", resultComponent::setPattern);
         loadInteger(element, "pageSize", resultComponent::setPageSize);
@@ -43,5 +55,12 @@ public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends Abst
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

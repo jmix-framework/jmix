@@ -34,6 +34,7 @@
         <radioButtonGroup id="radioButtonGroup"
                           classNames="className, className1"
                           colspan="1"
+                          css="color: red;"
                           errorMessage="errorMessage"
                           height="100%"
                           helperText="helperText"

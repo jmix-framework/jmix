@@ -61,7 +61,7 @@ import java.util.function.Function;
 @org.springframework.stereotype.Component("flowui_Dialogs")
 public class DialogsImpl implements Dialogs {
 
-    protected static final String WIDTH = "25em";
+    protected static final String MIN_WIDTH = "25em";
 
     protected Messages messages;
     protected UiViewProperties flowUiViewProperties;
@@ -117,7 +117,9 @@ public class DialogsImpl implements Dialogs {
             button.setText(action.getText());
         }
 
-        button.setIcon(action.getIcon());
+        if (action.getIcon() != null) {
+            button.setIcon(action.getIcon());
+        }
 
         button.addClickListener(event -> {
             action.actionPerform(dialog);
@@ -147,7 +149,7 @@ public class DialogsImpl implements Dialogs {
             dialog.setDraggable(true);
             dialog.setCloseOnOutsideClick(false);
             dialog.setCloseOnEsc(false);
-            dialog.setWidth(WIDTH);
+            dialog.setMinWidth(MIN_WIDTH);
         }
 
         @Override
@@ -410,7 +412,7 @@ public class DialogsImpl implements Dialogs {
         protected void initDialog(Dialog dialog) {
             dialog.setDraggable(true);
             dialog.setCloseOnOutsideClick(false);
-            dialog.setWidth(WIDTH);
+            dialog.setMinWidth(MIN_WIDTH);
 
             HorizontalLayout buttonsContainer = new HorizontalLayout();
             buttonsContainer.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
@@ -798,7 +800,7 @@ public class DialogsImpl implements Dialogs {
             dialog.setDraggable(true);
             dialog.setCloseOnOutsideClick(false);
             dialog.setCloseOnEsc(false);
-            dialog.setWidth(WIDTH);
+            dialog.setMinWidth(MIN_WIDTH);
         }
 
         protected void initDialogContent(Dialog dialog) {

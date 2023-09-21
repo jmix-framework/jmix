@@ -61,6 +61,7 @@ class CheckboxGroupXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(rbgView.checkboxGroup) {
             id.get() == "checkboxGroup"
             classNames.containsAll(["className", "className1"])
+            style.get("color") == "red"
             enabled
             errorMessage == "errorMessage"
             height == "100%"

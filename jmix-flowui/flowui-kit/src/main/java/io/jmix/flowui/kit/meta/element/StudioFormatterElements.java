@@ -52,7 +52,7 @@ public interface StudioFormatterElements {
                     @StudioProperty(xmlAttribute = "format", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             options = {"DATE", "DATETIME"}),
-                    @StudioProperty(xmlAttribute = "useUserTimeZone", type = StudioPropertyType.BOOLEAN,
+                    @StudioProperty(xmlAttribute = "useUserTimezone", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
             }
     )

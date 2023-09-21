@@ -20,9 +20,11 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.security.SecurityProperties;
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder;
+import io.jmix.security.impl.role.event.ResourceRoleModifiedEvent;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -49,6 +51,9 @@ public class AnnotatedResourceRoleProvider implements ResourceRoleProvider {
 
     @Autowired
     private SecurityProperties securityProperties;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     public AnnotatedResourceRoleProvider(JmixModulesClasspathScanner classpathScanner,
@@ -81,6 +86,7 @@ public class AnnotatedResourceRoleProvider implements ResourceRoleProvider {
         if (securityProperties.isAnnotatedRolesHotDeployEnabled()) {
             classpathScanner.refreshClassNames(detector);
             buildRolesCache();
+            eventPublisher.publishEvent(new ResourceRoleModifiedEvent(this));
             return;
         }
         throw new DevelopmentException("Annotated roles hot deploy is forbidden");

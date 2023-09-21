@@ -46,8 +46,8 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
 
     @Override
     public void execute(ComponentContext context, View<?> view) {
-        if (!(view.getContent() instanceof ComponentContainer)
-                && !(view.getContent() instanceof AppLayout)) {
+        if (!(UiComponentUtils.isContainer(view.getContent())
+                || view.getContent() instanceof AppLayout)) {
             throw new GuiDevelopmentException("View cannot contain components", context.getFullFrameId());
         }
 

@@ -17,25 +17,29 @@
 package io.jmix.flowui.view.builder;
 
 import io.jmix.flowui.Views;
+import io.jmix.flowui.sys.BeanUtil;
+import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.sys.BeanUtil;
 import org.springframework.context.ApplicationContext;
 
 public abstract class AbstractWindowBuilderProcessor {
 
     protected ApplicationContext applicationContext;
 
+    protected UiAccessChecker uiAccessChecker;
     protected Views views;
     protected ViewRegistry viewRegistry;
 
     public AbstractWindowBuilderProcessor(ApplicationContext applicationContext,
                                           Views views,
-                                          ViewRegistry viewRegistry) {
+                                          ViewRegistry viewRegistry,
+                                          UiAccessChecker uiAccessChecker) {
         this.applicationContext = applicationContext;
         this.views = views;
         this.viewRegistry = viewRegistry;
+        this.uiAccessChecker = uiAccessChecker;
     }
 
     protected <V extends View<?>> DialogWindow<V> createDialog(V view) {
@@ -47,6 +51,7 @@ public abstract class AbstractWindowBuilderProcessor {
 
     protected <V extends View<?>> V createView(DialogWindowBuilder<V> builder) {
         Class<V> viewClass = getViewClass(builder);
+        uiAccessChecker.checkViewPermitted(viewClass);
         return views.create(viewClass);
     }
 

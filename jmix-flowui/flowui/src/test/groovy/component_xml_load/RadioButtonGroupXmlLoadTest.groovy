@@ -61,6 +61,7 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(rbgView.radioButtonGroup) {
             id.get() == "radioButtonGroup"
             classNames.containsAll(["className", "className1"])
+            style.get("color") == "red"
             enabled
             errorMessage == "errorMessage"
             height == "100%"

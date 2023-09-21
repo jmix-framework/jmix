@@ -35,6 +35,7 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.Nested;
+import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import org.apache.commons.collections4.CollectionUtils;
@@ -63,8 +64,9 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                                         Metadata metadata,
                                         ExtendedEntities extendedEntities,
                                         UiViewProperties viewProperties,
+                                        UiAccessChecker uiAccessChecker,
                                         @Nullable List<EditedEntityTransformer> editedEntityTransformers) {
-        super(applicationContext, views, viewRegistry);
+        super(applicationContext, views, viewRegistry, uiAccessChecker);
 
         this.metadata = metadata;
         this.extendedEntities = extendedEntities;
@@ -74,18 +76,20 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
 
     @SuppressWarnings("unchecked")
     public <E, V extends View<?>> DialogWindow<V> build(DetailWindowBuilder<E, V> builder) {
+        V view = createView(builder);
 
         CollectionContainer<E> container = findContainer(builder);
 
         E entity = initEntity(builder, container);
 
-        V view = createView(builder);
+        // Setup parent context before setting entity,
+        // because 'setEntityToEdit' immediately processing entity
+        DataContext parentDataContext = setupParentDataContext(builder, view, container);
+
         ((DetailView<E>) view).setEntityToEdit(entity);
 
         DialogWindow<V> dialog = createDialog(view);
         initDialog(builder, dialog);
-
-        DataContext parentDataContext = setupParentDataContext(builder, view, container);
 
         setupListDataComponent(builder, ((DetailView<E>) view), dialog, container, parentDataContext);
         setupField(builder, view, dialog, parentDataContext);

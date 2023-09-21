@@ -16,37 +16,82 @@
 
 package io.jmix.security.impl.role;
 
+import io.jmix.core.CacheOperations;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleProvider;
 import io.jmix.security.role.ResourceRoleRepository;
-import io.jmix.security.role.RoleProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 @Component("sec_ResourceRoleRepository")
-public class ResourceRoleRepositoryImpl extends BaseRoleRepository<ResourceRole>
-        implements ResourceRoleRepository {
+public class ResourceRoleRepositoryImpl implements ResourceRoleRepository {
 
-    private Collection<ResourceRoleProvider> roleProviders;
+    private final CacheManager cacheManager;
 
-    @Autowired
-    public void setRoleProviders(Collection<ResourceRoleProvider> roleProviders) {
-        this.roleProviders = roleProviders;
+    private final CacheOperations cacheOperations;
+
+    private Cache rolesCache;
+
+    private final RoleRepositoryProviderUtils<ResourceRole> roleRepositoryProviderUtils;
+
+    public ResourceRoleRepositoryImpl(CacheManager cacheManager,
+                                      CacheOperations cacheOperations,
+                                      Collection<ResourceRoleProvider> roleProviders,
+                                      ObjectProvider<RoleRepositoryProviderUtils<ResourceRole>> roleRepositoryProviderUtilsProvider) {
+        this.cacheManager = cacheManager;
+        this.cacheOperations = cacheOperations;
+        this.roleRepositoryProviderUtils = roleRepositoryProviderUtilsProvider.getObject(roleProviders);
+    }
+
+    @PostConstruct
+    public void init() {
+        rolesCache = cacheManager.getCache(RESOURCE_ROLES_CACHE_NAME);
+        if (rolesCache == null) {
+            throw new IllegalStateException(String.format("Unable to find cache: %s", RESOURCE_ROLES_CACHE_NAME));
+        }
     }
 
     @Override
-    protected Collection<? extends RoleProvider<ResourceRole>> getRoleProviders() {
-        return roleProviders;
+    public ResourceRole findRoleByCode(String roleCode) {
+        return cacheOperations.get(rolesCache, roleCode, () ->
+                roleRepositoryProviderUtils.findRoleByCodeExcludeVisited(roleCode,
+                        new HashSet<>(),
+                        (role, childRole) -> {
+                            Collection<ResourcePolicy> allPolicies = new ArrayList<>(role.getAllResourcePolicies());
+                            allPolicies.addAll(childRole.getAllResourcePolicies());
+                            role.setAllResourcePolicies(allPolicies);
+                        }));
     }
 
     @Override
-    protected void mergeChildRoleState(ResourceRole role, ResourceRole childRole) {
-        Collection<ResourcePolicy> allPolicies = new ArrayList<>(role.getAllResourcePolicies());
-        allPolicies.addAll(childRole.getAllResourcePolicies());
-        role.setAllResourcePolicies(allPolicies);
+    public ResourceRole getRoleByCode(String code) {
+        ResourceRole rowLevelRole = findRoleByCode(code);
+        if (rowLevelRole == null) {
+            throw new IllegalStateException(String.format("ResourceRole not found by code: %s", code));
+        }
+        return rowLevelRole;
+    }
+
+    @Override
+    public boolean deleteRole(String code) {
+        return roleRepositoryProviderUtils.deleteRole(code);
+    }
+
+    @Override
+    public Collection<ResourceRole> getAllRoles() {
+        return roleRepositoryProviderUtils.getAllRoles();
+    }
+
+    @Override
+    public void invalidateCache() {
+        rolesCache.clear();
     }
 }

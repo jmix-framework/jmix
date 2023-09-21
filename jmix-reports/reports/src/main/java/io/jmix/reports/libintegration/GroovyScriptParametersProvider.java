@@ -34,5 +34,11 @@ public interface GroovyScriptParametersProvider {
      * @param reportParameters - parameters to include into the map of parameters
      * @return map of objects
      */
-    Map<String, Object> prepareParameters(ReportQuery reportQuery, BandData parentBand, Map<String, Object> reportParameters);
+    Map<String, Object> getParametersForDatasetParameters(ReportQuery reportQuery, BandData parentBand, Map<String, Object> reportParameters);
+
+    /**
+     * Prepares and return the map of objects
+     * @return map of objects
+     */
+    Map<String, Object> getParametersForValidationParameters();
 }

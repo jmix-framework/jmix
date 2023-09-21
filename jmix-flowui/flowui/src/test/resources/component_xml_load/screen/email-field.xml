@@ -39,6 +39,7 @@
                     autofocus="true"
                     autoselect="true"
                     classNames="cssClassName1, cssClassName2"
+                    css="color: red;"
                     clearButtonVisible="true"
                     enabled="true"
                     errorMessage="errorMessageString"

@@ -1,15 +1,13 @@
 package io.jmix.reportsflowui.view.parameter;
 
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
@@ -17,13 +15,18 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsTypedValue;
+import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
+import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
@@ -73,7 +76,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     @ViewComponent
     protected JmixComboBox<PredefinedTransformation> wildcardsField;
     @ViewComponent
-    protected Div predefinedTransformationBox;
+    protected VerticalLayout predefinedTransformationBox;
     @ViewComponent
     protected JmixTextArea localeField;
     @ViewComponent
@@ -86,9 +89,10 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     protected JmixCheckbox isPredefinedTransformationField;
     @ViewComponent
     protected Div transformationEditorBox;
-
     @ViewComponent
     protected InstanceContainer<ReportInputParameter> parameterDc;
+    @ViewComponent
+    protected TypedTextField<String> alias;
 
     @Autowired
     protected ParameterClassResolver parameterClassResolver;
@@ -364,6 +368,23 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     }
 
     @Subscribe
+    public void onValidation(final ValidationEvent event) {
+        boolean isValidated = getContent().getComponents().stream().noneMatch(component ->
+                component instanceof SupportsValidation<?>
+                        && component.isVisible()
+                        && ((HasRequired) component).isRequired()
+                        && ((AbstractSinglePropertyField<?, ?>) component).isEmpty());
+        if (!isValidated) {
+            event.addErrors(ValidationErrors.of(messages.getMessage(getClass(), "validationException.message")));
+        }
+        try {
+            reportParamAliasValidator.accept(alias.getValue());
+        } catch (ValidationException e) {
+            event.addErrors(ValidationErrors.of(e.getMessage()));
+        }
+    }
+
+    @Subscribe
     public void onBeforeSave(BeforeSaveEvent event) {
         if (!(getEditedEntity().getType() == ParameterType.ENTITY && Boolean.TRUE.equals(isLookupField.getValue()))) {
             lookupWhereCodeEditor.clear();
@@ -453,10 +474,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         screenField.setVisible(isEntity);
         enumerationField.setVisible(isEnum);
         predefinedTransformationBox.setVisible(isText);
+        UiComponentUtils.setValue(isPredefinedTransformationField, isText);
 
-        if (!isText) {
-            isPredefinedTransformationField.setValue(false);
-        }
         initDefaultValueField();
         initCurrentDateTimeField();
     }
@@ -476,11 +495,9 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     protected void initTransformations() {
         ReportInputParameter parameter = getEditedEntity();
+
         UiComponentUtils.setValue(isPredefinedTransformationField, parameter.getPredefinedTransformation() != null);
         enableControlsByTransformationType(parameter.getPredefinedTransformation() != null);
-
-        //todo
-//        isPredefinedTransformationField.setReadOnly(secureOperations.isEntityUpdatePermitted(metadata.getClass(ReportInputParameter.class), policyStore));
     }
 
     protected void enableControlsByTransformationType(boolean hasPredefinedTransformation) {

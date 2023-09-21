@@ -37,9 +37,9 @@ class OrmXmlTest extends DataSpec {
 
         then:
         //classes count
-        entityMappings.'*'.size() == 10
+        entityMappings.'*'.size() == 11
         entityMappings.'*'.findAll { it.name() == 'mapped-superclass' }.size() == 1
-        entityMappings.'*'.findAll { it.name() == 'entity' }.size() == 8
+        entityMappings.'*'.findAll { it.name() == 'entity' }.size() == 9
         entityMappings.'*'.findAll { it.name() == 'embeddable' }.size() == 1
 
         //classes
@@ -53,6 +53,7 @@ class OrmXmlTest extends DataSpec {
         entityMappings.'*'.find { it.@name == 'exttest_Bus' }.'@class' == "test_support.entity.entity_extension.Bus"
         entityMappings.'*'.find { it.@name == 'exttest_Doc' }.'@class' == "test_support.entity.entity_extension.Doc"
         entityMappings.'*'.find { it.@name == 'exttest_Station' }.'@class' == "test_support.entity.entity_extension.Station"
+        entityMappings.'*'.find { it.@name == 'ImplicitNameEntity' }.'@class' == "test_support.entity.entity_extension.ImplicitNameEntity"
 
 
         //fetch

@@ -99,6 +99,9 @@ dependencies {
         api "io.jmix.awsfs:jmix-awsfs:$freeVersion"
         api "io.jmix.awsfs:jmix-awsfs-starter:$freeVersion"
 
+        api "io.jmix.bulkeditor:jmix-bulkeditor:$freeVersion"
+        api "io.jmix.bulkeditor:jmix-bulkeditor-starter:$freeVersion"
+
         api "io.jmix.bpm:jmix-bpm:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-modeler:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-starter:$premiumVersion"
@@ -174,6 +177,8 @@ dependencies {
 
         api "io.jmix.notifications:jmix-notifications:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-starter:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-flowui:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-flowui-starter:$premiumVersion"
 
         api "io.jmix.oidc:jmix-oidc:$freeVersion"
         api "io.jmix.oidc:jmix-oidc-starter:$freeVersion"
@@ -218,6 +223,8 @@ dependencies {
         api "io.jmix.translations:jmix-translations-ckb:$freeVersion"
         api "io.jmix.translations:jmix-translations-nl:$freeVersion"
         api "io.jmix.translations:jmix-translations-it:$freeVersion"
+        api "io.jmix.translations:jmix-translations-ar:$freeVersion"
+        api "io.jmix.translations:jmix-translations-tr:$freeVersion"
 
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"
@@ -363,6 +370,13 @@ dependencies {
         api 'org.jetbrains:annotations:22.0.0'
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
+
+        api('com.hazelcast:hazelcast') {
+            version {
+                strictly '5.2.2'
+                because 'https://github.com/hazelcast/hazelcast/issues/24705, till https://github.com/hazelcast/hazelcast/pull/24841 will be released (5.2.5?)'
+            }
+        }
     }
 }
 

@@ -53,10 +53,13 @@ class ZipProject extends DefaultTask {
         includeToZip += this.includeToZip
 
         def excludeFromZip = [
+                project.rootDir.name + '/frontend/generated',
                 'build',
                 'deploy',
                 'bower_components',
                 'node_modules',
+                'dev-bundle',
+                'vite.generated.ts',
                 '.iml'
         ]
         excludeFromZip += this.excludeFromZip
@@ -72,11 +75,11 @@ class ZipProject extends DefaultTask {
             from '.'
             into tmpRootDir
             exclude { details ->
-                String name = details.file.name
-                if (isFileMatched(name, includeToZip)) return false
+                File file = details.file
+                if (isFileMatched(file, includeToZip)) return false
                 // eclipse project files, gradle, git, idea (directory based), Mac OS files
-                if (name.startsWith(".")) return true
-                return isFileMatched(name, excludeFromZip)
+                if (file.name.startsWith(".")) return true
+                return isFileMatched(file, excludeFromZip)
             }
         }
         project.copy {
@@ -91,14 +94,18 @@ class ZipProject extends DefaultTask {
         project.delete(tmpDir)
     }
 
-    protected static boolean isFileMatched(String name, def rules) {
+    protected static boolean isFileMatched(File file, def rules) {
+        def name = file.name
         for (String rule : rules) {
             if (rule.startsWith(".")) {     // extension
                 if (name.endsWith(rule)) {
                     return true
                 }
-            } else {                        // file name
-                if (name == rule) {
+            } else {                        // path
+                if (file.directory && file.toPath().endsWith(rule)) {
+                    return true
+                }
+                if (name == rule) {         // file name
                     return true
                 }
             }

@@ -38,6 +38,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         HasValidator<String>, InputNotifier, KeyNotifier {
 
     protected static final String CODE_EDITOR_VALUE_CHANGED_EVENT = "value-changed";
+    protected static final String PROPERTY_THEME_CHANGED_EVENT = "theme-changed";
 
     protected static final String PROPERTY_VALUE = "value";
     protected static final String PROPERTY_THEME = "theme";
@@ -169,14 +170,18 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     /**
      * @return current visual theme applied to the editor
      */
-    @Synchronize(PROPERTY_THEME)
+    @Synchronize(property = PROPERTY_THEME, value = PROPERTY_THEME_CHANGED_EVENT)
     public CodeEditorTheme getTheme() {
-        return CodeEditorTheme.fromId(getElement().getProperty(PROPERTY_THEME));
+        return CodeEditorTheme.fromId(getElement().getProperty(PROPERTY_THEME, CodeEditorTheme.TEXTMATE.getId()));
     }
 
     /**
      * Sets the visual theme of the editor.
-     * The visual theme is not applied by default.
+     * The visual theme is {@link CodeEditorTheme#TEXTMATE} by default, but if no theme is specified explicitly,
+     * the component will adapt the visual theme to the theme of the application.
+     * <p>
+     * Thus - when using the light theme of the application, {@link CodeEditorTheme#TEXTMATE} will be applied,
+     * when using the dark theme - {@link CodeEditorTheme#NORD_DARK} will be applied.
      *
      * @param theme the instance of the {@link CodeEditorTheme} to be applied
      */
@@ -189,12 +194,12 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     @Synchronize(PROPERTY_MODE)
     public CodeEditorMode getMode() {
-        return CodeEditorMode.fromId(getElement().getProperty(PROPERTY_MODE));
+        return CodeEditorMode.fromId(getElement().getProperty(PROPERTY_MODE, CodeEditorMode.PLAIN_TEXT.getId()));
     }
 
     /**
      * Sets syntax highlighting for a specific mode.
-     * The syntax highlighting mode is not applied by default.
+     * The syntax highlighting mode is {@link CodeEditorMode#PLAIN_TEXT} by default.
      *
      * @param mode the instance of the {@link CodeEditorMode} to be applied
      */

@@ -318,6 +318,12 @@ public class TaskRunNpmInstall implements FallibleCommand {
         }
 
         npmInstallCommand.add("--ignore-scripts");
+        // see:
+        // https://forum.jmix.io/t/jmix-ui-plugin-dont-work-with-the-latest-intellij-idea/3500
+        // https://github.com/pnpm/pnpm/issues/6778
+        if (options.isEnablePnpm()) {
+            npmInstallCommand.add("--config.confirmModulesPurge=false");
+        }
 
         if (options.isCiBuild()) {
             if (options.isEnablePnpm()) {

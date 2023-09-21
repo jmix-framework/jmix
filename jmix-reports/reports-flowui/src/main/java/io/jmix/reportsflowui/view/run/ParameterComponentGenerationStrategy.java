@@ -175,7 +175,7 @@ public class ParameterComponentGenerationStrategy {
     protected class TextFieldCreator implements FieldCreator<TypedTextField<?>> {
 
         @Override
-        public TypedTextField<?> createField(ReportInputParameter parameter) {
+        public TypedTextField<String> createField(ReportInputParameter parameter) {
             return uiComponents.create(TypedTextField.class);
         }
     }

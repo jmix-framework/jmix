@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <layout>
+
+        <!-- HasPrefix and HasSuffix-->
+        <bigDecimalField id="bigDecimalField">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </bigDecimalField>
+
+        <button id="button">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </button>
+
+        <emailField id="emailField">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </emailField>
+
+        <!-- metaСlass attribute is needed only for correct compilation-->
+        <entityPicker id="entityPicker" metaClass="test_Foo">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </entityPicker>
+
+        <integerField id="integerField">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </integerField>
+
+        <multiValuePicker id="multiValuePicker">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </multiValuePicker>
+
+        <numberField id="numberField">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </numberField>
+
+        <passwordField id="passwordField">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </passwordField>
+
+        <textArea id="textArea">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </textArea>
+
+        <textField id="textField">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </textField>
+
+        <valuePicker id="valuePicker">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </valuePicker>
+
+        <tabSheet id="tabSheet">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+            <suffix>
+                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+            </suffix>
+        </tabSheet>
+
+        <!-- HasPrefix-->
+        <comboBox id="comboBox">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+        </comboBox>
+
+        <datePicker id="datePicker">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+        </datePicker>
+
+        <!-- metaСlass attribute is needed only for correct compilation-->
+        <entityComboBox id="entityComboBox" metaClass="test_Foo">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+        </entityComboBox>
+
+        <select id="select">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+        </select>
+
+        <timePicker id="timePicker">
+            <prefix>
+                <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
+            </prefix>
+        </timePicker>
+    </layout>
+</view>

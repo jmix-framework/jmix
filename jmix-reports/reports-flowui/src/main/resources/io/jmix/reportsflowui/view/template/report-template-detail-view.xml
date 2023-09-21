@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://reportTemplateDetailView.title"
-      focusComponent="form">
+      focusComponent="templateForm">
     <data>
         <instance id="reportTemplateDc"
                   class="io.jmix.reports.entity.ReportTemplate">
@@ -41,6 +41,7 @@
                                       label="msg://isGroovyRadioButtonGroup.label" width="100%"/>
                     <checkbox id="customField" property="custom" label="msg://customField.label" width="100%"/>
                     <checkbox id="alterableField" property="alterable" label="msg://alterableField.label" width="100%"/>
+                    <checkbox id="defaultField" label="msg://defaultField.label" width="100%"/>
                     <select id="customDefinedByField" property="customDefinedBy"
                               label="msg://customDefinedByField.label"
                               requiredMessage="msg://customDefinedByField.requiredMessage" width="100%"/>

@@ -23,9 +23,12 @@ import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import org.dom4j.Element;
 
 public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
+
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
     protected JmixTabSheet createComponent() {
@@ -37,6 +40,14 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
         super.initComponent();
 
         createTabs(element);
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
     }
 
     protected void createTabs(Element element) {
@@ -111,5 +122,12 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
         public Component getContent() {
             return content;
         }
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

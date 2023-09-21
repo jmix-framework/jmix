@@ -21,9 +21,7 @@ import io.jmix.core.constraint.RowLevelConstraint
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.role.ResourceRoleRepository
-import io.jmix.security.role.RowLevelRoleRepository
+import io.jmix.security.role.RoleGrantedAuthorityUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
@@ -52,12 +50,6 @@ class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecif
     InMemoryUserRepository userRepository
 
     @Autowired
-    ResourceRoleRepository resourceRoleRepository
-
-    @Autowired
-    RowLevelRoleRepository rowLevelRoleRepository
-
-    @Autowired
     Metadata metadata
 
     @Autowired
@@ -67,7 +59,7 @@ class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecif
     DataSource dataSource
 
     @Autowired
-    CoreProperties coreProperties
+    RoleGrantedAuthorityUtils roleGrantedAuthorityUtils
 
     UserDetails user1
     TestOrder orderDenied1, orderDenied2, orderAllowed
@@ -82,10 +74,9 @@ class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecif
         user1 = User.builder()
                 .username("user1")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.
-                        withRowLevelRoleProvider({ rowLevelRoleRepository.getRoleByCode(it) })
-                        .withRowLevelRoles(TestDefaultConstraintsRole.NAME)
-                        .build())
+                .authorities(
+                        roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(TestDefaultConstraintsRole.NAME)
+                )
                 .build()
         userRepository.addUser(user1)
 

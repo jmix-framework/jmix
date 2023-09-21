@@ -89,6 +89,8 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "autoWidth", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "filterable", type = StudioPropertyType.BOOLEAN,
+                            defaultValueRef = "parent:filterable"),
                     @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "footer", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "frozen", type = StudioPropertyType.BOOLEAN,
@@ -118,6 +120,21 @@ public interface StudioElements {
             }
     )
     Grid.Column column();
+
+    @StudioElement(
+            name = "Aggregation",
+            classFqn = "io.jmix.flowui.component.AggregationInfo",
+            xmlElement = "aggregation",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "cellTitle", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "strategy", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.AggregationInfo$Type",
+                            options = {"SUM", "COUNT", "AVG", "MIN", "MAX"})
+            }
+    )
+    void aggregationInfo();
 
     @StudioElement(
             name = "LocalDateRenderer",

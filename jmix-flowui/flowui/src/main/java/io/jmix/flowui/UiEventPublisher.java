@@ -81,7 +81,7 @@ public class UiEventPublisher {
     protected void publish(Collection<UI> uis, ApplicationEvent event) {
         VaadinSession vaadinSession = VaadinSession.getCurrent();
         if (vaadinSession != null) {
-            applicationContext.getBean(UiEventsManager.class).publish(uis, event);
+            vaadinSession.getAttribute(UiEventsManager.class).publish(uis, event);
         } else {
             throw new IllegalStateException("Event cannot be sent since there is no active Session instance");
         }

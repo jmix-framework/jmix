@@ -20,11 +20,6 @@ import io.jmix.security.model.RowLevelRole;
 
 public interface RowLevelRoleRepository extends RoleRepository<RowLevelRole> {
 
-    default RowLevelRole getRoleByCode(String code) {
-        RowLevelRole rowLevelRole = findRoleByCode(code);
-        if (rowLevelRole == null) {
-            throw new IllegalStateException(String.format("RowLevelRole not found by code: %s", code));
-        }
-        return rowLevelRole;
-    }
+    String ROW_LEVEL_ROLES_CACHE_NAME = "row-level-roles-cache";
+
 }

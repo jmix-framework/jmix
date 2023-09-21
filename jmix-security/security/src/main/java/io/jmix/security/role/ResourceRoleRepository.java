@@ -20,11 +20,6 @@ import io.jmix.security.model.ResourceRole;
 
 public interface ResourceRoleRepository extends RoleRepository<ResourceRole> {
 
-    default ResourceRole getRoleByCode(String code) {
-        ResourceRole rowLevelRole = findRoleByCode(code);
-        if (rowLevelRole == null) {
-            throw new IllegalStateException(String.format("ResourceRole not found by code: %s", code));
-        }
-        return rowLevelRole;
-    }
+    String RESOURCE_ROLES_CACHE_NAME = "resource-roles-cache";
+
 }

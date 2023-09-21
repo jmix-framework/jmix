@@ -99,6 +99,9 @@ dependencies {
         api "io.jmix.awsfs:jmix-awsfs:$freeVersion"
         api "io.jmix.awsfs:jmix-awsfs-starter:$freeVersion"
 
+        api "io.jmix.bulkeditor:jmix-bulkeditor:$freeVersion"
+        api "io.jmix.bulkeditor:jmix-bulkeditor-starter:$freeVersion"
+
         api "io.jmix.bpm:jmix-bpm:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-modeler:$premiumVersion"
         api "io.jmix.bpm:jmix-bpm-starter:$premiumVersion"
@@ -174,6 +177,8 @@ dependencies {
 
         api "io.jmix.notifications:jmix-notifications:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-starter:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-flowui:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-flowui-starter:$premiumVersion"
 
         api "io.jmix.oidc:jmix-oidc:$freeVersion"
         api "io.jmix.oidc:jmix-oidc-starter:$freeVersion"

@@ -106,6 +106,11 @@ public class UiComponentProperties {
     boolean filterAutoApply;
 
     /**
+     * Shortcut for applying {@link Filter}
+     */
+    String filterApplyShortcut;
+
+    /**
      * Number of nested properties in the {@link AddConditionScreen}. I.e. if the depth is 2, then you'll be able to
      * select a property "contractor.city.country", if the value is 3, then "contractor.city.country.name", etc.
      */
@@ -144,6 +149,7 @@ public class UiComponentProperties {
             @Nullable Map<String, String> entityFieldType,
             @Nullable Map<String, List<String>> entityFieldActions,
             @DefaultValue("true") boolean filterAutoApply,
+            @DefaultValue("SHIFT-ENTER") String filterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("3") int filterColumnsCount,
             @DefaultValue("false") boolean filterShowConfigurationIdField
@@ -170,6 +176,7 @@ public class UiComponentProperties {
         this.entityFieldType = entityFieldType == null ? Collections.emptyMap() : entityFieldType;
         this.entityFieldActions = entityFieldActions == null ? Collections.emptyMap() : entityFieldActions;
         this.filterAutoApply = filterAutoApply;
+        this.filterApplyShortcut = filterApplyShortcut;
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterColumnsCount = filterColumnsCount;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
@@ -285,6 +292,13 @@ public class UiComponentProperties {
      */
     public boolean isFilterAutoApply() {
         return filterAutoApply;
+    }
+
+    /**
+     * @see #filterApplyShortcut
+     */
+    public String getFilterApplyShortcut() {
+        return filterApplyShortcut;
     }
 
     /**

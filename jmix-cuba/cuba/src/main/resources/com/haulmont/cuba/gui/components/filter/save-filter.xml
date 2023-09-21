@@ -19,7 +19,8 @@
         class="com.haulmont.cuba.gui.components.filter.SaveFilterWindow"
         caption="mainMsg://filter.saveFilter.caption">
     <actions>
-        <action id="commit" invoke="commit" caption="mainMsg://actions.Ok" icon="icons/ok.png" primary="true" shortcut="CTRL-ENTER"/>
+        <action id="commit" invoke="commit" caption="mainMsg://actions.Ok" icon="OK" primary="true"
+                shortcut="CTRL-ENTER"/>
     </actions>
     <layout spacing="true">
         <hbox spacing="true" width="100%" expand="filterName">
@@ -28,7 +29,7 @@
         </hbox>
         <hbox id="actionBox" spacing="true" height="AUTO" stylename="jmix-edit-window-actions">
             <button id="commit" action="commit"/>
-            <button id="close" invoke="cancel" caption="mainMsg://actions.Cancel" icon="icons/cancel.png"/>
+            <button id="close" invoke="cancel" caption="mainMsg://actions.Cancel" icon="CANCEL"/>
         </hbox>
     </layout>
 </window>

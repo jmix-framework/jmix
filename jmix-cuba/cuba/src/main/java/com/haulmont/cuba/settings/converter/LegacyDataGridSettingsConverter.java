@@ -52,9 +52,12 @@ public class LegacyDataGridSettingsConverter implements LegacySettingsConverter 
         if (settings.getColumns() != null) {
             Element columnsElem = element.addElement("columns");
 
-            if (settings.getSortColumnId() != null) {
-                columnsElem.addAttribute("sortColumnId", settings.getSortColumnId());
-                columnsElem.addAttribute("sortDirection", settings.getSortDirection().name());
+            if (!settings.getSortedColumnMap().isEmpty()) {
+                Element sortedColumns = columnsElem.addElement("sortedColumns");
+
+                settings.getSortedColumnMap()
+                        .forEach((columnId, sortDirection) ->
+                                sortedColumns.addAttribute(columnId, sortDirection.name()));
             }
 
             for (ColumnSettings columnSettings : settings.getColumns()) {
@@ -80,14 +83,30 @@ public class LegacyDataGridSettingsConverter implements LegacySettingsConverter 
 
         Element columnElem = settings.element("columns");
         if (columnElem != null) {
-            String sortColumnId = columnElem.attributeValue("sortColumnId");
-            if (StringUtils.isNotBlank(sortColumnId)) {
-                dataGridSettings.setSortColumnId(sortColumnId);
-            }
 
-            String sortDirection = columnElem.attributeValue("sortDirection");
-            if (StringUtils.isNotBlank(sortDirection)) {
-                dataGridSettings.setSortDirection(DataGrid.SortDirection.valueOf(sortDirection));
+            Element sortedColumns = columnElem.element("sortedColumns");
+            if (sortedColumns != null) {
+                sortedColumns.attributes()
+                        .forEach(attribute -> {
+                            String columnId = attribute.getName();
+                            String columnSortDirection = attribute.getValue();
+                            dataGridSettings.addSortedColumn(columnId, DataGrid.SortDirection.valueOf(columnSortDirection));
+                        });
+            } else {
+                // Parsing settings for backwards compatibility
+                String sortColumnId = columnElem.attributeValue("sortColumnId");
+                if (StringUtils.isNotBlank(sortColumnId)) {
+                    dataGridSettings.setSortColumnId(sortColumnId);
+                }
+
+                String sortDirection = columnElem.attributeValue("sortDirection");
+                if (StringUtils.isNotBlank(sortDirection)) {
+                    dataGridSettings.setSortDirection(DataGrid.SortDirection.valueOf(sortDirection));
+                }
+
+                // Removing old settings
+                dataGridSettings.setSortColumnId(null);
+                dataGridSettings.setSortDirection(null);
             }
 
             List<Element> columns = columnElem.elements("columns");

@@ -18,7 +18,10 @@ package io.jmix.securitydata.impl.role.provider;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanBuilder;
-import io.jmix.security.model.*;
+import io.jmix.security.model.RoleSource;
+import io.jmix.security.model.RowLevelBiPredicate;
+import io.jmix.security.model.RowLevelPolicy;
+import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.RowLevelRoleProvider;
 import io.jmix.securitydata.entity.RowLevelPolicyEntity;
 import io.jmix.securitydata.entity.RowLevelRoleEntity;
@@ -30,7 +33,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -39,14 +41,6 @@ import java.util.stream.Collectors;
 @Component("sec_DatabaseRowLevelRoleProvider")
 public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLevelRole>
         implements RowLevelRoleProvider {
-
-    private final ScriptEvaluator scriptEvaluator;
-    private final ApplicationContext applicationContext;
-
-    public DatabaseRowLevelRoleProvider(ScriptEvaluator scriptEvaluator, ApplicationContext applicationContext) {
-        this.scriptEvaluator = scriptEvaluator;
-        this.applicationContext = applicationContext;
-    }
 
     @Override
     protected Class<?> getRoleClass() {
@@ -108,6 +102,8 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
             Map<String, Object> arguments = new HashMap<>();
             arguments.put("__entity__", entity);
             arguments.put("applicationContext", applicationContext);
+
+            ScriptEvaluator scriptEvaluator = applicationContext.getBean(ScriptEvaluator.class);
             return Boolean.TRUE.equals(scriptEvaluator.evaluate(new StaticScriptSource(modifiedScript), arguments));
         };
     }

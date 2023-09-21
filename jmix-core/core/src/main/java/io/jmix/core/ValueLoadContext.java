@@ -46,7 +46,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
     protected List<String> properties = new ArrayList<>();
     protected List<AccessConstraint<?>> accessConstraints;
     protected Map<String, Serializable> hints; // lazy initialized map
-    protected boolean joinTransaction;
+    protected boolean joinTransaction = true;
     protected LockModeType lockMode;
 
     /**

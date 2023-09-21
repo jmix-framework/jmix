@@ -20,11 +20,16 @@ import io.jmix.ui.component.DataGrid;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataGridSettings implements ComponentSettings {
 
     protected String id;
+
+    protected Map<String, DataGrid.SortDirection> sortedColumnMap = new LinkedHashMap<>();
 
     protected String sortColumnId;
     protected DataGrid.SortDirection sortDirection;
@@ -47,7 +52,7 @@ public class DataGridSettings implements ComponentSettings {
         return sortColumnId;
     }
 
-    public void setSortColumnId(String sortColumnId) {
+    public void setSortColumnId(@Nullable String sortColumnId) {
         this.sortColumnId = sortColumnId;
     }
 
@@ -56,8 +61,20 @@ public class DataGridSettings implements ComponentSettings {
         return sortDirection;
     }
 
-    public void setSortDirection(DataGrid.SortDirection sortDirection) {
+    public void setSortDirection(@Nullable DataGrid.SortDirection sortDirection) {
         this.sortDirection = sortDirection;
+    }
+
+    public void clearSortedColumnMap() {
+        sortedColumnMap.clear();
+    }
+
+    public Map<String, DataGrid.SortDirection> getSortedColumnMap() {
+        return Collections.unmodifiableMap(sortedColumnMap);
+    }
+
+    public void addSortedColumn(String sortedColumnId, DataGrid.SortDirection sortDirection) {
+        sortedColumnMap.put(sortedColumnId, sortDirection);
     }
 
     @Nullable

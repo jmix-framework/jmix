@@ -24,7 +24,6 @@ import io.jmix.ui.app.filter.condition.AddConditionScreen;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.meta.CanvasBehaviour;
-import io.jmix.ui.meta.CanvasIconSize;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
 import io.jmix.ui.meta.StudioElementsGroup;
@@ -136,6 +135,27 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      */
     @StudioProperty
     void setAutoApply(boolean autoApply);
+
+    /**
+     * @return apply {@link Filter} key combination
+     */
+    @Nullable
+    KeyCombination getShortcutCombination();
+
+    /**
+     * Sets shortcut combination for apply {@link Filter}.
+     *
+     * @param applyShortcut key combination
+     */
+    void setApplyShortcutCombination(@Nullable KeyCombination applyShortcut);
+
+    /**
+     * Sets shortcut for apply {@link Filter} from string representation.
+     *
+     * @param applyShortcut string of type "Modifiers-Key", e.g. "Alt-N". Case-insensitive
+     */
+    @StudioProperty(type = PropertyType.SHORTCUT)
+    void setApplyShortcut(@Nullable String applyShortcut);
 
     /**
      * Applies the current configuration.

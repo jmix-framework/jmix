@@ -222,23 +222,6 @@ public class JmixGridWidget extends Grid<JsonObject> {
         return new JmixStaticSectionUpdater(getFooter(), getEscalator().getFooter());
     }
 
-    @Override
-    protected UserSorter createUserSorter() {
-        return new JmixUserSorter();
-    }
-
-    protected class JmixUserSorter extends UserSorter {
-
-        protected JmixUserSorter() {
-        }
-
-        @Override
-        public void sort(Column<?, ?> column, boolean multisort) {
-            // ignore 'multisort' until datasources don't support multi-sorting
-            super.sort(column, false);
-        }
-    }
-
     protected class JmixStaticSectionUpdater extends StaticSectionUpdater {
 
         public JmixStaticSectionUpdater(StaticSection<?> section, RowContainer container) {

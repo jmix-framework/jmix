@@ -27,7 +27,7 @@
     <layout height="100%" spacing="true" expand="pivotTable">
         <button id="exportExcel"
                 caption="msg://exportExcel"
-                icon="icons/excel.png"/>
+                icon="FILE_EXCEL_O"/>
         <pivot:pivotTable id="pivotTable" dataContainer="pivotTableDc"
                           width="100%">
             <pivot:properties/>

@@ -23,19 +23,19 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.client.widget.grid.selection.SelectionModel;
-import com.vaadin.client.widget.grid.selection.SelectionModelWithSelectionColumn;
-import io.jmix.ui.widget.client.grid.JmixEditorEventHandler;
-import io.jmix.ui.widget.client.grid.JmixGridEmptyState;
-import io.jmix.ui.widget.client.grid.HasClickSettings;
 import com.vaadin.client.WidgetUtil;
 import com.vaadin.client.renderers.Renderer;
 import com.vaadin.client.widget.escalator.FlyweightCell;
 import com.vaadin.client.widget.escalator.RowContainer;
 import com.vaadin.client.widget.grid.events.GridClickEvent;
+import com.vaadin.client.widget.grid.selection.SelectionModel;
+import com.vaadin.client.widget.grid.selection.SelectionModelWithSelectionColumn;
 import com.vaadin.client.widget.treegrid.TreeGrid;
 import elemental.events.Event;
 import elemental.json.JsonObject;
+import io.jmix.ui.widget.client.grid.HasClickSettings;
+import io.jmix.ui.widget.client.grid.JmixEditorEventHandler;
+import io.jmix.ui.widget.client.grid.JmixGridEmptyState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -207,23 +207,6 @@ public class JmixTreeGridWidget extends TreeGrid {
         Widget widget = WidgetUtil.findWidget(e, null);
         return widget instanceof HasClickSettings &&
                 ((HasClickSettings) widget).isClickThroughEnabled();
-    }
-
-    @Override
-    protected UserSorter createUserSorter() {
-        return new JmixUserSorter();
-    }
-
-    protected class JmixUserSorter extends UserSorter {
-
-        protected JmixUserSorter() {
-        }
-
-        @Override
-        public void sort(Column<?, ?> column, boolean multisort) {
-            // ignore 'multisort' until datasources don't support multi-sorting
-            super.sort(column, false);
-        }
     }
 
     protected class JmixStaticSectionUpdater extends StaticSectionUpdater {

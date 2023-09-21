@@ -16,10 +16,10 @@
 
 package io.jmix.ui.model.impl;
 
+import io.jmix.core.Sort;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.Sort;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.Sorter;
 import org.springframework.beans.factory.BeanFactory;
@@ -51,27 +51,35 @@ public abstract class BaseContainerSorter implements Sorter {
         sortInMemory(sort);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected void sortInMemory(Sort sort) {
-        if (sort.getOrders().isEmpty() || container.getItems().isEmpty()) {
+        List<Sort.Order> orders = sort.getOrders();
+
+        if (orders.isEmpty() || container.getItems().isEmpty()) {
             return;
         }
-        List list = new ArrayList(container.getItems());
-        list.sort(createComparator(sort, container.getEntityMetaClass()));
-        setItemsToContainer(list);
+
+        List containerItems = new ArrayList<>(container.getItems());
+        MetaClass metaClass = container.getEntityMetaClass();
+
+        Comparator comparator = createComparator(orders.get(0), metaClass);
+        for (int i = 1; i < orders.size(); i++) {
+            comparator = comparator.thenComparing(createComparator(orders.get(i), metaClass));
+        }
+
+        containerItems.sort(comparator);
+        setItemsToContainer(containerItems);
     }
 
     protected abstract void setItemsToContainer(List list);
 
-    protected Comparator<?> createComparator(Sort sort, MetaClass metaClass) {
-        if (sort.getOrders().size() > 1) {
-            throw new UnsupportedOperationException("Sort by multiple properties is not supported");
-        }
-        MetaPropertyPath propertyPath = metaClass.getPropertyPath(sort.getOrders().get(0).getProperty());
+    protected Comparator<?> createComparator(Sort.Order sortOrder, MetaClass metaClass) {
+        MetaPropertyPath propertyPath = metaClass.getPropertyPath(sortOrder.getProperty());
         if (propertyPath == null) {
-            throw new IllegalArgumentException("Property " + sort.getOrders().get(0).getProperty() + " is invalid");
+            throw new IllegalArgumentException("Property " + sortOrder.getProperty() + " is invalid");
         }
-        boolean asc = sort.getOrders().get(0).getDirection() == Sort.Direction.ASC;
+
+        boolean asc = sortOrder.getDirection() == Sort.Direction.ASC;
         EntityValuesComparator<Object> comparator = new EntityValuesComparator<>(asc, metaClass, beanFactory);
         return Comparator.comparing(e -> EntityValues.getValueEx(e, propertyPath), comparator);
     }

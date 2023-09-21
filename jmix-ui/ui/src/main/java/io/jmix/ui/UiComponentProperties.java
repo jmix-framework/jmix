@@ -57,6 +57,12 @@ public class UiComponentProperties {
     int tablePageLength;
 
     /**
+     * Whether to enable automatic sorting on grouping columns when collection of grouping columns
+     * is changed (reorder, add or remove grouping columns)
+     */
+    boolean groupTableSortOnGroupEnabled;
+
+    /**
      * This property adjusts a possible caching mechanism of table implementation.
      * <br>
      * Table component may fetch and render some rows outside visible area. With complex tables (for example containing
@@ -136,6 +142,7 @@ public class UiComponentProperties {
             @DefaultValue("ENTER") String tableViewShortcut,
             @DefaultValue("15") int tablePageLength,
             @DefaultValue("2") double tableCacheRate,
+            @DefaultValue("true") boolean groupTableSortOnGroupEnabled,
             @DefaultValue("CTRL-ALT") String pickerShortcutModifiers,
             @DefaultValue("CTRL-ALT-L") String pickerLookupShortcut,
             @DefaultValue("CTRL-ALT-O") String pickerOpenShortcut,
@@ -163,6 +170,7 @@ public class UiComponentProperties {
         this.tableViewShortcut = tableViewShortcut;
         this.tablePageLength = tablePageLength;
         this.tableCacheRate = tableCacheRate;
+        this.groupTableSortOnGroupEnabled = groupTableSortOnGroupEnabled;
         this.pickerShortcutModifiers = pickerShortcutModifiers;
         this.pickerLookupShortcut = pickerLookupShortcut;
         this.pickerOpenShortcut = pickerOpenShortcut;
@@ -249,6 +257,13 @@ public class UiComponentProperties {
      */
     public double getTableCacheRate() {
         return tableCacheRate;
+    }
+
+    /**
+     * @see #groupTableSortOnGroupEnabled
+     */
+    public boolean isGroupTableSortOnGroupEnabled() {
+        return groupTableSortOnGroupEnabled;
     }
 
     /**

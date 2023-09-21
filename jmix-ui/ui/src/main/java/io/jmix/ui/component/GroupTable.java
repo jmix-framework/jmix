@@ -141,9 +141,8 @@ public interface GroupTable<E> extends Table<E> {
      * Enable/disable automatic sorting on grouping columns when collection of grouping columns
      * is changed (reorder, add or remove grouping columns)
      * @param sortOnGroupEnabled flag whether sorting should be performed when grouping columns are changed.
-     *                          Default value is false
      */
-    @StudioProperty(defaultValue = "false")
+    @StudioProperty
     void setSortOnGroupEnabled(boolean sortOnGroupEnabled);
 
     /**

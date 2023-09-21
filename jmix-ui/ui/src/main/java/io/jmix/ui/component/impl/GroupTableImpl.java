@@ -176,6 +176,7 @@ public class GroupTableImpl<E> extends AbstractTable<JmixGroupTable, E>
         component.setGroupPropertyValueFormatter((groupId, value) ->
                 formatAggregatableGroupPropertyValue((GroupInfo<MetaPropertyPath>) groupId, value)
         );
+        component.setSortOnGroupEnabled(getUiComponentProperties().isGroupTableSortOnGroupEnabled());
     }
 
     protected JmixGroupTable createComponent() {

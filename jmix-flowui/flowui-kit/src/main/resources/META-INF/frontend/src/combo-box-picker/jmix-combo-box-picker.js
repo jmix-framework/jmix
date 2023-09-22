@@ -23,7 +23,7 @@ registerStyles('jmix-combo-box-picker', [],{
     moduleId: 'jmix-combo-box-picker-styles'
 });
 
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.0.3]
+// CAUTION: copied from @vaadin/combo-box [last update Vaadin 24.1.10]
 export class JmixComboBoxPicker extends ComboBox {
 
     static get is() {

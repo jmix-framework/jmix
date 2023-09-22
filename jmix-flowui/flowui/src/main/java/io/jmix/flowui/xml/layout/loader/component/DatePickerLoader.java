@@ -20,6 +20,7 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import org.dom4j.Element;
 
 import java.text.ParseException;
@@ -32,6 +33,7 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
     protected static final String DATE_PATTERN = "yyyy-MM-dd";
 
     protected DataLoaderSupport dataLoaderSupport;
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
     protected TypedDatePicker<?> createComponent() {
@@ -39,9 +41,17 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
     }
 
     @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
+    @Override
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
         componentLoader().loadDatatype(resultComponent, element);
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
         loadResourceString(element, "name", context.getMessageGroup(), resultComponent::setName);
         loadBoolean(element, "opened", resultComponent::setOpened);
@@ -52,7 +62,7 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
         loadDate(element, "max", resultComponent::setMax);
         loadDate(element, "min", resultComponent::setMin);
 
-        componentLoader().loadDateFormat(element, resultComponent::setI18n);
+        componentLoader().loadDatePickerI18n(element, resultComponent::setI18n);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
@@ -94,5 +104,12 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

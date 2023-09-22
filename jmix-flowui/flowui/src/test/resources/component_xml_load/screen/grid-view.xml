@@ -29,8 +29,11 @@
     </data>
     <layout>
         <dataGrid id="dataGrid"
+                  aggregatable="true"
+                  aggregationPosition="BOTTOM"
                   allRowsVisible="true"
                   classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
                   columnReorderingAllowed="true"
                   detailsVisibleOnClick="true"
                   dropMode="BETWEEN"
@@ -88,8 +91,11 @@
         </dataGrid>
 
         <treeDataGrid id="treeDataGrid"
+                      aggregatable="true"
+                      aggregationPosition="BOTTOM"
                       allRowsVisible="true"
                       classNames="cssClassName1, cssClassName2"
+                      css="color: red;"
                       columnReorderingAllowed="true"
                       detailsVisibleOnClick="true"
                       dropMode="BETWEEN"

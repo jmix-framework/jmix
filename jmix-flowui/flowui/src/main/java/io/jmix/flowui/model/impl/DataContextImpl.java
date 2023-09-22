@@ -31,8 +31,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -699,10 +699,6 @@ public class DataContextImpl implements DataContextInternal {
 
         entityReferencesNormalizer.updateReferences(saveContext.getEntitiesToSave());
         updateFetchPlans(saveContext);
-
-        for (Object entity : saveContext.getEntitiesToSave()) {
-            saveContext.getFetchPlans().put(entity, entityStates.getCurrentFetchPlan(entity));
-        }
 
         if (saveDelegate == null) {
             return dataManager.save(saveContext);

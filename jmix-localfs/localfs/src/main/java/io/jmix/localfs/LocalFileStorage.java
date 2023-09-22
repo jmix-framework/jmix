@@ -16,6 +16,7 @@
 
 package io.jmix.localfs;
 
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.FileRef;
@@ -24,6 +25,7 @@ import io.jmix.core.FileStorageException;
 import io.jmix.core.TimeSource;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.annotation.Internal;
+import jakarta.annotation.PreDestroy;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -33,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +45,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -191,9 +193,10 @@ public class LocalFileStorage implements FileStorage {
     }
 
     @Override
-    public FileRef saveStream(String fileName, InputStream inputStream) {
+    public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
         Path relativePath = createRelativeFilePath(fileName);
-        FileRef fileRef = new FileRef(storageName, pathToString(relativePath), fileName);
+        Map<String, String> fileRefParams = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
+        FileRef fileRef = new FileRef(storageName, pathToString(relativePath), fileName, fileRefParams);
         saveStream(fileRef, inputStream);
         return fileRef;
     }

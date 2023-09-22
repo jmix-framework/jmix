@@ -21,13 +21,24 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.listbox.ListBox;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.orderedlayout.Scroller;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.treegrid.TreeGrid;
@@ -37,13 +48,25 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.accordion.JmixAccordion;
 import io.jmix.flowui.component.accordion.JmixAccordionPanel;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
+import io.jmix.flowui.component.image.JmixImage;
+import io.jmix.flowui.component.listbox.JmixListBox;
+import io.jmix.flowui.component.listbox.JmixMultiSelectListBox;
 import io.jmix.flowui.component.loginform.JmixLoginForm;
+import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
+import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
+import io.jmix.flowui.component.scroller.JmixScroller;
+import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
+import io.jmix.flowui.component.tabsheet.JmixTabSheet;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
@@ -54,6 +77,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 
 import org.springframework.lang.Nullable;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -76,9 +100,20 @@ public class UiComponentsImpl implements UiComponents {
         register(TreeDataGrid.class, TreeGrid.class);
         register(JmixAccordion.class, Accordion.class);
         register(JmixAccordionPanel.class, AccordionPanel.class);
+        register(JmixCheckbox.class, Checkbox.class);
+        register(JmixCheckboxGroup.class, CheckboxGroup.class);
+        register(JmixRadioButtonGroup.class, RadioButtonGroup.class);
+        register(JmixImage.class, Image.class);
+        register(JmixListBox.class, ListBox.class);
+        register(JmixMultiSelectListBox.class, MultiSelectListBox.class);
         register(JmixDetails.class, Details.class);
+        register(JmixScroller.class, Scroller.class);
+        register(JmixSplitLayout.class, SplitLayout.class);
         register(JmixButton.class, Button.class);
+        register(JmixSelect.class, Select.class);
         register(JmixComboBox.class, ComboBox.class);
+        register(JmixMultiSelectComboBox.class, MultiSelectComboBox.class);
+        register(JmixTextArea.class, TextArea.class);
         register(TypedTextField.class, TextField.class);
         register(TypedTimePicker.class, TimePicker.class);
         register(TypedDateTimePicker.class, DateTimePicker.class);
@@ -107,12 +142,11 @@ public class UiComponentsImpl implements UiComponents {
     public <T extends Component> T create(ParameterizedTypeReference<T> typeReference) {
         ParameterizedType type = (ParameterizedType) typeReference.getType();
         T component = create((Class<T>) type.getRawType());
-        if (component instanceof SupportsDatatype) {
+        if (component instanceof SupportsDatatype<?> supportsDataTypeComponent) {
             Type[] actualTypeArguments = type.getActualTypeArguments();
-            if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class) {
-                Class actualTypeArgument = (Class) actualTypeArguments[0];
 
-                ((SupportsDatatype<?>) component).setDatatype(datatypeRegistry.find(actualTypeArgument));
+            if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class actualTypeArgument) {
+                supportsDataTypeComponent.setDatatype(datatypeRegistry.find(actualTypeArgument));
             }
         }
         return component;

@@ -18,13 +18,13 @@ package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.applayout.AppLayout;
-import io.jmix.flowui.component.ComponentContainer;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 
 import static io.jmix.flowui.component.UiComponentUtils.findFocusComponent;
@@ -41,9 +41,10 @@ public class FocusComponentInitTask implements ComponentLoader.InitTask {
 
     @Override
     public void execute(ComponentContext context, View<?> view) {
-        if (!(view.getContent() instanceof ComponentContainer)
-                && !(view.getContent() instanceof AppLayout)) {
-            throw new GuiDevelopmentException("View cannot contain components", context.getFullFrameId());
+        if (!(UiComponentUtils.isContainer(view.getContent())
+                || view.getContent() instanceof AppLayout)) {
+            throw new GuiDevelopmentException(View.class.getSimpleName() + " cannot contain components",
+                    context.getFullFrameId());
         }
 
         getFocusComponent().ifPresent(focusable ->

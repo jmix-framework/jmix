@@ -17,11 +17,13 @@
 package io.jmix.security.model;
 
 import org.springframework.lang.Nullable;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class BaseRole {
+public abstract class BaseRole implements Serializable {
     private String name;
     private String code;
     private String source;

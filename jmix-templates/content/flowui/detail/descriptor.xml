@@ -16,7 +16,8 @@ def formXml = api.processSnippet('form.xml',
         ['fetchPlan': detailFetchPlan,
         'api': api,
         'dcId': dcId,
-        'formId': 'form'])
+        'formId': 'form',
+        'asideLabelsPosition': asideLabelsPosition])
 def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         ['view': detailFetchPlan,
         'api': api])

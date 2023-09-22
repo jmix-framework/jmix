@@ -93,8 +93,24 @@ task contentJarIt(type: Jar) {
     }
 }
 
+task contentJarAr(type: Jar) {
+    archiveBaseName = 'jmix-translations-ar'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_ar.properties")
+    }
+}
+
+task contentJarTr(type: Jar) {
+    archiveBaseName = 'jmix-translations-tr'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_tr.properties")
+    }
+}
+
 assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarNl, contentJarZhCn, contentJarRo, contentJarEl, contentJarCkb,
-        contentJarIt)
+        contentJarIt, contentJarAr, contentJarTr)
 
 publishing {
     publications {
@@ -133,6 +149,14 @@ publishing {
         It(MavenPublication) {
             artifactId = 'jmix-translations-it'
             artifact(contentJarIt)
+        }
+        Ar(MavenPublication) {
+            artifactId = 'jmix-translations-ar'
+            artifact(contentJarAr)
+        }
+        Tr(MavenPublication) {
+            artifactId = 'jmix-translations-tr'
+            artifact(contentJarTr)
         }
     }
     if (rootProject.hasProperty('jmixUploadUrl')) {

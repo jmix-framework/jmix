@@ -19,6 +19,7 @@ package io.jmix.flowui.impl;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.di.Instantiator;
 import io.jmix.flowui.Views;
+import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
@@ -36,11 +37,17 @@ public class ViewsImpl implements Views {
     @Override
     public View create(String viewId) {
         ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
-        return create(viewInfo.getControllerClass());
+        return createInternal(viewInfo.getControllerClass());
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends View> T create(Class<T> viewClass) {
+        String id = ViewDescriptorUtils.getInferredViewId(viewClass);
+        return (T) create(id);
+    }
+
+    protected <T extends View> T createInternal(Class<T> viewClass) {
         return Instantiator.get(UI.getCurrent()).getOrCreate(viewClass);
     }
 }

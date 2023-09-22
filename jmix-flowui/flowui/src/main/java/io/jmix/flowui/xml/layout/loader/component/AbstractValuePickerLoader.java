@@ -21,17 +21,28 @@ import io.jmix.flowui.kit.component.valuepicker.ValuePickerBase;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
 public abstract class AbstractValuePickerLoader<T extends ValuePickerBase<?, ?>> extends AbstractComponentLoader<T> {
 
     protected DataLoaderSupport dataLoaderSupport;
     protected ActionLoaderSupport actionLoaderSupport;
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
+
+    @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
 
     @Override
     public void loadComponent() {
         if (resultComponent instanceof SupportsValueSource) {
             getDataLoaderSupport().loadData(((SupportsValueSource<?>) resultComponent), element);
         }
+
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
         componentLoader().loadFormatter(resultComponent, element);
         componentLoader().loadPlaceholder(resultComponent, element);
@@ -63,5 +74,12 @@ public abstract class AbstractValuePickerLoader<T extends ValuePickerBase<?, ?>>
             actionLoaderSupport = applicationContext.getBean(ActionLoaderSupport.class, context);
         }
         return actionLoaderSupport;
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

@@ -17,6 +17,7 @@
 package io.jmix.flowui.data.grid;
 
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
 
@@ -32,6 +33,21 @@ public interface DataGridItems<T> extends DataUnit, HasType<T> {
      * @return unmodifiable collection of items
      */
     Collection<T> getItems();
+
+    /**
+     * @param itemId the item id
+     * @return the item by the given id
+     */
+    @Nullable
+    T getItem(Object itemId);
+
+    /**
+     * @param itemId the item id
+     * @param propertyId the property id
+     * @return the item value
+     */
+    @Nullable
+    Object getItemValue(Object itemId, MetaPropertyPath propertyId);
 
     /**
      * @return the current item contained in the source

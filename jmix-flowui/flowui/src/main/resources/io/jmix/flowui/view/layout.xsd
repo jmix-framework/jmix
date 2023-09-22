@@ -1359,6 +1359,23 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="aggregationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SUM"/>
+            <xs:enumeration value="COUNT"/>
+            <xs:enumeration value="AVG"/>
+            <xs:enumeration value="MIN"/>
+            <xs:enumeration value="MAX"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="aggregationPosition">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="BOTTOM"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="componentSize">
         <xs:union>
             <xs:simpleType>
@@ -1535,6 +1552,56 @@
         <xs:complexContent>
             <xs:extension base="messageValidatorType">
                 <xs:attribute name="regexp" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="bigDecimalFieldValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:sequence>
+                    <xs:element name="digits" minOccurs="0" type="digitsValidatorType"/>
+                    <xs:element name="decimalMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="decimalMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
+                    <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="numberFieldValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:sequence>
+                    <xs:element name="doubleMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="doubleMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="integerFieldValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:sequence>
+                    <xs:element name="digits" minOccurs="0" type="digitsValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
+                    <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2089,9 +2156,14 @@
         <xs:attributeGroup ref="hasId"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="colspan" type="xs:integer"/>
+        <xs:attribute name="css" type="xs:string"/>
 
         <!-- enable XSD extension here -->
         <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+
+    <xs:complexType name="prefixOrSuffixComponent">
+        <xs:group ref="singleLayoutOrComponent" minOccurs="0"/>
     </xs:complexType>
 
     <xs:complexType name="baseAction">
@@ -2210,6 +2282,9 @@
             <xs:extension base="validatableBaseFieldComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:choice>
 
                 <xs:attribute name="value" type="xs:string"/>
@@ -2245,6 +2320,7 @@
                     </xs:element>
 
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -2458,6 +2534,16 @@
         </xs:simpleContent>
     </xs:complexType>
 
+    <xs:complexType name="gridAggregationType">
+        <xs:choice minOccurs="0">
+            <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+        </xs:choice>
+
+        <xs:attribute name="type" type="aggregationType"/>
+        <xs:attribute name="strategyClass" type="xs:string"/>
+        <xs:attribute name="cellTitle" type="resourceString"/>
+    </xs:complexType>
+
     <!-- Components -->
 
     <!-- ListMenu -->
@@ -2483,6 +2569,8 @@
                 <xs:attribute name="itemsPerPageVisible" type="xs:boolean"/>
                 <xs:attribute name="itemsPerPageUnlimitedItemVisible" type="xs:boolean"/>
 
+                <xs:attribute name="autoLoad" type="xs:boolean"/>
+
                 <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
@@ -2494,6 +2582,9 @@
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:choice>
 
                 <xs:attribute name="action" type="xs:string"/>
@@ -2577,9 +2668,10 @@
 
     <!-- Grid.Column-->
     <xs:complexType name="dataGridColumnComponent">
-        <xs:choice minOccurs="0">
-            <xs:group ref="renderers" maxOccurs="0"/>
-        </xs:choice>
+        <xs:sequence minOccurs="0">
+            <xs:element name="aggregation" type="gridAggregationType"/>
+            <xs:group ref="renderers"/>
+        </xs:sequence>
 
         <xs:attribute name="key" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
@@ -2589,6 +2681,7 @@
         <xs:attribute name="frozen" type="xs:boolean"/>
         <xs:attribute name="property" type="xs:string"/>
         <xs:attribute name="sortable" type="xs:boolean"/>
+        <xs:attribute name="filterable" type="xs:boolean"/>
         <xs:attribute name="flexGrow" type="xs:integer"/>
         <xs:attribute name="resizable" type="xs:boolean"/>
         <xs:attribute name="autoWidth" type="xs:boolean"/>
@@ -2617,7 +2710,9 @@
                                 <xs:element name="editorActionsColumn" type="dataGridEditorActionsColumn"
                                             minOccurs="0"/>
                             </xs:sequence>
+
                             <xs:attributeGroup ref="columnsLoadType"/>
+                            <xs:attribute name="filterable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
                 </xs:all>
@@ -2635,6 +2730,8 @@
                 <xs:attribute name="columnReorderingAllowed" type="xs:boolean"/>
                 <xs:attribute name="nestedNullBehavior" type="gridNestedNullBehaviorEnum"/>
                 <xs:attribute name="columnRendering" type="gridColumnRendering"/>
+                <xs:attribute name="aggregatable" type="xs:boolean"/>
+                <xs:attribute name="aggregationPosition" type="aggregationPosition"/>
                 <xs:attribute name="multiSort" type="xs:boolean"/>
                 <xs:attribute name="multiSortPriority" type="gridMultiSortPriority"/>
                 <xs:attribute name="multiSortOnShiftClickOnly" type="xs:boolean"/>
@@ -2678,6 +2775,9 @@
     <xs:complexType name="emailFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="maxLength" type="xs:integer"/>
@@ -2693,6 +2793,9 @@
     <xs:complexType name="passwordFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
@@ -2705,6 +2808,10 @@
     <xs:complexType name="numberFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="numberFieldValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
@@ -2720,6 +2827,10 @@
     <xs:complexType name="bigDecimalFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="bigDecimalFieldValidatorType"/>
+                </xs:sequence>
+
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
         </xs:complexContent>
@@ -2729,6 +2840,10 @@
     <xs:complexType name="integerFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="integerFieldValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
@@ -2811,9 +2926,11 @@
     <xs:complexType name="comboBoxComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
-                <xs:sequence>
-                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
-                    <xs:element name="itemsQuery" minOccurs="0" type="comboBoxItemsQueryType"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="itemsQuery" type="comboBoxItemsQueryType"/>
+
+                    <xs:element name="prefix" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="pattern" type="xs:string"/>
@@ -2843,6 +2960,7 @@
                 <xs:sequence minOccurs="0">
                     <xs:element name="itemsQuery" type="multiSelectComboBoxItemsQueryType"/>
                     <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="validators" type="collectionValidatorType"/>
                 </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -2872,9 +2990,9 @@
     <xs:complexType name="multiSelectComboBoxPickerComponent">
         <xs:complexContent>
             <xs:extension base="multiSelectComboBoxComponent">
-                <xs:sequence>
+                <xs:sequence minOccurs="0">
                     <xs:element name="itemsQuery" type="multiSelectComboBoxItemsQueryType"/>
-                    <xs:element name="actions" minOccurs="0">
+                    <xs:element name="actions">
                         <xs:complexType>
                             <xs:sequence>
                                 <xs:choice maxOccurs="unbounded">
@@ -2894,6 +3012,7 @@
             <xs:extension base="baseComboBoxPickerComponent">
                 <xs:sequence>
                     <xs:element name="itemsQuery" minOccurs="0" type="entityComboBoxItemsQueryType"/>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
                 </xs:sequence>
 
                 <xs:attribute name="metaClass" type="xs:string"/>
@@ -2912,6 +3031,8 @@
                 <xs:sequence>
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="timeDatatypeEnum"/>
@@ -2938,6 +3059,8 @@
                 <xs:sequence>
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
                 <xs:attribute name="name" type="xs:string"/>
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -3103,6 +3226,10 @@
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:choice>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>
@@ -3138,6 +3265,10 @@
     <xs:complexType name="entityPickerComponent">
         <xs:complexContent>
             <xs:extension base="valuePickerComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="metaClass" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
@@ -3159,6 +3290,9 @@
                     </xs:element>
                     <xs:element name="formatter" minOccurs="0" type="formatterType"/>
                     <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
                 <xs:attribute name="invalid" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="xs:string"/>
@@ -3276,6 +3410,11 @@
     <xs:complexType name="tabSheetComponent">
         <xs:complexContent>
             <xs:extension base="baseTabsComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                </xs:sequence>
+
                 <xs:attribute name="themeNames" type="tabSheetThemeNames"/>
             </xs:extension>
         </xs:complexContent>
@@ -3289,6 +3428,7 @@
         </xs:sequence>
 
         <xs:attribute name="themeNames" type="tabThemeNames"/>
+        <xs:attribute name="css" type="xs:string"/>
         <xs:attribute name="flexGrow" type="xs:double"/>
         <xs:attribute name="visible" type="xs:boolean"/>
 
@@ -3303,9 +3443,10 @@
     <xs:complexType name="selectComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
+                <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                    <xs:element name="prefix" type="prefixOrSuffixComponent"/>
+                </xs:sequence>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="emptySelectionCaption" type="resourceString"/>
@@ -3362,6 +3503,20 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="formItemType">
+        <xs:sequence>
+            <xs:group ref="standardComponent"/>
+        </xs:sequence>
+
+        <xs:attribute name="enabled" type="xs:boolean"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="colspan" type="xs:integer"/>
+
+        <xs:attributeGroup ref="hasLabel"/>
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasClassNames"/>
+    </xs:complexType>
+
     <!-- Form-->
     <xs:complexType name="formLayoutComponent">
         <xs:complexContent>
@@ -3369,6 +3524,7 @@
 
                 <xs:sequence>
                     <xs:element name="responsiveSteps" type="responsiveStepsType" minOccurs="0"/>
+                    <xs:element name="formItem" type="formItemType" minOccurs="0"/>
                     <xs:group ref="standardComponent"/>
                 </xs:sequence>
 
@@ -3559,8 +3715,8 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
-                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
-                    <xs:element name="validators" type="constraintValidatorType" minOccurs="0"/>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
                 </xs:sequence>
 
                 <xs:attribute name="highlightActiveLine" type="xs:boolean"/>
@@ -3743,6 +3899,7 @@
 
                 <xs:attribute name="dataLoader" type="xs:string" use="required"/>
                 <xs:attribute name="autoApply" type="xs:boolean"/>
+                <xs:attribute name="applyShortcut" type="xs:string"/>
                 <xs:attribute name="summaryText" type="resourceString"/>
                 <xs:attribute name="themeNames" type="detailsThemeNames"/>
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -3787,6 +3944,7 @@
                 <xs:sequence>
                     <xs:group ref="layoutOrComponent"/>
                     <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
+                    <xs:element name="validators" type="constraintValidatorType" minOccurs="0"/>
                 </xs:sequence>
                 <xs:attribute name="parameterName" type="xs:string"/>
 
@@ -3905,6 +4063,7 @@
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="dataLoadCoordinator" type="dataLoadCoordinatorType" minOccurs="0"/>
                 <xs:element name="urlQueryParameters" type="urlQueryParametersType" minOccurs="0"/>
+                <xs:element name="timer" type="timerType" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -4001,6 +4160,14 @@
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="component" type="xs:string" use="required"/>
         <xs:attribute name="param" type="xs:string"/>
+    </xs:complexType>
+
+    <!--    Timer-->
+    <xs:complexType name="timerType">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="delay" type="xs:integer" use="required"/>
+        <xs:attribute name="autostart" type="xs:boolean"/>
+        <xs:attribute name="repeating" type="xs:boolean"/>
     </xs:complexType>
 
     <!--  -->
@@ -4130,6 +4297,8 @@
             <xs:extension base="baseLayout">
                 <xs:attributeGroup ref="hasId"/>
                 <xs:attribute name="visible" type="xs:boolean"/>
+                <xs:attribute name="colspan" type="xs:integer"/>
+                <xs:attribute name="css" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

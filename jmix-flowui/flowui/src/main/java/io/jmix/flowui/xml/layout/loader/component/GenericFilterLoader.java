@@ -59,6 +59,8 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
 
         getLoaderSupport().loadBoolean(element, "opened", resultComponent::setOpened);
         getLoaderSupport().loadBoolean(element, "autoApply", resultComponent::setAutoApply);
+        componentLoader().loadShortcut(element, "applyShortcut")
+                .ifPresent(resultComponent::setApplyShortcut);
 
         loadDataLoader(resultComponent, element);
         componentLoader().loadResponsiveSteps(resultComponent, element);

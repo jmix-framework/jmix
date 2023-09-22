@@ -110,7 +110,7 @@ public class FormatterLoadFactory {
 
         loaderSupport.loadResourceString(element, "format", context.getMessageGroup(), formatter::setFormat);
         loaderSupport.loadString(element, "type", formatter::setType);
-        loaderSupport.loadBoolean(element, "useUserTimeZone", formatter::setUseUserTimezone);
+        loaderSupport.loadBoolean(element, "useUserTimezone", formatter::setUseUserTimezone);
 
         return formatter;
     }

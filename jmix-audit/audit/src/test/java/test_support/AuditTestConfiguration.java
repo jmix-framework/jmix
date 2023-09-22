@@ -22,11 +22,14 @@ import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
-import io.jmix.core.security.CoreSecurityConfiguration;
+import io.jmix.core.security.InMemoryUserRepository;
+import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -38,18 +41,22 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @ComponentScan
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = AuditConfiguration.class)
-@Import(AuditTestConfiguration.TestSecurityConfiguration.class)
+//@Import(AuditTestConfiguration.TestSecurityConfiguration.class)
 public class AuditTestConfiguration {
 
     @Bean
@@ -133,7 +140,26 @@ public class AuditTestConfiguration {
         return new TransactionTemplate(transactionManager);
     }
 
-    @EnableWebSecurity
-    static class TestSecurityConfiguration extends CoreSecurityConfiguration {
+    @Bean
+    AuthenticationManager authenticationManager(UserRepository userRepository) {
+        List<AuthenticationProvider> providers = new ArrayList<>();
+        SystemAuthenticationProvider systemAuthenticationProvider = new SystemAuthenticationProvider(userRepository);
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userRepository);
+        providers.add(systemAuthenticationProvider);
+        providers.add(daoAuthenticationProvider);
+        return new ProviderManager(providers);
     }
+
+    @Bean
+    public UserRepository userRepository() {
+        return new InMemoryUserRepository();
+    }
+
+//    @EnableWebSecurity
+//    static class TestSecurityConfiguration {
+//    }
+//    @EnableWebSecurity
+//    static class TestSecurityConfiguration extends CoreSecurityConfiguration {
+//    }
 }

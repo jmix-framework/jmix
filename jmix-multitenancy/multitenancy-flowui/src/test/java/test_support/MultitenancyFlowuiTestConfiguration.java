@@ -21,7 +21,6 @@ import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;

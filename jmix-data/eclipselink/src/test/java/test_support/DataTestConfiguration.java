@@ -22,12 +22,15 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.repository.EnableJmixDataRepositories;
-import io.jmix.core.security.CoreSecurityConfiguration;
+import io.jmix.core.security.InMemoryUserRepository;
+import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -39,12 +42,15 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @ComponentScan
@@ -53,9 +59,9 @@ import javax.sql.DataSource;
 @JmixModule(dependsOn = EclipselinkConfiguration.class)
 public class DataTestConfiguration {
 
-    @EnableWebSecurity
-    static class TestSecurityConfiguration extends CoreSecurityConfiguration {
-    }
+//    @EnableWebSecurity
+//    static class TestSecurityConfiguration extends CoreSecurityConfiguration {
+//    }
 
     @Bean
     public MessageSource messageSource(JmixModules modules, Resources resources) {
@@ -142,5 +148,18 @@ public class DataTestConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean
+    AuthenticationManager authenticationManager(UserRepository userRepository) {
+        List<AuthenticationProvider> providers = new ArrayList<>();
+        SystemAuthenticationProvider systemAuthenticationProvider = new SystemAuthenticationProvider(userRepository);
+        providers.add(systemAuthenticationProvider);
+        return new ProviderManager(providers);
+    }
+
+    @Bean
+    public UserRepository userRepository() {
+        return new InMemoryUserRepository();
     }
 }

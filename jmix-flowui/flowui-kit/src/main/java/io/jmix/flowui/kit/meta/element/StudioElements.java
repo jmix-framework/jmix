@@ -128,7 +128,7 @@ public interface StudioElements {
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             properties = {
                     @StudioProperty(xmlAttribute = "cellTitle", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "strategy", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "strategyClass", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.component.AggregationInfo$Type",
                             options = {"SUM", "COUNT", "AVG", "MIN", "MAX"})

@@ -29,11 +29,9 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.searchflowui.view.result.SearchResultsView;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
@@ -44,26 +42,36 @@ import static io.jmix.searchflowui.view.result.SearchResultsView.*;
 public class SearchField extends TypedTextField<String> {
     public static final String SEARCH_FIELD_STYLENAME = "jmix-search-field";
 
-    @Autowired
     protected Notifications notifications;
-    @Autowired
     protected Messages messages;
-    @Autowired
     protected SearchProperties searchProperties;
-    @Autowired
     protected ViewNavigators viewNavigators;
-    @Autowired
     protected DialogWindows dialogWindows;
 
-    //todo add search size parameter?
     protected Icon searchIcon;
     protected SearchStrategy searchStrategy;
     protected List<String> entities;
     protected OpenMode openMode;
+    protected int searchSize;
 
     public SearchField() {
         super();
         addClassName(SEARCH_FIELD_STYLENAME);
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        autowireDependencies();
+
+        initComponent();
+    }
+
+    protected void autowireDependencies() {
+        notifications = applicationContext.getBean(Notifications.class);
+        messages = applicationContext.getBean(Messages.class);
+        searchProperties = applicationContext.getBean(SearchProperties.class);
+        viewNavigators = applicationContext.getBean(ViewNavigators.class);
+        dialogWindows = applicationContext.getBean(DialogWindows.class);
     }
 
     @Override
@@ -91,10 +99,7 @@ public class SearchField extends TypedTextField<String> {
     }
 
     protected void openSearchResultsWindow(String searchText) {
-        SearchContext searchContext = createSearchContext(searchText, entities,
-                searchProperties.getSearchResultPageSize());
-
-        if (openMode == OpenMode.DIALOG) {
+      if (openMode == OpenMode.DIALOG) {
             DialogWindow<SearchResultsView> searchResultsDialog = dialogWindows.view(UiComponentUtils.getView(this),
                             SearchResultsView.class)
                     .build();
@@ -111,15 +116,10 @@ public class SearchField extends TypedTextField<String> {
                     .withQueryParameters(new QueryParameters(
                             Map.of(QUERY_PARAM_VALUE, List.of(this.getValue()),
                                     QUERY_PARAM_ENTITIES, this.getEntities(),
+                                    QUERY_PARAM_SEARCH_SIZE, List.of(String.valueOf(this.getSearchSize())),
                                     QUERY_PARAM_STRATEGY, List.of(this.getSearchStrategy().getName()))))
                     .navigate();
         }
-    }
-
-    protected SearchContext createSearchContext(String value, List<String> entities, int size) {
-        return new SearchContext(value)
-                .setSize(size)
-                .setEntities(entities);
     }
 
     public void performSearch() {
@@ -156,5 +156,13 @@ public class SearchField extends TypedTextField<String> {
 
     public void setSearchStrategy(SearchStrategy searchStrategy) {
         this.searchStrategy = searchStrategy;
+    }
+
+    public int getSearchSize() {
+        return searchSize;
+    }
+
+    public void setSearchSize(int searchSize) {
+        this.searchSize = searchSize;
     }
 }

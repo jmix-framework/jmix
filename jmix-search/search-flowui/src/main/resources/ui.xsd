@@ -27,6 +27,7 @@
                     <xs:attribute name="strategy" type="searchStrategyType"/>
                     <xs:attribute name="entities" type="xs:string"/>
                     <xs:attribute name="openMode" type="openMode"/>
+                    <xs:attribute name="searchSize" type="xs:integer"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

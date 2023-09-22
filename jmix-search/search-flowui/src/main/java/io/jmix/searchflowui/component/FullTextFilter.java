@@ -25,6 +25,7 @@ import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.jpqlfilter.JpqlFilterSupport;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.*;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Strings;
@@ -46,6 +47,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
     protected String parameterName;
     protected SearchStrategy searchStrategy;
     protected SearchStrategyManager searchStrategyManager;
+    protected SearchProperties searchProperties;
     protected String correctWhere;
 
     @Override
@@ -55,6 +57,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         idSerialization = applicationContext.getBean(IdSerialization.class);
         entitySearcher = applicationContext.getBean(EntitySearcher.class);
         searchStrategyManager = applicationContext.getBean(SearchStrategyManager.class);
+        searchProperties = applicationContext.getBean(SearchProperties.class);
     }
 
     @Override
@@ -108,11 +111,11 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
             throw new RuntimeException(FullTextFilter.NAME + " component can only work with CollectionLoader");
         }
         super.setDataLoader(dataLoader);
-        registerDataLoaderPreLoadListener((CollectionLoader) dataLoader);
+        registerDataLoaderPreLoadListener((CollectionLoader<?>) dataLoader);
     }
 
-    private void registerDataLoaderPreLoadListener(CollectionLoader dataLoader) {
-        ((CollectionLoader<?>) dataLoader).addPreLoadListener(preLoadEvent -> {
+    private void registerDataLoaderPreLoadListener(CollectionLoader<?> dataLoader) {
+        dataLoader.addPreLoadListener(preLoadEvent -> {
             String value = valueComponent.getValue();
             if (value != null && !"".equals(value)) {
                 List<Id> ids = performFullTextSearch(value);
@@ -134,15 +137,15 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
     private List<Id> performFullTextSearch(String searchTerm) {
         SearchContext searchContext = new SearchContext(searchTerm);
         searchContext.setEntities(getDataLoader().getContainer().getEntityMetaClass().getName());
+        searchContext.setSize(searchProperties.getSearchResultPageSize());
         SearchResult searchResult = entitySearcher.search(searchContext,
                 searchStrategy != null ? searchStrategy : searchStrategyManager.getDefaultSearchStrategy());
-        List<Id> ids = searchResult.getAllEntries().stream()
+        return searchResult.getAllEntries().stream()
                 .map(searchResultEntry -> {
                     String docId = searchResultEntry.getDocId();
                     return idSerialization.stringToId(docId);
                 })
                 .collect(Collectors.toList());
-        return ids;
     }
 
     /**

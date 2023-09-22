@@ -26,6 +26,7 @@ public class SearchFieldContext {
     protected List<String> entities;
     protected String value;
     protected OpenMode openMode;
+    protected int searchSize;
 
     public SearchFieldContext() {
     }
@@ -35,6 +36,7 @@ public class SearchFieldContext {
         this.entities = searchField.entities;
         this.value = searchField.getValue();
         this.openMode = searchField.getOpenMode();
+        this.searchSize = searchField.getSearchSize();
     }
 
     public OpenMode getOpenMode() {
@@ -67,5 +69,13 @@ public class SearchFieldContext {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public int getSearchSize() {
+        return searchSize;
+    }
+
+    public void setSearchSize(int searchSize) {
+        this.searchSize = searchSize;
     }
 }

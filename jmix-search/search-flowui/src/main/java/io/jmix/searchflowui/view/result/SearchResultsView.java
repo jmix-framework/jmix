@@ -55,6 +55,7 @@ public class SearchResultsView extends StandardView {
     public static final String QUERY_PARAM_VALUE = "value";
     public static final String QUERY_PARAM_ENTITIES = "entities";
     public static final String QUERY_PARAM_STRATEGY = "strategy";
+    public static final String QUERY_PARAM_SEARCH_SIZE = "searchSize";
 
     protected static final Map<String, String> systemFieldLabels = ImmutableMap.<String, String>builder()
             .put("_file_name", "fileName")
@@ -83,8 +84,6 @@ public class SearchResultsView extends StandardView {
     @Autowired
     protected SearchStrategyManager searchStrategyManager;
     @Autowired
-    protected SearchProperties searchProperties;
-    @Autowired
     protected DialogWindows dialogWindows;
     @Autowired
     private Notifications notifications;
@@ -92,6 +91,7 @@ public class SearchResultsView extends StandardView {
     protected SearchResult searchResult;
     protected SearchStrategy searchStrategy;
     protected List<String> entities = Collections.emptyList();
+    protected int searchSize;
     protected String value;
     protected SearchFieldContext searchFieldContext;
 
@@ -100,10 +100,15 @@ public class SearchResultsView extends StandardView {
         super.beforeEnter(event);
         parseQueryParameters(event.getLocation().getQueryParameters().getParameters());
         initSearchFieldContext();
-        SearchContext searchContext = createSearchContext(value, entities, searchProperties.getSearchResultPageSize());
+        SearchContext searchContext = createSearchContext(value, entities, searchSize);
 
         searchResult = entitySearcher.search(searchContext, searchStrategy);
         handleSearchResult(searchResult);
+    }
+
+    protected SearchContext createSearchContext(SearchFieldContext searchFieldContext) {
+        return createSearchContext(searchFieldContext.getValue(), searchFieldContext.getEntities(),
+                searchFieldContext.getSearchSize());
     }
 
     protected SearchContext createSearchContext(String value, List<String> entities, int size) {
@@ -112,16 +117,12 @@ public class SearchResultsView extends StandardView {
                 .setEntities(entities);
     }
 
-    protected SearchContext createSearchContext(SearchFieldContext searchFieldContext) {
-        return createSearchContext(searchFieldContext.getValue(), searchFieldContext.getEntities(),
-                searchProperties.getSearchResultPageSize());
-    }
-
     protected void initSearchFieldContext() {
         searchFieldContext = new SearchFieldContext();
         searchFieldContext.setEntities(entities);
         searchFieldContext.setValue(value);
         searchFieldContext.setSearchStrategy(searchStrategy);
+        searchFieldContext.setSearchSize(searchSize);
         //only happens when opened in navigation mode
         searchFieldContext.setOpenMode(OpenMode.NAVIGATION);
     }
@@ -139,6 +140,11 @@ public class SearchResultsView extends StandardView {
         }
         if (parameters.containsKey(QUERY_PARAM_ENTITIES)) {
             entities = parameters.get(QUERY_PARAM_ENTITIES);
+        }
+        if (parameters.containsKey(QUERY_PARAM_SEARCH_SIZE)) {
+            parameters.get(QUERY_PARAM_SEARCH_SIZE).stream()
+                    .findAny()
+                    .ifPresent(parameter -> searchSize = Integer.parseInt(parameter));
         }
     }
 
@@ -201,7 +207,7 @@ public class SearchResultsView extends StandardView {
         searchField.setValue(searchFieldContext.getValue());
         searchField.setEntities(searchFieldContext.getEntities());
         searchField.setOpenMode(searchFieldContext.getOpenMode());
-        searchField.setHelperText(messageBundle.formatMessage("searchResultsSize", searchResult.getSize()));
+        searchField.setHelperText(messageBundle.formatMessage("searchResultsSize", searchResult.getSize(), searchResult.getTotalHits()));
         searchField.setWidth("100%");
         searchField.setMaxWidth("50em");
         return searchField;
@@ -239,7 +245,7 @@ public class SearchResultsView extends StandardView {
         verticalLayout.setPadding(false);
         verticalLayout.setSpacing(false);
         verticalLayout.getThemeList().add("spacing-s");
-        verticalLayout.setMargin(true);
+        verticalLayout.addClassName("mt-l");
 
         JmixButton instanceBtn = createInstanceButton(entry.getEntityName(), entry);
         verticalLayout.add(instanceBtn);

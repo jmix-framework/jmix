@@ -19,6 +19,7 @@ package io.jmix.searchflowui.loader;
 import com.google.common.base.Strings;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.xml.layout.loader.component.TextFieldLoader;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchflowui.component.SearchField;
@@ -35,6 +36,7 @@ public class SearchFieldLoader extends TextFieldLoader {
     @Override
     public void loadComponent() {
         super.loadComponent();
+        loadSearchSize((SearchField) resultComponent, element);
         loadEntities((SearchField) resultComponent, element);
         loadStrategy((SearchField) resultComponent, element);
         loadOpenMode((SearchField) resultComponent, element);
@@ -52,6 +54,18 @@ public class SearchFieldLoader extends TextFieldLoader {
                     .collect(Collectors.toList());
         }
         component.setEntities(entities);
+    }
+    protected void loadSearchSize(SearchField component, Element element) {
+        String searchSizeString = element.attributeValue("searchSize");
+        SearchProperties searchProperties = applicationContext.getBean(SearchProperties.class);
+
+        int searchSize;
+        if (Strings.isNullOrEmpty(searchSizeString)) {
+            searchSize = searchProperties.getSearchResultPageSize();
+        } else {
+            searchSize = Integer.parseInt(searchSizeString);
+        }
+        component.setSearchSize(searchSize);
     }
     protected void loadStrategy(SearchField component, Element element) {
         String strategyName = element.attributeValue("strategy");

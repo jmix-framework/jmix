@@ -20,15 +20,20 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.SettingsFacet;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
+import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
 import io.jmix.flowui.facet.settings.ViewSettings;
 import io.jmix.flowui.facet.settings.ViewSettingsJson;
 import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
+import io.jmix.flowui.view.ViewFacets;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +49,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     private static final Logger log = LoggerFactory.getLogger(SettingsFacetImpl.class);
 
+    protected SettingsFacetUrlQueryParametersHelper settingsHelper;
     protected ViewControllerReflectionInspector reflectionInspector;
     protected ViewSettingsComponentManager settingsManager;
     protected UserSettingsCache userSettingsCache;
@@ -63,9 +69,13 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     protected Consumer<SettingsContext> applyDataLoadingSettingsDelegate;
     protected Consumer<SettingsContext> saveSettingsDelegate;
 
-    public SettingsFacetImpl(ViewControllerReflectionInspector reflectionInspector,
+    protected QueryParameters viewQueryParameters;
+
+    public SettingsFacetImpl(SettingsFacetUrlQueryParametersHelper settingsHelper,
+                             ViewControllerReflectionInspector reflectionInspector,
                              @Autowired(required = false) UserSettingsCache userSettingsCache,
                              @Autowired(required = false) ViewSettingsComponentManager settingsManager) {
+        this.settingsHelper = settingsHelper;
         this.reflectionInspector = reflectionInspector;
         this.settingsManager = settingsManager;
         this.userSettingsCache = userSettingsCache;
@@ -90,12 +100,16 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     public void applySettings() {
         Collection<Component> components = getManagedComponents();
 
+        components = excludeUrlQueryParametersFacetComponents(components);
+
         applyViewSettings(components);
     }
 
     @Override
     public void applyDataLoadingSettings() {
         Collection<Component> components = getManagedComponents();
+
+        components = excludeUrlQueryParametersFacetComponents(components);
 
         applyDataLoadingViewSettings(components);
     }
@@ -133,10 +147,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     @Override
     public Set<String> getExcludedComponentIds() {
-        if (excludedComponentIds == null) {
-            return Collections.emptySet();
-        }
-        return excludedComponentIds;
+        return Objects.requireNonNullElse(excludedComponentIds, Collections.emptySet());
     }
 
     @Override
@@ -146,9 +157,9 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
         Collection<Component> components = Collections.emptyList();
 
         if (auto) {
-            components = UiComponentUtils.getComponents(Objects.requireNonNull(getOwner()).getContent());
+            components = UiComponentUtils.getComponents(Objects.requireNonNull(getView()).getContent());
         } else if (CollectionUtils.isNotEmpty(componentIds)) {
-            components = UiComponentUtils.getComponents(Objects.requireNonNull(getOwner()).getContent())
+            components = UiComponentUtils.getComponents(Objects.requireNonNull(getView()).getContent())
                     .stream()
                     .filter(c -> componentIds.contains(c.getId().orElse(null)))
                     .collect(Collectors.toList());
@@ -245,13 +256,12 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     }
 
     protected void subscribeViewLifecycle() {
-        checkAttachedToView();
-        // Used only to hide inspection, cannot be null here
-        Objects.requireNonNull(getOwner());
+        View<?> view = getView();
 
-        beforeShowListener = new ViewEventListener(getOwner(), View.BeforeShowEvent.class, this::onViewBeforeShow);
-        readyListener = new ViewEventListener(getOwner(), View.ReadyEvent.class, this::onViewReady);
-        detachListener = new ViewEventListener(getOwner(), DetachEvent.class, this::onViewDetach);
+        beforeShowListener = new ViewEventListener(view, View.BeforeShowEvent.class, this::onViewBeforeShow);
+        readyListener = new ViewEventListener(view, View.ReadyEvent.class, this::onViewReady);
+        detachListener = new ViewEventListener(view, DetachEvent.class, this::onViewDetach);
+        detachListener = new ViewEventListener(view, View.QueryParametersChangeEvent.class, this::onQueryParametersChange);
     }
 
     protected void onViewBeforeShow(ComponentEvent<?> event) {
@@ -284,6 +294,12 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
         }
     }
 
+    protected void onQueryParametersChange(ComponentEvent<?> event) {
+        if (event instanceof View.QueryParametersChangeEvent) {
+            viewQueryParameters = ((View.QueryParametersChangeEvent) event).getQueryParameters();
+        }
+    }
+
     protected void applyViewSettings(Collection<Component> components) {
         if (isSettingsEnabled()) {
             settingsManager.applySettings(components, viewSettings);
@@ -313,10 +329,48 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
         return settingsManager != null;
     }
 
-    protected SettingsContext createSettingsContext() {
+    protected Collection<Component> excludeUrlQueryParametersFacetComponents(Collection<Component> components) {
+        Collection<Component> resultComponents = new ArrayList<>(components);
+        View<?> view = getView();
+
+        if (viewQueryParameters == null
+                || viewQueryParameters.getParameters().isEmpty()) {
+            return resultComponents;
+        }
+
+        ViewFacets viewFacets = ViewControllerUtils.getViewFacets(view);
+        List<UrlQueryParametersFacet> urlQueryFacets = viewFacets.getFacets()
+                .filter(f -> f instanceof UrlQueryParametersFacet)
+                .map(f -> (UrlQueryParametersFacet) f)
+                .toList();
+
+        if (urlQueryFacets.isEmpty()) {
+            return resultComponents;
+        }
+
+        List<UrlQueryParametersFacet.Binder> binders = new ArrayList<>();
+        urlQueryFacets.forEach(f -> binders.addAll(f.getBinders()));
+
+        for (UrlQueryParametersFacet.Binder binder : binders) {
+            if (!settingsHelper.containsParametersForBinder(viewQueryParameters, binder)) {
+                continue;
+            }
+            settingsHelper.getComponentFromBinder(binder)
+                    .ifPresent(resultComponents::remove);
+        }
+
+        return resultComponents;
+    }
+
+    protected View<?> getView() {
         checkAttachedToView();
+
         // Used only to hide inspection, cannot be null here
-        View<?> owner = Objects.requireNonNull(getOwner());
+        return Objects.requireNonNull(getOwner());
+    }
+
+    protected SettingsContext createSettingsContext() {
+        View<?> owner = getView();
 
         return new SettingsContext(owner, getManagedComponents(), viewSettings);
     }

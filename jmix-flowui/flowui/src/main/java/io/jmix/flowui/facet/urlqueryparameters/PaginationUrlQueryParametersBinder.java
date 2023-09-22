@@ -18,6 +18,7 @@ package io.jmix.flowui.facet.urlqueryparameters;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
@@ -102,5 +103,14 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
 
     protected Optional<PaginationDataLoader> getPaginationLoader() {
         return Optional.ofNullable(pagination.getPaginationLoader());
+    }
+
+    @Nullable
+    @Override
+    public Component getComponent() {
+        if (pagination instanceof Component component) {
+            return component;
+        }
+        return null;
     }
 }

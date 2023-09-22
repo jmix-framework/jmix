@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.impl.SettingsFacetImpl;
+import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
 import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector;
@@ -39,15 +40,18 @@ import java.util.stream.Collectors;
 public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
 
     protected LoaderSupport loaderSupport;
+    protected SettingsFacetUrlQueryParametersHelper settingsHelper;
     protected ViewControllerReflectionInspector reflectionInspector;
     protected ViewSettingsComponentManager settingsManager;
     protected UserSettingsCache userSettingsCache;
 
     public SettingsFacetProvider(LoaderSupport loaderSupport,
+                                 SettingsFacetUrlQueryParametersHelper settingsHelper,
                                  ViewControllerReflectionInspector reflectionInspector,
                                  @Autowired(required = false) UserSettingsCache userSettingsCache,
                                  @Autowired(required = false) ViewSettingsComponentManager settingsManager) {
         this.loaderSupport = loaderSupport;
+        this.settingsHelper = settingsHelper;
         this.reflectionInspector = reflectionInspector;
         this.settingsManager = settingsManager;
         this.userSettingsCache = userSettingsCache;
@@ -60,7 +64,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
 
     @Override
     public SettingsFacet create() {
-        return new SettingsFacetImpl(reflectionInspector, userSettingsCache, settingsManager);
+        return new SettingsFacetImpl(settingsHelper, reflectionInspector, userSettingsCache, settingsManager);
     }
 
     @Override

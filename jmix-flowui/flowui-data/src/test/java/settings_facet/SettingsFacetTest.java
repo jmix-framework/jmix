@@ -16,12 +16,10 @@
 
 package settings_facet;
 
-import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.facet.settings.component.DataGridSettings;
 import io.jmix.flowui.facet.settings.component.JmixDetailsSettings;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
-import io.jmix.flowui.testassist.UiTestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

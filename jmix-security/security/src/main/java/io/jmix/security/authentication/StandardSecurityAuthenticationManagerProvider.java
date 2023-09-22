@@ -16,7 +16,7 @@
 
 package io.jmix.security.authentication;
 
-import io.jmix.core.security.AddonAuthenticationManagerSupplier;
+import io.jmix.core.security.AddonAuthenticationManagerProvider;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -26,17 +26,17 @@ import org.springframework.security.authentication.ProviderManager;
 import java.util.List;
 
 /**
- * The default AddonAuthenticationManagerSupplier supplier that provides AuthenticationManager used by basic
+ * The default AddonAuthenticationManagerProvider that provides AuthenticationManager used by basic
  * application.
  */
-public class StandardAuthenticationManagerSupplier implements AddonAuthenticationManagerSupplier {
+public class StandardSecurityAuthenticationManagerProvider implements AddonAuthenticationManagerProvider {
 
     protected StandardAuthenticationProvidersProducer providersProducer;
 
     protected ApplicationEventPublisher publisher;
 
-    public StandardAuthenticationManagerSupplier(StandardAuthenticationProvidersProducer providersProducer,
-                                                 ApplicationEventPublisher publisher) {
+    public StandardSecurityAuthenticationManagerProvider(StandardAuthenticationProvidersProducer providersProducer,
+                                                         ApplicationEventPublisher publisher) {
         this.providersProducer = providersProducer;
         this.publisher = publisher;
     }

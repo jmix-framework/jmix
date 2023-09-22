@@ -16,23 +16,23 @@
 
 package io.jmix.core.security.impl;
 
-import io.jmix.core.security.AddonAuthenticationManagerSupplier;
-import io.jmix.core.security.AuthenticationManagerSupplier;
+import io.jmix.core.security.AddonAuthenticationManagerProvider;
+import io.jmix.core.security.AuthenticationManagerProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import java.util.List;
 
-public class AuthenticationManagerSupplierImpl implements AuthenticationManagerSupplier {
+public class AuthenticationManagerProviderImpl implements AuthenticationManagerProvider {
 
-    protected List<AddonAuthenticationManagerSupplier> suppliers;
+    protected List<AddonAuthenticationManagerProvider> providers;
 
-    public AuthenticationManagerSupplierImpl(List<AddonAuthenticationManagerSupplier> suppliers) {
-        this.suppliers = suppliers;
+    public AuthenticationManagerProviderImpl(List<AddonAuthenticationManagerProvider> providers) {
+        this.providers = providers;
     }
 
     @Override
     public AuthenticationManager getAuthenticationManager() {
-        //return AuthenticationProvider from the supplier with the highest order
-        return suppliers.get(0).getAuthenticationManager();
+        //return AuthenticationProvider from the provider with the highest order
+        return providers.get(0).getAuthenticationManager();
     }
 }

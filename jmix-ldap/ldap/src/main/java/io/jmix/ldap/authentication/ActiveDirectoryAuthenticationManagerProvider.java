@@ -16,23 +16,22 @@
 
 package io.jmix.ldap.authentication;
 
-import io.jmix.core.security.AddonAuthenticationManagerSupplier;
+import io.jmix.core.security.AddonAuthenticationManagerProvider;
 import io.jmix.ldap.LdapProperties;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
 import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
-import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
+import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 import java.util.List;
 
-public class LdapAuthenticationManagerSupplier implements AddonAuthenticationManagerSupplier {
+public class ActiveDirectoryAuthenticationManagerProvider implements AddonAuthenticationManagerProvider {
 
     protected StandardAuthenticationProvidersProducer providersProducer;
 
@@ -40,49 +39,40 @@ public class LdapAuthenticationManagerSupplier implements AddonAuthenticationMan
 
     protected LdapProperties ldapProperties;
 
-    protected LdapContextSource ldapContextSource;
-
     protected UserDetailsContextMapper ldapUserDetailsContextMapper;
 
     protected JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper;
 
-    protected LdapAuthoritiesPopulator ldapAuthoritiesPopulator;
-
-    public LdapAuthenticationManagerSupplier(StandardAuthenticationProvidersProducer providersProducer,
-                                             ApplicationEventPublisher publisher,
-                                             LdapProperties ldapProperties,
-                                             LdapContextSource ldapContextSource,
-                                             UserDetailsContextMapper ldapUserDetailsContextMapper,
-                                             JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper,
-                                             LdapAuthoritiesPopulator ldapAuthoritiesPopulator) {
+    public ActiveDirectoryAuthenticationManagerProvider(StandardAuthenticationProvidersProducer providersProducer,
+                                                        ApplicationEventPublisher publisher,
+                                                        LdapProperties ldapProperties,
+                                                        UserDetailsContextMapper ldapUserDetailsContextMapper,
+                                                        JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper) {
         this.providersProducer = providersProducer;
         this.publisher = publisher;
         this.ldapProperties = ldapProperties;
-        this.ldapContextSource = ldapContextSource;
         this.ldapUserDetailsContextMapper = ldapUserDetailsContextMapper;
         this.grantedAuthoritiesMapper = grantedAuthoritiesMapper;
-        this.ldapAuthoritiesPopulator = ldapAuthoritiesPopulator;
     }
 
     @Override
     public AuthenticationManager getAuthenticationManager() {
-        LdapBindAuthenticationManagerFactory factory = new LdapBindAuthenticationManagerFactory(ldapContextSource);
-        factory.setUserSearchBase(ldapProperties.getUserSearchBase());
-        factory.setUserSearchFilter(ldapProperties.getUserSearchFilter());
-        factory.setLdapAuthoritiesPopulator(ldapAuthoritiesPopulator);
-        factory.setUserDetailsContextMapper(ldapUserDetailsContextMapper);
-        factory.setAuthoritiesMapper(grantedAuthoritiesMapper);
-
         List<AuthenticationProvider> providers = providersProducer.getStandardProviders();
-
-        AuthenticationManager authenticationManager = factory.createAuthenticationManager();
-        if (authenticationManager instanceof ProviderManager) {
-            providers.addAll(((ProviderManager) authenticationManager).getProviders());
-        } else {
-            throw new IllegalStateException("Cannot get providers from default LDAP authentication manager");
-        }
+        providers.add(activeDirectoryLdapAuthenticationProvider());
         ProviderManager providerManager = new ProviderManager(providers);
         providerManager.setAuthenticationEventPublisher(new DefaultAuthenticationEventPublisher(publisher));
         return providerManager;
+    }
+
+    protected AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
+        String urls = StringUtils.join(ldapProperties.getUrls(), StringUtils.SPACE);
+        ActiveDirectoryLdapAuthenticationProvider authenticationProvider =
+                new ActiveDirectoryLdapAuthenticationProvider(ldapProperties.getActiveDirectoryDomain(), urls,
+                        ldapProperties.getUserSearchBase());
+        authenticationProvider.setConvertSubErrorCodesToExceptions(true);
+        authenticationProvider.setUserDetailsContextMapper(ldapUserDetailsContextMapper);
+        authenticationProvider.setAuthoritiesMapper(grantedAuthoritiesMapper);
+        authenticationProvider.setSearchFilter(ldapProperties.getUserSearchFilter());
+        return authenticationProvider;
     }
 }

@@ -372,6 +372,7 @@ public interface StudioElements {
             name = "FormItem",
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.FormItem",
             xmlElement = "formItem",
+            target = {"com.vaadin.flow.component.formlayout.FormLayout"},
             possibleChildren = "com.vaadin.flow.component.Component",
             maxCountOfChildren = 1,
             visible = true,

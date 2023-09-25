@@ -19,12 +19,14 @@ package io.jmix.flowui.xml.layout.loader.component;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
 import java.math.BigDecimal;
 
 public class BigDecimalFieldLoader extends AbstractComponentLoader<JmixBigDecimalField> {
 
     protected DataLoaderSupport dataLoaderSupport;
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
     protected JmixBigDecimalField createComponent() {
@@ -32,8 +34,16 @@ public class BigDecimalFieldLoader extends AbstractComponentLoader<JmixBigDecima
     }
 
     @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
+    @Override
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
         loadDouble(element, "value")
                 .ifPresent(aDouble -> resultComponent.setValue(BigDecimal.valueOf(aDouble)));
@@ -66,5 +76,12 @@ public class BigDecimalFieldLoader extends AbstractComponentLoader<JmixBigDecima
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

@@ -43,6 +43,24 @@ public class JmixSimplePagination extends AbstractPagination {
         super(SIMPLE_PAGINATION_CLASS_NAME);
     }
 
+    /**
+     * @return whether items count should be loaded automatically
+     */
+    public boolean isAutoLoad() {
+        return autoLoad;
+    }
+
+    /**
+     * Sets whether items count should be loaded automatically. When the autoload is disabled the component
+     * doesn't know the total count of items and shows a button with {@code [?]}. When it's enabled the component
+     * makes a query to get the total count of items and shows it. The default value is {@code false}.
+     *
+     * @param autoLoad pass true to enable autoload, or false otherwise
+     */
+    public void setAutoLoad(boolean autoLoad) {
+        this.autoLoad = autoLoad;
+    }
+
     @Override
     protected Div initContent() {
         Div content = super.initContent();

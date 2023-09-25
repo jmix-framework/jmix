@@ -68,12 +68,12 @@ class TextAreaXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxLength == 50
@@ -85,7 +85,6 @@ class TextAreaXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll([TextAreaVariant.LUMO_SMALL.getVariantName(),

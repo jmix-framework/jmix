@@ -50,12 +50,12 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
 
             autoApply
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             value == "1337"
             !enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             labelPosition == SupportsLabelPosition.LabelPosition.TOP
             labelVisible
@@ -68,7 +68,6 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
             parameterName == "parameterNameRcftvgy"
             !readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["themeNames1", "themeNames2"])
@@ -125,13 +124,13 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
 
             autoApply
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             //noinspection GrEqualsBetweenInconvertibleTypes
             value == true
             !enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             labelPosition == SupportsLabelPosition.LabelPosition.TOP
             labelVisible
@@ -142,7 +141,6 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
             parameterName == "parameterNameAsdsd"
             !readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["themeNames1", "themeNames2"])
@@ -202,6 +200,7 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
 
             autoApply
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             !enabled
             operationTextVisible
             summaryText == "summaryTextString"

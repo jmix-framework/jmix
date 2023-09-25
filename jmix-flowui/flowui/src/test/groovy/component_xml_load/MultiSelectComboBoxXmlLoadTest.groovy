@@ -81,12 +81,12 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -97,7 +97,6 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             (it as HasTitle).getTitle() == "titleString"

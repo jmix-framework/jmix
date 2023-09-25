@@ -91,13 +91,13 @@ class IntegerFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "IntegerField attributes will be loaded"
         verifyAll(view.integerFieldId) {
             id.get() == "integerFieldId"
-            !invalid
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
             autocorrect
             autofocus
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
@@ -114,7 +114,6 @@ class IntegerFieldXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             step == 10
             tabIndex == 3

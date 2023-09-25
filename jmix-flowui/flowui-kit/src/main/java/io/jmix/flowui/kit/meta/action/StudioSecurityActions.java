@@ -50,6 +50,36 @@ public interface StudioSecurityActions {
     )
     void showRoleAssignmentsAction();
 
+
+    @StudioAction(
+            type = "sec_showUserSubstitutions",
+            description = "Shows the user substitutions",
+            classFqn = "io.jmix.securityflowui.action.ShowUserSubstitutionsAction",
+            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
+                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
+                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
+                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "SHIELD",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
+                            initialValue = "showUserSubstitutions"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
+                            defaultValue = "msg:///actions.showUserSubstitutions"),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
+            },
+            items = {
+                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+    )
+    void showUserSubstitutionsAction();
+
     @StudioAction(
             type = "sec_assignToUsers",
             description = "Assign the role to selected users",

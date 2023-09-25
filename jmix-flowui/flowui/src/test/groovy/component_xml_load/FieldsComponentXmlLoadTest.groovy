@@ -76,6 +76,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "checkBoxId"
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             ariaLabel.get() == "ariaLabelString"
             enabled
             height == "50px"
@@ -86,7 +87,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minHeight == "40px"
             minWidth == "80px"
             readOnly
-            requiredIndicatorVisible
             tabIndex == 3
             value
             visible
@@ -132,12 +132,12 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -149,7 +149,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             allowedCharPattern == "charPattern"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
@@ -182,14 +181,13 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             allowedCharPattern == "charPattern"
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             datatype.class == LocalDateDatatype
             i18n.dateFormats.containsAll(["yyyy-MM-dd", "MM/dd/yyyy", "dd.MM.yyyy"])
             enabled
-            errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             max == LocalDate.of(2023, 7, 7)
             maxHeight == "55px"
@@ -202,7 +200,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
@@ -235,13 +232,12 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             allowedCharPattern == "charPattern"
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             datatype.class == LocalTimeDatatype
             enabled
-            errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             max == LocalTime.of(18, 0)
             maxHeight == "55px"
@@ -252,7 +248,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             step == Duration.ofMinutes(15)
             tabIndex == 3
@@ -284,14 +279,13 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "dateTimePickerId"
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             datatype.class == DateTimeDatatype
             datePlaceholder == "datePlaceholderString"
             datePickerI18n.dateFormats.containsAll(["yyyy-MM-dd", "MM/dd/yyyy", "dd.MM.yyyy"])
             enabled
-            errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             max == LocalDateTime.of(2023, 7, 7, 10, 15, 30)
             maxHeight == "55px"
@@ -301,7 +295,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             step == Duration.ofMinutes(15)
             tabIndex == 3
@@ -333,11 +326,11 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         then: "RadioButtonGroup will be loaded with the value of the property"
         verifyAll(componentView.radioButtonGroupId) {
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             errorMessage == null
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -345,7 +338,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             !readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             themeNames.containsAll([RadioGroupVariant.LUMO_VERTICAL.name()])
             value == order.number
@@ -367,13 +359,12 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "selectId"
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             emptySelectionAllowed
             emptySelectionCaption == "emptySelectionString"
             enabled
-            errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -381,7 +372,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             placeholder == "placeholderString"
             readOnly
-            requiredIndicatorVisible
             tabIndex == 3
             value == order.number
             visible

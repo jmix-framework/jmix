@@ -30,25 +30,21 @@ import io.jmix.core.security.event.UserDisabledEvent;
 import io.jmix.core.security.event.UserPasswordResetEvent;
 import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.security.authentication.AcceptsGrantedAuthorities;
-import io.jmix.security.authentication.RoleGrantedAuthority;
-import io.jmix.security.model.ResourceRole;
-import io.jmix.security.model.RowLevelRole;
-import io.jmix.security.role.ResourceRoleRepository;
-import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
-import org.springframework.lang.Nullable;
-import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -71,10 +67,6 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected ResourceRoleRepository resourceRoleRepository;
-    @Autowired
-    protected RowLevelRoleRepository rowLevelRoleRepository;
-    @Autowired
     protected RoleAssignmentRepository roleAssignmentRepository;
     @Autowired
     protected PasswordEncoder passwordEncoder;
@@ -82,6 +74,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     protected PersistentTokenRepository tokenRepository;
     @Autowired
     protected ApplicationEventPublisher eventPublisher;
+    @Autowired
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
     /**
      * Helps create authorities from roles.
@@ -94,8 +88,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
          * Adds a resource role by its code.
          */
         public GrantedAuthoritiesBuilder addResourceRole(String code) {
-            ResourceRole role = resourceRoleRepository.getRoleByCode(code);
-            RoleGrantedAuthority authority = RoleGrantedAuthority.ofResourceRole(role);
+            GrantedAuthority authority = roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(code);
             authorities.add(authority);
             return this;
         }
@@ -104,8 +97,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
          * Adds a row-level role by its code.
          */
         public GrantedAuthoritiesBuilder addRowLevelRole(String code) {
-            RowLevelRole role = rowLevelRoleRepository.getRoleByCode(code);
-            RoleGrantedAuthority authority = RoleGrantedAuthority.ofRowLevelRole(role);
+            GrantedAuthority authority = roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(code);
             authorities.add(authority);
             return this;
         }
@@ -260,15 +252,9 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     protected GrantedAuthority createAuthority(RoleAssignment roleAssignment) {
         GrantedAuthority authority = null;
         if (RoleAssignmentRoleType.RESOURCE.equals(roleAssignment.getRoleType())) {
-            ResourceRole role = resourceRoleRepository.findRoleByCode(roleAssignment.getRoleCode());
-            if (role != null) {
-                authority = RoleGrantedAuthority.ofResourceRole(role);
-            }
+            authority = roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(roleAssignment.getRoleCode());
         } else if (RoleAssignmentRoleType.ROW_LEVEL.equals(roleAssignment.getRoleType())) {
-            RowLevelRole role = rowLevelRoleRepository.findRoleByCode(roleAssignment.getRoleCode());
-            if (role != null) {
-                authority = RoleGrantedAuthority.ofRowLevelRole(role);
-            }
+            authority = roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(roleAssignment.getRoleCode());
         }
         return authority;
     }

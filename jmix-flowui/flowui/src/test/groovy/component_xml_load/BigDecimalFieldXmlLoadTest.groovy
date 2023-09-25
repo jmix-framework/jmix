@@ -59,13 +59,13 @@ class BigDecimalFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "BigDecimalField attributes will be loaded"
         verifyAll(componentView.bigDecimalFieldId) {
             id.get() == "bigDecimalFieldId"
-            !invalid
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
             autocorrect
             autofocus
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
@@ -79,7 +79,6 @@ class BigDecimalFieldXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])

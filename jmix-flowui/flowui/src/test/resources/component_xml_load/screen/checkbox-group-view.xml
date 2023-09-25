@@ -33,6 +33,7 @@
     <layout>
         <checkboxGroup id="checkboxGroup"
                        classNames="className, className1"
+                       css="color: red;"
                        colspan="1"
                        errorMessage="errorMessage"
                        height="100%"
@@ -45,7 +46,6 @@
                        itemsContainer="ordersDc"
                        readOnly="true"
                        required="true"
-                       requiredIndicatorVisible="true"
                        requiredMessage="requiredMessage"
                        themeNames="helper-above-field, vertical"
                        width="100%">

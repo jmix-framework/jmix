@@ -51,6 +51,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             alignItems == FlexComponent.Alignment.STRETCH
             boxSizing == BoxSizing.BORDER_BOX
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             justifyContentMode == FlexComponent.JustifyContentMode.AROUND
@@ -78,6 +79,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(containerView.accordionId) {
             id.get() == "accordionId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             height == "50px"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -96,6 +98,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         def panel = containerView.accordionId.children.find { it.id.get() == "${accordionPanel}Id" }
         verifyAll(panel as AccordionPanel) {
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             id.get() == "${accordionPanel}Id"
@@ -138,6 +141,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(containerView.scrollerId) {
             id.get() == "scrollerId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             height == "50px"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -160,6 +164,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(tabs) {
             id.get() == "tabsId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             height == "50px"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -176,6 +181,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(tabsChild[0] as Tab) {
             id.get() == "tab1"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             flexGrow == 45.54d
             label == "labelString"
@@ -193,6 +199,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(tabsChild[1] as Tab) {
             id.get() == "tab2"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             flexGrow == 45.44d
             themeName == "icon-on-top"
@@ -214,6 +221,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(tabSheet) {
             id.get() == "tabSheetId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             height == "50px"
             maxHeight == "55px"
             maxWidth == "120px"

@@ -25,7 +25,7 @@ import io.jmix.flowui.view.ViewDescriptor;
 
 @Route("SimplePaginationTestView")
 @ViewController
-@ViewDescriptor("simple-pagination-text-view.xml")
+@ViewDescriptor("simple-pagination-test-view.xml")
 public class SimplePaginationTestView extends StandardView {
 
     @ViewComponent

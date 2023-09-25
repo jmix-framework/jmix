@@ -59,7 +59,6 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "EmailField attributes will be loaded"
         verifyAll(emailFieldView.emailFieldId) {
             id.get() == "emailFieldId"
-            !invalid
             allowedCharPattern == "charPattern"
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
@@ -67,6 +66,7 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
@@ -84,7 +84,6 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             required
             requiredMessage == "requiredMessage"
-            requiredIndicatorVisible
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"

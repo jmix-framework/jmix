@@ -50,9 +50,9 @@ public class UserIndicator<V> extends Composite<Div> implements SupportsFormatte
     }
 
     protected void updateUserIndicatorLabel(V user) {
-        if (userComponent instanceof HasText) {
+        if (userComponent instanceof HasText hasTextComponent) {
             String userTitle = generateUserTitle(user);
-            ((HasText) userComponent).setText(userTitle);
+            hasTextComponent.setText(userTitle);
         }
     }
 

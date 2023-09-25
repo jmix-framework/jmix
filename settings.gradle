@@ -26,6 +26,9 @@ includeProject('authserver-starter', 'jmix-authserver/authserver-starter')
 includeProject('awsfs', 'jmix-awsfs/awsfs')
 includeProject('awsfs-starter', 'jmix-awsfs/awsfs-starter')
 
+includeProject('bulkeditor', 'jmix-bulkeditor/bulkeditor')
+includeProject('bulkeditor-starter', 'jmix-bulkeditor/bulkeditor-starter')
+
 includeProject('core', 'jmix-core/core')
 includeProject('core-starter', 'jmix-core/core-starter')
 

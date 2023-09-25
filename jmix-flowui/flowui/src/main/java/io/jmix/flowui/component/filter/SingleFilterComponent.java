@@ -16,12 +16,13 @@
 
 package io.jmix.flowui.component.filter;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
+import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.model.DataLoader;
-
 import org.springframework.lang.Nullable;
 
 /**
@@ -33,7 +34,7 @@ import org.springframework.lang.Nullable;
  * @see JpqlFilter
  * @see LogicalFilterComponent
  */
-public interface SingleFilterComponent<V> extends FilterComponent {
+public interface SingleFilterComponent<V> extends FilterComponent, HasSubParts {
 
     /**
      * @return the name of the associated query parameter name
@@ -46,6 +47,17 @@ public interface SingleFilterComponent<V> extends FilterComponent {
      * @param parameterName a name of the associated query parameter name
      */
     void setParameterName(String parameterName);
+
+    @Nullable
+    default Object getSubPart(String name) {
+        if (getValueComponent() instanceof Component component
+                && component.getId().isPresent()
+                && name.equals(component.getId().get())) {
+            return component;
+        }
+
+        return null;
+    }
 
     /**
      * @return a field for editing a property value

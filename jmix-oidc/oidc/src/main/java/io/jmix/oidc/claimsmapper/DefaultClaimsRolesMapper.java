@@ -2,6 +2,7 @@ package io.jmix.oidc.claimsmapper;
 
 import io.jmix.oidc.OidcProperties;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,9 @@ public class DefaultClaimsRolesMapper extends BaseClaimsRolesMapper {
     protected String rowLevelRolePrefix = "";
 
     public DefaultClaimsRolesMapper(ResourceRoleRepository resourceRoleRepository,
-                                    RowLevelRoleRepository rowLevelRoleRepository) {
-        super(resourceRoleRepository, rowLevelRoleRepository);
+                                    RowLevelRoleRepository rowLevelRoleRepository,
+                                    RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
+        super(resourceRoleRepository, rowLevelRoleRepository, roleGrantedAuthorityUtils);
     }
 
     @Override

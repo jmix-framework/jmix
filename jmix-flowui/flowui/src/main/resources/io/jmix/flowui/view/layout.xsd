@@ -2143,11 +2143,9 @@
 
     <xs:attributeGroup name="hasValueAndElement">
         <xs:attribute name="readOnly" type="xs:boolean"/>
-        <xs:attribute name="requiredIndicatorVisible" type="xs:boolean"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasValidation">
-        <xs:attribute name="invalid" type="xs:boolean"/>
         <xs:attribute name="errorMessage" type="resourceString"/>
     </xs:attributeGroup>
 
@@ -3294,7 +3292,7 @@
                     <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                     <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
-                <xs:attribute name="invalid" type="xs:boolean"/>
+
                 <xs:attribute name="themeNames" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>

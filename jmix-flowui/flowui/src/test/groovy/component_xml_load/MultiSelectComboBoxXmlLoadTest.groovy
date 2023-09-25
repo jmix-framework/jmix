@@ -87,7 +87,6 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -98,7 +97,6 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             (it as HasTitle).getTitle() == "titleString"

@@ -67,4 +67,16 @@ public interface StudioFacets {
             }
     )
     void timer();
+
+    @StudioFacet(
+            name = "Settings",
+            classFqn = "io.jmix.flowui.facet.SettingsFacet",
+            category = "Facet",
+            xmlElement = "settings",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN)
+            }
+    )
+    void settings();
 }

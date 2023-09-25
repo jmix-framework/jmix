@@ -40,7 +40,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.List;
 import java.util.Optional;
 
-@Component("flowui_UserSettingsServiceImpl")
+@Component("ui_UserSettingsServiceImpl")
 public class UserSettingsServiceImpl implements UserSettingsService {
 
     private static final Logger log = LoggerFactory.getLogger(UserSettingsServiceImpl.class);
@@ -120,13 +120,13 @@ public class UserSettingsServiceImpl implements UserSettingsService {
         Preconditions.checkNotNullArgument(toUsername);
 
         transaction.executeWithoutResult(status ->
-                entityManager.createQuery("delete from flowui_UiSetting s where s.username = ?1")
+                entityManager.createQuery("delete from ui_UiSetting s where s.username = ?1")
                         .setParameter(1, toUsername)
                         .executeUpdate());
 
         transaction.executeWithoutResult(status -> {
             List<UiSetting> fromUserSettings =
-                    entityManager.createQuery("select s from flowui_UiSetting s where s.username = ?1", UiSetting.class)
+                    entityManager.createQuery("select s from ui_UiSetting s where s.username = ?1", UiSetting.class)
                             .setParameter(1, fromUsername)
                             .getResultList();
 
@@ -145,7 +145,7 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     @Nullable
     protected UiSetting findUserSettings(String key) {
         List<UiSetting> result = entityManager.createQuery(
-                        "select s from flowui_UiSetting s where s.username = ?1 and s.key =?2",
+                        "select s from ui_UiSetting s where s.username = ?1 and s.key =?2",
                         UiSetting.class)
                 .setParameter(1, authentication.getUser().getUsername())
                 .setParameter(2, key)

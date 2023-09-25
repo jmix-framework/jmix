@@ -33,7 +33,7 @@ import java.util.Optional;
  * Provides methods for collaboration between {@link SettingsFacet} and {@link UrlQueryParametersFacet}.
  */
 @Internal
-@org.springframework.stereotype.Component("flowui_SettingsFacetUrlQueryParametersHelper")
+@org.springframework.stereotype.Component("ui_SettingsFacetUrlQueryParametersHelper")
 public class SettingsFacetUrlQueryParametersHelper {
 
     /**

@@ -25,7 +25,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.Objects;
 
-@org.springframework.stereotype.Component("flowui_SimplePaginationSettingsBinder")
+@org.springframework.stereotype.Component("ui_SimplePaginationSettingsBinder")
 public class SimplePaginationSettingsBinder implements
         DataLoadingSettingsBinder<SimplePagination, SimplePaginationSettings> {
 

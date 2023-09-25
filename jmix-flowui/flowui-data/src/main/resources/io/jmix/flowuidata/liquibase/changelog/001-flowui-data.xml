@@ -55,7 +55,7 @@
     </changeSet>
 
     <changeSet author="flowui-data" id="4">
-        <createTable tableName="FLOWUI_UI_SETTING">
+        <createTable tableName="UI_UI_SETTING">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

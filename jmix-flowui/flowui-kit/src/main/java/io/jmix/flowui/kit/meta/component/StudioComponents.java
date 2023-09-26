@@ -1952,19 +1952,19 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "Upload",
-            classFqn = "com.vaadin.flow.component.upload.Upload",
+            classFqn = "io.jmix.flowui.component.upload.JmixUpload",
             category = "Components",
             xmlElement = "upload",
             icon = "io/jmix/flowui/kit/meta/icon/component/upload.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "acceptedFileTypes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "autoUpload", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "dropAllowed", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "dropLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "dropLabelIcon", type = StudioPropertyType.ICON),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),

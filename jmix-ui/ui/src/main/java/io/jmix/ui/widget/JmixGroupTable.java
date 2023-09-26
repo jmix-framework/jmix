@@ -63,7 +63,7 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
 
     protected boolean sortOnGroupEnabled = true;
 
-    protected Map<Object, SortDetails> groupingPropertyIdsToSort = new LinkedHashMap<>();
+    protected Map<Object, SortDetails> groupingPropertyIdsToSort; //lazy initialized
 
     /**
      * Attention: this method is copied from the parent class: Table.setColumnOrder(Object[])
@@ -588,45 +588,59 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
     }
 
     protected void sortByGroupingProperties(Object[] groupingPropertyIds) {
-        Map<Object, SortDetails> newPropertyIdsToSort = new LinkedHashMap<>();
-        if (isSortEnabled()) {
-            for (Object property : groupingPropertyIds) {
-                SortDetails sortDetails = groupingPropertyIdsToSort.getOrDefault(property,
-                        new SortDetails(true, false));
-                newPropertyIdsToSort.put(property, sortDetails);
-            }
-            groupingPropertyIdsToSort = newPropertyIdsToSort;
-
-            if (sortContainerPropertyId != null) {
-                sort(new Object[]{sortContainerPropertyId}, new boolean[]{sortAscending});
-            } else {
-                sort(new Object[0], new boolean[0]);
-            }
+        if (!isSortEnabled()) {
+            return;
         }
+
+        Map<Object, SortDetails> newPropertyIdsToSort = new LinkedHashMap<>();
+        Map<Object, SortDetails> oldGroupingPropertyIdsToSort = getGroupingPropertyIdsToSort();
+        for (Object property : groupingPropertyIds) {
+            SortDetails sortDetails = oldGroupingPropertyIdsToSort.getOrDefault(property,
+                    new SortDetails(true, false));
+            newPropertyIdsToSort.put(property, sortDetails);
+        }
+        groupingPropertyIdsToSort = newPropertyIdsToSort;
+
+        if (sortContainerPropertyId != null) {
+            sort(new Object[]{sortContainerPropertyId}, new boolean[]{sortAscending});
+        } else {
+            sort(new Object[0], new boolean[0]);
+        }
+    }
+
+    protected Map<Object, SortDetails> getGroupingPropertyIdsToSort() {
+        if (groupingPropertyIdsToSort == null) {
+            groupingPropertyIdsToSort = new LinkedHashMap<>();
+        }
+        return groupingPropertyIdsToSort;
     }
 
     @Override
     public void sort(Object[] propertyIds, boolean[] ascendingValues) throws UnsupportedOperationException {
         if (sortOnGroupEnabled) {
-            Container containerDataSource = getContainerDataSource();
-            if (containerDataSource instanceof Container.Sortable) {
-                Map<Object, SortDetails> allSortPropertyIds = getAllPropertyIdsToSort(propertyIds, ascendingValues);
-
-                int pageIndex = getCurrentPageFirstItemIndex();
-                boolean refreshingPreviouslyEnabled = disableContentRefreshing();
-                sortByDataSource(allSortPropertyIds, ((Container.Sortable) containerDataSource));
-                setCurrentPageFirstItemIndex(pageIndex);
-                if (refreshingPreviouslyEnabled) {
-                    enableContentRefreshing(true);
-                }
-                refreshGroupingPropertyUserOriginated(propertyIds);
-                updateCurrentSortInfo(allSortPropertyIds);
-            } else if (containerDataSource != null) {
-                throw new UnsupportedOperationException(
-                        "Underlying Data does not allow sorting");
-            }
+            doSortOnGroup(propertyIds, ascendingValues);
         } else {
             super.sort(propertyIds, ascendingValues);
+        }
+    }
+
+    protected void doSortOnGroup(Object[] propertyIds, boolean[] ascendingValues) {
+        Container containerDataSource = getContainerDataSource();
+        if (containerDataSource instanceof Container.Sortable) {
+            Map<Object, SortDetails> allSortPropertyIds = getAllPropertyIdsToSort(propertyIds, ascendingValues);
+
+            int pageIndex = getCurrentPageFirstItemIndex();
+            boolean refreshingPreviouslyEnabled = disableContentRefreshing();
+            sortByDataSource(allSortPropertyIds, ((Container.Sortable) containerDataSource));
+            setCurrentPageFirstItemIndex(pageIndex);
+            if (refreshingPreviouslyEnabled) {
+                enableContentRefreshing(true);
+            }
+            refreshGroupingPropertyUserOriginated(propertyIds);
+            updateCurrentSortInfo(allSortPropertyIds);
+        } else if (containerDataSource != null) {
+            throw new UnsupportedOperationException(
+                    "Underlying Data does not allow sorting");
         }
     }
 
@@ -640,7 +654,7 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
      * directly set to sort
      */
     protected Map<Object, SortDetails> getAllPropertyIdsToSort(Object[] propertyIds, boolean[] ascendingValues) {
-        Map<Object, SortDetails> allPropertyIdsToSort = new LinkedHashMap<>(groupingPropertyIdsToSort);
+        Map<Object, SortDetails> allPropertyIdsToSort = new LinkedHashMap<>(getGroupingPropertyIdsToSort());
         for (int i = 0; i < propertyIds.length; i++) {
             Object propertyId = propertyIds[i];
             SortDetails sortDetails = allPropertyIdsToSort.computeIfAbsent(propertyId, pid -> new SortDetails());
@@ -653,7 +667,7 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
     protected void refreshGroupingPropertyUserOriginated(Object[] currentPropertyIdsToSort) {
         Set<Object> propertyIdsSet = Sets.newHashSet(currentPropertyIdsToSort);
 
-        for (Map.Entry<Object, SortDetails> propertySortDetailsEntry : groupingPropertyIdsToSort.entrySet()) {
+        for (Map.Entry<Object, SortDetails> propertySortDetailsEntry : getGroupingPropertyIdsToSort().entrySet()) {
             Object propertyId = propertySortDetailsEntry.getKey();
             if (!propertyIdsSet.contains(propertyId)) {
                 propertySortDetailsEntry.getValue().setUserOriginated(false);
@@ -696,6 +710,7 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
 
     @Override
     public void resetSortOrder() {
+        Map<Object, SortDetails> groupingPropertyIdsToSort = getGroupingPropertyIdsToSort();
         if (!sortOnGroupEnabled || groupingPropertyIdsToSort.isEmpty()) {
             super.resetSortOrder();
         } else {

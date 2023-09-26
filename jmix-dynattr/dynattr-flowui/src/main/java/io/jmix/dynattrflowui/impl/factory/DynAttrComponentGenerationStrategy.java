@@ -19,30 +19,25 @@ package io.jmix.dynattrflowui.impl.factory;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.HasValidator;
-import com.vaadin.flow.data.binder.ReadOnlyHasValue;
-import com.vaadin.flow.data.provider.ListDataProvider;
-import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.data.provider.CallbackDataProvider;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
-import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
+import io.jmix.core.metamodel.datatype.impl.LocalDateDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.*;
+import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattrflowui.impl.AttributeDependencies;
 import io.jmix.dynattrflowui.impl.AttributeOptionsLoader;
 import io.jmix.dynattrflowui.impl.AttributeRecalculationListener;
 import io.jmix.dynattrflowui.impl.AttributeValidators;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.Views;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
@@ -54,18 +49,19 @@ import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
+import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
-import io.jmix.flowui.data.BindingState;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.data.ValueSourceProvider;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasTitle;
-import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
-import io.jmix.flowui.kit.component.valuepicker.ValuePickerBase;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.ViewRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +70,8 @@ import org.springframework.core.Ordered;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static io.jmix.dynattr.AttributeType.*;
@@ -171,10 +167,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             setDescription((HasTitle) resultComponent, attribute);
         }
 
-        if (resultComponent instanceof HasValueAndElement) {
-
-        }
-
         return resultComponent;
     }
 
@@ -192,8 +184,10 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             return createStringField(context, attribute);
         } else if (type == BOOLEAN) {
             return createBooleanField(context, attribute);
-        } else if (type == DATE || type == DATE_WITHOUT_TIME) {
+        } else if (type == DATE) {
             return createDateField(context, attribute);
+        } else if (type == DATE_WITHOUT_TIME) {
+            return createDateWithoutTimeField(context, attribute);
         } else if (type == INTEGER || type == DOUBLE || type == DECIMAL) {
             return createNumberField(context, attribute);
         } else if (type == ENUMERATION) {
@@ -204,20 +198,23 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        MultiValuePicker valuesPicker = uiComponents.create(MultiValuePicker.class);
+        if (!attribute.getConfiguration().isLookup()) {
+            return createNonLookupCollectionField(context, attribute);
+        }
 
-//        setValidators((HasValidationProperties) valuesPicker, attribute);
+        JmixMultiSelectComboBoxPicker valuesPicker = uiComponents.create(JmixMultiSelectComboBoxPicker.class);
+
+        setValidators(valuesPicker, attribute);
+        setValueProvider(valuesPicker, attribute, context);
         setValueSource(valuesPicker, context);
 
         MultiValueSelectAction selectAction = actions.create(MultiValueSelectAction.ID);
         initValuesSelectActionByAttribute(selectAction, attribute);
-
-        if (attribute.getConfiguration().isLookup()) {
-            ContainerValueSource valueSource = (ContainerValueSource) ((SupportsValueSource<Object>)valuesPicker).getValueSource();
-            setValuesPickerOptionsLoader(valuesPicker, attribute, valueSource);
-        }
-
         valuesPicker.addAction(selectAction);
+
+
+        ContainerValueSource valueSource = (ContainerValueSource) ((SupportsValueSource<Object>)valuesPicker).getValueSource();
+        setValuesPickerOptionsLoader(valuesPicker, attribute, valueSource);
 
         ValueClearAction valueClearAction = actions.create(ValueClearAction.ID);
         valuesPicker.addAction(valueClearAction);
@@ -225,43 +222,77 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         return valuesPicker;
     }
 
+    private Component createNonLookupCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        JmixMultiValuePicker multiValuePicker = uiComponents.create(JmixMultiValuePicker.class);
+
+        setValidators(multiValuePicker, attribute);
+        setValueSource(multiValuePicker, context);
+
+        MultiValueSelectAction selectAction = actions.create(MultiValueSelectAction.ID);
+        initValuesSelectActionByAttribute(selectAction, attribute);
+        multiValuePicker.addAction(selectAction);
+
+        ValueClearAction valueClearAction = actions.create(ValueClearAction.ID);
+        multiValuePicker.addAction(valueClearAction);
+
+        return multiValuePicker;
+    }
+
+    private void setValueProvider(JmixMultiSelectComboBoxPicker valuesPicker,
+                                  AttributeDefinition attribute,
+                                  ComponentGenerationContext context) {
+        ContainerValueSource valueSource = (ContainerValueSource) context.getValueSource();
+        InstanceContainer<?> container = valueSource.getContainer();
+        Object entity = container.getItemOrNull();
+        List options = optionsLoader.loadOptions(entity, attribute);
+        valuesPicker.setItems(new CallbackDataProvider<CategoryAttribute, String>(e -> {
+            e.getLimit();
+            e.getOffset();
+            return options.stream();
+
+        }, e -> {
+            e.getLimit();
+            e.getOffset();
+            return options.size();
+        }));
+    }
+
     protected Component createStringField(ComponentGenerationContext context, AttributeDefinition attribute) {
         AbstractField textField;
 
         Integer rowsCount = attribute.getConfiguration().getRowsCount();
         if (rowsCount != null && rowsCount > 1) {
-            TextArea textArea = uiComponents.create(TextArea.class);
-//            textArea.setMinLength(rowsCount);
+            TextArea textArea = uiComponents.create(JmixTextArea.class);
+            textArea.setMinLength(rowsCount);
             textField = textArea;
         } else {
-            textField = uiComponents.create(TextField.class);
+            textField = uiComponents.create(TypedTextField.class);
         }
 
         setValidators((SupportsValidation) textField, attribute);
-        setValueSource(textField, context);
-
+        setValueSource((SupportsValueSource)textField, context);
         return textField;
     }
 
     protected Component createEnumerationField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        ComboBox comboBox = uiComponents.create(ComboBox.class);
+        JmixComboBox comboBox = uiComponents.create(JmixComboBox.class);
         ComponentUtils.setItemsMap(comboBox, getLocalizedEnumerationMap(attribute));
 
         setValueSource(comboBox, context);
-        setValidators((SupportsValidation) comboBox, attribute);
+        setValidators(comboBox, attribute);
 
         return comboBox;
     }
 
     protected Component createComboBox(ComponentGenerationContext context, AttributeDefinition attribute) {
-        ComboBox comboBox = uiComponents.create(ComboBox.class);
+        JmixComboBox comboBox = uiComponents.create(JmixComboBox.class);
 
         if (context.getValueSource() instanceof ContainerValueSource) {
             setComboBoxOptionsLoader(comboBox, attribute, (ContainerValueSource) context.getValueSource());
         }
 
         setValueSource(comboBox, context);
-        setValidators((SupportsValidation) comboBox, attribute);
+        setValidators(comboBox, attribute);
 
         return comboBox;
     }
@@ -269,13 +300,22 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected AbstractField createBooleanField(ComponentGenerationContext context, AttributeDefinition attribute) {
         JmixCheckbox component = uiComponents.create(JmixCheckbox.class);
 
-        //      todo  setValidators(component, attribute);
+        // todo setValidators(component, attribute);
         setValueSource(component, context);
 
         return component;
     }
 
-    protected Component createDateField(ComponentGenerationContext context, AttributeDefinition attribute) {
+    protected TypedDateTimePicker createDateField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        TypedDateTimePicker dateField = uiComponents.create(TypedDateTimePicker.class);
+
+        setValidators(dateField, attribute);
+        setValueSource(dateField, context);
+
+        return dateField;
+    }
+
+    private Component createDateWithoutTimeField(ComponentGenerationContext context, AttributeDefinition attribute) {
         TypedDatePicker dateField = uiComponents.create(TypedDatePicker.class);
 
         setValidators(dateField, attribute);
@@ -324,9 +364,8 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     @SuppressWarnings("unchecked")
-    protected void setValueSource(HasValue field, ComponentGenerationContext context) {
-
-//        field.setValue(.getValue());
+    protected void setValueSource(SupportsValueSource field, ComponentGenerationContext context) {
+        field.setValueSource(context.getValueSource());
     }
 
     protected void setValidators(SupportsValidation field, AttributeDefinition attribute) {
@@ -347,46 +386,11 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
     protected void setValueChangedListeners(HasValue component, AttributeDefinition attribute) {
         Set<AttributeDefinition> dependentAttributes = attributeDependencies.getDependentAttributes(attribute);
-        if (!dependentAttributes.isEmpty()) {
+        if (!dependentAttributes.isEmpty() && component instanceof SupportsValueSource) {
             //noinspection unchecked
             component.addValueChangeListener(e -> {
                 applicationContext.getBean(AttributeRecalculationListener.class, attribute)
-                        .accept(new ValueSource.ValueChangeEvent(new ValueSource() {
-                            @Override
-                            public Object getValue() {
-                                return e.getValue();
-                            }
-
-                            @Override
-                            public void setValue(Object value) {
-                                component.setValue(value);
-                            }
-
-                            @Override
-                            public boolean isReadOnly() {
-                                return false;
-                            }
-
-                            @Override
-                            public Registration addValueChangeListener(Consumer listener) {
-                                return null;
-                            }
-
-                            @Override
-                            public BindingState getState() {
-                                return null;
-                            }
-
-                            @Override
-                            public Registration addStateChangeListener(Consumer<StateChangeEvent> listener) {
-                                return null;
-                            }
-
-                            @Override
-                            public Class getType() {
-                                return null;
-                            }
-                        }, e.getOldValue(), e.getValue()));
+                        .accept(new ValueSource.ValueChangeEvent(((SupportsValueSource<?>) component).getValueSource(), e.getOldValue(), e.getValue()));
             });
         }
     }
@@ -420,7 +424,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         AttributeType attributeType = attribute.getDataType();
         switch (attributeType) {
             case DATE:
-                selectAction.setJavaClass(Date.class);
+                selectAction.setJavaClass(LocalDateTime.class);
 //                selectAction.setResolution(DateField.Resolution.MIN);
                 break;
             case DATE_WITHOUT_TIME:
@@ -434,7 +438,16 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 selectAction.setJavaClass(String.class);
                 Map values = getLocalizedEnumerationMap(attribute);
                 selectAction.setItemLabelGenerator(item -> values.get(item).toString());
-                selectAction.setItems(new ListDataProvider<>(values.keySet().stream().toList()));
+                selectAction.setItems(new CallbackDataProvider<CategoryAttribute, String>(event -> {
+                event.getLimit();
+                event.getOffset();
+                return values.keySet().stream();
+
+            }, event -> {
+                event.getLimit();
+                event.getOffset();
+                return values.keySet().size();
+            }));
                 break;
             case DOUBLE:
                 selectAction.setJavaClass(Double.class);
@@ -454,8 +467,9 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                     MetaClass metaClass = metadata.getClass(javaType);
                     selectAction.setEntityName(metaClass.getName());
                 }
-                selectAction.setViewId(attribute.getConfiguration().getLookupScreen());
-                selectAction.setUseComboBox(attribute.getConfiguration().isLookup());
+                selectAction.setLookupViewId(attribute.getConfiguration().getLookupScreen());
+                selectAction.setUseComboBox(true);
+
                 break;
         }
     }
@@ -472,7 +486,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void setValuesPickerOptionsLoader(MultiValuePicker valuesPicker,
+    protected <T extends HasActions & HasValue> void setValuesPickerOptionsLoader(T valuesPicker,
                                                 AttributeDefinition attribute,
                                                 ContainerValueSource valueSource) {
         InstanceContainer<?> container = valueSource.getContainer();
@@ -480,13 +494,31 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         if (entity != null) {
             List options = optionsLoader.loadOptions(entity, attribute);
             ((MultiValueSelectAction) valuesPicker.getAction(MultiValueSelectAction.ID))
-                    .setItems(new ListDataProvider<>(options));
+                    .setItems(new CallbackDataProvider<CategoryAttribute, String>(e -> {
+                e.getLimit();
+                e.getOffset();
+                return options.stream();
+
+            }, e -> {
+                e.getLimit();
+                e.getOffset();
+                return options.size();
+            }));
         }
         container.addItemChangeListener(e -> {
             List options = optionsLoader.loadOptions(e.getItem(), attribute);
 
             ((MultiValueSelectAction) valuesPicker.getAction(MultiValueSelectAction.ID))
-                    .setItems(new ListDataProvider(options));
+                    .setItems(new CallbackDataProvider<CategoryAttribute, String>(event -> {
+                        event.getLimit();
+                        event.getOffset();
+                        return options.stream();
+
+                    }, event -> {
+                        event.getLimit();
+                        event.getOffset();
+                        return options.size();
+                    }));
         });
 
         List<String> dependsOnAttributeCodes = attribute.getConfiguration().getDependsOnAttributeCodes();
@@ -496,9 +528,18 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 if (codesWithMarkers.contains(e.getProperty())) {
                     List options = optionsLoader.loadOptions(e.getItem(), attribute);
                     ((MultiValueSelectAction) valuesPicker.getAction(MultiValueSelectAction.ID))
-                            .setItems(new ListDataProvider<>(options));
+                            .setItems(new CallbackDataProvider<CategoryAttribute, String>(event -> {
+                                event.getLimit();
+                                event.getOffset();
+                                return options.stream();
+
+                            }, event -> {
+                                event.getLimit();
+                                event.getOffset();
+                                return options.size();
+                            }));
                     if (!options.contains(valuesPicker.getValue())) {
-                        valuesPicker.setValue(null);
+                        valuesPicker.clear();
                     }
                 }
             });
@@ -552,4 +593,5 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     public int getOrder() {
         return JmixOrder.HIGHEST_PRECEDENCE + 20;
     }
+
 }

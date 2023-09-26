@@ -16,10 +16,15 @@
 
 package io.jmix.dynattrflowui.impl;
 
+import com.vaadin.flow.component.Component;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.data.value.ContainerValueSource;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.sys.ViewDescriptorUtils;
+import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -41,34 +46,25 @@ public class AttributeRecalculationListener implements Consumer<ValueSource.Valu
         this.attribute = attribute;
     }
 
+
     @Override
     public void accept(ValueSource.ValueChangeEvent valueChangeEvent) {
-        // todo: implement
-    }
+        if (Boolean.TRUE.equals(recalculationInProgress.get())) {
+            return;
+        }
+        try {
+            recalculationInProgress.set(true);
 
-//    @Override
-//    public void accept(ValueSource.ValueChangeEvent valueChangeEvent) {
-//        if (Boolean.TRUE.equals(recalculationInProgress.get())) {
-//            return;
-//        }
-//        try {
-//            recalculationInProgress.set(true);
-//
-//            Component component = valueChangeEvent.getComponent();
-//            if (component instanceof HasValueSource
-//                    && ((HasValueSource<?>) component).getValueSource() instanceof ContainerValueSource) {
-//
-//                ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) ((HasValueSource<?>) component).getValueSource();
-//                InstanceContainer<?> container = valueSource.getContainer();
-//
-//                Object entity = container.getItem();
-//
-//                EntityValues.setValue(entity, DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode()), valueChangeEvent.getValue());
-//
-//                recalculationManager.recalculateByAttribute(entity, attribute);
-//            }
-//        } finally {
-//            recalculationInProgress.remove();
-//        }
-//    }
+            ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) valueChangeEvent.getSource();
+            InstanceContainer<?> container = valueSource.getContainer();
+
+            Object entity = container.getItem();
+
+            EntityValues.setValue(entity, DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode()), valueChangeEvent.getValue());
+
+            recalculationManager.recalculateByAttribute(entity, attribute);
+        } finally {
+            recalculationInProgress.remove();
+        }
+    }
 }

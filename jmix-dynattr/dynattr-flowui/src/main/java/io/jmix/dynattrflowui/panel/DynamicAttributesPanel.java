@@ -90,7 +90,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     protected String fieldCaptionWidth;
 
     protected VerticalLayout rootPanel;
-    protected HorizontalLayout categoryFieldBox;
+    protected VerticalLayout categoryFieldBox;
     protected H3 categoryFieldLabel;
     protected JmixComboBox<Category> categoryField;
     protected JmixFormLayout propertiesForm;
@@ -107,10 +107,13 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         this.validate = validate;
 
         rootPanel = uiComponents.create(VerticalLayout.class);
+        rootPanel.setPadding(false);
         rootPanel.setSpacing(true);
         rootPanel.setWidth("100%");
 
-        categoryFieldBox = uiComponents.create(HorizontalLayout.class);
+        categoryFieldBox = uiComponents.create(VerticalLayout.class);
+        categoryFieldBox.setPadding(false);
+        categoryFieldBox.setMargin(false);
         categoryFieldBox.setWidth("100%");
         categoryFieldBox.setSpacing(true);
 
@@ -118,7 +121,6 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         categoryFieldLabel.setText(messages.getMessage(getClass(), "category"));
 
         categoryField = uiComponents.create(JmixComboBox.class);
-
         categoryField.setWidth(fieldWidth);
         categoryField.addValueChangeListener(e -> initPropertiesForm());
         categoryFieldBox.add(categoryFieldLabel, categoryField);
@@ -137,6 +139,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     protected VerticalLayout initContent() {
         VerticalLayout content = super.initContent();
         content.setMargin(false);
+        content.setPadding(false);
         content.setId("dynAttrPanelLayout");
         content.add(rootPanel);
         return content;

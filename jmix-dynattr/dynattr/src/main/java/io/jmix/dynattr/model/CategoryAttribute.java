@@ -117,7 +117,7 @@ public class CategoryAttribute implements Serializable {
             @AttributeOverride(name = "intEntityId", column = @Column(name = "DEFAULT_INT_ENTITY_VALUE")),
             @AttributeOverride(name = "longEntityId", column = @Column(name = "DEFAULT_LONG_ENTITY_VALUE"))
     })
-    @EmbeddedParameters(nullAllowed = false)
+    @EmbeddedParameters(nullAllowed = true)
     private ReferenceToEntity defaultEntity;
 
     @Column(name = "ORDER_NO")

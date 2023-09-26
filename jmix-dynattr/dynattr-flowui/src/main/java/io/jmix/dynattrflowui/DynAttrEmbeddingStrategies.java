@@ -34,9 +34,6 @@ public class DynAttrEmbeddingStrategies {
 
     @Autowired(required = false)
     protected List<EmbeddingStrategy> embeddingStrategies;
-    @Autowired
-    protected DynAttrFacetInfo dynAttrFacetInfo;
-
 
     public void embedAttributes(Component component, View owner) {
         if (embeddingStrategies != null) {

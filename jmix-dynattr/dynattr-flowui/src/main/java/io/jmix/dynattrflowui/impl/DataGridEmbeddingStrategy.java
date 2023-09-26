@@ -17,10 +17,17 @@
 package io.jmix.dynattrflowui.impl;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.core.AccessManager;
+import io.jmix.core.DataManager;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeDefinition;
+import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
@@ -30,6 +37,18 @@ import java.util.List;
 
 @org.springframework.stereotype.Component("dynat_DataGridEmbeddingStrategy")
 public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
+
+    protected DataGridEmbeddingStrategy(Metadata metadata,
+                                        MetadataTools metadataTools,
+                                        DynAttrMetadata dynAttrMetadata,
+                                        AccessManager accessManager,
+                                        MsgBundleTools msgBundleTools,
+                                        CurrentAuthentication currentAuthentication,
+                                        DataManager dataManager,
+                                        AttributeRecalculationManager attributeRecalculationManager) {
+        super(metadata, metadataTools, dynAttrMetadata, accessManager, msgBundleTools, currentAuthentication,
+                dataManager, attributeRecalculationManager);
+    }
 
     @Override
     public boolean supportComponent(Component component) {

@@ -20,29 +20,40 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
+import io.jmix.core.*;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
+import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.flowui.kit.component.formatter.Formatter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collection;
 
 public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
 
-    protected MsgBundleTools msgBundleTools;
-    protected CurrentAuthentication currentAuthentication;
+    protected final MsgBundleTools msgBundleTools;
+    protected final CurrentAuthentication currentAuthentication;
+    protected final DataManager dataManager;
+    protected final AttributeRecalculationManager attributeRecalculationManager;
 
-    @Autowired
-    public void setMsgBundleTools(MsgBundleTools msgBundleTools) {
+    protected ListEmbeddingStrategy(Metadata metadata,
+                                    MetadataTools metadataTools,
+                                    DynAttrMetadata dynAttrMetadata,
+                                    AccessManager accessManager,
+                                    MsgBundleTools msgBundleTools,
+                                    CurrentAuthentication currentAuthentication,
+                                    DataManager dataManager,
+                                    AttributeRecalculationManager attributeRecalculationManager) {
+        super(metadata, metadataTools, dynAttrMetadata, accessManager);
         this.msgBundleTools = msgBundleTools;
-    }
-
-    @Autowired
-    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
+        this.dataManager = dataManager;
+        this.attributeRecalculationManager = attributeRecalculationManager;
     }
 
     protected String getColumnDescription(AttributeDefinition attribute) {
@@ -84,10 +95,26 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
     }
 
     protected Renderer getColumnRenderer(AttributeDefinition attribute) {
-        Renderer renderer = new ComponentRenderer(c -> {
-            String formatted = getColumnFormatter(attribute).apply(c);
-            return new Text(formatted);
+        Renderer renderer = new ComponentRenderer(() -> new Text(""), (c, rowEntity) -> {
+            Formatter formatter = getColumnFormatter(attribute);
+
+            Object propertyValue = EntityValues.getValue(rowEntity, attribute.getMetaProperty().getName());
+
+            if (propertyValue != null) {
+                if (attribute.getDataType().equals(AttributeType.ENTITY)) {
+                    // todo poor performance
+                    if(propertyValue instanceof Collection) {
+                        propertyValue = ((Collection)propertyValue).stream()
+                                .map(metadataTools::getInstanceName)
+                                .toList();
+                    } else {
+                        propertyValue = metadataTools.getInstanceName(propertyValue);
+                    }
+                }
+                ((Text) c).setText(formatter != null ? formatter.apply(propertyValue) : propertyValue.toString());
+            }
         });
+
         return renderer;
     }
 }

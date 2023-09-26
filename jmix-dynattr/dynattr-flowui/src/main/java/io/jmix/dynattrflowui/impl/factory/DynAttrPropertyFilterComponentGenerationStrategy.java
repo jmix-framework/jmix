@@ -41,6 +41,8 @@ import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.factory.PropertyFilterComponentGenerationContext;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
@@ -168,14 +170,14 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
 
     protected AbstractField createIntervalField(ComponentGenerationContext context) {
         ValuePicker valuePicker = uiComponents.create(ValuePicker.class);
-//       todo valuePicker.addAction(applicationContext.getBean(DateIntervalAction.class));
+//        valuePicker.addAction(applicationContext.getBean(DateIntervalAction.class));
         valuePicker.addAction(actions.create(ValueClearAction.ID));
         return valuePicker;
     }
 
     @Override
-    protected Component createDateField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        DatePicker dateField = (DatePicker) super.createDateField(context, attribute);
+    protected TypedDateTimePicker createDateField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        TypedDateTimePicker dateField = super.createDateField(context, attribute);
 //     todo   dataAwareComponentsTools.setupDateFormat(dateField, attribute.getMetaProperty());
         return dateField;
     }
@@ -186,7 +188,7 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
 
         Range range = attribute.getMetaProperty().getRange();
         if (field instanceof SupportsTypedValue && range.isDatatype()) {
-//      todo      ((HasType<?>) field).getType(range.asDatatype());
+            ((SupportsTypedValue) field).setTypedValue(range.asDatatype());
         }
 
         loadOptionsIfNeed(field, attribute);

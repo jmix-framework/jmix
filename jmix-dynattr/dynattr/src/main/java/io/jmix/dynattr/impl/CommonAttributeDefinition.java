@@ -246,6 +246,9 @@ public class CommonAttributeDefinition implements AttributeDefinition, Serializa
                 case ENUMERATION:
                     return attribute.getDefaultString();
                 case ENTITY:
+                    if(attribute.getDefaultEntity() == null) {
+                        return null;
+                    }
                     return attribute.getDefaultEntity().getObjectEntityId();
             }
         }

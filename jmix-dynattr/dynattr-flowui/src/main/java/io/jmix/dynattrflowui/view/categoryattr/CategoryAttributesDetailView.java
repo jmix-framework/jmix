@@ -27,7 +27,6 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
@@ -39,7 +38,6 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.suggestion.QuerySuggestions;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
@@ -51,7 +49,6 @@ import io.jmix.dynattrflowui.facet.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
 import io.jmix.flowui.*;
-import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -271,6 +268,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected List<TargetViewComponent> targetScreens = new ArrayList<>();
 
     private boolean isCommitted = false;
+    private boolean isRefreshing = false;
 
 
     @SuppressWarnings({"DataFlowIssue", "unchecked"})
@@ -293,12 +291,16 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         initDependsOnAttributesField();
 
         setupNumberFormat();
-        refreshAttributesUI();
+        if(!isRefreshing) {
+            isRefreshing = true;
+            refreshAttributesUI();
+            isRefreshing = false;
+        }
         setupFieldsLock();
 
         entityClassField.setValue(getEditedEntity().getEntityClass());
         entityClassField.addValueChangeListener(e -> getEditedEntity().setEntityClass(e.getValue()));
-        if(getEditedEntity().getEntityClass() != null) {
+        if (getEditedEntity().getEntityClass() != null) {
             Class<?> javaClass = getEditedEntity().getJavaType();
             MetaClass metaClass = metadata.getClass(javaClass);
             screenField.setItems(List.of(
@@ -308,8 +310,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
 
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
+        loadTargetViews();
     }
-
 
 
     @Subscribe("tabSheet")
@@ -341,8 +343,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 || LOOKUP_PROPERTY.equals(property)
                 || DEFAULT_DATE_IS_CURRENT_PROPERTY.equals(property)
                 || ENTITY_CLASS_PROPERTY.equals(property)) {
-            refreshAttributesUI();
-            refreshAttributesValues();
+            refreshOnce();
         }
 
         if (event.getPrevValue() == null && DATA_TYPE_PROPERTY.equals(property)) {
@@ -368,8 +369,16 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
 
         if (CONFIGURATION_OPTIONS_LOADER_TYPE_PROPERTY.equals(property)) {
+            refreshOnce();
+        }
+    }
+
+    private void refreshOnce() {
+        if(!isRefreshing) {
+            isRefreshing = true;
             refreshAttributesUI();
             refreshAttributesValues();
+            isRefreshing = false;
         }
     }
 
@@ -522,7 +531,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             return getAttributesOptions().size();
         }));
         dependsOnAttributesField.addValueChangeListener(e -> {
-            if(getEditedEntity().getConfiguration() != null) {
+            if (getEditedEntity().getConfiguration() != null) {
+                if(getEditedEntity().getConfiguration().getDependsOnAttributeCodes() == null){
+                    getEditedEntity().getConfiguration().setDependsOnAttributeCodes(new ArrayList<>());
+                }
                 getEditedEntity().getConfiguration().getDependsOnAttributeCodes().addAll(e.getValue()
                         .stream()
                         .map(CategoryAttribute::getCode)
@@ -647,7 +659,18 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
         optionsLoaderTypeField.setEnabled(Boolean.TRUE.equals(categoryAttribute.getLookup()));
         optionsLoaderTypeField.setRequired(Boolean.TRUE.equals(categoryAttribute.getLookup()));
+
+        OptionsLoaderType type = null;
+        if (getEditedEntity().getConfiguration() != null &&
+                getEditedEntity().getConfiguration().getOptionsLoaderType() != null) {
+            type = getEditedEntity().getConfiguration().getOptionsLoaderType();
+        }
+
         ComponentUtils.setItemsMap(optionsLoaderTypeField, getLoaderOptions());
+
+        if (type != null) {
+            optionsLoaderTypeField.setValue(type);
+        }
     }
 
     @Subscribe("screenField")
@@ -665,13 +688,13 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 .stream()
                 .filter(metaClass -> metaClass.getName().equals(getEditedEntity().getCategory().getEntityType()))
                 .toList();
-        if(metaClasses.size() != 1) {
+        if (metaClasses.size() != 1) {
             throw new IllegalStateException();
         }
         MetaClass targetClass = metaClasses.get(0);
         LookupWindowBuilder<Object, View<?>> lookupBuilder = dialogWindows.lookup(this, targetClass.getJavaClass())
                 .withSelectHandler(e -> {
-                    if(e.size() != 1) {
+                    if (e.size() != 1) {
                         return;
                     }
                     Object targetEntity = e.iterator().next();
@@ -865,47 +888,47 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 .open();
     }
 
-    protected List<QuerySuggestions> requestHint(CodeEditor sender, int senderCursorPosition) {
-        String joinStr = joinClauseField.getValue();
-        String whereStr = whereClauseField.getValue();
-
-        // CAUTION: the magic entity name!  The length is three character to match "{E}" length in query
-        String entityAlias = "a39";
-
-        int queryPosition = -1;
-        Class<?> javaClassForEntity = getEditedEntity().getJavaType();
-        if (javaClassForEntity == null) {
-            return new ArrayList<>();
-        }
-
-        String queryStart = format("select %s from %s %s ", entityAlias, metadata.getClass(javaClassForEntity), entityAlias);
-
-        StringBuilder queryBuilder = new StringBuilder(queryStart);
-        if (StringUtils.isNotEmpty(joinStr)) {
-            if (sender == joinClauseField) {
-                queryPosition = queryBuilder.length() + senderCursorPosition - 1;
-            }
-            if (!StringUtils.containsIgnoreCase(joinStr, "join") && !StringUtils.contains(joinStr, ",")) {
-                queryBuilder.append("join ").append(joinStr);
-                queryPosition += "join ".length();
-            } else {
-                queryBuilder.append(joinStr);
-            }
-        }
-        if (StringUtils.isNotEmpty(whereStr)) {
-            if (sender == whereClauseField) {
-                queryPosition = queryBuilder.length() + JPQL_WHERE.length() + senderCursorPosition;
-            }
-            queryBuilder.append(JPQL_WHERE)
-                    .append(" ")
-                    .append(whereStr);
-        }
-        String query = queryBuilder.toString();
-        query = query.replace("{E}", entityAlias);
-
-//   todo     return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
-        return new ArrayList<>();
-    }
+//  todo hints  protected List<QuerySuggestions> requestHint(CodeEditor sender, int senderCursorPosition) {
+//        String joinStr = joinClauseField.getValue();
+//        String whereStr = whereClauseField.getValue();
+//
+//        // CAUTION: the magic entity name!  The length is three character to match "{E}" length in query
+//        String entityAlias = "a39";
+//
+//        int queryPosition = -1;
+//        Class<?> javaClassForEntity = getEditedEntity().getJavaType();
+//        if (javaClassForEntity == null) {
+//            return new ArrayList<>();
+//        }
+//
+//        String queryStart = format("select %s from %s %s ", entityAlias, metadata.getClass(javaClassForEntity), entityAlias);
+//
+//        StringBuilder queryBuilder = new StringBuilder(queryStart);
+//        if (StringUtils.isNotEmpty(joinStr)) {
+//            if (sender == joinClauseField) {
+//                queryPosition = queryBuilder.length() + senderCursorPosition - 1;
+//            }
+//            if (!StringUtils.containsIgnoreCase(joinStr, "join") && !StringUtils.contains(joinStr, ",")) {
+//                queryBuilder.append("join ").append(joinStr);
+//                queryPosition += "join ".length();
+//            } else {
+//                queryBuilder.append(joinStr);
+//            }
+//        }
+//        if (StringUtils.isNotEmpty(whereStr)) {
+//            if (sender == whereClauseField) {
+//                queryPosition = queryBuilder.length() + JPQL_WHERE.length() + senderCursorPosition;
+//            }
+//            queryBuilder.append(JPQL_WHERE)
+//                    .append(" ")
+//                    .append(whereStr);
+//        }
+//        String query = queryBuilder.toString();
+//        query = query.replace("{E}", entityAlias);
+//
+////   todo     return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
+//        return new ArrayList<>();
+//    }
 
     @Subscribe
     protected void onValidation(ValidationEvent event) {

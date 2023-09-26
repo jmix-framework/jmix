@@ -21,8 +21,12 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import io.jmix.core.AccessManager;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeDefinition;
+import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.UiComponentsGenerator;
@@ -31,7 +35,6 @@ import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.ValueSourceProvider;
 import io.jmix.flowui.data.value.ContainerValueSourceProvider;
 import io.jmix.flowui.view.View;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,14 +44,17 @@ import java.util.OptionalDouble;
 public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    protected UiComponentsGenerator uiComponentsGenerator;
+    protected final UiComponentsGenerator uiComponentsGenerator;
 
+    protected FormEmbeddingStrategy(Metadata metadata,
+                                    MetadataTools metadataTools,
+                                    DynAttrMetadata dynAttrMetadata,
+                                    AccessManager accessManager,
+                                    UiComponentsGenerator uiComponentsGenerator) {
+        super(metadata, metadataTools, dynAttrMetadata, accessManager);
+        this.uiComponentsGenerator = uiComponentsGenerator;
+    }
 
-//    @Autowired
-//    public void setUiComponentsGenerator(UiComponentsGenerator uiComponentsGenerator) {
-//        this.uiComponentsGenerator = uiComponentsGenerator;
-//    }
 
     @Override
     public boolean supportComponent(Component component) {

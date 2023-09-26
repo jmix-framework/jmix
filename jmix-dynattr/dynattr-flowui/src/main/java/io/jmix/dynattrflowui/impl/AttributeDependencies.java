@@ -41,6 +41,7 @@ public class AttributeDependencies {
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList());
+//          todo is it fine ????????
                 if (attributeDefinitions.contains(attribute)) {
                     dependentAttributes.add(currentAttribute);
                 }

@@ -26,7 +26,6 @@ import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.View;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Comparator;
 import java.util.List;
@@ -34,28 +33,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
-    protected Metadata metadata;
-    protected MetadataTools metadataTools;
-    protected DynAttrMetadata dynAttrMetadata;
-    protected AccessManager accessManager;
+    protected final Metadata metadata;
+    protected final MetadataTools metadataTools;
+    protected final DynAttrMetadata dynAttrMetadata;
+    protected final AccessManager accessManager;
 
-    @Autowired
-    public void setMetadata(Metadata metadata) {
+    protected BaseEmbeddingStrategy(Metadata metadata,
+                                    MetadataTools metadataTools,
+                                    DynAttrMetadata dynAttrMetadata,
+                                    AccessManager accessManager) {
         this.metadata = metadata;
-    }
-
-    @Autowired
-    public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
-    }
-
-    @Autowired
-    public void setDynAttrMetadata(DynAttrMetadata dynAttrMetadata) {
         this.dynAttrMetadata = dynAttrMetadata;
-    }
-
-    @Autowired
-    public void setAccessManager(AccessManager accessManager) {
         this.accessManager = accessManager;
     }
 
@@ -92,10 +81,8 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
     protected void setLoadDynamicAttributes(InstanceContainer container) {
         if (container instanceof HasLoader) {
             DataLoader dataLoader = ((HasLoader) container).getLoader();
-            if (dataLoader instanceof InstanceLoader) {
-                ((InstanceLoader<?>) dataLoader).setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
-            } else if (dataLoader instanceof CollectionLoader) {
-                ((CollectionLoader<?>) dataLoader).setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
+            if (dataLoader instanceof InstanceLoader || dataLoader instanceof CollectionLoader) {
+                dataLoader.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
             }
         }
     }

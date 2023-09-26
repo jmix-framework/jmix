@@ -2711,6 +2711,7 @@
 
                             <xs:attributeGroup ref="columnsLoadType"/>
                             <xs:attribute name="filterable" type="xs:boolean"/>
+                            <xs:attribute name="resizable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
                 </xs:all>

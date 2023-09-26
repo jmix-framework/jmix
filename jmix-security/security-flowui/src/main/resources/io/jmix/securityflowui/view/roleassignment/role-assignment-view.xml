@@ -65,6 +65,7 @@
                     </hbox>
                     <dataGrid id="resourceRoleAssignmentsTable"
                               dataContainer="resourceRoleAssignmentEntitiesDc"
+                              columnReorderingAllowed="true"
                               selectionMode="MULTI">
                         <actions>
                             <action id="addResourceRole" type="list_add">
@@ -75,8 +76,8 @@
                             </action>
                             <action id="remove" type="list_remove"/>
                         </actions>
-                        <columns>
-                            <column property="roleCode" resizable="true"/>
+                        <columns resizable="true">
+                            <column property="roleCode"/>
                         </columns>
                     </dataGrid>
                 </vbox>
@@ -95,6 +96,7 @@
                     </hbox>
                     <dataGrid id="rowLevelRoleAssignmentsTable"
                               dataContainer="rowLevelRoleAssignmentEntitiesDc"
+                              columnReorderingAllowed="true"
                               selectionMode="MULTI">
                         <actions>
                             <action id="addRowLevelRole" type="list_add">
@@ -105,8 +107,8 @@
                             </action>
                             <action id="remove" type="list_remove"/>
                         </actions>
-                        <columns>
-                            <column property="roleCode" resizable="true"/>
+                        <columns resizable="true">
+                            <column property="roleCode"/>
                         </columns>
                     </dataGrid>
                 </vbox>

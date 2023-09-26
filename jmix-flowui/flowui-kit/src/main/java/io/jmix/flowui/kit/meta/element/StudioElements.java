@@ -100,7 +100,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF,
                             typeParameter = "T", required = true),
                     @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValueRef = "parent:resizable"),
                     @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "textAlign", type = StudioPropertyType.ENUMERATION,

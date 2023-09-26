@@ -45,6 +45,7 @@
         </hbox>
         <dataGrid id="usersDataGrid"
                   width="100%"
+                  columnReorderingAllowed="true"
                   minHeight="20em"
                   dataContainer="usersDc">
             <actions>
@@ -56,7 +57,7 @@
                 <action id="resetPassword" type="sec_resetPassword"/>
                 <action id="showUserSubstitutions" type="sec_showUserSubstitutions"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="username"/>
                 <column property="firstName"/>
                 <column property="lastName"/>

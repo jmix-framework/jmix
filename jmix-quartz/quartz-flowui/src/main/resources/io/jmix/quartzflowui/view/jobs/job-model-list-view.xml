@@ -42,6 +42,7 @@
         </hbox>
         <dataGrid id="jobModelsTable"
                   dataContainer="jobModelsDc"
+                  columnReorderingAllowed="true"
                   width="100%"
                   minHeight="20em">
             <actions>
@@ -61,7 +62,7 @@
                 <action id="activate" type="list_itemTracking" text="msg://resumeJob" icon="PLAY"/>
                 <action id="deactivate" type="list_itemTracking" text="msg://pauseJob" icon="PAUSE"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="jobName" resizable="true"/>
                 <column property="jobGroup" resizable="true"/>
                 <column property="jobClass" resizable="true"/>

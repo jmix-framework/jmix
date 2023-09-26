@@ -13,6 +13,8 @@ def tableXml = api.processSnippet('table.xml',
         'tableType': tableType,
         'tableId': tableId,
         'multiselect': multiselect,
+        'columnReorderingAllowed': columnReorderingAllowed,
+        'resizableColumns': resizableColumns,
         'tableActions': tableActions,
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>

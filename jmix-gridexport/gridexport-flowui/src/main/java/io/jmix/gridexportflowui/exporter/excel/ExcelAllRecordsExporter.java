@@ -22,7 +22,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.AbstractAllRecordsExporter;
-import io.jmix.gridexportflowui.exporter.EntityExporter;
+import io.jmix.gridexportflowui.exporter.EntityExportContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -57,12 +57,12 @@ public class ExcelAllRecordsExporter extends AbstractAllRecordsExporter {
         Preconditions.checkNotNullArgument(excelRowCreator, "Cannot export all rows. ExcelRowCreator can't be null");
         Preconditions.checkNotNullArgument(excelRowChecker, "Cannot export all rows. ExcelRowChecker can't be null");
 
-        EntityExporter entityExporter = (entity, entityNumber) -> {
-            boolean exportNotAllowed = excelRowChecker.test(entityNumber);
+        Predicate<EntityExportContext> entityExporter = context -> {
+            boolean exportNotAllowed = excelRowChecker.test(context.getEntityNumber());
             if (exportNotAllowed) {
                 return false;
             } else {
-                excelRowCreator.accept(new RowCreationContext(entity, entityNumber));
+                excelRowCreator.accept(new RowCreationContext(context.getEntity(), context.getEntityNumber()));
                 return true;
             }
         };

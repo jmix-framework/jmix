@@ -41,6 +41,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public abstract class AbstractAllRecordsExporter {
 
@@ -143,16 +144,19 @@ public abstract class AbstractAllRecordsExporter {
     }
 
     /**
-     * Method loads all entity instances associated with the given {@code dataUnit} and calls the
+     * Loads all entity instances associated with the given {@code dataUnit} and calls the
      * {@code entityExporter} to export each loaded entity instance. Creation of the output file object is the
-     * responsibility of the function. Data is loaded in batches, the batch size is configured by the
+     * responsibility of {@code entityExporter}. Data is loaded in batches, the batch size is configured by the
      * {@link GridExportProperties#getExportAllBatchSize()}.
      *
      * @param dataUnit       data unit linked with the data
-     * @param entityExporter function that is applied to each loaded instance
+     * @param entityExporter predicate that is applied to each loaded instance
      */
-    public void exportAll(DataUnit dataUnit, EntityExporter entityExporter) {
-        Preconditions.checkNotNullArgument(entityExporter, "Cannot export all rows. EntityExporter can't be null");
+    public void exportAll(DataUnit dataUnit, Predicate<EntityExportContext> entityExporter) {
+        Preconditions.checkNotNullArgument(entityExporter,
+                "Cannot export all rows. DataUnit can't be null");
+        Preconditions.checkNotNullArgument(entityExporter,
+                "Cannot export all rows. Entity exporter can't be null");
 
         DataLoader dataLoader = getDataLoader(dataUnit);
         int loadBatchSize = gridExportProperties.getExportAllBatchSize();
@@ -169,7 +173,9 @@ public abstract class AbstractAllRecordsExporter {
         });
     }
 
-    protected void exportEntities(CollectionLoader<?> collectionLoader, EntityExporter entityExporter, int loadBatchSize) {
+    protected void exportEntities(CollectionLoader<?> collectionLoader,
+                                  Predicate<EntityExportContext> entityExporter,
+                                  int loadBatchSize) {
         int rowNumber = 0;
         boolean initialLoading = true;
         Object lastLoadedPkValue = null;
@@ -190,7 +196,8 @@ public abstract class AbstractAllRecordsExporter {
 
             List<?> entities = dataManager.loadList(loadContext);
             for (Object entity : entities) {
-                proceedToExport = entityExporter.export(entity, ++rowNumber);
+                EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
+                proceedToExport = entityExporter.test(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }
@@ -206,7 +213,7 @@ public abstract class AbstractAllRecordsExporter {
     }
 
     protected void exportKeyValueEntities(KeyValueCollectionLoader loader,
-                                          EntityExporter entityExporter,
+                                          Predicate<EntityExportContext> entityExporter,
                                           int loadBatchSize) {
         int rowNumber = 0;
         boolean proceedToExport = true;
@@ -221,7 +228,8 @@ public abstract class AbstractAllRecordsExporter {
 
             List<KeyValueEntity> keyValueEntities = dataManager.loadValues(loadContext);
             for (KeyValueEntity keyValueEntity : keyValueEntities) {
-                proceedToExport = entityExporter.export(keyValueEntity, ++rowNumber);
+                EntityExportContext entityExportContext = new EntityExportContext(keyValueEntity, ++rowNumber);
+                proceedToExport = entityExporter.test(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }

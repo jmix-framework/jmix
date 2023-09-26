@@ -22,11 +22,12 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.AbstractAllRecordsExporter;
-import io.jmix.gridexportflowui.exporter.EntityExporter;
+import io.jmix.gridexportflowui.exporter.EntityExportContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Class is used by {@link io.jmix.gridexportflowui.action.ExportAction} for exporting all records from the database to JSON format.
@@ -53,8 +54,8 @@ public class JsonAllRecordsExporter extends AbstractAllRecordsExporter {
     public void exportAll(DataUnit dataUnit, Consumer<Object> jsonObjectCreator) {
         Preconditions.checkNotNullArgument(jsonObjectCreator, "jsonObjectCreator can't be null");
 
-        EntityExporter entityExporter = (entity, entityNumber) -> {
-            jsonObjectCreator.accept(entity);
+        Predicate<EntityExportContext> entityExporter = context -> {
+            jsonObjectCreator.accept(context.getEntity());
             return true;
         };
         exportAll(dataUnit, entityExporter);

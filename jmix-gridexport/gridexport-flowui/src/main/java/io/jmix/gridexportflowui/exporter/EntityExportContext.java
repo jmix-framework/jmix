@@ -17,15 +17,31 @@
 package io.jmix.gridexportflowui.exporter;
 
 /**
- * Entity exporter which is used by {@link AbstractAllRecordsExporter} to export entities one by one
+ * Contains information about single entity used when exporting entity collections
  */
-public interface EntityExporter {
+public class EntityExportContext {
+
+    protected Object entity;
+    protected int entityNumber;
+
+    public EntityExportContext(Object entity, int entityNumber) {
+        this.entity = entity;
+        this.entityNumber = entityNumber;
+    }
 
     /**
-     * Processes export operation on given entity and entity number
-     * @param entity entity to export
-     * @param entityNumber sequential number of entity being processed
-     * @return true if export operation has been successfully completed
+     *
+     * @return entity to export
      */
-    boolean export(Object entity, int entityNumber);
+    public Object getEntity() {
+        return entity;
+    }
+
+    /**
+     *
+     * @return sequential number of entity to export
+     */
+    public int getEntityNumber() {
+        return entityNumber;
+    }
 }

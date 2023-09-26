@@ -17,10 +17,10 @@ def tableXml = api.processSnippet('dto_table.xml',
       xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="${messageKeys['viewTitle']}"
       focusComponent="${tableId}">
-    <data readOnly="true">
+    <data>
         <collection id="${tableDc}"
                     class="${entity.fqn}">
-            <loader id="${tableDl}"/>
+            <loader id="${tableDl}" readOnly="true"/>
         </collection>
     </data>
     <facets>

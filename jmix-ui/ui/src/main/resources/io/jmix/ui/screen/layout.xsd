@@ -2932,6 +2932,7 @@
                 <xs:attribute name="stylename" type="tableStylename"/>
                 <xs:attribute name="fixedGrouping" type="xs:boolean"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
+                <xs:attribute name="sortOnGroupEnabled" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

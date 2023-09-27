@@ -131,6 +131,21 @@ public interface GroupTable<E> extends Table<E> {
     Map<Object, Object> getAggregationResults(GroupInfo info);
 
     /**
+     *
+     * @return true if automatic sorting on grouping columns is enabled
+     * @see #setSortOnGroupEnabled(boolean)
+     */
+    boolean isSortOnGroupEnabled();
+
+    /**
+     * Enable/disable automatic sorting on grouping columns when collection of grouping columns
+     * is changed (reorder, add or remove grouping columns)
+     * @param sortOnGroupEnabled flag whether sorting should be performed when grouping columns are changed.
+     */
+    @StudioProperty
+    void setSortOnGroupEnabled(boolean sortOnGroupEnabled);
+
+    /**
      * GroupTable column.
      *
      * @param <E> row item type

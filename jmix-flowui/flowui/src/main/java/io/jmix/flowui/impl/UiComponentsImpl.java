@@ -42,6 +42,7 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.treegrid.TreeGrid;
+import com.vaadin.flow.component.virtuallist.VirtualList;
 import com.vaadin.flow.di.Instantiator;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.flowui.UiComponents;
@@ -70,6 +71,7 @@ import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import org.slf4j.Logger;
@@ -121,6 +123,7 @@ public class UiComponentsImpl implements UiComponents {
         register(JmixBigDecimalField.class, BigDecimalField.class);
         register(JmixLoginForm.class, LoginForm.class);
         register(JmixMenuBar.class, MenuBar.class);
+        register(JmixVirtualList.class, VirtualList.class);
     }
 
     @SuppressWarnings("unchecked")

@@ -69,6 +69,8 @@ public interface StudioDataElements {
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
@@ -89,6 +91,8 @@ public interface StudioDataElements {
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "cacheable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }

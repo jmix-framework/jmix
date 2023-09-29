@@ -26,7 +26,15 @@
         </hbox>
         <hbox id="configurationBox" spacing="true" height="100%" margin="false" padding="false">
             <dataGrid id="sourceDataGrid" height="100%" width="100%"
-                      minWidth="40em" minHeight="30em" dataContainer="sourceDc">
+                      minWidth="40em" minHeight="30em" dataContainer="sourceDc" dropMode="BETWEEN">
+                <columns>
+                    <column key="name" property="name" header="msg://sourceDataGrid.sourceColumn.title"
+                            sortable="false"/>
+                    <column key="columnPosition" header="msg://sourceDataGrid.column.position.title"/>
+                    <column key="rowPosition" header="msg://sourceDataGrid.row.position.title"/>
+                </columns>
+            </dataGrid>
+            <dataGrid id="targetDataGrid" height="100%" width="100%" dataContainer="sourceDc" dropMode="BETWEEN">
                 <columns>
                     <column key="name" property="name" header="msg://sourceDataGrid.sourceColumn.title"
                             sortable="false"/>

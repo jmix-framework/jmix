@@ -18,6 +18,7 @@ package io.jmix.dynattrflowui.view.location;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dnd.DropTarget;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import io.jmix.core.Messages;
@@ -83,6 +84,7 @@ public class AttributeLocationViewFragment extends StandardView {
 
     public void setAttributes(CollectionContainer<CategoryAttribute> attributes) {
         this.sourceDc.setItems(attributes.getItems());
+
         columnsCountLookupField.setValue(attributes.getItems().stream()
                 .mapToInt(e -> e.getConfiguration().getColumnNumber() == null ? 1 : e.getConfiguration().getColumnNumber())
                 .max()

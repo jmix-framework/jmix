@@ -27,7 +27,6 @@ import io.jmix.dynattrflowui.view.category.CategoryListView;
 import io.jmix.dynattrflowui.view.category.CategoryDetailView;
 import io.jmix.dynattrflowui.view.categoryattr.AttributeEnumerationDetailView;
 import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesDetailView;
-import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesViewFragment;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
@@ -59,7 +58,7 @@ public interface DynamicAttributesReadOnlyRole {
     @EntityAttributePolicy(entityClass = AttributeLocalizedValue.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
 
     @ViewPolicy(viewClasses = {CategoryListView.class, CategoryDetailView.class, CategoryAttributesDetailView.class,
-            CategoryAttributesViewFragment.class, AttributeEnumerationDetailView.class, AttributeLocalizationViewFragment.class})
+            AttributeEnumerationDetailView.class, AttributeLocalizationViewFragment.class})
     @MenuPolicy(menuIds = {"dynat_Category.browse"})
     void dynamicAttributes();
 }

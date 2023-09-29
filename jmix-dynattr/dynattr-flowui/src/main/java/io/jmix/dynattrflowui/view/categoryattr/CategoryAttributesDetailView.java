@@ -45,7 +45,7 @@ import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
-import io.jmix.dynattrflowui.facet.DynAttrFacetInfo;
+import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
 import io.jmix.flowui.*;
@@ -68,6 +68,7 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.*;
@@ -255,6 +256,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected InstanceContainer<CategoryAttributeConfiguration> configurationDc;
     @ViewComponent
     protected CollectionLoader<TargetViewComponent> targetScreensDl;
+    @ViewComponent
+    protected InstanceContainer<CategoryAttribute> categoryAttributeDc;
 
     @ViewComponent("dependsOnAttributesField.clear")
     private ValueClearAction<String> dependsOnAttributesFieldClear;
@@ -267,7 +270,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     protected List<TargetViewComponent> targetScreens = new ArrayList<>();
 
-    private boolean isCommitted = false;
     private boolean isRefreshing = false;
 
 
@@ -422,24 +424,32 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @SuppressWarnings("unchecked")
     protected void initViewGrid() {
         targetScreensTable.getColumnByKey("view")
-                .setRenderer(new ComponentRenderer<>(item -> {
+                .setRenderer(new ComponentRenderer<>(() -> {
                     JmixComboBox<String> comboBox = uiComponents.create(JmixComboBox.class);
-                    comboBox.setItems(dynAttrFacetInfo.getDynAttrViews());
+
+                    return comboBox;
+                }, (comboBox, item) -> {
+                    MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
+
+                    comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
+                    comboBox.addValueChangeListener(e -> item.setView(e.getValue()));
+                    comboBox.addCustomValueSetListener(e -> item.setView(e.getDetail()));
                     if (item.getView() != null) {
                         comboBox.setValue(item.getView());
                     }
-                    comboBox.addValueChangeListener(e -> item.setView(e.getValue()));
-                    comboBox.addCustomValueSetListener(e -> item.setView(e.getDetail()));
-                    return comboBox;
                 }));
         targetScreensTable.getColumnByKey("component")
-                .setRenderer(new ComponentRenderer<>(item -> {
-                    TypedTextField<String> textField = uiComponents.create(TypedTextField.class);
-                    if (item.getComponent() != null) {
-                        textField.setValue(item.getComponent());
+                .setRenderer(new ComponentRenderer<>(() -> {
+                    JmixComboBox<String> comboBox = uiComponents.create(JmixComboBox.class);
+                    return comboBox;
+                }, (comboBox, item) -> {
+                    if(item.getView() != null) {
+                        comboBox.setItems(dynAttrFacetInfo.getDynAttrViewTargetComponentIds(item.getView()));
                     }
-                    textField.addValueChangeListener(e -> item.setComponent(e.getValue()));
-                    return textField;
+                    if (item.getComponent() != null) {
+                        comboBox.setValue(item.getComponent());
+                    }
+                    comboBox.addValueChangeListener(e -> item.setComponent(e.getValue()));
                 }));
     }
 
@@ -1028,13 +1038,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    @Subscribe("windowCommitAndCloseButton")
-    protected void windowCommitAndCloseClicked(ClickEvent<Button> e) {
-        isCommitted = true;
+    @Subscribe(target = Target.DATA_CONTEXT)
+    protected void onPreCommit(DataContext.PreSaveEvent event) {
         preCommitLocalizationFields();
         preCommitTargetViewsField();
         preCommitConfiguration();
-        closeWithDiscard();
     }
 
     protected void preCommitLocalizationFields() {
@@ -1084,9 +1092,5 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 getViewData().getDataContext().merge(attribute);
             }
         }
-    }
-
-    public boolean isCommitted() {
-        return isCommitted;
     }
 }

@@ -114,7 +114,7 @@ public class CategoryListView extends StandardListView<Category> {
     protected void onCategoriesGridApplyChanges(ActionPerformedEvent event) {
         dynAttrMetadata.reload();
         notifications.create(messages.getMessage(CategoryListView.class, "notification.changesApplied"))
-                .withType(Notifications.Type.WARNING)
+                .withType(Notifications.Type.SUCCESS)
                 .show();
     }
 

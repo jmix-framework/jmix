@@ -39,6 +39,7 @@
     </data>
     <actions>
         <action id="windowClose" type="detail_close"/>
+        <action id="windowCommitAndClose" type="detail_saveClose"/>
     </actions>
     <facets>
         <dataLoadCoordinator auto="true"/>
@@ -174,7 +175,7 @@
             </tab>
         </tabSheet>
         <hbox id="editActions" spacing="true" margin="true">
-            <button id="windowCommitAndCloseButton" icon="CHECK" text="msg:///actions.Ok" themeNames="primary"/>
+            <button action="windowCommitAndClose"/>
             <button action="windowClose"/>
         </hbox>
     </layout>

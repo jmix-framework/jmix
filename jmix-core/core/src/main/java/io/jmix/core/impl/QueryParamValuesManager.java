@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Encapsulates invocations of registered {@link QueryParamValueProvider}s.
  */
-@Component("data_QueryParamValuesManager")
+@Component("core_QueryParamValuesManager")
 public class QueryParamValuesManager {
 
     @Autowired(required = false)

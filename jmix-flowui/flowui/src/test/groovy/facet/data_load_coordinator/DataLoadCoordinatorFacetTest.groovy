@@ -16,6 +16,7 @@
 
 package facet.data_load_coordinator
 
+import facet.data_load_coordinator.screen.DlcAutoProvidedParamTestScreen
 import facet.data_load_coordinator.screen.DlcAutoTestScreen
 import facet.data_load_coordinator.screen.DlcManualNoParamTestScreen
 import facet.data_load_coordinator.screen.DlcManualTestScreen
@@ -98,10 +99,11 @@ class DataLoadCoordinatorFacetTest extends FlowuiTestSpecification {
         screenClass << [DlcManualTestScreen, DlcManualNoParamTestScreen]
     }
 
+    @Unroll
     def "auto configuration"() {
         when: "show screen"
 
-        def screen = navigateToView(DlcAutoTestScreen)
+        def screen = navigateToView(screenClass)
         def screenFacets = ViewControllerUtils.getViewFacets(screen);
 
         then: "facet is created and injected"
@@ -150,5 +152,9 @@ class DataLoadCoordinatorFacetTest extends FlowuiTestSpecification {
         screen.events.size() == 1
         screen.events[0].loader == 'ownersDl'
         screen.events[0].loadContext.query.parameters['component_nameFilterField'] == '(?i)%o%'
+
+        where:
+
+        screenClass << [DlcAutoTestScreen, DlcAutoProvidedParamTestScreen]
     }
 }

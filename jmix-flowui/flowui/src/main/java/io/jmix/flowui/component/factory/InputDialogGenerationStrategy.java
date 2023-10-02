@@ -184,6 +184,7 @@ public class InputDialogGenerationStrategy extends AbstractComponentGenerationSt
 
         fileStorageUploadField.setFileNameVisible(true);
         fileStorageUploadField.setClearButtonVisible(true);
+        fileStorageUploadField.setWidthFull();
 
         return fileStorageUploadField;
     }
@@ -193,6 +194,7 @@ public class InputDialogGenerationStrategy extends AbstractComponentGenerationSt
 
         fileUploadField.setFileNameVisible(true);
         fileUploadField.setClearButtonVisible(true);
+        fileUploadField.setWidthFull();
 
         return fileUploadField;
     }

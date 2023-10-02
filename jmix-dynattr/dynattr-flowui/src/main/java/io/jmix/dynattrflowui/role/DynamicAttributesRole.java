@@ -23,11 +23,10 @@ import io.jmix.dynattr.model.CategoryAttributeValue;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
-import io.jmix.dynattrflowui.view.category.CategoryListView;
 import io.jmix.dynattrflowui.view.category.CategoryDetailView;
+import io.jmix.dynattrflowui.view.category.CategoryListView;
 import io.jmix.dynattrflowui.view.categoryattr.AttributeEnumerationDetailView;
 import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesDetailView;
-import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
@@ -57,8 +56,8 @@ public interface DynamicAttributesRole {
     @EntityAttributePolicy(entityClass = AttributeLocalizedEnumValue.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = AttributeLocalizedValue.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 
-    @ViewPolicy(viewClasses = {CategoryListView.class, CategoryDetailView.class, CategoryAttributesDetailView.class,
-            AttributeEnumerationDetailView.class, AttributeLocalizationViewFragment.class})
+    @ViewPolicy(viewClasses = {CategoryListView.class, CategoryDetailView.class,
+            CategoryAttributesDetailView.class, AttributeEnumerationDetailView.class})
     @MenuPolicy(menuIds = {"dynat_Category.browse"})
     void dynamicAttributes();
 }

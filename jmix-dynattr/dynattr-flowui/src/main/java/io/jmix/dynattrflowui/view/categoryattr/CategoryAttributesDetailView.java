@@ -41,13 +41,14 @@ import io.jmix.core.security.AccessDeniedException;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
-import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
+import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.*;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
@@ -66,10 +67,7 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionLoader;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.*;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
@@ -201,6 +199,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected DatatypeRegistry datatypeRegistry;
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
+    @Autowired
+    protected DataComponents dataComponents;
+    @Autowired
+    protected MsgBundleTools msgBundleTools;
     //    @Autowired
 //    protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
     @Autowired
@@ -266,7 +268,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     private JmixButton editEnumerationBtn;
 
-    protected AttributeLocalizationViewFragment localizationFragment;
+    protected AttributeLocalizationComponent localizationFragment;
 
     protected List<TargetViewComponent> targetScreens = new ArrayList<>();
 
@@ -517,7 +519,14 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
             VerticalLayout localizationTabComponent = (VerticalLayout) tabSheet.getComponent(localizationTab);
-            localizationFragment = views.create(AttributeLocalizationViewFragment.class);
+            localizationFragment = new AttributeLocalizationComponent(coreProperties,
+                    msgBundleTools,
+                    metadata,
+                    messages,
+                    messageTools,
+                    uiComponents,
+                    dataComponents,
+                    getViewData().getDataContext());
             localizationFragment.setNameMsgBundle(getEditedEntity().getNameMsgBundle());
             localizationFragment.setDescriptionMsgBundle(getEditedEntity().getDescriptionsMsgBundle());
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());

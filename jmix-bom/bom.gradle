@@ -235,6 +235,8 @@ dependencies {
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-starter:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest-starter:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-flowui:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-flowui-starter:$premiumVersion"
 
         api 'com.google.guava:guava:32.1.2-jre'
         api 'commons-io:commons-io:2.11.0'

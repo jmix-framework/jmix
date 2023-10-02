@@ -169,6 +169,11 @@ public class DesignTimeConfiguration implements Filter.Configuration {
     }
 
     @Override
+    public boolean isAvailableForAllUsers() {
+        return true;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

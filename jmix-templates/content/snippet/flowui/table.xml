@@ -41,12 +41,13 @@ fetchPlan.orderedRootProperties.each { property ->
         minHeight="20em"
         dataContainer="${tableDc}"<%
         (tableType.isHierarchical()) ? print("\nhierarchyProperty=\"${hierarchicalProperty}\"") : print("")
+        if (columnReorderingAllowed) {%>\n columnReorderingAllowed="true"<%}
         if (multiselect) {%>\n selectionMode="MULTI"<%}%>>
     <actions><%tableActions.each { action ->%>
         <action id="${action}" type="list_${action}"/>
     <%}%>
     </actions>
-    <columns><%columns.each {column ->%>
+    <columns<%if (resizableColumns) {%> resizable="true"<%}%>><%columns.each {column ->%>
         <column property="${column}"/>
     <%}%>
     </columns>

@@ -60,7 +60,7 @@ public class SendingMessageView extends StandardView {
     @ViewComponent
     protected JmixTextArea contentTextArea;
     @ViewComponent
-    protected TypedTextField<String> bodyContentType;
+    protected TypedTextField<String> bodyContentTypeField;
     @ViewComponent
     protected JmixButton showContentBtn;
 
@@ -104,7 +104,7 @@ public class SendingMessageView extends StandardView {
                 coreProperties.getTempDir()
         );
 
-        if (StringUtils.containsIgnoreCase(bodyContentType.getValue(), DownloadFormat.HTML.getContentType())) {
+        if (StringUtils.containsIgnoreCase(bodyContentTypeField.getValue(), DownloadFormat.HTML.getContentType())) {
             downloader.download(dataProvider, "email-preview.html", DownloadFormat.HTML);
         } else {
             downloader.download(dataProvider, "email-preview.txt", DownloadFormat.TEXT);

@@ -58,7 +58,6 @@
                          remainingTimeText="remainingTimeText"
                          remainingTimeUnknownText="remainingTimeUnknownText"
                          required="true"
-                         requiredIndicatorVisible="true"
                          requiredMessage="requiredMessage"
                          uploadDialogCancelText="uploadDialogCancelText"
                          uploadDialogTitle="uploadDialogTitle"

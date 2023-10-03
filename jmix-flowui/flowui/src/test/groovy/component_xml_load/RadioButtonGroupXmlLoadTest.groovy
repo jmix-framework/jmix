@@ -66,7 +66,6 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
             errorMessage == "errorMessage"
             height == "100%"
             helperText == "helperText"
-            !invalid
             label == "label"
             maxHeight == "200px"
             maxWidth == "200px"
@@ -74,7 +73,6 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "100px"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessage"
             themeNames.containsAll([RadioGroupVariant.LUMO_HELPER_ABOVE_FIELD.getVariantName(),
                                     RadioGroupVariant.LUMO_VERTICAL.getVariantName()])

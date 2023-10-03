@@ -109,8 +109,7 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
 
     protected void initPropertyField() {
         if (filterMetaClass != null) {
-            List<String> properties = filterMetadataTools.getPropertyPaths(filterMetaClass, query,
-                            propertiesFilterPredicate).stream()
+            List<String> properties = filterMetadataTools.getPropertyPaths(currentConfiguration.getOwner()).stream()
                     .map(MetaPropertyPath::toPathString)
                     .collect(Collectors.toList());
 

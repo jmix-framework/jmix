@@ -71,6 +71,16 @@
               code="multiselect"
               propertyType="BOOLEAN"
               preferences="true"/>
+    <property caption="Column reordering"
+              code="columnReorderingAllowed"
+              propertyType="BOOLEAN"
+              preferences="true"
+              defaultValue="true"/>
+    <property caption="Resizable columns"
+              code="resizableColumns"
+              propertyType="BOOLEAN"
+              preferences="true"
+              defaultValue="true"/>
 
     <property caption="Descriptor name"
               code="viewDescriptorName"

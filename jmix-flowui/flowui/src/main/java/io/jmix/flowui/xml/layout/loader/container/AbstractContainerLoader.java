@@ -50,6 +50,11 @@ public abstract class AbstractContainerLoader<T extends Component> extends Abstr
                 pendingLoadComponents.add(componentLoader);
 
                 container.add(componentLoader.getResultComponent());
+
+                if (container instanceof FlexComponent flexContainer) {
+                    loadEnum(subElement, FlexComponent.Alignment.class, "alignSelf",
+                            alignSelf -> flexContainer.setAlignSelf(alignSelf, componentLoader.getResultComponent()));
+                }
             }
         }
     }

@@ -41,14 +41,14 @@ import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
-import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
-import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
+import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
@@ -165,25 +165,27 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         Boolean includeAll = loadBoolean(columnsElement, "includeAll").orElse(false);
         boolean filterable = loadBoolean(columnsElement, "filterable")
                 .orElse(false);
+        boolean resizable = loadBoolean(columnsElement, "resizable")
+                .orElse(false);
 
         if (includeAll) {
-            loadColumnsByInclude(resultComponent, columnsElement, holder, fetchPlan, filterable);
+            loadColumnsByInclude(resultComponent, columnsElement, holder, fetchPlan, filterable, resizable);
             // In case of includeAll, EditorActionsColumn will be place at the end
             loadEditorActionsColumns(resultComponent, columnsElement);
         } else {
             List<Element> columnElements = columnsElement.elements();
             for (Element columnElement : columnElements) {
-                loadColumnsElementChild(resultComponent, columnElement, holder, filterable);
+                loadColumnsElementChild(resultComponent, columnElement, holder, filterable, resizable);
             }
         }
     }
 
     protected void loadColumnsElementChild(T resultComponent, Element columnElement, GridDataHolder holder,
-                                           boolean filterableColumns) {
+                                           boolean filterableColumns, boolean resizableColumns) {
         switch (columnElement.getName()) {
             case COLUMN_ELEMENT_NAME:
                 loadColumn(resultComponent, columnElement, holder.dataLoader,
-                        Objects.requireNonNull(holder.getMetaClass()), filterableColumns);
+                        Objects.requireNonNull(holder.getMetaClass()), filterableColumns, resizableColumns);
                 break;
             case EDITOR_ACTIONS_COLUMN_ELEMENT_NAME:
                 loadEditorActionsColumn(resultComponent, columnElement);
@@ -286,7 +288,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected void loadColumnsByInclude(T component, Element columnsElement, GridDataHolder holder,
-                                        FetchPlan fetchPlan, boolean filterableColumns) {
+                                        FetchPlan fetchPlan, boolean filterableColumns, boolean resizableColumns) {
         MetaClass metaClass = Objects.requireNonNull(holder.getMetaClass());
         Collection<String> appliedProperties = getAppliedProperties(columnsElement, fetchPlan, metaClass);
 
@@ -305,7 +307,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 overriddenColumns.add(column);
             }
 
-            loadColumn(component, column, dataLoader, metaClass, filterableColumns);
+            loadColumn(component, column, dataLoader, metaClass, filterableColumns, resizableColumns);
         }
 
         // load remains columns
@@ -320,14 +322,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             if (propertyId != null) {
                 MetaPropertyPath propertyPath = metaClass.getPropertyPath(propertyId);
                 if (propertyPath == null || getMetaDataTools().fetchPlanContainsProperty(fetchPlan, propertyPath)) {
-                    loadColumn(component, column, dataLoader, metaClass, filterableColumns);
+                    loadColumn(component, column, dataLoader, metaClass, filterableColumns, resizableColumns);
                 }
             }
         }
     }
 
     protected void loadColumn(T component, Element element, @Nullable DataLoader dataLoader, MetaClass metaClass,
-                              boolean filterableColumns) {
+                              boolean filterableColumns, boolean resizableColumns) {
         String property = loadString(element, "property")
                 .orElse(null);
 
@@ -358,11 +360,11 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(element, "frozen", column::setFrozen);
         loadBoolean(element, "sortable", column::setSortable);
         loadInteger(element, "flexGrow", column::setFlexGrow);
-        loadBoolean(element, "resizable", column::setResizable);
         loadBoolean(element, "autoWidth", column::setAutoWidth);
         loadBoolean(element, "visible", column::setVisible);
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
 
+        loadColumnResizable(element, column, resizableColumns);
         loadColumnFilterable(element, column, dataLoader, metaClass, property, filterableColumns);
         loadColumnEditable(element, column, property);
         loadAggregationInfo(element, column);
@@ -394,6 +396,11 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
 
         return Optional.empty();
+    }
+
+    protected void loadColumnResizable(Element element, Column<?> column, boolean resizableColumns) {
+        loadBoolean(element, "resizable")
+                .ifPresentOrElse(column::setResizable, () -> column.setResizable(resizableColumns));
     }
 
     protected void loadColumnFilterable(Element element, Column<?> column, @Nullable DataLoader dataLoader,

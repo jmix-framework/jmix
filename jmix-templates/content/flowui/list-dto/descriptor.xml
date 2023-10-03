@@ -11,16 +11,18 @@ def tableXml = api.processSnippet('dto_table.xml',
         'tableType': tableType,
         'tableId': tableId,
         'tableActions': tableActions,
+        'columnReorderingAllowed': columnReorderingAllowed,
+        'resizableColumns': resizableColumns,
         'multiselect': multiselect])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="${messageKeys['viewTitle']}"
       focusComponent="${tableId}">
-    <data readOnly="true">
+    <data>
         <collection id="${tableDc}"
                     class="${entity.fqn}">
-            <loader id="${tableDl}"/>
+            <loader id="${tableDl}" readOnly="true"/>
         </collection>
     </data>
     <facets>

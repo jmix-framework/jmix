@@ -24,11 +24,17 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 @StudioUiKit
 public interface DynAttrStudioFacets {
     @StudioFacet(
+
             name = "DynamicAttributes",
             classFqn = "io.jmix.dynattrflowui.facet.DynAttrFacet",
             category = "Facets",
-            xmlElement = "DynamicAttributes",
-            icon = "io/jmix/dynattrflowui/icon/facet/dynamicAttributes.svg"
+            xmlElement = "dynamicAttributes",
+            xmlns = "http://jmix.io/schema/dynattr/flowui",
+            xmlnsAlias = "dynattr",
+            icon = "io/jmix/dynattrflowui/icon/facet/dynamicAttributes.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+            }
     )
     void dataLoadCoordinator();
 }

@@ -124,8 +124,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         MetaClass metaClass = context.getMetaClass();
         String propertyName = context.getProperty();
 
-        Assert.notNull(propertyName, "Property name has to be not null");
-
         if (!DynAttrUtils.isDynamicAttributeProperty(propertyName)) {
             return null;
         }
@@ -453,7 +451,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                     selectAction.setEntityName(metaClass.getName());
                 }
                 selectAction.setLookupViewId(attribute.getConfiguration().getLookupScreen());
-                selectAction.setUseComboBox(true);
+                selectAction.setUseComboBox(attribute.getConfiguration().isLookup());
             }
         }
     }

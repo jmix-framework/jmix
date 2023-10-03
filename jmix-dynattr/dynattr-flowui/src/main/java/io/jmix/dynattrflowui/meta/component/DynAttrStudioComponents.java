@@ -30,7 +30,7 @@ public interface DynAttrStudioComponents {
             classFqn = "io.jmix.dynattrflowui.panel.DynamicAttributesPanel",
             category = "Components",
             xmlElement = "dynamicAttributesPanel",
-            xmlns = "http://jmix.io/schema/dynattr/ui",
+            xmlns = "http://jmix.io/schema/dynattr/flowui",
             xmlnsAlias = "dynattr",
             icon = "io/jmix/dynattrflowui/icon/component/dynamicAttributesPanel.svg",
             properties = {

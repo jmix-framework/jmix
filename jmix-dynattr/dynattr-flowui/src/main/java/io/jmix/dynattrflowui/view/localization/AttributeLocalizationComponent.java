@@ -126,7 +126,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
         });
 
         Grid.Column<AttributeLocalizedValue> editColumn = localizedValuesDataGrid.addComponentColumn(attributeLocalizedValue -> {
-                    Button editButton = new Button("Edit");
+                    Button editButton = new Button(messages.getMessage("actions.Edit"));
                     editButton.setEnabled(true);
                     editButton.addClickListener(e -> {
                         if (editor.isOpen()) {

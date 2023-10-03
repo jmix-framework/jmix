@@ -21,6 +21,7 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
+import com.vaadin.flow.component.grid.dnd.GridDropEvent;
 import com.vaadin.flow.component.grid.dnd.GridDropLocation;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.html.H4;
@@ -49,6 +50,7 @@ import io.jmix.flowui.Views;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.CollectionContainer;
@@ -78,7 +80,11 @@ import java.util.stream.IntStream;
 @EditedEntityContainer("categoryDc")
 @DialogMode(width = "50em", height = "37.5em")
 public class CategoryDetailView extends StandardDetailView<Category> {
-    private static final List<Integer> COL_POSITIONS = IntStream.range(1, 5).boxed().toList();
+    private static final int LOWEST_COUNT = 1;
+    private static final int HIGHEST_COUNT = 5;
+    private static final List<Integer> COL_POSITIONS = IntStream.range(LOWEST_COUNT, HIGHEST_COUNT).boxed().toList();
+    private static final String DND_CONTENT_ROW_KEY = "text/plain";
+    private static final String NAME_COLUMN = "name";
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -139,6 +145,15 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected Button moveUpBtn;
     @ViewComponent
     protected Button moveDownBtn;
+    @ViewComponent("categoryAttrsGrid.edit")
+    protected Action editAction;
+    @ViewComponent("categoryAttrsGrid.remove")
+    protected Action removeAction;
+    @ViewComponent("categoryAttrsGrid.moveUp")
+    protected Action moveUpAction;
+    @ViewComponent("categoryAttrsGrid.moveDown")
+    protected Action moveDownAction;
+
 
     protected AttributeLocalizationComponent localizationFragment;
 
@@ -147,6 +162,25 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
+        initColumnsCountLookupField();
+        initActionsVisibleListener();
+        initLocationTab();
+        initEntityTypeField();
+        initLocalizationTab();
+        setupFieldsLock();
+        setGridActionsEnabled(!categoryAttrsGrid.getSelectedItems().isEmpty());
+    }
+
+    private void initActionsVisibleListener() {
+        categoryAttrsGrid.addSelectionListener(e -> setGridActionsEnabled(!e.getAllSelectedItems().isEmpty()));
+    }
+
+    private void setGridActionsEnabled(boolean enabled) {
+        List.of(editAction, removeAction, moveUpAction, moveDownAction)
+                .forEach(button -> button.setEnabled(enabled));
+    }
+
+    protected void initColumnsCountLookupField() {
         columnsCountLookupField.setItems(COL_POSITIONS);
         columnsCountLookupField.addValueChangeListener(e -> {
             initLocationTab();
@@ -156,23 +190,18 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                 .filter(item -> item.getConfiguration().getColumnNumber() != null)
                 .mapToInt(item -> item.getConfiguration().getColumnNumber())
                 .max()
-                .orElse(1));
-
-        initLocationTab();
-        initEntityTypeField();
-        initLocalizationTab();
-        setupFieldsLock();
+                .orElse(LOWEST_COUNT));
     }
 
     protected void initLocationTab() {
-        int size = columnsCountLookupField.getValue() == null ? 1 : columnsCountLookupField.getValue();
+        int size = columnsCountLookupField.getValue() == null ? LOWEST_COUNT : columnsCountLookupField.getValue();
         if (size < attributesLocationMapping.size()) {
-            unstashUnusedAttributes(size);
+            stashUnusedAttributes(size);
         }
         dislocateAttributesForMapping();
         attributesLocationTabContainer.removeAll();
 
-        VerticalLayout sourceGrid = createGrid("0", "SourceGrid", attributesLocationMapping.get(0), "320px");
+        VerticalLayout sourceGrid = createGrid("0", "SourceGrid", attributesLocationMapping.get(0), "20em");
 
         HorizontalLayout targetsGridContainer = new HorizontalLayout();
         targetsGridContainer.setPadding(false);
@@ -181,13 +210,14 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
         for (int i = 1; i <= size; i++) {
             attributesLocationMapping.computeIfAbsent(i, k -> new ArrayList<>());
-            targetsGridContainer.add(createGrid(String.valueOf(i), "Column " + i, attributesLocationMapping.get(i), "200px"));
+            targetsGridContainer.add(createGrid(String.valueOf(i), "Column " + i, attributesLocationMapping.get(i), "12.5em"));
         }
         attributesLocationTabContainer.add(sourceGrid, targetsGridContainer);
     }
 
-    private void unstashUnusedAttributes(int size) {
-        for (int i = ++size; i < attributesLocationMapping.size(); i++) {
+    private void stashUnusedAttributes(int size) {
+        int belowIndex = size + LOWEST_COUNT;
+        for (int i = belowIndex; i < attributesLocationMapping.size(); i++) {
             attributesLocationMapping.get(i).forEach(elem -> {
                 elem.getConfiguration().setRowNumber(null);
                 elem.getConfiguration().setColumnNumber(null);
@@ -200,6 +230,12 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     private void dislocateAttributesForMapping() {
         attributesLocationMapping = new HashMap<>();
         attributesViewsLocationMapping = new HashMap<>();
+
+        dislocateAttributesMappingByConfiguration();
+        sortAttributesMapping();
+    }
+
+    private void dislocateAttributesMappingByConfiguration() {
         categoryAttributesDc.getItems()
                 .forEach(categoryAttribute -> {
                     if (categoryAttribute.getConfiguration().getColumnNumber() == null) {
@@ -215,10 +251,12 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                         attributesLocationMapping.get(colNumber).add(categoryAttribute);
                     }
                 });
-
         if (!attributesLocationMapping.containsKey(0)) {
             attributesLocationMapping.put(0, new ArrayList<>());
         }
+    }
+
+    private void sortAttributesMapping() {
         attributesLocationMapping.values()
                 .forEach(list -> {
                     list.sort((left, right) -> {
@@ -239,7 +277,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected VerticalLayout createGrid(String id, String girdName, List<CategoryAttribute> sourceItems, String width) {
         Grid<CategoryAttribute> grid = new Grid<>(CategoryAttribute.class, false);
         grid.setWidth(width);
-        grid.addColumn("name");
+        grid.addColumn(NAME_COLUMN);
         grid.setId(id);
 
         GridListDataView<CategoryAttribute> dataView = grid.setItems(sourceItems);
@@ -250,50 +288,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
         AtomicReference<CategoryAttribute> draggedItem = new AtomicReference<>();
         grid.addColumnReorderListener(e -> snapshotLocation());
-        grid.addDragStartListener(
-                e -> draggedItem.set(e.getDraggedItems().get(0)));
-
-        grid.addDropListener(e -> {
-
-            Optional<CategoryAttribute> targetVal = attributesLocationMapping.values()
-                    .stream()
-                    .flatMap(Collection::stream)
-                    .filter(item -> item.getName().equals(e.getDataTransferData().get("text/plain")))
-                    .findFirst();
-            boolean isSameGrid = e.getDropTargetItem().isPresent() &&
-                    targetVal.isPresent() &&
-                    Objects.equals(targetVal.get().getConfiguration().getColumnNumber(),
-                            e.getDropTargetItem().get().getConfiguration().getColumnNumber());
-            if (isSameGrid && draggedItem.get() != null) {
-
-                CategoryAttribute targetAttr = e.getDropTargetItem().orElseThrow();
-                GridDropLocation dropLocation = e.getDropLocation();
-
-                boolean personWasDroppedOntoItself = draggedItem.get().equals(targetAttr);
-
-                if (personWasDroppedOntoItself) {
-                    return;
-                }
-
-                dataView.removeItem(draggedItem.get());
-
-                if (dropLocation == GridDropLocation.BELOW) {
-                    dataView.addItemAfter(draggedItem.get(), targetAttr);
-                } else {
-                    dataView.addItemBefore(draggedItem.get(), targetAttr);
-                }
-                draggedItem.set(null);
-            } else {
-                CategoryAttribute next = targetVal.orElseThrow();
-                for (Map.Entry<Integer, List<CategoryAttribute>> item : attributesLocationMapping.entrySet()) {
-                    if (item.getValue().contains(next)) {
-                        attributesViewsLocationMapping.get(item.getKey().toString()).removeItem(next);
-                        attributesViewsLocationMapping.get(item.getKey().toString()).refreshAll();
-                    }
-                }
-                e.getSource().getListDataView().addItem(next);
-            }
-            snapshotLocation();
+        grid.addDragStartListener(e -> draggedItem.set(e.getDraggedItems().get(0)));
+        grid.addDropListener(event -> {
+            handleDnD(event, draggedItem.get(), dataView);
+            draggedItem.set(null);
         });
 
         H4 targetGridLabel = new H4(girdName);
@@ -305,6 +303,56 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
         sourceGridLayout.add(targetGridLabel, grid);
         return sourceGridLayout;
+    }
+
+    private void handleDnD(GridDropEvent<CategoryAttribute> event, CategoryAttribute draggedItem, GridListDataView<CategoryAttribute> dataView) {
+
+        Optional<CategoryAttribute> targetAttribute = attributesLocationMapping.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .filter(item -> item.getName().equals(event.getDataTransferData().get(DND_CONTENT_ROW_KEY)))
+                .findFirst();
+
+        boolean isSameGrid = event.getDropTargetItem().isPresent() &&
+                targetAttribute.isPresent() &&
+                Objects.equals(targetAttribute.get().getConfiguration().getColumnNumber(),
+                        event.getDropTargetItem().get().getConfiguration().getColumnNumber());
+
+        if (isSameGrid && draggedItem != null) {
+            handleSelfDrop(event, draggedItem, dataView);
+        } else {
+            handleBetweenGridsDrop(event.getSource(), targetAttribute.orElseThrow());
+        }
+        snapshotLocation();
+    }
+
+    private void handleSelfDrop(GridDropEvent<CategoryAttribute> event, CategoryAttribute draggedItem, GridListDataView<CategoryAttribute> dataView) {
+        CategoryAttribute targetAttr = event.getDropTargetItem().orElseThrow();
+        GridDropLocation dropLocation = event.getDropLocation();
+
+        boolean personWasDroppedOntoItself = draggedItem.equals(targetAttr);
+
+        if (personWasDroppedOntoItself) {
+            return;
+        }
+
+        dataView.removeItem(draggedItem);
+
+        if (dropLocation == GridDropLocation.BELOW) {
+            dataView.addItemAfter(draggedItem, targetAttr);
+        } else {
+            dataView.addItemBefore(draggedItem, targetAttr);
+        }
+    }
+
+    private void handleBetweenGridsDrop(Grid<CategoryAttribute> sourceGrid, CategoryAttribute targetAttribute) {
+        for (Map.Entry<Integer, List<CategoryAttribute>> item : attributesLocationMapping.entrySet()) {
+            if (item.getValue().contains(targetAttribute)) {
+                attributesViewsLocationMapping.get(item.getKey().toString()).removeItem(targetAttribute);
+                attributesViewsLocationMapping.get(item.getKey().toString()).refreshAll();
+            }
+        }
+        sourceGrid.getListDataView().addItem(targetAttribute);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

@@ -23,6 +23,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
@@ -30,6 +31,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -68,6 +70,12 @@ public class ViewControllerReflectionInspector {
             CacheBuilder.newBuilder()
                     .weakKeys()
                     .build();
+
+    protected final Map<Class<?>, String> argumentTypeToDefaultMethodMap = Map.of(
+            ClickEvent.class, "addClickListener"
+    );
+
+    protected final Map<Class, Collection<MethodHandle>> argumentTypesToClashedMethodsMap = new HashMap<>();
 
     protected final Function<Class, MethodHandles.Lookup> lambdaLookupProvider;
 
@@ -128,6 +136,26 @@ public class ViewControllerReflectionInspector {
     public MethodHandle getAddListenerMethod(Class<?> clazz, Class<?> eventType) {
         Map<Class, MethodHandle> methods = targetIntrospectionCache.getUnchecked(clazz).getAddListenerMethods();
         return methods.get(eventType);
+    }
+
+    @Nullable
+    public MethodHandle getAddListenerMethod(Class<?> clazz, Class<?> eventType, String methodName) {
+        if (methodName.isEmpty()) {
+            return getAddListenerMethod(clazz, eventType);
+        }
+
+        Map<Class, Collection<MethodHandle>> methods = targetIntrospectionCache.getUnchecked(clazz)
+                .getClashedAddListenerMethods();
+
+        return methods.get(eventType).stream()
+                .filter(methodCandidate -> MethodHandles.lookup()
+                        .revealDirect(methodCandidate)
+                        .getName()
+                        // skip 'add' and 'set'
+                        .substring(3)
+                        .equals(StringUtils.capitalize(methodName)))
+                .findAny()
+                .orElse(null);
     }
 
     @Nullable
@@ -281,7 +309,8 @@ public class ViewControllerReflectionInspector {
         Map<String, MethodHandle> installTargetMethods = getInstallTargetMethodsNotCached(concreteClass, methods);
         Map<String, MethodHandle> supplyTargetMethods = getSupplyTargetMethodsNotCached(concreteClass, methods);
 
-        return new TargetIntrospectionData(addListenerMethods, installTargetMethods, supplyTargetMethods);
+        return new TargetIntrospectionData(addListenerMethods, argumentTypesToClashedMethodsMap,
+                installTargetMethods, supplyTargetMethods);
     }
 
     protected List<InjectElement> getAnnotatedInjectElementsNotCached(Class<?> clazz) {
@@ -583,6 +612,24 @@ public class ViewControllerReflectionInspector {
                         } catch (IllegalAccessException e) {
                             throw new RuntimeException("Unable to use subscription method " + m, e);
                         }
+
+                        // For cases where several listeners have the same signature
+                        // E.g. com.vaadin.flow.component.ClickNotifier
+                        if (argumentTypeToDefaultMethodMap.containsKey(actualTypeArgument)) {
+                            if (argumentTypesToClashedMethodsMap.containsKey(actualTypeArgument)) {
+                                argumentTypesToClashedMethodsMap.get(actualTypeArgument).add(mh);
+                            } else {
+                                ArrayList<MethodHandle> clashedMethods = new ArrayList<>();
+                                clashedMethods.add(mh);
+                                argumentTypesToClashedMethodsMap.put(actualTypeArgument, clashedMethods);
+                            }
+
+                            // Do not save non-default methods in cache for backward compatibility
+                            if (!m.getName().equals(argumentTypeToDefaultMethodMap.get(actualTypeArgument))) {
+                                continue;
+                            }
+                        }
+
                         subscriptionMethods.put(actualTypeArgument, mh);
                     }
                 }
@@ -758,19 +805,26 @@ public class ViewControllerReflectionInspector {
     public static class TargetIntrospectionData {
 
         private final Map<Class, MethodHandle> addListenerMethods;
+        private final Map<Class, Collection<MethodHandle>> clashedAddListenerMethods;
         private final Map<String, MethodHandle> installTargetMethods;
         private final Map<String, MethodHandle> supplyTargetMethods;
 
         public TargetIntrospectionData(Map<Class, MethodHandle> addListenerMethods,
+                                       Map<Class, Collection<MethodHandle>> clashedAddListenerMethods,
                                        Map<String, MethodHandle> installTargetMethods,
                                        Map<String, MethodHandle> supplyTargetMethods) {
             this.addListenerMethods = addListenerMethods;
+            this.clashedAddListenerMethods = clashedAddListenerMethods;
             this.installTargetMethods = installTargetMethods;
             this.supplyTargetMethods = supplyTargetMethods;
         }
 
         public Map<Class, MethodHandle> getAddListenerMethods() {
             return addListenerMethods;
+        }
+
+        public Map<Class, Collection<MethodHandle>> getClashedAddListenerMethods() {
+            return clashedAddListenerMethods;
         }
 
         public Map<String, MethodHandle> getInstallTargetMethods() {

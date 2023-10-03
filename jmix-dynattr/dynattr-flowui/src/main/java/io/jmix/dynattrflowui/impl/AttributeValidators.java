@@ -18,7 +18,6 @@ package io.jmix.dynattrflowui.impl;
 
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.flowui.component.validation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +28,11 @@ import java.util.List;
 @Component("dynat_AttributeValidators")
 public class AttributeValidators {
 
-    @Autowired
-    protected ApplicationContext applicationContext;
+    protected final ApplicationContext applicationContext;
+
+    public AttributeValidators(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     /**
      * Returns validators for a dynamic attribute
@@ -38,27 +40,18 @@ public class AttributeValidators {
      * @return collection of validators
      */
     public Collection<Validator<?>> getValidators(AttributeDefinition attribute) {
-        List<Validator<?>> validators;
-
-        switch (attribute.getDataType()) {
-            case INTEGER:
-                validators = createIntegerValidators(attribute);
-                break;
-            case DOUBLE:
-                validators = createDoubleValidators(attribute);
-                break;
-            case DECIMAL:
-                validators = createDecimalValidators(attribute);
-                break;
-            default:
-                validators = new ArrayList<>();
-        }
+        List<Validator<?>> validators = switch (attribute.getDataType()) {
+            case INTEGER -> createIntegerValidators(attribute);
+            case DOUBLE -> createDoubleValidators(attribute);
+            case DECIMAL -> createDecimalValidators(attribute);
+            default -> new ArrayList<>();
+        };
 
         // add custom groovy script validator
         if (attribute.getConfiguration().getValidatorGroovyScript() != null) {
-            GroovyScriptValidator<?> validator = applicationContext.getBean(GroovyScriptValidator.class,
-                    attribute.getConfiguration().getValidatorGroovyScript());
-            validators.add((Validator<?>) validator);
+            GroovyScriptValidator<?> validator = applicationContext.getBean(GroovyScriptValidator.class);
+            validator.setValidatorGroovyScript(attribute.getConfiguration().getValidatorGroovyScript());
+            validators.add(validator);
         }
 
         return validators;

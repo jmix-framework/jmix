@@ -48,7 +48,7 @@ import java.util.Collections;
  *          return new CustomGroovyScriptValidator();
  *     }
  * </pre>
-*
+ *
  * @param <T> any Object
  */
 @Component("dynat_GroovyScriptValidator")
@@ -57,60 +57,22 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
 
     protected String validatorGroovyScript;
 
-    protected ScriptEvaluator scriptEvaluator;
+    protected final ScriptEvaluator scriptEvaluator;
 
-    public GroovyScriptValidator() {
-    }
-
-    /**
-     * Constructor with default error message.
-     *
-     * @param validatorGroovyScript groovy script with 'value' macro
-     */
-    public GroovyScriptValidator(String validatorGroovyScript) {
-        this.validatorGroovyScript = validatorGroovyScript;
-    }
-
-    @Autowired
-    protected void setMessages(Messages messages) {
+    public GroovyScriptValidator(Messages messages,
+                                 DatatypeRegistry datatypeRegistry,
+                                 CurrentAuthentication currentAuthentication,
+                                 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+                                 StringSubstitutor substitutor,
+                                 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+                                 ScriptEvaluator scriptEvaluator) {
         this.messages = messages;
-    }
-
-    @Autowired
-    protected void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
         this.datatypeRegistry = datatypeRegistry;
-    }
-
-    @Autowired
-    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
-    }
-
-    @Autowired
-    public void setStringSubstitutor(StringSubstitutor substitutor) {
         this.substitutor = substitutor;
-    }
-
-    @Autowired // todo Could not autowire. No beans of 'ScriptEvaluator' type found.
-    protected void setScriptEvaluator(ScriptEvaluator scriptEvaluator) {
         this.scriptEvaluator = scriptEvaluator;
     }
 
-    /**
-     * @return a Groovy script
-     */
-    public String getValidatorGroovyScript() {
-        return validatorGroovyScript;
-    }
-
-    /**
-     * Sets a Groovy script
-     *
-     * @param validatorGroovyScript Groovy script
-     */
-    public void setValidatorGroovyScript(String validatorGroovyScript) {
-        this.validatorGroovyScript = validatorGroovyScript;
-    }
 
     @Override
     public void accept(T value) throws ValidationException {
@@ -135,5 +97,14 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
                 message, ParamsMap.of("value", formattedValue));
 
         throw new ValidationException(formattedMessage);
+    }
+
+    /**
+     * Sets a Groovy script
+     *
+     * @param validatorGroovyScript Groovy script
+     */
+    public void setValidatorGroovyScript(String validatorGroovyScript) {
+        this.validatorGroovyScript = validatorGroovyScript;
     }
 }

@@ -120,19 +120,17 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         categoryFieldLabel = uiComponents.create(H3.class);
         categoryFieldLabel.setText(messages.getMessage(getClass(), "category"));
 
+        //noinspection unchecked
         categoryField = uiComponents.create(JmixComboBox.class);
         categoryField.setWidth(fieldWidth);
         categoryField.addValueChangeListener(e -> initPropertiesForm());
         categoryFieldBox.add(categoryFieldLabel, categoryField);
         categoryFieldBox.expand(categoryField);
 
-
         propertiesForm = uiComponents.create(JmixFormLayout.class);
         propertiesForm.setWidth("100%");
         rootPanel.add(categoryFieldBox, propertiesForm);
         rootPanel.expand(propertiesForm);
-
-
     }
 
     @Override
@@ -165,7 +163,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
             List<AttributeDefinition> attributesToAdd = fields.keySet().stream()
                     .filter(attr -> attr.getConfiguration().getColumnNumber() != null
                             && attr.getConfiguration().getRowNumber() != null)
-                    .collect(Collectors.toList());
+                    .toList();
 
             int maxColumnIndex = attributesToAdd.stream()
                     .mapToInt(attr -> attr.getConfiguration().getColumnNumber())
@@ -175,12 +173,14 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
             for (int i = 0; i <= maxColumnIndex; i++) {
                 int columnIndex = i;
                 List<AttributeDefinition> columnAttributes = attributesToAdd.stream()
+                        .filter(attr -> attr.getConfiguration().getColumnNumber() != null && attr.getConfiguration().getRowNumber() != null)
                         .filter(attr -> columnIndex == attr.getConfiguration().getColumnNumber())
                         .sorted(Comparator.comparing(attr -> attr.getConfiguration().getRowNumber()))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 int currentRowNumber = 0;
                 for (AttributeDefinition attr : columnAttributes) {
+                    //noinspection DataFlowIssue
                     while (attr.getConfiguration().getRowNumber() > currentRowNumber) {
                         //add empty row
                         newPropertiesForm.add(createEmptyComponent());
@@ -238,7 +238,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
 
     protected Component generateFieldComponent(AttributeDefinition attribute) {
         MetaProperty metaProperty = attribute.getMetaProperty();
-        ValueSource valueSource = new ContainerValueSource<>(instanceContainer, metaProperty.getName());
+        ValueSource<?> valueSource = new ContainerValueSource<>(instanceContainer, metaProperty.getName());
 
         ComponentGenerationContext componentContext =
                 new ComponentGenerationContext(instanceContainer.getEntityMetaClass(), metaProperty.getName());
@@ -291,16 +291,6 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
                 map(definition -> (Category) definition.getSource())
                 .collect(Collectors.toList());
     }
-
-//    protected void initFieldCaptionWidth(FormLayout newRuntimeForm) {
-//        if (fieldCaptionWidth != null) {
-//            String sizeWithUnit = Unit.parseStringSize(fieldCaptionWidth);
-//            if (SizeUnit.PERCENTAGE.equals(sizeWithUnit.getUnit())) {
-//                throw new IllegalStateException("DynamicAttributesPanel fieldCaptionWidth with '%' unit is unsupported");
-//            }
-//            newRuntimeForm.setChildrenCaptionWidth(Math.round(sizeWithUnit.getSize()));
-//        }
-//    }
 
     protected void onInstanceContainerItemChangeEvent(InstanceContainer.ItemChangeEvent<?> event) {
         if (event.getItem() instanceof Categorized

@@ -22,5 +22,5 @@ import java.util.List;
 
 public interface AttributeOptionsLoader {
 
-    List loadOptions(Object entity, AttributeDefinition attribute);
+    List<?> loadOptions(Object entity, AttributeDefinition attribute);
 }

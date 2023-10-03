@@ -54,6 +54,7 @@ import io.jmix.flowui.view.ViewRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -65,13 +66,16 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
     private static final Logger log = LoggerFactory.getLogger(DynAttrPropertyFilterComponentGenerationStrategy.class);
 
     public DynAttrPropertyFilterComponentGenerationStrategy(Messages messages,
+                                                            @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
                                                             UiComponents uiComponents,
                                                             DynAttrMetadata dynamicModelMetadata,
                                                             Metadata metadata,
                                                             MsgBundleTools msgBundleTools,
                                                             AttributeOptionsLoader optionsLoader,
                                                             AttributeValidators attributeValidators,
+                                                            @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
                                                             ViewRegistry viewRegistry,
+                                                            @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
                                                             Actions actions,
                                                             AttributeDependencies attributeDependencies,
                                                             FormatStringsRegistry formatStringsRegistry,
@@ -125,11 +129,12 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
     }
 
     @Override
-    protected AbstractField createBooleanField(ComponentGenerationContext context, AttributeDefinition attribute) {
+    protected AbstractField<?, ?> createBooleanField(ComponentGenerationContext context, AttributeDefinition attribute) {
         return createUnaryField(context);
     }
 
-    protected AbstractField createUnaryField(ComponentGenerationContext context) {
+    protected AbstractField<?, ?> createUnaryField(@SuppressWarnings("unused") ComponentGenerationContext context) {
+        //noinspection unchecked
         JmixComboBox<Boolean> component = uiComponents.create(JmixComboBox.class);
         ComponentUtils.setItemsMap(component, ImmutableMap.of(
                 Boolean.TRUE, messages.getMessage("boolean.yes"),
@@ -140,10 +145,11 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
     }
 
     @Override
-    protected EntityPicker createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        EntityPicker entityPicker = (EntityPicker) super.createEntityField(context, attribute);
+    protected EntityPicker<?> createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        EntityPicker<?> entityPicker = (EntityPicker<?>) super.createEntityField(context, attribute);
 
         Class<?> javaType = attribute.getJavaType();
+        Assert.notNull(javaType, "Java type is null for current attribute");
         MetaClass metaClass = metadata.getClass(javaType);
 
         entityPicker.setMetaClass(metaClass);
@@ -168,18 +174,17 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
         }
     }
 
-    protected AbstractField createIntervalField(ComponentGenerationContext context) {
-        ValuePicker valuePicker = uiComponents.create(ValuePicker.class);
+    protected AbstractField<?, ?> createIntervalField(@SuppressWarnings("unused") ComponentGenerationContext context) {
+        ValuePicker<?> valuePicker = uiComponents.create(ValuePicker.class);
 //        valuePicker.addAction(applicationContext.getBean(DateIntervalAction.class));
         valuePicker.addAction(actions.create(ValueClearAction.ID));
         return valuePicker;
     }
 
     @Override
-    protected TypedDateTimePicker createDateField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        TypedDateTimePicker dateField = super.createDateField(context, attribute);
-//     todo   dataAwareComponentsTools.setupDateFormat(dateField, attribute.getMetaProperty());
-        return dateField;
+    protected TypedDateTimePicker<?> createDateField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        //     todo   dataAwareComponentsTools.setupDateFormat(dateField, attribute.getMetaProperty());
+        return super.createDateField(context, attribute);
     }
 
     @Override
@@ -188,6 +193,7 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
 
         Range range = attribute.getMetaProperty().getRange();
         if (field instanceof SupportsTypedValue && range.isDatatype()) {
+            //noinspection rawtypes,unchecked
             ((SupportsTypedValue) field).setTypedValue(range.asDatatype());
         }
 
@@ -196,7 +202,7 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
     }
 
     @Override
-    protected void setLookupActionScreen(EntityLookupAction lookupAction, AttributeDefinition attribute) {
+    protected void setLookupActionScreen(EntityLookupAction<?> lookupAction, AttributeDefinition attribute) {
         String screen = attribute.getConfiguration().getLookupScreen();
         if (!Strings.isNullOrEmpty(screen)) {
             lookupAction.setViewId(screen);

@@ -27,7 +27,7 @@ public interface DynAttrStudioFacets {
             name = "DynamicAttributes",
             classFqn = "io.jmix.dynattrflowui.facet.DynAttrFacet",
             category = "Facets",
-            xmlElement = "dataLoadCoordinator",
+            xmlElement = "DynamicAttributes",
             icon = "io/jmix/dynattrflowui/icon/facet/dynamicAttributes.svg"
     )
     void dataLoadCoordinator();

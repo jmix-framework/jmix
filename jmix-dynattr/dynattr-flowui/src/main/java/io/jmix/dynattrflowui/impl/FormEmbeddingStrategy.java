@@ -35,6 +35,7 @@ import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.ValueSourceProvider;
 import io.jmix.flowui.data.value.ContainerValueSourceProvider;
 import io.jmix.flowui.view.View;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,13 +44,14 @@ import java.util.OptionalDouble;
 @org.springframework.stereotype.Component("dynat_FormEmbeddingStrategy")
 public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+
     protected final UiComponentsGenerator uiComponentsGenerator;
 
     protected FormEmbeddingStrategy(Metadata metadata,
                                     MetadataTools metadataTools,
                                     DynAttrMetadata dynAttrMetadata,
                                     AccessManager accessManager,
+                                    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
                                     UiComponentsGenerator uiComponentsGenerator) {
         super(metadata, metadataTools, dynAttrMetadata, accessManager);
         this.uiComponentsGenerator = uiComponentsGenerator;
@@ -62,7 +64,7 @@ public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
     }
 
     @Override
-    protected void embed(Component component, View view, List<AttributeDefinition> attributes) {
+    protected void embed(Component component, View<?> view, List<AttributeDefinition> attributes) {
         FormLayout form = (FormLayout) component;
         for (AttributeDefinition attribute : attributes) {
             addAttributeComponent((JmixFormLayout) form, attribute);
@@ -87,6 +89,7 @@ public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
     protected void addAttributeComponent(JmixFormLayout form, AttributeDefinition attribute) {
         String code = DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode());
 
+        Assert.notNull(form.getValueSourceProvider(), "Value source provider is null");
         ValueSource<?> valueSource = form.getValueSourceProvider().getValueSource(code);
 
         ComponentGenerationContext context = new ComponentGenerationContext(getEntityMetaClass(form), code);
@@ -102,7 +105,7 @@ public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
     protected void setWidth(FormLayout form, HasSize component, AttributeDefinition attributeDefinition) {
         String columnWidth = attributeDefinition.getConfiguration().getFormWidth();
         if (Strings.isNullOrEmpty(columnWidth)) {
-            calculateAutoSize(form, (Component) component).ifPresent(size -> component.setWidth(size));
+            calculateAutoSize(form, (Component) component).ifPresent(component::setWidth);
         } else if ("auto".equalsIgnoreCase(columnWidth)) {
             component.setWidth("AUTO");
         } else {
@@ -110,17 +113,7 @@ public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
         }
     }
 
-    protected int findComponentColumn(FormLayout form, Component component) {
-        for (int i = 0; i < form.getChildren().count(); i++) {
-            if (form.getChildren().toList().contains(component)) {
-                return i;
-            }
-        }
-        throw new IllegalStateException("Unable to find component column");
-    }
-
     protected Optional<String> calculateAutoSize(FormLayout form, Component component) {
-        int column = findComponentColumn(form, component);
         OptionalDouble pixels = form.getChildren()
                 .filter(c -> c != component && c instanceof HasSize)
                 .filter(c -> ((HasSize) c).getWidthUnit().isPresent() && ((HasSize) c).getWidthUnit().get() == Unit.PIXELS)

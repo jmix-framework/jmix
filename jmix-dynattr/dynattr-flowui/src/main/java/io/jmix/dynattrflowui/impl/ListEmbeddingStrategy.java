@@ -57,6 +57,7 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
     }
 
     protected String getColumnDescription(AttributeDefinition attribute) {
+        //noinspection DataFlowIssue
         return msgBundleTools.getLocalizedValue(attribute.getDescriptionsMsgBundle(), attribute.getDescription());
     }
 
@@ -64,16 +65,16 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
         if (!Strings.isNullOrEmpty(attribute.getConfiguration().getColumnName())) {
             return attribute.getConfiguration().getColumnName();
         } else {
+            //noinspection DataFlowIssue
             return msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName());
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    protected Formatter getColumnFormatter(AttributeDefinition attribute) {
+    protected <T>  Formatter<T> getColumnFormatter(AttributeDefinition attribute) {
         if (attribute.getDataType() == AttributeType.ENUMERATION) {
             if (!attribute.isCollection()) {
                 return value -> {
-                    if (value == null) {
+                    if (value == null || attribute.getEnumerationMsgBundle() == null) {
                         return null;
                     } else {
                         return msgBundleTools.getLocalizedEnumeration(attribute.getEnumerationMsgBundle(), (String) value);
@@ -94,9 +95,9 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
         return null;
     }
 
-    protected Renderer getColumnRenderer(AttributeDefinition attribute) {
-        Renderer renderer = new ComponentRenderer(() -> new Text(""), (c, rowEntity) -> {
-            Formatter formatter = getColumnFormatter(attribute);
+    protected <T> Renderer<T> getColumnRenderer(AttributeDefinition attribute) {
+        return new ComponentRenderer<>(() -> new Text(""), (c, rowEntity) -> {
+            Formatter<Object> formatter = getColumnFormatter(attribute);
 
             Object propertyValue = EntityValues.getValue(rowEntity, attribute.getMetaProperty().getName());
 
@@ -104,7 +105,7 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
                 if (attribute.getDataType().equals(AttributeType.ENTITY)) {
                     // todo poor performance
                     if(propertyValue instanceof Collection) {
-                        propertyValue = ((Collection)propertyValue).stream()
+                        propertyValue = ((Collection<?>)propertyValue).stream()
                                 .map(metadataTools::getInstanceName)
                                 .toList();
                     } else {
@@ -114,7 +115,5 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
                 ((Text) c).setText(formatter != null ? formatter.apply(propertyValue) : propertyValue.toString());
             }
         });
-
-        return renderer;
     }
 }

@@ -27,10 +27,12 @@ import io.jmix.dynattr.OptionsLoaderType;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.NotNull;
+import org.apache.http.util.Asserts;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -41,21 +43,28 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
 
     protected final Map<String, OptionsLoaderStrategy> loaderStrategies = new HashMap<>();
 
-    @Autowired
     protected StoreAwareLocator storeAwareLocator;
-    @Autowired
     protected DataManager dataManager;
-    @Autowired
     protected Metadata metadata;
-    @Autowired
     protected ScriptEvaluator scriptEvaluator;
 
     protected static final String ENTITY_QUERY_PARAM = "entity";
     protected static final String ENTITY_FIELD_QUERY_PARAM = "entity.";
     protected static final Pattern COMMON_PARAM_PATTERN = Pattern.compile("\\$\\{(.+?)}");
 
+    public AttributeOptionsLoaderImpl(StoreAwareLocator storeAwareLocator,
+                                      DataManager dataManager,
+                                      Metadata metadata,
+                                      @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+                                      ScriptEvaluator scriptEvaluator) {
+        this.storeAwareLocator = storeAwareLocator;
+        this.dataManager = dataManager;
+        this.metadata = metadata;
+        this.scriptEvaluator = scriptEvaluator;
+    }
+
     public interface OptionsLoaderStrategy {
-        List loadOptions(Object entity, AttributeDefinition attribute, String script);
+        List<?> loadOptions(Object entity, AttributeDefinition attribute, String script);
     }
 
     @PostConstruct
@@ -66,10 +75,10 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
     }
 
     @Override
-    public List loadOptions(Object entity, AttributeDefinition attribute) {
+    public List<?> loadOptions(Object entity, AttributeDefinition attribute) {
         AttributeDefinition.Configuration configuration = attribute.getConfiguration();
         String loaderScript = configuration.getOptionsLoaderScript();
-        List result = null;
+        List<?> result = null;
         if (Objects.nonNull(configuration.getOptionsLoaderType())) {
             OptionsLoaderStrategy loaderStrategy = resolveLoaderStrategy(configuration.getOptionsLoaderType());
             result = loaderStrategy.loadOptions(entity, attribute, loaderScript);
@@ -85,13 +94,14 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         return loaderStrategy;
     }
 
-    protected List executeSql(Object entity, AttributeDefinition attribute, String script) {
+    protected List<?> executeSql(Object entity, AttributeDefinition attribute, String script) {
         if (!Strings.isNullOrEmpty(script)) {
             return storeAwareLocator.getTransactionTemplate(Stores.MAIN)
                     .execute(status -> {
                         EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
                         SqlQuery sqlQuery = buildSqlQuery(script, Collections.singletonMap("entity", entity));
 
+                        //noinspection SqlSourceToSinkFlow
                         Query query = entityManager.createNativeQuery(sqlQuery.query);
 
                         if (sqlQuery.params != null) {
@@ -122,7 +132,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         boolean result = matcher.find();
         if (result) {
             List<Object> queryParams = new ArrayList<>();
-            StringBuffer query = new StringBuffer();
+            StringBuilder query = new StringBuilder();
             do {
                 String parameterName = matcher.group(1);
                 queryParams.add(getQueryParameterValue(parameterName, params));
@@ -152,7 +162,8 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         return null;
     }
 
-    protected List executeJpql(Object entity, AttributeDefinition attribute, String script) {
+    protected List<?> executeJpql(Object entity, AttributeDefinition attribute, String script) {
+        Assert.notNull(attribute.getJavaType(), "attribute's java type should be not null");
         MetaClass metaClass = metadata.getClass(attribute.getJavaType());
 
         StringBuilder queryString = new StringBuilder(String.format("select e from %s e", metaClass.getName()));
@@ -179,7 +190,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         boolean result = matcher.find();
         if (result) {
             Map<String, Object> queryParams = new HashMap<>();
-            StringBuffer queryString = new StringBuffer();
+            StringBuilder queryString = new StringBuilder();
             int i = 1;
             do {
                 String paramKey = String.format("param_%s", i);
@@ -198,9 +209,9 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         }
     }
 
-    protected List executeGroovyScript(Object entity, AttributeDefinition attribute, String script) {
+    protected List<?> executeGroovyScript(Object entity, AttributeDefinition attribute, String script) {
         if (!Strings.isNullOrEmpty(script)) {
-            return (List) scriptEvaluator.evaluate(new StaticScriptSource(script), Collections.singletonMap("entity", entity));
+            return (List<?>) scriptEvaluator.evaluate(new StaticScriptSource(script), Collections.singletonMap("entity", entity));
         }
         return null;
     }

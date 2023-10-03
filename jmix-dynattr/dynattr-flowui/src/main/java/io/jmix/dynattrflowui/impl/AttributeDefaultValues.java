@@ -24,7 +24,6 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -33,16 +32,25 @@ import java.util.stream.Stream;
 
 @Component("dynat_AttributeDefaultValues")
 public class AttributeDefaultValues {
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected DynAttrMetadata dynAttrMetadata;
-    @Autowired
-    protected TimeSource timeSource;
-    @Autowired
-    protected DataManager dataManager;
-    @Autowired
-    protected ReferenceToEntitySupport referenceToEntitySupport;
+
+    // todo is in Jmix ok to use constructor injections + final modifier
+    protected final Metadata metadata;
+    protected final DynAttrMetadata dynAttrMetadata;
+    protected final TimeSource timeSource;
+    protected final DataManager dataManager;
+    protected final ReferenceToEntitySupport referenceToEntitySupport;
+
+    public AttributeDefaultValues(Metadata metadata,
+                                  DynAttrMetadata dynAttrMetadata,
+                                  TimeSource timeSource,
+                                  DataManager dataManager,
+                                  ReferenceToEntitySupport referenceToEntitySupport) {
+        this.metadata = metadata;
+        this.dynAttrMetadata = dynAttrMetadata;
+        this.timeSource = timeSource;
+        this.dataManager = dataManager;
+        this.referenceToEntitySupport = referenceToEntitySupport;
+    }
 
     public void initDefaultAttributeValues(Object entity) {
         MetaClass metaClass = metadata.getClass(entity);
@@ -59,7 +67,6 @@ public class AttributeDefaultValues {
             if (attribute.getDefaultValue() != null) {
                 if (attribute.isCollection()) {
                     if (attribute.getDataType() == AttributeType.ENTITY) {
-                        //noinspection unchecked
                         List<Object> defaultEntities = Stream.of(attribute.getDefaultValue())
                                 .map(id -> reloadEntity(attribute, id))
                                 .collect(Collectors.toList());

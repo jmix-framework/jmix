@@ -18,17 +18,19 @@ package io.jmix.dynattrflowui.impl;
 
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component("dynat_AttributeDependencies")
 public class AttributeDependencies {
 
-    @Autowired
-    protected DynAttrMetadata dynAttrMetadata;
+
+    protected final DynAttrMetadata dynAttrMetadata;
+
+    public AttributeDependencies(DynAttrMetadata dynAttrMetadata) {
+        this.dynAttrMetadata = dynAttrMetadata;
+    }
 
     public Set<AttributeDefinition> getDependentAttributes(AttributeDefinition attribute) {
         Set<AttributeDefinition> dependentAttributes = new HashSet<>();
@@ -40,7 +42,7 @@ public class AttributeDependencies {
                         .map(code -> dynAttrMetadata.getAttributeByCode(currentAttribute.getMetaProperty().getDomain(), code))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .collect(Collectors.toList());
+                        .toList();
 //          todo is it fine ????????
                 if (attributeDefinitions.contains(attribute)) {
                     dependentAttributes.add(currentAttribute);

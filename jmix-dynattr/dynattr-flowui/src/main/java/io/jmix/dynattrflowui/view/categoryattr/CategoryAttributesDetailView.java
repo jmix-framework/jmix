@@ -48,6 +48,7 @@ import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
+import io.jmix.dynattrflowui.utils.DataProviderUtils;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.*;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
@@ -73,6 +74,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -83,7 +85,7 @@ import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.dynattr.OptionsLoaderType.*;
 import static java.lang.String.format;
 
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@SuppressWarnings({"SpringJavaInjectionPointsAutowiringInspection", "SpringJavaAutowiredFieldsWarningInspection"})
 @ViewController("dynat_CategoryAttribute.edit")
 @ViewDescriptor("category-attributes-detail-view.xml")
 @Route(value = "dynat/category/:id/attributes/:id", layout = DefaultMainViewParent.class)
@@ -94,24 +96,19 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected static final String DATA_TYPE_PROPERTY = "dataType";
     protected static final String DEFAULT_DATE_IS_CURRENT_PROPERTY = "defaultDateIsCurrent";
     protected static final String ENTITY_CLASS_PROPERTY = "entityClass";
-    protected static final String JOIN_CLAUSE_PROPERTY = "joinClause";
     protected static final String LOOKUP_PROPERTY = "lookup";
     protected static final String NAME_PROPERTY = "name";
-    protected static final String SCREEN_PROPERTY = "screen";
-    protected static final String WHERE_CLAUSE_PROPERTY = "whereClause";
 
     protected static final String MAIN_TAB_NAME = "mainTab";
-    protected static final String ONE_COLUMN_WIDTH = "630px";
-    protected static final String TWO_COLUMNS_WIDTH = "854px";
-    protected static final String MESSAGE_DIALOG_WIDTH = "560px";
+    protected static final String MESSAGE_DIALOG_WIDTH = "35em";
+    protected static final String VIEW_COLUMN = "view";
+    protected static final String COMPONENT_COLUMN = "component";
 
     protected static final String CONFIGURATION_NUMBER_FORMAT_PATTERN_PROPERTY = "numberFormatPattern";
     protected static final String CONFIGURATION_OPTIONS_LOADER_TYPE_PROPERTY = "optionsLoaderType";
 
     protected static final Multimap<AttributeType, String> FIELDS_VISIBLE_FOR_TYPES = ArrayListMultimap.create();
     protected static final Set<AttributeType> SUPPORTED_OPTIONS_TYPES = ImmutableSet.of(STRING, DOUBLE, DECIMAL, INTEGER, ENTITY);
-
-    protected static final String JPQL_WHERE = "where";
 
     static {
         FIELDS_VISIBLE_FOR_TYPES.put(BOOLEAN, "defaultBooleanField");
@@ -203,8 +200,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected DataComponents dataComponents;
     @Autowired
     protected MsgBundleTools msgBundleTools;
-    //    @Autowired
-//    protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
+    // @Autowired protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
     @Autowired
     protected AccessManager accessManager;
 
@@ -234,8 +230,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected CodeEditor joinClauseField;
     @ViewComponent
     protected CodeEditor whereClauseField;
-    @ViewComponent
-    protected CodeEditor validationScriptField;
     @ViewComponent
     protected CodeEditor recalculationScriptField;
     @ViewComponent
@@ -274,8 +268,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     private boolean isRefreshing = false;
 
-
-    @SuppressWarnings({"DataFlowIssue", "unchecked"})
     @Subscribe
     protected void onInit(InitEvent event) {
         initAttributeForm();
@@ -295,7 +287,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         initDependsOnAttributesField();
 
         setupNumberFormat();
-        if(!isRefreshing) {
+        if (!isRefreshing) {
             isRefreshing = true;
             refreshAttributesUI();
             isRefreshing = false;
@@ -315,18 +307,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
-    }
-
-
-    @Subscribe("tabSheet")
-    protected void onTabSheetSelectedTabChange(JmixTabSheet.SelectedChangeEvent event) {
-        String tabName = event.getSelectedTab().getId().orElseThrow();
-        String dialogWidth;
-        if (MAIN_TAB_NAME.equals(tabName) && getEditedEntity().getDataType() != null) {
-            dialogWidth = TWO_COLUMNS_WIDTH;
-        } else {
-            dialogWidth = ONE_COLUMN_WIDTH;
-        }
     }
 
     @Subscribe("defaultEntityIdField")
@@ -350,18 +330,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             refreshOnce();
         }
 
-        if (event.getPrevValue() == null && DATA_TYPE_PROPERTY.equals(property)) {
-        }
-
         if (NAME_PROPERTY.equals(property)) {
             refreshCodeFieldValue();
-        }
-
-        if (SCREEN_PROPERTY.equals(property)
-                || JOIN_CLAUSE_PROPERTY.equals(property)
-                || WHERE_CLAUSE_PROPERTY.equals(property)) {
-            // todo: filter support FilteringLookupAction
-//            dynamicAttributesGuiTools.initEntityPickerField(defaultEntityIdField, e.getItem());
         }
     }
 
@@ -378,7 +348,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     }
 
     private void refreshOnce() {
-        if(!isRefreshing) {
+        if (!isRefreshing) {
             isRefreshing = true;
             refreshAttributesUI();
             refreshAttributesValues();
@@ -425,34 +395,32 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @SuppressWarnings("unchecked")
     protected void initViewGrid() {
-        targetScreensTable.getColumnByKey("view")
-                .setRenderer(new ComponentRenderer<>(() -> {
-                    JmixComboBox<String> comboBox = uiComponents.create(JmixComboBox.class);
+        //noinspection DataFlowIssue
+        targetScreensTable.getColumnByKey(VIEW_COLUMN)
+                .setRenderer(new ComponentRenderer<>(
+                        () -> (JmixComboBox<String>) uiComponents.create(JmixComboBox.class),
+                        (comboBox, item) -> {
+                            MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
 
-                    return comboBox;
-                }, (comboBox, item) -> {
-                    MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
-
-                    comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
-                    comboBox.addValueChangeListener(e -> item.setView(e.getValue()));
-                    comboBox.addCustomValueSetListener(e -> item.setView(e.getDetail()));
-                    if (item.getView() != null) {
-                        comboBox.setValue(item.getView());
-                    }
-                }));
-        targetScreensTable.getColumnByKey("component")
-                .setRenderer(new ComponentRenderer<>(() -> {
-                    JmixComboBox<String> comboBox = uiComponents.create(JmixComboBox.class);
-                    return comboBox;
-                }, (comboBox, item) -> {
-                    if(item.getView() != null) {
-                        comboBox.setItems(dynAttrFacetInfo.getDynAttrViewTargetComponentIds(item.getView()));
-                    }
-                    if (item.getComponent() != null) {
-                        comboBox.setValue(item.getComponent());
-                    }
-                    comboBox.addValueChangeListener(e -> item.setComponent(e.getValue()));
-                }));
+                            comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
+                            comboBox.addValueChangeListener(e -> item.setView(e.getValue()));
+                            comboBox.addCustomValueSetListener(e -> item.setView(e.getDetail()));
+                            if (item.getView() != null) {
+                                comboBox.setValue(item.getView());
+                            }
+                        }));
+        //noinspection DataFlowIssue
+        targetScreensTable.getColumnByKey(COMPONENT_COLUMN)
+                .setRenderer(new ComponentRenderer<>(() -> (JmixComboBox<String>) uiComponents.create(JmixComboBox.class),
+                        (comboBox, item) -> {
+                            if (item.getView() != null) {
+                                comboBox.setItems(dynAttrFacetInfo.getDynAttrViewTargetComponentIds(item.getView()));
+                            }
+                            if (item.getComponent() != null) {
+                                comboBox.setValue(item.getComponent());
+                            }
+                            comboBox.addValueChangeListener(e -> item.setComponent(e.getValue()));
+                        }));
     }
 
     protected void initAttributeForm() {
@@ -531,6 +499,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             localizationFragment.setDescriptionMsgBundle(getEditedEntity().getDescriptionsMsgBundle());
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
 
+            Assert.notNull(localizationTabComponent, "localizationTabComponent not found");
             localizationTabComponent.add(localizationFragment);
         }
     }
@@ -539,19 +508,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected void initDependsOnAttributesField() {
         MultiValueSelectAction<CategoryAttribute> selectAction =
                 (MultiValueSelectAction<CategoryAttribute>) dependsOnAttributesField.getAction("select");
-        selectAction.setItems(new CallbackDataProvider<CategoryAttribute, String>(e -> {
-            e.getLimit();
-            e.getOffset();
-            return getAttributesOptions().stream();
-
-        }, e -> {
-            e.getLimit();
-            e.getOffset();
-            return getAttributesOptions().size();
-        }));
+        Assert.notNull(selectAction, "select action not found");
+        selectAction.setItems(DataProviderUtils.dataProvider(getAttributesOptions()));
         dependsOnAttributesField.addValueChangeListener(e -> {
             if (getEditedEntity().getConfiguration() != null) {
-                if(getEditedEntity().getConfiguration().getDependsOnAttributeCodes() == null){
+                if (getEditedEntity().getConfiguration().getDependsOnAttributeCodes() == null) {
                     getEditedEntity().getConfiguration().setDependsOnAttributeCodes(new ArrayList<>());
                 }
                 getEditedEntity().getConfiguration().getDependsOnAttributeCodes().addAll(e.getValue()
@@ -622,12 +583,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             if (!Strings.isNullOrEmpty(entityClassField.getValue())) {
                 Class<?> javaClass = categoryAttribute.getJavaType();
                 MetaClass metaClass = metadata.getClass(javaClass);
+                //noinspection ConstantValue
                 if (javaClass != null) {
-                    //todo dynamicAttributesGuiTools.initEntityPickerField(defaultEntityId, attribute);
                     screenField.setItems(List.of(
                             viewRegistry.getListViewId(metaClass),
                             viewRegistry.getLookupViewId(metaClass)));
-                    // todo is only lookup needs
                     refreshDefaultEntityIdFieldValue();
                 }
             } else {
@@ -694,11 +654,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe("screenField")
     public void onScreenFieldValueChange(AbstractField.ComponentValueChangeEvent<ComboBox<String>, String> event) {
-        if (Strings.isNullOrEmpty(screenField.getValue())) {
-            this.defaultEntityIdField.setEnabled(false);
-        } else {
-            this.defaultEntityIdField.setEnabled(true);
-        }
+        this.defaultEntityIdField.setEnabled(!Strings.isNullOrEmpty(screenField.getValue()));
     }
 
     @Subscribe("defaultEntityIdField.lookup")
@@ -819,11 +775,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 lc.setQueryString(format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
                         .setParameter("entityId", attribute.getObjectDefaultEntityId());
                 Object entity = dataManager.load(lc);
-                if (entity != null) {
-                    defaultEntityIdField.setValue(entity);
-                } else {
-                    defaultEntityIdField.setValue(null);
-                }
+                defaultEntityIdField.setValue(entity);
             }
         }
     }
@@ -896,15 +848,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             return optionsList;
         }
         return optionsList;
-    }
-
-    protected void showMessageDialog(String caption, String message) {
-        dialogs.createMessageDialog()
-                .withText(caption)
-                .withContent(new Html(message))
-                .withModal(false)
-                .withWidth(MESSAGE_DIALOG_WIDTH)
-                .open();
     }
 
 //  todo hints  protected List<QuerySuggestions> requestHint(CodeEditor sender, int senderCursorPosition) {

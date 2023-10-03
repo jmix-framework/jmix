@@ -16,35 +16,24 @@
 
 package io.jmix.dynattrflowui.impl;
 
-import com.vaadin.flow.component.Component;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.sys.ViewDescriptorUtils;
-import io.jmix.flowui.view.ViewControllerUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
 import java.util.function.Consumer;
 
-@org.springframework.stereotype.Component
+@org.springframework.stereotype.Component("dynat_AttributeRecalculationListener")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class AttributeRecalculationListener implements Consumer<ValueSource.ValueChangeEvent> {
+public class AttributeRecalculationListener implements Consumer<ValueSource.ValueChangeEvent<?>> {
+    private static final ThreadLocal<Boolean> recalculationInProgress = new ThreadLocal<>();
+    protected final AttributeRecalculationManager recalculationManager;
 
     protected final AttributeDefinition attribute;
-
-    @Autowired
-    protected AttributeRecalculationManager recalculationManager;
-
-    private static final ThreadLocal<Boolean> recalculationInProgress = new ThreadLocal<>();
-
-    public AttributeRecalculationListener(AttributeDefinition attribute) {
-        this.attribute = attribute;
-    }
 
 
     @Override
@@ -66,5 +55,10 @@ public class AttributeRecalculationListener implements Consumer<ValueSource.Valu
         } finally {
             recalculationInProgress.remove();
         }
+    }
+
+    public AttributeRecalculationListener(AttributeRecalculationManager recalculationManager, AttributeDefinition attribute) {
+        this.recalculationManager = recalculationManager;
+        this.attribute = attribute;
     }
 }

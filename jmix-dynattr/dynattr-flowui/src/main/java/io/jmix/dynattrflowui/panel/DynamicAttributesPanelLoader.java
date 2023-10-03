@@ -28,6 +28,7 @@ import org.springframework.context.annotation.ContextAnnotationAutowireCandidate
 
 @Internal
 public class DynamicAttributesPanelLoader extends AbstractComponentLoader<DynamicAttributesPanel> {
+    @SuppressWarnings("NullableProblems")
     @Override
     public DynamicAttributesPanel createComponent() {
         return factory.create(DynamicAttributesPanel.class);
@@ -49,7 +50,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
             throw new GuiDevelopmentException("DynamicAttributesPanel element doesn't have 'dataContainer' attribute",
                     context, "DynamicAttributesPanel ID", element.attributeValue("id"));
         }
-        InstanceContainer container = getComponentContext().getViewData().getContainer(containerId);
+        InstanceContainer<Object> container = getComponentContext().getViewData().getContainer(containerId);
         resultComponent.setInstanceContainer(container);
     }
 

@@ -14,10 +14,10 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://jmix.io/schema/dynattr/ui"
+<xs:schema targetNamespace="http://jmix.io/schema/dynattr/flowui"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:layout="http://jmix.io/schema/ui/layout"
-           xmlns="http://jmix.io/schema/dynattr/ui"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
+           xmlns="http://jmix.io/schema/dynattr/flowui"
            elementFormDefault="qualified">
 
     <!-- DynamicAttributes Facet -->
@@ -29,9 +29,7 @@
     <xs:complexType name="dynamicAttributesPanel">
         <xs:attributeGroup ref="layout:hasId"/>
         <xs:attributeGroup ref="layout:hasSize"/>
-        <xs:attributeGroup ref="layout:hasStyle"/>
-        <xs:attributeGroup ref="layout:hasAlign"/>
-        <xs:attributeGroup ref="layout:hasVisibility"/>
+        <xs:attributeGroup ref="layout:hasClassNames"/>
 
         <xs:attribute name="dataContainer" type="xs:string" use="required"/>
         <xs:attribute name="cols" type="xs:integer"/>

@@ -16,70 +16,67 @@
 
 package io.jmix.dynattrflowui.impl;
 
-import com.google.common.collect.ImmutableMap;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.spring.annotation.UIScope;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Resources;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrflowui.facet.DynAttrFacet;
-import io.jmix.flowui.Facets;
-import io.jmix.flowui.Views;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
-import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.facet.Facet;
-import io.jmix.flowui.sys.*;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyMap;
-
 @UIScope
+@Order(JmixOrder.LOWEST_PRECEDENCE)
 @Component("dynattr_DynAttrFacetInfo")
 public class DynAttrFacetInfo {
 
     private static final Logger log = LoggerFactory.getLogger(DynAttrFacetInfo.class);
 
-    @Autowired
-    protected ViewRegistry viewRegistry;
-    @Autowired
-    protected Resources resources;
-    @Autowired
-    protected Dom4jTools dom4jTools;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected MetadataTools metadataTools;
+    protected final ViewRegistry viewRegistry;
+
+    protected final Resources resources;
+
+    protected final Dom4jTools dom4jTools;
+
+    protected final Metadata metadata;
+
+    protected final MetadataTools metadataTools;
 
     private final Map<String, DynAttrFacetViewInfo> dynAttrViewsComponentMapping = new ConcurrentHashMap<>();
     private volatile boolean isInitialized = false;
+
+    public DynAttrFacetInfo(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") ViewRegistry viewRegistry,
+                            Resources resources,
+                            Dom4jTools dom4jTools,
+                            Metadata metadata,
+                            MetadataTools metadataTools) {
+        this.viewRegistry = viewRegistry;
+        this.resources = resources;
+        this.dom4jTools = dom4jTools;
+        this.metadata = metadata;
+        this.metadataTools = metadataTools;
+    }
 
 
     protected boolean isFacetAvailable(Element window, List<String> facetNames) {
         if (facetNames.isEmpty()) {
             return true;
         }
-//
-//      todo ?  if (window.element("dsContext") != null) {
-//            return true;
-//        }
 
         Element facets = window.element("facets");
         if (facets != null) {
@@ -96,7 +93,7 @@ public class DynAttrFacetInfo {
 
 
     private void getDynAttrViews(MetaClass metaClass) {
-        if(isInitialized){
+        if (isInitialized) {
             return;
         }
         Set<String> visitedWindowIds = new HashSet<>();
@@ -135,7 +132,7 @@ public class DynAttrFacetInfo {
         isInitialized = true;
     }
 
-    protected boolean isEntityAvailable(Element window, Class entityClass) {
+    protected boolean isEntityAvailable(Element window, Class<?> entityClass) {
 
         Element data = window.element("data");
         if (data == null) {
@@ -147,13 +144,13 @@ public class DynAttrFacetInfo {
         List<String> dataElementIds = dataElements.stream()
                 .filter(de -> isEntityAvailableInDataElement(entityClass, de))
                 .map(de -> de.attributeValue("id"))
-                .collect(Collectors.toList());
+                .toList();
 
-        return dataElementIds.size() > 0;
+        return !dataElementIds.isEmpty();
     }
 
-    protected boolean isEntityAvailableForClass(Class entityClass, String className) {
-        Class entity = entityClass;
+    protected boolean isEntityAvailableForClass(Class<?> entityClass, String className) {
+        Class<?> entity = entityClass;
         boolean isAvailable;
         boolean process;
         do {
@@ -164,7 +161,7 @@ public class DynAttrFacetInfo {
         return isAvailable;
     }
 
-    protected boolean isEntityAvailableInDataElement(Class entityClass, @Nullable Element dataContainer) {
+    protected boolean isEntityAvailableInDataElement(Class<?> entityClass, @Nullable Element dataContainer) {
         if (dataContainer == null) {
             return false;
         }
@@ -177,7 +174,7 @@ public class DynAttrFacetInfo {
         return isEntityAvailableForClass(entityClass, dsClassValue);
     }
 
-    protected boolean isEntityAvailableInDataElement(Class entityClass, Element dataElement, String datasourceId) {
+    protected boolean isEntityAvailableInDataElement(Class<?> entityClass, Element dataElement, String datasourceId) {
         Element datasource = elementById(dataElement, datasourceId);
         return isEntityAvailableInDataElement(entityClass, datasource);
     }
@@ -204,7 +201,7 @@ public class DynAttrFacetInfo {
     }
 
     public Collection<String> getDynAttrViewTargetComponentIds(String viewId) {
-        if(!dynAttrViewsComponentMapping.containsKey(viewId)) {
+        if (!dynAttrViewsComponentMapping.containsKey(viewId)) {
             return new ArrayList<>();
         }
         return dynAttrViewsComponentMapping.get(viewId).getPossibleTargetUiComponentIds();
@@ -212,11 +209,11 @@ public class DynAttrFacetInfo {
 
     private void findTargetElementNames(List<String> targetElementList, Element searchElement) {
         for (var child : searchElement.elements()) {
-            if(child.getQName().getName().equals(JmixFormLayout.QUALIFIED_XML_NAME) ||
+            if (child.getQName().getName().equals(JmixFormLayout.QUALIFIED_XML_NAME) ||
                     child.getQName().getName().equals("dataGrid")) {
                 targetElementList.add(child.attributeValue("id"));
             }
-            if(child.elements().size() > 0) {
+            if (!child.elements().isEmpty()) {
                 findTargetElementNames(targetElementList, child);
             }
         }
@@ -234,7 +231,7 @@ public class DynAttrFacetInfo {
                     return root;
                 }
             } catch (RuntimeException e) {
-                log.error("Can't parse screen file: ", src);
+                log.error(String.format("Can't parse screen file: %s", src));
             }
         } else {
             throw new FileNotFoundException("File doesn't exist or empty: " + src);
@@ -242,7 +239,7 @@ public class DynAttrFacetInfo {
         return null;
     }
 
-    public class DynAttrFacetViewInfo {
+    public static class DynAttrFacetViewInfo {
         private String viewId;
         private Collection<String> possibleTargetUiComponentIds = new ArrayList<>();
 

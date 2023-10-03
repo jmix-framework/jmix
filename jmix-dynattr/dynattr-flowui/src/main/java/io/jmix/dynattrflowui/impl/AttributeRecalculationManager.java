@@ -24,7 +24,6 @@ import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.dynattr.DynamicAttributesState;
 import io.jmix.dynattrflowui.DynAttrUiProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
@@ -34,12 +33,18 @@ import java.util.*;
 @Component("dynat_AttributeRecalculationManager")
 public class AttributeRecalculationManager {
 
-    @Autowired
-    protected ScriptEvaluator scriptEvaluator;
-    @Autowired
-    protected AttributeDependencies attributeDependencies;
-    @Autowired
-    protected DynAttrUiProperties dynAttrUiProperties;
+    protected final ScriptEvaluator scriptEvaluator;
+    protected final AttributeDependencies attributeDependencies;
+    protected final DynAttrUiProperties dynAttrUiProperties;
+
+    public AttributeRecalculationManager(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+                                         ScriptEvaluator scriptEvaluator,
+                                         AttributeDependencies attributeDependencies,
+                                         DynAttrUiProperties dynAttrUiProperties) {
+        this.scriptEvaluator = scriptEvaluator;
+        this.attributeDependencies = attributeDependencies;
+        this.dynAttrUiProperties = dynAttrUiProperties;
+    }
 
     /**
      * Performs recalculation for all dependent dynamic attributes. Recalculation is performed hierarchically.

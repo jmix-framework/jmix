@@ -58,6 +58,7 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -69,7 +70,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@SuppressWarnings({"SpringJavaInjectionPointsAutowiringInspection", "SpringJavaAutowiredFieldsWarningInspection"})
 @Route(value = "dynat/category/:id", layout = DefaultMainViewParent.class)
 @ViewController("dynat_CategoryView.detail")
 @ViewDescriptor("category-detail-view.xml")
@@ -179,9 +180,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         targetsGridContainer.setSpacing(false);
 
         for (int i = 1; i <= size; i++) {
-            if (attributesLocationMapping.get(i) == null) {
-                attributesLocationMapping.put(i, new ArrayList<>());
-            }
+            attributesLocationMapping.computeIfAbsent(i, k -> new ArrayList<>());
             targetsGridContainer.add(createGrid(String.valueOf(i), "Column " + i, attributesLocationMapping.get(i), "200px"));
         }
         attributesLocationTabContainer.add(sourceGrid, targetsGridContainer);
@@ -194,30 +193,28 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                 elem.getConfiguration().setColumnNumber(null);
             });
             attributesLocationMapping.remove(i);
-            attributesViewsLocationMapping.remove(i);
+            attributesViewsLocationMapping.remove(String.valueOf(i));
         }
     }
 
     private void dislocateAttributesForMapping() {
         attributesLocationMapping = new HashMap<>();
         attributesViewsLocationMapping = new HashMap<>();
-        if (categoryAttributesDc.getItems() != null) {
-            categoryAttributesDc.getItems()
-                    .forEach(categoryAttribute -> {
-                        if (categoryAttribute.getConfiguration().getColumnNumber() == null) {
-                            if (!attributesLocationMapping.containsKey(0)) {
-                                attributesLocationMapping.put(0, new ArrayList<>());
-                            }
-                            attributesLocationMapping.get(0).add(categoryAttribute);
-                        } else {
-                            int colNumber = categoryAttribute.getConfiguration().getColumnNumber();
-                            if (!attributesLocationMapping.containsKey(colNumber)) {
-                                attributesLocationMapping.put(colNumber, new ArrayList<>());
-                            }
-                            attributesLocationMapping.get(colNumber).add(categoryAttribute);
+        categoryAttributesDc.getItems()
+                .forEach(categoryAttribute -> {
+                    if (categoryAttribute.getConfiguration().getColumnNumber() == null) {
+                        if (!attributesLocationMapping.containsKey(0)) {
+                            attributesLocationMapping.put(0, new ArrayList<>());
                         }
-                    });
-        }
+                        attributesLocationMapping.get(0).add(categoryAttribute);
+                    } else {
+                        int colNumber = categoryAttribute.getConfiguration().getColumnNumber();
+                        if (!attributesLocationMapping.containsKey(colNumber)) {
+                            attributesLocationMapping.put(colNumber, new ArrayList<>());
+                        }
+                        attributesLocationMapping.get(colNumber).add(categoryAttribute);
+                    }
+                });
 
         if (!attributesLocationMapping.containsKey(0)) {
             attributesLocationMapping.put(0, new ArrayList<>());
@@ -260,7 +257,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
             Optional<CategoryAttribute> targetVal = attributesLocationMapping.values()
                     .stream()
-                    .flatMap(item -> item.stream())
+                    .flatMap(Collection::stream)
                     .filter(item -> item.getName().equals(e.getDataTransferData().get("text/plain")))
                     .findFirst();
             boolean isSameGrid = e.getDropTargetItem().isPresent() &&
@@ -274,7 +271,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
                 boolean personWasDroppedOntoItself = draggedItem.get().equals(targetAttr);
 
-                if (targetAttr == null || personWasDroppedOntoItself) {
+                if (personWasDroppedOntoItself) {
                     return;
                 }
 
@@ -310,6 +307,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         return sourceGridLayout;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     protected void snapshotLocation() {
         for (Map.Entry<Integer, List<CategoryAttribute>> listEntry : attributesLocationMapping.entrySet()) {
             List<CategoryAttribute> list = listEntry.getValue();
@@ -547,6 +545,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected void categoryAttrsGridEditListener(ActionPerformedEvent event) {
         CategoryAttribute categoryAttributeSelected = categoryAttrsGrid.getSingleSelectedItem();
 
+        Assert.notNull(categoryAttributeSelected, "Selected attribute has to be not null");
         dialogWindows.detail(this, CategoryAttribute.class)
                 .withViewClass(CategoryAttributesDetailView.class)
                 .editEntity(categoryAttributeSelected)
@@ -574,6 +573,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Subscribe("categoryAttrsGrid.moveUp")
     protected void onCategoryAttrsGridMoveUp(ActionPerformedEvent event) {
         gridHelper.moveTableItemUp(categoryAttributesDc, categoryAttrsGrid, () ->
@@ -585,6 +585,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Subscribe("categoryAttrsGrid.moveDown")
     protected void onCategoryAttrsGridMoveDown(ActionPerformedEvent event) {
         gridHelper.moveTableItemDown(categoryAttributesDc, categoryAttrsGrid, () ->

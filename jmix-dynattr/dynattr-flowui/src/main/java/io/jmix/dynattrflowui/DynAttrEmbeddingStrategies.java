@@ -28,10 +28,14 @@ import java.util.List;
 @org.springframework.stereotype.Component("dynat_DynAttrEmbeddingStrategies")
 public class DynAttrEmbeddingStrategies {
 
-    @Autowired(required = false)
-    protected List<EmbeddingStrategy> embeddingStrategies;
+    protected final List<EmbeddingStrategy> embeddingStrategies;
 
-    public void embedAttributes(Component component, View owner) {
+    public DynAttrEmbeddingStrategies(@Autowired(required = false) List<EmbeddingStrategy> embeddingStrategies) {
+        this.embeddingStrategies = embeddingStrategies;
+    }
+
+
+    public void embedAttributes(Component component, View<?> owner) {
         if (embeddingStrategies != null) {
             for (EmbeddingStrategy strategy : embeddingStrategies) {
                 if (strategy.supportComponent(component)) {

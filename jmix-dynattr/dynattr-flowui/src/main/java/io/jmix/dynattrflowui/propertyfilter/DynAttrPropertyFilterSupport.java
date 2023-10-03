@@ -48,11 +48,13 @@ public class DynAttrPropertyFilterSupport extends PropertyFilterSupport {
         this.dynAttrMetadata = dynAttrMetadata;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     protected boolean isStringDatatype(MetaPropertyPath mpp) {
         return super.isStringDatatype(mpp) && !isEnumerationAttribute(mpp);
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public EnumSet<PropertyFilter.Operation> getAvailableOperations(MetaPropertyPath mpp) {
         if (isEnumerationAttribute(mpp)) {

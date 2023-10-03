@@ -31,10 +31,9 @@ import java.util.Locale;
 @Component("dynat_DynAttrMessageResolver")
 public class DynAttrMessageResolver implements MessageResolver {
 
-    protected DynAttrMetadata dynAttrMetadata;
-    protected MsgBundleTools msgBundleTools;
+    protected final DynAttrMetadata dynAttrMetadata;
+    protected final MsgBundleTools msgBundleTools;
 
-    @Autowired
     public DynAttrMessageResolver(DynAttrMetadata dynAttrMetadata, MsgBundleTools msgBundleTools) {
         this.dynAttrMetadata = dynAttrMetadata;
         this.msgBundleTools = msgBundleTools;
@@ -48,13 +47,14 @@ public class DynAttrMessageResolver implements MessageResolver {
         }
 
         AttributeDefinition attribute = dynAttrMetadata.getAttributeByCode(property.getDomain(),
-                DynAttrUtils.getAttributeCodeFromProperty(property.getName()))
+                        DynAttrUtils.getAttributeCodeFromProperty(property.getName()))
                 .orElse(null);
 
         if (attribute == null) {
             return null;
         }
 
+        //noinspection DataFlowIssue
         return msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName());
     }
 }

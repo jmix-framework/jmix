@@ -23,5 +23,5 @@ public interface EmbeddingStrategy {
 
     boolean supportComponent(Component component);
 
-    void embed(Component component, View owner);
+    void embed(Component component, View<?> owner);
 }

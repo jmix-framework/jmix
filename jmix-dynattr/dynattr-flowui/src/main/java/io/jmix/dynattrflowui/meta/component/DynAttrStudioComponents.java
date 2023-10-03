@@ -16,6 +16,7 @@
 
 package io.jmix.dynattrflowui.meta.component;
 
+import io.jmix.dynattrflowui.panel.DynamicAttributesPanel;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
@@ -31,9 +32,7 @@ public interface DynAttrStudioComponents {
             xmlElement = "dynamicAttributesPanel",
             xmlns = "http://jmix.io/schema/dynattr/ui",
             xmlnsAlias = "dynattr",
-            icon = "io/jmix/dynattrflowui/icon/component/dynamicAttributesPanel.svg"
-//        ,canvasIcon = "io/jmix/dynattrflowui/icon/component/dynamicAttributesPanel_canvas.svg",
-/*        canvasIconSize = CanvasIconSize.LARGE*/,
+            icon = "io/jmix/dynattrflowui/icon/component/dynamicAttributesPanel.svg",
             properties = {
                     @StudioProperty(
                             name = "dataContainer",
@@ -56,7 +55,6 @@ public interface DynAttrStudioComponents {
                             name = "fieldCaptionWidth",
                             xmlAttribute = "fieldCaptionWidth",
                             type = StudioPropertyType.INTEGER),
-
             })
-    ComboButton comboButton();
+    DynamicAttributesPanel dynamicAttributesPanel();
 }

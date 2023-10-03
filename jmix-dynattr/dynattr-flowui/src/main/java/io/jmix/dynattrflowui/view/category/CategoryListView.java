@@ -118,30 +118,6 @@ public class CategoryListView extends StandardListView<Category> {
                 .show();
     }
 
-    protected Span categoriesGridEntityTypeColumnGenerator(Category category) {
-        Span dataTypeLabel = uiComponents.create(Span.class);
-        MetaClass metaClass = metadata.getSession().getClass(category.getEntityType());
-        dataTypeLabel.setText(messageTools.getEntityCaption(metaClass));
-        return dataTypeLabel;
-    }
-
-    protected Span attributesTableDataTypeColumnGenerator(CategoryAttribute categoryAttribute) {
-        String labelContent;
-        if (BooleanUtils.isTrue(categoryAttribute.getIsEntity())) {
-            Class<?> clazz = categoryAttribute.getJavaType();
-            if (clazz != null) {
-                MetaClass metaClass = metadata.getSession().getClass(clazz);
-                labelContent = messageTools.getEntityCaption(metaClass);
-            } else {
-                labelContent = "";
-            }
-        } else {
-            String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
-            labelContent = messages.getMessage(AttributeType.class, key);
-        }
-        return new Span(labelContent);
-    }
-
     @Install(to = "categoriesGrid.edit", subject = "afterSaveHandler")
     private void categoriesGridEditAfterCommitHandler(Category category) {
         categoriesDl.load();

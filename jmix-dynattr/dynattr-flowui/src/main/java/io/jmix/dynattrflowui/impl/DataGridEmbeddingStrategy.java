@@ -17,6 +17,7 @@
 package io.jmix.dynattrflowui.impl;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.AccessManager;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
@@ -56,8 +57,8 @@ public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
     }
 
     @Override
-    protected void embed(Component component, View owner, List<AttributeDefinition> attributes) {
-        DataGrid dataGrid = (DataGrid) component;
+    protected void embed(Component component, View<?> owner, List<AttributeDefinition> attributes) {
+        DataGrid<?> dataGrid = (DataGrid<?>) component;
         for (AttributeDefinition attribute : attributes) {
             addAttributeColumn(dataGrid, attribute);
         }
@@ -65,7 +66,7 @@ public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
 
     @Override
     protected MetaClass getEntityMetaClass(Component component) {
-        DataGrid dataGrid = (DataGrid) component;
+        DataGrid<?> dataGrid = (DataGrid<?>) component;
         if (dataGrid.getItems() instanceof EntityDataUnit) {
             return ((EntityDataUnit) dataGrid.getItems()).getEntityMetaClass();
         }
@@ -74,18 +75,17 @@ public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
 
     @Override
     protected void setLoadDynamicAttributes(Component component) {
-        DataGrid dataGrid = (DataGrid) component;
+        DataGrid<?> dataGrid = (DataGrid<?>) component;
         if (dataGrid.getItems() instanceof ContainerDataGridItems) {
             setLoadDynamicAttributes(((ContainerDataGridItems<?>) dataGrid.getItems()).getContainer());
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void addAttributeColumn(DataGrid dataGrid, AttributeDefinition attribute) {
+    protected void addAttributeColumn(DataGrid<?> dataGrid, AttributeDefinition attribute) {
         MetaProperty metaProperty = attribute.getMetaProperty();
         MetaClass metaClass = getEntityMetaClass(dataGrid);
 
-        DataGrid.Column column = dataGrid.addColumn(metaProperty.getName(), new MetaPropertyPath(metaClass, metaProperty));
+        DataGrid.Column<?> column = dataGrid.addColumn(metaProperty.getName(), new MetaPropertyPath(metaClass, metaProperty));
 
         column.setTooltipGenerator(item -> getColumnDescription(attribute));
 
@@ -98,7 +98,7 @@ public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
         setColumnWidth(column, attribute);
     }
 
-    protected void setColumnWidth(DataGrid.Column column, AttributeDefinition attribute) {
+    protected void setColumnWidth(DataGrid.Column<?> column, AttributeDefinition attribute) {
         if (attribute.getConfiguration().getColumnWidth() != null) {
             column.setWidth(attribute.getConfiguration().getColumnWidth() + "px");
         }

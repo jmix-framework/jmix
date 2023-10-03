@@ -104,7 +104,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
     private void initData() {
         localizedValuesDc = this.dataComponents.createCollectionContainer(AttributeLocalizedValue.class);
         localizedValuesDl = this.dataComponents.createCollectionLoader();
-        localizedValuesDc.addItemChangeListener(e -> dataContext.setModified(e.getItem(), true));
+        localizedValuesDc.addItemChangeListener(e -> Optional.ofNullable(e.getItem()).ifPresent(val -> dataContext.setModified(val, true)));
         localizedValuesDl.setLoadDelegate(e -> localizedValues);
         localizedValuesDl.setContainer(localizedValuesDc);
     }

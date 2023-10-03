@@ -26,6 +26,7 @@ import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.View;
+import org.springframework.util.Assert;
 
 import java.util.Comparator;
 import java.util.List;
@@ -48,8 +49,14 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
         this.accessManager = accessManager;
     }
 
+    protected abstract MetaClass getEntityMetaClass(Component component);
+
+    protected abstract void setLoadDynamicAttributes(Component component);
+
+    protected abstract void embed(Component component, View<?> owner, List<AttributeDefinition> attributes);
+
     @Override
-    public void embed(Component component, View owner) {
+    public void embed(Component component, View<?> owner) {
         if (getWindowId(owner) != null) {
 
             MetaClass entityMetaClass = getEntityMetaClass(component);
@@ -68,17 +75,11 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
         }
     }
 
-    protected abstract MetaClass getEntityMetaClass(Component component);
-
-    protected abstract void setLoadDynamicAttributes(Component component);
-
-    protected abstract void embed(Component component, View owner, List<AttributeDefinition> attributes);
-
-    protected String getWindowId(View view) {
-        return view.getId().orElseThrow().toString();
+    protected String getWindowId(View<?> view) {
+        return view.getId().orElseThrow();
     }
 
-    protected void setLoadDynamicAttributes(InstanceContainer container) {
+    protected void setLoadDynamicAttributes(InstanceContainer<?> container) {
         if (container instanceof HasLoader) {
             DataLoader dataLoader = ((HasLoader) container).getLoader();
             if (dataLoader instanceof InstanceLoader || dataLoader instanceof CollectionLoader) {
@@ -101,6 +102,8 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
     }
 
     protected boolean checkPermissions(AttributeDefinition attributeDefinition, MetaClass entityMetaClass) {
+        Assert.notNull(attributeDefinition.getJavaType(), "Attribute's java type should be not null");
+
         UiEntityAttributeContext uiEntityAttributeContext =
                 new UiEntityAttributeContext(metadataTools.resolveMetaPropertyPath(entityMetaClass,
                         DynAttrUtils.getPropertyFromAttributeCode(attributeDefinition.getCode())));

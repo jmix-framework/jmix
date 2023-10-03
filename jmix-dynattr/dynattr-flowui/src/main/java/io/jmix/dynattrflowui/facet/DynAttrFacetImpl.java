@@ -32,7 +32,7 @@ public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {
     protected AttributeDefaultValues attributeDefaultValues;
 
     @Override
-    public void setOwner(@Nullable View owner) {
+    public void setOwner(@Nullable View<?> owner) {
         super.setOwner(owner);
         subscribe();
     }
@@ -48,7 +48,7 @@ public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {
         }
 
         if (view instanceof StandardDetailView<?>) {
-            ViewControllerUtils.addInitEntityEvent((StandardDetailView)view, e -> attributeDefaultValues.initDefaultAttributeValues(e.getEntity()));
+            ViewControllerUtils.addInitEntityEvent((StandardDetailView<?>) view, e -> attributeDefaultValues.initDefaultAttributeValues(e.getEntity()));
         }
     }
 }

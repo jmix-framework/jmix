@@ -27,7 +27,6 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.view.builder.EditedEntityTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -36,18 +35,25 @@ import java.util.Collections;
 import java.util.Map;
 
 @Component("dynat_DynAttrAwareEntityTransformer")
-@Order(110)
+@Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
 public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
 
-    @Autowired
-    private EntityStates entityStates;
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private DynAttrManager dynAttrManager;
-    @Autowired
-    private AccessConstraintsRegistry accessConstraintsRegistry;
+    private final EntityStates entityStates;
+    private final DataManager dataManager;
+    private final DynAttrManager dynAttrManager;
+    private final AccessConstraintsRegistry accessConstraintsRegistry;
 
+    public DynAttrAwareEntityTransformer(EntityStates entityStates,
+                                         DataManager dataManager,
+                                         DynAttrManager dynAttrManager,
+                                         AccessConstraintsRegistry accessConstraintsRegistry) {
+        this.entityStates = entityStates;
+        this.dataManager = dataManager;
+        this.dynAttrManager = dynAttrManager;
+        this.accessConstraintsRegistry = accessConstraintsRegistry;
+    }
+
+    @SuppressWarnings("NullableProblems")
     @Override
     public <E> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
         boolean needDynamicAttributes = false;
@@ -63,6 +69,8 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
             if (loader instanceof CollectionLoader) {
                 Map<String, Serializable> hints = loader.getHints();
 
+                // todo hints is always true
+                //noinspection ConstantValue
                 needDynamicAttributes = hints != null
                         && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR));
             }
@@ -82,6 +90,7 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
         }
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public <E> E transformForField(E editedEntity, HasValue<?, E> field) {
         return editedEntity;

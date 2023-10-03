@@ -24,13 +24,13 @@ import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
-@org.springframework.stereotype.Component("ui_VirtualListDelegate")
+@Component("ui_VirtualListDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class VirtualListDelegate<V> extends AbstractComponentDelegate<JmixVirtualList<V>> {
 
     protected DataProvider<V, ?> dataProvider;
-
     protected Registration itemsChangeRegistration;
 
     public VirtualListDelegate(JmixVirtualList<V> component) {
@@ -53,13 +53,12 @@ public class VirtualListDelegate<V> extends AbstractComponentDelegate<JmixVirtua
         dataProvider = null;
     }
 
+    @SuppressWarnings("unchecked")
     protected void doBind(DataProvider<V, ?> dataProvider) {
-        //noinspection unchecked
         this.dataProvider = dataProvider instanceof InMemoryDataProviderWrapper<?>
                 ? ((InMemoryDataProviderWrapper<V>) dataProvider).getDataProvider()
                 : dataProvider;
         if (this.dataProvider instanceof EntityItems) {
-            //noinspection unchecked
             itemsChangeRegistration = ((EntityItems<V>) this.dataProvider).addItemsChangeListener(this::onItemsChanged);
         }
     }

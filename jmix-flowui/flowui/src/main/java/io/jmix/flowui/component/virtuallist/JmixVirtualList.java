@@ -89,7 +89,14 @@ public class JmixVirtualList<V> extends VirtualList<V> implements SupportsDataPr
         setDataProvider(new EnumDataProvider<>(itemsEnum));
     }
 
+    /**
+     * Sets an in-memory data provider for the VirtualList to use
+     *
+     * @param inMemoryDataProvider InMemoryDataProvider to use, not <code>null</code>
+     */
     public void setDataProvider(InMemoryDataProvider<V> inMemoryDataProvider) {
+        Preconditions.checkNotNullArgument(inMemoryDataProvider);
+
         // Override Vaadin implementation, so we will have access to the original DataProvider
         InMemoryDataProviderWrapper<V> wrapper = new InMemoryDataProviderWrapper<>(inMemoryDataProvider);
         setDataProvider(wrapper);
@@ -97,6 +104,8 @@ public class JmixVirtualList<V> extends VirtualList<V> implements SupportsDataPr
 
     @Override
     public void setDataProvider(DataProvider<V, ?> dataProvider) {
+        Preconditions.checkNotNullArgument(dataProvider);
+
         bindDataProvider(dataProvider);
         super.setDataProvider(dataProvider);
     }

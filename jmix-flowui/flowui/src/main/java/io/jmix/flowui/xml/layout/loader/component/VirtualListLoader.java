@@ -16,15 +16,9 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import io.jmix.flowui.component.virtuallist.ComponentTemplateValueProvider;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
-import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
-import org.dom4j.Element;
-
-import java.util.List;
 
 public class VirtualListLoader extends AbstractComponentLoader<JmixVirtualList<?>> {
 
@@ -43,7 +37,6 @@ public class VirtualListLoader extends AbstractComponentLoader<JmixVirtualList<?
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadTabIndex(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        loadRenderer();
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {
@@ -51,23 +44,5 @@ public class VirtualListLoader extends AbstractComponentLoader<JmixVirtualList<?
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
-    }
-
-    protected void loadRenderer() {
-        Element componentRenderer = element.element("componentRenderer");
-        if (componentRenderer != null) {
-            List<Element> rootElements = componentRenderer.elements();
-            if (rootElements.size() != 1) {
-                throw new GuiDevelopmentException("Component renderer for virtual list must have single root component",
-                        context);
-            }
-            ComponentTemplateValueProvider<?> valueProvider = getComponentTemplateValueProvider(rootElements.get(0));
-            //noinspection rawtypes,unchecked
-            resultComponent.setRenderer(new ComponentRenderer(valueProvider));
-        }
-    }
-
-    protected ComponentTemplateValueProvider<?> getComponentTemplateValueProvider(Element rootElement) {
-        return applicationContext.getBean(ComponentTemplateValueProvider.class, rootElement, context);
     }
 }

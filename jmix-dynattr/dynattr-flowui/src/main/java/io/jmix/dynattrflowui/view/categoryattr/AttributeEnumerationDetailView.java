@@ -30,7 +30,7 @@ import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
-import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
+import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -42,6 +42,7 @@ import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,9 @@ public class AttributeEnumerationDetailView extends StandardView {
     @Autowired
     protected Messages messages;
     @Autowired
-    private Views views;
+    protected DataComponents dataComponents;
+    @Autowired
+    protected MessageTools messageTools;
 
     @ViewComponent
     protected VerticalLayout localizationBox;
@@ -87,7 +90,7 @@ public class AttributeEnumerationDetailView extends StandardView {
 
     protected String enumeration;
     protected String enumerationLocales;
-    protected AttributeLocalizationViewFragment localizationFragment;
+    protected AttributeLocalizationComponent localizationFragment;
     protected List<AttributeLocalizedEnumValue> localizedEnumValues = new ArrayList<>();
 
 
@@ -233,7 +236,14 @@ public class AttributeEnumerationDetailView extends StandardView {
             CrudEntityContext crudEntityContext = new CrudEntityContext(localizedEnumValuesDc.getEntityMetaClass());
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
-            localizationFragment = views.create(AttributeLocalizationViewFragment.class);
+            localizationFragment = new AttributeLocalizationComponent(coreProperties,
+                    msgBundleTools,
+                    metadata,
+                    messages,
+                    messageTools,
+                    uiComponents,
+                    dataComponents,
+                    getViewData().getDataContext());
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
             localizationFragment.removeDescriptionColumn();
 

@@ -37,11 +37,12 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattrflowui.utils.GridHelper;
 import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesDetailView;
-import io.jmix.dynattrflowui.view.localization.AttributeLocalizationViewFragment;
+import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.Views;
@@ -51,6 +52,7 @@ import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
@@ -111,6 +113,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected DialogWindows dialogWindows;
     @Autowired
     protected GridHelper gridHelper;
+    @Autowired
+    protected DataComponents dataComponents;
+    @Autowired
+    protected MsgBundleTools msgBundleTools;
 
     @ViewComponent
     protected InstanceContainer<Category> categoryDc;
@@ -133,7 +139,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     @ViewComponent
     protected Button moveDownBtn;
 
-    protected AttributeLocalizationViewFragment localizationFragment;
+    protected AttributeLocalizationComponent localizationFragment;
 
     protected Map<Integer, List<CategoryAttribute>> attributesLocationMapping = new HashMap<>();
     protected Map<String, GridListDataView<CategoryAttribute>> attributesViewsLocationMapping = new HashMap<>();
@@ -158,8 +164,13 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     }
 
     protected void initLocationTab() {
-        attributesLocationTabContainer.removeAll();
+        int size = columnsCountLookupField.getValue() == null ? 1 : columnsCountLookupField.getValue();
+        if (size < attributesLocationMapping.size()) {
+            unstashUnusedAttributes(size);
+        }
         dislocateAttributesForMapping();
+        attributesLocationTabContainer.removeAll();
+
         VerticalLayout sourceGrid = createGrid("0", "SourceGrid", attributesLocationMapping.get(0), "320px");
 
         HorizontalLayout targetsGridContainer = new HorizontalLayout();
@@ -167,7 +178,6 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         targetsGridContainer.setMargin(false);
         targetsGridContainer.setSpacing(false);
 
-        int size = columnsCountLookupField.getValue() == null ? 1 : columnsCountLookupField.getValue();
         for (int i = 1; i <= size; i++) {
             if (attributesLocationMapping.get(i) == null) {
                 attributesLocationMapping.put(i, new ArrayList<>());
@@ -175,6 +185,17 @@ public class CategoryDetailView extends StandardDetailView<Category> {
             targetsGridContainer.add(createGrid(String.valueOf(i), "Column " + i, attributesLocationMapping.get(i), "200px"));
         }
         attributesLocationTabContainer.add(sourceGrid, targetsGridContainer);
+    }
+
+    private void unstashUnusedAttributes(int size) {
+        for (int i = ++size; i < attributesLocationMapping.size(); i++) {
+            attributesLocationMapping.get(i).forEach(elem -> {
+                elem.getConfiguration().setRowNumber(null);
+                elem.getConfiguration().setColumnNumber(null);
+            });
+            attributesLocationMapping.remove(i);
+            attributesViewsLocationMapping.remove(i);
+        }
     }
 
     private void dislocateAttributesForMapping() {
@@ -234,8 +255,20 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         grid.addColumnReorderListener(e -> snapshotLocation());
         grid.addDragStartListener(
                 e -> draggedItem.set(e.getDraggedItems().get(0)));
+
         grid.addDropListener(e -> {
-            if (e.getDropTargetItem().isPresent() && draggedItem.get() != null) {
+
+            Optional<CategoryAttribute> targetVal = attributesLocationMapping.values()
+                    .stream()
+                    .flatMap(item -> item.stream())
+                    .filter(item -> item.getName().equals(e.getDataTransferData().get("text/plain")))
+                    .findFirst();
+            boolean isSameGrid = e.getDropTargetItem().isPresent() &&
+                    targetVal.isPresent() &&
+                    Objects.equals(targetVal.get().getConfiguration().getColumnNumber(),
+                            e.getDropTargetItem().get().getConfiguration().getColumnNumber());
+            if (isSameGrid && draggedItem.get() != null) {
+
                 CategoryAttribute targetAttr = e.getDropTargetItem().orElseThrow();
                 GridDropLocation dropLocation = e.getDropLocation();
 
@@ -252,19 +285,15 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                 } else {
                     dataView.addItemBefore(draggedItem.get(), targetAttr);
                 }
+                draggedItem.set(null);
             } else {
-                CategoryAttribute next = attributesLocationMapping.values()
-                        .stream()
-                        .flatMap(item -> item.stream())
-                        .filter(item -> item.getName().equals(e.getDataTransferData().get("text/plain")))
-                        .findFirst()
-                        .orElseThrow();
+                CategoryAttribute next = targetVal.orElseThrow();
                 for (Map.Entry<Integer, List<CategoryAttribute>> item : attributesLocationMapping.entrySet()) {
                     if (item.getValue().contains(next)) {
                         attributesViewsLocationMapping.get(item.getKey().toString()).removeItem(next);
+                        attributesViewsLocationMapping.get(item.getKey().toString()).refreshAll();
                     }
                 }
-                dataView.removeItem(next);
                 e.getSource().getListDataView().addItem(next);
             }
             snapshotLocation();
@@ -358,11 +387,18 @@ public class CategoryDetailView extends StandardDetailView<Category> {
             CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
-            localizationFragment = views.create(AttributeLocalizationViewFragment.class);
+            localizationFragment = new AttributeLocalizationComponent(coreProperties,
+                    msgBundleTools,
+                    metadata,
+                    messages,
+                    messageTools,
+                    uiComponents,
+                    dataComponents,
+                    getViewData().getDataContext());
+
             localizationFragment.setNameMsgBundle(getEditedEntity().getLocaleNames());
             localizationFragment.removeDescriptionColumn();
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
-            localizationFragment.setDataContext(getViewData().getDataContext());
 
             localizationTabContainer.add(localizationFragment);
             localizationTabContainer.expand(localizationFragment);

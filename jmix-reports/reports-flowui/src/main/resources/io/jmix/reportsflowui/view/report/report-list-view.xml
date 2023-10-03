@@ -53,6 +53,7 @@
         <dataGrid id="reportsDataGrid"
                   width="100%"
                   minHeight="20em"
+                  columnReorderingAllowed="true"
                   dataContainer="reportsDc">
             <actions>
                 <action id="create" type="list_create" text="msg://dropdownCreateBtn.action.create.text"/>
@@ -67,7 +68,7 @@
                 <action id="executions" type="list_itemTracking" icon="FILE"
                         text="msg://action.executions.text"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="group"/>
                 <column property="description"/>
                 <column property="code"/>

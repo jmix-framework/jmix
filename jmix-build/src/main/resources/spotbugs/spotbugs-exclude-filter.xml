@@ -128,6 +128,18 @@
     </Match>
 
     <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+        <Class name="io.jmix.notificationsflowui.view.inappnotification.InAppNotificationDetailView"/>
+        <Method name="onRecipientsFieldFetchCallback"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+        <Class name="io.jmix.notificationsflowui.view.createnotification.CreateNotificationDialog"/>
+        <Method name="onRecipientsFieldFetchCallback"/>
+    </Match>
+
+    <Match>
         <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
         <Class name="io.jmix.data.impl.jpql.EntityPath"/>
     </Match>

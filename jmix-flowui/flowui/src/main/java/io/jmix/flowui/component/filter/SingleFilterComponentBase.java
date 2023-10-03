@@ -368,6 +368,12 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
             ((Component) valueComponent).setId(getInnerComponentPrefix() + "valueComponent");
         }
 
+        // WA: min-width (in a flexbox) defaults not to 0 but to the element's intrinsic width,
+        // which in this case is the default width
+        if (valueComponent instanceof HasSize hasSizeComponent) {
+            hasSizeComponent.setMinWidth("1px");
+        }
+
         if (valueComponent instanceof SupportsTypedValue) {
             //noinspection unchecked
             ((SupportsTypedValue<?, ?, V, ?>) valueComponent).addTypedValueChangeListener(this::onFieldValueChanged);

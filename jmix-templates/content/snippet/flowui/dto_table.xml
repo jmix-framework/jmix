@@ -28,12 +28,13 @@ entity.attributes.each { attr ->
         width="100%"
         minHeight="20em"
         dataContainer="${tableDc}"<%
+        if (columnReorderingAllowed) {%>\n columnReorderingAllowed="true"<%}
         if (multiselect) {%>\n selectionMode="MULTI"<%}%>>
 <actions><%tableActions.each { action ->%>
 <action id="${action}" type="list_${action}"/>
 <%}%>
 </actions>
-<columns><%columns.each {column ->%>
+<columns<%if (resizableColumns) {%> resizable="true"<%}%>><%columns.each {column ->%>
 <column property="${column}"/>
 <%}%>
 </columns>

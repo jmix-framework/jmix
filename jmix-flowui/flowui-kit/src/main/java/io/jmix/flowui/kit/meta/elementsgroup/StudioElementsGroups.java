@@ -32,6 +32,10 @@ public interface StudioElementsGroups {
             target = {"com.vaadin.flow.component.grid.Grid"},
             properties = {
                     @StudioProperty(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "filterable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "includeAll", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
             }
     )
@@ -81,8 +85,7 @@ public interface StudioElementsGroups {
                     "io.jmix.flowui.kit.component.upload.AbstractSingleUploadField",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
                     "io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup",
-                    "io.jmix.flowui.component.select.JmixSelect",
-                    "io.jmix.flowui.component.textarea.JmixTextArea"
+                    "io.jmix.flowui.component.select.JmixSelect"
             }
     )
     void validator();

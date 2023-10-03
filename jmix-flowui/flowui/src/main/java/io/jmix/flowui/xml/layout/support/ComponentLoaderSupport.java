@@ -261,11 +261,9 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
     public void loadValueAndElementAttributes(HasValueAndElement<?, ?> component, Element element) {
         loaderSupport.loadBoolean(element, "readOnly", component::setReadOnly);
-        loaderSupport.loadBoolean(element, "requiredIndicatorVisible", component::setRequiredIndicatorVisible);
     }
 
     public void loadValidationAttributes(HasValidation component, Element element, Context context) {
-        loaderSupport.loadBoolean(element, "invalid", component::setInvalid);
         loaderSupport.loadResourceString(element, "errorMessage", context.getMessageGroup(),
                 component::setErrorMessage);
 

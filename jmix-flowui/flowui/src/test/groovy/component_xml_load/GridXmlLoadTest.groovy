@@ -21,6 +21,7 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.dnd.GridDropMode
 import component_xml_load.screen.GridView
 import io.jmix.core.DataManager
+import io.jmix.flowui.component.grid.EnhancedDataGrid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -52,6 +53,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void cleanup() {
+        //noinspection SqlDialectInspection, SqlNoDataSourceInspection
         jdbcTemplate.execute("delete from TEST_ORDER")
     }
 
@@ -66,6 +68,8 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
         then: "dataGrid attributes are loaded"
         verifyAll(dataGrid) {
             id.get() == "dataGrid"
+            aggregatable
+            aggregationPosition == EnhancedDataGrid.AggregationPosition.BOTTOM
             allRowsVisible
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
@@ -130,6 +134,8 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
         then: "treeDataGrid attributes are loaded"
         verifyAll(treeDataGrid) {
             id.get() == "treeDataGrid"
+            aggregatable
+            aggregationPosition == EnhancedDataGrid.AggregationPosition.BOTTOM
             allRowsVisible
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"

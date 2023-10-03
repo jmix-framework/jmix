@@ -89,6 +89,8 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "autoWidth", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "filterable", type = StudioPropertyType.BOOLEAN,
+                            defaultValueRef = "parent:filterable"),
                     @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "footer", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "frozen", type = StudioPropertyType.BOOLEAN,
@@ -98,7 +100,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF,
                             typeParameter = "T", required = true),
                     @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValueRef = "parent:resizable"),
                     @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "textAlign", type = StudioPropertyType.ENUMERATION,
@@ -118,6 +120,21 @@ public interface StudioElements {
             }
     )
     Grid.Column column();
+
+    @StudioElement(
+            name = "Aggregation",
+            classFqn = "io.jmix.flowui.component.AggregationInfo",
+            xmlElement = "aggregation",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "cellTitle", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "strategyClass", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.AggregationInfo$Type",
+                            options = {"SUM", "COUNT", "AVG", "MIN", "MAX"})
+            }
+    )
+    void aggregationInfo();
 
     @StudioElement(
             name = "LocalDateRenderer",
@@ -232,7 +249,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "flewGrow", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
@@ -355,6 +372,7 @@ public interface StudioElements {
             name = "FormItem",
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.FormItem",
             xmlElement = "formItem",
+            target = {"com.vaadin.flow.component.formlayout.FormLayout"},
             possibleChildren = "com.vaadin.flow.component.Component",
             maxCountOfChildren = 1,
             visible = true,
@@ -404,8 +422,6 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -424,8 +440,6 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
@@ -456,8 +470,6 @@ public interface StudioElements {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -467,8 +479,6 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
@@ -642,4 +652,15 @@ public interface StudioElements {
             maxCountOfChildren = 1
     )
     void suffix();
+
+    @StudioElement(
+            name = "Component",
+            xmlElement = "component",
+            target = "io.jmix.flowui.facet.SettingsFacet",
+            properties = {
+                @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
+                @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN)
+            }
+    )
+    void settingsFacetComponent();
 }

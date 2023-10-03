@@ -28,13 +28,14 @@
             <button action="locksTable.unlock"/>
         </hbox>
 
-        <dataGrid id="locksTable" width="100%" minHeight="20em" dataContainer="locksDc">
+        <dataGrid id="locksTable" width="100%" minHeight="20em" dataContainer="locksDc"
+                  columnReorderingAllowed="true">
             <actions>
                 <action id="refresh" type="list_refresh"/>
                 <action id="unlock" type="list_itemTracking" text="msg://lockListView.unlock"
                         icon="UNLOCK"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column key="objectIdColumn" property="objectId" header="msg://lockListView.objectId"/>
                 <column key="usernameColumn" property="username" header="msg://lockListView.username"/>
                 <column key="sinceColumn" property="since" header="msg://lockListView.since"/>

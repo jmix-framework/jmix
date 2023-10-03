@@ -1359,6 +1359,23 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="aggregationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SUM"/>
+            <xs:enumeration value="COUNT"/>
+            <xs:enumeration value="AVG"/>
+            <xs:enumeration value="MIN"/>
+            <xs:enumeration value="MAX"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="aggregationPosition">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="BOTTOM"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="componentSize">
         <xs:union>
             <xs:simpleType>
@@ -1535,6 +1552,56 @@
         <xs:complexContent>
             <xs:extension base="messageValidatorType">
                 <xs:attribute name="regexp" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="bigDecimalFieldValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:sequence>
+                    <xs:element name="digits" minOccurs="0" type="digitsValidatorType"/>
+                    <xs:element name="decimalMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="decimalMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
+                    <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="numberFieldValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:sequence>
+                    <xs:element name="doubleMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="doubleMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="integerFieldValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:sequence>
+                    <xs:element name="digits" minOccurs="0" type="digitsValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
+                    <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2076,11 +2143,9 @@
 
     <xs:attributeGroup name="hasValueAndElement">
         <xs:attribute name="readOnly" type="xs:boolean"/>
-        <xs:attribute name="requiredIndicatorVisible" type="xs:boolean"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasValidation">
-        <xs:attribute name="invalid" type="xs:boolean"/>
         <xs:attribute name="errorMessage" type="resourceString"/>
     </xs:attributeGroup>
 
@@ -2467,6 +2532,16 @@
         </xs:simpleContent>
     </xs:complexType>
 
+    <xs:complexType name="gridAggregationType">
+        <xs:choice minOccurs="0">
+            <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+        </xs:choice>
+
+        <xs:attribute name="type" type="aggregationType"/>
+        <xs:attribute name="strategyClass" type="xs:string"/>
+        <xs:attribute name="cellTitle" type="resourceString"/>
+    </xs:complexType>
+
     <!-- Components -->
 
     <!-- ListMenu -->
@@ -2591,9 +2666,10 @@
 
     <!-- Grid.Column-->
     <xs:complexType name="dataGridColumnComponent">
-        <xs:choice minOccurs="0">
-            <xs:group ref="renderers" maxOccurs="0"/>
-        </xs:choice>
+        <xs:sequence minOccurs="0">
+            <xs:element name="aggregation" type="gridAggregationType"/>
+            <xs:group ref="renderers"/>
+        </xs:sequence>
 
         <xs:attribute name="key" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
@@ -2603,6 +2679,7 @@
         <xs:attribute name="frozen" type="xs:boolean"/>
         <xs:attribute name="property" type="xs:string"/>
         <xs:attribute name="sortable" type="xs:boolean"/>
+        <xs:attribute name="filterable" type="xs:boolean"/>
         <xs:attribute name="flexGrow" type="xs:integer"/>
         <xs:attribute name="resizable" type="xs:boolean"/>
         <xs:attribute name="autoWidth" type="xs:boolean"/>
@@ -2631,7 +2708,10 @@
                                 <xs:element name="editorActionsColumn" type="dataGridEditorActionsColumn"
                                             minOccurs="0"/>
                             </xs:sequence>
+
                             <xs:attributeGroup ref="columnsLoadType"/>
+                            <xs:attribute name="filterable" type="xs:boolean"/>
+                            <xs:attribute name="resizable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
                 </xs:all>
@@ -2649,6 +2729,8 @@
                 <xs:attribute name="columnReorderingAllowed" type="xs:boolean"/>
                 <xs:attribute name="nestedNullBehavior" type="gridNestedNullBehaviorEnum"/>
                 <xs:attribute name="columnRendering" type="gridColumnRendering"/>
+                <xs:attribute name="aggregatable" type="xs:boolean"/>
+                <xs:attribute name="aggregationPosition" type="aggregationPosition"/>
                 <xs:attribute name="multiSort" type="xs:boolean"/>
                 <xs:attribute name="multiSortPriority" type="gridMultiSortPriority"/>
                 <xs:attribute name="multiSortOnShiftClickOnly" type="xs:boolean"/>
@@ -2692,6 +2774,9 @@
     <xs:complexType name="emailFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="maxLength" type="xs:integer"/>
@@ -2707,6 +2792,9 @@
     <xs:complexType name="passwordFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
@@ -2719,6 +2807,10 @@
     <xs:complexType name="numberFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="numberFieldValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
@@ -2734,6 +2826,10 @@
     <xs:complexType name="bigDecimalFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="bigDecimalFieldValidatorType"/>
+                </xs:sequence>
+
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
         </xs:complexContent>
@@ -2743,6 +2839,10 @@
     <xs:complexType name="integerFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="integerFieldValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
@@ -2859,6 +2959,7 @@
                 <xs:sequence minOccurs="0">
                     <xs:element name="itemsQuery" type="multiSelectComboBoxItemsQueryType"/>
                     <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="validators" type="collectionValidatorType"/>
                 </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -2910,6 +3011,7 @@
             <xs:extension base="baseComboBoxPickerComponent">
                 <xs:sequence>
                     <xs:element name="itemsQuery" minOccurs="0" type="entityComboBoxItemsQueryType"/>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
                 </xs:sequence>
 
                 <xs:attribute name="metaClass" type="xs:string"/>
@@ -3123,6 +3225,7 @@
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
 
                     <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                     <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
@@ -3161,6 +3264,10 @@
     <xs:complexType name="entityPickerComponent">
         <xs:complexContent>
             <xs:extension base="valuePickerComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                </xs:sequence>
+
                 <xs:attribute name="metaClass" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
@@ -3186,7 +3293,7 @@
                     <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                     <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
-                <xs:attribute name="invalid" type="xs:boolean"/>
+
                 <xs:attribute name="themeNames" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
@@ -3607,8 +3714,8 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
-                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
-                    <xs:element name="validators" type="constraintValidatorType" minOccurs="0"/>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
                 </xs:sequence>
 
                 <xs:attribute name="highlightActiveLine" type="xs:boolean"/>
@@ -3795,6 +3902,7 @@
                 <xs:attribute name="summaryText" type="resourceString"/>
                 <xs:attribute name="themeNames" type="detailsThemeNames"/>
                 <xs:attribute name="opened" type="xs:boolean"/>
+                <xs:attribute name="propertyHierarchyDepth" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -3836,6 +3944,7 @@
                 <xs:sequence>
                     <xs:group ref="layoutOrComponent"/>
                     <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
+                    <xs:element name="validators" type="constraintValidatorType" minOccurs="0"/>
                 </xs:sequence>
                 <xs:attribute name="parameterName" type="xs:string"/>
 
@@ -3955,6 +4064,7 @@
                 <xs:element name="dataLoadCoordinator" type="dataLoadCoordinatorType" minOccurs="0"/>
                 <xs:element name="urlQueryParameters" type="urlQueryParametersType" minOccurs="0"/>
                 <xs:element name="timer" type="timerType" minOccurs="0"/>
+                <xs:element name="settings" type="settingsFacetType" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -4059,6 +4169,22 @@
         <xs:attribute name="delay" type="xs:integer" use="required"/>
         <xs:attribute name="autostart" type="xs:boolean"/>
         <xs:attribute name="repeating" type="xs:boolean"/>
+    </xs:complexType>
+
+    <!-- SettingsFacet -->
+
+    <xs:complexType name="settingsFacetType">
+        <xs:sequence>
+            <xs:element name="component" type="settingsComponentType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="auto" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="settingsComponentType">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="enabled" type="xs:boolean"/>
     </xs:complexType>
 
     <!--  -->

@@ -32,7 +32,9 @@ import com.vaadin.flow.spring.VaadinServletContextInitializer
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
 import io.jmix.core.security.SystemAuthenticator
 import io.jmix.flowui.ViewNavigators
+import io.jmix.flowui.backgroundtask.BackgroundTaskManager
 import io.jmix.flowui.sys.ViewControllersConfiguration
+import io.jmix.flowui.sys.event.UiEventsManager
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration
 import io.jmix.flowui.testassist.vaadin.TestServletContext
 import io.jmix.flowui.testassist.vaadin.TestSpringServlet
@@ -134,6 +136,8 @@ class FlowuiTestSpecification extends Specification {
         VaadinService.setCurrent(springServlet.getService())
 
         vaadinSession = new TestVaadinSession(springServlet.getService())
+        vaadinSession.setAttribute(BackgroundTaskManager, new BackgroundTaskManager());
+        vaadinSession.setAttribute(UiEventsManager, new UiEventsManager());
         VaadinSession.setCurrent(vaadinSession)
 
         vaadinSession.setConfiguration(springServlet.getService().getDeploymentConfiguration());

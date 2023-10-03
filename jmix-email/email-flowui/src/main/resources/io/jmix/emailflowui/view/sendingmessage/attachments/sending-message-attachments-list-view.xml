@@ -39,9 +39,10 @@
         </hbox>
         <dataGrid id="attachmentsDataGrid"
                   dataContainer="attachmentsDc"
+                  columnReorderingAllowed="true"
                   minHeight="20em"
                   width="100%">
-            <columns>
+            <columns resizable="true">
                 <column property="name"/>
                 <column property="encoding"/>
                 <column property="contentId"/>

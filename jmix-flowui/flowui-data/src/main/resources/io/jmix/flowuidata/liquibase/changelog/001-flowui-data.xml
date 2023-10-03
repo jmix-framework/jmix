@@ -54,4 +54,17 @@
                       columnDataType="varchar(255)"/>
     </changeSet>
 
+    <changeSet author="flowui-data" id="4">
+        <createTable tableName="UI_UI_SETTING">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="USERNAME" type="varchar(255)"/>
+            <column name="KEY_" type="varchar(255)"/>
+            <column name="VALUE_" type="clob"/>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

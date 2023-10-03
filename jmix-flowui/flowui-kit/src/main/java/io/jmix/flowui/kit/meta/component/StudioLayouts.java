@@ -111,6 +111,8 @@ public interface StudioLayouts {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "spacing", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"spacing-xs", "spacing-s", "spacing", "spacing-l", "spacing-xl"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
@@ -162,6 +164,8 @@ public interface StudioLayouts {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "spacing", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"spacing-xs", "spacing-s", "spacing", "spacing-l", "spacing-xl"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100%")

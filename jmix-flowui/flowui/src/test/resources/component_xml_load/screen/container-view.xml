@@ -47,6 +47,7 @@
               width="100px">
             <textField id="expanded"/>
             <button text="vboxChild"/>
+            <checkbox id="selfAlignChild" alignSelf="END"/>
         </vbox>
 
         <hbox id="hboxId"
@@ -68,7 +69,30 @@
               width="100px">
             <textField id="expanded"/>
             <button text="hboxChild"/>
+            <checkbox id="selfAlignChild" alignSelf="END"/>
         </hbox>
+
+        <flexLayout id="flexLayoutId"
+                    alignItems="STRETCH"
+                    classNames="cssClassName1, cssClassName2"
+                    contentAlignment="CENTER"
+                    css="color: red;"
+                    enabled="true"
+                    expand="expanded"
+                    flexDirection="COLUMN_REVERSE"
+                    flexWrap="WRAP"
+                    height="50px"
+                    justifyContent="AROUND"
+                    maxHeight="55px"
+                    maxWidth="120px"
+                    minHeight="40px"
+                    minWidth="80px"
+                    visible="true"
+                    width="100px">
+            <textField id="expanded"/>
+            <button text="flexLayoutChild"/>
+            <checkbox id="selfAlignChild" alignSelf="END"/>
+        </flexLayout>
 
         <accordion id="accordionId"
                    classNames="cssClassName1, cssClassName2"

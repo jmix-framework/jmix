@@ -62,6 +62,7 @@ import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioPropertiesBinding;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
+import io.jmix.flowui.kit.meta.StudioSupplyHandler;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
@@ -2535,7 +2536,6 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.virtuallist.JmixVirtualList",
             category = "Components",
             xmlElement = "virtualList",
-            icon = "io/jmix/flowui/kit/meta/icon/component/button.svg", //todo
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
@@ -2556,6 +2556,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.Renderer"
+                    )
             }
     )
     VirtualList virtualList();

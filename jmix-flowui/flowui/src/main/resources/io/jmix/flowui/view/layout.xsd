@@ -1793,6 +1793,23 @@
             </xs:simpleType>
         </xs:union>
     </xs:simpleType>
+    
+    <xs:simpleType name="spacingThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="spacing-xs"/>
+                    <xs:enumeration value="spacing-s"/>
+                    <xs:enumeration value="spacing"/>
+                    <xs:enumeration value="spacing-l"/>
+                    <xs:enumeration value="spacing-xl"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
 
     <xs:simpleType name="timePickerThemeNames">
         <xs:union>
@@ -4316,6 +4333,7 @@
                 <xs:attribute name="visible" type="xs:boolean"/>
                 <xs:attribute name="colspan" type="xs:integer"/>
                 <xs:attribute name="css" type="xs:string"/>
+                <xs:attribute name="themeNames" type="spacingThemeNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

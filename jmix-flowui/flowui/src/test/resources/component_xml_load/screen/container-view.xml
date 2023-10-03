@@ -44,6 +44,7 @@
               minWidth="80px"
               padding="true"
               spacing="true"
+              themeNames="spacing-xs"
               width="100px">
             <textField id="expanded"/>
             <button text="vboxChild"/>
@@ -65,6 +66,7 @@
               minWidth="80px"
               padding="true"
               spacing="true"
+              themeNames="spacing-xs"
               width="100px">
             <textField id="expanded"/>
             <button text="hboxChild"/>

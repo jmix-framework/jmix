@@ -29,9 +29,11 @@ import io.jmix.flowui.component.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+@Primary
 @Component("flowui_TextFieldDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class TextInputFieldDelegate<C extends AbstractField<?, String>, V> extends AbstractFieldDelegate<C, V, String> {

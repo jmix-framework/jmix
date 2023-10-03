@@ -18,15 +18,13 @@ package component_xml_load
 
 import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.accordion.AccordionPanel
-import com.vaadin.flow.component.orderedlayout.BoxSizing
-import com.vaadin.flow.component.orderedlayout.FlexComponent
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout
-import com.vaadin.flow.component.orderedlayout.Scroller
+import com.vaadin.flow.component.orderedlayout.*
 import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.TabSheetVariant
 import com.vaadin.flow.component.tabs.Tabs
 import component_xml_load.screen.ContainerView
+import io.jmix.flowui.component.checkbox.JmixCheckbox
 import io.jmix.flowui.component.textfield.TypedTextField
 import io.jmix.flowui.kit.component.button.JmixButton
 import org.springframework.boot.test.context.SpringBootTest
@@ -65,10 +63,41 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             width == "100px"
             (getChildren().find { it instanceof TypedTextField<?> } as TypedTextField<?>).id.get() == "expanded"
             (getChildren().find { it instanceof JmixButton } as JmixButton).text == "${container}Child"
+            getAlignSelf((getChildren().find { it instanceof JmixCheckbox } as JmixCheckbox))
+                    == FlexComponent.Alignment.END
         }
 
         where:
         container << ["vbox", "hbox"]
+    }
+
+    def "Load flexLayout container from XML"() {
+        when: "Open the ContainerView"
+        def containerView = navigateToView(ContainerView)
+
+        then: "FlexLayout attributes will be loaded"
+        verifyAll(containerView.flexLayoutId) {
+            id.get() == "flexLayoutId"
+            alignItems == FlexComponent.Alignment.STRETCH
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            alignContent == FlexLayout.ContentAlignment.CENTER
+            style.get("color") == "red"
+            enabled
+            flexDirection == FlexLayout.FlexDirection.COLUMN_REVERSE
+            flexWrap == FlexLayout.FlexWrap.WRAP
+            height == "50px"
+            justifyContentMode == FlexComponent.JustifyContentMode.AROUND
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            visible
+            width == "100px"
+            (getChildren().find { it instanceof TypedTextField<?> } as TypedTextField<?>).id.get() == "expanded"
+            (getChildren().find { it instanceof JmixButton } as JmixButton).text == "flexLayoutChild"
+            getAlignSelf((getChildren().find { it instanceof JmixCheckbox } as JmixCheckbox))
+                    == FlexComponent.Alignment.END
+        }
     }
 
     def "Load accordion container from XML"() {
@@ -121,8 +150,8 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         def containerView = navigateToView(ContainerView.class)
 
         then: "AccordionPanel tooltip will be loaded"
-        def panel = containerView.accordionId.children.find {it.id.get() == "accordionPanelId"}
-        verifyAll (panel as AccordionPanel) {
+        def panel = containerView.accordionId.children.find { it.id.get() == "accordionPanelId" }
+        verifyAll(panel as AccordionPanel) {
             tooltip.text == "tooltipText"
             tooltip.focusDelay == 1
             tooltip.hideDelay == 2

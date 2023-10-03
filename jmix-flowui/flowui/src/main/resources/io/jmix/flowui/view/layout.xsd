@@ -1261,7 +1261,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="alignItemsEnum">
+    <xs:simpleType name="alignEnum">
         <xs:restriction>
             <xs:enumeration value="START"/>
             <xs:enumeration value="END"/>
@@ -2116,7 +2116,7 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasFlexible">
-        <xs:attribute name="alignItems" type="alignItemsEnum"/>
+        <xs:attribute name="alignItems" type="alignEnum"/>
         <xs:attribute name="justifyContent" type="justifyContentModeEnum"/>
 
         <xs:attributeGroup ref="hasSize"/>
@@ -2154,6 +2154,7 @@
         <xs:attributeGroup ref="hasId"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="colspan" type="xs:integer"/>
+        <xs:attribute name="alignSelf" type="alignEnum"/>
         <xs:attribute name="css" type="xs:string"/>
 
         <!-- enable XSD extension here -->
@@ -4315,6 +4316,7 @@
                 <xs:attributeGroup ref="hasId"/>
                 <xs:attribute name="visible" type="xs:boolean"/>
                 <xs:attribute name="colspan" type="xs:integer"/>
+                <xs:attribute name="alignSelf" type="alignEnum"/>
                 <xs:attribute name="css" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>

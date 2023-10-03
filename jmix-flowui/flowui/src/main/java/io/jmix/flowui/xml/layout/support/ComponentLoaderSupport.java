@@ -371,7 +371,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                     } else if (stepString.endsWith("s")) {
                         step = Duration.ofSeconds(Long.parseLong(StringUtils.chop(stepString)));
                     } else {
-                        step = Duration.ofMinutes(Long.parseLong(StringUtils.chop(stepString)));
+                        step = Duration.ofMinutes(Long.parseLong(stepString));
                     }
 
                     return step;

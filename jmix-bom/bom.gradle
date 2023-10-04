@@ -230,6 +230,11 @@ dependencies {
         api "io.jmix.sessions:jmix-sessions:$freeVersion"
         api "io.jmix.sessions:jmix-sessions-starter:$freeVersion"
 
+        api "io.jmix.simplesecurity:jmix-simple-security:$freeVersion"
+        api "io.jmix.simplesecurity:jmix-simple-security-starter:$freeVersion"
+        api "io.jmix.simplesecurity:jmix-simple-security-flowui:$freeVersion"
+        api "io.jmix.simplesecurity:jmix-simple-security-flowui-starter:$freeVersion"
+
         api "io.jmix.templates.studio:jmix-studio-templates:$freeVersion"
 
         api "io.jmix.translations:jmix-translations-fr:$freeVersion"
@@ -244,6 +249,11 @@ dependencies {
         api "io.jmix.translations:jmix-translations-ar:$freeVersion"
         api "io.jmix.translations:jmix-translations-tr:$freeVersion"
         api "io.jmix.translations:jmix-translations-es:$freeVersion"
+
+        api "io.jmix.usermanagement:jmix-local-user-management:$freeVersion"
+        api "io.jmix.usermanagement:jmix-local-user-management-starter:$freeVersion"
+        api "io.jmix.usermanagement:jmix-local-user-management-flowui:$freeVersion"
+        api "io.jmix.usermanagement:jmix-local-user-management-flowui-starter:$freeVersion"
 
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"

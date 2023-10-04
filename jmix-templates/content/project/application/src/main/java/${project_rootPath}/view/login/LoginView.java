@@ -7,6 +7,7 @@ import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.AccessDeniedException;
@@ -14,8 +15,8 @@ import io.jmix.flowui.component.loginform.JmixLoginForm;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.view.*;
-import io.jmix.securityflowui.authentication.AuthDetails;
-import io.jmix.securityflowui.authentication.LoginViewSupport;
+import io.jmix.simplesecurityflowui.authentication.AuthDetails;
+import io.jmix.simplesecurityflowui.authentication.LoginViewSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@AnonymousAllowed
 @Route(value = "login")
 @ViewController("${normalizedPrefix_underscore}LoginView")
 @ViewDescriptor("login-view.xml")

@@ -26,7 +26,6 @@ import io.jmix.core.security.impl.AuthenticationManagerProviderImpl;
 import io.jmix.core.security.impl.JmixSessionAuthenticationStrategy;
 import io.jmix.core.session.SessionProperties;
 import io.jmix.security.authentication.StandardSecurityAuthenticationManagerProvider;
-import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
 import io.jmix.security.impl.constraint.SecurityConstraintsRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -138,6 +137,17 @@ public class SecurityConfiguration {
     @Bean(name = "sec_PostAuthenticationChecks")
     public PostAuthenticationChecks postAuthenticationChecks() {
         return new PostAuthenticationChecks();
+    }
+
+    @Bean("sec_StandardAuthenticationProvidersProducer")
+    public StandardAuthenticationProvidersProducer standardAuthenticationProvidersProducer(
+            UserRepository userRepository,
+            ServiceUserProvider serviceUserProvider,
+            PasswordEncoder passwordEncoder,
+            PreAuthenticationChecks preAuthenticationChecks,
+            PostAuthenticationChecks postAuthenticationChecks
+    ) {
+        return new StandardAuthenticationProvidersProducer(userRepository, serviceUserProvider, passwordEncoder, preAuthenticationChecks, postAuthenticationChecks);
     }
 
     @Bean("sec_StandardSecurityAuthenticationManagerProvider")

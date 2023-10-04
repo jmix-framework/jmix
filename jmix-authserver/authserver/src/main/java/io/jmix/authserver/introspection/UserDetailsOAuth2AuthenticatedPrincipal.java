@@ -16,7 +16,7 @@
 
 package io.jmix.authserver.introspection;
 
-import io.jmix.security.authentication.JmixUserDetails;
+import io.jmix.core.security.user.JmixUserDetails;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 

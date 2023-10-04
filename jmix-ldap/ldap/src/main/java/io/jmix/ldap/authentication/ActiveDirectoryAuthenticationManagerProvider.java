@@ -19,7 +19,7 @@ package io.jmix.ldap.authentication;
 import io.jmix.core.security.AddonAuthenticationManagerProvider;
 import io.jmix.ldap.LdapProperties;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
-import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
+import io.jmix.core.security.StandardAuthenticationProvidersProducer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;

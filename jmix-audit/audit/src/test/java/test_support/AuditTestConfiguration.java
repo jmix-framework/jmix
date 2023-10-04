@@ -23,8 +23,10 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.InMemoryUserRepository;
+import io.jmix.core.security.ServiceUserProvider;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
+import io.jmix.core.security.user.DefaultServiceUserProvider;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
@@ -141,14 +143,19 @@ public class AuditTestConfiguration {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(UserRepository userRepository) {
+    AuthenticationManager authenticationManager(UserRepository userRepository, ServiceUserProvider serviceUserProvider) {
         List<AuthenticationProvider> providers = new ArrayList<>();
-        SystemAuthenticationProvider systemAuthenticationProvider = new SystemAuthenticationProvider(userRepository);
+        SystemAuthenticationProvider systemAuthenticationProvider = new SystemAuthenticationProvider(userRepository, serviceUserProvider);
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userRepository);
         providers.add(systemAuthenticationProvider);
         providers.add(daoAuthenticationProvider);
         return new ProviderManager(providers);
+    }
+
+    @Bean
+    public ServiceUserProvider serviceUsersProvider() {
+        return new DefaultServiceUserProvider();
     }
 
     @Bean

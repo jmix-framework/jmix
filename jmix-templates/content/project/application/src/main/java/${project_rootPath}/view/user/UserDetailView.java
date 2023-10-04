@@ -10,11 +10,13 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import jakarta.annotation.security.RolesAllowed;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
 
+@RolesAllowed("ADMIN")
 @Route(value = "users/:id", layout = MainView.class)
 @ViewController("${normalizedPrefix_underscore}User.detail")
 @ViewDescriptor("user-detail-view.xml")

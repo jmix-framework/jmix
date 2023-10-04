@@ -17,6 +17,7 @@
 package io.jmix.security.authentication;
 
 import io.jmix.core.security.AddonAuthenticationManagerProvider;
+import io.jmix.core.security.StandardAuthenticationProvidersProducer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;

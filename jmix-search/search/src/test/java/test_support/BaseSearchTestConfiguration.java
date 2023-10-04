@@ -23,7 +23,9 @@ import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.InMemoryUserRepository;
+import io.jmix.core.security.ServiceUserProvider;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.user.DefaultServiceUserProvider;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
@@ -115,6 +117,11 @@ public class BaseSearchTestConfiguration {
     @Bean
     PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public ServiceUserProvider serviceUsersProvider() {
+        return new DefaultServiceUserProvider();
     }
 
     @Bean

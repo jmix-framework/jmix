@@ -17,7 +17,7 @@
 package io.jmix.security.configurer;
 
 import io.jmix.core.CoreProperties;
-import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.ServiceUserProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -38,14 +38,14 @@ public class AnonymousConfigurer extends AbstractHttpConfigurer<AnonymousConfigu
             ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
 
             CoreProperties coreProperties = applicationContext.getBean(CoreProperties.class);
-            UserRepository userRepository = applicationContext.getBean(UserRepository.class);
+            ServiceUserProvider serviceUserProvider = applicationContext.getBean(ServiceUserProvider.class);
 
             http.anonymous(anonymousConfigurer -> {
                 anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
-                anonymousConfigurer.principal(userRepository.getAnonymousUser());
-                Collection<? extends GrantedAuthority> anonymousAuthorities = userRepository.getAnonymousUser().getAuthorities();
+                anonymousConfigurer.principal(serviceUserProvider.getAnonymousUser());
+                Collection<? extends GrantedAuthority> anonymousAuthorities = serviceUserProvider.getAnonymousUser().getAuthorities();
                 if (!anonymousAuthorities.isEmpty()) {
-                    anonymousConfigurer.authorities(new ArrayList<>(userRepository.getAnonymousUser().getAuthorities()));
+                    anonymousConfigurer.authorities(new ArrayList<>(serviceUserProvider.getAnonymousUser().getAuthorities()));
                 }
             });
         } catch (Exception e) {

@@ -70,16 +70,6 @@ public class LdapUserRepository implements UserRepository {
     }
 
     @Override
-    public UserDetails getSystemUser() {
-        throw new UnsupportedOperationException("LdapUserRepository does not include the system user");
-    }
-
-    @Override
-    public UserDetails getAnonymousUser() {
-        throw new UnsupportedOperationException("LdapUserRepository does not include the anonymous user");
-    }
-
-    @Override
     public List<? extends UserDetails> getByUsernameLike(String substring) {
         Set<DirContextOperations> userData = this.userSearch.searchForUsersBySubstring(substring);
         List<UserDetails> result = new ArrayList<>();

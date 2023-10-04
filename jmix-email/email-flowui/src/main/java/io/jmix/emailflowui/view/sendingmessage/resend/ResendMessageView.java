@@ -22,11 +22,13 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
+import io.jmix.emailflowui.role.EmailHistoryRole;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
+import jakarta.annotation.security.RolesAllowed;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RolesAllowed(EmailHistoryRole.CODE)
 @ViewController("email_resendMessageView")
 @ViewDescriptor("resend-message-view.xml")
 @DialogMode(width = "50em")

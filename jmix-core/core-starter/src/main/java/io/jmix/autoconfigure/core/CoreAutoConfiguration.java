@@ -18,6 +18,11 @@ package io.jmix.autoconfigure.core;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.JmixMessageSource;
+import io.jmix.core.pessimisticlocking.LockManager;
+import io.jmix.core.security.ServiceUserProvider;
+import io.jmix.core.security.user.DefaultServiceUserProvider;
+import io.jmix.core.security.user.UserClassResolver;
+import io.jmix.core.security.user.UserDetailsUserClassResolver;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -92,5 +97,17 @@ public class CoreAutoConfiguration {
             source.registerCorsConfiguration(urlPattern, configuration);
         }
         return source;
+    }
+
+    @Bean("core_ServiceUserProvider")
+    @ConditionalOnMissingBean(ServiceUserProvider.class)
+    public ServiceUserProvider serviceUserProvider() {
+        return new DefaultServiceUserProvider();
+    }
+
+    @Bean("core_ApplicationUserClassResolver")
+    @ConditionalOnMissingBean(UserClassResolver.class)
+    public UserClassResolver applicationUserClassResolver() {
+        return new UserDetailsUserClassResolver();
     }
 }

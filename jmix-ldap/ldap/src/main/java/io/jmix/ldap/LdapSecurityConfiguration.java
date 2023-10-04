@@ -21,7 +21,7 @@ import io.jmix.core.security.AddonAuthenticationManagerProvider;
 import io.jmix.core.security.event.PreAuthenticationCheckEvent;
 import io.jmix.ldap.authentication.LdapAuthenticationManagerProvider;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
-import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
+import io.jmix.core.security.StandardAuthenticationProvidersProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;

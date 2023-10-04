@@ -1,10 +1,12 @@
 package ${project_rootPackage};
 
+import ${project_rootPackage}.entity.User;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
+import io.jmix.core.security.user.DatabaseUserRepository;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -44,6 +46,11 @@ public class ${project_classPrefix}Application implements AppShellConfigurator {
     @ConfigurationProperties("main.datasource.hikari")
     DataSource dataSource(final DataSourceProperties dataSourceProperties) {
         return dataSourceProperties.initializeDataSourceBuilder().build();
+    }
+
+    @Bean("${normalizedPrefix_underscore}UserRepository")
+    DatabaseUserRepository<User> databaseUserRepository() {
+        return new DatabaseUserRepository<>();
     }
 
     @EventListener

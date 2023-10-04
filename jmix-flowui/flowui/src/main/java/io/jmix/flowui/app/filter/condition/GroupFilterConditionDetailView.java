@@ -34,10 +34,12 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import jakarta.annotation.Nullable;
+import jakarta.annotation.security.RolesAllowed;
 
 import java.util.Collections;
 import java.util.List;
 
+@RolesAllowed("flowui-filter")
 @ViewController("flowui_GroupFilterCondition.detail")
 @ViewDescriptor("group-filter-condition-detail-view.xml")
 @EditedEntityContainer("filterConditionDc")

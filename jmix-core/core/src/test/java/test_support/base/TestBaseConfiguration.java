@@ -7,8 +7,10 @@ import io.jmix.core.Resources;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.InMemoryUserRepository;
+import io.jmix.core.security.ServiceUserProvider;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
+import io.jmix.core.security.user.DefaultServiceUserProvider;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
@@ -55,9 +57,9 @@ public class TestBaseConfiguration {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(UserRepository userRepository) {
+    AuthenticationManager authenticationManager(UserRepository userRepository, ServiceUserProvider serviceUserProvider) {
         List<AuthenticationProvider> providers = new ArrayList<>();
-        SystemAuthenticationProvider systemAuthenticationProvider = new SystemAuthenticationProvider(userRepository);
+        SystemAuthenticationProvider systemAuthenticationProvider = new SystemAuthenticationProvider(userRepository, serviceUserProvider);
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userRepository);
         providers.add(systemAuthenticationProvider);
@@ -68,5 +70,10 @@ public class TestBaseConfiguration {
     @Bean
     public UserRepository userRepository() {
         return new InMemoryUserRepository();
+    }
+
+    @Bean
+    public ServiceUserProvider serviceUsersProvider() {
+        return new DefaultServiceUserProvider();
     }
 }

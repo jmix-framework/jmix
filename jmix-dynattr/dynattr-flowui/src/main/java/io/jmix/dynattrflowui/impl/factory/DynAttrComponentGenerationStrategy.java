@@ -193,7 +193,10 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        if (!attribute.getDataType().equals(ENUMERATION) && !attribute.getConfiguration().isLookup()) {
+        if(attribute.getDataType().equals(ENUMERATION)) {
+            return createEnumCollectionField(context, attribute);
+        }
+        if (!attribute.getConfiguration().isLookup()) {
             return createNonLookupCollectionField(context, attribute);
         }
 
@@ -202,7 +205,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         setValidators(valuesPicker, attribute);
         setValueProvider(valuesPicker, attribute, context);
         setValueSource(valuesPicker, context);
-        reconfigureIfEnum(valuesPicker, attribute, context);
 
         MultiValueSelectAction<?> selectAction = actions.create(MultiValueSelectAction.ID);
         initValuesSelectActionByAttribute(selectAction, attribute);
@@ -212,18 +214,35 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         Assert.notNull(valueSource, "Value source not found");
         setValuesPickerOptionsLoader(valuesPicker, attribute, valueSource);
 
+
         ValueClearAction<?> valueClearAction = actions.create(ValueClearAction.ID);
         valuesPicker.addAction(valueClearAction);
 
         return valuesPicker;
     }
 
-    private void reconfigureIfEnum(JmixMultiSelectComboBoxPicker<?> valuesPicker, AttributeDefinition attribute, ComponentGenerationContext context) {
-        if(attribute.getDataType().equals(ENUMERATION)){
-            Map values = getLocalizedEnumerationMap(attribute);
-            valuesPicker.setItemLabelGenerator(e -> values.get(e).toString());
-            valuesPicker.setItems(DataProviderUtils.dataProvider(values.keySet().stream().toList()));
-        }
+    protected Component createEnumCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        JmixMultiSelectComboBoxPicker<?> valuesPicker = uiComponents.create(JmixMultiSelectComboBoxPicker.class);
+
+        setValidators(valuesPicker, attribute);
+        setValueProvider(valuesPicker, attribute, context);
+        setValueSource(valuesPicker, context);
+        setEnumValueSource(valuesPicker, attribute);
+
+        MultiValueSelectAction<?> selectAction = actions.create(MultiValueSelectAction.ID);
+        initValuesSelectActionByAttribute(selectAction, attribute);
+        valuesPicker.addAction(selectAction);
+
+        ValueClearAction<?> valueClearAction = actions.create(ValueClearAction.ID);
+        valuesPicker.addAction(valueClearAction);
+
+        return valuesPicker;
+    }
+
+    private void setEnumValueSource(JmixMultiSelectComboBoxPicker<?> valuesPicker, AttributeDefinition attribute) {
+        Map values = getLocalizedEnumerationMap(attribute);
+        valuesPicker.setItemLabelGenerator(e -> values.get(e).toString());
+        valuesPicker.setItems(DataProviderUtils.dataProvider(values.keySet().stream().toList()));
     }
 
     private Component createNonLookupCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -443,7 +462,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 selectAction.setJavaClass(String.class);
                 Map values = getLocalizedEnumerationMap(attribute);
                 selectAction.setItemLabelGenerator(item -> values.get(item).toString());
-                selectAction.setItems(DataProviderUtils.dataProvider(values.keySet().stream().toList()));
+                selectAction.setItems(DataProviderUtils.dataProvider(new ArrayList<>(values.keySet())));
             }
             case DOUBLE -> selectAction.setJavaClass(Double.class);
             case DECIMAL -> selectAction.setJavaClass(BigDecimal.class);

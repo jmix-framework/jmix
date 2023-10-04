@@ -26,19 +26,18 @@ public final class DataProviderUtils {
     private DataProviderUtils() {}
 
 
-    @SuppressWarnings({"rawtypes", "ResultOfMethodCallIgnored"})
+    @SuppressWarnings({"rawtypes"})
     public static DataProvider dataProvider(List<?> items) {
         return new CallbackDataProvider<>(e -> {
-            // todo:dynattr dataProvider
-            e.getLimit();
-            e.getOffset();
-            //noinspection unchecked,rawtypes
-            return (Stream) items.stream();
+            return (Stream) items.stream()
+                    .limit(e.getLimit())
+                    .skip(e.getOffset());
 
         }, e -> {
-            e.getLimit();
-            e.getOffset();
-            return items.size();
+            return Math.toIntExact(items.stream()
+                    .limit(e.getLimit())
+                    .skip(e.getOffset())
+                    .count());
         });
     }
 }

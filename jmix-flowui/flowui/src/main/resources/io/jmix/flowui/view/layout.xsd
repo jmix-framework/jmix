@@ -1982,7 +1982,6 @@
                     <xs:enumeration value="minimal"/>
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
-                    <xs:enumeration value="fixed"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2002,7 +2001,6 @@
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
                     <xs:enumeration value="bordered"/>
-                    <xs:enumeration value="fixed"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

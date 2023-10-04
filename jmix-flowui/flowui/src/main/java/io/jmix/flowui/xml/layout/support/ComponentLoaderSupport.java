@@ -249,7 +249,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
     public void loadThemeList(com.vaadin.flow.component.Component component, Element element) {
         loaderSupport.loadString(element, "themeNames")
-                .ifPresent(badgeString -> split(badgeString, component.getElement().getThemeList()::add));
+                .ifPresent(themeNamesString -> split(themeNamesString, component.getElement().getThemeList()::add));
     }
 
     /**

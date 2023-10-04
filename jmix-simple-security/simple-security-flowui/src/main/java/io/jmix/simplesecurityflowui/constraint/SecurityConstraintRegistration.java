@@ -35,6 +35,5 @@ public class SecurityConstraintRegistration {
     public void registerConstraints() {
         accessConstraintsRegistry.register(beanFactory.getBean(UiMenuConstraint.class));
         accessConstraintsRegistry.register(beanFactory.getBean(UiShowViewConstraint.class));
-//        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class));
     }
 }

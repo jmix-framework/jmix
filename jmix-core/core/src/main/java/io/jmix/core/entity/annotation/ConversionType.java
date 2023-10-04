@@ -18,7 +18,10 @@ package io.jmix.core.entity.annotation;
 
 /**
  * Defines a case conversion type.
+ *
+ * @deprecated Framework no longer uses this enum. Will be removed in version 2.1.
  */
+@Deprecated(since = "2.0.3", forRemoval = true)
 public enum ConversionType {
     /**
      * A value will be upper cased

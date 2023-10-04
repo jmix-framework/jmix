@@ -29,8 +29,11 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 /**
  * Indicates that auto case conversion should be used for text input fields bound with marked entity field.
+ *
+ * @deprecated Framework no longer uses this annotation. Will be removed in version 2.1.
  */
 
+@Deprecated(since = "2.0.3", forRemoval = true)
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation

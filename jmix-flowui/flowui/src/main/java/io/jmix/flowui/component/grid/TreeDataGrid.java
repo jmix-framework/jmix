@@ -232,12 +232,6 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         }
     }
 
-    @Deprecated
-    @Override
-    public List<Column<E>> getVisibleColumns() {
-        return gridDelegate.getVisibleColumns();
-    }
-
     @Override
     public boolean isAggregatable() {
         return gridDelegate.isAggregatable();

@@ -200,12 +200,6 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return gridDelegate.addColumn(column);
     }
 
-    @Deprecated
-    @Override
-    public List<Column<E>> getVisibleColumns() {
-        return gridDelegate.getVisibleColumns();
-    }
-
     @Override
     public boolean isAggregatable() {
         return gridDelegate.isAggregatable();

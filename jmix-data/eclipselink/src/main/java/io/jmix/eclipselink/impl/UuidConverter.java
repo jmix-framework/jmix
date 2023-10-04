@@ -26,9 +26,9 @@ import org.eclipse.persistence.platform.database.SQLServerPlatform;
 import org.eclipse.persistence.sessions.Session;
 
 /**
- * Replaced with converters obtained through {@link io.jmix.eclipselink.impl.dbms.UuidMappingInfo}.
+ * CAUTION: Consider using converters obtained through {@link io.jmix.eclipselink.impl.dbms.UuidMappingInfo}.
+ * This class is used as a fallback if the database platform doesn't implement {@link io.jmix.eclipselink.impl.dbms.UuidMappingInfo}.
  */
-@Deprecated
 public class UuidConverter implements Converter {
 
     private final static UuidConverter INSTANCE = new UuidConverter();

@@ -67,6 +67,11 @@ public class UiComponentProperties {
      */
     boolean filterShowConfigurationIdField;
 
+    /**
+     * Whether validation of filter configuration name uniqueness should be enabled
+     */
+    boolean filterConfigurationUniqueNames;
+
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -82,7 +87,8 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean filterAutoApply,
             String filterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
-            @DefaultValue("false") boolean filterShowConfigurationIdField) {
+            @DefaultValue("false") boolean filterShowConfigurationIdField,
+            @DefaultValue("true") boolean filterConfigurationUniqueNames) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -101,6 +107,7 @@ public class UiComponentProperties {
         this.filterApplyShortcut = filterApplyShortcut;
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
+        this.filterConfigurationUniqueNames = filterConfigurationUniqueNames;
     }
 
     public String getGridCreateShortcut() {
@@ -176,5 +183,12 @@ public class UiComponentProperties {
      */
     public boolean isFilterShowConfigurationIdField() {
         return filterShowConfigurationIdField;
+    }
+
+    /**
+     * @see #filterConfigurationUniqueNames
+     */
+    public boolean isFilterConfigurationUniqueNames() {
+        return filterConfigurationUniqueNames;
     }
 }

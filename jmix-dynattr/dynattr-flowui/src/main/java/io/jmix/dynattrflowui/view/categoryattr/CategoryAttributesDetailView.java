@@ -20,13 +20,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
@@ -38,6 +40,7 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
@@ -100,7 +103,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected static final String NAME_PROPERTY = "name";
 
     protected static final String MAIN_TAB_NAME = "mainTab";
-    protected static final String MESSAGE_DIALOG_WIDTH = "35em";
     protected static final String VIEW_COLUMN = "view";
     protected static final String COMPONENT_COLUMN = "component";
 
@@ -277,6 +279,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
+        // todo fix after post init data fix
         getEditedEntity().init(metadata);
     }
 
@@ -403,24 +406,49 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                             MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
 
                             comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
+                            setValueIfAbsentInItems(comboBox, item.getView());
+
                             comboBox.addValueChangeListener(e -> item.setView(e.getValue()));
                             comboBox.addCustomValueSetListener(e -> item.setView(e.getDetail()));
-                            if (item.getView() != null) {
-                                comboBox.setValue(item.getView());
-                            }
                         }));
         //noinspection DataFlowIssue
         targetScreensTable.getColumnByKey(COMPONENT_COLUMN)
-                .setRenderer(new ComponentRenderer<>(() -> (JmixComboBox<String>) uiComponents.create(JmixComboBox.class),
-                        (comboBox, item) -> {
-                            if (item.getView() != null) {
-                                comboBox.setItems(dynAttrFacetInfo.getDynAttrViewTargetComponentIds(item.getView()));
-                            }
-                            if (item.getComponent() != null) {
-                                comboBox.setValue(item.getComponent());
-                            }
-                            comboBox.addValueChangeListener(e -> item.setComponent(e.getValue()));
-                        }));
+                .setRenderer(new ComponentRenderer<>(
+                        this::visibilityTableComponentColumnComponentGenerator,
+                        this::visibilityTableComponentColumnUpdater)
+                );
+    }
+
+    protected JmixComboBox<String> visibilityTableComponentColumnComponentGenerator() {
+        JmixComboBox<String> comboBox = uiComponents.create(JmixComboBox.class);
+        comboBox.setAllowCustomValue(true);
+        return comboBox;
+    }
+
+    protected void visibilityTableComponentColumnUpdater(JmixComboBox<String> comboBox, TargetViewComponent item) {
+        MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
+
+        if (item.getView() != null) {
+            Collection<String> targetComponents = dynAttrFacetInfo.getDynAttrViewTargetComponentIds(categoryMetaClass, item.getView());
+            comboBox.setItems(targetComponents);
+        }
+        setValueIfAbsentInItems(comboBox, item.getComponent());
+
+        comboBox.addValueChangeListener(e -> item.setComponent(e.getValue()));
+        comboBox.addCustomValueSetListener(e -> item.setComponent(e.getDetail()));
+    }
+
+    private <T> void setValueIfAbsentInItems(JmixComboBox<T> jmixComboBox, T value) {
+        if(value == null) {
+            return;
+        }
+        List<T> items = jmixComboBox.getListDataView().getItems().toList();
+        if (!items.contains(value)) {
+            ArrayList<T> extendedItemsByCustomValue = new ArrayList<>(items);
+            extendedItemsByCustomValue.add(value);
+            jmixComboBox.setItems(extendedItemsByCustomValue);
+        }
+        jmixComboBox.setValue(value);
     }
 
     protected void initAttributeForm() {
@@ -686,7 +714,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             lookupBuilder.build()
                     .open();
         } catch (AccessDeniedException ex) {
-            notifications.create(messages.getMessage(CategoryAttributesDetailView.class, "entityScreenAccessDeniedMessage"))
+            notifications.create(messages.getMessage(CategoryAttributesDetailView.class, "entityViewAccessDeniedMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
         }

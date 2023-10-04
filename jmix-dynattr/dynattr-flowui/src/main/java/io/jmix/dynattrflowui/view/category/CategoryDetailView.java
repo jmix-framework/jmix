@@ -41,6 +41,7 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
+import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
 import io.jmix.dynattrflowui.utils.GridHelper;
 import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesDetailView;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
@@ -64,6 +65,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -161,6 +163,19 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected Map<String, GridListDataView<CategoryAttribute>> attributesViewsLocationMapping = new HashMap<>();
 
     @Subscribe
+    public void onInitEvent(InitEvent event) {
+        sortCategoryAttrsGridByOrderNo();
+        categoryAttrsGrid
+                .addColumn(createCategoryAttrsGridDataTypeRenderer())
+                .setHeader(messageTools.getPropertyCaption(metadata.getClass(CategoryAttribute.class), "dataType"));
+
+        categoryAttrsGrid
+                .addColumn(createCategoryAttrsGridDefaultValueRenderer())
+                .setHeader(messages.getMessage(getClass(), "categoryAttrsGrid.defaultValue"));
+
+    }
+
+    @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         initColumnsCountLookupField();
         initActionsVisibleListener();
@@ -201,7 +216,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         dislocateAttributesForMapping();
         attributesLocationTabContainer.removeAll();
 
-        VerticalLayout sourceGrid = createGrid("0", "SourceGrid", attributesLocationMapping.get(0), "20em");
+        VerticalLayout sourceGrid = createGrid("0",
+                messages.getMessage(getClass(), "sourceGridTitle"),
+                attributesLocationMapping.get(0),
+                "20em");
 
         HorizontalLayout targetsGridContainer = new HorizontalLayout();
         targetsGridContainer.setPadding(false);
@@ -210,7 +228,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
         for (int i = 1; i <= size; i++) {
             attributesLocationMapping.computeIfAbsent(i, k -> new ArrayList<>());
-            targetsGridContainer.add(createGrid(String.valueOf(i), "Column " + i, attributesLocationMapping.get(i), "12.5em"));
+            targetsGridContainer.add(createGrid(String.valueOf(i),
+                    MessageFormat.format("{0} {1}",
+                    messages.getMessage(getClass(), "targetColumnGridTitle"), i),
+                    attributesLocationMapping.get(i), "12.5em"));
         }
         attributesLocationTabContainer.add(sourceGrid, targetsGridContainer);
     }
@@ -277,7 +298,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected VerticalLayout createGrid(String id, String girdName, List<CategoryAttribute> sourceItems, String width) {
         Grid<CategoryAttribute> grid = new Grid<>(CategoryAttribute.class, false);
         grid.setWidth(width);
-        grid.addColumn(NAME_COLUMN);
+        grid.addColumn(NAME_COLUMN).setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), NAME_COLUMN));
         grid.setId(id);
 
         GridListDataView<CategoryAttribute> dataView = grid.setItems(sourceItems);
@@ -451,20 +472,6 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         }
     }
 
-
-    @Subscribe
-    public void onInitEvent(InitEvent event) {
-        sortCategoryAttrsGridByOrderNo();
-        categoryAttrsGrid
-                .addColumn(createCategoryAttrsGridDataTypeRenderer())
-                .setHeader(messageTools.getPropertyCaption(metadata.getClass(CategoryAttribute.class), "dataType"));
-
-        categoryAttrsGrid
-                .addColumn(createCategoryAttrsGridDefaultValueRenderer())
-                .setHeader(messages.getMessage(getClass(), "categoryAttrsGrid.defaultValue"));
-
-    }
-
     protected ComponentRenderer<Span, CategoryAttribute> createCategoryAttrsGridDefaultValueRenderer() {
         return new ComponentRenderer<>(this::categoryAttrsGridDefaultValueColumnComponent,
                 this::categoryAttrsGridDefaultValueColumnUpdater);
@@ -568,7 +575,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                 MetaClass metaClass = metadata.getClass(javaType);
                 dataType = messageTools.getEntityCaption(metaClass);
             } else {
-                dataType = messages.getMessage("classNotFound");
+                dataType = "";
             }
         } else {
             String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
@@ -580,23 +587,40 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
     @Subscribe("categoryAttrsGrid.create")
     protected void categoryAttrsGridCreateListener(ActionPerformedEvent event) {
+        // todo fix this after composite data in ui fix (switch to standtard list_create + initializer)
         dialogWindows.detail(this, CategoryAttribute.class)
                 .withViewClass(CategoryAttributesDetailView.class)
                 .newEntity()
                 .withParentDataContext(getViewData().getDataContext())
                 .withInitializer(e -> e.setCategory(categoryDc.getItem()))
+                .withAfterCloseListener(e -> {
+                    // todo also bug caused by data components
+                    if (e.getCloseAction().equals(StandardOutcome.SAVE.getCloseAction())) {
+                        categoryAttributesDc.replaceItem(e.getView().getEditedEntity());
+                        categoryAttrsGrid.getDataProvider().refreshAll();
+                    }
+                })
                 .build()
                 .open();
     }
 
     @Subscribe("categoryAttrsGrid.edit")
     protected void categoryAttrsGridEditListener(ActionPerformedEvent event) {
+        // todo fix this after composite data in ui fix (switch to standtard list_edit)
+
         CategoryAttribute categoryAttributeSelected = categoryAttrsGrid.getSingleSelectedItem();
 
         Assert.notNull(categoryAttributeSelected, "Selected attribute has to be not null");
         dialogWindows.detail(this, CategoryAttribute.class)
                 .withViewClass(CategoryAttributesDetailView.class)
                 .editEntity(categoryAttributeSelected)
+                .withAfterCloseListener(e -> {
+                    // todo also bug caused by data components
+                    if (e.getCloseAction().equals(StandardOutcome.SAVE.getCloseAction())) {
+                        categoryAttributesDc.replaceItem(e.getView().getEditedEntity());
+                        categoryAttrsGrid.getDataProvider().refreshAll();
+                    }
+                })
                 .withParentDataContext(getViewData().getDataContext())
                 .build()
                 .open();
@@ -684,5 +708,9 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         if (localizationFragment != null) {
             getEditedEntity().setLocaleNames(localizationFragment.getNameMsgBundle());
         }
+    }
+
+    public Category getCategory() {
+        return getEditedEntity();
     }
 }

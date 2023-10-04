@@ -22,7 +22,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.data.provider.CallbackDataProvider;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -30,7 +29,6 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.*;
-import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattrflowui.impl.*;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
 import io.jmix.flowui.Actions;
@@ -70,7 +68,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static io.jmix.dynattr.AttributeType.*;
 
@@ -196,7 +193,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        if (!attribute.getConfiguration().isLookup()) {
+        if (!attribute.getDataType().equals(ENUMERATION) && !attribute.getConfiguration().isLookup()) {
             return createNonLookupCollectionField(context, attribute);
         }
 
@@ -205,11 +202,11 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         setValidators(valuesPicker, attribute);
         setValueProvider(valuesPicker, attribute, context);
         setValueSource(valuesPicker, context);
+        reconfigureIfEnum(valuesPicker, attribute, context);
 
         MultiValueSelectAction<?> selectAction = actions.create(MultiValueSelectAction.ID);
         initValuesSelectActionByAttribute(selectAction, attribute);
         valuesPicker.addAction(selectAction);
-
 
         ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) ((SupportsValueSource<?>) valuesPicker).getValueSource();
         Assert.notNull(valueSource, "Value source not found");
@@ -219,6 +216,14 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         valuesPicker.addAction(valueClearAction);
 
         return valuesPicker;
+    }
+
+    private void reconfigureIfEnum(JmixMultiSelectComboBoxPicker<?> valuesPicker, AttributeDefinition attribute, ComponentGenerationContext context) {
+        if(attribute.getDataType().equals(ENUMERATION)){
+            Map values = getLocalizedEnumerationMap(attribute);
+            valuesPicker.setItemLabelGenerator(e -> values.get(e).toString());
+            valuesPicker.setItems(DataProviderUtils.dataProvider(values.keySet().stream().toList()));
+        }
     }
 
     private Component createNonLookupCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {

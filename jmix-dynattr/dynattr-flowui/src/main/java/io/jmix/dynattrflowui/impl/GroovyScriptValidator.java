@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 
@@ -77,7 +78,7 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
     @Override
     public void accept(T value) throws ValidationException {
         // consider null value is valid
-        if (value == null) {
+        if (value == null || !StringUtils.hasText(validatorGroovyScript)) {
             return;
         }
         Object scriptResult = scriptEvaluator.evaluate(new StaticScriptSource(validatorGroovyScript),

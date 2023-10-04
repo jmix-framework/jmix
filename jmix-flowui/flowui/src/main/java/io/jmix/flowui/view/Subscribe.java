@@ -58,7 +58,7 @@ public @interface Subscribe {
     String id() default "";
 
     /**
-     * @return property name that will be set using annotated method
+     * @return explicit method name that will be set using annotated method
      */
     String subject() default "";
 

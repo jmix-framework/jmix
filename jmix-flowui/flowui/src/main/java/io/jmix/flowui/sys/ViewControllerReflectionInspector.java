@@ -140,20 +140,17 @@ public class ViewControllerReflectionInspector {
 
     @Nullable
     public MethodHandle getAddListenerMethod(Class<?> clazz, Class<?> eventType, String methodName) {
-        if (methodName.isEmpty()) {
-            return getAddListenerMethod(clazz, eventType);
+        // Trying to find cached method first
+        MethodHandle cachedMethod = getAddListenerMethod(clazz, eventType);
+        if (methodName.isEmpty() || cachedMethod != null && isMethodHandleHasName(cachedMethod, methodName)) {
+            return cachedMethod;
         }
 
         Map<Class, Collection<MethodHandle>> methods = targetIntrospectionCache.getUnchecked(clazz)
                 .getClashedAddListenerMethods();
 
         return methods.get(eventType).stream()
-                .filter(methodCandidate -> MethodHandles.lookup()
-                        .revealDirect(methodCandidate)
-                        .getName()
-                        // skip 'add' and 'set'
-                        .substring(3)
-                        .equals(StringUtils.capitalize(methodName)))
+                .filter(methodCandidate -> isMethodHandleHasName(methodCandidate, methodName))
                 .findAny()
                 .orElse(null);
     }
@@ -699,6 +696,17 @@ public class ViewControllerReflectionInspector {
         }
 
         return ImmutableMap.copyOf(handlesMap);
+    }
+
+    protected boolean isMethodHandleHasName(MethodHandle methodHandle, String methodName) {
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        String capitalizedMethodName = StringUtils.capitalize(methodName);
+
+        return lookup.revealDirect(methodHandle)
+                .getName()
+                // skip 'add' and 'set'
+                .substring(3)
+                .equals(capitalizedMethodName);
     }
 
     public static class InjectElement {

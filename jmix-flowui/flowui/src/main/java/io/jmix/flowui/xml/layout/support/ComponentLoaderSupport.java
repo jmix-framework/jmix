@@ -251,6 +251,15 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 .ifPresent(component::setOverlayClassName);
     }
 
+    public void loadThemeList(com.vaadin.flow.component.Component component, Element element) {
+        loaderSupport.loadString(element, "themeNames")
+                .ifPresent(themeNamesString -> split(themeNamesString, component.getElement().getThemeList()::add));
+    }
+
+    /**
+     * @deprecated use {@link ComponentLoaderSupport#loadThemeList(com.vaadin.flow.component.Component, Element)} instead
+     */
+    @Deprecated(since = "2.0.3", forRemoval = true)
     public void loadBadge(HasText component, Element element) {
         loaderSupport.loadString(element, "themeNames")
                 .ifPresent(badgeString -> {
@@ -415,7 +424,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public Optional<String> loadShortcutCombination(Element element) {
-        return loadShortcut(element,"shortcutCombination");
+        return loadShortcut(element, "shortcutCombination");
     }
 
     public Optional<String> loadShortcut(Element element, String attributeName) {

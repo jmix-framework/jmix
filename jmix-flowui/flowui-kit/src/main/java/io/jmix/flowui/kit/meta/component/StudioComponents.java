@@ -1616,7 +1616,7 @@ public interface StudioComponents {
                             options = {"VERTICAL", "HORIZONTAL"}),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
                             options = {"icon-on-top", "centered", "small", "minimal",
-                                    "hide-scroll-buttons", "equal-width-tabs", "fixed"}),
+                                    "hide-scroll-buttons", "equal-width-tabs"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)

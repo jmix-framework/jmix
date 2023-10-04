@@ -11,11 +11,11 @@
     }%>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <$rootTagName xmlns="$rootTagNamespace"
-        caption="${caption}"<%if (overrideActionType == "EMPTY") {%>>
+        caption="${caption}"<%if (messagesGroup != null && messagesGroup != '') {%>
+        messagesGroup="$messagesGroup"<%}%><%if (overrideActionType == "EMPTY") {%>>
     <layout>
 
     </layout><%}%><%if (overrideActionType == "EXTEND") {%>
-        extends="${overrideScreen.reference}"<%if (messagesGroup != null && messagesGroup != '') {%>
-        messagesGroup="$messagesGroup"<%}%>>
+        extends="${overrideScreen.reference}">
     <layout/><%}%>
  </$rootTagName><%}%>

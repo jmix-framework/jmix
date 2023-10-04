@@ -381,7 +381,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     /**
      * @deprecated use {@link ComponentLoaderSupport#loadDateFormat(DatePicker.DatePickerI18n, Element)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "2.1", forRemoval = true)
     public void loadDateFormat(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
         loaderSupport.loadResourceString(element, "dateFormat", context.getMessageGroup())
                 .ifPresent(dateFormatString -> {

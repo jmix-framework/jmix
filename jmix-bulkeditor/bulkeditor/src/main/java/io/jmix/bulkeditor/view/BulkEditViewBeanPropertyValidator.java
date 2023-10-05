@@ -30,10 +30,9 @@ import javax.annotation.Nullable;
 @Component("bulked_BulkEditViewBeanPropertyValidator")
 public class BulkEditViewBeanPropertyValidator implements Validator<Object> {
 
-    protected final Class<?> beanClass;
-    protected final String beanProperty;
+    protected Class<?> beanClass;
+    protected String beanProperty;
 
-    protected ObjectProvider<BeanPropertyValidator> delegateProvider;
     protected BeanPropertyValidator delegate;
 
     public BulkEditViewBeanPropertyValidator(Class<?> beanClass, String beanProperty) {
@@ -43,17 +42,13 @@ public class BulkEditViewBeanPropertyValidator implements Validator<Object> {
 
     @Autowired
     public void setDelegateProvider(ObjectProvider<BeanPropertyValidator> delegateProvider) {
-        this.delegateProvider = delegateProvider;
+        this.delegate = delegateProvider.getObject(beanClass, beanProperty);
     }
 
     @Override
     public void accept(@Nullable Object value) {
         if (value != null) {
-            getDelegate().accept(value);
+            delegate.accept(value);
         }
-    }
-
-    protected BeanPropertyValidator getDelegate() {
-        return delegate != null ? delegate : delegateProvider.getObject(beanClass, beanProperty);
     }
 }

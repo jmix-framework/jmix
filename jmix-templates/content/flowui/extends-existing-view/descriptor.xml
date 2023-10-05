@@ -9,8 +9,9 @@ if (view.descriptor != null && view.descriptor.rootTag != null) {
 }
 %>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<$rootTagName xmlns="$rootTagNamespace"
-        title="${title}"
-        extends="${extendView.reference}">
+<$rootTagName xmlns="$rootTagNamespace"<%if (title != null && title != '') {%>
+        title="${title}"<%}%>
+        extends="${extendView.reference}"<%if (messagesGroup != null && messagesGroup != '') {%>
+        messagesGroup="$messagesGroup"<%}%>>
     <layout/>
 </$rootTagName>

@@ -73,8 +73,8 @@ class ViewDataTest extends DataContextSpec {
         dataContext != null
         userCont != null
         usersCont != null
-        userCont.view == fetchPlanRepository.getFetchPlan(User, 'user.edit')
-        usersCont.view == fetchPlanRepository.getFetchPlan(User, 'user.browse')
+        userCont.fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.edit')
+        usersCont.fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.browse')
     }
 
     def "containers with loaders"() {

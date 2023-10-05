@@ -1261,7 +1261,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="alignItemsEnum">
+    <xs:simpleType name="alignEnum">
         <xs:restriction>
             <xs:enumeration value="START"/>
             <xs:enumeration value="END"/>
@@ -1750,6 +1750,7 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
+                    <xs:enumeration value="badge"/>
                     <xs:enumeration value="normal"/>
                     <xs:enumeration value="success"/>
                     <xs:enumeration value="error"/>
@@ -1789,6 +1790,23 @@
                     <xs:enumeration value="filled"/>
                     <xs:enumeration value="reverse"/>
                     <xs:enumeration value="small"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+    
+    <xs:simpleType name="spacingThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="spacing-xs"/>
+                    <xs:enumeration value="spacing-s"/>
+                    <xs:enumeration value="spacing"/>
+                    <xs:enumeration value="spacing-l"/>
+                    <xs:enumeration value="spacing-xl"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -1964,7 +1982,6 @@
                     <xs:enumeration value="minimal"/>
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
-                    <xs:enumeration value="fixed"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -1984,7 +2001,6 @@
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
                     <xs:enumeration value="bordered"/>
-                    <xs:enumeration value="fixed"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2116,7 +2132,7 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasFlexible">
-        <xs:attribute name="alignItems" type="alignItemsEnum"/>
+        <xs:attribute name="alignItems" type="alignEnum"/>
         <xs:attribute name="justifyContent" type="justifyContentModeEnum"/>
 
         <xs:attributeGroup ref="hasSize"/>
@@ -2154,6 +2170,7 @@
         <xs:attributeGroup ref="hasId"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="colspan" type="xs:integer"/>
+        <xs:attribute name="alignSelf" type="alignEnum"/>
         <xs:attribute name="css" type="xs:string"/>
 
         <!-- enable XSD extension here -->
@@ -4318,7 +4335,9 @@
                 <xs:attributeGroup ref="hasId"/>
                 <xs:attribute name="visible" type="xs:boolean"/>
                 <xs:attribute name="colspan" type="xs:integer"/>
+                <xs:attribute name="alignSelf" type="alignEnum"/>
                 <xs:attribute name="css" type="xs:string"/>
+                <xs:attribute name="themeNames" type="spacingThemeNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

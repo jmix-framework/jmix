@@ -231,7 +231,7 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
     @Override
     public void executeValidators() throws ValidationException {
         super.executeValidators();
-        if (uiComponentProperties.isFilterConfigurationUniqueNames()) {
+        if (uiComponentProperties.isFilterConfigurationUniqueNamesEnabled()) {
             validateConfigurationName();
         }
     }

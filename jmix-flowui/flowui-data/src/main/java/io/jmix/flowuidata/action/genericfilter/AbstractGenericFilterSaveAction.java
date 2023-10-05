@@ -282,7 +282,7 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
                     "logicalFilterConditionDetailView.uniqueConfigurationId"));
         }
 
-        if (uiComponentProperties.isFilterConfigurationUniqueNames()) {
+        if (uiComponentProperties.isFilterConfigurationUniqueNamesEnabled()) {
             String name = validationContext.getValue("nameField");
             boolean configurationWithSameNameExists = target.getConfigurations().stream()
                     .anyMatch(conf -> Objects.equals(name, conf.getName()) && !conf.isAvailableForAllUsers());

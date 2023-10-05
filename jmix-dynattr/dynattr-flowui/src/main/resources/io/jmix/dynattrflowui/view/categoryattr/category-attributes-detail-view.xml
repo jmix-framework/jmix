@@ -87,7 +87,7 @@
                                      property="defaultEntity"
                                      title="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">
                             <actions>
-                                <action id="lookup" icon="SEARCH"/>
+                                <action id="lookup" icon="ELLIPSIS_DOTS_H"/>
                                 <action id="clear" type="value_clear" icon="BAN"/>
                             </actions>
                         </valuePicker>

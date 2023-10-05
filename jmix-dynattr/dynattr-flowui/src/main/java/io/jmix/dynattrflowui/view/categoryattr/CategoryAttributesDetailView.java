@@ -276,11 +276,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     }
 
     @Subscribe
-    protected void onBeforeShow(BeforeShowEvent event) {
-        getEditedEntity().init(metadata);
-    }
-
-    @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
         initCategoryAttributeConfigurationField();
         initLocalizationTab();

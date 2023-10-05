@@ -25,7 +25,8 @@ import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrflowui.facet.DynAttrFacet;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
-import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.ViewInfo;
+import io.jmix.flowui.view.ViewRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -38,7 +39,6 @@ import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @UIScope
 @Order(JmixOrder.LOWEST_PRECEDENCE)
@@ -57,8 +57,7 @@ public class DynAttrFacetInfo {
 
     protected final MetadataTools metadataTools;
 
-    private final Map<String, DynAttrFacetViewInfo> dynAttrViewsComponentMapping = new ConcurrentHashMap<>();
-    private volatile boolean isInitialized = false;
+    private final Map<Class<?>, Map<String, DynAttrFacetViewInfo>> metaClassNameDynAttrViewsComponentMapping = new ConcurrentHashMap<>();
 
     public DynAttrFacetInfo(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") ViewRegistry viewRegistry,
                             Resources resources,
@@ -92,10 +91,15 @@ public class DynAttrFacetInfo {
     }
 
 
-    private void getDynAttrViews(MetaClass metaClass) {
-        if (isInitialized) {
+    private void scanDynAttrViews(MetaClass metaClass) {
+        Class<?> javaClass = metaClass.getJavaClass();
+        if (metaClassNameDynAttrViewsComponentMapping.containsKey(javaClass)) {
             return;
+        } else {
+            metaClassNameDynAttrViewsComponentMapping.put(javaClass, new ConcurrentHashMap<>());
         }
+
+
         Set<String> visitedWindowIds = new HashSet<>();
 
         for (ViewInfo windowInfo : viewRegistry.getViewInfos()) {
@@ -119,7 +123,7 @@ public class DynAttrFacetInfo {
                             List<String> targetElementNames = new ArrayList<>();
                             findTargetElementNames(targetElementNames, windowElement.element("layout"));
                             facetViewInfo.setPossibleTargetUiComponentIds(targetElementNames);
-                            dynAttrViewsComponentMapping.put(windowId, facetViewInfo);
+                            metaClassNameDynAttrViewsComponentMapping.get(javaClass).put(windowId, facetViewInfo);
                         }
                     }
                 } catch (FileNotFoundException e) {
@@ -129,7 +133,6 @@ public class DynAttrFacetInfo {
 
             visitedWindowIds.add(windowId);
         }
-        isInitialized = true;
     }
 
     protected boolean isEntityAvailable(Element window, Class<?> entityClass) {
@@ -196,15 +199,25 @@ public class DynAttrFacetInfo {
     }
 
     public Collection<String> getDynAttrViewIds(MetaClass metaClass) {
-        getDynAttrViews(metaClass);
-        return dynAttrViewsComponentMapping.keySet().stream().toList();
+        Class<?> javaClass = metaClass.getJavaClass();
+        if (!metaClassNameDynAttrViewsComponentMapping.containsKey(javaClass)) {
+            scanDynAttrViews(metaClass);
+        }
+        return metaClassNameDynAttrViewsComponentMapping.get(javaClass)
+                .keySet()
+                .stream()
+                .toList();
     }
 
-    public Collection<String> getDynAttrViewTargetComponentIds(String viewId) {
-        if (!dynAttrViewsComponentMapping.containsKey(viewId)) {
+    public Collection<String> getDynAttrViewTargetComponentIds(MetaClass metaClass, String viewId) {
+        Class<?> javaClass = metaClass.getJavaClass();
+        if (!metaClassNameDynAttrViewsComponentMapping.containsKey(javaClass)) {
+            scanDynAttrViews(metaClass);
+        }
+        if (!metaClassNameDynAttrViewsComponentMapping.get(javaClass).containsKey(viewId)) {
             return new ArrayList<>();
         }
-        return dynAttrViewsComponentMapping.get(viewId).getPossibleTargetUiComponentIds();
+        return metaClassNameDynAttrViewsComponentMapping.get(javaClass).get(viewId).getPossibleTargetUiComponentIds();
     }
 
     private void findTargetElementNames(List<String> targetElementList, Element searchElement) {

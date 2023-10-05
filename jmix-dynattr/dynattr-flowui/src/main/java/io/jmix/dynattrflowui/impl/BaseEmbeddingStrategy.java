@@ -102,8 +102,6 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
     }
 
     protected boolean checkPermissions(AttributeDefinition attributeDefinition, MetaClass entityMetaClass) {
-        Assert.notNull(attributeDefinition.getJavaType(), "Attribute's java type should be not null");
-
         UiEntityAttributeContext uiEntityAttributeContext =
                 new UiEntityAttributeContext(metadataTools.resolveMetaPropertyPath(entityMetaClass,
                         DynAttrUtils.getPropertyFromAttributeCode(attributeDefinition.getCode())));

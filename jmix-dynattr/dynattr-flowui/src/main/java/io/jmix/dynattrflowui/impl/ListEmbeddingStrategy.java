@@ -16,11 +16,15 @@
 
 package io.jmix.dynattrflowui.impl;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.DataManager;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeDefinition;
@@ -28,10 +32,10 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.flowui.kit.component.formatter.Formatter;
-import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.MessageFormat;
 import java.util.Collection;
 
 public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
@@ -70,7 +74,7 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
         }
     }
 
-    protected <T>  Formatter<T> getColumnFormatter(AttributeDefinition attribute) {
+    protected <T> Formatter<T> getColumnFormatter(AttributeDefinition attribute) {
         if (attribute.getDataType() == AttributeType.ENUMERATION) {
             if (!attribute.isCollection()) {
                 return value -> {
@@ -80,6 +84,12 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
                         return msgBundleTools.getLocalizedEnumeration(attribute.getEnumerationMsgBundle(), (String) value);
                     }
                 };
+            } else {
+                return value -> MessageFormat.format("[{0}]", Joiner.on(", ")
+                        .join(((Collection) value)
+                                .stream()
+                                .map(item -> msgBundleTools.getLocalizedEnumeration(attribute.getEnumerationMsgBundle(), (String) item))
+                                .toList()));
             }
         } else if (!Strings.isNullOrEmpty(attribute.getConfiguration().getNumberFormatPattern())) {
             return value -> {
@@ -104,8 +114,8 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
             if (propertyValue != null) {
                 if (attribute.getDataType().equals(AttributeType.ENTITY)) {
                     // todo poor performance
-                    if(propertyValue instanceof Collection) {
-                        propertyValue = ((Collection<?>)propertyValue).stream()
+                    if (propertyValue instanceof Collection) {
+                        propertyValue = ((Collection<?>) propertyValue).stream()
                                 .map(metadataTools::getInstanceName)
                                 .toList();
                     } else {

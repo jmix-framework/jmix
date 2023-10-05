@@ -22,7 +22,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.data.provider.CallbackDataProvider;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -30,7 +29,6 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.*;
-import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattrflowui.impl.*;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
 import io.jmix.flowui.Actions;
@@ -70,7 +68,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static io.jmix.dynattr.AttributeType.*;
 
@@ -196,6 +193,9 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        if(attribute.getDataType().equals(ENUMERATION)) {
+            return createEnumCollectionField(context, attribute);
+        }
         if (!attribute.getConfiguration().isLookup()) {
             return createNonLookupCollectionField(context, attribute);
         }
@@ -210,15 +210,39 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         initValuesSelectActionByAttribute(selectAction, attribute);
         valuesPicker.addAction(selectAction);
 
-
         ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) ((SupportsValueSource<?>) valuesPicker).getValueSource();
         Assert.notNull(valueSource, "Value source not found");
         setValuesPickerOptionsLoader(valuesPicker, attribute, valueSource);
+
 
         ValueClearAction<?> valueClearAction = actions.create(ValueClearAction.ID);
         valuesPicker.addAction(valueClearAction);
 
         return valuesPicker;
+    }
+
+    protected Component createEnumCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        JmixMultiSelectComboBoxPicker<?> valuesPicker = uiComponents.create(JmixMultiSelectComboBoxPicker.class);
+
+        setValidators(valuesPicker, attribute);
+        setValueProvider(valuesPicker, attribute, context);
+        setValueSource(valuesPicker, context);
+        setEnumValueSource(valuesPicker, attribute);
+
+        MultiValueSelectAction<?> selectAction = actions.create(MultiValueSelectAction.ID);
+        initValuesSelectActionByAttribute(selectAction, attribute);
+        valuesPicker.addAction(selectAction);
+
+        ValueClearAction<?> valueClearAction = actions.create(ValueClearAction.ID);
+        valuesPicker.addAction(valueClearAction);
+
+        return valuesPicker;
+    }
+
+    private void setEnumValueSource(JmixMultiSelectComboBoxPicker<?> valuesPicker, AttributeDefinition attribute) {
+        Map values = getLocalizedEnumerationMap(attribute);
+        valuesPicker.setItemLabelGenerator(e -> values.get(e).toString());
+        valuesPicker.setItems(DataProviderUtils.dataProvider(values.keySet().stream().toList()));
     }
 
     private Component createNonLookupCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -438,7 +462,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 selectAction.setJavaClass(String.class);
                 Map values = getLocalizedEnumerationMap(attribute);
                 selectAction.setItemLabelGenerator(item -> values.get(item).toString());
-                selectAction.setItems(DataProviderUtils.dataProvider(values.keySet().stream().toList()));
+                selectAction.setItems(DataProviderUtils.dataProvider(new ArrayList<>(values.keySet())));
             }
             case DOUBLE -> selectAction.setJavaClass(Double.class);
             case DECIMAL -> selectAction.setJavaClass(BigDecimal.class);

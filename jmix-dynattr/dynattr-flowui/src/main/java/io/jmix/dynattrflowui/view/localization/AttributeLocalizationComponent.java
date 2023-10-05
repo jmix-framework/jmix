@@ -27,13 +27,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
 import io.jmix.flowui.UiComponents;
@@ -59,7 +59,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
     protected final MessageTools messageTools;
     protected final UiComponents uiComponents;
     protected final DataComponents dataComponents;
-    private final DataContext dataContext;
+    protected final DataContext dataContext;
 
     protected CollectionLoader<AttributeLocalizedValue> localizedValuesDl;
     protected CollectionContainer<AttributeLocalizedValue> localizedValuesDc;
@@ -118,7 +118,10 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
         languageColumn.setRenderer(new ComponentRenderer<>(item -> new Text(item.getLanguage() + "|" + item.getLocale())));
 
         Grid.Column<AttributeLocalizedValue> nameCol = localizedValuesDataGrid.addColumn(NAME_PROPERTY);
+        nameCol.setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), NAME_PROPERTY));
+
         Grid.Column<AttributeLocalizedValue> descriptionCol = localizedValuesDataGrid.addColumn(DESCRIPTION_PROPERTY);
+        descriptionCol.setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), DESCRIPTION_PROPERTY));
 
         Editor<AttributeLocalizedValue> editor = localizedValuesDataGrid.getEditor();
         editor.addSaveListener(e -> {

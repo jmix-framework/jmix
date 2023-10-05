@@ -85,7 +85,7 @@
                         <valuePicker id="defaultEntityIdField"
                                      dataContainer="categoryAttributeDc"
                                      property="defaultEntity"
-                                     title="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">
+                                     label="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">
                             <actions>
                                 <action id="lookup" icon="ELLIPSIS_DOTS_H"/>
                                 <action id="clear" type="value_clear" icon="BAN"/>
@@ -124,7 +124,7 @@
             <tab id="calculatedValuesAndOptionsTab" label="msg://calculatedValuesAndOptionsTab.title">
                 <formLayout id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc" width="100%">
                     <multiSelectComboBoxPicker id="dependsOnAttributesField"
-                                               title="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.dependsOnAttributes"
+                                               label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.dependsOnAttributes"
                                                allowCustomValue="true">
                         <actions>
                             <action id="select" type="multi_value_select" icon="SEARCH"/>

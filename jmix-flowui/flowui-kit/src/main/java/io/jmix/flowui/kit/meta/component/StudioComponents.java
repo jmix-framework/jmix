@@ -2609,6 +2609,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.virtuallist.JmixVirtualList",
             category = "Components",
             xmlElement = "virtualList",
+            icon = "io/jmix/flowui/kit/meta/icon/component/virtualList.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),

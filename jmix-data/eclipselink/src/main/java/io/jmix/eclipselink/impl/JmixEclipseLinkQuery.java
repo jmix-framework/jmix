@@ -30,7 +30,7 @@ import io.jmix.data.*;
 import io.jmix.data.impl.EntityFetcher;
 import io.jmix.data.impl.QueryConstantHandler;
 import io.jmix.data.impl.QueryMacroHandler;
-import io.jmix.data.impl.QueryParamValuesManager;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.data.persistence.DbmsFeatures;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;

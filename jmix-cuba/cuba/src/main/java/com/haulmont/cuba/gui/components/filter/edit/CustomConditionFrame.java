@@ -29,7 +29,7 @@ import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.impl.QueryParamValuesManager;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.data.impl.jpql.DomainModel;
 import io.jmix.data.impl.jpql.DomainModelBuilder;
 import io.jmix.data.impl.jpql.DomainModelWithCaptionsBuilder;

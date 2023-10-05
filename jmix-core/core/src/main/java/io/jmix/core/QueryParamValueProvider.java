@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data;
+package io.jmix.core;
 
 import javax.annotation.Nullable;
 
@@ -24,8 +24,6 @@ import javax.annotation.Nullable;
  * For any given query parameter with an empty value, all existing {@code QueryParamValueProvider} beans are requested
  * until a provider supporting this parameter is found. You can use the {@code Order} annotation with
  * the {@code JmixOrder.HIGHEST_PRECEDENCE - 10} value to override providers of the framework.
- *
- * @see io.jmix.data.impl.SessionQueryParamValueProvider
  */
 public interface QueryParamValueProvider {
 

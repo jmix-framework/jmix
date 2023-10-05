@@ -17,7 +17,7 @@
 package io.jmix.securitydata.constraint;
 
 
-import io.jmix.data.impl.QueryParamValuesManager;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.data.impl.SessionQueryParamValueProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 
 /**
  * @deprecated
- * The functionality of assigning predefined query parameters has been moved to {@link io.jmix.data.QueryParamValueProvider}s.
+ * The functionality of assigning predefined query parameters has been moved to {@link io.jmix.core.QueryParamValueProvider}s.
  */
 @Deprecated
 @Component("sec_PredefinedQueryParameters")

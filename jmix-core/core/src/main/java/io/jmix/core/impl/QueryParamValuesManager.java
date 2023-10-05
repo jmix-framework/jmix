@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.core.impl;
 
-import io.jmix.data.QueryParamValueProvider;
+import io.jmix.core.QueryParamValueProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,10 +26,10 @@ import java.util.List;
 /**
  * Encapsulates invocations of registered {@link QueryParamValueProvider}s.
  */
-@Component("data_QueryParamValuesManager")
+@Component("core_QueryParamValuesManager")
 public class QueryParamValuesManager {
 
-    @Autowired
+    @Autowired(required = false)
     private List<QueryParamValueProvider> queryParamValueProviders;
 
     public boolean supports(String paramName) {

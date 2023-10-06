@@ -22,6 +22,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
@@ -103,7 +104,8 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 
         for (Grid.Column<Object> column : dataGrid.getColumns()) {
             Object columnValue = getColumnValue(dataGrid, column, entity);
-            MetaPropertyPath metaPropertyPath = metadata.getClass(entity).getPropertyPath(column.getKey());
+            //noinspection unchecked,rawtypes
+            MetaPropertyPath metaPropertyPath = ((EnhancedDataGrid) dataGrid).getColumnMetaPropertyPath(column);
 
             if (columnValue != null) {
                 jsonObject.add(column.getKey(),

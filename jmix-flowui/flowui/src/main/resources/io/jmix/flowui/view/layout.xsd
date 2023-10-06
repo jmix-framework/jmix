@@ -1261,7 +1261,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="alignItemsEnum">
+    <xs:simpleType name="alignEnum">
         <xs:restriction>
             <xs:enumeration value="START"/>
             <xs:enumeration value="END"/>
@@ -1750,6 +1750,7 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
+                    <xs:enumeration value="badge"/>
                     <xs:enumeration value="normal"/>
                     <xs:enumeration value="success"/>
                     <xs:enumeration value="error"/>
@@ -1789,6 +1790,23 @@
                     <xs:enumeration value="filled"/>
                     <xs:enumeration value="reverse"/>
                     <xs:enumeration value="small"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+    
+    <xs:simpleType name="spacingThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="spacing-xs"/>
+                    <xs:enumeration value="spacing-s"/>
+                    <xs:enumeration value="spacing"/>
+                    <xs:enumeration value="spacing-l"/>
+                    <xs:enumeration value="spacing-xl"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -1964,7 +1982,6 @@
                     <xs:enumeration value="minimal"/>
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
-                    <xs:enumeration value="fixed"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -1984,7 +2001,6 @@
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
                     <xs:enumeration value="bordered"/>
-                    <xs:enumeration value="fixed"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2116,7 +2132,7 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasFlexible">
-        <xs:attribute name="alignItems" type="alignItemsEnum"/>
+        <xs:attribute name="alignItems" type="alignEnum"/>
         <xs:attribute name="justifyContent" type="justifyContentModeEnum"/>
 
         <xs:attributeGroup ref="hasSize"/>
@@ -2143,11 +2159,9 @@
 
     <xs:attributeGroup name="hasValueAndElement">
         <xs:attribute name="readOnly" type="xs:boolean"/>
-        <xs:attribute name="requiredIndicatorVisible" type="xs:boolean"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasValidation">
-        <xs:attribute name="invalid" type="xs:boolean"/>
         <xs:attribute name="errorMessage" type="resourceString"/>
     </xs:attributeGroup>
 
@@ -2156,6 +2170,7 @@
         <xs:attributeGroup ref="hasId"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="colspan" type="xs:integer"/>
+        <xs:attribute name="alignSelf" type="alignEnum"/>
         <xs:attribute name="css" type="xs:string"/>
 
         <!-- enable XSD extension here -->
@@ -2713,6 +2728,7 @@
 
                             <xs:attributeGroup ref="columnsLoadType"/>
                             <xs:attribute name="filterable" type="xs:boolean"/>
+                            <xs:attribute name="resizable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
                 </xs:all>
@@ -3294,7 +3310,7 @@
                     <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                     <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
                 </xs:sequence>
-                <xs:attribute name="invalid" type="xs:boolean"/>
+
                 <xs:attribute name="themeNames" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
@@ -3903,6 +3919,7 @@
                 <xs:attribute name="summaryText" type="resourceString"/>
                 <xs:attribute name="themeNames" type="detailsThemeNames"/>
                 <xs:attribute name="opened" type="xs:boolean"/>
+                <xs:attribute name="propertyHierarchyDepth" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -4064,6 +4081,7 @@
                 <xs:element name="dataLoadCoordinator" type="dataLoadCoordinatorType" minOccurs="0"/>
                 <xs:element name="urlQueryParameters" type="urlQueryParametersType" minOccurs="0"/>
                 <xs:element name="timer" type="timerType" minOccurs="0"/>
+                <xs:element name="settings" type="settingsFacetType" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -4168,6 +4186,22 @@
         <xs:attribute name="delay" type="xs:integer" use="required"/>
         <xs:attribute name="autostart" type="xs:boolean"/>
         <xs:attribute name="repeating" type="xs:boolean"/>
+    </xs:complexType>
+
+    <!-- SettingsFacet -->
+
+    <xs:complexType name="settingsFacetType">
+        <xs:sequence>
+            <xs:element name="component" type="settingsComponentType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="auto" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="settingsComponentType">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="enabled" type="xs:boolean"/>
     </xs:complexType>
 
     <!--  -->
@@ -4298,7 +4332,9 @@
                 <xs:attributeGroup ref="hasId"/>
                 <xs:attribute name="visible" type="xs:boolean"/>
                 <xs:attribute name="colspan" type="xs:integer"/>
+                <xs:attribute name="alignSelf" type="alignEnum"/>
                 <xs:attribute name="css" type="xs:string"/>
+                <xs:attribute name="themeNames" type="spacingThemeNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

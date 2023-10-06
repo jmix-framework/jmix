@@ -60,29 +60,30 @@
                     <button id="resendEmailBtn" action="sendingMessageDataGrid.resendEmail"/>
                     <simplePagination id="pagination" dataLoader="sendingMessagesDl"/>
                 </hbox>
-                <dataGrid id="sendingMessageDataGrid" width="100%" dataContainer="sendingMessagesDc">
+                <dataGrid id="sendingMessageDataGrid" width="100%" dataContainer="sendingMessagesDc"
+                          columnReorderingAllowed="true">
                     <actions>
                         <action id="downloadAttachment" text="msg://sendingMessageView.downloadAttachments.text"
                                 type="list_itemTracking" icon="lumo:download"/>
                         <action id="resendEmail" text="msg://sendingMessageView.resendEmail.text"
                                 type="list_itemTracking" icon="lumo:reload"/>
                     </actions>
-                    <columns>
-                        <column property="address" resizable="true" sortable="false"/>
-                        <column property="cc" resizable="true"/>
-                        <column property="bcc" resizable="true"/>
-                        <column property="from" resizable="true"/>
-                        <column property="subject" resizable="true"/>
-                        <column property="status" resizable="true"/>
-                        <column property="bodyContentType" resizable="true"/>
-                        <column property="createTs" resizable="true"/>
-                        <column property="dateSent" resizable="true"/>
-                        <column property="updateTs" resizable="true"/>
-                        <column property="attachmentsName" resizable="true" sortable="false"/>
-                        <column property="attemptsLimit" resizable="true"/>
-                        <column property="deadline" resizable="true"/>
-                        <column property="attemptsMade" resizable="true"/>
-                        <column property="important" resizable="true"/>
+                    <columns resizable="true">
+                        <column property="address" sortable="false"/>
+                        <column property="cc"/>
+                        <column property="bcc"/>
+                        <column property="from"/>
+                        <column property="subject"/>
+                        <column property="status"/>
+                        <column property="bodyContentType"/>
+                        <column property="createTs"/>
+                        <column property="dateSent"/>
+                        <column property="updateTs"/>
+                        <column property="attachmentsName" sortable="false"/>
+                        <column property="attemptsLimit"/>
+                        <column property="deadline"/>
+                        <column property="attemptsMade"/>
+                        <column property="important"/>
                     </columns>
                 </dataGrid>
             </vbox>
@@ -99,7 +100,7 @@
                         <button id="showContentBtn" text="msg://sendingMessageView.showContentBtn.text"
                                 icon="ENVELOPE_OPEN" enabled="false"/>
                     </vbox>
-                    <textField id="bodyContentType" property="bodyContentType" readOnly="true"/>
+                    <textField id="bodyContentTypeField" property="bodyContentType" readOnly="true"/>
                     <textField id="status" property="status" readOnly="true"/>
                     <textField id="attachmentsName" property="attachmentsName" readOnly="true"/>
                     <dateTimePicker id="createTs" property="createTs" readOnly="true"/>

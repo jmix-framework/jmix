@@ -56,7 +56,6 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             labelPosition == SupportsLabelPosition.LabelPosition.TOP
             labelVisible
@@ -69,7 +68,6 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
             parameterName == "parameterNameRcftvgy"
             !readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["themeNames1", "themeNames2"])
@@ -133,7 +131,6 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             labelPosition == SupportsLabelPosition.LabelPosition.TOP
             labelVisible
@@ -144,7 +141,6 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
             parameterName == "parameterNameAsdsd"
             !readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["themeNames1", "themeNames2"])

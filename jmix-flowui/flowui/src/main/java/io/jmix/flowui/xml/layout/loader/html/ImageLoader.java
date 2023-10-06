@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.xml.layout.loader.html;
 
-import com.google.common.base.Splitter;
 import io.jmix.flowui.component.image.JmixImage;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
@@ -37,19 +36,7 @@ public class ImageLoader extends AbstractHtmlContainerLoader<JmixImage<?>> {
         loadResourceString(element, "alternateText", context.getMessageGroup(), resultComponent::setAlt);
 
         componentLoader().loadAriaLabel(resultComponent, element);
-
-        getLoaderSupport().loadString(element, "themeNames",
-                names -> resultComponent.getElement().getThemeList().addAll(Splitter.on(",")
-                        .omitEmptyStrings()
-                        .trimResults()
-                        .splitToList(names)));
-
         getDataLoaderSupport().loadData(resultComponent, element);
-    }
-
-    @Override
-    protected void loadBadge() {
-        // No badges for Image
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

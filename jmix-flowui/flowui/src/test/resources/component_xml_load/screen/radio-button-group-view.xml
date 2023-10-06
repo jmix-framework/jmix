@@ -46,7 +46,6 @@
                           itemsContainer="ordersDc"
                           readOnly="true"
                           required="true"
-                          requiredIndicatorVisible="true"
                           requiredMessage="requiredMessage"
                           themeNames="helper-above-field, vertical"
                           width="100%">

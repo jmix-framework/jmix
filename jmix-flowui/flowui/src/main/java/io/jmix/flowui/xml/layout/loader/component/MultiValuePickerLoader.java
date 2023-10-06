@@ -29,7 +29,6 @@ public class MultiValuePickerLoader extends AbstractValuePickerLoader<JmixMultiV
     public void loadComponent() {
         super.loadComponent();
 
-        loadBoolean(element, "invalid", resultComponent::setInvalid);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
 
         componentLoader().loadRequired(resultComponent, element, context);

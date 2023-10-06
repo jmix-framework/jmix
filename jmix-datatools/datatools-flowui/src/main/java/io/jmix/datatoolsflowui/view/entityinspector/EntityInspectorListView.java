@@ -34,6 +34,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
@@ -51,13 +52,16 @@ import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.list.*;
 import io.jmix.flowui.action.view.LookupSelectAction;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -161,9 +165,14 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected Downloader downloader;
 
     protected DataGrid<Object> entitiesDataGrid;
+    protected GenericFilter entitiesGenericFilter;
+    protected Registration queryParametersChangeRegistration;
+    protected QueryParameters initialParameters;
+
     protected MetaClass selectedMeta;
     protected CollectionLoader entitiesDl;
     protected CollectionContainer entitiesDc;
+
     protected String entityName;
     protected boolean isDialogMode = true;
 
@@ -172,14 +181,12 @@ public class EntityInspectorListView extends StandardListView<Object> {
         showMode.setValue(ShowMode.NON_REMOVED);
         getViewData().setDataContext(dataComponents.createDataContext());
         ComponentUtils.setItemsMap(entitiesLookup, getEntitiesLookupFieldOptions());
-
-        entitiesLookup.addValueChangeListener(e -> showEntities());
-        showMode.addValueChangeListener(e -> showEntities());
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Map<String, List<String>> parameters = event.getLocation().getQueryParameters().getParameters();
+        initialParameters = event.getLocation().getQueryParameters();
+        Map<String, List<String>> parameters = initialParameters.getParameters();
 
         if (parameters.containsKey(QUERY_PARAM_ENTITY)) {
             parameters.get(QUERY_PARAM_ENTITY).stream()
@@ -219,6 +226,9 @@ public class EntityInspectorListView extends StandardListView<Object> {
             entitiesLookup.addValueChangeListener(this::entityChangeListener);
             showMode.addValueChangeListener(this::showModeChangeListener);
         }
+
+        entitiesLookup.addValueChangeListener(e -> showEntities());
+        showMode.addValueChangeListener(e -> showEntities());
     }
 
     @Override
@@ -262,7 +272,79 @@ public class EntityInspectorListView extends StandardListView<Object> {
                 getContent().indexOf(lookupActionsLayout),
                 entitiesDataGrid);
 
+        if (entitiesGenericFilter != null) {
+            getContent().remove(entitiesGenericFilter);
+        }
+
+        entitiesGenericFilter = createGenericFilter();
+
+        getContent().addComponentAtIndex(
+                getContent().indexOf(buttonsPanel),
+                entitiesGenericFilter
+        );
+
         entitiesDataGrid.addSelectionListener(this::entitiesDataGridSelectionListener);
+    }
+
+    protected GenericFilter createGenericFilter() {
+        GenericFilter genericFilter = uiComponents.create(GenericFilter.class);
+        genericFilter.setId("genericFilter");
+        genericFilter.setDataLoader(entitiesDl);
+
+        initQueryParametersBinder(genericFilter);
+
+        return genericFilter;
+    }
+
+    protected void initQueryParametersBinder(GenericFilter genericFilter) {
+        GenericFilterUrlQueryParametersBinder genericFilterBinder = createQueryParametersBinder(genericFilter);
+
+        if (queryParametersChangeRegistration != null) {
+            queryParametersChangeRegistration.remove();
+            queryParametersChangeRegistration = null;
+        }
+
+        queryParametersChangeRegistration =
+                ViewControllerUtils.addQueryParametersChangeListener(this, event -> {
+                    if (UiComponentUtils.isComponentAttachedToDialog(this)) {
+                        return;
+                    }
+
+                    genericFilterBinder.updateState(event.getQueryParameters());
+                });
+
+        // Lazy update of query parameters for backward navigation
+        if (initialParameters != null) {
+            genericFilterBinder.updateState(initialParameters);
+            initialParameters = null;
+        }
+    }
+
+    private GenericFilterUrlQueryParametersBinder createQueryParametersBinder(GenericFilter genericFilter) {
+        GenericFilterUrlQueryParametersBinder genericFilterBinder =
+                new GenericFilterUrlQueryParametersBinder(genericFilter, urlParamSerializer, getApplicationContext());
+
+        genericFilterBinder.addUrlQueryParametersChangeListener(event -> {
+            if (UiComponentUtils.isComponentAttachedToDialog(this)) {
+                return;
+            }
+
+            getUI().ifPresent(ui -> {
+                // Required to collect query parameters from fields, since the current
+                // listener is called immediately after changing any query parameters by the
+                // field (see entityChangeListener, showModeChangeListener).
+                // At this point, the previous state is not pushed to the UI, and fields query parameters is not
+                // applied to the URL
+                QueryParameters queryParameters = routeSupport.mergeQueryParameters(
+                        collectFieldsQueryParameters(),
+                        event.getQueryParameters()
+                );
+
+                routeSupport.setQueryParameters(ui, queryParameters);
+            });
+        });
+
+        return genericFilterBinder;
     }
 
     protected void showEntities() {
@@ -303,7 +385,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
             restoreAction.setEnabled(restoreEnabled);
         }
     }
-
 
     protected CollectionContainer createContainer(MetaClass meta) {
         entitiesDc = dataComponents.createCollectionContainer(meta.getJavaClass());
@@ -538,7 +619,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
         return editAction;
     }
 
-
     protected JmixButton createRestoreButton(DataGrid<Object> dataGrid) {
         JmixButton restoreButton = uiComponents.create(JmixButton.class);
         ItemTrackingAction restoreAction = actions.create(ItemTrackingAction.ID, RESTORE_ACTION_ID);
@@ -586,7 +666,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     protected void showRestoreDialog() {
         Set<Object> entityList = entitiesDataGrid.getSelectedItems();
-        if (entityList.size() > 0) {
+        if (!entityList.isEmpty()) {
             if (metadataTools.isSoftDeletable(selectedMeta.getJavaClass())) {
                 showOptionDialog(
                         messages.getMessage("dialogs.Confirmation"),
@@ -595,7 +675,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
                         this::restoreOkHandler,
                         this::standardCancelHandler,
                         entityList
-
                 );
             }
         } else {
@@ -619,7 +698,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
                                 .withHandler(cancelEvent))
                 .open();
     }
-
 
     protected void wipeOutOkHandler(ActionPerformedEvent actionPerformedEvent, Set<Object> entityList) {
         dataManager.save(
@@ -653,9 +731,18 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
             if (metaClass == null) {
                 getContent().remove(entitiesDataGrid);
+                getContent().remove(entitiesGenericFilter);
+                buttonsPanel.removeAll();
 
                 //to remove the current entityName param and restore showMode param
-                routeSupport.setQueryParameters(ui, QueryParameters.of(QUERY_PARAM_MODE, showMode.getValue().getId()));
+                routeSupport.fetchCurrentLocation(ui, location -> {
+                    Map<String, List<String>> parametersMap =
+                            new HashMap<>(location.getQueryParameters().getParameters());
+                    parametersMap.remove(QUERY_PARAM_ENTITY);
+                    parametersMap.remove(GenericFilterUrlQueryParametersBinder.DEFAULT_CONFIGURATION_PARAM);
+                    parametersMap.remove(GenericFilterUrlQueryParametersBinder.DEFAULT_CONDITION_PARAM);
+                    routeSupport.setQueryParameters(ui, new QueryParameters(parametersMap));
+                });
             } else {
                 routeSupport.setQueryParameter(ui, QUERY_PARAM_ENTITY, metaClass.getName());
             }
@@ -673,6 +760,19 @@ public class EntityInspectorListView extends StandardListView<Object> {
                     queryParamValue
             );
         });
+    }
+
+    protected QueryParameters collectFieldsQueryParameters() {
+        Map<String, List<String>> parametersMap = new HashMap<>();
+
+        MetaClass value = entitiesLookup.getValue();
+        if (value != null) {
+            parametersMap.put(QUERY_PARAM_ENTITY, Collections.singletonList(value.getName()));
+        }
+
+        parametersMap.put(QUERY_PARAM_MODE, Collections.singletonList(showMode.getValue().getId()));
+
+        return new QueryParameters(parametersMap);
     }
 
     protected void showNotification(String message) {

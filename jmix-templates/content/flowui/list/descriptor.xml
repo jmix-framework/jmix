@@ -13,6 +13,8 @@ def tableXml = api.processSnippet('table.xml',
         'tableType': tableType,
         'tableId': tableId,
         'multiselect': multiselect,
+        'columnReorderingAllowed': columnReorderingAllowed,
+        'resizableColumns': resizableColumns,
         'tableActions': tableActions,
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -20,12 +22,12 @@ def tableXml = api.processSnippet('table.xml',
       xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="${messageKeys['viewTitle']}"
       focusComponent="${tableId}">
-    <data readOnly="true">
+    <data>
         <collection id="${tableDc}"
                     class="${entity.fqn}"<%if (!is_inline_listFetchPlan) {%>
         fetchPlan="${listFetchPlan.name}"<%}%>> <%if (is_inline_listFetchPlan) {%>
             ${inline_listFetchPlan}
-            <%}%><loader id="${tableDl}">
+            <%}%><loader id="${tableDl}" readOnly="true">
                 <query>
                     <![CDATA[select e from ${entity.name} e]]>
                 </query>

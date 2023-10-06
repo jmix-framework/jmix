@@ -15,7 +15,7 @@ import {DelegateStateMixin} from '@vaadin/component-base/src/delegate-state-mixi
 import {Tabs} from '@vaadin/tabs/src/vaadin-tabs.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.0.3]
+// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.1.10]
 /**
  * @private
  * A controller which observes the <vaadin-tabs> slotted to the tabs slot.

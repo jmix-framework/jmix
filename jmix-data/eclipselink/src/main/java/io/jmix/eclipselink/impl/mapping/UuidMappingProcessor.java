@@ -84,7 +84,6 @@ public class UuidMappingProcessor implements MappingProcessor {
         field.setColumnDefinition(mappingInfo.getUuidColumnDefinition());
     }
 
-    @Deprecated
     private void setDatabaseFieldParameters(Session session, DatabaseField field) {
         if (session.getPlatform() instanceof PostgreSQLPlatform) {
             field.setSqlType(Types.OTHER);

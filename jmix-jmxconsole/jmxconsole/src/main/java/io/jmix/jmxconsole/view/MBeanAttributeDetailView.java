@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.jmxconsole;
+package io.jmix.jmxconsole.view;
 
-import io.jmix.jmxconsole.model.ManagedBeanAttribute;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.view.*;
+import io.jmix.jmxconsole.AttributeComponentProvider;
+import io.jmix.jmxconsole.JmxControl;
+import io.jmix.jmxconsole.model.ManagedBeanAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;

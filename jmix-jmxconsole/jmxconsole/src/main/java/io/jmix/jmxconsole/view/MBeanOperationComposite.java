@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.jmxconsole;
+package io.jmix.jmxconsole.view;
 
+import io.jmix.jmxconsole.AttributeComponentProvider;
 import io.jmix.jmxconsole.model.ManagedBeanAttribute;
 import io.jmix.jmxconsole.model.ManagedBeanOperation;
 import io.jmix.jmxconsole.model.ManagedBeanOperationParameter;

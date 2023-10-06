@@ -65,11 +65,6 @@ public class UiProperties {
      */
     boolean useSessionFixationProtection;
 
-    /**
-     * Timeout (in seconds) for MBean operation invoked in JMX console
-     */
-    int jmxConsoleMBeanOperationTimeoutSec;
-
     public UiProperties(@DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
                         @DefaultValue("true") boolean compositeMenu,
@@ -79,8 +74,7 @@ public class UiProperties {
                         @Nullable Map<String, Integer> entityPageSize,
                         @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
-                        @DefaultValue("true") boolean useSessionFixationProtection,
-                        @DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec
+                        @DefaultValue("true") boolean useSessionFixationProtection
     ) {
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
@@ -92,7 +86,6 @@ public class UiProperties {
         this.viewFileExtensions = viewFileExtensions;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.useSessionFixationProtection = useSessionFixationProtection;
-        this.jmxConsoleMBeanOperationTimeoutSec = jmxConsoleMBeanOperationTimeoutSec;
     }
 
     /**
@@ -157,11 +150,5 @@ public class UiProperties {
      */
     public boolean isUseSessionFixationProtection() {
         return useSessionFixationProtection;
-    }
-    /**
-     * @see #jmxConsoleMBeanOperationTimeoutSec
-     */
-    public int getJmxConsoleMBeanOperationTimeoutSec() {
-        return jmxConsoleMBeanOperationTimeoutSec;
     }
 }

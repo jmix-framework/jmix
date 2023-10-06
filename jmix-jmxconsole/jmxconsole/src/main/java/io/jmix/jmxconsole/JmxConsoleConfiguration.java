@@ -19,7 +19,6 @@ package io.jmix.jmxconsole;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
-import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
@@ -41,16 +40,7 @@ public class JmxConsoleConfiguration {
                                                 final AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         final ViewControllersConfiguration viewControllers
                 = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
-        viewControllers.setBasePackages(Collections.singletonList("io.jmix.jmxconsole"));
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.jmxconsole.view"));
         return viewControllers;
-    }
-
-    @Bean("jmxcon_JmxconActions")
-    public ActionsConfiguration actions(final ApplicationContext applicationContext,
-                                        final AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        final ActionsConfiguration actions
-                = new ActionsConfiguration(applicationContext, metadataReaderFactory);
-        actions.setBasePackages(Collections.singletonList("io.jmix.jmxconsole"));
-        return actions;
     }
 }

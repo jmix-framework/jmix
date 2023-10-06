@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.jmxconsole;
+package io.jmix.jmxconsole.view;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Span;
@@ -33,6 +33,7 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import io.jmix.jmxconsole.JmxControl;
 import io.jmix.jmxconsole.model.ManagedBeanAttribute;
 import io.jmix.jmxconsole.model.ManagedBeanInfo;
 import org.apache.commons.collections4.CollectionUtils;

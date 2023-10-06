@@ -34,11 +34,11 @@
             </textField>
             <button id="editBtn" action="mbeansDataGrid.edit"/>
         </hbox>
-        <dataGrid id="mbeansDataGrid" dataContainer="mbeanDc">
+        <dataGrid id="mbeansDataGrid" dataContainer="mbeanDc" columnReorderingAllowed="true">
             <actions>
                 <action id="edit" type="list_edit" icon="SEARCH" text="msg://inspectAction.text"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="domain"/>
                 <column property="objectName"/>
                 <column property="description"/>

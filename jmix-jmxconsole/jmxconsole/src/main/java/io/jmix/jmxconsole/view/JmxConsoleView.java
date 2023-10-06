@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.jmxconsole;
+package io.jmix.jmxconsole.view;
 
 
 import com.google.common.base.Strings;
@@ -26,6 +26,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import io.jmix.jmxconsole.JmxControl;
 import io.jmix.jmxconsole.model.ManagedBeanInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,6 @@ public class JmxConsoleView extends StandardView {
     protected JmxControl jmxControl;
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
-
 
     @Subscribe
     public void onInit(final InitEvent event) {

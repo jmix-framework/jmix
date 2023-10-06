@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package io.jmix.jmxconsole;
+package io.jmix.jmxconsole.view;
 
-import io.jmix.jmxconsole.model.ManagedBeanOperation;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -36,6 +35,11 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
+import io.jmix.jmxconsole.AttributeHelper;
+import io.jmix.jmxconsole.JmxConsoleProperties;
+import io.jmix.jmxconsole.JmxControl;
+import io.jmix.jmxconsole.JmxControlException;
+import io.jmix.jmxconsole.model.ManagedBeanOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +81,8 @@ public class MBeanOperationResultView extends StandardView {
     protected TimeSource timeSource;
     @Autowired
     protected UiComponents uiComponents;
+    @Autowired
+    protected JmxConsoleProperties jmxConsoleProperties;
 
     protected BackgroundTaskHandler<Object> taskHandler;
     protected Object result;
@@ -92,7 +98,7 @@ public class MBeanOperationResultView extends StandardView {
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         BackgroundTask<Long, Object> task =
-                new OperationBackgroundTask(uiProperties.getJmxConsoleMBeanOperationTimeoutSec(), this);
+                new OperationBackgroundTask(jmxConsoleProperties.getJmxConsoleMBeanOperationTimeoutSec(), this);
         taskHandler = backgroundWorker.handle(task);
         taskHandler.execute();
     }

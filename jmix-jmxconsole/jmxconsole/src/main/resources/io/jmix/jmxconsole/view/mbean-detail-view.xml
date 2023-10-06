@@ -36,12 +36,15 @@
             <button action="attributesDataGrid.refresh"/>
             <button action="attributesDataGrid.edit"/>
         </hbox>
-        <dataGrid id="attributesDataGrid" dataContainer="attrDc" height="40em" width="100%">
+        <dataGrid id="attributesDataGrid" dataContainer="attrDc"
+                  minHeight="20em"
+                  width="100%"
+                  columnReorderingAllowed="true">
             <actions>
                 <action id="refresh" type="list_refresh"/>
                 <action id="edit" type="list_edit"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="name"/>
                 <column property="description"/>
                 <column property="type"/>

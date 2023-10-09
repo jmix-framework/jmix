@@ -58,8 +58,10 @@
                                   requiredMessage="msg://dataTypeField.required"/>
                         <codeEditor id="validationScriptField" property="configuration.validatorGroovyScript"
                                     mode="GROOVY"
+                                    showLineNumbers="true"
                                     highlightActiveLine="false"
-                                    showGutter="false"
+                                    showGutter="true"
+                                    highlightGutterLine="false"
                                     height="12em"/>
                     </formLayout>
                     <formLayout id="optionalAttributeForm" dataContainer="categoryAttributeDc" height="90%"
@@ -135,17 +137,29 @@
                     </multiSelectComboBoxPicker>
                     <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                     <codeEditor id="optionsLoaderScriptField" property="configuration.optionsLoaderScript"
+                                showLineNumbers="true"
+                                highlightGutterLine="false"
                                 highlightActiveLine="false"
-                                showGutter="false"/>
+                                mode="GROOVY"
+                                showGutter="true"/>
                     <codeEditor id="joinClauseField" property="joinClause"
+                                showLineNumbers="true"
+                                highlightGutterLine="false"
                                 highlightActiveLine="false"
-                                showGutter="false" height="70px"/>
+                                showGutter="true"
+                                height="70px"/>
                     <codeEditor id="whereClauseField" property="whereClause"
+                                showLineNumbers="true"
+                                highlightGutterLine="false"
                                 highlightActiveLine="false"
-                                showGutter="false" height="70px"/>
-                    <codeEditor id="recalculationScriptField"
-                                property="configuration.recalculationScript"
-                                highlightActiveLine="false" showGutter="false" mode="GROOVY" height="10em"/>
+                                showGutter="true"
+                                height="70px"/>
+                    <codeEditor id="recalculationScriptField" property="configuration.recalculationScript"
+                                showLineNumbers="true"
+                                highlightGutterLine="false"
+                                highlightActiveLine="false"
+                                showGutter="true"
+                                mode="GROOVY" height="10em"/>
                 </formLayout>
             </tab>
             <tab id="localizationTab" label="msg://localizationTab.title"

@@ -279,8 +279,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
-        initCodeEditors();
-
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
         initDependsOnAttributesField();
@@ -307,16 +305,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
     }
-
-    private void initCodeEditors() {
-        List.of(optionsLoaderScriptField, optionsLoaderScriptField, joinClauseField, whereClauseField, recalculationScriptField)
-                .forEach(e -> {
-                    e.setHighlightActiveLine(false);
-                    e.setShowGutter(true);
-                    e.setShowPrintMargin(true);
-                });
-    }
-
     @Subscribe("defaultEntityIdField")
     protected void onDefaultEntityIdFieldValueChange(JmixValuePicker.ValueChangeEvent<Object> event) {
         Object entity = event.getValue();

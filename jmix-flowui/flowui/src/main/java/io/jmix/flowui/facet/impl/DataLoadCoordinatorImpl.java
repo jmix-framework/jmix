@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCoordinator {
@@ -134,7 +135,7 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
         List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader).stream()
                 .filter(paramName ->
                         !queryParamValuesManager.supports(paramName))
-                .toList();
+                .collect(Collectors.toList());
 
         List<String> allParameters = new ArrayList<>(queryParameters);
         allParameters.addAll(getConditionParameters(loader));

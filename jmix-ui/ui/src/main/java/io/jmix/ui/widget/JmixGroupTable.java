@@ -676,6 +676,12 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
     }
 
     protected void sortByDataSource(Map<Object, SortDetails> sortPropertyIds, Container.Sortable sortableContainer) {
+        if (sortPropertyIds.isEmpty()) {
+            //legacy data sources don't support sorting on empty sort property array so call resetSortOrder() instead
+            resetSortOrder();
+            return;
+        }
+
         Object[] allPropertyIds = new Object[sortPropertyIds.size()];
         boolean[] allAscendingValues = new boolean[sortPropertyIds.size()];
         int i = 0;

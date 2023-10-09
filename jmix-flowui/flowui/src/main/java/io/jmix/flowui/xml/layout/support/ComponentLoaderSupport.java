@@ -43,7 +43,6 @@ import io.jmix.flowui.kit.component.*;
 import io.jmix.flowui.kit.component.formatter.Formatter;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.loader.PropertyShortcutCombinationLoader;
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dom4j.Element;
@@ -459,20 +458,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                         component.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
     }
 
-    public void loadDatePickerI18n(DatePicker.DatePickerI18n i18n, Element element,
-                                   Consumer<DatePicker.DatePickerI18n> setter) {
-        DatePicker.DatePickerI18n datePickerI18n = SerializationUtils.clone(i18n);
-
-        loadFirstDayOfWeek(datePickerI18n, element);
-        loadDateFormat(datePickerI18n, element);
-
-        setter.accept(datePickerI18n);
-    }
-
-    /**
-     * @deprecated use {@link ComponentLoaderSupport#loadDatePickerI18n(DatePicker.DatePickerI18n, Element, Consumer)} instead.
-     */
-    @Deprecated(since = "2.1.0", forRemoval = true)
     public void loadDatePickerI18n(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
         DatePicker.DatePickerI18n datePickerI18n = new DatePicker.DatePickerI18n();
 

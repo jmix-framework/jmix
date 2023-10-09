@@ -3736,6 +3736,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="highlightActiveLine" type="xs:boolean"/>
+                <xs:attribute name="highlightGutterLine" type="xs:boolean"/>
                 <xs:attribute name="showGutter" type="xs:boolean"/>
                 <xs:attribute name="showLineNumbers" type="xs:boolean"/>
                 <xs:attribute name="showPrintMargin" type="xs:boolean"/>

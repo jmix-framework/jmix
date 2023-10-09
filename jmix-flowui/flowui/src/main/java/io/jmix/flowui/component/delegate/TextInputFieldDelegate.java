@@ -19,15 +19,18 @@ package io.jmix.flowui.component.delegate;
 import com.vaadin.flow.component.AbstractField;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
-import io.jmix.flowui.data.binding.impl.FieldValueBinding;
-import io.jmix.flowui.data.EntityValueSource;
-import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.component.HasLengthLimited;
 import io.jmix.flowui.component.validation.RegexpValidator;
 import io.jmix.flowui.component.validation.SizeValidator;
 import io.jmix.flowui.component.validation.Validator;
+import io.jmix.flowui.data.DataAwareComponentsTools;
+import io.jmix.flowui.data.EntityValueSource;
+import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
+import io.jmix.flowui.data.binding.impl.FieldValueBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -42,6 +45,7 @@ public class TextInputFieldDelegate<C extends AbstractField<?, String>, V> exten
 
     protected SizeValidator<? super V> sizeValidator;
     protected RegexpValidator regexpValidator;
+    protected DataAwareComponentsTools dataAwareComponentsTools;
 
     protected String pattern;
     protected int maxLength = -1;
@@ -49,6 +53,11 @@ public class TextInputFieldDelegate<C extends AbstractField<?, String>, V> exten
 
     public TextInputFieldDelegate(C component) {
         super(component);
+    }
+
+    @Autowired
+    public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
+        this.dataAwareComponentsTools = dataAwareComponentsTools;
     }
 
     public String getPattern() {
@@ -110,6 +119,13 @@ public class TextInputFieldDelegate<C extends AbstractField<?, String>, V> exten
         } else {
             log.debug("{} is not added because component value type is not {}",
                     SizeValidator.class, String.class.getSimpleName());
+        }
+    }
+
+    @Override
+    protected void setupProperties(EntityValueSource<?, V> valueSource) {
+        if (component instanceof HasLengthLimited hasLengthLimitedComponent) {
+            dataAwareComponentsTools.setupLength(hasLengthLimitedComponent, valueSource);
         }
     }
 

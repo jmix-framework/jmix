@@ -19,12 +19,13 @@ package io.jmix.flowui.component.delegate;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.data.EntityValueSource;
+import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.binding.ValueBinding;
 import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
-import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.kit.event.EventBus;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public abstract class AbstractValueComponentDelegate<C extends Component & HasValue<?, V>, T, V>
@@ -57,9 +58,15 @@ public abstract class AbstractValueComponentDelegate<C extends Component & HasVa
         if (valueSource != null) {
             valueBinding = createValueBinding(valueSource);
             valueBinding.bind();
+
+            setupProperties((EntityValueSource<?, T>) valueSource);
         }
 
         valueBindingChanged(valueBinding);
+    }
+
+    protected void setupProperties(EntityValueSource<?, T> valueSource) {
+        // hook to be implemented
     }
 
     protected void valueBindingChanged(@Nullable ValueBinding<T> valueBinding) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 
 package io.jmix.flowui.component.delegate;
 
-import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import com.vaadin.flow.component.AbstractField;
+import io.jmix.flowui.component.HasLengthLimited;
 import io.jmix.flowui.data.DataAwareComponentsTools;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -27,16 +28,17 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
-@Component("flowui_DatePickerDelegate")
+/**
+ * @param <C> component type
+ * @param <V> component value type
+ */
+@Component("flowui_TextAreaFieldDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DatePickerDelegate<V extends Comparable>
-        extends AbstractDateTimeFieldDelegate<TypedDatePicker<V>, V, LocalDate> {
+public class TextAreaFieldDelegate<C extends AbstractField<?, String>, V> extends AbstractFieldDelegate<C, V, String> {
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
 
-    public DatePickerDelegate(TypedDatePicker<V> component) {
+    public TextAreaFieldDelegate(C component) {
         super(component);
     }
 
@@ -53,6 +55,8 @@ public class DatePickerDelegate<V extends Comparable>
 
     @Override
     protected void setupProperties(EntityValueSource<?, V> valueSource) {
-        dataAwareComponentsTools.setupRange(component, valueSource);
+        if (component instanceof HasLengthLimited hasLengthLimitedComponent) {
+            dataAwareComponentsTools.setupLength(hasLengthLimitedComponent, valueSource);
+        }
     }
 }

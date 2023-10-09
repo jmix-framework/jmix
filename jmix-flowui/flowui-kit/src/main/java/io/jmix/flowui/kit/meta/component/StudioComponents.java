@@ -2521,6 +2521,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "highlightActiveLine", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "highlightGutterLine", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),

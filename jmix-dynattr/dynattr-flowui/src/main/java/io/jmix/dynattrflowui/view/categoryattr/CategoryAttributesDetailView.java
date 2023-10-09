@@ -406,7 +406,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         //noinspection DataFlowIssue
         targetScreensTable.getColumnByKey(VIEW_COLUMN)
                 .setRenderer(new ComponentRenderer<>(
-                        () -> (JmixComboBox<String>) uiComponents.create(JmixComboBox.class),
+                        () -> {
+                            JmixComboBox<String> jmixComboBox = uiComponents.create(JmixComboBox.class);
+                            jmixComboBox.setMinWidth("25em");
+                            return jmixComboBox;
+                        },
                         (comboBox, item) -> {
                             MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
 
@@ -426,6 +430,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     protected JmixComboBox<String> visibilityTableComponentColumnComponentGenerator() {
         JmixComboBox<String> comboBox = uiComponents.create(JmixComboBox.class);
+        comboBox.setMinWidth("25em");
         comboBox.setAllowCustomValue(true);
         return comboBox;
     }

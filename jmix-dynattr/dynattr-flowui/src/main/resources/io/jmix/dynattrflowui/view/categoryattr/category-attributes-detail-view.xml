@@ -166,7 +166,7 @@
                         <button id="removeBtn" action="targetScreensTable.remove"/>
                     </hbox>
                     <dataGrid id="targetScreensTable" dataContainer="targetScreensDc" width="100%" height="250px"
-                              editorBuffered="true">
+                              editorBuffered="true" minWidth="55em">
                         <actions>
                             <action id="create" type="list_create" text="msg:///actions.Create"/>
                             <action id="remove" type="list_remove" text="msg:///actions.Remove" actionVariant="DANGER"/>

@@ -90,7 +90,7 @@
                     </formLayout>
                 </vbox>
             </tab>
-            <tab id="attributesLocationTab" label="msg://attributesLocationTab.title">
+            <tab id="attributesLocationTab" label="msg://attributesLocationTab.title" visible="false">
                 <vbox padding="false" margin="false">
                     <hbox padding="false" margin="false">
                         <comboBox id="columnsCountLookupField"

@@ -36,12 +36,14 @@ import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
+import io.jmix.dynattrflowui.utils.DataProviderUtils;
 import io.jmix.dynattrflowui.utils.GridHelper;
 import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesDetailView;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
@@ -430,16 +432,18 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     }
 
     protected void initEntityTypeField() {
-        Map<String, MetaClass> options = new TreeMap<>(); //the map sorts metaclasses by the string key
+        Map<MetaClass, String> options = new HashMap<>(); //the map sorts metaclasses by the string key
         for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
             if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
                 continue;
             }
-            options.put(messageTools.getDetailedEntityCaption(metaClass), metaClass);
+            options.put(metaClass, messageTools.getDetailedEntityCaption(metaClass));
         }
-        ComponentUtils.setItemsMap(entityTypeField, options.entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)));
+        entityTypeField.setItemLabelGenerator(e -> options.get(e));
+        entityTypeField.setItems(DataProviderUtils.dataProvider(options.keySet().stream()
+                .sorted(Comparator.comparing(MetadataObject::getName))
+                .toList()));
+
         entityTypeField.addValueChangeListener(e -> getEditedEntity().setEntityType(e.getValue().getName()));
         if (getEditedEntity().getEntityType() != null) {
             entityTypeField.setValue(extendedEntities.getEffectiveMetaClass(getEditedEntity().getEntityType()));

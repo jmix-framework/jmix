@@ -23,7 +23,6 @@ import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
@@ -34,19 +33,6 @@ import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.dynattr.model.Categorized;
 import io.jmix.dynattr.model.Category;
-//import io.jmix.ui.GuiDevelopmentException;
-//import io.jmix.ui.UiComponents;
-//import io.jmix.ui.component.*;
-//import io.jmix.ui.component.data.ValueSource;
-//import io.jmix.ui.component.data.value.ContainerValueSource;
-//import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
-//import io.jmix.ui.meta.CanvasIconSize;
-//import io.jmix.ui.meta.PropertyType;
-//import io.jmix.ui.meta.StudioComponent;
-//import io.jmix.ui.meta.StudioProperty;
-//import io.jmix.ui.model.DataLoader;
-//import io.jmix.ui.model.HasLoader;
-//import io.jmix.ui.model.InstanceContainer;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -66,7 +52,6 @@ import jakarta.validation.constraints.Positive;
 import org.hibernate.validator.internal.metadata.facets.Validatable;
 
 import javax.annotation.Nullable;
-//import javax.validation.constraints.Positive;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -159,7 +144,6 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     protected void addFieldsToForm(FormLayout newPropertiesForm, Map<AttributeDefinition, Component> fields) {
         if (fields.keySet().stream().anyMatch(attr -> attr.getConfiguration().getColumnNumber() != null
                 && attr.getConfiguration().getRowNumber() != null)) {
-
             List<AttributeDefinition> attributesToAdd = fields.keySet().stream()
                     .filter(attr -> attr.getConfiguration().getColumnNumber() != null
                             && attr.getConfiguration().getRowNumber() != null)
@@ -169,7 +153,9 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
                     .mapToInt(attr -> attr.getConfiguration().getColumnNumber())
                     .max()
                     .orElse(0);
-
+            newPropertiesForm.setResponsiveSteps(List.of(maxColumnIndex).stream()
+                    .map(i -> new FormLayout.ResponsiveStep("0px", i))
+                    .toList());
             for (int i = 0; i <= maxColumnIndex; i++) {
                 int columnIndex = i;
                 List<AttributeDefinition> columnAttributes = attributesToAdd.stream()
@@ -177,7 +163,6 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
                         .filter(attr -> columnIndex == attr.getConfiguration().getColumnNumber())
                         .sorted(Comparator.comparing(attr -> attr.getConfiguration().getRowNumber()))
                         .toList();
-
                 int currentRowNumber = 0;
                 for (AttributeDefinition attr : columnAttributes) {
                     //noinspection DataFlowIssue
@@ -186,6 +171,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
                         newPropertiesForm.add(createEmptyComponent());
                         currentRowNumber++;
                     }
+
                     newPropertiesForm.add(fields.get(attr));
                     currentRowNumber++;
                 }
@@ -195,7 +181,12 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
             int rowsPerColumn = getRowsPerColumn(propertiesCount);
             int columnNo = 0;
             int fieldsCount = 0;
-            for (Component field : fields.values()) {
+
+            List<Component> sortedAttributeFields = fields.entrySet().stream()
+                    .sorted(Comparator.comparingInt(e -> e.getKey().getOrderNo()))
+                    .map(e -> e.getValue())
+                    .toList();
+            for (Component field : sortedAttributeFields) {
                 fieldsCount++;
                 newPropertiesForm.add(field, columnNo);
                 if (fieldsCount % rowsPerColumn == 0) {
@@ -254,9 +245,9 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     protected void setWidth(Component component, AttributeDefinition attribute) {
         String formWidth = attribute.getConfiguration().getFormWidth();
         if (!Strings.isNullOrEmpty(formWidth) && component instanceof HasSize) {
-            ((HasSize)component).setWidth(formWidth);
+            ((HasSize) component).setWidth(formWidth);
         } else {
-            ((HasSize)component).setWidth(fieldWidth);
+            ((HasSize) component).setWidth(fieldWidth);
         }
     }
 

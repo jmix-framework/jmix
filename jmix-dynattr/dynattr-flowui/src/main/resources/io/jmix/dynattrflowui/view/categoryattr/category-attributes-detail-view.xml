@@ -57,7 +57,9 @@
                         <comboBox id="dataTypeField" property="dataType" required="true"
                                   requiredMessage="msg://dataTypeField.required"/>
                         <codeEditor id="validationScriptField" property="configuration.validatorGroovyScript"
-                                    mode="GROOVY" highlightActiveLine="false" showGutter="false"
+                                    mode="GROOVY"
+                                    highlightActiveLine="false"
+                                    showGutter="false"
                                     height="12em"/>
                     </formLayout>
                     <formLayout id="optionalAttributeForm" dataContainer="categoryAttributeDc" height="90%"
@@ -127,18 +129,22 @@
                                                label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.dependsOnAttributes"
                                                allowCustomValue="true">
                         <actions>
-                            <action id="select" type="multi_value_select" icon="SEARCH"/>
+                            <action id="select" type="multi_value_select" icon="ELLIPSIS_DOTS_H"/>
                             <action id="clear" type="value_clear"/>
                         </actions>
                     </multiSelectComboBoxPicker>
                     <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                     <codeEditor id="optionsLoaderScriptField" property="configuration.optionsLoaderScript"
+                                highlightActiveLine="false"
                                 showGutter="false"/>
-                    <codeEditor id="joinClauseField" property="joinClause" highlightActiveLine="false"
+                    <codeEditor id="joinClauseField" property="joinClause"
+                                highlightActiveLine="false"
                                 showGutter="false" height="70px"/>
-                    <codeEditor id="whereClauseField" property="whereClause" highlightActiveLine="false"
+                    <codeEditor id="whereClauseField" property="whereClause"
+                                highlightActiveLine="false"
                                 showGutter="false" height="70px"/>
-                    <codeEditor id="recalculationScriptField" property="configuration.recalculationScript"
+                    <codeEditor id="recalculationScriptField"
+                                property="configuration.recalculationScript"
                                 highlightActiveLine="false" showGutter="false" mode="GROOVY" height="10em"/>
                 </formLayout>
             </tab>
@@ -153,6 +159,7 @@
             </tab>
             <tab id="visibilityTab" label="msg://visibilityTab.title">
                 <vbox margin="false">
+                    <h3 text="msg://targetViews"/>
                     <html content="msg://visibilityTab.help"/>
                     <hbox classNames="buttons-panel">
                         <button id="createBtn" action="targetScreensTable.create"/>

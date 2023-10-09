@@ -92,6 +92,10 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
         conditions.add(propertiesHeaderCondition);
 
         for (MetaPropertyPath path : paths) {
+            // todo support dynamic properties and remove this interception
+            if(isDynamicAttribute(path)) {
+                continue;
+            }
             FilterCondition condition = createFilterConditionByPath(path);
             FilterCondition parent = path.isDirectProperty()
                     ? propertiesHeaderCondition
@@ -104,6 +108,10 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
                 ObjectUtils.compare(condition1.getLocalizedLabel(), condition2.getLocalizedLabel()));
 
         return conditions;
+    }
+
+    protected boolean isDynamicAttribute(MetaPropertyPath path) {
+        return path.isDirectProperty() && path.getFirstPropertyName().startsWith("+");
     }
 
     protected FilterCondition createFilterConditionByPath(MetaPropertyPath metaPropertyPath) {

@@ -40,6 +40,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.*;
+import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
@@ -145,8 +146,8 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
     }
 
     @Override
-    protected EntityPicker<?> createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        EntityPicker<?> entityPicker = (EntityPicker<?>) super.createEntityField(context, attribute);
+    protected AbstractField createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        EntityPickerComponent<?> entityPicker = (EntityPickerComponent<?>) super.createEntityField(context, attribute);
 
         Class<?> javaType = attribute.getJavaType();
         Assert.notNull(javaType, "Java type is null for current attribute");
@@ -154,9 +155,9 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
 
         entityPicker.setMetaClass(metaClass);
 
-        loadOptionsIfNeed(entityPicker, attribute);
+        loadOptionsIfNeed((Component) entityPicker, attribute);
 
-        return entityPicker;
+        return (AbstractField) entityPicker;
     }
 
     protected void loadOptionsIfNeed(Component component, AttributeDefinition attribute) {
@@ -194,7 +195,7 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
         Range range = attribute.getMetaProperty().getRange();
         if (field instanceof SupportsTypedValue && range.isDatatype()) {
             //noinspection rawtypes,unchecked
-            ((SupportsTypedValue) field).setTypedValue(range.asDatatype());
+            ((SupportsTypedValue) field).setTypedValue(attribute.getJavaType());
         }
 
         loadOptionsIfNeed(field, attribute);
@@ -207,8 +208,6 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
         if (!Strings.isNullOrEmpty(screen)) {
             lookupAction.setViewId(screen);
         }
-
-        lookupAction.setOpenMode(OpenMode.DIALOG);
     }
 
 

@@ -193,7 +193,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        if(attribute.getDataType().equals(ENUMERATION)) {
+        if (attribute.getDataType().equals(ENUMERATION)) {
             return createEnumCollectionField(context, attribute);
         }
         if (!attribute.getConfiguration().isLookup()) {
@@ -211,9 +211,9 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         valuesPicker.addAction(selectAction);
 
         ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) ((SupportsValueSource<?>) valuesPicker).getValueSource();
-        Assert.notNull(valueSource, "Value source not found");
-        setValuesPickerOptionsLoader(valuesPicker, attribute, valueSource);
-
+        if (valueSource != null) {
+            setValuesPickerOptionsLoader(valuesPicker, attribute, valueSource);
+        }
 
         ValueClearAction<?> valueClearAction = actions.create(ValueClearAction.ID);
         valuesPicker.addAction(valueClearAction);
@@ -265,7 +265,9 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                                   AttributeDefinition attribute,
                                   ComponentGenerationContext context) {
         ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) context.getValueSource();
-        Assert.notNull(valueSource, "Value source is null");
+        if (valueSource == null) {
+            return;
+        }
 
         InstanceContainer<?> container = valueSource.getContainer();
         Object entity = container.getItemOrNull();

@@ -20,10 +20,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -71,6 +68,7 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.*;
@@ -227,6 +225,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     protected JmixValuePicker<Object> defaultEntityIdField;
     @ViewComponent
+    protected CodeEditor validationScriptField;
+    @ViewComponent
     protected CodeEditor optionsLoaderScriptField;
     @ViewComponent
     protected CodeEditor joinClauseField;
@@ -279,6 +279,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
+        initCodeEditors();
+
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
         initDependsOnAttributesField();
@@ -304,6 +306,15 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
+    }
+
+    private void initCodeEditors() {
+        List.of(optionsLoaderScriptField, optionsLoaderScriptField, joinClauseField, whereClauseField, recalculationScriptField)
+                .forEach(e -> {
+                    e.setHighlightActiveLine(false);
+                    e.setShowGutter(true);
+                    e.setShowPrintMargin(true);
+                });
     }
 
     @Subscribe("defaultEntityIdField")
@@ -383,7 +394,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Install(to = "dependsOnAttributesField", subject = "validator")
     protected void dependsOnAttributesFieldValidator(Collection<CategoryAttribute> categoryAttributes) {
-        if (recalculationScriptField.getValue() != null
+        if (org.springframework.util.StringUtils.hasText(recalculationScriptField.getValue())
                 && CollectionUtils.isEmpty(categoryAttributes)) {
             throw new ValidationException(
                     messages.getMessage(CategoryAttributesDetailView.class, "dependsOnAttributes.validationMsg"));
@@ -449,20 +460,22 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         ComponentUtils.setItemsMap(defaultBooleanField, getBooleanOptions());
         ComponentUtils.setItemsMap(dataTypeField, getDataTypeOptions());
         ComponentUtils.setItemsMap(entityClassField, getEntityOptions());
-//        validationScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
-//                messages.getMessage(CategoryAttrsEdit.class, "validationScript"),
-//                messages.getMessage(CategoryAttrsEdit.class, "validationScriptHelp")
-//        ));
+        validationScriptField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "validationScriptHelp"));
     }
 
     protected void initCalculatedValuesAndOptionsForm() {
-//        recalculationScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
-//                messages.getMessage(CategoryAttrsEdit.class, "recalculationScript"),
-//                messages.getMessage(CategoryAttrsEdit.class, "recalculationScriptHelp")
-//        ));
+        recalculationScriptField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "recalculationScriptHelp"));
 
 //    todo https://github.com/jmix-framework/jmix/issues/1678    whereClauseField.setSuggester((source, text, cursorPosition) -> requestHint(whereClauseField, cursorPosition));
 //        joinClauseField.setSuggester((source, text, cursorPosition) -> requestHint(joinClauseField, cursorPosition));
+    }
+
+    protected void showMessageDialog(String caption, String message) {
+        dialogs.createMessageDialog()
+                .withText(caption)
+                .withContent(new Html(message))
+                .withModal(false)
+                .open();
     }
 
     protected void loadTargetViews() {
@@ -533,6 +546,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         Assert.notNull(selectAction, "select action not found");
         selectAction.setItems(DataProviderUtils.dataProvider(getAttributesOptions()));
         dependsOnAttributesField.addValueChangeListener(e -> {
+            dependsOnAttributesField.setRequired(false);
             if (getEditedEntity().getConfiguration() != null) {
                 if (getEditedEntity().getConfiguration().getDependsOnAttributeCodes() == null) {
                     getEditedEntity().getConfiguration().setDependsOnAttributeCodes(new ArrayList<>());
@@ -636,27 +650,19 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 || optionsType == GROOVY;
         optionsLoaderScriptField.setVisible(scriptLoaderVisible);
 
-//        if (optionsType == GROOVY) {
-//            optionsLoaderScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
-//                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderGroovyScript"),
-//                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderGroovyScriptHelp")));
-//            optionsLoaderScriptField.setMode(SourceCodeEditor.Mode.Groovy);
-//        } else if (optionsType == SQL) {
-//            optionsLoaderScriptField.setContextHelpIconClickHandler(e -> showMessageDialog(
-//                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderSqlScript"),
-//                    messages.getMessage(CategoryAttrsEdit.class, "optionsLoaderSqlScriptHelp")));
-//            optionsLoaderScriptField.setMode(SourceCodeEditor.Mode.SQL);
-//        } else if (optionsType == JPQL) {
-//            joinClauseField.setContextHelpIconClickHandler(e -> showMessageDialog(
-//                    messages.getMessage(CategoryAttrsEdit.class, "joinClause"),
-//                    messages.getMessage(CategoryAttrsEdit.class, "joinClauseHelp")));
-//            whereClauseField.setContextHelpIconClickHandler(e -> showMessageDialog(
-//                    messages.getMessage(CategoryAttrsEdit.class, "whereClause"),
-//                    messages.getMessage(CategoryAttrsEdit.class, "whereClauseHelp")));
-//        } else {
-//            optionsLoaderScriptField.setContextHelpIconClickHandler(null);
-//            optionsLoaderScriptField.setMode(SourceCodeEditor.Mode.Text);
-//        }
+        if (optionsType == GROOVY) {
+            optionsLoaderScriptField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderGroovyScriptHelp"));
+            optionsLoaderScriptField.setMode(CodeEditorMode.GROOVY);
+        } else if (optionsType == SQL) {
+            optionsLoaderScriptField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderSqlScriptHelp"));
+            optionsLoaderScriptField.setMode(CodeEditorMode.SQL);
+        } else if (optionsType == JPQL) {
+            joinClauseField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "joinClauseHelp"));
+            whereClauseField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "whereClauseHelp"));
+        } else {
+            optionsLoaderScriptField.setTitle("");
+            optionsLoaderScriptField.setMode(CodeEditorMode.TEXT);
+        }
 
         optionsLoaderTypeField.setEnabled(Boolean.TRUE.equals(categoryAttribute.getLookup()));
         optionsLoaderTypeField.setRequired(Boolean.TRUE.equals(categoryAttribute.getLookup()));

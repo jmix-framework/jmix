@@ -467,7 +467,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     @SuppressWarnings({"rawtypes"})
     protected Dialog createOverlay(PropertyFilter propertyFilter, JmixButton filterButton) {
-        Dialog dialog = new Dialog(propertyFilter);
+        JmixButton clearButton = createClearFilterButton(propertyFilter);
+
+        Dialog dialog = new Dialog(propertyFilter, clearButton);
         dialog.addClassName(COLUMN_FILTER_DIALOG_CLASSNAME);
 
         if (!isSmallDevice()) {
@@ -499,6 +501,17 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             filterButton.getElement().setAttribute(COLUMN_FILTER_BUTTON_ACTIVATED_ATTRIBUTE_NAME,
                     propertyFilter.getValue() != null);
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected JmixButton createClearFilterButton(PropertyFilter propertyFilter) {
+        JmixButton clearButton = getUiComponents().create(JmixButton.class);
+
+        clearButton.addThemeVariants(ButtonVariant.LUMO_ICON);
+        clearButton.setIcon(VaadinIcon.ERASER.create());
+        clearButton.addClickListener(__ -> propertyFilter.clear());
+
+        return clearButton;
     }
 
     @SuppressWarnings({"rawtypes"})

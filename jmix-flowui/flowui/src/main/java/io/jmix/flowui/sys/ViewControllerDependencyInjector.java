@@ -442,7 +442,8 @@ public class ViewControllerDependencyInjector {
                 continue;
             }
 
-            MethodHandle addListenerMethod = reflectionInspector.getAddListenerMethod(eventTarget.getClass(), eventType);
+            MethodHandle addListenerMethod = reflectionInspector.getAddListenerMethod(eventTarget.getClass(), eventType,
+                    annotation.subject());
             if (addListenerMethod == null) {
                 throw new DevelopmentException(String.format("Target %s does not support event type %s",
                         eventTarget.getClass().getName(), eventType));

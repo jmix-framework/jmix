@@ -16,23 +16,15 @@
 
 package io.jmix.rest;
 
-import io.jmix.core.CorsProperties;
-import org.springframework.lang.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.lang.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "jmix.rest")
 public class RestProperties {
-
-    /**
-     * Allowed origins for cross-domain requests.
-     * @deprecated use {@link CorsProperties#getAllowedOrigins()}
-     */
-    @Deprecated
-    private final String[] allowedOrigins;
 
     /**
      * Whether the passed entities versions should be validated before entities are persisted.
@@ -47,12 +39,10 @@ public class RestProperties {
     private final Map<String, Integer> entityMaxFetchSize;
 
     public RestProperties(
-            @DefaultValue("*") String[] allowedOrigins,
             @DefaultValue("false") boolean optimisticLockingEnabled,
             @DefaultValue("true") boolean responseFetchPlanEnabled,
             @DefaultValue("10000") int defaultMaxFetchSize,
             @Nullable Map<String, Integer> entityMaxFetchSize) {
-        this.allowedOrigins = allowedOrigins;
         this.optimisticLockingEnabled = optimisticLockingEnabled;
         this.responseFetchPlanEnabled = responseFetchPlanEnabled;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
@@ -71,16 +61,6 @@ public class RestProperties {
      */
     public boolean isResponseFetchPlanEnabled() {
         return responseFetchPlanEnabled;
-    }
-
-    /**
-     * @see #allowedOrigins
-     *
-     * @deprecated use {@link CorsProperties#getAllowedOrigins()}
-     */
-    @Deprecated
-    public String[] getAllowedOrigins() {
-        return allowedOrigins;
     }
 
     public int getEntityMaxFetchSize(String entityName) {

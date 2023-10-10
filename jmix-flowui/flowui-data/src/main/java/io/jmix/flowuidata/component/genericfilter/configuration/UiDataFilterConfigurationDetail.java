@@ -22,12 +22,17 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.AbstractConfigurationDetail;
 import io.jmix.flowui.data.value.ContainerValueSource;
+import io.jmix.flowui.exception.ComponentValidationException;
+import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowuidata.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowuidata.entity.FilterConfiguration;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail {
 
@@ -44,6 +49,9 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
 
     protected boolean defaultForMeFieldVisible = true;
     protected boolean viewReadOnly = false;
+
+    protected GenericFilter filter;
+    protected String originalConfigurationId;
 
     protected InstanceContainer<FilterConfiguration> configurationDc;
 
@@ -79,6 +87,11 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
         } else {
             editedConfigurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
         }
+    }
+
+    public void init() {
+        initFields();
+        initOriginalConfigurationId();
     }
 
     @Override
@@ -205,5 +218,56 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
 
     protected String getLabelByProperty(String propertyName) {
         return messageTools.getPropertyCaption(configurationDc.getEntityMetaClass(), propertyName);
+    }
+
+    protected void initOriginalConfigurationId() {
+        originalConfigurationId = configurationDc.getItem().getConfigurationId();
+    }
+
+    public void setFilter(GenericFilter filter) {
+        this.filter = filter;
+    }
+
+    @Override
+    public void executeValidators() throws ValidationException {
+        super.executeValidators();
+        if (uiComponentProperties.isFilterConfigurationUniqueNamesEnabled()) {
+            validateConfigurationName();
+        }
+    }
+
+    protected void validateConfigurationName() {
+        boolean configurationWithSameNameExists = configurationWithSameNameExists();
+        if (configurationWithSameNameExists) {
+            boolean availableForAllUsers = availableForAllUsersField.getValue();
+            String messageKey;
+            if (availableForAllUsers) {
+                messageKey = "nameField.nonUniqueGlobalName";
+            } else {
+                messageKey = "nameField.nonUniqueUserName";
+            }
+            throw new ComponentValidationException(messages.getMessage(getClass(), messageKey), nameField);
+        }
+    }
+
+    protected boolean configurationWithSameNameExists() {
+        if (filter == null) {
+            return false;
+        }
+
+        String editedConfigurationName = configurationDc.getItem().getName();
+        boolean availableForAllUsers = availableForAllUsersField.getValue();
+        return filter.getConfigurations().stream()
+                .anyMatch(conf ->
+                        Objects.equals(editedConfigurationName, conf.getName())
+                                && (availableForAllUsers == conf.isAvailableForAllUsers())
+                                //skip itself the configuration being checked
+                                && !Objects.equals(originalConfigurationId, conf.getId())
+                );
+    }
+
+    @Override
+    public boolean isInvalid() {
+        return super.isInvalid() || configurationWithSameNameExists();
     }
 }

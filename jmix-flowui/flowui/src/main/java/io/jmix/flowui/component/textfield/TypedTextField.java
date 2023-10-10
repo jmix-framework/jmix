@@ -31,19 +31,19 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.component.*;
+import io.jmix.flowui.component.delegate.TextInputFieldDelegate;
+import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.ConversionException;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.component.delegate.TextInputFieldDelegate;
-import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.HasTitle;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 public class TypedTextField<V> extends TextField
         implements SupportsValidation<V>, SupportsStatusChangeHandler<TypedTextField<V>>, SupportsDatatype<V>,
         SupportsTypedValue<TypedTextField<V>, ComponentValueChangeEvent<TextField, String>, V, String>,
-        SupportsValueSource<V>, HasRequired, HasTitle, ApplicationContextAware, InitializingBean {
+        SupportsValueSource<V>, HasLengthLimited, HasRequired, HasTitle, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 

@@ -36,6 +36,7 @@ public class CodeEditorLoader extends AbstractComponentLoader<CodeEditor> {
         getDataLoaderSupport().loadData(resultComponent, element);
 
         loadBoolean(element, "highlightActiveLine", resultComponent::setHighlightActiveLine);
+        loadBoolean(element, "highlightGutterLine", resultComponent::setHighlightGutterLine);
         loadBoolean(element, "showGutter", resultComponent::setShowGutter);
         loadBoolean(element, "showLineNumbers", resultComponent::setShowLineNumbers);
         loadBoolean(element, "showPrintMargin", resultComponent::setShowPrintMargin);

@@ -29,6 +29,8 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
+import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.ComponentGenerationStrategy;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -40,12 +42,13 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.upload.FileStorageUploadField;
 import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.data.SupportsValueSource;
+import jakarta.persistence.Lob;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
-
 import org.springframework.lang.Nullable;
-import jakarta.persistence.Lob;
+
 import java.lang.annotation.Annotation;
 import java.sql.Time;
 import java.time.*;
@@ -92,7 +95,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         Component resultComponent = null;
 
         if (Collection.class.isAssignableFrom(mpp.getMetaProperty().getJavaType())) {
-            resultComponent = createCollectionField(context);
+            resultComponent = createCollectionField(context, mpp);
         } else if (mppRange.isDatatype()) {
             resultComponent = createDatatypeField(context, mpp);
         } else if (mppRange.isClass()) {
@@ -256,9 +259,25 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         return fileStorageUploadField;
     }
 
-    //TODO: kremnevda, implement after https://github.com/jmix-framework/jmix/issues/1044 27.09.2022
-    protected Component createCollectionField(ComponentGenerationContext context) {
-        return null;
+    protected Component createCollectionField(ComponentGenerationContext context, MetaPropertyPath mpp) {
+        JmixMultiValuePicker<?> multiValuePicker = uiComponents.create(JmixMultiValuePicker.class);
+        setValueSource(multiValuePicker, context);
+
+        MultiValueSelectAction<?> selectAction = actions.create(MultiValueSelectAction.ID);
+        Range range = mpp.getRange();
+
+        if (range.isClass()) {
+            selectAction.setEntityName(range.asClass().getName());
+        } else if (range.isDatatype()) {
+            selectAction.setJavaClass(range.asDatatype().getJavaClass());
+        } else if (range.isEnum()) {
+            //noinspection unchecked
+            selectAction.setEnumClass(range.asEnumeration().getJavaClass());
+        }
+
+        multiValuePicker.addAction(selectAction);
+        multiValuePicker.addAction(actions.create(ValueClearAction.ID));
+        return multiValuePicker;
     }
 
     @Nullable

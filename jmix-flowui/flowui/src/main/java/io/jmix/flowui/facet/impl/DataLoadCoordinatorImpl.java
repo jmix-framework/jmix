@@ -19,6 +19,7 @@ package io.jmix.flowui.facet.impl;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.DevelopmentException;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -54,9 +55,12 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
     protected List<Trigger> triggers = new ArrayList<>();
 
     protected ViewControllerReflectionInspector reflectionInspector;
+    private final QueryParamValuesManager queryParamValuesManager;
 
-    public DataLoadCoordinatorImpl(ViewControllerReflectionInspector reflectionInspector) {
+    public DataLoadCoordinatorImpl(ViewControllerReflectionInspector reflectionInspector,
+                                   QueryParamValuesManager queryParamValuesManager) {
         this.reflectionInspector = reflectionInspector;
+        this.queryParamValuesManager = queryParamValuesManager;
     }
 
     @Override
@@ -127,7 +131,11 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
     }
 
     protected void configureAutomatically(DataLoader loader, View<?> view) {
-        List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader);
+        List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader).stream()
+                .filter(paramName ->
+                        !queryParamValuesManager.supports(paramName))
+                .toList();
+
         List<String> allParameters = new ArrayList<>(queryParameters);
         allParameters.addAll(getConditionParameters(loader));
 

@@ -26,6 +26,7 @@ jmix-upload-field[theme~="no-file-name"] .jmix-upload-button {
 
 .jmix-upload-field-file-name {
     cursor: pointer;
+    margin: 0;
 }
 .jmix-upload-field-file-name:hover {
     text-decoration: underline;

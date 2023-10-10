@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright (c) 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.core.entity.annotation;
+package facet.data_load_coordinator.screen;
 
-/**
- * Defines a case conversion type.
- */
-public enum ConversionType {
-    /**
-     * A value will be upper cased
-     */
-    LOWER,
-    /**
-     * A value will be lower cased
-     */
-    UPPER
+
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
+
+@Route(value = "facet/dlc/dlc-auto-provided")
+@ViewController
+@ViewDescriptor("dlc-auto-provided-param-screen.xml")
+public class DlcAutoProvidedParamTestScreen extends DlcBaseTestScreen {
 }

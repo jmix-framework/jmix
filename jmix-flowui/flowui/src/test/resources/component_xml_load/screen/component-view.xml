@@ -908,6 +908,7 @@
                     height="50px"
                     helperText="helperTextString"
                     highlightActiveLine="false"
+                    highlightGutterLine="false"
                     label="labelString"
                     maxHeight="55px"
                     maxWidth="120px"

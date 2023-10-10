@@ -79,6 +79,12 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onHighlightActiveLineChange'
             },
 
+            highlightGutterLine: {
+                type: Boolean,
+                value: true,
+                observer: '_onHighlightGutterLineChange'
+            },
+
             showGutter: {
                 type: Boolean,
                 value: true,
@@ -139,6 +145,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             theme: "ace/theme/" + this.theme,
             mode: "ace/mode/" + this.mode,
             highlightActiveLine: this.highlightActiveLine,
+            highlightGutterLine: this.highlightGutterLine,
             showGutter: this.showGutter,
             showLineNumbers: this.showLineNumbers,
             showPrintMargin: this.showPrintMargin,
@@ -209,8 +216,8 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.setReadOnly(readonly);
-        this._editor.setHighlightActiveLine(!readonly);
-        this._editor.setHighlightGutterLine(!readonly);
+        this._editor.setHighlightActiveLine(this.highlightActiveLine && !readonly);
+        this._editor.setHighlightGutterLine(this.highlightGutterLine && !readonly);
         this._editor.renderer.$cursorLayer.element.style.opacity = readonly
             ? 0
             : 1;
@@ -260,6 +267,17 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     /**
      * @protected
      */
+    _onHighlightGutterLineChange(showGutterLine) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.setHighlightGutterLine(showGutterLine);
+    }
+
+    /**
+     * @protected
+     */
     _onShowGutterChange(showGutter) {
         if (this._editor === undefined) {
             return;
@@ -298,7 +316,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             return;
         }
 
-        this._editor.setValue(value);
+        this._editor.session.setValue(value);
     }
 
     /**

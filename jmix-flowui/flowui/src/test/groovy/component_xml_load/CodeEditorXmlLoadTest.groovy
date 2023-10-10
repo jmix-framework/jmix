@@ -66,6 +66,8 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             fontSize == "20"
             height == "50px"
             helperText == "helperTextString"
+            !highlightActiveLine
+            !highlightGutterLine
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"

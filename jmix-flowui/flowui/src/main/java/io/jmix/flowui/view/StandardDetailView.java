@@ -82,7 +82,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     // whether user has edited entity after view opening
     private boolean modifiedAfterOpen = false;
 
-    private boolean showSaveNotification = true;
+    private Boolean showSaveNotification;
     private boolean saveActionPerformed = false;
 
     /**
@@ -126,7 +126,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         setModifiedAfterOpen(false);
 
         if (!postSaveEvent.getSavedInstances().isEmpty()
-                && showSaveNotification) {
+                && isShowSaveNotification()) {
             showSaveNotification();
         }
     }
@@ -302,7 +302,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      * @return whether a notification will be shown in case of successful save
      */
     public boolean isShowSaveNotification() {
-        return showSaveNotification;
+        return showSaveNotification != null ? showSaveNotification : !hasParentDataContext();
+    }
+
+    private boolean hasParentDataContext() {
+        DataContext dataContext = getViewData().getDataContextOrNull();
+        return dataContext != null && dataContext.getParent() != null;
     }
 
     /**

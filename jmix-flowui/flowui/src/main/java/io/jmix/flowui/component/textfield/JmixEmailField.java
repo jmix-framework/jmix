@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.component.HasLengthLimited;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
@@ -38,7 +39,8 @@ import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public class JmixEmailField extends EmailField implements SupportsValueSource<String>, SupportsValidation<String>,
-        SupportsStatusChangeHandler<JmixEmailField>, HasRequired, HasTitle, ApplicationContextAware, InitializingBean {
+        SupportsStatusChangeHandler<JmixEmailField>, HasLengthLimited, HasRequired, HasTitle,
+        ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 

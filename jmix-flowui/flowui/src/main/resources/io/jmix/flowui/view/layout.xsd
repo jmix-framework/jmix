@@ -1750,6 +1750,7 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
+                    <xs:enumeration value="badge"/>
                     <xs:enumeration value="normal"/>
                     <xs:enumeration value="success"/>
                     <xs:enumeration value="error"/>
@@ -1981,7 +1982,6 @@
                     <xs:enumeration value="minimal"/>
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
-                    <xs:enumeration value="fixed"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2001,7 +2001,6 @@
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
                     <xs:enumeration value="bordered"/>
-                    <xs:enumeration value="fixed"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -3737,6 +3736,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="highlightActiveLine" type="xs:boolean"/>
+                <xs:attribute name="highlightGutterLine" type="xs:boolean"/>
                 <xs:attribute name="showGutter" type="xs:boolean"/>
                 <xs:attribute name="showLineNumbers" type="xs:boolean"/>
                 <xs:attribute name="showPrintMargin" type="xs:boolean"/>

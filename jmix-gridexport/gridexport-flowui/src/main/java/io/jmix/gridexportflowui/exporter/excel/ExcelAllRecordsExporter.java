@@ -17,18 +17,15 @@
 package io.jmix.gridexportflowui.exporter.excel;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.Id;
-import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.AbstractAllRecordsExporter;
+import io.jmix.gridexportflowui.exporter.EntityExportContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -38,18 +35,11 @@ import java.util.function.Predicate;
 @Component("grdexp_ExcelAllRecordsExporter")
 public class ExcelAllRecordsExporter extends AbstractAllRecordsExporter {
 
-    protected DataManager dataManager;
-    protected PlatformTransactionManager platformTransactionManager;
-    protected GridExportProperties gridExportProperties;
-
     public ExcelAllRecordsExporter(MetadataTools metadataTools,
                                    DataManager dataManager,
                                    PlatformTransactionManager platformTransactionManager,
                                    GridExportProperties gridExportProperties) {
-        super(metadataTools);
-        this.dataManager = dataManager;
-        this.platformTransactionManager = platformTransactionManager;
-        this.gridExportProperties = gridExportProperties;
+        super(metadataTools, dataManager, platformTransactionManager, gridExportProperties);
     }
 
     /**
@@ -62,45 +52,21 @@ public class ExcelAllRecordsExporter extends AbstractAllRecordsExporter {
      * @param excelRowCreator function that is being applied to each loaded instance
      * @param excelRowChecker function that checks for exceeding the maximum number of rows in XLSX format
      */
-    @SuppressWarnings("rawtypes")
     protected void exportAll(DataUnit dataUnit, Consumer<RowCreationContext> excelRowCreator,
                              Predicate<Integer> excelRowChecker) {
         Preconditions.checkNotNullArgument(excelRowCreator, "Cannot export all rows. ExcelRowCreator can't be null");
         Preconditions.checkNotNullArgument(excelRowChecker, "Cannot export all rows. ExcelRowChecker can't be null");
 
-        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
-        transactionTemplate.executeWithoutResult(transactionStatus -> {
-            long count = dataManager.getCount(generateLoadContext(dataUnit));
-            int loadBatchSize = gridExportProperties.getExportAllBatchSize();
-
-            int rowNumber = 0;
-            boolean initialLoading = true;
-            Object lastLoadedPkValue = null;
-
-            for (int firstResult = 0; firstResult < count && !excelRowChecker.test(rowNumber); firstResult += loadBatchSize) {
-                LoadContext loadContext = generateLoadContext(dataUnit);
-                LoadContext.Query query = loadContext.getQuery();
-
-                if (initialLoading) {
-                    initialLoading = false;
-                } else {
-                    query.setParameter(LAST_LOADED_PK_CONDITION_PARAMETER_NAME, lastLoadedPkValue);
-                }
-                query.setMaxResults(loadBatchSize);
-
-                List entities = dataManager.loadList(loadContext);
-                for (Object entity : entities) {
-                    if (excelRowChecker.test(++rowNumber)) {
-                        break;
-                    }
-
-                    excelRowCreator.accept(new RowCreationContext(entity, rowNumber));
-                }
-
-                Object lastEntity = entities.get(entities.size() - 1);
-                lastLoadedPkValue = Id.of(lastEntity).getValue();
+        Predicate<EntityExportContext> entityExporter = context -> {
+            boolean exportNotAllowed = excelRowChecker.test(context.getEntityNumber());
+            if (exportNotAllowed) {
+                return false;
+            } else {
+                excelRowCreator.accept(new RowCreationContext(context.getEntity(), context.getEntityNumber()));
+                return true;
             }
-        });
+        };
+        exportAll(dataUnit, entityExporter);
     }
 
     public static class RowCreationContext {

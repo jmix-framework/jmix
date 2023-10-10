@@ -71,6 +71,7 @@
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="entityId" type="xs:string"/>
+        <xs:attribute name="readOnly" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="collectionLoaderType">
@@ -81,6 +82,7 @@
         <xs:attribute name="firstResult" type="xs:integer"/>
         <xs:attribute name="maxResults" type="xs:integer"/>
         <xs:attribute name="cacheable" type="xs:boolean"/>
+        <xs:attribute name="readOnly" type="xs:boolean"/>
     </xs:complexType>
 
 

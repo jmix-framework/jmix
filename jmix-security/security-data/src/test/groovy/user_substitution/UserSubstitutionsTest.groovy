@@ -21,12 +21,12 @@ import io.jmix.core.Metadata
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.core.usersubstitution.UserSubstitutionManager
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationToken
-import io.jmix.security.TestUserSubstitutionEventListener
-import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.role.ResourceRoleRepository
 import io.jmix.core.usersubstitution.CurrentUserSubstitution
+import io.jmix.core.usersubstitution.UserSubstitutionManager
+import io.jmix.security.TestUserSubstitutionEventListener
+import io.jmix.security.role.ResourceRoleRepository
+import io.jmix.security.role.RoleGrantedAuthorityUtils
 import io.jmix.securitydata.entity.UserSubstitutionEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -68,6 +68,9 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
     @Autowired
     TestUserSubstitutionEventListener eventListener;
 
+    @Autowired
+    RoleGrantedAuthorityUtils roleGrantedAuthorityUtils
+
     UserDetails user1, user2, user3
     Authentication systemAuthentication
 
@@ -75,7 +78,7 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         user1 = User.builder()
                 .username("user1")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofResourceRole(roleRepository.getRoleByCode(TestDataManagerReadQueryRole.NAME)))
+                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(TestDataManagerReadQueryRole.NAME))
                 .build()
 
         userRepository.addUser(user1)
@@ -83,7 +86,7 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         user2 = User.builder()
                 .username("user2")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofResourceRole(roleRepository.getRoleByCode(TestDataManagerEntityOperationsRole.NAME)))
+                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(TestDataManagerEntityOperationsRole.NAME))
                 .build()
         userRepository.addUser(user2)
 
@@ -122,7 +125,7 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         then:
         ((UserDetails) authToken.principal) == user1
         authToken.authorities.size() == 1
-        authToken.authorities[0].authority == TestDataManagerReadQueryRole.NAME
+        authToken.authorities[0].authority == "ROLE_" + TestDataManagerReadQueryRole.NAME
 
         currentUserSubstitution.getAuthenticatedUser() == user1
         currentUserSubstitution.getSubstitutedUser() == null
@@ -137,7 +140,7 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         ((UserDetails) substitutedToken.principal) == user1
         ((UserDetails) substitutedToken.substitutedPrincipal) == user2
         substitutedToken.authorities.size() == 1
-        substitutedToken.authorities[0].authority == TestDataManagerEntityOperationsRole.NAME
+        substitutedToken.authorities[0].authority == "ROLE_" + TestDataManagerEntityOperationsRole.NAME
         substitutedToken.getDetails() == USER_DETAILS
 
         currentUserSubstitution.getAuthenticatedUser() == user1

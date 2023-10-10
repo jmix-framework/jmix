@@ -17,6 +17,8 @@
 package io.jmix.core;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Interface of a component to store and load files defined by file references.
@@ -39,7 +41,22 @@ public interface FileStorage {
      * @throws IllegalArgumentException if arguments are incorrect
      * @throws FileStorageException     if something goes wrong
      */
-    FileRef saveStream(String fileName, InputStream inputStream);
+    default FileRef saveStream(String fileName, InputStream inputStream) {
+        return saveStream(fileName, inputStream, Collections.emptyMap());
+    }
+
+    /**
+     * Saves an InputStream contents into the file storage using additional parameters.
+     *
+     * @param fileName    file name
+     * @param inputStream input stream, must be closed in the calling code
+     * @param parameters additional parameters that can be used in specific storage implementation
+     *                   (for example, can be converted to FileRef parameters)
+     * @return file reference
+     * @throws IllegalArgumentException if arguments are incorrect
+     * @throws FileStorageException     if something goes wrong
+     */
+    FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters);
 
     /**
      * Returns an input stream to load a file contents.

@@ -1,12 +1,13 @@
 package io.jmix.oidc.usermapper;
 
+import com.google.common.base.Strings;
 import io.jmix.core.SaveContext;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.PersistenceHints;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
 import io.jmix.oidc.user.JmixOidcUser;
-import io.jmix.security.authentication.RoleGrantedAuthority;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.slf4j.Logger;
@@ -38,12 +39,16 @@ public abstract class SynchronizingOidcUserMapper<T extends JmixOidcUser> extend
 
     protected boolean synchronizeRoleAssignments;
 
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+
     public SynchronizingOidcUserMapper(UnconstrainedDataManager dataManager,
                                        UserRepository userRepository,
-                                       ClaimsRolesMapper claimsRolesMapper) {
+                                       ClaimsRolesMapper claimsRolesMapper,
+                                       RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
         this.dataManager = dataManager;
         this.userRepository = userRepository;
         this.claimsRolesMapper = claimsRolesMapper;
+        this.roleGrantedAuthorityUtils = roleGrantedAuthorityUtils;
     }
 
     /**
@@ -109,18 +114,18 @@ public abstract class SynchronizingOidcUserMapper<T extends JmixOidcUser> extend
 
     protected Collection<RoleAssignmentEntity> buildRoleAssignmentEntities(String username, Collection<? extends GrantedAuthority> grantedAuthorities) {
         List<RoleAssignmentEntity> roleAssignmentEntities = new ArrayList<>();
+        String defaultRolePrefix = roleGrantedAuthorityUtils.getDefaultRolePrefix();
+        String defaultRowLevelRolePrefix = roleGrantedAuthorityUtils.getDefaultRowLevelRolePrefix();
         for (GrantedAuthority grantedAuthority : grantedAuthorities) {
-            if (grantedAuthority instanceof RoleGrantedAuthority) {
-                RoleGrantedAuthority roleGrantedAuthority = (RoleGrantedAuthority) grantedAuthority;
-                String roleCode = roleGrantedAuthority.getAuthority();
-                String roleType;
-                if (roleCode.startsWith("row_level_role:")) {
+            String roleCode = grantedAuthority.getAuthority();
+            if (!Strings.isNullOrEmpty(roleCode)) {
+                String roleType = RoleAssignmentRoleType.RESOURCE;
+                if (roleCode.startsWith(defaultRolePrefix)) {
+                    roleCode = roleCode.substring(defaultRolePrefix.length());
+                } else if (roleCode.startsWith(defaultRowLevelRolePrefix)) {
+                    roleCode = roleCode.substring(defaultRowLevelRolePrefix.length());
                     roleType = RoleAssignmentRoleType.ROW_LEVEL;
-                    roleCode = roleCode.substring("row_level_role:".length());
-                } else {
-                    roleType = RoleAssignmentRoleType.RESOURCE;
                 }
-
                 RoleAssignmentEntity roleAssignmentEntity = dataManager.create(RoleAssignmentEntity.class);
                 roleAssignmentEntity.setRoleCode(roleCode);
                 roleAssignmentEntity.setUsername(username);

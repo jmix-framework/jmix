@@ -20,9 +20,11 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.security.SecurityProperties;
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder;
+import io.jmix.security.impl.role.event.RowLevelRoleModifiedEvent;
 import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.RowLevelRoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -42,6 +44,7 @@ public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
     private final JmixModulesClasspathScanner classpathScanner;
 
     private final RowLevelRoleDetector detector;
+    private final ApplicationEventPublisher eventPublisher;
 
     private final AnnotatedRoleBuilder annotatedRoleBuilder;
 
@@ -53,10 +56,12 @@ public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
     @Autowired
     public AnnotatedRowLevelRoleProvider(JmixModulesClasspathScanner classpathScanner,
                                          AnnotatedRoleBuilder annotatedRoleBuilder,
-                                         RowLevelRoleDetector detector) {
+                                         RowLevelRoleDetector detector,
+                                         ApplicationEventPublisher eventPublisher) {
         this.classpathScanner = classpathScanner;
         this.annotatedRoleBuilder = annotatedRoleBuilder;
         this.detector = detector;
+        this.eventPublisher = eventPublisher;
 
         buildRolesCache();
     }
@@ -81,6 +86,7 @@ public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
         if (securityProperties.isAnnotatedRolesHotDeployEnabled()) {
             classpathScanner.refreshClassNames(detector);
             buildRolesCache();
+            eventPublisher.publishEvent(new RowLevelRoleModifiedEvent(this));
             return;
         }
 

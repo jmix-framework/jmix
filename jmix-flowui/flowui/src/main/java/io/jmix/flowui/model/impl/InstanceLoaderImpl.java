@@ -213,13 +213,14 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         parameters.remove(name);
     }
 
+    @Nullable
     @Override
     public Object getEntityId() {
         return entityId;
     }
 
     @Override
-    public void setEntityId(Object entityId) {
+    public void setEntityId(@Nullable Object entityId) {
         this.entityId = entityId;
     }
 

@@ -17,6 +17,7 @@ package test_support.base.entity;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.metamodel.annotation.Comment;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -30,12 +31,14 @@ import java.util.Date;
 
 @MappedSuperclass
 @JmixEntity(name = "base$BaseEntity")
+@Comment("Base class of all project entities")
 public abstract class BaseEntity extends BaseUuidEntity {
 
     private static final long serialVersionUID = 5642226839555253331L;
 
     @Version
     @Column(name = "VERSION", nullable = false)
+    @Comment("Used for optimistic locking")
     protected Integer version;
 
     @CreatedDate

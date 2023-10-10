@@ -44,6 +44,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     protected static final String PROPERTY_THEME = "theme";
     protected static final String PROPERTY_MODE = "mode";
     protected static final String PROPERTY_HIGHLIGHT_ACTIVE_LINE = "highlightActiveLine";
+    protected static final String PROPERTY_HIGHLIGHT_GUTTER_LINE = "highlightGutterLine";
     protected static final String PROPERTY_SHOW_GUTTER = "showGutter";
     protected static final String PROPERTY_SHOW_LINE_NUMBERS = "showLineNumbers";
     protected static final String PROPERTY_SHOW_PRINT_MARGIN = "showPrintMargin";
@@ -93,6 +94,25 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     public void setHighlightActiveLine(boolean highlightActiveLine) {
         getElement().setProperty(PROPERTY_HIGHLIGHT_ACTIVE_LINE, highlightActiveLine);
+    }
+
+    /**
+     * @return {@code true} if the current gutter line highlighting is enabled, {@code false} otherwise
+     */
+    @Synchronize(PROPERTY_HIGHLIGHT_GUTTER_LINE)
+    public boolean isHighlightGutterLine() {
+        return getElement().getProperty(PROPERTY_HIGHLIGHT_GUTTER_LINE, true);
+    }
+
+    /**
+     * Sets the highlight of the current gutter line. If the highlighting is enabled,
+     * the gutter line the cursor is on will be highlighted.
+     * The highlight is enabled by default.
+     *
+     * @param highlightGutterLine whether to use gutter line highlighting
+     */
+    public void setHighlightGutterLine(boolean highlightGutterLine) {
+        getElement().setProperty(PROPERTY_HIGHLIGHT_GUTTER_LINE, highlightGutterLine);
     }
 
     /**

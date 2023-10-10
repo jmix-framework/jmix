@@ -57,12 +57,26 @@
               code="multiselect"
               step="1"
               propertyType="BOOLEAN"/>
+    <property caption="Labels position aside"
+              code="asideLabelsPosition"
+              step="1"
+              propertyType="BOOLEAN"/>
     <property caption="Table actions"
               step="1"
               code="tableActions"
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
               optionsString="${actionSearch.getWizardTableActions()}"/>
+    <property caption="Column reordering"
+              step="1"
+              code="columnReorderingAllowed"
+              propertyType="BOOLEAN"
+              defaultValue="true"/>
+    <property caption="Resizable columns"
+              step="1"
+              code="resizableColumns"
+              propertyType="BOOLEAN"
+              defaultValue="true"/>
 
     <property caption="List view descriptor name"
               code="viewDescriptorName"

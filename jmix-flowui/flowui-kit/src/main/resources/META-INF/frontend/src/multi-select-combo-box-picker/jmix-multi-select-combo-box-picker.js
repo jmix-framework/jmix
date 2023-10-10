@@ -25,7 +25,7 @@ registerStyles('jmix-multi-select-combo-box-picker', [],{
     moduleId: 'jmix-multi-select-combo-box-picker-styles'
 });
 
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.1.1]
+// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 24.1.10]
 export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
 
     static get is() {

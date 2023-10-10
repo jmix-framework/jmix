@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.util;
 
+import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import io.jmix.flowui.view.View;
 
 public final class WebBrowserTools {
@@ -25,14 +26,14 @@ public final class WebBrowserTools {
     private WebBrowserTools() {
     }
 
-    public static void preventBrowserTabClosing(View<?> view) {
-        view.getElement().executeJs(
+    public static PendingJavaScriptResult preventBrowserTabClosing(View<?> view) {
+        return view.getElement().executeJs(
                 "window.addEventListener('beforeunload', " + BEFORE_UNLOAD_LISTENER + ", {capture: true})"
         );
     }
 
-    public static void allowBrowserTabClosing(View<?> view) {
-        view.getElement().executeJs(
+    public static PendingJavaScriptResult allowBrowserTabClosing(View<?> view) {
+        return view.getElement().executeJs(
                 "window.removeEventListener('beforeunload', " + BEFORE_UNLOAD_LISTENER + ", {capture: true})"
         );
     }

@@ -28,14 +28,6 @@ public class EmailMovedImapEvent extends BaseImapEvent {
     protected final String oldFolderName;
     protected final ImapFolder oldFolder;
 
-    @SuppressWarnings("WeakerAccess")
-    @Deprecated
-    public EmailMovedImapEvent(ImapMessage message, String oldFolderName) {
-        super(message);
-        this.oldFolder = null;
-        this.oldFolderName = oldFolderName;
-    }
-
     public EmailMovedImapEvent(ImapMessage message, ImapFolder oldFolder) {
         super(message);
         this.oldFolder = oldFolder;

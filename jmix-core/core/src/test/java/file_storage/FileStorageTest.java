@@ -33,8 +33,10 @@ import test_support.app.TestFileStorage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @ExtendWith(SpringExtension.class)
@@ -55,6 +57,22 @@ public class FileStorageTest {
 
         byte[] storedFile = ByteStreams.toByteArray(inputStream);
         assertEquals("some content", new String(storedFile));
+    }
+
+    @Test
+    void testSaveLoadWithParams() throws IOException {
+        FileRef ref = fileStorage.saveStream("testfile", new ByteArrayInputStream("some content".getBytes()),
+                Map.of("a", 1, "b", false));
+
+        InputStream inputStream = fileStorage.openStream(ref);
+
+        byte[] storedFile = ByteStreams.toByteArray(inputStream);
+        assertEquals("some content", new String(storedFile));
+
+        Map<String, String> parameters = ref.getParameters();
+        assertNotNull(parameters);
+        assertEquals("1", parameters.get("a"));
+        assertEquals("false", parameters.get("b"));
     }
 
     @Test

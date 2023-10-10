@@ -16,6 +16,7 @@
 
 package test_support.app;
 
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
@@ -46,14 +47,15 @@ public class TestFileStorage implements FileStorage {
     }
 
     @Override
-    public FileRef saveStream(String fileName, InputStream inputStream) {
+    public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
         byte[] bytes;
         try {
             bytes = ByteStreams.toByteArray(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        FileRef reference = new FileRef("testFs", fileName, fileName);
+        Map<String, String> fileRefParams = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
+        FileRef reference = new FileRef("testFs", fileName, fileName, fileRefParams);
         files.put(reference, bytes);
         return reference;
     }

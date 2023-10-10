@@ -17,19 +17,17 @@
 package io.jmix.gridexportflowui.exporter.json;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.Id;
-import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.AbstractAllRecordsExporter;
+import io.jmix.gridexportflowui.exporter.EntityExportContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Class is used by {@link io.jmix.gridexportflowui.action.ExportAction} for exporting all records from the database to JSON format.
@@ -37,18 +35,11 @@ import java.util.function.Consumer;
 @Component("grdexp_JsonAllRecordsExporter")
 public class JsonAllRecordsExporter extends AbstractAllRecordsExporter {
 
-    protected DataManager dataManager;
-    protected PlatformTransactionManager platformTransactionManager;
-    protected GridExportProperties gridExportProperties;
-
     public JsonAllRecordsExporter(MetadataTools metadataTools,
                                   DataManager dataManager,
                                   PlatformTransactionManager platformTransactionManager,
                                   GridExportProperties gridExportProperties) {
-        super(metadataTools);
-        this.dataManager = dataManager;
-        this.platformTransactionManager = platformTransactionManager;
-        this.gridExportProperties = gridExportProperties;
+        super(metadataTools, dataManager, platformTransactionManager, gridExportProperties);
     }
 
     /**
@@ -60,37 +51,13 @@ public class JsonAllRecordsExporter extends AbstractAllRecordsExporter {
      * @param dataUnit          data unit linked with the data
      * @param jsonObjectCreator function that is being applied to each loaded instance
      */
-    @SuppressWarnings("rawtypes")
     public void exportAll(DataUnit dataUnit, Consumer<Object> jsonObjectCreator) {
         Preconditions.checkNotNullArgument(jsonObjectCreator, "jsonObjectCreator can't be null");
 
-        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
-        transactionTemplate.executeWithoutResult(transactionStatus -> {
-            long count = dataManager.getCount(generateLoadContext(dataUnit));
-            int loadBatchSize = gridExportProperties.getExportAllBatchSize();
-
-            boolean initialLoading = true;
-            Object lastLoadedPkValue = null;
-
-            for (int firstResult = 0; firstResult < count; firstResult += loadBatchSize) {
-                LoadContext loadContext = generateLoadContext(dataUnit);
-                LoadContext.Query query = loadContext.getQuery();
-
-                if (initialLoading) {
-                    initialLoading = false;
-                } else {
-                    query.setParameter(LAST_LOADED_PK_CONDITION_PARAMETER_NAME, lastLoadedPkValue);
-                }
-                query.setMaxResults(loadBatchSize);
-
-                List entities = dataManager.loadList(loadContext);
-                for (Object entity : entities) {
-                    jsonObjectCreator.accept(entity);
-                }
-
-                Object lastEntity = entities.get(entities.size() - 1);
-                lastLoadedPkValue = Id.of(lastEntity).getValue();
-            }
-        });
+        Predicate<EntityExportContext> entityExporter = context -> {
+            jsonObjectCreator.accept(context.getEntity());
+            return true;
+        };
+        exportAll(dataUnit, entityExporter);
     }
 }

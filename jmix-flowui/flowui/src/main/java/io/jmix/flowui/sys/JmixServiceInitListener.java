@@ -31,6 +31,7 @@ import io.jmix.core.Resources;
 import io.jmix.flowui.component.error.JmixInternalServerError;
 import io.jmix.flowui.exception.UiExceptionHandlers;
 import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
+import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.view.ViewRegistry;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Element;
@@ -129,6 +130,10 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         }
         event.getSession().setErrorHandler(uiExceptionHandlers);
         event.getSession().setAttribute(BackgroundTaskManager.class, new BackgroundTaskManager());
+        // UiEventsManager instance should be stored per user session. It cannot be Spring bean
+        // with `VaadinSessionScope` because there are cases when we should get instance for not
+        // current user to publish events, which is not possible with bean.
+        event.getSession().setAttribute(UiEventsManager.class, new UiEventsManager());
 
         initCookieLocale(event.getSession());
     }
@@ -148,8 +153,8 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         ApplicationRouteRegistry applicationRouteRegistry =
                 ApplicationRouteRegistry.getInstance(VaadinService.getCurrent().getContext());
 
-        Optional<ErrorTargetEntry> navigationTargetOpt = applicationRouteRegistry.
-                getErrorNavigationTarget(new Exception());
+        Optional<ErrorTargetEntry> navigationTargetOpt = applicationRouteRegistry
+                .getErrorNavigationTarget(new Exception());
 
         if (navigationTargetOpt.isPresent()) {
             ErrorTargetEntry errorTargetEntry = navigationTargetOpt.get();

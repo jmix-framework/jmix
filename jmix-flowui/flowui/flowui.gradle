@@ -29,6 +29,8 @@ dependencies {
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 
+    implementation 'com.google.code.gson:gson'
+
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.springframework.boot:spring-boot-test'

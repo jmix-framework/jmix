@@ -59,6 +59,7 @@
             <dataGrid id="rowLevelPoliciesTable"
                       dataContainer="rowLevelPoliciesDc"
                       selectionMode="MULTI"
+                      columnReorderingAllowed="true"
                       minHeight="20em"
                       width="100%">
                 <actions>
@@ -79,7 +80,7 @@
                     </action>
                     <action id="remove" type="list_remove"/>
                 </actions>
-                <columns>
+                <columns resizable="true">
                     <column property="type"/>
                     <column property="action"/>
                     <column property="entityName"/>
@@ -98,6 +99,7 @@
                       dataContainer="childRolesDc"
                       selectionMode="MULTI"
                       minHeight="20em"
+                      columnReorderingAllowed="true"
                       width="100%">
                 <actions>
                     <action id="add" type="list_add"/>
@@ -107,7 +109,7 @@
                         </properties>
                     </action>
                 </actions>
-                <columns>
+                <columns resizable="true">
                     <column property="name"/>
                     <column property="code"/>
                     <column property="source"/>

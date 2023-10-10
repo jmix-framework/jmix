@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.facet.urlqueryparameters;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
@@ -49,6 +50,9 @@ public abstract class AbstractUrlQueryParametersBinder implements UrlQueryParame
     protected void fireQueryParametersChanged(UrlQueryParametersChangeEvent event) {
         getEventBus().fireEvent(event);
     }
+
+    @Nullable
+    public abstract Component getComponent();
 
     protected EventBus getEventBus() {
         if (eventBus == null) {

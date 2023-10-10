@@ -1,0 +1,106 @@
+<%
+def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
+tableId = "${pluralForm}DataGrid"
+tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
+def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
+def isNotPersistEntity = entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')
+
+detailDc = entity.uncapitalizedClassName + 'Dc'
+detailDl = entity.uncapitalizedClassName + 'Dl'
+def nestedDatasourceProperties = api.evaluateScript('nestedDatasourceProperties.groovy', ['view': detailFetchPlan, 'embeddable': false])
+def nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
+
+def tableXml = api.processSnippet('table.xml',
+        ['entity': entity,
+        'fetchPlan': listFetchPlan,
+        'tableDc': tableDc,
+        'tableDl': tableDl,
+        'tableType': tableType,
+        'tableId': tableId,
+        'multiselect': multiselect,
+        'columnReorderingAllowed': columnReorderingAllowed,
+        'resizableColumns': resizableColumns,
+        'tableActions': tableActions,
+        'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
+
+def formXml = api.processSnippet('form.xml',
+        ['fetchPlan': detailFetchPlan,
+        'api': api,
+        'dcId': detailDc,
+        'formId': 'form',
+        'asideLabelsPosition': asideLabelsPosition])
+
+def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
+        ['view': detailFetchPlan,
+        'api': api])
+
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="${messageKeys['viewTitle']}"
+      focusComponent="${tableId}">
+    <data>
+        <collection id="${tableDc}"
+                     class="${entity.fqn}"<%if (!is_inline_listFetchPlan) {%>
+        fetchPlan="${listFetchPlan.name}"<%}%>> <%if (is_inline_listFetchPlan) {%>
+            ${inline_listFetchPlan}
+            <%}%><loader id="${tableDl}" readOnly="true">
+                <query>
+                    <![CDATA[select e from ${entity.name} e]]>
+                </query>
+            </loader>
+        </collection>
+        <instance id="${detailDc}"
+                class="${entity.fqn}"<%if (!entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')) {%> <%if (!is_inline_detailFetchPlan) {%>
+                fetchPlan="${detailFetchPlan.name}"<%}%><%}%>> <%if (is_inline_detailFetchPlan) {%>
+            ${inline_detailFetchPlan}
+            <%}%><loader id="${detailDl}"/>
+        <%
+        nestedDatasourceProperties.each {%>
+            <instance id="${it}Dc" property="${it}"/>
+        <%}
+
+        nestedCollectionDatasourceProperties.each {%>
+            <collection id="${it}Dc" property="${it}"/>
+        <%}
+        %></instance>
+        <%if (optionsDatasourceXml?.trim()) {%>
+            ${optionsDatasourceXml}
+        <%}%>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters><%if (createGenericFilter) {%>
+            <genericFilter component="genericFilter"/><%}%>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+        </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+        <action id="saveAction" text="msg:///actions.Save" icon="CHECK" actionVariant="PRIMARY"/>
+        <action id="cancelAction" text="msg:///actions.Cancel" icon="BAN"/>
+    </actions>
+    <layout padding="false">
+        <formLayout classNames="master-detail-layout" height="100%">
+            <vbox id="listLayout" height="100%"><%if (createGenericFilter) {%>
+                <genericFilter id="genericFilter"
+                               dataLoader="${tableDl}">
+                    <properties include=".*"/>
+                </genericFilter><%}%>
+                ${tableXml}
+                <hbox id="lookupActions" visible="false">
+                    <button id="selectBtn" action="selectAction"/>
+                    <button id="discardBtn" action="discardAction"/>
+                </hbox>
+            </vbox>
+            <vbox id="detailsLayout" height="100%">
+                ${formXml}
+                <hbox id="detailActions">
+                    <button id="saveBtn" action="saveAction"/>
+                    <button id="cancelBtn" action="cancelAction"/>
+                </hbox>
+            </vbox>
+        </formLayout>
+    </layout>
+</view>

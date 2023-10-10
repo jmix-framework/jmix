@@ -30,6 +30,7 @@ import io.jmix.oidc.usermapper.OidcUserMapper;
 import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -62,8 +63,10 @@ public class OidcAutoConfiguration {
     @ConditionalOnBean(ResourceRoleRepository.class)
     public ClaimsRolesMapper claimsRoleMapper(ResourceRoleRepository resourceRoleRepository,
                                               RowLevelRoleRepository rowLevelRoleRepository,
-                                              OidcProperties oidcProperties) {
-        DefaultClaimsRolesMapper mapper = new DefaultClaimsRolesMapper(resourceRoleRepository, rowLevelRoleRepository);
+                                              OidcProperties oidcProperties,
+                                              RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
+        DefaultClaimsRolesMapper mapper = new DefaultClaimsRolesMapper(resourceRoleRepository,
+                rowLevelRoleRepository, roleGrantedAuthorityUtils);
         mapper.setRolesClaimName(oidcProperties.getDefaultClaimsRolesMapper().getRolesClaimName());
         mapper.setResourceRolePrefix(oidcProperties.getDefaultClaimsRolesMapper().getResourceRolePrefix());
         mapper.setRowLevelRolePrefix(oidcProperties.getDefaultClaimsRolesMapper().getRowLevelRolePrefix());

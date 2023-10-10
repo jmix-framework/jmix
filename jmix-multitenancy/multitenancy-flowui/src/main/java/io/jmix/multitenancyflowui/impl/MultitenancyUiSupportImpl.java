@@ -23,7 +23,6 @@ import io.jmix.core.Messages;
 import io.jmix.multitenancy.MultitenancyProperties;
 import io.jmix.multitenancy.entity.Tenant;
 import io.jmix.multitenancyflowui.MultitenancyUiSupport;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -41,7 +40,6 @@ public class MultitenancyUiSupportImpl implements MultitenancyUiSupport {
     protected final Messages messages;
 
     protected static final String TENANT_USERNAME_SEPARATOR = "|";
-    protected static final String INVALID_TENANT_ID_PARAM_MESSAGE_KEY = "invalidQueryParameter";
 
     public MultitenancyUiSupportImpl(MultitenancyProperties multitenancyProperties,
                                      DataManager dataManager,
@@ -62,20 +60,12 @@ public class MultitenancyUiSupportImpl implements MultitenancyUiSupport {
         Map<String, List<String>> params = location.getQueryParameters().getParameters();
         String tenantId = null;
 
-        if (MapUtils.isNotEmpty(params)) {
-            List<String> tenantIdParams = params.get(tenantIdUrlParamName);
+        List<String> tenantIdParams = params.get(tenantIdUrlParamName);
 
-            if (tenantIdParams != null && tenantIdParams.size() == 1) {
-                tenantId = tenantIdParams.get(0);
-            } else {
-                String message = messages.formatMessage(
-                        getClass(),
-                        INVALID_TENANT_ID_PARAM_MESSAGE_KEY,
-                        tenantIdUrlParamName
-                );
-                throw new IllegalStateException(message);
-            }
+        if (tenantIdParams != null && !tenantIdParams.isEmpty()) {
+            tenantId = tenantIdParams.get(0);
         }
+
         return concatUsername(username, tenantId);
     }
 

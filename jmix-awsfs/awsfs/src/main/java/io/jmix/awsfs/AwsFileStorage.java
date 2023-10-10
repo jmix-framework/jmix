@@ -17,6 +17,7 @@
 package io.jmix.awsfs;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
@@ -55,7 +57,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 
-import org.springframework.lang.Nullable;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,6 +64,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -190,18 +192,19 @@ public class AwsFileStorage implements FileStorage {
     }
 
     @Override
-    public FileRef saveStream(String fileName, InputStream inputStream) {
+    public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
         String fileKey = createFileKey(fileName);
         int s3ChunkSizeBytes = this.chunkSize * 1024;
         try (BufferedInputStream bos = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
             S3Client s3Client = s3ClientReference.get();
             int totalSizeBytes = bos.available();
+            Map<String, String> fileRefParameters = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
             if (totalSizeBytes == 0) {
                 s3Client.putObject(PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(fileKey)
                         .build(), RequestBody.empty());
-                return new FileRef(getStorageName(), fileKey, fileName);
+                return new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
             }
 
             CreateMultipartUploadRequest createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
@@ -238,7 +241,7 @@ public class AwsFileStorage implements FileStorage {
                             .uploadId(response.uploadId())
                             .multipartUpload(completedMultipartUpload).build();
             s3Client.completeMultipartUpload(completeMultipartUploadRequest);
-            return new FileRef(getStorageName(), fileKey, fileName);
+            return new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
         } catch (IOException | SdkException e) {
             log.error("Error saving file to S3 storage", e);
             String message = String.format("Could not save file %s.", fileName);

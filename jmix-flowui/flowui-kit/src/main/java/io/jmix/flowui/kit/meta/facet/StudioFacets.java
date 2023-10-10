@@ -52,4 +52,31 @@ public interface StudioFacets {
             }
     )
     void queryParameters();
+
+    @StudioFacet(
+            name = "Timer",
+            classFqn = "io.jmix.flowui.facet.Timer",
+            category = "Facets",
+            xmlElement = "timer",
+            icon = "io/jmix/flowui/kit/meta/icon/facet/timer.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "delay", type = StudioPropertyType.INTEGER, required = true),
+                    @StudioProperty(xmlAttribute = "repeating", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "autostart", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
+            }
+    )
+    void timer();
+
+    @StudioFacet(
+            name = "Settings",
+            classFqn = "io.jmix.flowui.facet.SettingsFacet",
+            category = "Facet",
+            xmlElement = "settings",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN)
+            }
+    )
+    void settings();
 }

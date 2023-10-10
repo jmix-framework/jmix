@@ -19,21 +19,19 @@ package io.jmix.authserver.introspection;
 import io.jmix.authserver.AuthServerProperties;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignment;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
-import io.jmix.security.authentication.RoleGrantedAuthority;
-import io.jmix.security.role.ResourceRoleRepository;
-import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * The class is used for converting a list of role codes specified for the client in properties file into the list of
- * {@link RoleGrantedAuthority}.
+ * {@link GrantedAuthority}.
  *
  * @see AuthServerProperties
  */
@@ -42,47 +40,37 @@ public class TokenIntrospectorRolesHelper {
 
     private static final Logger log = LoggerFactory.getLogger(TokenIntrospectorRolesHelper.class);
 
-    private ResourceRoleRepository resourceRoleRepository;
-
-    private RowLevelRoleRepository rowLevelRoleRepository;
-
     private RegisteredClientRoleAssignmentRepository clientRoleAssignmentRepository;
 
-    public TokenIntrospectorRolesHelper(ResourceRoleRepository resourceRoleRepository,
-                                        RowLevelRoleRepository rowLevelRoleRepository,
-                                        RegisteredClientRoleAssignmentRepository clientRoleAssignmentRepository) {
-        this.resourceRoleRepository = resourceRoleRepository;
-        this.rowLevelRoleRepository = rowLevelRoleRepository;
+    private RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+
+    public TokenIntrospectorRolesHelper(RegisteredClientRoleAssignmentRepository clientRoleAssignmentRepository,
+                                        RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
         this.clientRoleAssignmentRepository = clientRoleAssignmentRepository;
+        this.roleGrantedAuthorityUtils = roleGrantedAuthorityUtils;
     }
 
     /**
      * Converts a list of roles specified for the client in properties file into the list of
-     * {@link RoleGrantedAuthority}.
+     * {@link GrantedAuthority}.
      *
      * @param clientId a client id
      * @return a list of RoleGrantedAuthority
      */
-    public List<RoleGrantedAuthority> getClientGrantedAuthorities(String clientId) {
+    public List<GrantedAuthority> getClientGrantedAuthorities(String clientId) {
         Collection<RegisteredClientRoleAssignment> roleAssignments = clientRoleAssignmentRepository.findByClientId(clientId);
 
-        List<String> resourceRoles = roleAssignments.stream()
+        List<GrantedAuthority> resourceRoleAuthorities = roleAssignments.stream()
                 .flatMap(roleAssignment -> roleAssignment.resourceRoles().stream())
-                .toList();
-        List<RoleGrantedAuthority> resourceRoleAuthorities = resourceRoles.stream()
-                .map(resourceRoleRepository::getRoleByCode)
-                .map(RoleGrantedAuthority::ofResourceRole)
+                .map(roleCode -> roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(roleCode))
                 .toList();
 
-        List<String> rowLevelRoles = roleAssignments.stream()
+        List<GrantedAuthority> rowLevelRolesAuthorities = roleAssignments.stream()
                 .flatMap(roleAssignment -> roleAssignment.rowLevelRoles().stream())
-                .toList();
-        List<RoleGrantedAuthority> rowLevelRolesAuthorities = rowLevelRoles.stream()
-                .map(rowLevelRoleRepository::getRoleByCode)
-                .map(RoleGrantedAuthority::ofRowLevelRole)
+                .map(roleCode -> roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(roleCode))
                 .toList();
 
-        List<RoleGrantedAuthority> authorities = new ArrayList<>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.addAll(resourceRoleAuthorities);
         authorities.addAll(rowLevelRolesAuthorities);
 

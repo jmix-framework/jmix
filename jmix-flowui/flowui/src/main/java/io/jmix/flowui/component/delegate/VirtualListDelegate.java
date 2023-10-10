@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-@Component("ui_VirtualListDelegate")
+@Component("flowui_VirtualListDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class VirtualListDelegate<V> extends AbstractComponentDelegate<JmixVirtualList<V>> {
 

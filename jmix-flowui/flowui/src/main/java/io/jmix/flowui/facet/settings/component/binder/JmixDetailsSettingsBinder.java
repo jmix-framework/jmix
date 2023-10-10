@@ -26,7 +26,7 @@ import org.springframework.core.annotation.Order;
 import java.util.Objects;
 
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-@org.springframework.stereotype.Component("ui_JmixDetailsSettingsBinder")
+@org.springframework.stereotype.Component("flowui_JmixDetailsSettingsBinder")
 public class JmixDetailsSettingsBinder implements ComponentSettingsBinder<JmixDetails, JmixDetailsSettings> {
 
     @Override

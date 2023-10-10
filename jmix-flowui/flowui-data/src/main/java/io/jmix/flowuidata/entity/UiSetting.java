@@ -29,9 +29,9 @@ import java.util.UUID;
 /**
  * Record for user's UI setting.
  */
-@Entity(name = "ui_UiSetting")
+@Entity(name = "flowui_UiSetting")
 @JmixEntity
-@Table(name = "UI_UI_SETTING")
+@Table(name = "FLOWUI_UI_SETTING")
 @SystemLevel
 public class UiSetting implements Serializable {
     private static final long serialVersionUID = -5262191502816639662L;

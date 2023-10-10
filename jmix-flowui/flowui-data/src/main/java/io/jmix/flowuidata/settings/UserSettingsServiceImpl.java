@@ -20,7 +20,6 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.data.impl.EntityEventManager;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowuidata.entity.UiSetting;
@@ -32,15 +31,12 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Optional;
 
-@Component("ui_UserSettingsServiceImpl")
+@Component("flowui_UserSettingsServiceImpl")
 public class UserSettingsServiceImpl implements UserSettingsService {
 
     private static final Logger log = LoggerFactory.getLogger(UserSettingsServiceImpl.class);
@@ -120,13 +116,13 @@ public class UserSettingsServiceImpl implements UserSettingsService {
         Preconditions.checkNotNullArgument(toUsername);
 
         transaction.executeWithoutResult(status ->
-                entityManager.createQuery("delete from ui_UiSetting s where s.username = ?1")
+                entityManager.createQuery("delete from flowui_UiSetting s where s.username = ?1")
                         .setParameter(1, toUsername)
                         .executeUpdate());
 
         transaction.executeWithoutResult(status -> {
             List<UiSetting> fromUserSettings =
-                    entityManager.createQuery("select s from ui_UiSetting s where s.username = ?1", UiSetting.class)
+                    entityManager.createQuery("select s from flowui_UiSetting s where s.username = ?1", UiSetting.class)
                             .setParameter(1, fromUsername)
                             .getResultList();
 
@@ -145,7 +141,7 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     @Nullable
     protected UiSetting findUserSettings(String key) {
         List<UiSetting> result = entityManager.createQuery(
-                        "select s from ui_UiSetting s where s.username = ?1 and s.key =?2",
+                        "select s from flowui_UiSetting s where s.username = ?1 and s.key =?2",
                         UiSetting.class)
                 .setParameter(1, authentication.getUser().getUsername())
                 .setParameter(2, key)

@@ -24,7 +24,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.springframework.stereotype.Component;
 
-@Component("ui_NumberRendererProvider")
+@Component("flowui_NumberRendererProvider")
 public class NumberRendererProvider extends AbstractFormattableRendererProvider<NumberRenderer<?>> {
 
     public static final String NAME = "numberRenderer";

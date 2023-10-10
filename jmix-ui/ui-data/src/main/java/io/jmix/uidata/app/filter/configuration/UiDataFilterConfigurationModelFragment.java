@@ -202,7 +202,7 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
 
     @Subscribe(target = Target.PARENT_CONTROLLER)
     protected void onValidationEvent(StandardEditor.ValidationEvent event) {
-        if (componentProperties.isFilterConfigurationUniqueNames()) {
+        if (componentProperties.isFilterConfigurationUniqueNamesEnabled()) {
             event.addErrors(validateConfigurationName());
         }
     }

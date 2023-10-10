@@ -186,7 +186,7 @@ public class FilterSaveAsAction extends FilterAction {
                                 "logicalFilterConditionEdit.uniqueConfigurationId"));
                     }
 
-                    if (componentProperties.isFilterConfigurationUniqueNames()) {
+                    if (componentProperties.isFilterConfigurationUniqueNamesEnabled()) {
                         String name = validationContext.getValue("nameField");
                         boolean configurationWithSameNameExists = filter.getConfigurations().stream()
                                 .anyMatch(conf -> Objects.equals(name, conf.getName()) && !conf.isAvailableForAllUsers());

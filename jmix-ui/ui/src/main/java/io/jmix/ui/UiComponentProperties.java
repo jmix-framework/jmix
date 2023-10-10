@@ -135,7 +135,7 @@ public class UiComponentProperties {
     /**
      * Whether validation of filter configuration name uniqueness should be enabled
      */
-    boolean filterConfigurationUniqueNames;
+    boolean filterConfigurationUniqueNamesEnabled;
 
     public UiComponentProperties(
             @DefaultValue("true") boolean htmlSanitizerEnabled,
@@ -165,7 +165,7 @@ public class UiComponentProperties {
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("3") int filterColumnsCount,
             @DefaultValue("false") boolean filterShowConfigurationIdField,
-            @DefaultValue("true") boolean filterConfigurationUniqueNames
+            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled
     ) {
         this.htmlSanitizerEnabled = htmlSanitizerEnabled;
         this.uploadFieldMaxUploadSizeMb = uploadFieldMaxUploadSizeMb;
@@ -194,7 +194,7 @@ public class UiComponentProperties {
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterColumnsCount = filterColumnsCount;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
-        this.filterConfigurationUniqueNames = filterConfigurationUniqueNames;
+        this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
     }
 
     public int getUploadFieldMaxUploadSizeMb() {
@@ -345,9 +345,9 @@ public class UiComponentProperties {
     }
 
     /**
-     * @see #filterConfigurationUniqueNames
+     * @see #filterConfigurationUniqueNamesEnabled
      */
-    public boolean isFilterConfigurationUniqueNames() {
-        return filterConfigurationUniqueNames;
+    public boolean isFilterConfigurationUniqueNamesEnabled() {
+        return filterConfigurationUniqueNamesEnabled;
     }
 }

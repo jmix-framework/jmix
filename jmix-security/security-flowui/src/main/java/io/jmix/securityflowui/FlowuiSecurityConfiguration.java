@@ -20,7 +20,6 @@ import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.securityflowui.access.UiViewAccessChecker;
-import org.springframework.lang.Nullable;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -46,11 +46,13 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -287,7 +289,10 @@ public class FlowuiSecurityConfiguration {
         formLogin.loginPage(loginPath).permitAll();
         formLogin.successHandler(createSuccessHandler(http));
 
-        http.csrf().ignoringRequestMatchers(loginPath);
+        HandlerMappingIntrospector handlerMappingIntrospector = applicationContext.getBean(HandlerMappingIntrospector.class);
+        MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(handlerMappingIntrospector);
+        MvcRequestMatcher loginPathPattern = mvcRequestMatcherBuilder.pattern(loginPath);
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(loginPathPattern));
         // TODO: gg, replace with VaadinWebSecurity.configureLogout?
         http.logout()
                 .logoutUrl(LOGOUT_URL)

@@ -3761,6 +3761,18 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!--    VirtualList-->
+    <xs:complexType name="virtualListComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!--    HTML-->
 
     <!-- Html -->
@@ -4297,6 +4309,7 @@
                 <xs:element name="groupFilter" type="groupFilterComponent"/>
                 <xs:element name="genericFilter" type="genericFilterComponent"/>
                 <xs:element name="codeEditor" type="codeEditorComponent"/>
+                <xs:element name="virtualList" type="virtualListComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

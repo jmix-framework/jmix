@@ -96,6 +96,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("groupFilter", GroupFilterLoader.class);
         loaders.put("genericFilter", GenericFilterLoader.class);
         loaders.put("codeEditor", CodeEditorLoader.class);
+        loaders.put("virtualList", VirtualListLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

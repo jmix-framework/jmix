@@ -93,6 +93,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected static final String FILTER_CLASS_NAME = "jmix-generic-filter";
     protected static final String FILTER_CONTENT_WRAPPER_CLASS_NAME = FILTER_CLASS_NAME + "-content-wrapper";
     protected static final String FILTER_CONTROLS_LAYOUT_CLASS_NAME = FILTER_CLASS_NAME + "-controls-layout";
+    protected static final String GLOBAL_CONFIGURATION_NAME_POSTFIX = " *";
 
     protected ApplicationContext applicationContext;
     protected CurrentAuthentication currentAuthentication;
@@ -757,6 +758,9 @@ public class GenericFilter extends Composite<JmixDetails>
             if (caption == null) {
                 caption = configuration.getId();
             }
+        }
+        if (configuration.isAvailableForAllUsers()) {
+            caption = caption + GLOBAL_CONFIGURATION_NAME_POSTFIX;
         }
 
         return caption;

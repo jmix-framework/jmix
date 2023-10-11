@@ -4,8 +4,18 @@ tableId = "${pluralForm}DataGrid"
 def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
 tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 
+private Object getActionSearchSafely() {
+    try {
+        return actionSearch
+    } catch(Exception e) {
+        return null
+    }
+}
+
 def tableXml = api.processSnippet('dto_table.xml',
-        ['entity': entity,
+        ['jmixProjectModule': api.jmixProjectModule,
+        'actionSearch': getActionSearchSafely(),
+        'entity': entity,
         'tableDc': tableDc,
         'tableDl': tableDl,
         'tableType': tableType,

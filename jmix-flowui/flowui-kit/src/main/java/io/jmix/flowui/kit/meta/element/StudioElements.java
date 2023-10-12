@@ -276,6 +276,7 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.component.shared.Tooltip",
             icon = "io/jmix/flowui/kit/meta/icon/element/tooltip.svg",
             xmlElement = "tooltip",
+            unlimitedCount = false,
             target = {"io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
@@ -639,7 +640,8 @@ public interface StudioElements {
             target = {"com.vaadin.flow.component.shared.HasPrefix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
             possibleChildren = {"com.vaadin.flow.component.Component"},
-            maxCountOfChildren = 1
+            maxCountOfChildren = 1,
+            unlimitedCount = false
     )
     void prefix();
 
@@ -649,7 +651,8 @@ public interface StudioElements {
             target = {"com.vaadin.flow.component.shared.HasSuffix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
             possibleChildren = {"com.vaadin.flow.component.Component"},
-            maxCountOfChildren = 1
+            maxCountOfChildren = 1,
+            unlimitedCount = false
     )
     void suffix();
 

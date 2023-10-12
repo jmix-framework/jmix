@@ -39,6 +39,8 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.component.upload.FileStorageUploadField;
+import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import org.springframework.core.Ordered;
 
@@ -113,6 +115,10 @@ public class InputDialogGenerationStrategy extends AbstractComponentGenerationSt
             return createTimeField(datatype);
         } else if (datatype instanceof BooleanDatatype) {
             return createBooleanField();
+        } else if (datatype instanceof FileRefDatatype) {
+            return createFileStorageUploadField();
+        } else if (datatype instanceof ByteArrayDatatype) {
+            return createFileUploadField();
         } else {
             throw new IllegalArgumentException("InputDialog doesn't support datatype: " + datatype.getClass());
         }
@@ -171,6 +177,26 @@ public class InputDialogGenerationStrategy extends AbstractComponentGenerationSt
 
     protected Component createBooleanField() {
         return uiComponents.create(JmixCheckbox.class);
+    }
+
+    protected Component createFileStorageUploadField() {
+        FileStorageUploadField fileStorageUploadField = uiComponents.create(FileStorageUploadField.class);
+
+        fileStorageUploadField.setFileNameVisible(true);
+        fileStorageUploadField.setClearButtonVisible(true);
+        fileStorageUploadField.setWidthFull();
+
+        return fileStorageUploadField;
+    }
+
+    protected Component createFileUploadField() {
+        FileUploadField fileUploadField = uiComponents.create(FileUploadField.class);
+
+        fileUploadField.setFileNameVisible(true);
+        fileUploadField.setClearButtonVisible(true);
+        fileUploadField.setWidthFull();
+
+        return fileUploadField;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

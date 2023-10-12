@@ -41,21 +41,21 @@ import io.jmix.rest.impl.service.filter.RestFilterParser;
 import io.jmix.rest.impl.service.filter.data.EntitiesSearchResult;
 import io.jmix.rest.impl.service.filter.data.ResponseInfo;
 import io.jmix.rest.transform.JsonTransformationDirection;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import org.springframework.lang.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -264,17 +264,9 @@ public class EntitiesControllerManager {
             throw new RestAPIException("Cannot parse entities filter", "Entities filter cannot be null", HttpStatus.BAD_REQUEST);
         }
 
-        //for backward compatibility we should support both 'view' and 'viewName' properties. In future the
-        //'viewName' parameter will be removed
-        String view = !Strings.isNullOrEmpty(searchEntitiesRequest.getView()) ?
-                searchEntitiesRequest.getView() :
-                searchEntitiesRequest.getViewName();
-
-        view = !StringUtils.isEmpty(searchEntitiesRequest.getFetchPlan()) ? searchEntitiesRequest.getFetchPlan() : view;
-
         return searchEntities(entityName,
                 searchEntitiesRequest.getFilter().toString(),
-                view,
+                searchEntitiesRequest.getFetchPlan(),
                 searchEntitiesRequest.getLimit(),
                 searchEntitiesRequest.getOffset(),
                 searchEntitiesRequest.getSort(),
@@ -945,11 +937,7 @@ public class EntitiesControllerManager {
 
     protected class SearchEntitiesRequestDTO {
         protected JsonObject filter;
-        protected String view;
         protected String fetchPlan;
-        @Deprecated
-        //the viewName property has been left for a backward compatibility. It will removed in future releases
-        protected String viewName;
         protected Integer limit;
         protected Integer offset;
         protected String sort;
@@ -965,17 +953,8 @@ public class EntitiesControllerManager {
             return filter;
         }
 
-        public String getView() {
-            return view;
-        }
-
         public String getFetchPlan() {
             return fetchPlan;
-        }
-
-        @Deprecated
-        public String getViewName() {
-            return viewName;
         }
 
         public Integer getLimit() {
@@ -1012,15 +991,6 @@ public class EntitiesControllerManager {
 
         public void setFetchPlan(String fetchPlan) {
             this.fetchPlan = fetchPlan;
-        }
-
-        public void setView(String view) {
-            this.view = view;
-        }
-
-        @Deprecated
-        public void setViewName(String viewName) {
-            this.viewName = viewName;
         }
 
         public void setLimit(Integer limit) {

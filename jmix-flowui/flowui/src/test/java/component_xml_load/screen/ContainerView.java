@@ -19,6 +19,7 @@ package component_xml_load.screen;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -50,6 +51,9 @@ public class ContainerView extends StandardView {
 
     @ViewComponent
     public HorizontalLayout hboxId;
+
+    @ViewComponent
+    public FlexLayout flexLayoutId;
 
     @ViewComponent
     public Accordion accordionId;

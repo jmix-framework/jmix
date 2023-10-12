@@ -10,8 +10,9 @@
         rootTagNamespace = rootTag.namespace
     }%>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<$rootTagName xmlns="$rootTagNamespace"
-        title="${title}"<%if (overrideActionType == "EMPTY") {%>>
+<$rootTagName xmlns="$rootTagNamespace"<%if (title != null && title != '') {%>
+        title="${title}"<%}%><%if (messagesGroup != null && messagesGroup != '') {%>
+        messagesGroup="$messagesGroup"<%}%><%if (overrideActionType == "EMPTY") {%>>
     <layout>
 
     </layout><%}%><%if (overrideActionType == "EXTEND") {%>

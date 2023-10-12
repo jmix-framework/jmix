@@ -54,6 +54,7 @@
             <simplePagination id="pagination" dataLoader="userSubstitutionsDl"/>
         </hbox>
         <dataGrid id="substitutionDataGrid" width="100%" height="100%"
+                  columnReorderingAllowed="true"
                   dataContainer="userSubstitutionsDc" selectionMode="MULTI">
             <actions>
                 <action id="create" type="list_create">
@@ -72,7 +73,7 @@
                 </action>
                 <action id="remove" type="list_remove"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="substitutedUsername" header="msg://substitutedUser.header"/>
                 <column property="startDate"/>
                 <column property="endDate"/>

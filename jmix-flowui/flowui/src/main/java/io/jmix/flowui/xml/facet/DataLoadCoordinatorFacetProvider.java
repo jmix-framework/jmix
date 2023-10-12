@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.facet;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
@@ -41,11 +42,14 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
     protected LoaderSupport loaderSupport;
     protected ViewControllerReflectionInspector reflectionInspector;
+    protected QueryParamValuesManager queryParamValuesManager;
 
     public DataLoadCoordinatorFacetProvider(LoaderSupport loaderSupport,
-                                            ViewControllerReflectionInspector reflectionInspector) {
+                                            ViewControllerReflectionInspector reflectionInspector,
+                                            QueryParamValuesManager queryParamValuesManager) {
         this.loaderSupport = loaderSupport;
         this.reflectionInspector = reflectionInspector;
+        this.queryParamValuesManager = queryParamValuesManager;
     }
 
     @Override
@@ -55,7 +59,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
     @Override
     public DataLoadCoordinator create() {
-        return new DataLoadCoordinatorImpl(reflectionInspector);
+        return new DataLoadCoordinatorImpl(reflectionInspector, queryParamValuesManager);
     }
 
     @Override

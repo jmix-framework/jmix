@@ -100,7 +100,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF,
                             typeParameter = "T", required = true),
                     @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValueRef = "parent:resizable"),
                     @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "textAlign", type = StudioPropertyType.ENUMERATION,
@@ -249,7 +249,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "flewGrow", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
@@ -276,6 +276,7 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.component.shared.Tooltip",
             icon = "io/jmix/flowui/kit/meta/icon/element/tooltip.svg",
             xmlElement = "tooltip",
+            unlimitedCount = false,
             target = {"io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
@@ -372,6 +373,7 @@ public interface StudioElements {
             name = "FormItem",
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.FormItem",
             xmlElement = "formItem",
+            target = {"com.vaadin.flow.component.formlayout.FormLayout"},
             possibleChildren = "com.vaadin.flow.component.Component",
             maxCountOfChildren = 1,
             visible = true,
@@ -421,8 +423,6 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -441,8 +441,6 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
@@ -473,8 +471,6 @@ public interface StudioElements {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -484,8 +480,6 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
@@ -646,7 +640,8 @@ public interface StudioElements {
             target = {"com.vaadin.flow.component.shared.HasPrefix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
             possibleChildren = {"com.vaadin.flow.component.Component"},
-            maxCountOfChildren = 1
+            maxCountOfChildren = 1,
+            unlimitedCount = false
     )
     void prefix();
 
@@ -656,7 +651,19 @@ public interface StudioElements {
             target = {"com.vaadin.flow.component.shared.HasSuffix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
             possibleChildren = {"com.vaadin.flow.component.Component"},
-            maxCountOfChildren = 1
+            maxCountOfChildren = 1,
+            unlimitedCount = false
     )
     void suffix();
+
+    @StudioElement(
+            name = "Component",
+            xmlElement = "component",
+            target = "io.jmix.flowui.facet.SettingsFacet",
+            properties = {
+                @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
+                @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN)
+            }
+    )
+    void settingsFacetComponent();
 }

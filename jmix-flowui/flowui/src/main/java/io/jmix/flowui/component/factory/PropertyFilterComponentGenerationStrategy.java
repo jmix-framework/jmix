@@ -38,7 +38,6 @@ import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
-
 import org.springframework.lang.Nullable;
 
 @org.springframework.stereotype.Component("flowui_PropertyFilterComponentGenerationStrategy")
@@ -89,7 +88,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         if (pfContext.getOperation().getType() == Operation.Type.UNARY) {
             return createUnaryField(context);
         } else if (pfContext.getOperation().getType() == Operation.Type.LIST) {
-            return createCollectionField(context);
+            return createCollectionField(context, mpp);
         } else if (pfContext.getOperation().getType() == Operation.Type.INTERVAL) {
             return createIntervalField(context, mpp);
         }

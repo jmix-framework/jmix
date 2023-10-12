@@ -93,6 +93,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected static final String FILTER_CLASS_NAME = "jmix-generic-filter";
     protected static final String FILTER_CONTENT_WRAPPER_CLASS_NAME = FILTER_CLASS_NAME + "-content-wrapper";
     protected static final String FILTER_CONTROLS_LAYOUT_CLASS_NAME = FILTER_CLASS_NAME + "-controls-layout";
+    protected static final String GLOBAL_CONFIGURATION_NAME_POSTFIX = " *";
 
     protected ApplicationContext applicationContext;
     protected CurrentAuthentication currentAuthentication;
@@ -106,6 +107,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected boolean autoApply;
     protected String applyShortcut;
+    protected int propertyHierarchyDepth;
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
     protected Predicate<MetaPropertyPath> propertyFiltersPredicate;
@@ -153,6 +155,7 @@ public class GenericFilter extends Composite<JmixDetails>
         UiComponentProperties uiComponentProperties = applicationContext.getBean(UiComponentProperties.class);
         this.autoApply = uiComponentProperties.isFilterAutoApply();
         this.applyShortcut = uiComponentProperties.getFilterApplyShortcut();
+        this.propertyHierarchyDepth = uiComponentProperties.getFilterPropertiesHierarchyDepth();
 
         initDefaultResponsiveSteps();
         initEmptyConfiguration();
@@ -756,6 +759,9 @@ public class GenericFilter extends Composite<JmixDetails>
                 caption = configuration.getId();
             }
         }
+        if (configuration.isAvailableForAllUsers()) {
+            caption = caption + GLOBAL_CONFIGURATION_NAME_POSTFIX;
+        }
 
         return caption;
     }
@@ -994,6 +1000,29 @@ public class GenericFilter extends Composite<JmixDetails>
                 getDataLoader().removeParameter(singleFilterComponent.getParameterName());
             }
         }
+    }
+
+    /**
+     * @return hierarchy depth of entity properties available for filtering.
+     * @see #setPropertyHierarchyDepth(int)
+     */
+    public int getPropertyHierarchyDepth() {
+        return propertyHierarchyDepth;
+    }
+
+    /**
+     * Sets hierarchy depth of entity properties available for filtering.
+     * This property is used in the 'Add Condition' editor of the filter. For example, if the depth value is 2,
+     * then you can select an entity attribute {@code contractor.city.country},
+     * if the value is 3, then {@code contractor.city.country.name}.
+     *
+     * @param propertyHierarchyDepth hierarchy depth of entity properties available for filtering
+     */
+    public void setPropertyHierarchyDepth(int propertyHierarchyDepth) {
+        if (propertyHierarchyDepth <= 0) {
+            throw new IllegalArgumentException("Property hierarchy depth value must be greater than 0");
+        }
+        this.propertyHierarchyDepth = propertyHierarchyDepth;
     }
 
     /**

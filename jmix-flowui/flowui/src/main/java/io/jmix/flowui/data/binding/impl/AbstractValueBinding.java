@@ -32,27 +32,28 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
-import io.jmix.flowui.data.binding.SuspendableBinding;
-import io.jmix.flowui.data.binding.ValueBinding;
-import io.jmix.flowui.data.BindingState;
-import io.jmix.flowui.data.DataUnit.StateChangeEvent;
-import io.jmix.flowui.data.EntityValueSource;
-import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.validation.bean.BeanPropertyValidator;
+import io.jmix.flowui.data.BindingState;
+import io.jmix.flowui.data.DataUnit.StateChangeEvent;
+import io.jmix.flowui.data.EntityValueSource;
+import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.data.binding.SuspendableBinding;
+import io.jmix.flowui.data.binding.ValueBinding;
 import io.jmix.flowui.data.value.ContainerValueSource;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.Nested;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-
-import org.springframework.lang.Nullable;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.metadata.BeanDescriptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -186,7 +187,7 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
                 }
 
                 if (!attributeContext.canView()) {
-                    ((Component) component).setVisible(false);
+                    ComponentUtils.setVisible((Component) component, false);
                 }
 
                 resetRequiredIfAttributeFiltered(component, entityValueSource, metaPropertyPath);

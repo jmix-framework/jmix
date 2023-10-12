@@ -80,7 +80,6 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -90,7 +89,6 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])

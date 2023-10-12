@@ -24,7 +24,7 @@ import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-@Component("ui_TimerFacetProvider")
+@Component("flowui_TimerFacetProvider")
 public class TimerFacetProvider implements FacetProvider<Timer> {
 
     protected LoaderSupport loaderSupport;

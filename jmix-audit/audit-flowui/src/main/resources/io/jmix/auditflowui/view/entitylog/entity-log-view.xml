@@ -137,19 +137,19 @@
                     <responsiveStep minWidth="0" columns="1"/>
                     <responsiveStep minWidth="80em" columns="2"/>
                 </responsiveSteps>
-                <dataGrid id="entityLogTable" dataContainer="entityLogDc">
-                    <columns>
-                        <column property="eventTs" resizable="true"/>
-                        <column property="username" resizable="true"/>
-                        <column property="type" resizable="true"/>
-                        <column property="entityInstanceName" resizable="true"/>
+                <dataGrid id="entityLogTable" dataContainer="entityLogDc" columnReorderingAllowed="true">
+                    <columns resizable="true">
+                        <column property="eventTs"/>
+                        <column property="username"/>
+                        <column property="type"/>
+                        <column property="entityInstanceName"/>
                     </columns>
                 </dataGrid>
 
-                <dataGrid id="entityLogAttrTable" width="100%" dataContainer="entityLogAttrDc">
-                    <columns>
-                        <column property="valueId" resizable="true"/>
-                        <column property="oldValueId" resizable="true"/>
+                <dataGrid id="entityLogAttrTable" width="100%" dataContainer="entityLogAttrDc" columnReorderingAllowed="true">
+                    <columns resizable="true">
+                        <column property="valueId"/>
+                        <column property="oldValueId"/>
                     </columns>
                 </dataGrid>
 
@@ -180,7 +180,8 @@
                                      acceptedFileTypes=".json,.zip"/>
                     <simplePagination id="paginationLoggedEntity" dataLoader="loggedEntityDl"/>
                 </hbox>
-                <dataGrid id="loggedEntityTable" minHeight="20em" dataContainer="loggedEntityDc">
+                <dataGrid id="loggedEntityTable" minHeight="20em" dataContainer="loggedEntityDc"
+                          columnReorderingAllowed="true">
                     <actions>
                         <action id="create" type="list_create"/>
                         <action id="edit" type="list_edit"/>
@@ -188,7 +189,7 @@
                         <action id="exportJSON" text="msg://actions.exportJSON"/>
                         <action id="exportZIP" text="msg://actions.exportZIP"/>
                     </actions>
-                    <columns>
+                    <columns resizable="true">
                         <column property="name"/>
                         <column property="auto"/>
                         <column property="manual"/>

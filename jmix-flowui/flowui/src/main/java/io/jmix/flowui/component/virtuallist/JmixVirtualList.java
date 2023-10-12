@@ -18,7 +18,6 @@ package io.jmix.flowui.component.virtuallist;
 
 import com.vaadin.flow.component.virtuallist.VirtualList;
 import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.InMemoryDataProvider;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.EnumClass;
@@ -28,7 +27,6 @@ import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.data.items.EnumDataProvider;
-import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -87,19 +85,6 @@ public class JmixVirtualList<V> extends VirtualList<V> implements SupportsDataPr
         }
 
         setDataProvider(new EnumDataProvider<>(itemsEnum));
-    }
-
-    /**
-     * Sets an in-memory data provider for the VirtualList to use
-     *
-     * @param inMemoryDataProvider InMemoryDataProvider to use, not <code>null</code>
-     */
-    public void setDataProvider(InMemoryDataProvider<V> inMemoryDataProvider) {
-        Preconditions.checkNotNullArgument(inMemoryDataProvider);
-
-        // Override Vaadin implementation, so we will have access to the original DataProvider
-        InMemoryDataProviderWrapper<V> wrapper = new InMemoryDataProviderWrapper<>(inMemoryDataProvider);
-        setDataProvider(wrapper);
     }
 
     @Override

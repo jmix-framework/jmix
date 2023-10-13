@@ -244,6 +244,8 @@ dependencies {
 
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
 
+        api 'org.liquibase:liquibase-core:4.24.0'
+
         def eclipselinkOriginalVersion = '4.0.1'
         def eclipselinkVersion = '4.0.1-15-jmix'
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"

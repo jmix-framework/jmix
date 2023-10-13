@@ -3783,15 +3783,10 @@
                     <xs:element name="content" minOccurs="0">
                         <xs:complexType mixed="true"/>
                     </xs:element>
-
-                    <xs:element name="file" minOccurs="0">
-                        <xs:complexType>
-                            <xs:attribute name="path" type="resourceString"/>
-                        </xs:complexType>
-                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="content" type="resourceString"/>
+                <xs:attribute name="file" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>

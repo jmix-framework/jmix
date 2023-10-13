@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,19 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Allows to sort the list of {@link ViewControllersConfiguration} in the same order as Jmix modules containing the screens
+ * Allows to sort the list of {@link ActionsConfiguration} in the same order as Jmix modules containing the actions
  * have been sorted.
  * @see AbstractBasePackageConfigurationSorter
  */
-@Component("flowui_ViewControllersConfigurationSorter")
-public class ViewControllersConfigurationSorter
-        extends AbstractBasePackageConfigurationSorter<ViewControllersConfiguration> {
+@Component("flowui_ActionsConfigurationSorter")
+public class ActionsConfigurationSorter extends AbstractBasePackageConfigurationSorter<ActionsConfiguration> {
 
-    public ViewControllersConfigurationSorter(JmixModules jmixModules) {
+    public ActionsConfigurationSorter(JmixModules jmixModules) {
         super(jmixModules);
     }
 
     @Override
-    protected List<String> getBasePackages(ViewControllersConfiguration configuration) {
+    protected List<String> getBasePackages(ActionsConfiguration configuration) {
         return configuration.getBasePackages();
     }
 }

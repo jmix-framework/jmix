@@ -2517,37 +2517,67 @@
     </xs:group>
 
     <xs:complexType name="baseComboBoxItemsQueryType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="searchStringFormat" type="xs:string"/>
-                <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
-            </xs:extension>
-        </xs:simpleContent>
+        <xs:sequence>
+            <xs:element name="query"/>
+        </xs:sequence>
+        <xs:attribute name="searchStringFormat" type="xs:string"/>
+        <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="comboBoxItemsQueryType">
-        <xs:simpleContent>
+        <xs:complexContent>
             <xs:extension base="baseComboBoxItemsQueryType"/>
-        </xs:simpleContent>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="entityComboBoxItemsQueryType">
-        <xs:simpleContent>
+        <xs:complexContent>
             <xs:extension base="baseComboBoxItemsQueryType">
+                <xs:sequence>
+                    <xs:element name="fetchPlan" type="itemsQueryFetchPlanType" minOccurs="0"/>
+                </xs:sequence>
                 <xs:attribute name="class" type="xs:string" use="required"/>
                 <xs:attribute name="fetchPlan" type="xs:string"/>
             </xs:extension>
-        </xs:simpleContent>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="multiSelectComboBoxItemsQueryType">
-        <xs:simpleContent>
+        <xs:complexContent>
             <xs:extension base="baseComboBoxItemsQueryType">
+                <xs:sequence>
+                    <xs:element name="fetchPlan" type="itemsQueryFetchPlanType" minOccurs="0"/>
+                </xs:sequence>
                 <xs:attribute name="class" type="xs:string"/>
                 <xs:attribute name="fetchPlan" type="xs:string"/>
             </xs:extension>
-        </xs:simpleContent>
+        </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="itemsQueryFetchPlanType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
+        </xs:sequence>
+        <xs:attribute name="extends"/>
+    </xs:complexType>
+
+    <xs:complexType name="itemsQueryFetchPlanPropertyType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
+        </xs:sequence>
+        <xs:attribute name="name"/>
+        <xs:attribute name="fetchPlan"/>
+        <xs:attribute name="fetch" type="itemsQueryFetchPlanFetchMode"/>
+    </xs:complexType>
+
+    <xs:simpleType name="itemsQueryFetchPlanFetchMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="UNDEFINED"/>
+            <xs:enumeration value="JOIN"/>
+            <xs:enumeration value="BATCH"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="gridAggregationType">
         <xs:choice minOccurs="0">

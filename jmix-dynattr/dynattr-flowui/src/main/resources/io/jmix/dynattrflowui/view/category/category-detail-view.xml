@@ -41,7 +41,7 @@
     <layout spacing="true" expand="tabSheet">
         <tabSheet id="tabSheet" height="100%" width="100%">
             <tab id="mainTab" label="msg://mainTab.title">
-                <vbox margin="false">
+                <vbox padding="false" margin="false">
                     <formLayout id="form" dataContainer="categoryDc">
                         <responsiveSteps>
                             <responsiveStep minWidth="0" columns="1"/>
@@ -84,19 +84,10 @@
                 </vbox>
             </tab>
             <tab id="localizationTab" label="msg://localizationTab.title" visible="false">
-                <vbox id="localizationTabContainer">
+                <vbox id="localizationTabContainer" padding="false" margin="false">
                     <formLayout dataContainer="categoryDc">
                         <textField id="localizedNameField" property="name" readOnly="true"/>
                     </formLayout>
-                </vbox>
-            </tab>
-            <tab id="attributesLocationTab" label="msg://attributesLocationTab.title" visible="false">
-                <vbox padding="false" margin="false">
-                    <hbox padding="false" margin="false">
-                        <comboBox id="columnsCountLookupField"
-                                  label="msg://columnsCountLookupField.title" width="175px"/>
-                    </hbox>
-                    <hbox id="attributesLocationTabContainer" padding="false" margin="false"/>
                 </vbox>
             </tab>
         </tabSheet>

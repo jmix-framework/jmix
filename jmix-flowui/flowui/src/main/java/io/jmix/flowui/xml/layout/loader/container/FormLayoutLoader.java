@@ -74,7 +74,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         loadSubComponents();
     }
 
-    private void loadData(FormLayout resultComponent, Element element) {
+    protected void loadData(FormLayout resultComponent, Element element) {
         String containerId = element.attributeValue("dataContainer");
         if (!Strings.isNullOrEmpty(containerId)) {
 

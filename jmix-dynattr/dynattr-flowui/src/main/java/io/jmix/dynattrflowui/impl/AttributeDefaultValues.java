@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 @Component("dynat_AttributeDefaultValues")
 public class AttributeDefaultValues {
 
-    // todo is in Jmix ok to use constructor injections + final modifier
     protected final Metadata metadata;
     protected final DynAttrMetadata dynAttrMetadata;
     protected final TimeSource timeSource;

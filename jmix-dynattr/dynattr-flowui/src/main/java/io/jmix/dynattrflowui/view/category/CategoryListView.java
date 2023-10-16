@@ -18,14 +18,11 @@ package io.jmix.dynattrflowui.view.category;
 
 import com.google.common.io.Files;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.flowui.Notifications;
@@ -41,7 +38,6 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.InstanceLoader;
 import io.jmix.flowui.view.*;
-import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,11 +66,7 @@ public class CategoryListView extends StandardListView<Category> {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected UiComponents uiComponents;
-    @Autowired
     protected Metadata metadata;
-    @Autowired
-    protected MessageTools messageTools;
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;
     @Autowired

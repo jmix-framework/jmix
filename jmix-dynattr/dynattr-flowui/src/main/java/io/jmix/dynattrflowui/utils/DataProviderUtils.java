@@ -26,8 +26,15 @@ public final class DataProviderUtils {
     private DataProviderUtils() {}
 
 
+    /**
+     * Creates a new DataProvider from list for ui component that represend his own dta from data provider interface
+     * @param items source collection that contains items to show
+     * @return lazy data provider with pagination support for ui component
+     * @see com.vaadin.flow.data.provider.HasDataView
+     * @see com.vaadin.flow.data.provider.DataProvider
+     */
     @SuppressWarnings({"rawtypes"})
-    public static DataProvider dataProvider(List<?> items) {
+    public static DataProvider createCallbackDataProvider(List<?> items) {
         return new CallbackDataProvider<>(e -> {
             return (Stream) items.stream()
                     .limit(e.getLimit())

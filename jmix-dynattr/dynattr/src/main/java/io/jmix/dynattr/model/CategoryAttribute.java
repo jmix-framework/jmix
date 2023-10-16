@@ -30,7 +30,6 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.impl.CategoryAttributeConfigurationConvertor;
-import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -39,6 +38,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

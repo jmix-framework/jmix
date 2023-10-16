@@ -47,83 +47,88 @@
     <layout expand="editActions" spacing="true">
         <tabSheet id="tabSheet" width="100%" height="90%">
             <tab id="mainTab" label="msg://mainTab.title">
-                <hbox id="attributeBox" width="100%" spacing="true">
-                    <formLayout id="attributeForm" dataContainer="categoryAttributeDc" height="90%" width="100%">
-                        <textField id="nameField" property="name" required="true"
-                                   requiredMessage="msg://nameField.required"/>
-                        <textField id="codeField" property="code" required="true"
-                                   requiredMessage="msg://codeField.required"/>
-                        <textArea id="descriptionField" property="description" maxLength="1000"/>
-                        <comboBox id="dataTypeField" property="dataType" required="true"
-                                  requiredMessage="msg://dataTypeField.required"/>
+                <vbox margin="false" padding="false">
+                    <hbox id="attributeBox" width="100%" spacing="true">
+                        <formLayout id="attributeForm" dataContainer="categoryAttributeDc" height="90%" width="100%">
+                            <textField id="nameField" property="name" required="true"
+                                       requiredMessage="msg://nameField.required"/>
+                            <textField id="codeField" property="code" required="true"
+                                       requiredMessage="msg://codeField.required"/>
+                            <comboBox id="dataTypeField" property="dataType" required="true"
+                                      requiredMessage="msg://dataTypeField.required"/>
+                            <textArea id="descriptionField" property="description" minHeight="7em"/>
+                        </formLayout>
+                        <formLayout id="optionalAttributeForm" dataContainer="categoryAttributeDc" height="90%"
+                                    width="100%"
+                                    visible="false">
+
+                            <comboBox id="entityClassField" required="true"
+                                      label="msg://io.jmix.dynattr.model/CategoryAttribute.entityClass"
+                                      requiredMessage="msg://entityClassField.required"/>
+                            <comboBox id="screenField" label="msg://io.jmix.dynattr.model/CategoryAttribute.screen"
+                                      required="true"
+                                      requiredMessage="msg://screenField.required"/>
+                            <textField id="widthField" property="width">
+                                <validators>
+                                    <regexp regexp="^(-?\d+(?:\.\d+)?)(%|px)?$"
+                                            message="msg://widthField.validationMessage"/>
+                                </validators>
+                            </textField>
+                            <textField id="rowsCountField" property="rowsCount">
+                                <validators>
+                                    <min value="1" message="msg://rowsCountField.validationMessage"/>
+                                    <max value="40" message="msg://rowsCountField.validationMessage"/>
+                                </validators>
+                            </textField>
+                            <valuePicker id="defaultEntityIdField"
+                                         dataContainer="categoryAttributeDc"
+                                         property="defaultEntity"
+                                         label="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">
+                                <actions>
+                                    <action id="lookup" icon="ELLIPSIS_DOTS_H"/>
+                                    <action id="clear" type="value_clear" icon="BAN"/>
+                                </actions>
+                            </valuePicker>
+                            <hbox id="enumerationBox" expand="enumerationField" margin="false" classNames="items-end">
+                                <textField id="enumerationField"
+                                           label="msg://io.jmix.dynattr.model/CategoryAttribute.enumeration"
+                                           dataContainer="categoryAttributeDc"
+                                           property="enumeration" required="true"
+                                           requiredMessage="msg://enumerationField.required" readOnly="true"/>
+                                <button id="editEnumerationBtn" text="msg:///actions.Edit"/>
+                            </hbox>
+                            <textField id="defaultStringField" property="defaultString"/>
+                            <textField id="defaultIntField" property="defaultInt"/>
+                            <textField id="defaultDoubleField" property="defaultDouble"/>
+                            <textField id="defaultDecimalField" property="defaultDecimal"/>
+                            <comboBox id="defaultBooleanField" property="defaultBoolean"/>
+                            <dateTimePicker id="defaultDateField" property="defaultDate"/>
+                            <datePicker id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
+                            <textField id="numberFormatPatternField" property="configuration.numberFormatPattern"/>
+                            <textField id="minIntField" property="configuration.minInt"/>
+                            <textField id="maxIntField" property="configuration.maxInt"/>
+                            <textField id="minDoubleField" property="configuration.minDouble"/>
+                            <textField id="maxDoubleField" property="configuration.maxDouble"/>
+                            <textField id="minDecimalField" property="configuration.minDecimal"/>
+                            <textField id="maxDecimalField" property="configuration.maxDecimal"/>
+                            <checkbox id="defaultDateIsCurrentField" property="defaultDateIsCurrent"/>
+                            <checkbox id="lookupField" property="lookup" visible="false">
+                                <tooltip text="msg://lookupField.contextHelp"/>
+                            </checkbox>
+                            <checkbox id="isCollectionField" property="isCollection" visible="false"/>
+                        </formLayout>
+                    </hbox>
+                    <formLayout id="validationForm" dataContainer="categoryAttributeDc" height="90%" width="100%">
                         <codeEditor id="validationScriptField" property="configuration.validatorGroovyScript"
                                     mode="GROOVY"
                                     showLineNumbers="true"
                                     highlightActiveLine="false"
+                                    colspan="2"
                                     showGutter="true"
                                     highlightGutterLine="false"
-                                    height="12em"/>
+                                    height="9em"/>
                     </formLayout>
-                    <formLayout id="optionalAttributeForm" dataContainer="categoryAttributeDc" height="90%"
-                                width="100%"
-                                visible="false">
-
-                        <comboBox id="entityClassField" required="true"
-                                  label="msg://io.jmix.dynattr.model/CategoryAttribute.entityClass"
-                                  requiredMessage="msg://entityClassField.required"/>
-                        <comboBox id="screenField" label="msg://io.jmix.dynattr.model/CategoryAttribute.screen"
-                                  required="true"
-                                  requiredMessage="msg://screenField.required"/>
-                        <textField id="widthField" property="width">
-                            <validators>
-                                <regexp regexp="^(-?\d+(?:\.\d+)?)(%|px)?$"
-                                        message="msg://widthField.validationMessage"/>
-                            </validators>
-                        </textField>
-                        <textField id="rowsCountField" property="rowsCount">
-                            <validators>
-                                <min value="1" message="msg://rowsCountField.validationMessage"/>
-                                <max value="40" message="msg://rowsCountField.validationMessage"/>
-                            </validators>
-                        </textField>
-                        <valuePicker id="defaultEntityIdField"
-                                     dataContainer="categoryAttributeDc"
-                                     property="defaultEntity"
-                                     label="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">
-                            <actions>
-                                <action id="lookup" icon="ELLIPSIS_DOTS_H"/>
-                                <action id="clear" type="value_clear" icon="BAN"/>
-                            </actions>
-                        </valuePicker>
-                        <hbox id="enumerationBox" expand="enumerationField" margin="false" classNames="items-end">
-                            <textField id="enumerationField"
-                                       label="msg://io.jmix.dynattr.model/CategoryAttribute.enumeration"
-                                       dataContainer="categoryAttributeDc"
-                                       property="enumeration" required="true"
-                                       requiredMessage="msg://enumerationField.required" readOnly="true"/>
-                            <button id="editEnumerationBtn" text="msg:///actions.Edit"/>
-                        </hbox>
-                        <textField id="defaultStringField" property="defaultString"/>
-                        <textField id="defaultIntField" property="defaultInt"/>
-                        <textField id="defaultDoubleField" property="defaultDouble"/>
-                        <textField id="defaultDecimalField" property="defaultDecimal"/>
-                        <comboBox id="defaultBooleanField" property="defaultBoolean"/>
-                        <dateTimePicker id="defaultDateField" property="defaultDate"/>
-                        <datePicker id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
-                        <textField id="numberFormatPatternField" property="configuration.numberFormatPattern"/>
-                        <textField id="minIntField" property="configuration.minInt"/>
-                        <textField id="maxIntField" property="configuration.maxInt"/>
-                        <textField id="minDoubleField" property="configuration.minDouble"/>
-                        <textField id="maxDoubleField" property="configuration.maxDouble"/>
-                        <textField id="minDecimalField" property="configuration.minDecimal"/>
-                        <textField id="maxDecimalField" property="configuration.maxDecimal"/>
-                        <checkbox id="defaultDateIsCurrentField" property="defaultDateIsCurrent"/>
-                        <checkbox id="lookupField" property="lookup" visible="false">
-                            <tooltip text="msg://lookupField.contextHelp"/>
-                        </checkbox>
-                        <checkbox id="isCollectionField" property="isCollection" visible="false"/>
-                    </formLayout>
-                </hbox>
+                </vbox>
             </tab>
             <tab id="calculatedValuesAndOptionsTab" label="msg://calculatedValuesAndOptionsTab.title">
                 <formLayout id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc" width="100%">
@@ -141,30 +146,36 @@
                                 highlightGutterLine="false"
                                 highlightActiveLine="false"
                                 mode="GROOVY"
+                                height="12em"
+                                colspan="2"
                                 showGutter="true"/>
                     <codeEditor id="joinClauseField" property="joinClause"
                                 showLineNumbers="true"
                                 highlightGutterLine="false"
                                 highlightActiveLine="false"
+                                colspan="2"
                                 showGutter="true"
-                                height="70px"/>
+                                height="12em"/>
                     <codeEditor id="whereClauseField" property="whereClause"
                                 showLineNumbers="true"
                                 highlightGutterLine="false"
                                 highlightActiveLine="false"
+                                colspan="2"
                                 showGutter="true"
-                                height="70px"/>
+                                height="12em"/>
                     <codeEditor id="recalculationScriptField" property="configuration.recalculationScript"
                                 showLineNumbers="true"
                                 highlightGutterLine="false"
                                 highlightActiveLine="false"
+                                colspan="2"
                                 showGutter="true"
-                                mode="GROOVY" height="10em"/>
+                                mode="GROOVY"
+                                height="12em"/>
                 </formLayout>
             </tab>
             <tab id="localizationTab" label="msg://localizationTab.title"
                  visible="false">
-                <vbox id="localizationContainer">
+                <vbox id="localizationContainer" padding="false" margin="false">
                     <formLayout id="categoryAttrLocalizationForm" dataContainer="categoryAttributeDc" width="100%">
                         <textField id="localizedNameField" property="name" readOnly="true"/>
                         <textField id="localizedDescriptionField" property="description" readOnly="true"/>
@@ -172,7 +183,7 @@
                 </vbox>
             </tab>
             <tab id="visibilityTab" label="msg://visibilityTab.title">
-                <vbox margin="false">
+                <vbox padding="false" margin="false">
                     <h3 text="msg://targetViews"/>
                     <html content="msg://visibilityTab.help"/>
                     <hbox classNames="buttons-panel">

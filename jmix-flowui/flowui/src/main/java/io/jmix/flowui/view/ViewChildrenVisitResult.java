@@ -17,35 +17,58 @@
 package io.jmix.flowui.view;
 
 import com.vaadin.flow.component.Component;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
+/**
+ * ViewChildrenVisitResult data model class that stores results from walk through comonents tree from view
+ * @see io.jmix.flowui.component.UiComponentUtils
+ */
 public class ViewChildrenVisitResult {
     private View<?> view;
     @Nullable
     private String componentId;
     private Component component;
 
+    /**
+     * @return target view, parent that contains found component result
+     */
     public View<?> getView() {
         return view;
     }
 
+    /**
+     * @param view set view to store target view, parent that contains found component result
+     */
     public void setView(View<?> view) {
         this.view = view;
     }
 
+    /**
+     * Returns found component id result inside tree elements in target view, also can be null because elements may not have own id
+     * @return found component id result inside tree elements in target view
+     */
+    @Nullable
     public String getComponentId() {
         return componentId;
     }
 
+    /**
+     * @param componentId component id that was found inside view
+     */
     public void setComponentId(@Nullable String componentId) {
         this.componentId = componentId;
     }
 
-    @Nullable
+    /**
+     * @return found component result inside tree elements in target view, always not null
+     */
     public Component getComponent() {
         return component;
     }
 
+    /**
+     * @param component component that was found inside view
+     */
     public void setComponent(Component component) {
         this.component = component;
     }

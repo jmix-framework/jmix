@@ -24,6 +24,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -37,7 +38,6 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
@@ -49,6 +49,7 @@ import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
+import io.jmix.dynattrflowui.utils.DynAttrUiHelper;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.*;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
@@ -200,9 +201,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected DataComponents dataComponents;
     @Autowired
     protected MsgBundleTools msgBundleTools;
-    // @Autowired protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected DynAttrUiHelper dynAttrUiHelper;
 
     @ViewComponent
     protected JmixCheckbox lookupField;
@@ -282,6 +284,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
         initDependsOnAttributesField();
+
 
         setupNumberFormat();
         if (!isRefreshing) {
@@ -417,6 +420,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     }
 
     protected JmixComboBox<String> visibilityTableComponentColumnComponentGenerator() {
+        //noinspection unchecked
         JmixComboBox<String> comboBox = uiComponents.create(JmixComboBox.class);
         comboBox.setMinWidth("25em");
         comboBox.setAllowCustomValue(true);
@@ -453,22 +457,16 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         ComponentUtils.setItemsMap(defaultBooleanField, getBooleanOptions());
         ComponentUtils.setItemsMap(dataTypeField, getDataTypeOptions());
         ComponentUtils.setItemsMap(entityClassField, getEntityOptions());
-        validationScriptField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "validationScriptHelp"));
+
+        validationScriptField.setHelperComponent(
+                dynAttrUiHelper.createHelperButton(
+                        messages.getMessage(CategoryAttributesDetailView.class, "validationScriptHelp")));
     }
 
     protected void initCalculatedValuesAndOptionsForm() {
-        recalculationScriptField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "recalculationScriptHelp"));
-
-//    todo https://github.com/jmix-framework/jmix/issues/1678    whereClauseField.setSuggester((source, text, cursorPosition) -> requestHint(whereClauseField, cursorPosition));
-//        joinClauseField.setSuggester((source, text, cursorPosition) -> requestHint(joinClauseField, cursorPosition));
-    }
-
-    protected void showMessageDialog(String caption, String message) {
-        dialogs.createMessageDialog()
-                .withText(caption)
-                .withContent(new Html(message))
-                .withModal(false)
-                .open();
+        recalculationScriptField.setHelperComponent(
+                dynAttrUiHelper.createHelperButton(
+                        messages.getMessage(CategoryAttributesDetailView.class, "recalculationScriptHelp")));
     }
 
     protected void loadTargetViews() {
@@ -537,7 +535,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         MultiValueSelectAction<CategoryAttribute> selectAction =
                 (MultiValueSelectAction<CategoryAttribute>) dependsOnAttributesField.getAction("select");
         Assert.notNull(selectAction, "select action not found");
-        selectAction.setItems(DataProviderUtils.dataProvider(getAttributesOptions()));
+        selectAction.setItems(DataProviderUtils.createCallbackDataProvider(getAttributesOptions()));
         dependsOnAttributesField.addValueChangeListener(e -> {
             dependsOnAttributesField.setRequired(false);
             if (getEditedEntity().getConfiguration() != null) {
@@ -644,16 +642,24 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         optionsLoaderScriptField.setVisible(scriptLoaderVisible);
 
         if (optionsType == GROOVY) {
-            optionsLoaderScriptField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderGroovyScriptHelp"));
+            optionsLoaderScriptField.setHelperComponent(
+                    dynAttrUiHelper.createHelperButton(
+                            messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderGroovyScriptHelp")));
             optionsLoaderScriptField.setMode(CodeEditorMode.GROOVY);
         } else if (optionsType == SQL) {
-            optionsLoaderScriptField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderSqlScriptHelp"));
+            optionsLoaderScriptField.setHelperComponent(
+                    dynAttrUiHelper.createHelperButton(
+                            messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderSqlScriptHelp")));
             optionsLoaderScriptField.setMode(CodeEditorMode.SQL);
         } else if (optionsType == JPQL) {
-            joinClauseField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "joinClauseHelp"));
-            whereClauseField.setTitle(messages.getMessage(CategoryAttributesDetailView.class, "whereClauseHelp"));
+            joinClauseField.setHelperComponent(
+                    dynAttrUiHelper.createHelperButton(
+                            messages.getMessage(CategoryAttributesDetailView.class, "joinClauseHelp")));
+            whereClauseField.setHelperComponent(
+                    dynAttrUiHelper.createHelperButton(
+                            messages.getMessage(CategoryAttributesDetailView.class, "whereClauseHelp")));
         } else {
-            optionsLoaderScriptField.setTitle("");
+            optionsLoaderScriptField.setHelperComponent(new Div());
             optionsLoaderScriptField.setMode(CodeEditorMode.TEXT);
         }
 
@@ -870,48 +876,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
         return optionsList;
     }
-
-//  todo hints  protected List<QuerySuggestions> requestHint(CodeEditor sender, int senderCursorPosition) {
-//        String joinStr = joinClauseField.getValue();
-//        String whereStr = whereClauseField.getValue();
-//
-//        // CAUTION: the magic entity name!  The length is three character to match "{E}" length in query
-//        String entityAlias = "a39";
-//
-//        int queryPosition = -1;
-//        Class<?> javaClassForEntity = getEditedEntity().getJavaType();
-//        if (javaClassForEntity == null) {
-//            return new ArrayList<>();
-//        }
-//
-//        String queryStart = format("select %s from %s %s ", entityAlias, metadata.getClass(javaClassForEntity), entityAlias);
-//
-//        StringBuilder queryBuilder = new StringBuilder(queryStart);
-//        if (StringUtils.isNotEmpty(joinStr)) {
-//            if (sender == joinClauseField) {
-//                queryPosition = queryBuilder.length() + senderCursorPosition - 1;
-//            }
-//            if (!StringUtils.containsIgnoreCase(joinStr, "join") && !StringUtils.contains(joinStr, ",")) {
-//                queryBuilder.append("join ").append(joinStr);
-//                queryPosition += "join ".length();
-//            } else {
-//                queryBuilder.append(joinStr);
-//            }
-//        }
-//        if (StringUtils.isNotEmpty(whereStr)) {
-//            if (sender == whereClauseField) {
-//                queryPosition = queryBuilder.length() + JPQL_WHERE.length() + senderCursorPosition;
-//            }
-//            queryBuilder.append(JPQL_WHERE)
-//                    .append(" ")
-//                    .append(whereStr);
-//        }
-//        String query = queryBuilder.toString();
-//        query = query.replace("{E}", entityAlias);
-//
-////   todo     return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
-//        return new ArrayList<>();
-//    }
 
     @Subscribe
     protected void onValidation(ValidationEvent event) {

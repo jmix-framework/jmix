@@ -242,7 +242,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     private void setEnumValueSource(JmixMultiSelectComboBoxPicker<?> valuesPicker, AttributeDefinition attribute) {
         Map values = getLocalizedEnumerationMap(attribute);
         valuesPicker.setItemLabelGenerator(e -> values.get(e).toString());
-        valuesPicker.setItems(DataProviderUtils.dataProvider(values.keySet().stream().toList()));
+        valuesPicker.setItems(DataProviderUtils.createCallbackDataProvider(values.keySet().stream().toList()));
     }
 
     private Component createNonLookupCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -273,7 +273,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         Object entity = container.getItemOrNull();
         List<?> options = optionsLoader.loadOptions(entity, attribute);
         //noinspection unchecked
-        valuesPicker.setItems(DataProviderUtils.dataProvider(options));
+        valuesPicker.setItems(DataProviderUtils.createCallbackDataProvider(options));
     }
 
     protected Component createStringField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -464,7 +464,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 selectAction.setJavaClass(String.class);
                 Map values = getLocalizedEnumerationMap(attribute);
                 selectAction.setItemLabelGenerator(item -> values.get(item).toString());
-                selectAction.setItems(DataProviderUtils.dataProvider(new ArrayList<>(values.keySet())));
+                selectAction.setItems(DataProviderUtils.createCallbackDataProvider(new ArrayList<>(values.keySet())));
             }
             case DOUBLE -> selectAction.setJavaClass(Double.class);
             case DECIMAL -> selectAction.setJavaClass(BigDecimal.class);
@@ -504,13 +504,13 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         if (entity != null) {
             List options = optionsLoader.loadOptions(entity, attribute);
             ((MultiValueSelectAction) valuesPicker.getAction(MultiValueSelectAction.ID))
-                    .setItems(DataProviderUtils.dataProvider(options));
+                    .setItems(DataProviderUtils.createCallbackDataProvider(options));
         }
         container.addItemChangeListener(e -> {
             List options = optionsLoader.loadOptions(e.getItem(), attribute);
 
             ((MultiValueSelectAction) valuesPicker.getAction(MultiValueSelectAction.ID))
-                    .setItems(DataProviderUtils.dataProvider(options));
+                    .setItems(DataProviderUtils.createCallbackDataProvider(options));
         });
 
         List<String> dependsOnAttributeCodes = attribute.getConfiguration().getDependsOnAttributeCodes();
@@ -524,7 +524,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 if (codesWithMarkers.contains(e.getProperty())) {
                     List options = optionsLoader.loadOptions(e.getItem(), attribute);
                     ((MultiValueSelectAction) valuesPicker.getAction(MultiValueSelectAction.ID))
-                            .setItems(DataProviderUtils.dataProvider(options));
+                            .setItems(DataProviderUtils.createCallbackDataProvider(options));
                     if (!options.contains(valuesPicker.getValue())) {
                         valuesPicker.clear();
                     }

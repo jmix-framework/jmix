@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -69,7 +66,16 @@ public class QuartzService {
                             triggerModel.setTriggerName(trigger.getKey().getName());
                             triggerModel.setTriggerGroup(trigger.getKey().getGroup());
                             triggerModel.setScheduleType(trigger instanceof SimpleTrigger ? ScheduleType.SIMPLE : ScheduleType.CRON_EXPRESSION);
-                            triggerModel.setStartDate(trigger.getStartTime());
+                            /*
+                            Ignore startTime if it's in the past - during saving empty startTime will be set as 'now'.
+                            This in combination with validation prevents case when scheduler reproduces all executions
+                            from the startTime to the current moment after trigger is recreated (all triggers
+                            a created with startTime not earlier than 'now')
+                            */
+                            Date startTime = trigger.getStartTime();
+                            if (startTime.after(new Date())) {
+                                triggerModel.setStartDate(startTime);
+                            }
                             triggerModel.setEndDate(trigger.getEndTime());
                             triggerModel.setLastFireDate(trigger.getPreviousFireTime());
                             triggerModel.setNextFireDate(trigger.getNextFireTime());

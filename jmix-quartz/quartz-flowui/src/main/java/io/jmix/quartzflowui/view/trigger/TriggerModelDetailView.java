@@ -30,7 +30,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.select.Select;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
@@ -43,6 +42,7 @@ import io.jmix.quartz.service.QuartzService;
 import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,13 +58,15 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     @ViewComponent
     private JmixComboBox<String> triggerGroupField;
     @ViewComponent
-    private TypedTextField<String> cronExpressionField;
-    @ViewComponent
     private FormLayout.FormItem cronExpressionFormItem;
+    @ViewComponent
+    private JmixButton cronExpressionHelpButton;
     @ViewComponent
     private TypedTextField<Integer> repeatCountField;
     @ViewComponent
     private FormLayout.FormItem repeatCountFormItem;
+    @ViewComponent
+    private JmixButton repeatCountHelpButton;
     @ViewComponent
     private TypedTextField<Long> repeatIntervalField;
     @ViewComponent
@@ -91,8 +93,6 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     @Autowired
     private MessageBundle messageBundle;
     @Autowired
-    private UiComponents uiComponents;
-    @Autowired
     private Dialogs dialogs;
     @Autowired
     private Messages messages;
@@ -101,12 +101,11 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     @Subscribe
     public void onInit(InitEvent event) {
         initTriggerGroupNames();
-        initCronHelperButton();
+        initCronExpressionHelperButton();
         initRepeatModeHelperButton();
         initRepeatCountHelperButton();
         initMisfireInstructionHelperButton();
-        setupDateTimePickerDefaultTimeListener(startDateTimePicker);
-        setupDateTimePickerDefaultTimeListener(endDateTimePicker);
+        initDateFields();
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -117,7 +116,6 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         if (getEditedEntity().getScheduleType() == null) {
             scheduleTypeField.setValue(ScheduleType.CRON_EXPRESSION);
         }
-
         String misfireInstructionId = getEditedEntity().getMisfireInstructionId();
         if (misfireInstructionId == null) {
             misfireInstructionField.setValue(getDefaultMisfireInstructionId(scheduleTypeField.getValue()));
@@ -132,15 +130,10 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         }
     }
 
-    private void initCronHelperButton() {
-        JmixButton helperBtn = uiComponents.create(JmixButton.class);
-        helperBtn.setIcon(VaadinIcon.QUESTION_CIRCLE_O.create());
-        helperBtn.addThemeVariants(
-                ButtonVariant.LUMO_SMALL,
-                ButtonVariant.LUMO_TERTIARY,
-                ButtonVariant.LUMO_CONTRAST);
-        helperBtn.addClickListener(this::onCronHelperButtonClick);
-        cronExpressionField.setSuffixComponent(helperBtn);
+    private void initCronExpressionHelperButton() {
+        cronExpressionHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        cronExpressionHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        cronExpressionHelpButton.addClickListener(this::onCronHelperButtonClick);
     }
 
     private void onCronHelperButtonClick(ClickEvent<Button> event) {
@@ -153,11 +146,8 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     }
 
     private void initRepeatModeHelperButton() {
-        repeatModeSelectorHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE_O.create());
-        repeatModeSelectorHelpButton.addThemeVariants(
-                ButtonVariant.LUMO_SMALL,
-                ButtonVariant.LUMO_TERTIARY,
-                ButtonVariant.LUMO_CONTRAST);
+        repeatModeSelectorHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        repeatModeSelectorHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
         repeatModeSelectorHelpButton.addClickListener(this::onRepeatModeHelperButtonClick);
     }
 
@@ -171,14 +161,9 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     }
 
     private void initRepeatCountHelperButton() {
-        JmixButton helperBtn = uiComponents.create(JmixButton.class);
-        helperBtn.setIcon(VaadinIcon.QUESTION_CIRCLE_O.create());
-        helperBtn.addThemeVariants(
-                ButtonVariant.LUMO_SMALL,
-                ButtonVariant.LUMO_TERTIARY,
-                ButtonVariant.LUMO_CONTRAST);
-        helperBtn.addClickListener(this::onRepeatCountHelperButtonClick);
-        repeatCountField.setSuffixComponent(helperBtn);
+        repeatCountHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        repeatCountHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        repeatCountHelpButton.addClickListener(this::onRepeatCountHelperButtonClick);
     }
 
     private void onRepeatCountHelperButtonClick(ClickEvent<Button> event) {
@@ -190,12 +175,17 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
                 .open();
     }
 
+    private void initDateFields() {
+        LocalDateTime now = LocalDate.now().atStartOfDay();
+        startDateTimePicker.setMin(now);
+        endDateTimePicker.setMin(now);
+        setupDateTimePickerDefaultTimeListener(startDateTimePicker);
+        setupDateTimePickerDefaultTimeListener(endDateTimePicker);
+    }
+
     private void initMisfireInstructionHelperButton() {
-        misfireInstructionHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE_O.create());
-        misfireInstructionHelpButton.addThemeVariants(
-                ButtonVariant.LUMO_SMALL,
-                ButtonVariant.LUMO_TERTIARY,
-                ButtonVariant.LUMO_CONTRAST);
+        misfireInstructionHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        misfireInstructionHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
         misfireInstructionHelpButton.addClickListener(this::onMisfireInstructionHelperButtonClick);
     }
 
@@ -293,7 +283,9 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
             initRepeatFieldsVisibility(isSimpleTrigger, repeatMode);
             initRepeatFieldsValues(repeatMode);
         });
-        initRepeatModeSelectorValue();
+        if (ScheduleType.SIMPLE.equals(scheduleTypeField.getValue())) {
+            initRepeatModeSelectorValue();
+        }
     }
 
     private void initRepeatModeSelectorValue() {
@@ -370,13 +362,17 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
 
     @Subscribe
     public void onValidation(ValidationEvent event) {
-        if (ScheduleType.SIMPLE.equals(getEditedEntity().getScheduleType())
-                || CronExpression.isValidExpression(getEditedEntity().getCronExpression())) {
-            return;
+        if (ScheduleType.CRON_EXPRESSION.equals(getEditedEntity().getScheduleType())
+                && !CronExpression.isValidExpression(getEditedEntity().getCronExpression())) {
+            String message = messageBundle.getMessage("invalidCronExpressionValidationMessage");
+            event.getErrors().add(message);
         }
 
-        String message = messageBundle.getMessage("invalidCronExpressionValidationMessage");
-        event.getErrors().add(message);
+        Date startDateTimeValue = startDateTimePicker.getTypedValue();
+        if (startDateTimeValue != null && startDateTimeValue.before(new Date())) {
+            String message = messageBundle.getMessage("triggerStartDateInThePastValidationMessage");
+            event.getErrors().add(message);
+        }
     }
 
     protected void setupDateTimePickerDefaultTimeListener(TypedDateTimePicker<?> dateTimePicker) {

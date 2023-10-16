@@ -10,8 +10,19 @@ detailDl = entity.uncapitalizedClassName + 'Dl'
 def nestedDatasourceProperties = api.evaluateScript('nestedDatasourceProperties.groovy', ['view': detailFetchPlan, 'embeddable': false])
 def nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
 
+private Object getActionSearchSafely() {
+    try {
+        return actionSearch
+    } catch(Exception e) {
+        return null
+    }
+}
+
 def tableXml = api.processSnippet('table.xml',
-        ['entity': entity,
+        ['jmixProjectModule': api.jmixProjectModule,
+        'actionSearch': getActionSearchSafely(),
+        'tableActions': tableActions,
+        'entity': entity,
         'fetchPlan': listFetchPlan,
         'tableDc': tableDc,
         'tableDl': tableDl,
@@ -20,7 +31,6 @@ def tableXml = api.processSnippet('table.xml',
         'multiselect': multiselect,
         'columnReorderingAllowed': columnReorderingAllowed,
         'resizableColumns': resizableColumns,
-        'tableActions': tableActions,
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
 
 def formXml = api.processSnippet('form.xml',

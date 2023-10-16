@@ -587,7 +587,8 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false")
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
     void valueItemsQuery();
@@ -607,6 +608,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY),
                     @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
             }
     )
@@ -629,6 +631,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY),
                     @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
             }
     )

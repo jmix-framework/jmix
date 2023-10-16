@@ -4200,7 +4200,7 @@
 
     <xs:complexType name="settingsFacetType">
         <xs:sequence>
-            <xs:element name="component" type="settingsComponentType"/>
+            <xs:element name="component" minOccurs="0" type="settingsComponentType"/>
         </xs:sequence>
 
         <xs:attribute name="id" type="xs:string"/>

@@ -71,11 +71,13 @@ public interface StudioFacets {
     @StudioFacet(
             name = "Settings",
             classFqn = "io.jmix.flowui.facet.SettingsFacet",
-            category = "Facet",
+            category = "Facets",
             xmlElement = "settings",
+            icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN)
+                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false", initialValue = "true"),
             }
     )
     void settings();

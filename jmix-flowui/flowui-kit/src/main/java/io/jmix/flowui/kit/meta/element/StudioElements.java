@@ -313,7 +313,7 @@ public interface StudioElements {
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
                     "com.vaadin.flow.component.tabs.Tab"},
             properties = {
-                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING, required = true),
                     @StudioProperty(xmlAttribute = "focusDelay", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "hideDelay", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "hoverDelay", type = StudioPropertyType.INTEGER),

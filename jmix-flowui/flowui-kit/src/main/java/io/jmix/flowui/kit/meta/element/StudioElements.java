@@ -90,7 +90,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "autoWidth", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "filterable", type = StudioPropertyType.BOOLEAN,
-                            defaultValueRef = "parent:filterable"),
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "footer", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "frozen", type = StudioPropertyType.BOOLEAN,

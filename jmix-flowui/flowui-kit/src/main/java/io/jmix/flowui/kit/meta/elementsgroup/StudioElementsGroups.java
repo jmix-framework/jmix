@@ -32,8 +32,6 @@ public interface StudioElementsGroups {
             target = {"com.vaadin.flow.component.grid.Grid"},
             properties = {
                     @StudioProperty(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "filterable", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "includeAll", type = StudioPropertyType.BOOLEAN, defaultValue = "false")

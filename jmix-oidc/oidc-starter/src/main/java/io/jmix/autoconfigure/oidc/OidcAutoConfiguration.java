@@ -143,7 +143,7 @@ public class OidcAutoConfiguration {
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                        JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter,
                                                        ApplicationEventPublisher applicationEventPublisher) throws Exception {
-            http.cors().and()                
+            http.cors(Customizer.withDefaults())
                 .oauth2ResourceServer(resourceServer -> {
                 resourceServer.jwt(jwt -> {
                     jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);

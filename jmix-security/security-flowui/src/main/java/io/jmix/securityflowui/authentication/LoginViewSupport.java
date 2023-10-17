@@ -282,6 +282,10 @@ public class LoginViewSupport {
         SavedRequest savedRequest = requestCache.getRequest(httpServletRequest, response);
         if (savedRequest != null) {
             if (savedRequest instanceof DefaultSavedRequest defaultSavedRequest) {
+                //build location by servlet path and query params only (without host, port etc.)
+                //because later we need to check if it is main view location
+                //and RouteConfiguration.getRoute(String) doesn't support full URLs
+                //like one returned from savedRequest.getRedirectUrl()
                 QueryParameters queryParameters = QueryParameters.fromString(defaultSavedRequest.getQueryString());
                 return new Location(defaultSavedRequest.getServletPath(), queryParameters);
             } else {
@@ -293,7 +297,7 @@ public class LoginViewSupport {
     }
 
     protected boolean isRedirectToInitialView(Location redirectLocation) {
-        if (StringUtils.isNotEmpty(redirectLocation.getQueryParameters().getQueryString())) {
+        if (!Strings.isNullOrEmpty(redirectLocation.getQueryParameters().getQueryString())) {
             return false;
         }
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
@@ -304,7 +308,7 @@ public class LoginViewSupport {
 
     protected void navigateToInitialView() {
         String defaultViewId = uiProperties.getDefaultViewId();
-        if (StringUtils.isEmpty(defaultViewId)) {
+        if (Strings.isNullOrEmpty(defaultViewId)) {
             navigateToMainView();
         } else {
             navigateToDefaultView(defaultViewId);

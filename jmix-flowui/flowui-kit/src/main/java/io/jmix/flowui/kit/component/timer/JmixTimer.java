@@ -30,6 +30,7 @@ public class JmixTimer extends Component {
 
     protected static final String DELAY_PROPERTY_NAME = "delay";
     protected static final String REPEATING_PROPERTY_NAME = "repeating";
+    protected static final String AUTOSTART_PROPERTY_NAME = "autostart";
 
     public void setRepeating(boolean repeating) {
         getElement().setProperty(REPEATING_PROPERTY_NAME, repeating);
@@ -45,6 +46,14 @@ public class JmixTimer extends Component {
 
     public void setDelay(int delay) {
         getElement().setProperty(DELAY_PROPERTY_NAME, delay);
+    }
+
+    public void setAutostart(boolean autostart) {
+        getElement().setProperty(AUTOSTART_PROPERTY_NAME, autostart);
+    }
+
+    public boolean isAutostart() {
+        return getElement().getProperty(AUTOSTART_PROPERTY_NAME, false);
     }
 
     public void start() {

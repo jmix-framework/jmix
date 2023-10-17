@@ -2757,6 +2757,7 @@
                             </xs:sequence>
 
                             <xs:attributeGroup ref="columnsLoadType"/>
+                            <xs:attribute name="sortable" type="xs:boolean"/>
                             <xs:attribute name="resizable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>

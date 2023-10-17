@@ -102,7 +102,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
                             defaultValueRef = "parent:resizable"),
                     @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
+                            defaultValueRef = "parent:sortable"),
                     @StudioProperty(xmlAttribute = "textAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.grid.ColumnTextAlign", defaultValue = "START",
                             options = {"CENTER", "END", "START"}),

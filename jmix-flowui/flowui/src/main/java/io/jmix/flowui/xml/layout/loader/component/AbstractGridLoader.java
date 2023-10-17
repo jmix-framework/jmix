@@ -163,27 +163,29 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     protected void loadColumns(T resultComponent, Element columnsElement, GridDataHolder holder, FetchPlan fetchPlan) {
         Boolean includeAll = loadBoolean(columnsElement, "includeAll").orElse(false);
+        boolean sortable = loadBoolean(columnsElement, "sortable")
+                .orElse(true);
         boolean resizable = loadBoolean(columnsElement, "resizable")
                 .orElse(false);
 
         if (includeAll) {
-            loadColumnsByInclude(resultComponent, columnsElement, holder, fetchPlan, resizable);
+            loadColumnsByInclude(resultComponent, columnsElement, holder, fetchPlan, sortable, resizable);
             // In case of includeAll, EditorActionsColumn will be place at the end
             loadEditorActionsColumns(resultComponent, columnsElement);
         } else {
             List<Element> columnElements = columnsElement.elements();
             for (Element columnElement : columnElements) {
-                loadColumnsElementChild(resultComponent, columnElement, holder, resizable);
+                loadColumnsElementChild(resultComponent, columnElement, holder, sortable, resizable);
             }
         }
     }
 
     protected void loadColumnsElementChild(T resultComponent, Element columnElement, GridDataHolder holder,
-                                           boolean resizableColumns) {
+                                           boolean sortableColumns, boolean resizableColumns) {
         switch (columnElement.getName()) {
             case COLUMN_ELEMENT_NAME:
                 loadColumn(resultComponent, columnElement, holder.dataLoader,
-                        Objects.requireNonNull(holder.getMetaClass()), resizableColumns);
+                        Objects.requireNonNull(holder.getMetaClass()), sortableColumns, resizableColumns);
                 break;
             case EDITOR_ACTIONS_COLUMN_ELEMENT_NAME:
                 loadEditorActionsColumn(resultComponent, columnElement);
@@ -286,7 +288,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected void loadColumnsByInclude(T component, Element columnsElement, GridDataHolder holder,
-                                        FetchPlan fetchPlan, boolean resizableColumns) {
+                                        FetchPlan fetchPlan, boolean sortableColumns, boolean resizableColumns) {
         MetaClass metaClass = Objects.requireNonNull(holder.getMetaClass());
         Collection<String> appliedProperties = getAppliedProperties(columnsElement, fetchPlan, metaClass);
 
@@ -305,7 +307,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 overriddenColumns.add(column);
             }
 
-            loadColumn(component, column, dataLoader, metaClass, resizableColumns);
+            loadColumn(component, column, dataLoader, metaClass, sortableColumns, resizableColumns);
         }
 
         // load remains columns
@@ -320,14 +322,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             if (propertyId != null) {
                 MetaPropertyPath propertyPath = metaClass.getPropertyPath(propertyId);
                 if (propertyPath == null || getMetaDataTools().fetchPlanContainsProperty(fetchPlan, propertyPath)) {
-                    loadColumn(component, column, dataLoader, metaClass, resizableColumns);
+                    loadColumn(component, column, dataLoader, metaClass, sortableColumns, resizableColumns);
                 }
             }
         }
     }
 
     protected void loadColumn(T component, Element element, @Nullable DataLoader dataLoader, MetaClass metaClass,
-                              boolean resizableColumns) {
+                              boolean sortableColumns, boolean resizableColumns) {
         String property = loadString(element, "property")
                 .orElse(null);
 
@@ -356,12 +358,12 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadResourceString(element, "header", context.getMessageGroup(), column::setHeader);
         loadResourceString(element, "footer", context.getMessageGroup(), column::setFooter);
         loadBoolean(element, "frozen", column::setFrozen);
-        loadBoolean(element, "sortable", column::setSortable);
         loadInteger(element, "flexGrow", column::setFlexGrow);
         loadBoolean(element, "autoWidth", column::setAutoWidth);
         loadBoolean(element, "visible", column::setVisible);
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
 
+        loadColumnSortable(element, column, sortableColumns);
         loadColumnResizable(element, column, resizableColumns);
         loadColumnFilterable(element, column, dataLoader, metaClass, property);
         loadColumnEditable(element, column, property);
@@ -394,6 +396,11 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
 
         return Optional.empty();
+    }
+
+    protected void loadColumnSortable(Element element, Column<?> column, boolean sortableColumns) {
+        loadBoolean(element, "sortable")
+                .ifPresentOrElse(column::setSortable, () -> column.setSortable(sortableColumns));
     }
 
     protected void loadColumnResizable(Element element, Column<?> column, boolean resizableColumns) {

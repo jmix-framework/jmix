@@ -17,12 +17,12 @@
 package io.jmix.datatools.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.impl.converters.AuditConversionService;
 import io.jmix.datatools.EntityRestore;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -30,12 +30,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
-
-import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 
 @Component("datatl_EntityRestore")
 public class EntityRestoreImpl implements EntityRestore {
+
+    protected static int RELATED_ENTITY_DELETED_DATE_START_OFFSET_MS = -100;
+    protected static int RELATED_ENTITY_DELETED_DATE_END_OFFSET_MS = 1000;
 
     private static final Logger log = LoggerFactory.getLogger(EntityRestore.class);
 
@@ -47,6 +52,9 @@ public class EntityRestoreImpl implements EntityRestore {
 
     @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
+    protected AuditConversionService auditConversionService;
 
     @Override
     public int restoreEntities(Collection<Object> entities) {
@@ -76,11 +84,11 @@ public class EntityRestoreImpl implements EntityRestore {
         if (reloadedEntityOpt.isPresent() && EntityValues.isSoftDeleted(reloadedEntityOpt.get())) {
             Object reloadedEntity = reloadedEntityOpt.get();
             log.info("Restoring deleted entity {}", reloadedEntity);
-            Date deleteTs = (Date) ((EntityEntrySoftDelete) getUncheckedEntityEntry(reloadedEntity)).getDeletedDate(); //TODO: add to EntityValues?
+            Object deletedDate = EntityValues.getDeletedDate(reloadedEntity);
             EntityValues.setDeletedDate(reloadedEntity, null);
             EntityValues.setDeletedBy(reloadedEntity, null);
             saveContext.saving(reloadedEntity);
-            RestorationContext restorationContext = new RestorationContext(entity, deleteTs, saveContext);
+            RestorationContext restorationContext = new RestorationContext(entity, deletedDate, saveContext);
             restoreDetails(restorationContext);
         }
     }
@@ -145,7 +153,7 @@ public class EntityRestoreImpl implements EntityRestore {
         }
 
         LoadContext<Entity> loadContext = createRestoreCandidatesLoadContext(
-                jpql, detailMetaClass, entityId, restorationContext.getDeleteTs()
+                jpql, detailMetaClass, entityId, restorationContext.getDeletedDate()
         );
 
         List<Entity> entities = dataManager.loadList(loadContext);
@@ -159,14 +167,42 @@ public class EntityRestoreImpl implements EntityRestore {
     private LoadContext<Entity> createRestoreCandidatesLoadContext(String queryString,
                                                                    MetaClass metaClass,
                                                                    Object entityId,
-                                                                   Date deleteTs) {
+                                                                   Object deletedDate) {
         LoadContext.Query query = new LoadContext.Query(queryString);
+        Class<?> candidateDeletedDatePropertyClass = getDeletedDatePropertyClassNN(metaClass);
+        Object deletedDateInCandidateType =
+                auditConversionService.convert(deletedDate, candidateDeletedDatePropertyClass);
         query.setParameter("id", entityId);
-        query.setParameter("start", DateUtils.addMilliseconds(deleteTs, -100));
-        query.setParameter("end", DateUtils.addMilliseconds(deleteTs, 1000));
+        query.setParameter("start",
+                addOffsetToDateMs(deletedDateInCandidateType, RELATED_ENTITY_DELETED_DATE_START_OFFSET_MS));
+        query.setParameter("end",
+                addOffsetToDateMs(deletedDateInCandidateType, RELATED_ENTITY_DELETED_DATE_END_OFFSET_MS));
         return new LoadContext<Entity>(metaClass)
                 .setQuery(query)
                 .setHint("jmix.softDeletion", false);
+    }
+
+    protected Class<?> getDeletedDatePropertyClassNN(MetaClass metaClass) {
+        String deletedDateProperty = metadataTools.findDeletedDateProperty(metaClass.getJavaClass());
+        if (deletedDateProperty == null) {
+            throw new IllegalArgumentException("Failed to find deletedDate property");
+        }
+        return metaClass.getProperty(deletedDateProperty).getJavaType();
+    }
+
+    protected Object addOffsetToDateMs(Object dateObject, int offset) {
+        if (dateObject instanceof Date date) {
+            return DateUtils.addMilliseconds(date, offset);
+        } else if (dateObject instanceof LocalDate localDate) {
+            return localDate;
+        } else if (dateObject instanceof LocalDateTime localDateTime) {
+            return localDateTime.plus(offset, ChronoUnit.MILLIS);
+        } else if (dateObject instanceof OffsetDateTime offsetDateTime) {
+            return offsetDateTime.plus(offset, ChronoUnit.MILLIS);
+        } else {
+            throw new IllegalArgumentException("'%s' date class is not supported"
+                    .formatted(dateObject.getClass().getSimpleName()));
+        }
     }
 
     private void processOnDeleteInverseProperties(RestorationContext restorationContext) {
@@ -202,7 +238,8 @@ public class EntityRestoreImpl implements EntityRestore {
                 continue;
             }
             String jpql = getOnDeleteInverseCascadePropertyQueryString(metaClassToRestore, property);
-            LoadContext<Entity> loadContext = createRestoreCandidatesLoadContext(jpql, detailMetaClass, entityId, restorationContext.getDeleteTs());
+            LoadContext<Entity> loadContext = createRestoreCandidatesLoadContext(jpql, detailMetaClass, entityId,
+                    restorationContext.getDeletedDate());
             List<Entity> entities = dataManager.loadList(loadContext);
 
             for (Entity detailEntity : entities) {
@@ -248,12 +285,12 @@ public class EntityRestoreImpl implements EntityRestore {
 
     private static class RestorationContext {
         private final Object entity;
-        private final Date deleteTs;
+        private final Object deletedDate;
         private final SaveContext saveContext;
 
-        public RestorationContext(Object entity, Date deleteTs, SaveContext saveContext) {
+        public RestorationContext(Object entity, Object deletedDate, SaveContext saveContext) {
             this.entity = entity;
-            this.deleteTs = deleteTs;
+            this.deletedDate = deletedDate;
             this.saveContext = saveContext;
         }
 
@@ -269,8 +306,8 @@ public class EntityRestoreImpl implements EntityRestore {
             return entity.getClass();
         }
 
-        public Date getDeleteTs() {
-            return deleteTs;
+        public Object getDeletedDate() {
+            return deletedDate;
         }
 
         public SaveContext getSaveContext() {

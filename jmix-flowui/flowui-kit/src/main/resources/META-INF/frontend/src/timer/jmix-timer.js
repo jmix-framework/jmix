@@ -17,6 +17,14 @@
 import { html, PolymerElement } from '@polymer/polymer';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
 
+
+/*
+Vaadin behaviour:
+If a page is refreshed or duplicated, chain of component connectCallback-disconnectCallback-connectCallback is invoked.
+
+So, to prevent faulty stop events during page refresh or duplication,
+"jmix-timer-stop event" is not fired on disconnect but only when stop is triggered by user
+*/
 export class JmixTimer extends ElementMixin(PolymerElement) {
 
     static get is() {
@@ -37,11 +45,15 @@ export class JmixTimer extends ElementMixin(PolymerElement) {
         return {
             repeating: {
                 type: Boolean,
-                value: false,
+                value: false
             },
             delay: {
                 type: Number,
                 value: 0
+            },
+            autostart: {
+                type: Boolean,
+                value: false
             }
         };
     }
@@ -68,16 +80,31 @@ export class JmixTimer extends ElementMixin(PolymerElement) {
     }
 
     stop() {
+        this.stop(true);
+    }
+
+    stop(userOriginated) {
         if (this.running) {
             clearInterval(this.intervalId);
             this.intervalId = null;
             this.running = false;
-            this.dispatchEvent(new CustomEvent('jmix-timer-stop'))
+            if (userOriginated) {
+                this.dispatchEvent(new CustomEvent('jmix-timer-stop'))
+            }
         }
     }
 
     disconnectedCallback() {
-        this.stop();
+        super.disconnectedCallback();
+        //stop without firing stop event
+        this.stop(false);
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+        if (this.autostart) {
+            this.start();
+        }
     }
 }
 

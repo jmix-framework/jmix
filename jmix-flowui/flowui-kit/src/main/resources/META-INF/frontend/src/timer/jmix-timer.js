@@ -80,10 +80,10 @@ export class JmixTimer extends ElementMixin(PolymerElement) {
     }
 
     stop() {
-        this.stop(true);
+        this.stopInternal(true);
     }
 
-    stop(userOriginated) {
+    stopInternal(userOriginated) {
         if (this.running) {
             clearInterval(this.intervalId);
             this.intervalId = null;
@@ -97,7 +97,7 @@ export class JmixTimer extends ElementMixin(PolymerElement) {
     disconnectedCallback() {
         super.disconnectedCallback();
         //stop without firing stop event
-        this.stop(false);
+        this.stopInternal(false);
     }
 
     connectedCallback() {

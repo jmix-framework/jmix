@@ -578,6 +578,7 @@ public interface StudioElements {
             name = "ItemsQuery",
             xmlElement = "itemsQuery",
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.JmixComboBox"},
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.EntityComboBox",
@@ -597,6 +598,7 @@ public interface StudioElements {
             name = "ItemsQuery",
             xmlElement = "itemsQuery",
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.EntityComboBox"},
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
@@ -618,6 +620,7 @@ public interface StudioElements {
             name = "ItemsQuery",
             xmlElement = "itemsQuery",
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            unlimitedCount = false,
             target = {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker"

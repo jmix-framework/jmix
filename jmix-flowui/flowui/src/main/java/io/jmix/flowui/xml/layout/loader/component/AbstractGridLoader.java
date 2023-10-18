@@ -42,7 +42,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.querycondition.PropertyConditionUtils;
-import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.app.datagrid.HeaderPropertyFilterLayout;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
@@ -89,7 +89,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
     protected FetchPlanRepositoryImpl fetchPlanRepository;
     protected ClassManager classManager;
-    protected UiComponents uiComponents;
     protected Messages messages;
     protected PropertyFilterSupport propertyFilterSupport;
 
@@ -436,7 +435,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected PropertyFilter<?> createPropertyFilter(DataLoader dataLoader, MetaClass metaClass, String property) {
-        PropertyFilter<?> propertyFilter = getUiComponents().create(PropertyFilter.class);
+        PropertyFilter<?> propertyFilter = factory.create(PropertyFilter.class);
 
         propertyFilter.setDataLoader(dataLoader);
         propertyFilter.setProperty(property);
@@ -451,7 +450,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected Component createFilterButton(PropertyFilter<?> propertyFilter) {
-        JmixButton filterButton = getUiComponents().create(JmixButton.class);
+        JmixButton filterButton = factory.create(JmixButton.class);
         filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
         filterButton.setIcon(VaadinIcon.FILTER.create());
         filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
@@ -476,7 +475,10 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected Dialog createOverlay(PropertyFilter propertyFilter, JmixButton filterButton) {
         JmixButton clearButton = createClearFilterButton(propertyFilter);
 
-        Dialog dialog = new Dialog(propertyFilter, clearButton);
+        HeaderPropertyFilterLayout headerPropertyFilterLayout = factory.create(HeaderPropertyFilterLayout.class);
+        headerPropertyFilterLayout.getContent().add(propertyFilter, clearButton);
+
+        Dialog dialog = new Dialog(headerPropertyFilterLayout);
         dialog.addClassName(COLUMN_FILTER_DIALOG_CLASSNAME);
 
         if (!isSmallDevice()) {
@@ -512,7 +514,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     @SuppressWarnings("rawtypes")
     protected JmixButton createClearFilterButton(PropertyFilter propertyFilter) {
-        JmixButton clearButton = getUiComponents().create(JmixButton.class);
+        JmixButton clearButton = factory.create(JmixButton.class);
 
         clearButton.addThemeVariants(ButtonVariant.LUMO_ICON);
         clearButton.setIcon(VaadinIcon.ERASER.create());
@@ -523,7 +525,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     @SuppressWarnings({"rawtypes"})
     protected JmixButton createApplyButton(PropertyFilter propertyFilter, Dialog dialog, AtomicReference appliedValue) {
-        JmixButton applyButton = getUiComponents().create(JmixButton.class);
+        JmixButton applyButton = factory.create(JmixButton.class);
         applyButton.setIcon(VaadinIcon.CHECK.create());
         applyButton.setText(getMessages().getMessage("columnFilter.apply.text"));
 
@@ -539,7 +541,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     @SuppressWarnings("rawtypes")
     protected JmixButton createCancelButton(PropertyFilter propertyFilter, Dialog dialog, AtomicReference appliedValue) {
-        JmixButton cancelButton = getUiComponents().create(JmixButton.class);
+        JmixButton cancelButton = factory.create(JmixButton.class);
         cancelButton.setIcon(VaadinIcon.BAN.create());
         cancelButton.setText(getMessages().getMessage("columnFilter.cancel.text"));
 
@@ -568,7 +570,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected Component createHeaderComponent(String headerText, Component filterButton) {
-        HorizontalLayout layout = getUiComponents().create(HorizontalLayout.class);
+        HorizontalLayout layout = factory.create(HorizontalLayout.class);
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.setClassName(LumoUtility.Gap.XSMALL);
@@ -806,13 +808,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             classManager = applicationContext.getBean(ClassManager.class);
         }
         return classManager;
-    }
-
-    protected UiComponents getUiComponents() {
-        if (uiComponents == null) {
-            uiComponents = applicationContext.getBean(UiComponents.class, context);
-        }
-        return uiComponents;
     }
 
     protected PropertyFilterSupport getPropertyFilterSupport() {

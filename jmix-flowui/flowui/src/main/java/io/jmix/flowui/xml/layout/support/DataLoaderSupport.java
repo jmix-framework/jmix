@@ -265,7 +265,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
                     ITEMS_QUERY_ELEMENT, ((Component) component).getId()), getComponentContext());
         }
 
-        return queryElement.getStringValue();
+        return queryElement.getTextTrim();
     }
 
     @Nullable

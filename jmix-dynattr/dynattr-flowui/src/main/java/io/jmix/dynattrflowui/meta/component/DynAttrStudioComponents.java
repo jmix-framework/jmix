@@ -34,6 +34,7 @@ public interface DynAttrStudioComponents {
             xmlnsAlias = "dynattr",
             icon = "io/jmix/dynattrflowui/icon/component/dynamicAttributesPanel.svg",
             properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(
                             name = "dataContainer",
                             xmlAttribute = "dataContainer",

@@ -24,7 +24,7 @@ import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-@Component("ui_TimerFacetProvider")
+@Component("flowui_TimerFacetProvider")
 public class TimerFacetProvider implements FacetProvider<Timer> {
 
     protected LoaderSupport loaderSupport;
@@ -65,10 +65,6 @@ public class TimerFacetProvider implements FacetProvider<Timer> {
         timer.setDelay(delay);
 
         loaderSupport.loadBoolean(element, "repeating", timer::setRepeating);
-
-        boolean autostart = loaderSupport.loadBoolean(element, "autostart").orElse(false);
-        if (autostart) {
-            timer.start();
-        }
+        loaderSupport.loadBoolean(element, "autostart", timer::setAutostart);
     }
 }

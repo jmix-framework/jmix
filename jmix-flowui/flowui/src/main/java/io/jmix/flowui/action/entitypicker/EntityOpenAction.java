@@ -95,7 +95,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
 
     @Override
     public void setTarget(@Nullable EntityPickerComponent<E> target) {
-        checkState(target instanceof HasValue,
+        checkState(target == null || target instanceof HasValue,
                 "A component must implement " + HasValue.class.getSimpleName());
 
         super.setTarget(target);

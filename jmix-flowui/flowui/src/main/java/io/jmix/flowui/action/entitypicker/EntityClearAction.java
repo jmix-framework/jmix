@@ -72,7 +72,7 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
 
     @Override
     public void setTarget(@Nullable EntityPickerComponent<E> target) {
-        checkState(target instanceof HasValue,
+        checkState(target == null || target instanceof HasValue,
                 "A component must implement " + HasValue.class.getSimpleName());
 
         super.setTarget(target);

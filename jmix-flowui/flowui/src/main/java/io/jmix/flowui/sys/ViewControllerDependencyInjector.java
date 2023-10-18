@@ -591,7 +591,7 @@ public class ViewControllerDependencyInjector {
             Class<?> instanceClass = targetInstance.getClass();
             Method supplyMethod = annotatedMethod.getMethod();
 
-            MethodHandle targetSetterMethod = getSupplyTargetSetterMethod(annotation, instanceClass);
+            MethodHandle targetSetterMethod = getSupplyTargetSetterMethod(annotatedMethod, instanceClass);
             Supplier<?> supplier = createSupplierInstance(controller, supplyMethod);
 
             try {
@@ -609,15 +609,16 @@ public class ViewControllerDependencyInjector {
         return new InstalledSupplier(controller, method);
     }
 
-    protected MethodHandle getSupplyTargetSetterMethod(Supply annotation, Class<?> instanceClass) {
+    protected MethodHandle getSupplyTargetSetterMethod(AnnotatedMethod<Supply> annotatedMethod, Class<?> instanceClass) {
+        Supply annotation = annotatedMethod.getAnnotation();
         String subjectProperty = annotation.type() != Object.class
                 ? StringUtils.uncapitalize(annotation.type().getSimpleName())
                 : annotation.subject();
 
         String subjectSetterName = "set" + StringUtils.capitalize(subjectProperty);
 
-        MethodHandle targetSetterMethod =
-                reflectionInspector.getSupplyTargetMethod(instanceClass, subjectSetterName);
+        MethodHandle targetSetterMethod = reflectionInspector.getSupplyTargetMethod(instanceClass, subjectSetterName,
+                annotatedMethod.getMethod().getReturnType());
 
         if (targetSetterMethod == null) {
             throw new DevelopmentException(

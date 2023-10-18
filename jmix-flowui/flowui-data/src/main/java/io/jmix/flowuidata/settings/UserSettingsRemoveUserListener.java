@@ -29,7 +29,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import java.util.List;
 
 @Internal
-@Component("ui_UserSettingsRemoveUserListener")
+@Component("flowui_UserSettingsRemoveUserListener")
 public class UserSettingsRemoveUserListener {
 
     @PersistenceContext
@@ -41,7 +41,7 @@ public class UserSettingsRemoveUserListener {
         String username = event.getUsername();
 
         List<UiSetting> settings = entityManager.createQuery(
-                        "select s from ui_UiSetting s where s.username = ?1", UiSetting.class)
+                        "select s from flowui_UiSetting s where s.username = ?1", UiSetting.class)
                 .setParameter(1, username)
                 .getResultList();
 

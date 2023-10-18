@@ -70,6 +70,7 @@ public class GenericFilterConfigurationConverter {
                 (LogicalFilterComponent<?>) converter.convertToComponent(rootCondition);
         Configuration configuration = new RunTimeConfiguration(id, logicalFilterComponent, filter);
         configuration.setName(configurationModel.getName());
+        configuration.setAvailableForAllUsers(configurationModel.getUsername() == null);
 
         for (FilterComponent filterComponent : logicalFilterComponent.getFilterComponents()) {
             if (filterComponent instanceof SingleFilterComponentBase) {

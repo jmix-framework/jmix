@@ -20,6 +20,8 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.QueryParameters;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
@@ -36,15 +38,23 @@ import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.sys.AppCookies;
 import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
+import io.jmix.flowui.view.DetailView;
+import io.jmix.flowui.view.DetailViewTypeExtractor;
+import io.jmix.flowui.view.ViewInfo;
+import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.securityflowui.accesscontext.UiLoginToUiContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
@@ -52,11 +62,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
-import org.springframework.lang.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -96,6 +104,7 @@ public class LoginViewSupport {
     protected RememberMeServices rememberMeServices;
     protected ApplicationEventPublisher applicationEventPublisher;
     protected VaadinDefaultRequestCache requestCache;
+    protected ViewRegistry viewRegistry;
 
     protected AppCookies cookies;
 
@@ -154,6 +163,11 @@ public class LoginViewSupport {
     @Autowired(required = false)
     public void setAuthenticationStrategy(SessionAuthenticationStrategy authenticationStrategy) {
         this.authenticationStrategy = authenticationStrategy;
+    }
+
+    @Autowired
+    public void setViewRegistry(ViewRegistry viewRegistry) {
+        this.viewRegistry = viewRegistry;
     }
 
     /**
@@ -245,12 +259,10 @@ public class LoginViewSupport {
 
     protected void showInitialView(VaadinServletRequest request, VaadinServletResponse response) {
         Location location = getRedirectLocation(request, response);
-        if (location != null) {
-            UI.getCurrent().navigate(location.getPath(), location.getQueryParameters());
+        if (location == null || isRedirectToInitialView(location)) {
+            navigateToInitialView();
         } else {
-            String mainViewId = uiProperties.getMainViewId();
-            viewNavigators.view(mainViewId)
-                    .navigate();
+            UI.getCurrent().navigate(location.getPath(), location.getQueryParameters());
         }
     }
 
@@ -269,10 +281,62 @@ public class LoginViewSupport {
 
         SavedRequest savedRequest = requestCache.getRequest(httpServletRequest, response);
         if (savedRequest != null) {
-            return new Location(savedRequest.getRedirectUrl());
+            if (savedRequest instanceof DefaultSavedRequest defaultSavedRequest) {
+                //build location by servlet path and query params only (without host, port etc.)
+                //because later we need to check if it is main view location
+                //and RouteConfiguration.getRoute(String) doesn't support full URLs
+                //like one returned from savedRequest.getRedirectUrl()
+                QueryParameters queryParameters = QueryParameters.fromString(defaultSavedRequest.getQueryString());
+                return new Location(defaultSavedRequest.getServletPath(), queryParameters);
+            } else {
+                return new Location(savedRequest.getRedirectUrl());
+            }
         }
 
         return null;
+    }
+
+    protected boolean isRedirectToInitialView(Location redirectLocation) {
+        if (!Strings.isNullOrEmpty(redirectLocation.getQueryParameters().getQueryString())) {
+            return false;
+        }
+        RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
+        return routeConfiguration.getRoute(redirectLocation.getPathWithQueryParameters())
+                .map(StandardMainView.class::isAssignableFrom)
+                .orElse(false);
+    }
+
+    protected void navigateToInitialView() {
+        String defaultViewId = uiProperties.getDefaultViewId();
+        if (Strings.isNullOrEmpty(defaultViewId)) {
+            navigateToMainView();
+        } else {
+            navigateToDefaultView(defaultViewId);
+        }
+    }
+
+    protected void navigateToMainView() {
+        String mainViewId = uiProperties.getMainViewId();
+        viewNavigators.view(mainViewId)
+                .navigate();
+    }
+
+    protected void navigateToDefaultView(String defaultViewId) {
+        ViewInfo viewInfo = viewRegistry.getViewInfo(defaultViewId);
+        if (DetailView.class.isAssignableFrom(viewInfo.getControllerClass())) {
+            viewNavigators.detailView(getEntityClass(viewInfo))
+                    .withBackwardNavigation(false)
+                    .navigate();
+        } else {
+            viewNavigators.view(defaultViewId)
+                    .navigate();
+        }
+    }
+
+    protected Class<?> getEntityClass(ViewInfo viewInfo) {
+        return DetailViewTypeExtractor.extractEntityClass(viewInfo)
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("Failed to determine entity type for detail view '%s'", viewInfo.getId())));
     }
 
     protected Authentication createAuthenticationToken(String username, String password,

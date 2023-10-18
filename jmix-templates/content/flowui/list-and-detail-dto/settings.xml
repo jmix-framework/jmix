@@ -66,7 +66,7 @@
               code="tableActions"
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
-              optionsString="${actionSearch.getWizardTableActions()}"/>
+              optionsString="${actionSearch.getWizardTableActions(api.jmixProjectModule)}"/>
     <property caption="Column reordering"
               step="1"
               code="columnReorderingAllowed"

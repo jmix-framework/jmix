@@ -262,7 +262,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
         if (queryElement == null) {
             throw new GuiDevelopmentException(String.format("Nested 'query' element is missing " +
                             "for '%s' element in component %s.",
-                    ITEMS_QUERY_ELEMENT, ((Component) component).getId()), getComponentContext());
+                    ITEMS_QUERY_ELEMENT, component.getId()), getComponentContext());
         }
 
         return queryElement.getTextTrim();

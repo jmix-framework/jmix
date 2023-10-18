@@ -28,6 +28,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
@@ -304,10 +305,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                     viewRegistry.getLookupViewId(metaClass)));
             screenField.setValue(getEditedEntity().getScreen());
         }
-
+        tabSheet.addSelectedChangeListener(e -> refreshOnce());
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
     }
+
     @Subscribe("defaultEntityIdField")
     protected void onDefaultEntityIdFieldValueChange(JmixValuePicker.ValueChangeEvent<Object> event) {
         Object entity = event.getValue();
@@ -441,7 +443,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     }
 
     private <T> void setValueIfAbsentInItems(JmixComboBox<T> jmixComboBox, T value) {
-        if(value == null) {
+        if (value == null) {
             return;
         }
         List<T> items = jmixComboBox.getListDataView().getItems().toList();
@@ -458,13 +460,34 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         ComponentUtils.setItemsMap(dataTypeField, getDataTypeOptions());
         ComponentUtils.setItemsMap(entityClassField, getEntityOptions());
 
-        validationScriptField.setHelperComponent(
+        attachHelperForSuffix(
+                validationScriptField,
                 dynAttrUiHelper.createHelperButton(
                         messages.getMessage(CategoryAttributesDetailView.class, "validationScriptHelp")));
     }
 
+    protected void attachHelperForSuffix(CodeEditor codeEditor, Component componentSuffix) {
+        Element parent = codeEditor.getElement().getParent();
+        componentSuffix.getStyle().set("padding-top", "1.9em");
+        if(parent.getChildCount() > 0) {
+            parent.getComponent().ifPresent(e -> {
+                if (e instanceof Div) {
+                    parent.removeAllChildren();
+                    ((Div) e).add(codeEditor);
+                }
+            });
+        }
+        parent.getComponent()
+                .ifPresent((Component component) -> {
+                    if (component instanceof Div) {
+                        ((Div) component).add(componentSuffix);
+                    }
+                });
+    }
+
     protected void initCalculatedValuesAndOptionsForm() {
-        recalculationScriptField.setHelperComponent(
+        attachHelperForSuffix(
+                recalculationScriptField,
                 dynAttrUiHelper.createHelperButton(
                         messages.getMessage(CategoryAttributesDetailView.class, "recalculationScriptHelp")));
     }
@@ -634,32 +657,43 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         OptionsLoaderType optionsType = configuration.getOptionsLoaderType();
 
         boolean jpqlLoaderVisible = optionsType == JPQL;
-        joinClauseField.setVisible(jpqlLoaderVisible);
-        whereClauseField.setVisible(jpqlLoaderVisible);
+        joinClauseField.getElement().getParent().setVisible(jpqlLoaderVisible);
+        whereClauseField.getElement().getParent().setVisible(jpqlLoaderVisible);
 
         boolean scriptLoaderVisible = optionsType == SQL
                 || optionsType == GROOVY;
-        optionsLoaderScriptField.setVisible(scriptLoaderVisible);
+        optionsLoaderScriptField.getElement().getParent().setVisible(scriptLoaderVisible);
 
         if (optionsType == GROOVY) {
-            optionsLoaderScriptField.setHelperComponent(
+            attachHelperForSuffix(
+                    optionsLoaderScriptField,
                     dynAttrUiHelper.createHelperButton(
-                            messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderGroovyScriptHelp")));
+                            messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderGroovyScriptHelp"))
+            );
             optionsLoaderScriptField.setMode(CodeEditorMode.GROOVY);
         } else if (optionsType == SQL) {
-            optionsLoaderScriptField.setHelperComponent(
+            attachHelperForSuffix(
+                    optionsLoaderScriptField,
                     dynAttrUiHelper.createHelperButton(
-                            messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderSqlScriptHelp")));
+                            messages.getMessage(CategoryAttributesDetailView.class, "optionsLoaderSqlScriptHelp"))
+            );
             optionsLoaderScriptField.setMode(CodeEditorMode.SQL);
         } else if (optionsType == JPQL) {
-            joinClauseField.setHelperComponent(
+            attachHelperForSuffix(
+                    joinClauseField,
                     dynAttrUiHelper.createHelperButton(
-                            messages.getMessage(CategoryAttributesDetailView.class, "joinClauseHelp")));
-            whereClauseField.setHelperComponent(
+                            messages.getMessage(CategoryAttributesDetailView.class, "joinClauseHelp"))
+            );
+            attachHelperForSuffix(
+                    whereClauseField,
                     dynAttrUiHelper.createHelperButton(
-                            messages.getMessage(CategoryAttributesDetailView.class, "whereClauseHelp")));
+                            messages.getMessage(CategoryAttributesDetailView.class, "whereClauseHelp"))
+            );
         } else {
-            optionsLoaderScriptField.setHelperComponent(new Div());
+            attachHelperForSuffix(
+                    whereClauseField,
+                    new Div()
+            );
             optionsLoaderScriptField.setMode(CodeEditorMode.TEXT);
         }
 

@@ -118,60 +118,87 @@
                             <checkbox id="isCollectionField" property="isCollection" visible="false"/>
                         </formLayout>
                     </hbox>
-                    <formLayout id="validationForm" dataContainer="categoryAttributeDc" height="90%" width="100%">
-                        <codeEditor id="validationScriptField" property="configuration.validatorGroovyScript"
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="validationScriptField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.validatorGroovyScript"
+                                    dataContainer="categoryAttributeDc" property="configuration.validatorGroovyScript"
                                     mode="GROOVY"
+                                    width="100%"
                                     showLineNumbers="true"
                                     highlightActiveLine="false"
                                     colspan="2"
                                     showGutter="true"
                                     highlightGutterLine="false"
                                     height="9em"/>
-                    </formLayout>
+                    </div>
                 </vbox>
             </tab>
             <tab id="calculatedValuesAndOptionsTab" label="msg://calculatedValuesAndOptionsTab.title">
-                <formLayout id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc" width="100%">
-                    <multiSelectComboBoxPicker id="dependsOnAttributesField"
-                                               label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.dependsOnAttributes"
-                                               allowCustomValue="true">
-                        <actions>
-                            <action id="select" type="multi_value_select" icon="ELLIPSIS_DOTS_H"/>
-                            <action id="clear" type="value_clear"/>
-                        </actions>
-                    </multiSelectComboBoxPicker>
-                    <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
-                    <codeEditor id="optionsLoaderScriptField" property="configuration.optionsLoaderScript"
-                                showLineNumbers="true"
-                                highlightGutterLine="false"
-                                highlightActiveLine="false"
-                                mode="GROOVY"
-                                height="12em"
-                                colspan="2"
-                                showGutter="true"/>
-                    <codeEditor id="joinClauseField" property="joinClause"
-                                showLineNumbers="true"
-                                highlightGutterLine="false"
-                                highlightActiveLine="false"
-                                colspan="2"
-                                showGutter="true"
-                                height="12em"/>
-                    <codeEditor id="whereClauseField" property="whereClause"
-                                showLineNumbers="true"
-                                highlightGutterLine="false"
-                                highlightActiveLine="false"
-                                colspan="2"
-                                showGutter="true"
-                                height="12em"/>
-                    <codeEditor id="recalculationScriptField" property="configuration.recalculationScript"
-                                showLineNumbers="true"
-                                highlightGutterLine="false"
-                                highlightActiveLine="false"
-                                colspan="2"
-                                showGutter="true"
-                                mode="GROOVY"
-                                height="12em"/>
-                </formLayout>
+                <vbox margin="false" padding="false">
+                    <formLayout id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc" width="100%">
+                        <multiSelectComboBoxPicker id="dependsOnAttributesField"
+                                                   label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.dependsOnAttributes"
+                                                   allowCustomValue="true">
+                            <actions>
+                                <action id="select" type="multi_value_select" icon="ELLIPSIS_DOTS_H"/>
+                                <action id="clear" type="value_clear"/>
+                            </actions>
+                        </multiSelectComboBoxPicker>
+                        <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
+                    </formLayout>
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="optionsLoaderScriptField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.optionsLoaderScript"
+                                    dataContainer="categoryAttributeDc" property="configuration.optionsLoaderScript"
+                                    width="100%"
+                                    showLineNumbers="true"
+                                    highlightGutterLine="false"
+                                    highlightActiveLine="false"
+                                    mode="GROOVY"
+                                    height="12em"
+                                    colspan="2"
+                                    showGutter="true"/>
+                    </div>
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="joinClauseField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttribute.joinClause"
+                                    dataContainer="categoryAttributeDc" property="joinClause"
+                                    width="100%"
+                                    showLineNumbers="true"
+                                    highlightGutterLine="false"
+                                    highlightActiveLine="false"
+                                    mode="SQL"
+                                    colspan="2"
+                                    showGutter="true"
+                                    height="12em"/>
+                    </div>
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="whereClauseField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttribute.whereClause"
+                                    dataContainer="categoryAttributeDc" property="whereClause"
+                                    width="100%"
+                                    showLineNumbers="true"
+                                    highlightGutterLine="false"
+                                    highlightActiveLine="false"
+                                    colspan="2"
+                                    mode="SQL"
+                                    showGutter="true"
+                                    height="12em"/>
+                    </div>
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="recalculationScriptField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.recalculationScript"
+                                    dataContainer="categoryAttributeDc" property="configuration.recalculationScript"
+                                    showLineNumbers="true"
+                                    width="100%"
+                                    highlightGutterLine="false"
+                                    highlightActiveLine="false"
+                                    colspan="2"
+                                    showGutter="true"
+                                    mode="GROOVY"
+                                    height="12em"/>
+                    </div>
+                </vbox>
             </tab>
             <tab id="localizationTab" label="msg://localizationTab.title"
                  visible="false">

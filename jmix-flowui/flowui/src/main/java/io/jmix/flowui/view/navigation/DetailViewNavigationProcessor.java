@@ -24,6 +24,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.DetailView;
+import io.jmix.flowui.view.DetailViewMode;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
@@ -55,8 +56,17 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
     }
 
     @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Class<? extends View> inferViewClass(DetailViewNavigator<?> navigator) {
-        return viewRegistry.getDetailViewInfo(navigator.getEntityClass()).getControllerClass();
+        Class<?> entityClass;
+        if (navigator.getMode() == DetailViewMode.CREATE) {
+            entityClass = navigator.getEntityClass();
+        } else {
+            entityClass = navigator.getEditedEntity()
+                    .map(Object::getClass)
+                    .orElse((Class) navigator.getEntityClass());
+        }
+        return viewRegistry.getDetailViewInfo(entityClass).getControllerClass();
     }
 
     @Override

@@ -88,8 +88,6 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
     <actions>
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
-        <action id="saveAction" text="msg:///actions.Save" icon="CHECK" actionVariant="PRIMARY"/>
-        <action id="cancelAction" text="msg:///actions.Cancel" icon="BAN"/>
     </actions>
     <layout padding="false">
         <formLayout classNames="master-detail-layout" height="100%">
@@ -107,8 +105,8 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
             <vbox id="detailsLayout" height="100%">
                 ${formXml}
                 <hbox id="detailActions">
-                    <button id="saveBtn" action="saveAction"/>
-                    <button id="cancelBtn" action="cancelAction"/>
+                    <button id="saveBtn" text="msg:///actions.Save" icon="CHECK" themeNames="primary"/>
+                    <button id="cancelBtn" text="msg:///actions.Cancel" icon="BAN"/>
                 </hbox>
             </vbox>
         </formLayout>

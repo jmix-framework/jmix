@@ -107,7 +107,7 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
     @Override
     public String getPageTitle() {
         if (getEditedEntity().getName() != null) {
-            return messageBundle.formatMessage("editAttribute.caption.format", getEditedEntity().getName());
+            return getEditedEntity().getName();
         } else {
             return super.getPageTitle();
         }

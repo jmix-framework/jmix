@@ -17,6 +17,7 @@
 package io.jmix.jmxconsole.view;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -57,13 +58,7 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     @ViewComponent
     protected VerticalLayout operations;
     @ViewComponent
-    protected Span mbeanClassName;
-    @ViewComponent
-    protected Span mbeanDescription;
-    @ViewComponent
     protected TypedTextField<String> operationsSearchField;
-    @ViewComponent
-    protected Span mbeanName;
 
     @Autowired
     protected JmxControl jmxControl;
@@ -91,6 +86,35 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
         initComponents();
     }
 
+    private void initMbeanFormLayout() {
+        FormLayout formLayout = uiComponents.create(FormLayout.class);
+        formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1));
+
+        Span mbeanName = createSpan(getEditedEntity().getObjectName());
+        Span mbeanClassName = createSpan(getEditedEntity().getClassName());
+        Span mbeanDescription = createSpan(getEditedEntity().getDescription());
+
+        formLayout.addFormItem(mbeanName, messageBundle.getMessage("mbean.name"));
+        formLayout.addFormItem(mbeanClassName, messageBundle.getMessage("mbean.className"));
+        formLayout.addFormItem(mbeanDescription, messageBundle.getMessage("mbean.description"));
+
+        getContent().addComponentAsFirst(formLayout);
+    }
+
+    protected Span createSpan(String text) {
+        Span span = uiComponents.create(Span.class);
+        span.setText(text);
+        return span;
+    }
+
+    @Override
+    public String getPageTitle() {
+        String objectName = getEditedEntity().getObjectName();
+        return StringUtils.isNotEmpty(objectName)
+                ? objectName.substring(objectName.indexOf("=") + 1)
+                : super.getPageTitle();
+    }
+
     @Override
     protected String getRouteParamName() {
         return MBEAN_ROUTE_PARAM_NAME;
@@ -99,7 +123,7 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     protected void initComponents() {
         jmxControl.loadAttributes(getEditedEntity());
 
-        initMbeanSpans();
+        initMbeanFormLayout();
         initOperationsLayout();
         initDataGridColumns();
         initSearchField();
@@ -200,12 +224,6 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     protected void reloadAttribute(ManagedBeanAttribute attribute) {
         jmxControl.loadAttributeValue(attribute);
         attrDc.replaceItem(attribute);
-    }
-
-    protected void initMbeanSpans() {
-        mbeanName.setText(messageBundle.formatMessage("mbean.name", getEditedEntity().getObjectName()));
-        mbeanClassName.setText(messageBundle.formatMessage("mbean.className", getEditedEntity().getClassName()));
-        mbeanDescription.setText(messageBundle.formatMessage("mbean.description", getEditedEntity().getDescription()));
     }
 
     protected void initOperationsLayout() {

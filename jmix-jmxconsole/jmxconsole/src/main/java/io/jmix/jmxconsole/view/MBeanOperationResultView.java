@@ -16,8 +16,6 @@
 
 package io.jmix.jmxconsole.view;
 
-import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.Route;
@@ -30,6 +28,7 @@ import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -59,9 +58,7 @@ public class MBeanOperationResultView extends StandardView {
     @ViewComponent
     protected JmixButton exportBtn;
     @ViewComponent
-    protected H4 resultTitle;
-    @ViewComponent
-    protected VerticalLayout resultContainer;
+    protected VerticalLayout resultVBox;
 
     @Autowired
     protected JmxControl jmxControl;
@@ -133,10 +130,13 @@ public class MBeanOperationResultView extends StandardView {
         }
     }
 
-    protected Paragraph createParagraph(String message) {
-        Paragraph traceParagraph = uiComponents.create(Paragraph.class);
-        traceParagraph.setText(message);
-        return traceParagraph;
+    protected JmixTextArea createTextArea(String message) {
+        JmixTextArea textArea = uiComponents.create(JmixTextArea.class);
+        textArea.setWidthFull();
+        textArea.setMaxHeight("35em");
+        textArea.setValue(message);
+        textArea.setReadOnly(true);
+        return textArea;
     }
 
 
@@ -165,15 +165,13 @@ public class MBeanOperationResultView extends StandardView {
     }
 
     protected class OperationBackgroundTask extends BackgroundTask<Long, Object> {
-        protected Paragraph paragraph = null;
-        protected String resultMessage;
 
         protected OperationBackgroundTask(long timeoutSeconds, View<?> view) {
             super(timeoutSeconds, view);
         }
 
         @Override
-        public Object run(TaskLifeCycle<Long> taskLifeCycle) throws Exception {
+        public Object run(TaskLifeCycle<Long> taskLifeCycle) {
             return jmxControl.invokeOperation(operation, paramValues);
         }
 
@@ -181,21 +179,22 @@ public class MBeanOperationResultView extends StandardView {
         public void done(Object res) {
             result = res;
             String resultString = AttributeHelper.convertToString(result);
+            taskProgressBar.setVisible(false);
             if (StringUtils.isNotEmpty(resultString)) {
-                paragraph = createParagraph(resultString);
-                resultMessage = messageBundle.getMessage("operationResult.result");
+                showResult(resultString);
             } else {
-                resultMessage = messageBundle.getMessage("operationResult.void");
+                closeWithDefaultAction();
+                notifications.create(messageBundle.getMessage("operationResult.void"))
+                        .withType(Notifications.Type.SUCCESS)
+                        .show();
             }
-            showResult();
         }
 
         @Override
         public boolean handleException(Exception ex) {
             exception = ex;
-            paragraph = createParagraph(getExceptionMessage(ex));
-            resultMessage = messageBundle.getMessage("operationResult.exception");
-            showResult();
+            taskProgressBar.setVisible(false);
+            showResult(getExceptionMessage(ex));
             return true;
         }
 
@@ -208,12 +207,8 @@ public class MBeanOperationResultView extends StandardView {
             return true;
         }
 
-        protected void showResult() {
-            taskProgressBar.setVisible(false);
-            resultTitle.setText(resultMessage);
-            if (paragraph != null) {
-                resultContainer.add(paragraph);
-            }
+        protected void showResult(String resultMessage) {
+            resultVBox.add(createTextArea(resultMessage));
             exportBtn.setEnabled(true);
         }
     }

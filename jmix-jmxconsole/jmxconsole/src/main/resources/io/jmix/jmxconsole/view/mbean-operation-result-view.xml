@@ -24,11 +24,9 @@
     <layout>
         <vbox id="resultVBox" padding="false" width="100%">
             <progressBar id="taskProgressBar" width="100%" indeterminate="true"/>
-            <h4 id="resultTitle"/>
-            <vbox id="resultContainer" padding="false" width="100%"/>
         </vbox>
         <hbox id="detailActions">
-            <button id="closeBtn" action="closeAction"/>
+            <button id="closeBtn" action="closeAction" themeNames="primary"/>
             <button id="exportBtn" action="exportAction" enabled="false"/>
         </hbox>
     </layout>

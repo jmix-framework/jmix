@@ -16,10 +16,6 @@
 
 package io.jmix.jmxconsole.view;
 
-import io.jmix.jmxconsole.AttributeComponentProvider;
-import io.jmix.jmxconsole.model.ManagedBeanAttribute;
-import io.jmix.jmxconsole.model.ManagedBeanOperation;
-import io.jmix.jmxconsole.model.ManagedBeanOperationParameter;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H4;
@@ -36,6 +32,10 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
+import io.jmix.jmxconsole.AttributeComponentProvider;
+import io.jmix.jmxconsole.model.ManagedBeanAttribute;
+import io.jmix.jmxconsole.model.ManagedBeanOperation;
+import io.jmix.jmxconsole.model.ManagedBeanOperationParameter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -134,7 +134,7 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
     }
 
     protected void initComponents() {
-        form.setSummaryText(String.format(" %s():%s - %s",
+        form.setSummaryText(String.format("%s(): %s - %s",
                 operation.getName(), convertTypeToReadableName(operation.getReturnType()), operation.getDescription()));
 
         List<ManagedBeanOperationParameter> parameters = operation.getParameters();

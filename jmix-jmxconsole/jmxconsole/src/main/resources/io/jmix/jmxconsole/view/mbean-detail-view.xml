@@ -15,8 +15,7 @@
   ~ limitations under the License.
   -->
 
-<view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://mbeanDetailView.title">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data>
         <instance id="mbeanDc" class="io.jmix.jmxconsole.model.ManagedBeanInfo">
             <collection id="attrDc" property="attributes"/>
@@ -29,15 +28,13 @@
         <action id="close" type="detail_discard" text="msg://actions.Close"/>
     </actions>
     <layout>
-        <span id="mbeanName"/>
-        <span id="mbeanClassName"/>
-        <span id="mbeanDescription"/>
         <hbox classNames="buttons-panel">
             <button action="attributesDataGrid.refresh"/>
             <button action="attributesDataGrid.edit"/>
         </hbox>
         <dataGrid id="attributesDataGrid" dataContainer="attrDc"
-                  minHeight="20em"
+                  minHeight="25em"
+                  maxHeight="25em"
                   width="100%"
                   columnReorderingAllowed="true">
             <actions>

@@ -2517,37 +2517,67 @@
     </xs:group>
 
     <xs:complexType name="baseComboBoxItemsQueryType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="searchStringFormat" type="xs:string"/>
-                <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
-            </xs:extension>
-        </xs:simpleContent>
+        <xs:sequence>
+            <xs:element name="query"/>
+        </xs:sequence>
+        <xs:attribute name="searchStringFormat" type="xs:string"/>
+        <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="comboBoxItemsQueryType">
-        <xs:simpleContent>
+        <xs:complexContent>
             <xs:extension base="baseComboBoxItemsQueryType"/>
-        </xs:simpleContent>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="entityComboBoxItemsQueryType">
-        <xs:simpleContent>
+        <xs:complexContent>
             <xs:extension base="baseComboBoxItemsQueryType">
+                <xs:sequence>
+                    <xs:element name="fetchPlan" type="itemsQueryFetchPlanType" minOccurs="0"/>
+                </xs:sequence>
                 <xs:attribute name="class" type="xs:string" use="required"/>
                 <xs:attribute name="fetchPlan" type="xs:string"/>
             </xs:extension>
-        </xs:simpleContent>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="multiSelectComboBoxItemsQueryType">
-        <xs:simpleContent>
+        <xs:complexContent>
             <xs:extension base="baseComboBoxItemsQueryType">
+                <xs:sequence>
+                    <xs:element name="fetchPlan" type="itemsQueryFetchPlanType" minOccurs="0"/>
+                </xs:sequence>
                 <xs:attribute name="class" type="xs:string"/>
                 <xs:attribute name="fetchPlan" type="xs:string"/>
             </xs:extension>
-        </xs:simpleContent>
+        </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="itemsQueryFetchPlanType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
+        </xs:sequence>
+        <xs:attribute name="extends"/>
+    </xs:complexType>
+
+    <xs:complexType name="itemsQueryFetchPlanPropertyType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
+        </xs:sequence>
+        <xs:attribute name="name"/>
+        <xs:attribute name="fetchPlan"/>
+        <xs:attribute name="fetch" type="itemsQueryFetchPlanFetchMode"/>
+    </xs:complexType>
+
+    <xs:simpleType name="itemsQueryFetchPlanFetchMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="UNDEFINED"/>
+            <xs:enumeration value="JOIN"/>
+            <xs:enumeration value="BATCH"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="gridAggregationType">
         <xs:choice minOccurs="0">
@@ -2727,7 +2757,7 @@
                             </xs:sequence>
 
                             <xs:attributeGroup ref="columnsLoadType"/>
-                            <xs:attribute name="filterable" type="xs:boolean"/>
+                            <xs:attribute name="sortable" type="xs:boolean"/>
                             <xs:attribute name="resizable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
@@ -3736,6 +3766,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="highlightActiveLine" type="xs:boolean"/>
+                <xs:attribute name="highlightGutterLine" type="xs:boolean"/>
                 <xs:attribute name="showGutter" type="xs:boolean"/>
                 <xs:attribute name="showLineNumbers" type="xs:boolean"/>
                 <xs:attribute name="showPrintMargin" type="xs:boolean"/>
@@ -3760,6 +3791,18 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!--    VirtualList-->
+    <xs:complexType name="virtualListComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!--    HTML-->
 
     <!-- Html -->
@@ -3770,15 +3813,10 @@
                     <xs:element name="content" minOccurs="0">
                         <xs:complexType mixed="true"/>
                     </xs:element>
-
-                    <xs:element name="file" minOccurs="0">
-                        <xs:complexType>
-                            <xs:attribute name="path" type="resourceString"/>
-                        </xs:complexType>
-                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="content" type="resourceString"/>
+                <xs:attribute name="file" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
@@ -4192,7 +4230,7 @@
 
     <xs:complexType name="settingsFacetType">
         <xs:sequence>
-            <xs:element name="component" type="settingsComponentType"/>
+            <xs:element name="component" minOccurs="0" type="settingsComponentType"/>
         </xs:sequence>
 
         <xs:attribute name="id" type="xs:string"/>
@@ -4296,6 +4334,7 @@
                 <xs:element name="groupFilter" type="groupFilterComponent"/>
                 <xs:element name="genericFilter" type="genericFilterComponent"/>
                 <xs:element name="codeEditor" type="codeEditorComponent"/>
+                <xs:element name="virtualList" type="virtualListComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

@@ -45,7 +45,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collections;
@@ -90,9 +90,19 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
     }
 
     protected void initUiUserSubstitutionChangeListener() {
-        UiEventsManager uiEventsManager = VaadinSession.getCurrent().getAttribute(UiEventsManager.class);
-        uiEventsManager.addApplicationListener(this,
-                (ApplicationListener<UiUserSubstitutionsChangedEvent>) this::onUserSubstitutionsChanged);
+        VaadinSession session = VaadinSession.getCurrent();
+        if (session == null) {
+            return;
+        }
+
+        UiEventsManager uiEventsManager = session.getAttribute(UiEventsManager.class);
+
+        if (uiEventsManager != null) {
+            uiEventsManager.addApplicationListener(this, this::onApplicationEvent);
+
+            // Remove on detach event
+            addDetachListener(event -> uiEventsManager.removeApplicationListeners(this));
+        }
     }
 
     @Override
@@ -182,6 +192,12 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
             return metadataTools.getInstanceName(user);
         } else {
             return user.getUsername();
+        }
+    }
+
+    protected void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof UiUserSubstitutionsChangedEvent uiUserSubstitutionsChangedEvent) {
+            onUserSubstitutionsChanged(uiUserSubstitutionsChangedEvent);
         }
     }
 

@@ -16,10 +16,13 @@
 
 package io.jmix.flowui.component.delegate;
 
+import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import io.jmix.flowui.data.DataAwareComponentsTools;
+import io.jmix.flowui.data.EntityValueSource;
+import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
 import io.jmix.flowui.data.binding.impl.FieldValueBinding;
-import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -31,13 +34,25 @@ import java.time.LocalDate;
 public class DatePickerDelegate<V extends Comparable>
         extends AbstractDateTimeFieldDelegate<TypedDatePicker<V>, V, LocalDate> {
 
+    protected DataAwareComponentsTools dataAwareComponentsTools;
+
     public DatePickerDelegate(TypedDatePicker<V> component) {
         super(component);
+    }
+
+    @Autowired
+    public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
+        this.dataAwareComponentsTools = dataAwareComponentsTools;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected AbstractValueBinding<V> createValueBinding(ValueSource<V> valueSource) {
         return applicationContext.getBean(FieldValueBinding.class, valueSource, component);
+    }
+
+    @Override
+    protected void setupProperties(EntityValueSource<?, V> valueSource) {
+        dataAwareComponentsTools.setupRange(component, valueSource);
     }
 }

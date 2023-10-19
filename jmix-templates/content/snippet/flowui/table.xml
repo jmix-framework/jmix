@@ -31,8 +31,8 @@ fetchPlan.orderedRootProperties.each { property ->
 
 %>
 <hbox id="buttonsPanel" classNames="buttons-panel">
-<%tableActions.each { action ->%>
-<button id="${action}Btn" action="${tableId}.${action}"/>
+<%tableActions.each { actionId ->%>
+<button id="${actionId}Btn" action="${tableId}.${actionId}"/>
 <%}%>
 <simplePagination id="pagination" dataLoader="${tableDl}"/>
 </hbox>
@@ -43,8 +43,14 @@ fetchPlan.orderedRootProperties.each { property ->
         (tableType.isHierarchical()) ? print("\nhierarchyProperty=\"${hierarchicalProperty}\"") : print("")
         if (columnReorderingAllowed) {%>\n columnReorderingAllowed="true"<%}
         if (multiselect) {%>\n selectionMode="MULTI"<%}%>>
-    <actions><%tableActions.each { action ->%>
-        <action id="${action}" type="list_${action}"/>
+    <actions><%tableActions.each { actionId ->
+    if (actionSearch != null && jmixProjectModule != null) {
+    def actionDescription = actionSearch.getActionDescriptionBy(actionId, jmixProjectModule)
+    %>
+    <action id="${actionDescription.getId()}" type="${actionDescription.getType()}"/>
+    <%} else {%>
+    <action id="${actionId}" type="list_${actionId}"/>
+    <%}%>
     <%}%>
     </actions>
     <columns<%if (resizableColumns) {%> resizable="true"<%}%>><%columns.each {column ->%>

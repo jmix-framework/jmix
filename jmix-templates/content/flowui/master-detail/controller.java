@@ -4,12 +4,14 @@ import ${entity.fqn};<%if (!api.jmixProjectModule.isApplication()) {%>
 import io.jmix.flowui.view.DefaultMainViewParent;
 <%} else {%>
 import ${module_basePackage}.view.main.MainView;
-<%}%>import com.vaadin.flow.component.HasValueAndElement;
+<%}%>import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.*;
 
@@ -61,15 +63,15 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         updateControls(true);
     }
 
-    @Subscribe("saveAction")
-    public void onSaveActionPerformed(final ActionPerformedEvent event) {
+    @Subscribe("saveBtn")
+    public void onSaveButtonClick(final ClickEvent<JmixButton> event) {
         dataContext.save();
         ${tableDc}.replaceItem(${detailDc}.getItem());
         updateControls(false);
     }
 
-    @Subscribe("cancelAction")
-    public void onCancelActionPerformed(final ActionPerformedEvent event) {
+    @Subscribe("cancelBtn")
+    public void onCancelButtonClick(final ClickEvent<JmixButton> event) {
         dataContext.clear();
         ${detailDl}.load();
         updateControls(false);

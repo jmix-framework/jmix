@@ -29,7 +29,7 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-@org.springframework.stereotype.Component("ui_DataGridSettingsBinder")
+@org.springframework.stereotype.Component("flowui_DataGridSettingsBinder")
 public class DataGridSettingsBinder extends AbstractGridSettingsBinder<DataGrid<?>, DataGridSettings> {
 
     @Override

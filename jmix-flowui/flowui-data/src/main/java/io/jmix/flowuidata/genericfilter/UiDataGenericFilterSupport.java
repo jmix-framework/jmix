@@ -132,10 +132,11 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
         boolean defaultFormMeFieldVisible = isDefaultForMeFieldVisible(currentConfiguration, configurationModel);
         configurationDetail.setDefaultForMeFieldVisible(defaultFormMeFieldVisible);
         configurationDetail.setConfigurationDc(configurationDc);
+        configurationDetail.setFilter(currentConfiguration.getOwner());
 
         dialog.addAfterOpenListener(afterOpenEvent -> {
             //lazy initialization is required because the state of the components depends on the data container
-            configurationDetail.initFields();
+            configurationDetail.init();
             afterOpenEvent.getView().setReadOnly(configurationDetail.isViewReadOnly());
         });
 
@@ -157,6 +158,7 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
 
         Configuration resultConfiguration = initFilterConfiguration(configurationModel.getConfigurationId(),
                 configurationModel.getName(), configuration, isNewConfiguration, rootFilterComponent);
+        resultConfiguration.setAvailableForAllUsers(configurationModel.getUsername() == null);
 
         saveConfigurationModel(resultConfiguration, configurationModel);
 

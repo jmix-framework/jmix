@@ -95,14 +95,4 @@ public interface StudioHTMLElements {
             target = "com.vaadin.flow.component.Html"
     )
     void htmlContent();
-
-    @StudioElement(
-            name = "File Content",
-            xmlElement = "file",
-            target = "com.vaadin.flow.component.Html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "path", type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
-    void fileContent();
 }

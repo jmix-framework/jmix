@@ -28,7 +28,7 @@ import org.springframework.core.annotation.Order;
 import java.util.List;
 
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-@org.springframework.stereotype.Component("ui_TreeDataGridSettingsBinder")
+@org.springframework.stereotype.Component("flowui_TreeDataGridSettingsBinder")
 public class TreeDataGridSettingsBinder extends AbstractGridSettingsBinder<TreeDataGrid<?>, TreeDataGridSettings> {
 
     @Override

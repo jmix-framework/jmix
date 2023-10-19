@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
-@org.springframework.stereotype.Component("ui_ViewSettingsComponentManagerImpl")
+@org.springframework.stereotype.Component("flowui_ViewSettingsComponentManagerImpl")
 public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentManager {
 
     private static final Logger log = LoggerFactory.getLogger(ViewSettingsComponentManagerImpl.class);

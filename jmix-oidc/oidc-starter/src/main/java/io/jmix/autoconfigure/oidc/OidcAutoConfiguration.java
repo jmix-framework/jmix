@@ -47,6 +47,7 @@ import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInit
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @AutoConfiguration
 @Import({OidcConfiguration.class})
@@ -98,7 +99,7 @@ public class OidcAutoConfiguration {
                         authorize
                                 //if we don't allow /vaadinServlet/PUSH URL the Session Expired toolbox won't
                                 //be shown in the web browser
-                                .requestMatchers("/vaadinServlet/PUSH/**").permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/vaadinServlet/PUSH/**")).permitAll()
                                 .anyRequest().authenticated();
                     })
                     .oauth2Login(oauth2Login -> {

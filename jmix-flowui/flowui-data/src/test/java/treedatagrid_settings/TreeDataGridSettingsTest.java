@@ -51,7 +51,7 @@ public class TreeDataGridSettingsTest extends AbstractSettingsTest {
 
     @AfterEach
     public void afterEach() {
-        jdbc.update("delete from FLOWUI_UI_SETTING");
+        jdbc.update("delete from FLOWUI_USER_SETTINGS");
         userSettingsCache.clear();
     }
 

@@ -110,6 +110,9 @@ includeProject('reports-rest-starter', 'jmix-reports/reports-rest-starter')
 includeProject('reports-flowui', 'jmix-reports/reports-flowui')
 includeProject('reports-flowui-starter', 'jmix-reports/reports-flowui-starter')
 
+includeProject('jmxconsole', 'jmix/jmix-jmxconsole/jmxconsole')
+includeProject('jmxconsole-starter', 'jmix/jmix-jmxconsole/jmxconsole-starter')
+
 includeProject('search', 'jmix-search/search')
 includeProject('search-starter', 'jmix-search/search-starter')
 includeProject('search-aws-starter', 'jmix-search/search-aws-starter')

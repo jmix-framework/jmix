@@ -1,0 +1,12 @@
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.jmxconsole'
+archivesBaseName = 'jmix-jmxconsole'
+
+dependencies {
+    api project(':core')
+    api project(':data')
+
+    api project(':flowui')
+}

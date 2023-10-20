@@ -42,6 +42,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import jakarta.persistence.EntityManagerFactory;
@@ -110,5 +112,10 @@ public class MultitenancyFlowuiTestConfiguration {
     @Bean(name = "core_UserRepository")
     public UserRepository userRepository() {
         return new InMemoryUserRepository();
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }

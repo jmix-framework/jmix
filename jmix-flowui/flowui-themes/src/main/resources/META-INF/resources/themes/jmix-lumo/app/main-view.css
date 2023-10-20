@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-nav {
-  display: flex;
-  flex-direction: column;
-}
-
 .jmix-main-view-header {
   box-sizing: border-box;
   display: flex;
@@ -55,6 +50,8 @@ nav {
 }
 
 .jmix-main-view-navigation {
+  display: flex;
+  flex-direction: column;
   border-bottom: 1px solid;
   border-color: var(--lumo-contrast-10pct);
   flex-grow: 1;

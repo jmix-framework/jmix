@@ -2890,9 +2890,9 @@
                     <xs:element name="validators" minOccurs="0" type="integerFieldValidatorType"/>
                 </xs:sequence>
 
-                <xs:attribute name="max" type="xs:double"/>
-                <xs:attribute name="min" type="xs:double"/>
-                <xs:attribute name="step" type="xs:double"/>
+                <xs:attribute name="max" type="xs:integer"/>
+                <xs:attribute name="min" type="xs:integer"/>
+                <xs:attribute name="step" type="xs:integer"/>
                 <xs:attribute name="stepButtonsVisible" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasRequired"/>

@@ -178,6 +178,7 @@ dependencies {
         api "io.jmix.notifications:jmix-notifications:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-starter:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-flowui:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-flowui-kit:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-flowui-starter:$premiumVersion"
 
         api "io.jmix.oidc:jmix-oidc:$freeVersion"

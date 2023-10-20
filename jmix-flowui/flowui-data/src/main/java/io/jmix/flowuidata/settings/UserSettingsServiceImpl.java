@@ -22,7 +22,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.impl.EntityEventManager;
 import io.jmix.flowui.settings.UserSettingsService;
-import io.jmix.flowuidata.entity.UiSetting;
+import io.jmix.flowuidata.entity.UserSettingsItem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class UserSettingsServiceImpl implements UserSettingsService {
         Preconditions.checkNotNullArgument(key);
 
         String value = transaction.execute(status -> {
-            UiSetting us = findUserSettings(key);
+            UserSettingsItem us = findUserSettings(key);
             return us == null ? null : us.getValue();
         });
 
@@ -84,9 +84,9 @@ public class UserSettingsServiceImpl implements UserSettingsService {
         Preconditions.checkNotNullArgument(key);
 
         transaction.executeWithoutResult(status -> {
-            UiSetting us = findUserSettings(key);
+            UserSettingsItem us = findUserSettings(key);
             if (us == null) {
-                us = metadata.create(UiSetting.class);
+                us = metadata.create(UserSettingsItem.class);
                 us.setUsername(authentication.getUser().getUsername());
                 us.setKey(key);
                 us.setValue(value);
@@ -103,7 +103,7 @@ public class UserSettingsServiceImpl implements UserSettingsService {
         Preconditions.checkNotNullArgument(key);
 
         transaction.executeWithoutResult(status -> {
-            UiSetting us = findUserSettings(key);
+            UserSettingsItem us = findUserSettings(key);
             if (us != null) {
                 entityManager.remove(us);
             }
@@ -116,18 +116,18 @@ public class UserSettingsServiceImpl implements UserSettingsService {
         Preconditions.checkNotNullArgument(toUsername);
 
         transaction.executeWithoutResult(status ->
-                entityManager.createQuery("delete from flowui_UiSetting s where s.username = ?1")
+                entityManager.createQuery("delete from flowui_UserSettingsItem s where s.username = ?1")
                         .setParameter(1, toUsername)
                         .executeUpdate());
 
         transaction.executeWithoutResult(status -> {
-            List<UiSetting> fromUserSettings =
-                    entityManager.createQuery("select s from flowui_UiSetting s where s.username = ?1", UiSetting.class)
+            List<UserSettingsItem> fromUserSettings =
+                    entityManager.createQuery("select s from flowui_UserSettingsItem s where s.username = ?1", UserSettingsItem.class)
                             .setParameter(1, fromUsername)
                             .getResultList();
 
-            for (UiSetting currSetting : fromUserSettings) {
-                UiSetting newSetting = metadata.create(UiSetting.class);
+            for (UserSettingsItem currSetting : fromUserSettings) {
+                UserSettingsItem newSetting = metadata.create(UserSettingsItem.class);
                 newSetting.setUsername(toUsername);
                 newSetting.setKey(currSetting.getKey());
                 newSetting.setValue(currSetting.getValue());
@@ -139,10 +139,10 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     }
 
     @Nullable
-    protected UiSetting findUserSettings(String key) {
-        List<UiSetting> result = entityManager.createQuery(
-                        "select s from flowui_UiSetting s where s.username = ?1 and s.key =?2",
-                        UiSetting.class)
+    protected UserSettingsItem findUserSettings(String key) {
+        List<UserSettingsItem> result = entityManager.createQuery(
+                        "select s from flowui_UserSettingsItem s where s.username = ?1 and s.key =?2",
+                        UserSettingsItem.class)
                 .setParameter(1, authentication.getUser().getUsername())
                 .setParameter(2, key)
                 .getResultList();

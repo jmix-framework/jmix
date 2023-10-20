@@ -90,7 +90,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "autoWidth", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "filterable", type = StudioPropertyType.BOOLEAN,
-                            defaultValueRef = "parent:filterable"),
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "footer", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "frozen", type = StudioPropertyType.BOOLEAN,
@@ -102,7 +102,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
                             defaultValueRef = "parent:resizable"),
                     @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
+                            defaultValueRef = "parent:sortable"),
                     @StudioProperty(xmlAttribute = "textAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.grid.ColumnTextAlign", defaultValue = "START",
                             options = {"CENTER", "END", "START"}),
@@ -313,7 +313,7 @@ public interface StudioElements {
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
                     "com.vaadin.flow.component.tabs.Tab"},
             properties = {
-                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING, required = true),
                     @StudioProperty(xmlAttribute = "focusDelay", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "hideDelay", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "hoverDelay", type = StudioPropertyType.INTEGER),
@@ -578,6 +578,7 @@ public interface StudioElements {
             name = "ItemsQuery",
             xmlElement = "itemsQuery",
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.JmixComboBox"},
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.EntityComboBox",
@@ -587,7 +588,8 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false")
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
     void valueItemsQuery();
@@ -596,6 +598,7 @@ public interface StudioElements {
             name = "ItemsQuery",
             xmlElement = "itemsQuery",
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.EntityComboBox"},
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
@@ -607,6 +610,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY),
                     @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
             }
     )
@@ -616,6 +620,7 @@ public interface StudioElements {
             name = "ItemsQuery",
             xmlElement = "itemsQuery",
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            unlimitedCount = false,
             target = {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker"
@@ -629,6 +634,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "searchStringFormat", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "escapeValueForLike", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY),
                     @StudioProperty(xmlAttribute = "fetchPlan", type = StudioPropertyType.FETCH_PLAN)
             }
     )

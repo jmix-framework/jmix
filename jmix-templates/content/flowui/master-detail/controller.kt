@@ -4,12 +4,14 @@ import ${entity.fqn}<%if (!api.jmixProjectModule.isApplication()) {%>
 import io.jmix.flowui.view.DefaultMainViewParent
 <%} else {%>
 import ${module_basePackage}.view.main.MainView
-<%}%>import com.vaadin.flow.component.HasValueAndElement
+<%}%>import com.vaadin.flow.component.ClickEvent
+import com.vaadin.flow.component.HasValueAndElement
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.Route
 import io.jmix.flowui.kit.action.ActionPerformedEvent
+import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.model.*
 import io.jmix.flowui.view.*
 import io.jmix.flowui.view.Target
@@ -52,7 +54,7 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
     @Subscribe("${tableId}.create")
     fun on${tableId.capitalize()}Create(event: ActionPerformedEvent) {
         dataContext.clear()
-        val entity:  ${entity.className} = dataContext.create(${entity.className}::class.java)
+        val entity: ${entity.className} = dataContext.create(${entity.className}::class.java)
         ${detailDc}.item = entity
         updateControls(true)
     }
@@ -62,15 +64,15 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
         updateControls(true)
     }
 
-    @Subscribe("saveAction")
-    fun onSaveActionPerformed(event: ActionPerformedEvent) {
+    @Subscribe("saveBtn")
+    fun onSaveButtonClick(event: ClickEvent<JmixButton>) {
         dataContext.save()
         ${tableDc}.replaceItem(${detailDc}.item)
         updateControls(false)
     }
 
-    @Subscribe("cancelAction")
-    fun onCancelActionPerformed(event: ActionPerformedEvent) {
+    @Subscribe("cancelBtn")
+    fun onCancelButtonClick(event: ClickEvent<JmixButton>) {
         dataContext.clear()
         ${detailDl}.load()
         updateControls(false)

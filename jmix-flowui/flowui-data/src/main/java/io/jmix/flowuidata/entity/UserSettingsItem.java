@@ -29,11 +29,11 @@ import java.util.UUID;
 /**
  * Record for user's UI setting.
  */
-@Entity(name = "flowui_UiSetting")
+@Entity(name = "flowui_UserSettingsItem")
 @JmixEntity
-@Table(name = "FLOWUI_UI_SETTING")
+@Table(name = "FLOWUI_USER_SETTINGS")
 @SystemLevel
-public class UiSetting implements Serializable {
+public class UserSettingsItem implements Serializable {
     private static final long serialVersionUID = -5262191502816639662L;
 
     @Id

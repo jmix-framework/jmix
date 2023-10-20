@@ -42,7 +42,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.querycondition.PropertyConditionUtils;
-import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.app.datagrid.HeaderPropertyFilterLayout;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
@@ -89,7 +89,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
     protected FetchPlanRepositoryImpl fetchPlanRepository;
     protected ClassManager classManager;
-    protected UiComponents uiComponents;
     protected Messages messages;
     protected PropertyFilterSupport propertyFilterSupport;
 
@@ -163,29 +162,29 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     protected void loadColumns(T resultComponent, Element columnsElement, GridDataHolder holder, FetchPlan fetchPlan) {
         Boolean includeAll = loadBoolean(columnsElement, "includeAll").orElse(false);
-        boolean filterable = loadBoolean(columnsElement, "filterable")
-                .orElse(false);
+        boolean sortable = loadBoolean(columnsElement, "sortable")
+                .orElse(true);
         boolean resizable = loadBoolean(columnsElement, "resizable")
                 .orElse(false);
 
         if (includeAll) {
-            loadColumnsByInclude(resultComponent, columnsElement, holder, fetchPlan, filterable, resizable);
+            loadColumnsByInclude(resultComponent, columnsElement, holder, fetchPlan, sortable, resizable);
             // In case of includeAll, EditorActionsColumn will be place at the end
             loadEditorActionsColumns(resultComponent, columnsElement);
         } else {
             List<Element> columnElements = columnsElement.elements();
             for (Element columnElement : columnElements) {
-                loadColumnsElementChild(resultComponent, columnElement, holder, filterable, resizable);
+                loadColumnsElementChild(resultComponent, columnElement, holder, sortable, resizable);
             }
         }
     }
 
     protected void loadColumnsElementChild(T resultComponent, Element columnElement, GridDataHolder holder,
-                                           boolean filterableColumns, boolean resizableColumns) {
+                                           boolean sortableColumns, boolean resizableColumns) {
         switch (columnElement.getName()) {
             case COLUMN_ELEMENT_NAME:
                 loadColumn(resultComponent, columnElement, holder.dataLoader,
-                        Objects.requireNonNull(holder.getMetaClass()), filterableColumns, resizableColumns);
+                        Objects.requireNonNull(holder.getMetaClass()), sortableColumns, resizableColumns);
                 break;
             case EDITOR_ACTIONS_COLUMN_ELEMENT_NAME:
                 loadEditorActionsColumn(resultComponent, columnElement);
@@ -288,7 +287,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected void loadColumnsByInclude(T component, Element columnsElement, GridDataHolder holder,
-                                        FetchPlan fetchPlan, boolean filterableColumns, boolean resizableColumns) {
+                                        FetchPlan fetchPlan, boolean sortableColumns, boolean resizableColumns) {
         MetaClass metaClass = Objects.requireNonNull(holder.getMetaClass());
         Collection<String> appliedProperties = getAppliedProperties(columnsElement, fetchPlan, metaClass);
 
@@ -307,7 +306,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 overriddenColumns.add(column);
             }
 
-            loadColumn(component, column, dataLoader, metaClass, filterableColumns, resizableColumns);
+            loadColumn(component, column, dataLoader, metaClass, sortableColumns, resizableColumns);
         }
 
         // load remains columns
@@ -322,14 +321,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             if (propertyId != null) {
                 MetaPropertyPath propertyPath = metaClass.getPropertyPath(propertyId);
                 if (propertyPath == null || getMetaDataTools().fetchPlanContainsProperty(fetchPlan, propertyPath)) {
-                    loadColumn(component, column, dataLoader, metaClass, filterableColumns, resizableColumns);
+                    loadColumn(component, column, dataLoader, metaClass, sortableColumns, resizableColumns);
                 }
             }
         }
     }
 
     protected void loadColumn(T component, Element element, @Nullable DataLoader dataLoader, MetaClass metaClass,
-                              boolean filterableColumns, boolean resizableColumns) {
+                              boolean sortableColumns, boolean resizableColumns) {
         String property = loadString(element, "property")
                 .orElse(null);
 
@@ -358,14 +357,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadResourceString(element, "header", context.getMessageGroup(), column::setHeader);
         loadResourceString(element, "footer", context.getMessageGroup(), column::setFooter);
         loadBoolean(element, "frozen", column::setFrozen);
-        loadBoolean(element, "sortable", column::setSortable);
         loadInteger(element, "flexGrow", column::setFlexGrow);
         loadBoolean(element, "autoWidth", column::setAutoWidth);
         loadBoolean(element, "visible", column::setVisible);
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
 
+        loadColumnSortable(element, column, sortableColumns);
         loadColumnResizable(element, column, resizableColumns);
-        loadColumnFilterable(element, column, dataLoader, metaClass, property, filterableColumns);
+        loadColumnFilterable(element, column, dataLoader, metaClass, property);
         loadColumnEditable(element, column, property);
         loadAggregationInfo(element, column);
 
@@ -398,25 +397,32 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         return Optional.empty();
     }
 
+    protected void loadColumnSortable(Element element, Column<?> column, boolean sortableColumns) {
+        loadBoolean(element, "sortable")
+                .ifPresentOrElse(column::setSortable, () -> column.setSortable(sortableColumns));
+    }
+
     protected void loadColumnResizable(Element element, Column<?> column, boolean resizableColumns) {
         loadBoolean(element, "resizable")
                 .ifPresentOrElse(column::setResizable, () -> column.setResizable(resizableColumns));
     }
 
     protected void loadColumnFilterable(Element element, Column<?> column, @Nullable DataLoader dataLoader,
-                                        MetaClass metaClass, String property, boolean filterableColumns) {
-        Optional<Boolean> filterable = loadBoolean(element, "filterable");
+                                        MetaClass metaClass, String property) {
+        loadBoolean(element, "filterable")
+                .ifPresent(filterable -> {
+                    if (!filterable) {
+                        return;
+                    }
 
-        if (filterableColumns && filterable.isEmpty()
-                || filterable.isPresent() && filterable.get()) {
-            if (dataLoader == null) {
-                throw new GuiDevelopmentException(resultComponent.getClass().getSimpleName() +
-                        " with a filterable column must have a DataLoader",
-                        context, "Component ID", resultComponent.getId());
-            }
+                    if (dataLoader == null) {
+                        throw new GuiDevelopmentException(resultComponent.getClass().getSimpleName() +
+                                " with a filterable column must have a DataLoader",
+                                context, "Component ID", resultComponent.getId());
+                    }
 
-            setFilterComponent(column, dataLoader, metaClass, property);
-        }
+                    setFilterComponent(column, dataLoader, metaClass, property);
+                });
     }
 
     protected void setFilterComponent(Column<?> column, DataLoader dataLoader,
@@ -429,7 +435,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected PropertyFilter<?> createPropertyFilter(DataLoader dataLoader, MetaClass metaClass, String property) {
-        PropertyFilter<?> propertyFilter = getUiComponents().create(PropertyFilter.class);
+        PropertyFilter<?> propertyFilter = factory.create(PropertyFilter.class);
 
         propertyFilter.setDataLoader(dataLoader);
         propertyFilter.setProperty(property);
@@ -444,7 +450,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected Component createFilterButton(PropertyFilter<?> propertyFilter) {
-        JmixButton filterButton = getUiComponents().create(JmixButton.class);
+        JmixButton filterButton = factory.create(JmixButton.class);
         filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
         filterButton.setIcon(VaadinIcon.FILTER.create());
         filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
@@ -469,7 +475,10 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected Dialog createOverlay(PropertyFilter propertyFilter, JmixButton filterButton) {
         JmixButton clearButton = createClearFilterButton(propertyFilter);
 
-        Dialog dialog = new Dialog(propertyFilter, clearButton);
+        HeaderPropertyFilterLayout headerPropertyFilterLayout = factory.create(HeaderPropertyFilterLayout.class);
+        headerPropertyFilterLayout.getContent().add(propertyFilter, clearButton);
+
+        Dialog dialog = new Dialog(headerPropertyFilterLayout);
         dialog.addClassName(COLUMN_FILTER_DIALOG_CLASSNAME);
 
         if (!isSmallDevice()) {
@@ -505,7 +514,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     @SuppressWarnings("rawtypes")
     protected JmixButton createClearFilterButton(PropertyFilter propertyFilter) {
-        JmixButton clearButton = getUiComponents().create(JmixButton.class);
+        JmixButton clearButton = factory.create(JmixButton.class);
 
         clearButton.addThemeVariants(ButtonVariant.LUMO_ICON);
         clearButton.setIcon(VaadinIcon.ERASER.create());
@@ -516,7 +525,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     @SuppressWarnings({"rawtypes"})
     protected JmixButton createApplyButton(PropertyFilter propertyFilter, Dialog dialog, AtomicReference appliedValue) {
-        JmixButton applyButton = getUiComponents().create(JmixButton.class);
+        JmixButton applyButton = factory.create(JmixButton.class);
         applyButton.setIcon(VaadinIcon.CHECK.create());
         applyButton.setText(getMessages().getMessage("columnFilter.apply.text"));
 
@@ -532,7 +541,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     @SuppressWarnings("rawtypes")
     protected JmixButton createCancelButton(PropertyFilter propertyFilter, Dialog dialog, AtomicReference appliedValue) {
-        JmixButton cancelButton = getUiComponents().create(JmixButton.class);
+        JmixButton cancelButton = factory.create(JmixButton.class);
         cancelButton.setIcon(VaadinIcon.BAN.create());
         cancelButton.setText(getMessages().getMessage("columnFilter.cancel.text"));
 
@@ -561,7 +570,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected Component createHeaderComponent(String headerText, Component filterButton) {
-        HorizontalLayout layout = getUiComponents().create(HorizontalLayout.class);
+        HorizontalLayout layout = factory.create(HorizontalLayout.class);
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.setClassName(LumoUtility.Gap.XSMALL);
@@ -799,13 +808,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             classManager = applicationContext.getBean(ClassManager.class);
         }
         return classManager;
-    }
-
-    protected UiComponents getUiComponents() {
-        if (uiComponents == null) {
-            uiComponents = applicationContext.getBean(UiComponents.class, context);
-        }
-        return uiComponents;
     }
 
     protected PropertyFilterSupport getPropertyFilterSupport() {

@@ -22,6 +22,7 @@ import com.vaadin.flow.data.provider.Query;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.flowui.component.SupportsItemsFetchCallback;
 import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsItemsEnum;
@@ -61,6 +62,9 @@ public class DataLoaderSupport implements ApplicationContextAware {
     protected LoaderResolver loaderResolver;
     protected ClassManager classManager;
     protected LoaderSupport loaderSupport;
+    protected Metadata metadata;
+    protected FetchPlanLoader fetchPlanLoader;
+    protected FetchPlanRepository fetchPlanRepository;
 
     public DataLoaderSupport(Context context) {
         this.context = context;
@@ -84,6 +88,21 @@ public class DataLoaderSupport implements ApplicationContextAware {
     @Autowired
     public void setLoaderSupport(LoaderSupport loaderSupport) {
         this.loaderSupport = loaderSupport;
+    }
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setFetchPlanLoader(FetchPlanLoader fetchPlanLoader) {
+        this.fetchPlanLoader = fetchPlanLoader;
+    }
+
+    @Autowired
+    public void setFetchPlanRepository(FetchPlanRepository fetchPlanRepository) {
+        this.fetchPlanRepository = fetchPlanRepository;
     }
 
     public void loadData(SupportsValueSource<?> component, Element element) {
@@ -178,7 +197,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void loadEntityItemsQueryInternal(SupportsItemsFetchCallback<?, String> component,
                                                 Element itemsElement, Class<?> entityClass) {
-        String queryString = itemsElement.getStringValue();
+        String queryString = loadQuery((Component) component, itemsElement);
         String searchStringFormat = loadSearchStringFormat(itemsElement);
         boolean escapeValue = loadEscapeValueForLike(itemsElement);
 
@@ -220,7 +239,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
 
     protected void loadValueItemsQueryInternal(SupportsItemsFetchCallback<?, String> component,
                                                Element itemsElement) {
-        String queryString = itemsElement.getStringValue();
+        String queryString = loadQuery((Component) component, itemsElement);
         String searchStringFormat = loadSearchStringFormat(itemsElement);
         boolean escapeValue = loadEscapeValueForLike(itemsElement);
 
@@ -238,6 +257,17 @@ public class DataLoaderSupport implements ApplicationContextAware {
         });
     }
 
+    protected String loadQuery(Component component, Element itemsElement) {
+        Element queryElement = itemsElement.element("query");
+        if (queryElement == null) {
+            throw new GuiDevelopmentException(String.format("Nested 'query' element is missing " +
+                            "for '%s' element in component %s.",
+                    ITEMS_QUERY_ELEMENT, component.getId()), getComponentContext());
+        }
+
+        return queryElement.getTextTrim();
+    }
+
     @Nullable
     protected String loadSearchStringFormat(Element itemsElement) {
         return loaderSupport
@@ -253,12 +283,29 @@ public class DataLoaderSupport implements ApplicationContextAware {
 
     @Nullable
     protected FetchPlan loadFetchPlan(Element itemsElement, Class<?> entityClass) {
+        Element fetchPlanElement = itemsElement.element("fetchPlan");
+        if (fetchPlanElement != null) {
+            return loadInlineFetchPlan(fetchPlanElement, entityClass);
+        }
+
         return loaderSupport.loadString(itemsElement, "fetchPlan")
-                .map(fetchPlanName -> {
-                    FetchPlanRepository fetchPlanRepository = applicationContext.getBean(FetchPlanRepository.class);
-                    return fetchPlanRepository.getFetchPlan(entityClass, fetchPlanName);
-                })
+                .map(fetchPlanName ->
+                        fetchPlanRepository.getFetchPlan(entityClass, fetchPlanName))
                 .orElse(null);
+    }
+
+    protected FetchPlan loadInlineFetchPlan(Element fetchPlanElement, Class<?> entityClass) {
+        FetchPlanLoader.FetchPlanInfo fetchPlanInfo = fetchPlanLoader
+                .getFetchPlanInfo(fetchPlanElement, metadata.getClass(entityClass));
+
+        FetchPlanBuilder builder = fetchPlanLoader.getFetchPlanBuilder(fetchPlanInfo, name ->
+                fetchPlanRepository.getFetchPlan(fetchPlanInfo.getMetaClass(), name));
+
+        fetchPlanLoader.loadFetchPlanProperties(fetchPlanElement, builder,
+                fetchPlanInfo.isSystemProperties(), (metaClass, fetchPlanName) ->
+                        fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName));
+
+        return builder.build();
     }
 
     protected String getSearchString(Query<?, String> query,
@@ -270,7 +317,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
 
         if (!Strings.isNullOrEmpty(searchStringFormat)) {
             StringSubstitutor substitutor = applicationContext.getBean(StringSubstitutor.class);
-            searchString = substitutor.substitute(searchStringFormat, ParamsMap.of("searchString", searchString));
+            searchString = substitutor.substitute(searchStringFormat, ParamsMap.of("inputString", searchString));
         }
 
         return searchString;

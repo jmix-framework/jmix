@@ -65,10 +65,6 @@ public class TimerFacetProvider implements FacetProvider<Timer> {
         timer.setDelay(delay);
 
         loaderSupport.loadBoolean(element, "repeating", timer::setRepeating);
-
-        boolean autostart = loaderSupport.loadBoolean(element, "autostart").orElse(false);
-        if (autostart) {
-            timer.start();
-        }
+        loaderSupport.loadBoolean(element, "autostart", timer::setAutostart);
     }
 }

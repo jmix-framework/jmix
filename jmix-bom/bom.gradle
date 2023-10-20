@@ -178,6 +178,7 @@ dependencies {
         api "io.jmix.notifications:jmix-notifications:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-starter:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-flowui:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-flowui-kit:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-flowui-starter:$premiumVersion"
 
         api "io.jmix.oidc:jmix-oidc:$freeVersion"
@@ -245,6 +246,8 @@ dependencies {
         api 'org.dom4j:dom4j:2.1.4'
 
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
+
+        api 'org.liquibase:liquibase-core:4.24.0'
 
         def eclipselinkOriginalVersion = '4.0.1'
         def eclipselinkVersion = '4.0.1-15-jmix'

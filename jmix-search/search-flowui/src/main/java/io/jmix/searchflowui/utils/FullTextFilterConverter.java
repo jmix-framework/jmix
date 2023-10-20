@@ -32,7 +32,6 @@ import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchflowui.component.FullTextFilter;
 import io.jmix.searchflowui.entity.FullTextFilterCondition;
 import org.elasticsearch.common.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
@@ -43,17 +42,21 @@ import java.util.Objects;
 @org.springframework.stereotype.Component("search_FullTextFilterConverter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FullTextFilterConverter extends AbstractFilterComponentConverter<FullTextFilter, FullTextFilterCondition> {
-    @Autowired
+
     protected UiComponents uiComponents;
-    @Autowired
     protected Metadata metadata;
-    @Autowired
     protected SearchStrategyManager searchStrategyManager;
-    @Autowired
     protected SingleFilterSupport singleFilterSupport;
 
-    public FullTextFilterConverter(GenericFilter filter) {
+    public FullTextFilterConverter(GenericFilter filter,
+                                   UiComponents uiComponents, Metadata metadata,
+                                   SearchStrategyManager searchStrategyManager,
+                                   SingleFilterSupport singleFilterSupport) {
         super(filter);
+        this.uiComponents = uiComponents;
+        this.metadata = metadata;
+        this.searchStrategyManager = searchStrategyManager;
+        this.singleFilterSupport = singleFilterSupport;
     }
 
     @Override

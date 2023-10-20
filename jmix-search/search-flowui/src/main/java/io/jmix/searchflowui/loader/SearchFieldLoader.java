@@ -18,7 +18,8 @@ package io.jmix.searchflowui.loader;
 
 import com.google.common.base.Strings;
 import io.jmix.flowui.view.OpenMode;
-import io.jmix.flowui.xml.layout.loader.component.TextFieldLoader;
+import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
@@ -30,16 +31,45 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SearchFieldLoader extends TextFieldLoader {
+public class SearchFieldLoader extends AbstractComponentLoader<SearchField> {
 
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
+
+    @Override
+    protected SearchField createComponent() {
+        return factory.create(SearchField.class);
+    }
 
     @Override
     public void loadComponent() {
-        super.loadComponent();
-        loadSearchSize((SearchField) resultComponent, element);
-        loadEntities((SearchField) resultComponent, element);
-        loadStrategy((SearchField) resultComponent, element);
-        loadOpenMode((SearchField) resultComponent, element);
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
+
+        loadString(element, "value", resultComponent::setValue);
+
+        componentLoader().loadAutofocus(resultComponent, element);
+        componentLoader().loadTitle(resultComponent, element, context);
+        componentLoader().loadPlaceholder(resultComponent, element);
+        componentLoader().loadLabel(resultComponent, element);
+        componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadTooltip(resultComponent, element);
+        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadHelperText(resultComponent, element);
+        componentLoader().loadSizeAttributes(resultComponent, element);
+        componentLoader().loadAriaLabel(resultComponent, element);
+
+        loadSearchSize(resultComponent, element);
+        loadEntities(resultComponent, element);
+        loadStrategy(resultComponent, element);
+        loadOpenMode(resultComponent, element);
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 
     protected void loadEntities(SearchField component, Element element) {
@@ -55,6 +85,7 @@ public class SearchFieldLoader extends TextFieldLoader {
         }
         component.setEntities(entities);
     }
+
     protected void loadSearchSize(SearchField component, Element element) {
         String searchSizeString = element.attributeValue("searchSize");
         SearchProperties searchProperties = applicationContext.getBean(SearchProperties.class);
@@ -67,6 +98,7 @@ public class SearchFieldLoader extends TextFieldLoader {
         }
         component.setSearchSize(searchSize);
     }
+
     protected void loadStrategy(SearchField component, Element element) {
         String strategyName = element.attributeValue("strategy");
         SearchStrategyManager strategyManager = applicationContext.getBean(SearchStrategyManager.class);
@@ -88,12 +120,5 @@ public class SearchFieldLoader extends TextFieldLoader {
             openMode = OpenMode.valueOf(openModeName);
         }
         component.setOpenMode(openMode);
-    }
-
-    @Override
-    protected SearchField createComponent() {
-        resultComponent = factory.create(SearchField.class);
-        loadId(resultComponent, element);
-        return (SearchField) resultComponent;
     }
 }

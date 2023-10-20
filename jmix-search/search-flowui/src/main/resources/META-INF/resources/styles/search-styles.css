@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-@Internal
-@Experimental
-package io.jmix.searchflowui.view.result;
+.jmix-main-view-navigation > .jmix-search-field{
+    display: flex;
+    margin: auto var(--lumo-space-m) var(--lumo-space-s)  var(--lumo-space-m);
+}
 
-import io.jmix.core.annotation.Experimental;
-import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+.jmix-main-view-header > .jmix-search-field{
+    margin-inline-start: auto;
+    margin-inline-end: var(--lumo-space-m);
+}

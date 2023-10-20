@@ -20,6 +20,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.virtuallist.VirtualList;
@@ -37,7 +38,6 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
-import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.*;
 import io.jmix.searchflowui.component.SearchField;
 import io.jmix.searchflowui.component.SearchFieldContext;
@@ -62,9 +62,6 @@ public class SearchResultsView extends StandardView {
             .put("_content", "content")
             .build();
 
-    @ViewComponent
-    protected VerticalLayout contentBoxWithName;
-
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
@@ -86,7 +83,7 @@ public class SearchResultsView extends StandardView {
     @Autowired
     protected DialogWindows dialogWindows;
     @Autowired
-    private Notifications notifications;
+    protected Notifications notifications;
 
     protected SearchResult searchResult;
     protected SearchStrategy searchStrategy;
@@ -168,12 +165,12 @@ public class SearchResultsView extends StandardView {
 
     protected void handleNoSearchText() {
         Span span = createNoSearchTextSpan();
-        contentBoxWithName.add(span);
+        getContent().add(span);
     }
 
     protected void renderResult(SearchResult searchResult) {
-        contentBoxWithName.removeAll();
-        contentBoxWithName.add(createSearchField(searchResult));
+        getContent().removeAll();
+        getContent().add(createSearchField(searchResult));
         if (searchResult.isEmpty()) {
             notifications.create(messageBundle.getMessage("noResults"))
                     .show();
@@ -183,8 +180,8 @@ public class SearchResultsView extends StandardView {
             virtualList.setItems(searchResult.getAllEntries());
             virtualList.setWidthFull();
 
-            contentBoxWithName.expand(virtualList);
-            contentBoxWithName.add(virtualList);
+            getContent().expand(virtualList);
+            getContent().add(virtualList);
         }
     }
 
@@ -194,17 +191,17 @@ public class SearchResultsView extends StandardView {
         return span;
     }
 
-    protected Span createHitSpan(String caption) {
-        Span hitSpan = uiComponents.create(Span.class);
-        caption = "<div>" + caption + "</div>";
-        hitSpan.add(new Html(caption));
-        return hitSpan;
+    protected Div createHitDiv(String caption) {
+        Div hitDiv = uiComponents.create(Div.class);
+        hitDiv.add(new Html(caption));
+        return hitDiv;
     }
 
     protected SearchField createSearchField(SearchResult searchResult) {
         SearchField searchField = uiComponents.create(SearchField.class);
-        searchField.setSearchStrategy(searchFieldContext.getSearchStrategy());
         searchField.setValue(searchFieldContext.getValue());
+        searchField.setSearchStrategy(searchFieldContext.getSearchStrategy());
+        searchField.setSearchSize(searchFieldContext.getSearchSize());
         searchField.setEntities(searchFieldContext.getEntities());
         searchField.setOpenMode(searchFieldContext.getOpenMode());
         searchField.setHelperText(messageBundle.formatMessage("searchResultsSize", searchResult.getSize(), searchResult.getTotalHits()));
@@ -255,7 +252,7 @@ public class SearchResultsView extends StandardView {
         for (FieldHit fieldHit : entry.getFieldHits()) {
             String fieldCaption = formatFieldCaption(entry.getEntityName(), fieldHit.getFieldName());
             if (!uniqueCaptions.contains(fieldCaption)) {
-                list.add(fieldCaption + " : " + fieldHit.getHighlights());
+                list.add("<div>" + fieldCaption + " : " + fieldHit.getHighlights() + "</div>");
                 uniqueCaptions.add(fieldCaption);
             }
         }
@@ -266,8 +263,7 @@ public class SearchResultsView extends StandardView {
 
         Collections.sort(list);
         for (String caption : list) {
-            Span hitSpan = createHitSpan(caption);
-            hitLayout.add(hitSpan);
+            hitLayout.add(createHitDiv(caption));
         }
         verticalLayout.add(hitLayout);
 

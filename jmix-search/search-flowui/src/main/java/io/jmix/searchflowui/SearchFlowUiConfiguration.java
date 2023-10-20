@@ -54,7 +54,7 @@ public class SearchFlowUiConfiguration {
                                                 AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ViewControllersConfiguration viewControllers
                 = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
-        viewControllers.setBasePackages(Collections.singletonList("io.jmix.searchflowui"));
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.searchflowui.view"));
         return viewControllers;
     }
 

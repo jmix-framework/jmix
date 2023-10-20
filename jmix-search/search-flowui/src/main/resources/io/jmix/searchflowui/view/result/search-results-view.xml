@@ -17,8 +17,6 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://searchResultsView.title">
-    <layout>
-        <vbox id="contentBoxWithName" width="100%" height="100%" padding="false"/>
-    </layout>
+    <layout/>
 </view>
 

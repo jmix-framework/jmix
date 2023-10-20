@@ -44,6 +44,11 @@ public interface SearchResult {
      */
     long getTotalHits();
 
+    /**
+     * Sets the total number of hits for this {@link SearchResult}.
+     *
+     * @param totalHits the total number of hits to be set.
+     */
     void setTotalHits(long totalHits);
 
     /**

@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@Internal
+
+@NonNullApi
 package io.jmix.searchflowui.entity;
 
-import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

@@ -15,8 +15,6 @@
  */
 
 @NonNullApi
-@Internal
 package io.jmix.searchflowui.component;
 
-import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

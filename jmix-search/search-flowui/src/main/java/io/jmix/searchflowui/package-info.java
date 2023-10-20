@@ -15,8 +15,6 @@
  */
 
 @NonNullApi
-@Experimental
 package io.jmix.searchflowui;
 
-import io.jmix.core.annotation.Experimental;
 import org.springframework.lang.NonNullApi;

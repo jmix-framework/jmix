@@ -20,7 +20,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -88,13 +91,12 @@ import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.dynattr.OptionsLoaderType.*;
 import static java.lang.String.format;
 
-@SuppressWarnings({"SpringJavaInjectionPointsAutowiringInspection", "SpringJavaAutowiredFieldsWarningInspection"})
 @ViewController("dynat_CategoryAttribute.edit")
 @ViewDescriptor("category-attributes-detail-view.xml")
 @Route(value = "dynat/category/:id/attributes/:id", layout = DefaultMainViewParent.class)
 @PrimaryDetailView(CategoryAttribute.class)
 @EditedEntityContainer("categoryAttributeDc")
-@DialogMode(width = "60em", height = "50em", resizable = true) // todo forceDialog = true
+@DialogMode(minWidth = "60em", minHeight = "50em", resizable = true) // todo forceDialog = true
 public class CategoryAttributesDetailView extends StandardDetailView<CategoryAttribute> {
     protected static final String DATA_TYPE_PROPERTY = "dataType";
     protected static final String DEFAULT_DATE_IS_CURRENT_PROPERTY = "defaultDateIsCurrent";
@@ -469,7 +471,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected void attachHelperForSuffix(CodeEditor codeEditor, Component componentSuffix) {
         Element parent = codeEditor.getElement().getParent();
         componentSuffix.getStyle().set("padding-top", "1.9em");
-        if(parent.getChildCount() > 0) {
+        if (parent.getChildCount() > 0) {
             parent.getComponent().ifPresent(e -> {
                 if (e instanceof Div) {
                     parent.removeAllChildren();

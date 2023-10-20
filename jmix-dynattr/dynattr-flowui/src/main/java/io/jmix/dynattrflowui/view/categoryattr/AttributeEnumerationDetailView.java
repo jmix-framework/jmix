@@ -28,7 +28,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
@@ -53,7 +52,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @ViewController("dynat_AttributeEnumerationDetailView")
 @ViewDescriptor("attribute-enumeration-detail-view.xml")
 @DialogMode(width = "55em", height = "45em", resizable = true) // todo forceDialog = true
@@ -69,7 +67,7 @@ public class AttributeEnumerationDetailView extends StandardView {
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
-    private AccessManager accessManager;
+    protected AccessManager accessManager;
     @Autowired
     protected Messages messages;
     @Autowired
@@ -120,7 +118,7 @@ public class AttributeEnumerationDetailView extends StandardView {
     @Subscribe
     protected void onInit(InitEvent e) {
         Grid.Column<AttributeLocalizedEnumValue> removeItemColumn = localizedEnumValuesDataGrid.getColumnByKey(REMOVE_ITEM_COLUMN);
-        if(removeItemColumn == null) {
+        if (removeItemColumn == null) {
             throw new IllegalStateException("No column with key " + REMOVE_ITEM_COLUMN);
         }
         removeItemColumn.setRenderer(createRemoveItemColumnRenderer());

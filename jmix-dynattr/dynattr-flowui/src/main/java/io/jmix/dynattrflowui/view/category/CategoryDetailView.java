@@ -20,13 +20,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.dataview.GridListDataView;
-import com.vaadin.flow.component.grid.dnd.GridDropEvent;
-import com.vaadin.flow.component.grid.dnd.GridDropLocation;
-import com.vaadin.flow.component.grid.dnd.GridDropMode;
-import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -42,14 +36,12 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
-import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
 import io.jmix.dynattrflowui.utils.DynAttrUiHelper;
 import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesDetailView;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.Views;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
@@ -66,27 +58,18 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.IntStream;
 
-@SuppressWarnings({"SpringJavaInjectionPointsAutowiringInspection", "SpringJavaAutowiredFieldsWarningInspection"})
 @Route(value = "dynat/category/:id", layout = DefaultMainViewParent.class)
 @ViewController("dynat_CategoryView.detail")
 @ViewDescriptor("category-detail-view.xml")
 @PrimaryDetailView(Category.class)
 @EditedEntityContainer("categoryDc")
-@DialogMode(width = "50em", height = "37.5em")
+@DialogMode(width = "50em", minHeight = "25em")
 public class CategoryDetailView extends StandardDetailView<Category> {
-    private static final int LOWEST_COUNT = 1;
-    private static final int HIGHEST_COUNT = 5;
-    private static final List<Integer> COL_POSITIONS = IntStream.range(LOWEST_COUNT, HIGHEST_COUNT).boxed().toList();
-    private static final String DND_CONTENT_ROW_KEY = "text/plain";
-    private static final String NAME_COLUMN = "name";
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -101,9 +84,9 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     @Autowired
     protected FetchPlans fetchPlans;
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
     @Autowired
-    private AccessManager accessManager;
+    protected AccessManager accessManager;
     @Autowired
     protected Messages messages;
     @Autowired
@@ -150,12 +133,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected Action moveUpAction;
     @ViewComponent("categoryAttrsGrid.moveDown")
     protected Action moveDownAction;
-
-
-    protected AttributeLocalizationComponent localizationFragment;
-
-    protected Map<Integer, List<CategoryAttribute>> attributesLocationMapping = new HashMap<>();
-    protected Map<String, GridListDataView<CategoryAttribute>> attributesViewsLocationMapping = new HashMap<>();
+    protected AttributeLocalizationComponent localizationComponent;
 
     @Subscribe
     public void onInitEvent(InitEvent event) {
@@ -172,20 +150,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
-        initActionsVisibleListener();
         initEntityTypeField();
         initLocalizationTab();
         setupFieldsLock();
         setGridActionsEnabled(!categoryAttrsGrid.getSelectedItems().isEmpty());
-    }
-
-    private void initActionsVisibleListener() {
-        categoryAttrsGrid.addSelectionListener(e -> setGridActionsEnabled(!e.getAllSelectedItems().isEmpty()));
-    }
-
-    private void setGridActionsEnabled(boolean enabled) {
-        List.of(editAction, removeAction, moveUpAction, moveDownAction)
-                .forEach(button -> button.setEnabled(enabled));
     }
 
     protected void setupFieldsLock() {
@@ -201,6 +169,16 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         if (event.getValue() != null) {
             getEditedEntity().setEntityType(event.getValue().getName());
         }
+    }
+
+    @Subscribe("categoryAttrsGrid")
+    protected void categoryAttrsGridSelectionHandler(SelectionEvent<Grid<CategoryAttribute>, CategoryAttribute> event) {
+        setGridActionsEnabled(!event.getAllSelectedItems().isEmpty());
+    }
+
+    private void setGridActionsEnabled(boolean enabled) {
+        List.of(editAction, removeAction, moveUpAction, moveDownAction)
+                .forEach(button -> button.setEnabled(enabled));
     }
 
     @Subscribe("isDefaultField")
@@ -236,7 +214,6 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                 .sorted(Comparator.comparing(MetadataObject::getName))
                 .toList()));
 
-        entityTypeField.addValueChangeListener(e -> getEditedEntity().setEntityType(e.getValue().getName()));
         if (getEditedEntity().getEntityType() != null) {
             entityTypeField.setValue(extendedEntities.getEffectiveMetaClass(getEditedEntity().getEntityType()));
         }
@@ -250,7 +227,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
             CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
             accessManager.applyRegisteredConstraints(crudEntityContext);
 
-            localizationFragment = new AttributeLocalizationComponent(coreProperties,
+            localizationComponent = new AttributeLocalizationComponent(coreProperties,
                     msgBundleTools,
                     metadata,
                     messages,
@@ -259,12 +236,12 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                     dataComponents,
                     getViewData().getDataContext());
 
-            localizationFragment.setNameMsgBundle(getEditedEntity().getLocaleNames());
-            localizationFragment.removeDescriptionColumn();
-            localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
+            localizationComponent.setNameMsgBundle(getEditedEntity().getLocaleNames());
+            localizationComponent.removeDescriptionColumn();
+            localizationComponent.setEnabled(crudEntityContext.isUpdatePermitted());
 
-            localizationTabContainer.add(localizationFragment);
-            localizationTabContainer.expand(localizationFragment);
+            localizationTabContainer.add(localizationComponent);
+            localizationTabContainer.expand(localizationComponent);
         }
     }
 
@@ -496,8 +473,8 @@ public class CategoryDetailView extends StandardDetailView<Category> {
 
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPreCommit(DataContext.PreSaveEvent event) {
-        if (localizationFragment != null) {
-            getEditedEntity().setLocaleNames(localizationFragment.getNameMsgBundle());
+        if (localizationComponent != null) {
+            getEditedEntity().setLocaleNames(localizationComponent.getNameMsgBundle());
         }
     }
 

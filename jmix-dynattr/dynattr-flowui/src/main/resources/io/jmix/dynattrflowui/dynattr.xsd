@@ -13,14 +13,10 @@
     <!-- DynamicAttributesPanel -->
     <xs:complexType name="dynamicAttributesPanel">
         <xs:attributeGroup ref="layout:hasId"/>
-        <xs:attributeGroup ref="layout:hasSize"/>
 
         <xs:attribute name="dataContainer" type="xs:string" use="required"/>
         <xs:attribute name="cols" type="xs:integer"/>
         <xs:attribute name="rows" type="xs:integer"/>
-        <xs:attribute name="fieldWidth" type="xs:string"/>
-        <xs:attribute name="fieldCaptionWidth" type="xs:string"/>
-        <xs:attribute name="margin" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:element name="dynamicAttributesPanel" type="dynamicAttributesPanel"/>

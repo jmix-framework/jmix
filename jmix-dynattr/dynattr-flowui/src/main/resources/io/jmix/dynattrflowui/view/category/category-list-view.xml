@@ -40,12 +40,8 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout spacing="true">
-        <!-- TODO filter
-        <filter id="categoriesFilter" dataLoader="categoriesDl" applyTo="categoriesGrid">
-            <properties include=".*"/>
-        </filter>-->
         <split id="split" orientation="HORIZONTAL" width="100%" minHeight="25em" height="100%">
-            <vbox id="categoryBox" height="100%" expand="categoriesGrid">
+            <vbox id="categoryBox" margin="false" padding="false" height="100%" expand="categoriesGrid">
                 <hbox id="buttonsPanel" classNames="buttons-panel">
                     <button id="createBtn" action="categoriesGrid.create"/>
                     <button id="editBtn" action="categoriesGrid.edit"/>
@@ -72,19 +68,19 @@
                         <action id="exportJSON" text="msg://exportJSON"/>
                         <action id="exportZIP" text="msg://exportZIP"/>
                     </actions>
-                    <columns>
+                    <columns resizable="true">
                         <column property="name" header="msg://categoriesGrid.name"/>
                         <column property="entityType"/>
                         <column property="isDefault"/>
                     </columns>
                 </dataGrid>
             </vbox>
-            <vbox id="attributesBox" height="100%" expand="attributesTable">
+            <vbox id="attributesBox" margin="false" padding="false" height="100%" expand="attributesTable">
                 <h3 text="msg://categoryAttributes.text"/>
                 <dataGrid id="attributesTable"
                           width="100%"
                           dataContainer="attributesDc">
-                    <columns>
+                    <columns resizable="true">
                         <column property="name"/>
                         <column property="code"/>
                         <column property="dataType"/>

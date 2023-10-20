@@ -50,7 +50,7 @@
                 <h3 text="msg://localizationBox.title"/>
             </vbox>
         </hbox>
-        <hbox id="buttonsBox" spacing="true">
+        <hbox id="detailButtonsBox" spacing="true">
             <button id="commitBtn" icon="CHECK" text="msg:///actions.Ok" themeNames="primary"/>
             <button id="cancelBtn" icon="BAN" text="msg:///actions.Cancel"/>
         </hbox>

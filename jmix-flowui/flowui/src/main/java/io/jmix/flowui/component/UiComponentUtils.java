@@ -131,7 +131,6 @@ public final class UiComponentUtils {
         } else if (container instanceof HasComponents) {
             return container.getChildren().sequential().collect(Collectors.toList());
         } else if (container instanceof View<?>) {
-            // todo toList() -> .collect(toUnmodifiedList()) or toList() instead?
             return container.getChildren().collect(Collectors.toList());
         } else {
             throw new IllegalArgumentException(container.getClass().getSimpleName() +

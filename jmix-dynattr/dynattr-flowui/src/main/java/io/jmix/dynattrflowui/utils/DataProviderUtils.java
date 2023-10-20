@@ -27,7 +27,7 @@ public final class DataProviderUtils {
 
 
     /**
-     * Creates a new DataProvider from list for ui component that represend his own dta from data provider interface
+     * Creates a new DataProvider from list for ui component that represents his own data from data provider interface
      * @param items source collection that contains items to show
      * @return lazy data provider with pagination support for ui component
      * @see com.vaadin.flow.data.provider.HasDataView

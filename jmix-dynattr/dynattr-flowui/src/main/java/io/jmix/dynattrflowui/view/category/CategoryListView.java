@@ -26,7 +26,6 @@ import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.download.DownloadFormat;
@@ -50,7 +49,6 @@ import java.util.Objects;
 import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @Route(value = "dynat/category", layout = DefaultMainViewParent.class)
 @ViewController("dynat_CategoryView.list")
 @ViewDescriptor("category-list-view.xml")
@@ -78,7 +76,7 @@ public class CategoryListView extends StandardListView<Category> {
     @Autowired
     protected Downloader downloader;
     @Autowired
-    private AccessManager accessManager;
+    protected AccessManager accessManager;
 
 
     @ViewComponent
@@ -90,11 +88,11 @@ public class CategoryListView extends StandardListView<Category> {
     @ViewComponent
     protected InstanceLoader<Category> categoryDl;
     @ViewComponent
-    private CollectionLoader<Category> categoriesDl;
+    protected CollectionLoader<Category> categoriesDl;
     @ViewComponent
     protected FileUploadField importField;
     @ViewComponent
-    private Button applyChangesBtn;
+    protected Button applyChangesBtn;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -108,16 +106,6 @@ public class CategoryListView extends StandardListView<Category> {
         notifications.create(messages.getMessage(CategoryListView.class, "notification.changesApplied"))
                 .withType(Notifications.Type.SUCCESS)
                 .show();
-    }
-
-    @Install(to = "categoriesGrid.edit", subject = "afterSaveHandler")
-    private void categoriesGridEditAfterCommitHandler(Category category) {
-        categoriesDl.load();
-    }
-
-    @Install(to = "categoriesGrid.create", subject = "afterSaveHandler")
-    private void categoriesGridCreateAfterCommitHandler(Category category) {
-        categoriesDl.load();
     }
 
     @Subscribe(id = "categoriesDc", target = Target.DATA_CONTAINER)

@@ -44,7 +44,7 @@ import java.util.Collections;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {DynAttrConfiguration.class, FlowuiConfiguration.class})
 @PropertySource(name = "io.jmix.dynattrflowui", value = "classpath:/io/jmix/dynattrflowui/module.properties")
-public class DynAttrUiConfiguration {
+public class DynAttrFlowuiConfiguration {
 
     @Bean("dynat_DynAttrPropertyFilterSupport")
     @Primary

@@ -33,7 +33,6 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
 import io.jmix.flowui.UiComponents;

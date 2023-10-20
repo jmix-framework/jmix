@@ -19,12 +19,12 @@ package io.jmix.autoconfigure.dynattrui;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
-import io.jmix.dynattrflowui.DynAttrUiConfiguration;
+import io.jmix.dynattrflowui.DynAttrFlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, DataConfiguration.class, DynAttrConfiguration.class, DynAttrUiConfiguration.class})
+@Import({CoreConfiguration.class, DataConfiguration.class, DynAttrConfiguration.class, DynAttrFlowuiConfiguration.class})
 public class DynAttrUiAutoConfiguration {
 }
 

@@ -27,6 +27,12 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.Html",
             category = "HTML",
             xmlElement = "html",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = "content",
+                            maxCount = 1
+                    )
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

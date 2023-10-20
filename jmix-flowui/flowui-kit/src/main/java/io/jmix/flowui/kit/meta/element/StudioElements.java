@@ -374,9 +374,13 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.FormItem",
             xmlElement = "formItem",
             target = {"com.vaadin.flow.component.formlayout.FormLayout"},
-            possibleChildren = "com.vaadin.flow.component.Component",
-            maxCountOfChildren = 1,
             visible = true,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
@@ -645,9 +649,13 @@ public interface StudioElements {
             xmlElement = "prefix",
             target = {"com.vaadin.flow.component.shared.HasPrefix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
-            possibleChildren = {"com.vaadin.flow.component.Component"},
-            maxCountOfChildren = 1,
-            unlimitedCount = false
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            )
     )
     void prefix();
 
@@ -656,9 +664,13 @@ public interface StudioElements {
             xmlElement = "suffix",
             target = {"com.vaadin.flow.component.shared.HasSuffix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
-            possibleChildren = {"com.vaadin.flow.component.Component"},
-            maxCountOfChildren = 1,
-            unlimitedCount = false
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            )
     )
     void suffix();
 

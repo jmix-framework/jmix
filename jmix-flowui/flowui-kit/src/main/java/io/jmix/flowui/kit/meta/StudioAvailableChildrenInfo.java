@@ -43,7 +43,7 @@ public @interface StudioAvailableChildrenInfo {
      * Array with the components tags qualified names (with namespace if exist) that
      * can be contained inside the current component.
      * <p></p>
-     * Empty array is equivalent to the fact that checking for a class will return true.
+     * Empty array is equivalent to the fact that checking for a tag will return true.
      */
     TagInfo[] availableTags() default {};
 
@@ -51,22 +51,30 @@ public @interface StudioAvailableChildrenInfo {
      * Array with the components qualified names that
      * can be contained inside the current component.
      * <p></p>
-     * Empty array is equivalent to the fact that checking for a tag will return true.
+     * Empty array is equivalent to the fact that checking for a class will return true.
      */
     ClassInfo[] availableClasses() default {};
 
     /**
      * Policy describing the final result of whether a component can be a child or not.
      * See more info in {@link ConditionPolicy}.
+     *
+     * @see ConditionPolicy
      */
     ConditionPolicy conditionPolicy() default ConditionPolicy.ALL;
 
+    /**
+     * Description of how many times a component tag can occur inside the current component.
+     */
     @interface TagInfo {
         String qualifiedName();
 
         long maxCount();
     }
 
+    /**
+     * Description of how many times a component class can occur inside the current component.
+     */
     @interface ClassInfo {
         String qualifiedName();
 

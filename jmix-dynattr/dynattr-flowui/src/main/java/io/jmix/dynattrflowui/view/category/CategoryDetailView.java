@@ -145,7 +145,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         categoryAttrsGrid
                 .addColumn(createCategoryAttrsGridDefaultValueRenderer())
                 .setHeader(messages.getMessage(getClass(), "categoryAttrsGrid.defaultValue"));
-
+        categoryAttrsGrid.addSelectionListener(e -> setGridActionsEnabled(!e.getAllSelectedItems().isEmpty()));
     }
 
     @Subscribe
@@ -169,11 +169,6 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         if (event.getValue() != null) {
             getEditedEntity().setEntityType(event.getValue().getName());
         }
-    }
-
-    @Subscribe("categoryAttrsGrid")
-    protected void categoryAttrsGridSelectionHandler(SelectionEvent<Grid<CategoryAttribute>, CategoryAttribute> event) {
-        setGridActionsEnabled(!event.getAllSelectedItems().isEmpty());
     }
 
     private void setGridActionsEnabled(boolean enabled) {

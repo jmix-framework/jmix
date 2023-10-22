@@ -139,7 +139,6 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
                     editButton.setEnabled(true);
                     return editButton;
                 })
-                .setWidth("14em")
                 .setFlexGrow(0);
 
         Binder<AttributeLocalizedValue> binder = new Binder<>(AttributeLocalizedValue.class);

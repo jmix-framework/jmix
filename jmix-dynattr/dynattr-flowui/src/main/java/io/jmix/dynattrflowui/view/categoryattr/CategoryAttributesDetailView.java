@@ -96,7 +96,7 @@ import static java.lang.String.format;
 @Route(value = "dynat/category/:id/attributes/:id", layout = DefaultMainViewParent.class)
 @PrimaryDetailView(CategoryAttribute.class)
 @EditedEntityContainer("categoryAttributeDc")
-@DialogMode(minWidth = "60em", minHeight = "50em", resizable = true) // todo forceDialog = true
+@DialogMode(minWidth = "60em", maxWidth = "80%", resizable = true)
 public class CategoryAttributesDetailView extends StandardDetailView<CategoryAttribute> {
     protected static final String DATA_TYPE_PROPERTY = "dataType";
     protected static final String DEFAULT_DATE_IS_CURRENT_PROPERTY = "defaultDateIsCurrent";

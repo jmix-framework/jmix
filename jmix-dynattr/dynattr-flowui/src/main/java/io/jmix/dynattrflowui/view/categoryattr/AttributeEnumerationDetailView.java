@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 
 @ViewController("dynat_AttributeEnumerationDetailView")
 @ViewDescriptor("attribute-enumeration-detail-view.xml")
-@DialogMode(width = "55em", height = "45em", resizable = true) // todo forceDialog = true
+@DialogMode(width = "55em", height = "45em", resizable = true)
 public class AttributeEnumerationDetailView extends StandardView {
     public static final String REMOVE_ITEM_COLUMN = "removeItem";
 

@@ -68,7 +68,7 @@ import java.util.*;
 @ViewDescriptor("category-detail-view.xml")
 @PrimaryDetailView(Category.class)
 @EditedEntityContainer("categoryDc")
-@DialogMode(width = "50em", minHeight = "25em")
+@DialogMode(width = "50em", maxWidth = "80%")
 public class CategoryDetailView extends StandardDetailView<Category> {
 
     @Autowired

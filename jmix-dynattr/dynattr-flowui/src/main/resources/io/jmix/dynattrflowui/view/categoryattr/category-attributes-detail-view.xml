@@ -44,7 +44,7 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout expand="editActions" spacing="true">
+    <layout expand="detailButtonsBox" spacing="true">
         <tabSheet id="tabSheet" width="100%">
             <tab id="mainTab" label="msg://mainTab.title">
                 <vbox margin="false" padding="false">

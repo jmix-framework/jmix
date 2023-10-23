@@ -407,9 +407,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                             return jmixComboBox;
                         },
                         (comboBox, item) -> {
-                            MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
+                            if (categoryAttributeDc.getItem().getCategory().getEntityType() != null) {
+                                MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
+                                comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
+                            }
 
-                            comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
                             setValueIfAbsentInItems(comboBox, item.getView());
 
                             comboBox.addValueChangeListener(e -> item.setView(e.getValue()));
@@ -432,9 +434,9 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     }
 
     protected void visibilityTableComponentColumnUpdater(JmixComboBox<String> comboBox, TargetViewComponent item) {
-        MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
-
-        if (item.getView() != null) {
+        if (item.getView() != null && categoryAttributeDc.getItem().getCategory().getEntityType() != null) {
+            MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
+            comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
             Collection<String> targetComponents = dynAttrFacetInfo.getDynAttrViewTargetComponentIds(categoryMetaClass, item.getView());
             comboBox.setItems(targetComponents);
         }

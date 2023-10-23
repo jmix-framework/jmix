@@ -47,7 +47,6 @@
                             <responsiveStep minWidth="0" columns="1"/>
                             <responsiveStep minWidth="28em" columns="2"/>
                             <responsiveStep minWidth="42em" columns="3"/>
-                            <responsiveStep minWidth="60em" columns="4"/>
                         </responsiveSteps>
                         <textField id="nameField" property="name"
                                    required="true" requiredMessage="msg://nameField.required"/>

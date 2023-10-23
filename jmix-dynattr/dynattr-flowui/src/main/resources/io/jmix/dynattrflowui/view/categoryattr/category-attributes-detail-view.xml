@@ -50,6 +50,9 @@
                 <vbox margin="false" padding="false">
                     <hbox id="attributeBox" width="100%" spacing="true">
                         <formLayout id="attributeForm" dataContainer="categoryAttributeDc" width="100%">
+                            <responsiveSteps>
+                                <responsiveStep minWidth="0px" columns="1"/>
+                            </responsiveSteps>
                             <textField id="nameField" property="name" required="true"
                                        requiredMessage="msg://nameField.required"/>
                             <textField id="codeField" property="code" required="true"
@@ -61,7 +64,9 @@
                         <formLayout id="optionalAttributeForm" dataContainer="categoryAttributeDc"
                                     width="100%"
                                     visible="false">
-
+                            <responsiveSteps>
+                                <responsiveStep minWidth="0px" columns="1"/>
+                            </responsiveSteps>
                             <comboBox id="entityClassField" required="true"
                                       label="msg://io.jmix.dynattr.model/CategoryAttribute.entityClass"
                                       requiredMessage="msg://entityClassField.required"/>

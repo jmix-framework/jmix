@@ -16,9 +16,11 @@
 
 package io.jmix.dynattrflowui.view.category;
 
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -164,7 +166,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     }
 
     @Subscribe("entityTypeField")
-    protected void onEntityTypeFieldValueChange(HasValue.ValueChangeEvent<MetaClass> event) {
+    protected void onEntityTypeFieldValueChange(AbstractField.ComponentValueChangeEvent<ComboBox<MetaClass>, MetaClass> event) {
         if (event.getValue() != null) {
             getEditedEntity().setEntityType(event.getValue().getName());
         }

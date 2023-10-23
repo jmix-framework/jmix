@@ -172,6 +172,9 @@ dependencies {
 
         api "io.jmix.maps:jmix-maps:$premiumVersion"
         api "io.jmix.maps:jmix-maps-starter:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-flowui:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-flowui-kit:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-flowui-starter:$premiumVersion"
 
         api "io.jmix.multitenancy:jmix-multitenancy:$freeVersion"
         api "io.jmix.multitenancy:jmix-multitenancy-flowui:$freeVersion"

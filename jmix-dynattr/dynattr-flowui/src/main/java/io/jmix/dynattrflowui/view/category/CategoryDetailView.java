@@ -362,10 +362,8 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                 .withParentDataContext(getViewData().getDataContext())
                 .withInitializer(e -> e.setCategory(categoryDc.getItem()))
                 .withAfterCloseListener(e -> {
-                    // todo also bug caused by data components
                     if (e.getCloseAction().equals(StandardOutcome.SAVE.getCloseAction())) {
-                        categoryAttributesDc.replaceItem(e.getView().getEditedEntity());
-                        categoryAttrsGrid.getDataProvider().refreshAll();
+                        refreshAttributesDc(e.getView().getEditedEntity());
                     }
                 })
                 .build()
@@ -382,13 +380,21 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                 .editEntity(categoryAttributeSelected)
                 .withAfterCloseListener(e -> {
                     if (e.getCloseAction().equals(StandardOutcome.SAVE.getCloseAction())) {
-                        categoryAttributesDc.replaceItem(e.getView().getEditedEntity());
-                        categoryAttrsGrid.getDataProvider().refreshAll();
+                        refreshAttributesDc(e.getView().getEditedEntity());
                     }
                 })
                 .withParentDataContext(getViewData().getDataContext())
                 .build()
                 .open();
+    }
+
+    private void refreshAttributesDc(CategoryAttribute attribute) {
+        if(categoryAttributesDc.getMutableItems().contains(attribute)) {
+            categoryAttributesDc.replaceItem(attribute);
+        } else {
+            categoryAttributesDc.getMutableItems().add(attribute);
+        }
+        categoryAttrsGrid.getDataProvider().refreshAll();
     }
 
     @Subscribe("categoryAttrsGrid.remove")

@@ -15,7 +15,7 @@
  */
 package io.jmix.dynattrflowui.kit.meta.component;
 
-import io.jmix.dynattrflowui.kit.component.DynamicAttributesPanel;
+import com.vaadin.flow.component.html.Div;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
@@ -23,6 +23,9 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
 public interface DynAttrStudioComponents {
+    /**
+     * @return Div because we cannot show dynamic attributes for preview mode inside jmix studio
+     */
     @StudioComponent(
             name = "DynamicAttributesPanel",
             classFqn = "io.jmix.dynattrflowui.panel.DynamicAttributesPanel",
@@ -55,5 +58,5 @@ public interface DynAttrStudioComponents {
                             xmlAttribute = "fieldCaptionWidth",
                             type = StudioPropertyType.INTEGER),
             })
-    DynamicAttributesPanel dynamicAttributesPanel();
+    Div dynamicAttributesPanel();
 }

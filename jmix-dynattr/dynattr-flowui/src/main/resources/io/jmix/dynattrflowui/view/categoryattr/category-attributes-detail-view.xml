@@ -238,7 +238,7 @@
                 </vbox>
             </tab>
         </tabSheet>
-        <hbox id="detailButtonsBox" spacing="true" margin="true">
+        <hbox id="detailButtonsBox" >
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>
         </hbox>

@@ -75,7 +75,7 @@
                     </columns>
                 </dataGrid>
             </vbox>
-            <vbox id="attributesBox" margin="false" padding="false" height="100%" expand="attributesTable">
+            <vbox id="attributesBox" margin="true" padding="false" height="100%" expand="attributesTable">
                 <h3 text="msg://categoryAttributes.text"/>
                 <dataGrid id="attributesTable"
                           width="100%"

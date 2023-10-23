@@ -22,6 +22,8 @@ import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.FieldDelegate;
+import io.jmix.flowui.component.validation.MaxValidator;
+import io.jmix.flowui.component.validation.MinValidator;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -41,6 +43,9 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
     protected ApplicationContext applicationContext;
 
     protected FieldDelegate<JmixIntegerField, Integer, Integer> fieldDelegate;
+
+    protected Registration maxValidatorRegistration;
+    protected Registration minValidatorRegistration;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -146,5 +151,25 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
     @Override
     public void setStatusChangeHandler(@Nullable Consumer<StatusContext<JmixIntegerField>> handler) {
         fieldDelegate.setStatusChangeHandler(handler);
+    }
+
+    @Override
+    public void setMax(int max) {
+        super.setMax(max);
+        if (maxValidatorRegistration != null) {
+            maxValidatorRegistration.remove();
+        }
+        //noinspection unchecked
+        maxValidatorRegistration = fieldDelegate.addValidator(applicationContext.getBean(MaxValidator.class, max));
+    }
+
+    @Override
+    public void setMin(int min) {
+        super.setMin(min);
+        if (minValidatorRegistration != null) {
+            minValidatorRegistration.remove();
+        }
+        //noinspection unchecked
+        minValidatorRegistration = fieldDelegate.addValidator(applicationContext.getBean(MinValidator.class, min));
     }
 }

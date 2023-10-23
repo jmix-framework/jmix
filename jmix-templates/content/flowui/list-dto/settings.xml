@@ -50,7 +50,7 @@
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
               preferences="true"
-              optionsString="${actionSearch.getWizardTableActions()}"/>
+              optionsString="${actionSearch.getWizardTableActions(api.jmixProjectModule)}"/>
     <property caption="Multiselect"
               code="multiselect"
               propertyType="BOOLEAN"

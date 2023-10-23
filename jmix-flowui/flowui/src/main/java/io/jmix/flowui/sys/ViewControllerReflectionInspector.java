@@ -162,9 +162,10 @@ public class ViewControllerReflectionInspector {
     }
 
     @Nullable
-    public MethodHandle getSupplyTargetMethod(Class<?> clazz, String methodName) {
-        Map<String, MethodHandle> methods = targetIntrospectionCache.getUnchecked(clazz).getSupplyTargetMethods();
-        return methods.get(methodName);
+    public MethodHandle getSupplyTargetMethod(Class<?> clazz, String methodName, Class<?> parameterType) {
+        Map<MethodSignature, MethodHandle> methods =
+                targetIntrospectionCache.getUnchecked(clazz).getSupplyTargetMethods();
+        return methods.get(new MethodSignature(methodName, List.of(parameterType)));
     }
 
     public MethodHandle getConsumerMethodFactory(Class<?> ownerClass, AnnotatedMethod annotatedMethod, Class<?> eventClass) {
@@ -304,7 +305,8 @@ public class ViewControllerReflectionInspector {
 
         Map<Class, MethodHandle> addListenerMethods = getAddListenerMethodsNotCached(concreteClass, methods);
         Map<String, MethodHandle> installTargetMethods = getInstallTargetMethodsNotCached(concreteClass, methods);
-        Map<String, MethodHandle> supplyTargetMethods = getSupplyTargetMethodsNotCached(concreteClass, methods);
+        Map<MethodSignature, MethodHandle> supplyTargetMethods =
+                getSupplyTargetMethodsNotCached(concreteClass, methods);
 
         return new TargetIntrospectionData(addListenerMethods, argumentTypesToClashedMethodsMap,
                 installTargetMethods, supplyTargetMethods);
@@ -671,9 +673,9 @@ public class ViewControllerReflectionInspector {
         return ImmutableMap.copyOf(handlesMap);
     }
 
-    protected Map<String, MethodHandle> getSupplyTargetMethodsNotCached(Class<?> clazz,
+    protected Map<MethodSignature, MethodHandle> getSupplyTargetMethodsNotCached(Class<?> clazz,
                                                                         Method[] uniqueDeclaredMethods) {
-        Map<String, MethodHandle> handlesMap = new HashMap<>();
+        Map<MethodSignature, MethodHandle> handlesMap = new HashMap<>();
         MethodHandles.Lookup lookup = MethodHandles.lookup();
 
         for (Method m : uniqueDeclaredMethods) {
@@ -690,8 +692,9 @@ public class ViewControllerReflectionInspector {
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("unable to get method handle " + m);
                 }
-
-                handlesMap.put(m.getName(), methodHandle);
+                MethodSignature methodSignature =
+                        new MethodSignature(m.getName(), Arrays.asList(m.getParameterTypes()));
+                handlesMap.put(methodSignature, methodHandle);
             }
         }
 
@@ -815,12 +818,12 @@ public class ViewControllerReflectionInspector {
         private final Map<Class, MethodHandle> addListenerMethods;
         private final Map<Class, Collection<MethodHandle>> clashedAddListenerMethods;
         private final Map<String, MethodHandle> installTargetMethods;
-        private final Map<String, MethodHandle> supplyTargetMethods;
+        private final Map<MethodSignature, MethodHandle> supplyTargetMethods;
 
         public TargetIntrospectionData(Map<Class, MethodHandle> addListenerMethods,
                                        Map<Class, Collection<MethodHandle>> clashedAddListenerMethods,
                                        Map<String, MethodHandle> installTargetMethods,
-                                       Map<String, MethodHandle> supplyTargetMethods) {
+                                       Map<MethodSignature, MethodHandle> supplyTargetMethods) {
             this.addListenerMethods = addListenerMethods;
             this.clashedAddListenerMethods = clashedAddListenerMethods;
             this.installTargetMethods = installTargetMethods;
@@ -839,8 +842,45 @@ public class ViewControllerReflectionInspector {
             return installTargetMethods;
         }
 
-        public Map<String, MethodHandle> getSupplyTargetMethods() {
+        public Map<MethodSignature, MethodHandle> getSupplyTargetMethods() {
             return supplyTargetMethods;
+        }
+    }
+
+    public static class MethodSignature {
+
+        protected String name;
+        protected List<Class<?>> parameters;
+
+        public MethodSignature(String name, List<Class<?>> parameters) {
+            this.name = name;
+            this.parameters = parameters;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<Class<?>> getParameters() {
+            return parameters;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            MethodSignature that = (MethodSignature) o;
+            return Objects.equals(name, that.name) && Objects.equals(parameters, that.parameters);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, parameters);
+        }
+
+        @Override
+        public String toString() {
+            return "MethodSignature{" + name + "(" + parameters + ")" + "}";
         }
     }
 }

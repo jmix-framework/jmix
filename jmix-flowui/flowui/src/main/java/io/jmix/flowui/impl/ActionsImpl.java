@@ -22,8 +22,10 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.sys.ActionDefinition;
 import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.ActionsConfigurationSorter;
 import io.jmix.flowui.sys.BeanUtil;
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,7 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
     protected List<ActionsConfiguration> configurations = Collections.emptyList();
     protected ClassManager classManager;
     protected ApplicationContext applicationContext;
+    protected ActionsConfigurationSorter actionsConfigurationSorter;
 
     protected Map<String, Class<? extends Action>> classes = new HashMap<>();
 
@@ -63,6 +66,18 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    @Autowired
+    public void setActionsConfigurationSorter(ActionsConfigurationSorter actionsConfigurationSorter) {
+        this.actionsConfigurationSorter = actionsConfigurationSorter;
+    }
+
+    @PostConstruct
+    protected void postConstruct() {
+        //sort ActionsConfiguration list in the same order as Jmix modules. In this case actions overridden
+        //in add-ons or application will replace original action definitions
+        this.configurations = actionsConfigurationSorter.sort(this.configurations);
     }
 
     @SuppressWarnings("unchecked")

@@ -202,11 +202,20 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected <V extends View<?>> Class<V> inferViewClass(DialogWindowBuilder<V> builder) {
         DetailWindowBuilder<?, V> detailBuilder = ((DetailWindowBuilder<?, V>) builder);
-        return (Class<V>) viewRegistry.getDetailViewInfo(detailBuilder.getEntityClass()).getControllerClass();
+        Class<?> entityClass;
+
+        if (detailBuilder.getMode() == DetailViewMode.CREATE) {
+            entityClass = detailBuilder.getEntityClass();
+        } else {
+            entityClass = detailBuilder.getEditedEntity()
+                    .map(Object::getClass)
+                    .orElse((Class) detailBuilder.getEntityClass());
+        }
+        return (Class<V>) viewRegistry.getDetailViewInfo(entityClass).getControllerClass();
     }
 
     @Nullable

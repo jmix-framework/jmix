@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Component("ui_LocalDateTimeRendererProvider")
+@Component("flowui_LocalDateTimeRendererProvider")
 public class LocalDateTimeRendererProvider extends AbstractFormattableRendererProvider<LocalDateTimeRenderer<?>> {
 
     public static final String NAME = "localDateTimeRenderer";

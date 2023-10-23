@@ -40,7 +40,24 @@ public class AuditConversionServiceImpl implements AuditConversionService {
 
         addConverter(AuditConverters.DateToLongConverter.INSTANCE);
         addConverter(AuditConverters.LongToDateConverter.INSTANCE);
+
         addConverter(AuditConverters.DateToOffsetDateTimeConverter.INSTANCE);
+        addConverter(AuditConverters.OffsetDateTimeToDateConverter.INSTANCE);
+
+        addConverter(AuditConverters.LocalDateToDateConverter.INSTANCE);
+        addConverter(AuditConverters.DateToLocalDateConverter.INSTANCE);
+
+        addConverter(AuditConverters.LocalDateTimeToDateConverter.INSTANCE);
+        addConverter(AuditConverters.DateToLocalDateTimeConverter.INSTANCE);
+
+        addConverter(AuditConverters.LocalDateTimeToLocalDateConverter.INSTANCE);
+        addConverter(AuditConverters.LocalDateToLocalDateTimeConverter.INSTANCE);
+
+        addConverter(AuditConverters.LocalDateToOffsetDateTimeConverter.INSTANCE);
+        addConverter(AuditConverters.OffsetDateTimeToLocalDateConverter.INSTANCE);
+
+        addConverter(AuditConverters.LocalDateTimeToOffsetDateTimeConverter.INSTANCE);
+        addConverter(AuditConverters.OffsetDateTimeToLocalDateTimeConverter.INSTANCE);
 
         conversionService.addConverter(AuditConverters.UserToStringConverter.INSTANCE);
     }

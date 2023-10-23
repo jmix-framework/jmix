@@ -21,8 +21,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
-import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -46,21 +48,33 @@ public class AuthorizedApiUrlsConfigurer extends AbstractHttpConfigurer<Authoriz
             try {
                 String[] urlPatterns = toArray(concat(anonymousUrlPatterns, authenticatedUrlPatterns), String.class);
 
+
                 AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry urlRegistry = http.securityMatcher(urlPatterns)
                         .authorizeHttpRequests();
 
+                HandlerMappingIntrospector handlerMappingIntrospector = applicationContext.getBean(HandlerMappingIntrospector.class);
+                MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(handlerMappingIntrospector);
+
                 if (!anonymousUrlPatterns.isEmpty()) {
-                    urlRegistry.requestMatchers(toArray(anonymousUrlPatterns, String.class)).permitAll();
+                    MvcRequestMatcher[] mvcRequestMatchers = createMvcRequestMatchers(anonymousUrlPatterns, mvcRequestMatcherBuilder);
+                    urlRegistry.requestMatchers(mvcRequestMatchers).permitAll();
                 }
 
                 if (!authenticatedUrlPatterns.isEmpty()) {
-                    urlRegistry.requestMatchers(toArray(authenticatedUrlPatterns, String.class)).authenticated();
+                    MvcRequestMatcher[] mvcRequestMatchers = createMvcRequestMatchers(authenticatedUrlPatterns, mvcRequestMatcherBuilder);
+                    urlRegistry.requestMatchers(mvcRequestMatchers).authenticated();
                 }
 
             } catch (Exception e) {
                 throw new RuntimeException("Error while init security", e);
             }
         }
+    }
+
+    private MvcRequestMatcher[] createMvcRequestMatchers(Collection<String> urlPatterns, MvcRequestMatcher.Builder mvcRequestMatcherBuilder) {
+        return Arrays.stream(toArray(urlPatterns, String.class))
+                .map(urlPattern -> mvcRequestMatcherBuilder.pattern(urlPattern))
+                .toArray(MvcRequestMatcher[]::new);
     }
 
     private Collection<String> getAnonymousUrlPatterns(ApplicationContext applicationContext) {

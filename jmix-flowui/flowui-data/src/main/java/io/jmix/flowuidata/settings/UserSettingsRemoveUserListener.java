@@ -18,7 +18,7 @@ package io.jmix.flowuidata.settings;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.event.UserRemovedEvent;
-import io.jmix.flowuidata.entity.UiSetting;
+import io.jmix.flowuidata.entity.UserSettingsItem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import java.util.List;
 
 @Internal
-@Component("ui_UserSettingsRemoveUserListener")
+@Component("flowui_UserSettingsRemoveUserListener")
 public class UserSettingsRemoveUserListener {
 
     @PersistenceContext
@@ -37,15 +37,15 @@ public class UserSettingsRemoveUserListener {
 
     @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
-    void onUserRemove(UserRemovedEvent event) {
+    public void onUserRemove(UserRemovedEvent event) {
         String username = event.getUsername();
 
-        List<UiSetting> settings = entityManager.createQuery(
-                        "select s from ui_UiSetting s where s.username = ?1", UiSetting.class)
+        List<UserSettingsItem> settings = entityManager.createQuery(
+                        "select s from flowui_UserSettingsItem s where s.username = ?1", UserSettingsItem.class)
                 .setParameter(1, username)
                 .getResultList();
 
-        for (UiSetting setting : settings) {
+        for (UserSettingsItem setting : settings) {
             entityManager.remove(setting);
         }
     }

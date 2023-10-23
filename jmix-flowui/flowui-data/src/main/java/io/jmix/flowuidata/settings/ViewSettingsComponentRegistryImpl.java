@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Collects {@link ComponentSettingsBinder} and provides information for which component registered settings class.
  */
-@org.springframework.stereotype.Component("ui_ViewSettingsComponentRegistryImpl")
+@org.springframework.stereotype.Component("flowui_ViewSettingsComponentRegistryImpl")
 public class ViewSettingsComponentRegistryImpl implements ViewSettingsComponentRegistry, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(ViewSettingsComponentRegistryImpl.class);

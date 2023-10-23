@@ -40,12 +40,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @AutoConfiguration
 @Import({OidcConfiguration.class})
@@ -97,7 +99,7 @@ public class OidcAutoConfiguration {
                         authorize
                                 //if we don't allow /vaadinServlet/PUSH URL the Session Expired toolbox won't
                                 //be shown in the web browser
-                                .requestMatchers("/vaadinServlet/PUSH/**").permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/vaadinServlet/PUSH/**")).permitAll()
                                 .anyRequest().authenticated();
                     })
                     .oauth2Login(oauth2Login -> {
@@ -144,10 +146,11 @@ public class OidcAutoConfiguration {
                                                        JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter,
                                                        ApplicationEventPublisher applicationEventPublisher) throws Exception {
             http.oauth2ResourceServer(resourceServer -> {
-                resourceServer.jwt(jwt -> {
-                    jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
-                });
-            });
+                        resourceServer.jwt(jwt -> {
+                            jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
+                        });
+                    })
+                    .cors(Customizer.withDefaults());
             http.apply(SecurityConfigurers.apiSecurity());
 
             OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =

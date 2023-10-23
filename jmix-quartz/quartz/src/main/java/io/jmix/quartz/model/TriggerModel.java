@@ -36,6 +36,8 @@ public class TriggerModel {
 
     private String cronExpression;
 
+    private String misfireInstructionId;
+
     @Min(-1)
     private Integer repeatCount;
 
@@ -135,6 +137,15 @@ public class TriggerModel {
 
     public void setRepeatInterval(Long repeatInterval) {
         this.repeatInterval = repeatInterval;
+    }
+
+    @Nullable
+    public String getMisfireInstructionId() {
+        return misfireInstructionId;
+    }
+
+    public void setMisfireInstructionId(String misfireInstructionId) {
+        this.misfireInstructionId = misfireInstructionId;
     }
 
     @SuppressWarnings("ConstantConditions")

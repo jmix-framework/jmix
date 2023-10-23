@@ -1,0 +1,10 @@
+apply plugin: 'io.jmix'
+apply plugin: 'groovy'
+
+group = 'io.jmix.dynattr'
+archivesBaseName = 'jmix-dynattr-flowui-kit'
+
+dependencies {
+    api project(':flowui')
+    api project(':flowui-kit')
+}

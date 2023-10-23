@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.jmix.dynattrflowui.kit.meta.component;
 
-package io.jmix.dynattrflowui.meta.component;
-
-import io.jmix.dynattrflowui.panel.DynamicAttributesPanel;
-import io.jmix.flowui.kit.component.combobutton.ComboButton;
+import io.jmix.dynattrflowui.kit.component.DynamicAttributesPanel;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;

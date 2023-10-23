@@ -33,6 +33,7 @@ import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.dynattr.model.Categorized;
 import io.jmix.dynattr.model.Category;
+import io.jmix.dynattrflowui.kit.component.DynamicAttributesPanel;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -55,8 +56,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-public class DynamicAttributesPanel extends Composite<VerticalLayout> implements HasSize {
+public class DynamicAttributesPanelImpl extends Composite<VerticalLayout> implements DynamicAttributesPanel, HasSize {
 
     public static final String NAME = "dynamicAttributesPanel";
 
@@ -80,11 +80,11 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     protected JmixComboBox<Category> categoryField;
     protected JmixFormLayout propertiesForm;
 
-    public DynamicAttributesPanel(UiComponentsGenerator uiComponentsGenerator,
-                                  UiComponents uiComponents,
-                                  Messages messages,
-                                  DynAttrMetadata dynAttrMetadata,
-                                  ViewValidation validate) {
+    public DynamicAttributesPanelImpl(UiComponentsGenerator uiComponentsGenerator,
+                                      UiComponents uiComponents,
+                                      Messages messages,
+                                      DynAttrMetadata dynAttrMetadata,
+                                      ViewValidation validate) {
         this.uiComponentsGenerator = uiComponentsGenerator;
         this.uiComponents = uiComponents;
         this.messages = messages;
@@ -298,6 +298,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
      *
      * @param container {@link InstanceContainer} object with editing entity
      */
+    @Override
     public void setInstanceContainer(InstanceContainer<Object> container) {
         this.instanceContainer = container;
         propertiesForm.setValueSourceProvider(new ContainerValueSourceProvider<>(instanceContainer));
@@ -318,6 +319,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
      *
      * @param cols positive integer or {@code null}
      */
+    @Override
     @Positive
     public void setColumnsCount(Integer cols) {
         if (cols != null && cols <= 0) {
@@ -332,6 +334,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
      *
      * @param rows positive integer or {@code null}
      */
+    @Override
     @Positive
     public void setRowsCount(Integer rows) {
         if (rows != null && rows <= 0) {
@@ -346,6 +349,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
      *
      * @param fieldWidth width of the fields
      */
+    @Override
     public void setFieldWidth(String fieldWidth) {
         this.fieldWidth = fieldWidth;
     }
@@ -356,6 +360,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
      *
      * @param fieldCaptionWidth width of the fields caption
      */
+    @Override
     public void setFieldCaptionWidth(String fieldCaptionWidth) {
         this.fieldCaptionWidth = fieldCaptionWidth;
     }
@@ -365,10 +370,12 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
      *
      * @param visible visibility flag
      */
+    @Override
     public void setCategoryFieldVisible(boolean visible) {
         categoryFieldBox.setVisible(visible);
     }
 
+    @Override
     public boolean isValid() {
         Collection<Component> components = UiComponentUtils.getOwnComponents(propertiesForm);
         for (Component component : components) {

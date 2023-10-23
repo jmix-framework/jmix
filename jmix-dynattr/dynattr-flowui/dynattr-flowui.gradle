@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ archivesBaseName = 'jmix-dynattr-flowui'
 
 dependencies {
     api project(':dynattr')
+    api project(':dynattr-flowui-kit')
 
     api project(':flowui')
 

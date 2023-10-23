@@ -20,18 +20,15 @@ import com.google.common.base.Strings;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.sys.ControllerDependencyInjector;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
-import org.springframework.context.annotation.ContextAnnotationAutowireCandidateResolver;
 
 @Internal
-public class DynamicAttributesPanelLoader extends AbstractComponentLoader<DynamicAttributesPanel> {
+public class DynamicAttributesPanelLoader extends AbstractComponentLoader<DynamicAttributesPanelImpl> {
     @SuppressWarnings("NullableProblems")
     @Override
-    public DynamicAttributesPanel createComponent() {
-        return factory.create(DynamicAttributesPanel.class);
+    public DynamicAttributesPanelImpl createComponent() {
+        return factory.create(DynamicAttributesPanelImpl.class);
     }
 
     @Override
@@ -44,7 +41,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
     }
 
 
-    protected void loadDataContainer(DynamicAttributesPanel resultComponent, Element element) {
+    protected void loadDataContainer(DynamicAttributesPanelImpl resultComponent, Element element) {
         String containerId = element.attributeValue("dataContainer");
         if (Strings.isNullOrEmpty(containerId)) {
             throw new GuiDevelopmentException("DynamicAttributesPanel element doesn't have 'dataContainer' attribute",
@@ -54,22 +51,22 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
         resultComponent.setInstanceContainer(container);
     }
 
-    protected void loadColumnsCount(DynamicAttributesPanel resultComponent, Element element) {
+    protected void loadColumnsCount(DynamicAttributesPanelImpl resultComponent, Element element) {
         resultComponent.setColumnsCount(getIntegerAttribute("cols", element));
     }
 
-    protected void loadRowsCount(DynamicAttributesPanel resultComponent, Element element) {
+    protected void loadRowsCount(DynamicAttributesPanelImpl resultComponent, Element element) {
         resultComponent.setRowsCount(getIntegerAttribute("rows", element));
     }
 
-    protected void loadFieldWidth(DynamicAttributesPanel resultComponent, Element element) {
+    protected void loadFieldWidth(DynamicAttributesPanelImpl resultComponent, Element element) {
         String fieldWidth = element.attributeValue("fieldWidth");
         if (!Strings.isNullOrEmpty(fieldWidth)) {
             resultComponent.setFieldWidth(fieldWidth);
         }
     }
 
-    protected void loadFieldCaptionWidth(DynamicAttributesPanel resultComponent, Element element) {
+    protected void loadFieldCaptionWidth(DynamicAttributesPanelImpl resultComponent, Element element) {
         String fieldWidth = element.attributeValue("fieldCaptionWidth");
         if (!Strings.isNullOrEmpty(fieldWidth)) {
             resultComponent.setFieldCaptionWidth(fieldWidth);

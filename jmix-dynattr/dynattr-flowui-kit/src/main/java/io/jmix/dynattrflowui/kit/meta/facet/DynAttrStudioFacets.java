@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package io.jmix.dynattrflowui.meta.facet;
+package io.jmix.dynattrflowui.kit.meta.facet;
 
 import io.jmix.flowui.kit.meta.StudioFacet;
 import io.jmix.flowui.kit.meta.StudioProperty;
@@ -24,7 +23,6 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 @StudioUiKit
 public interface DynAttrStudioFacets {
     @StudioFacet(
-
             name = "DynamicAttributes",
             classFqn = "io.jmix.dynattrflowui.facet.DynAttrFacet",
             category = "Facets",
@@ -36,5 +34,5 @@ public interface DynAttrStudioFacets {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
             }
     )
-    void dataLoadCoordinator();
+    void dynamicAttributesFacet();
 }

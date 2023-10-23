@@ -50,6 +50,8 @@
 }
 
 .jmix-main-view-navigation {
+  display: flex;
+  flex-direction: column;
   border-bottom: 1px solid;
   border-color: var(--lumo-contrast-10pct);
   flex-grow: 1;

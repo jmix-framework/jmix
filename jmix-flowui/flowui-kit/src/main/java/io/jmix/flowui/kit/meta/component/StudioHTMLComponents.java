@@ -27,6 +27,12 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.Html",
             category = "HTML",
             xmlElement = "html",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = "content",
+                            maxCount = 1
+                    )
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -37,6 +43,8 @@ public interface StudioHTMLComponents {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "content", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "file", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER)
             }
     )

@@ -34,9 +34,16 @@ import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.component.textfield.*;
+import com.vaadin.flow.component.textfield.BigDecimalField;
+import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.virtuallist.VirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
@@ -51,7 +58,12 @@ import io.jmix.flowui.kit.component.upload.JmixFileStorageUploadField;
 import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
-import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.StudioComponent;
+import io.jmix.flowui.kit.meta.StudioPropertiesBinding;
+import io.jmix.flowui.kit.meta.StudioProperty;
+import io.jmix.flowui.kit.meta.StudioPropertyType;
+import io.jmix.flowui.kit.meta.StudioSupplyHandler;
+import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
 public interface StudioComponents {
@@ -1228,10 +1240,10 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
@@ -1241,7 +1253,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "step", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "step", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "stepButtonsVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
@@ -2593,4 +2605,44 @@ public interface StudioComponents {
             }
     )
     JmixCodeEditor codeEditor();
+
+    @StudioComponent(
+            name = "VirtualList",
+            classFqn = "io.jmix.flowui.component.virtuallist.JmixVirtualList",
+            category = "Components",
+            xmlElement = "virtualList",
+            icon = "io/jmix/flowui/kit/meta/icon/component/virtualList.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "itemsContainer",
+                            type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF, typeParameter = "V"),
+                    @StudioProperty(xmlAttribute = "itemsEnum", type = StudioPropertyType.ENUM_CLASS,
+                            typeParameter = "V"),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.Renderer"
+                    )
+            }
+    )
+    VirtualList virtualList();
 }

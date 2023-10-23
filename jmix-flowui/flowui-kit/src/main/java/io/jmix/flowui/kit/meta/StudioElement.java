@@ -51,11 +51,5 @@ public @interface StudioElement {
 
     StudioSupplyHandler[] supplyHandlers() default {};
 
-    /**
-     * Array with the components qualified names that
-     * can be contained inside the current component.
-     */
-    String[] possibleChildren() default {};
-
-    int maxCountOfChildren() default -1;
+    StudioAvailableChildrenInfo availableChildren() default @StudioAvailableChildrenInfo();
 }

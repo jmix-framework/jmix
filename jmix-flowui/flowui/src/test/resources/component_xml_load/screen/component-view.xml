@@ -938,5 +938,21 @@
                      position="BOTTOM"
             />
         </codeEditor>
+
+        <virtualList id="virtualListId"
+                     classNames="cssClassName1, cssClassName2"
+                     css="color: red;"
+                     enabled="true"
+                     height="50px"
+                     maxHeight="55px"
+                     maxWidth="120px"
+                     minHeight="40px"
+                     minWidth="80px"
+                     tabIndex="3"
+                     visible="false"
+                     width="100px"/>
+
+        <virtualList id="virtualListItemsEnumId"
+                     itemsEnum="test_support.entity.sec.RoleType"/>
     </layout>
 </view>

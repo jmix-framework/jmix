@@ -55,7 +55,7 @@ public class SimplePaginationSettingsTest extends AbstractSettingsTest {
 
     @AfterEach
     public void afterEach() {
-        jdbc.update("delete from UI_UI_SETTING");
+        jdbc.update("delete from FLOWUI_USER_SETTINGS");
         jdbc.update("delete from TEST_PROJECT");
         userSettingsCache.clear();
     }

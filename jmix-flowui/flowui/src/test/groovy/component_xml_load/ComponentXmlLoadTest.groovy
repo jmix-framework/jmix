@@ -27,11 +27,13 @@ import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer
 import com.vaadin.flow.dom.ElementConstants
 import component_xml_load.screen.ComponentView
 import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer
+import io.jmix.flowui.data.items.EnumDataProvider
 import io.jmix.flowui.kit.component.dropdownbutton.ActionItem
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant
 import io.jmix.flowui.kit.component.dropdownbutton.TextItem
 import org.springframework.boot.test.context.SpringBootTest
+import test_support.entity.sec.RoleType
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -305,6 +307,38 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.uploadWithReceiverFqn) {
             id.get() == "uploadWithReceiverFqn"
             receiver instanceof FileTemporaryStorageBuffer
+        }
+    }
+
+    def "Load virtualList component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "VirtualList attributes will be loaded"
+        verifyAll(componentView.virtualListId) {
+            id.get() == "virtualListId"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
+            enabled
+            height == "50px"
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            tabIndex == 3
+            !visible
+            width == "100px"
+        }
+    }
+
+    def "Load virtualList with itemsEnum from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "ItemsEnum should be loaded"
+        verifyAll(componentView.virtualListItemsEnumId) {
+            id.get() == "virtualListItemsEnumId"
+            (dataProvider as EnumDataProvider<RoleType>).getEnumClass() == RoleType.class
         }
     }
 }

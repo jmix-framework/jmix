@@ -39,6 +39,7 @@ import io.jmix.flowui.component.upload.JmixUpload;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
+import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
@@ -50,6 +51,7 @@ import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.sales.Order;
+import test_support.entity.sec.RoleType;
 
 @Route(value = "component-view")
 @ViewController("ComponentView")
@@ -178,4 +180,10 @@ public class ComponentView extends StandardView {
 
     @ViewComponent
     public CodeEditor codeEditorId;
+
+    @ViewComponent
+    public JmixVirtualList<Order> virtualListId;
+
+    @ViewComponent
+    public JmixVirtualList<RoleType> virtualListItemsEnumId;
 }

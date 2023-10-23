@@ -59,7 +59,7 @@ def initDefaultFieldAttrs(attr) {
 	}
 
 	if(attr.isEnumType()) {
-		field.tag = 'comboBox'
+		field.tag = 'select'
 	}
 
     if (attr.isDeepInheritor('java.lang.Boolean')) {

@@ -42,7 +42,9 @@ public class TimerImpl extends AbstractFacet implements Timer {
 
     @Override
     public void start() {
-        timerImpl.start();
+        if (timerImpl.isAttached()) {
+            timerImpl.start();
+        }
     }
 
     @Override
@@ -71,6 +73,16 @@ public class TimerImpl extends AbstractFacet implements Timer {
     }
 
     @Override
+    public boolean isAutostart() {
+        return timerImpl.isAutostart();
+    }
+
+    @Override
+    public void setAutostart(boolean autostart) {
+        timerImpl.setAutostart(autostart);
+    }
+
+    @Override
     public Registration addTimerActionListener(Consumer<TimerActionEvent> listener) {
         ComponentEventListener<JmixTimer.JmixTimerTickEvent> adapter = new JmixTimerActionListenerAdapter(listener);
         return timerImpl.addActionListener(adapter);
@@ -90,13 +102,18 @@ public class TimerImpl extends AbstractFacet implements Timer {
 
     @Override
     public void setOwner(@Nullable View<?> owner) {
-        super.setOwner(owner);
-
         if (owner != null) {
+            super.setOwner(owner);
             if (owner.getContent() instanceof HasComponents) {
                 //noinspection unchecked
                 registerInView((View<? extends HasComponents>) owner);
             }
+        } else {
+            if (this.owner != null && this.owner.getContent() instanceof HasComponents) {
+                //noinspection unchecked
+                unregisterInView((View<? extends HasComponents>) this.owner);
+            }
+            super.setOwner(null);
         }
     }
 
@@ -118,7 +135,15 @@ public class TimerImpl extends AbstractFacet implements Timer {
     }
 
     protected void addDetachListener(View<? extends HasComponents> owner) {
-        owner.addDetachListener(e -> owner.getContent().remove(timerImpl));
+        owner.addDetachListener(e -> detachTimer(owner));
+    }
+
+    protected void detachTimer(View<? extends HasComponents> owner) {
+        owner.getContent().remove(timerImpl);
+    }
+
+    protected void unregisterInView(View<? extends HasComponents> owner) {
+        detachTimer(owner);
     }
 
     protected class JmixTimerActionListenerAdapter implements ComponentEventListener<JmixTimer.JmixTimerTickEvent> {

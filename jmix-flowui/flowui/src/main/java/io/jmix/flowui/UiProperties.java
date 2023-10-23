@@ -38,6 +38,11 @@ public class UiProperties {
     String mainViewId;
 
     /**
+     * View that should be opened after login. This setting will be applied to all users.
+     */
+    String defaultViewId;
+
+    /**
      * Defines whether menu should be built with menu items from add-ons. {@code true} means using menu items from
      * add-ons, {@code false} - using only menu configuration from the application. The default value is {@code true}.
      */
@@ -67,6 +72,7 @@ public class UiProperties {
 
     public UiProperties(@DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
+                        @Nullable String defaultViewId,
                         @DefaultValue("true") boolean compositeMenu,
                         @DefaultValue("10000") Integer defaultMaxFetchSize,
                         @Nullable Map<String, Integer> entityMaxFetchSize,
@@ -78,6 +84,7 @@ public class UiProperties {
     ) {
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
+        this.defaultViewId = defaultViewId;
         this.compositeMenu = compositeMenu;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
@@ -100,6 +107,14 @@ public class UiProperties {
      */
     public String getMainViewId() {
         return mainViewId;
+    }
+
+    /**
+     * @see #defaultViewId
+     */
+    @Nullable
+    public String getDefaultViewId() {
+        return defaultViewId;
     }
 
     /**

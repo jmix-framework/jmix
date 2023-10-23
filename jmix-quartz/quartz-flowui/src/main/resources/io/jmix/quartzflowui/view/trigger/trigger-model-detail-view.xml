@@ -14,26 +14,56 @@
         <action id="viewClose" type="view_close"/>
     </actions>
     <layout>
-        <formLayout id="form" dataContainer="triggerModelDc">
+        <formLayout id="form" dataContainer="triggerModelDc" labelsPosition="TOP">
             <responsiveSteps>
                 <responsiveStep minWidth="0" columns="1"/>
             </responsiveSteps>
-            <select id="scheduleTypeField" property="scheduleType"
-                    required="true"/>
-            <textField id="cronExpressionField" property="cronExpression"
-                       required="true"
-                       visible="false"/>
-            <hbox id="repeatModeBox">
-                <radioButtonGroup id="repeatModeSelector" label="msg://triggerRepeatMode"
-                                  itemsEnum="io.jmix.quartz.model.RepeatMode" width="100%"/>
-                <button id="repeatModeSelectorHelpButton" classNames="self-center"/>
-            </hbox>
-            <textField id="repeatCountField" property="repeatCount" visible="false"/>
-            <textField id="repeatIntervalField" property="repeatInterval" required="true" visible="false"/>
-            <dateTimePicker id="startDateTimePicker" property="startDate"/>
-            <dateTimePicker id="endDateTimePicker" property="endDate"/>
-            <textField id="triggerNameField" property="triggerName"/>
-            <comboBox id="triggerGroupField" property="triggerGroup" allowCustomValue="true"/>
+            <formItem id="scheduleTypeFormItem">
+                <select id="scheduleTypeField" property="scheduleType" required="true"/>
+            </formItem>
+            <formItem id="cronExpressionFormItem" visible="false"
+                      label="msg://io.jmix.quartz.model/TriggerModel.cronExpression">
+                <hbox id="cronExpressionBox">
+                    <textField id="cronExpressionField" property="cronExpression" required="true" width="100%"/>
+                    <button id="cronExpressionHelpButton" classNames="self-center"/>
+                </hbox>
+            </formItem>
+            <formItem id="repeatModeFormItem" label="msg://triggerRepeatMode">
+                <hbox id="repeatModeBox">
+                    <radioButtonGroup id="repeatModeSelector" itemsEnum="io.jmix.quartz.model.RepeatMode" width="100%"/>
+                    <button id="repeatModeSelectorHelpButton" classNames="self-center"/>
+                </hbox>
+            </formItem>
+            <formItem id="repeatCountFormItem" visible="false"
+                      label="msg://io.jmix.quartz.model/TriggerModel.repeatCount">
+                <hbox id="repeatCountBox">
+                    <textField id="repeatCountField" property="repeatCount" width="100%"/>
+                    <button id="repeatCountHelpButton" classNames="self-center"/>
+                </hbox>
+            </formItem>
+            <formItem id="repeatIntervalFormItem" visible="false">
+                <textField id="repeatIntervalField" property="repeatInterval" required="true"/>
+            </formItem>
+            <formItem>
+                <dateTimePicker id="startDateTimePicker" property="startDate"/>
+            </formItem>
+            <formItem>
+                <dateTimePicker id="endDateTimePicker" property="endDate"/>
+            </formItem>
+            <formItem id="misfireInstructionFormItem"
+                      label="msg://io.jmix.quartz.model/TriggerModel.misfireInstructionId">
+                <hbox id="misfireInstructionBox">
+                    <comboBox id="misfireInstructionField" dataContainer="triggerModelDc"
+                              property="misfireInstructionId" width="100%"/>
+                    <button id="misfireInstructionHelpButton" classNames="self-center"/>
+                </hbox>
+            </formItem>
+            <formItem>
+                <textField id="triggerNameField" property="triggerName"/>
+            </formItem>
+            <formItem>
+                <comboBox id="triggerGroupField" property="triggerGroup" allowCustomValue="true"/>
+            </formItem>
         </formLayout>
         <hbox id="detailActions" spacing="true">
             <button id="saveAndCloseBtn" action="viewSaveAndClose"/>

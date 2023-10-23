@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  * Publishes a {@link UiUserSubstitutionsChangedEvent} for the UI scope.
  * The event should be handled in the components or the views.
  */
-@Component("ui_UserSubstitutionsChangedListener")
+@Component("flowui_UserSubstitutionsChangedListener")
 public class UserSubstitutionsChangedListener {
 
     @Autowired

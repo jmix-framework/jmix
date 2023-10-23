@@ -37,6 +37,19 @@ public interface SearchResult {
      * @return effective offset
      */
     int getEffectiveOffset();
+    /**
+     * Gets total amount of hits in this {@link SearchResult}.
+     *
+     * @return total hits
+     */
+    long getTotalHits();
+
+    /**
+     * Sets the total number of hits for this {@link SearchResult}.
+     *
+     * @param totalHits the total number of hits to be set.
+     */
+    void setTotalHits(long totalHits);
 
     /**
      * Gets names of all entities presented in this {@link SearchResult}.

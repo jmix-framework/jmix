@@ -156,6 +156,7 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
             cellValue = EntityValues.getValueEx(instance, metaPropertyPath.getPath());
         } else {
             Renderer<?> renderer = column.getRenderer();
+            //if a component renderer is assigned, try to retrieve export value from rendered component
             if (renderer instanceof ComponentRenderer componentRenderer) {
                 Component cellComponent = componentRenderer.createComponent(instance);
                 if (cellComponent instanceof HasText hasText) {

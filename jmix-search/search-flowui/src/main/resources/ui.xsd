@@ -43,7 +43,7 @@
                     <xs:attribute name="entities" type="xs:string"/>
                     <xs:attribute name="openMode" type="openMode"/>
                     <xs:attribute name="searchSize" type="xs:integer"/>
-                    <xs:attribute name="strategy" type="searchStrategyType"/>
+                    <xs:attribute name="searchStrategy" type="searchStrategyType"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

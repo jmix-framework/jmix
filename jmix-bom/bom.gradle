@@ -209,6 +209,7 @@ dependencies {
         api "io.jmix.search:jmix-search-starter:$freeVersion"
         api "io.jmix.search:jmix-search-aws-starter:$freeVersion"
         api "io.jmix.search:jmix-search-flowui:$freeVersion"
+        api "io.jmix.search:jmix-search-flowui-kit:$freeVersion"
         api "io.jmix.search:jmix-search-flowui-starter:$freeVersion"
 
         api "io.jmix.security:jmix-security:$freeVersion"

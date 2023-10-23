@@ -40,7 +40,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -499,6 +501,8 @@ public class DynAttrManagerImpl implements DynAttrManager {
             cav.setDateWithoutTimeValue((LocalDate) value);
         } else if (value instanceof Date) {
             cav.setDateValue((Date) value);
+        } else if (value instanceof LocalDateTime) {
+            cav.setDateValue(Timestamp.valueOf((LocalDateTime) value));
         } else if (value instanceof Integer) {
             cav.setIntValue((Integer) value);
         } else if (value instanceof Double) {
@@ -513,8 +517,8 @@ public class DynAttrManagerImpl implements DynAttrManager {
             cav.setTransientEntityValue(value);
         } else if (value instanceof String) {
             cav.setStringValue((String) value);
-        } else if (value instanceof List) {
-            cav.setTransientCollectionValue((List<Object>) value);
+        } else if (value instanceof Collection) {
+            cav.setTransientCollectionValue(((Collection) value).stream().toList());
         } else {
             throw new IllegalArgumentException("Unsupported value type " + value.getClass());
         }

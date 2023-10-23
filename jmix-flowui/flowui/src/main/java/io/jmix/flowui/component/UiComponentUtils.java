@@ -25,14 +25,13 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewChildrenVisitResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class UiComponentUtils {
@@ -131,6 +130,8 @@ public final class UiComponentUtils {
             return ((ComponentContainer) container).getOwnComponents();
         } else if (container instanceof HasComponents) {
             return container.getChildren().sequential().collect(Collectors.toList());
+        } else if (container instanceof View<?>) {
+            return container.getChildren().collect(Collectors.toList());
         } else {
             throw new IllegalArgumentException(container.getClass().getSimpleName() +
                     " has no API to obtain component list");
@@ -373,6 +374,30 @@ public final class UiComponentUtils {
             ((SupportsTypedValue<?, ?, V, ?>) component).setTypedValue(value);
         } else {
             component.setValue(value);
+        }
+    }
+
+    public static void walkComponents(View<?> view, Consumer<ViewChildrenVisitResult> viewChildrenVisitResultConsumer) {
+        __walkComponentsInternal(view, UiComponentUtils.getComponents(view), viewChildrenVisitResultConsumer, new HashSet<Component>());
+    }
+
+    private static void __walkComponentsInternal(View<?> view,
+                                                 Collection<Component> currentChildrenComponents,
+                                                 Consumer<ViewChildrenVisitResult> callback,
+                                                 Set<Component> treeComponents) {
+        for (Component component : currentChildrenComponents) {
+            if(treeComponents.contains(component)){
+                break;
+            }
+            ViewChildrenVisitResult visitResult = new ViewChildrenVisitResult();
+            visitResult.setComponent(component);
+            visitResult.setView(view);
+            visitResult.setComponentId(component.getId().orElse(null));
+            callback.accept(visitResult);
+
+            treeComponents.add(component);
+
+            __walkComponentsInternal(view, UiComponentUtils.getComponents(view), callback, treeComponents);
         }
     }
 }

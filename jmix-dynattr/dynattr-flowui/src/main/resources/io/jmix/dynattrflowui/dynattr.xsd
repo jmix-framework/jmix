@@ -1,0 +1,24 @@
+
+<xs:schema targetNamespace="http://jmix.io/schema/dynattr/flowui"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
+           xmlns="http://jmix.io/schema/dynattr/flowui"
+           elementFormDefault="qualified">
+
+    <!-- DynamicAttributes Facet -->
+    <xs:complexType name="dynamicAttributesType">
+        <xs:attribute name="id" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- DynamicAttributesPanel -->
+    <xs:complexType name="dynamicAttributesPanel">
+        <xs:attributeGroup ref="layout:hasId"/>
+
+        <xs:attribute name="dataContainer" type="xs:string" use="required"/>
+        <xs:attribute name="cols" type="xs:integer"/>
+        <xs:attribute name="rows" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:element name="dynamicAttributesPanel" type="dynamicAttributesPanel"/>
+    <xs:element name="dynamicAttributes" type="dynamicAttributesType"/>
+</xs:schema>

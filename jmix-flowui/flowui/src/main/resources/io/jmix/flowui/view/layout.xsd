@@ -4124,6 +4124,9 @@
                 <xs:element name="urlQueryParameters" type="urlQueryParametersType" minOccurs="0"/>
                 <xs:element name="timer" type="timerType" minOccurs="0"/>
                 <xs:element name="settings" type="settingsFacetType" minOccurs="0"/>
+
+                <!-- allow custom facets from any namespace -->
+                <xs:any/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>

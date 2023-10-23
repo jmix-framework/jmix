@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://categoryAttributeDetailView.title">
+    <data>
+        <instance id="categoryAttributeDc"
+                  class="io.jmix.dynattr.model.CategoryAttribute">
+            <fetchPlan extends="_local">
+                <property name="category" fetchPlan="_local">
+                    <property name="categoryAttrs" fetchPlan="_local">
+                        <property name="defaultEntity" fetchPlan="_local"/>
+                    </property>
+                </property>
+                <property name="defaultEntity" fetchPlan="_local"/>
+            </fetchPlan>
+            <loader id="categoryAttributeDl"/>
+            <instance id="configurationDc" property="configuration"/>
+        </instance>
+        <collection id="targetScreensDc"
+                    class="io.jmix.dynattrflowui.impl.model.TargetViewComponent"
+                    fetchPlan="_local">
+            <loader id="targetScreensDl"/>
+        </collection>
+    </data>
+    <actions>
+        <action id="windowClose" type="detail_close"/>
+        <action id="windowCommitAndClose" type="detail_saveClose"/>
+    </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout expand="detailButtonsBox" spacing="true">
+        <tabSheet id="tabSheet" width="100%">
+            <tab id="mainTab" label="msg://mainTab.title">
+                <vbox margin="false" padding="false">
+                    <hbox id="attributeBox" width="100%" spacing="true">
+                        <formLayout id="attributeForm" dataContainer="categoryAttributeDc" width="100%">
+                            <responsiveSteps>
+                                <responsiveStep minWidth="0px" columns="1"/>
+                            </responsiveSteps>
+                            <textField id="nameField" property="name" required="true"
+                                       requiredMessage="msg://nameField.required"/>
+                            <textField id="codeField" property="code" required="true"
+                                       requiredMessage="msg://codeField.required"/>
+                            <comboBox id="dataTypeField" property="dataType" required="true"
+                                      requiredMessage="msg://dataTypeField.required"/>
+                            <textArea id="descriptionField" property="description" minHeight="7em"/>
+                        </formLayout>
+                        <formLayout id="optionalAttributeForm" dataContainer="categoryAttributeDc"
+                                    width="100%"
+                                    visible="false">
+                            <responsiveSteps>
+                                <responsiveStep minWidth="0px" columns="1"/>
+                            </responsiveSteps>
+                            <comboBox id="entityClassField" required="true"
+                                      label="msg://io.jmix.dynattr.model/CategoryAttribute.entityClass"
+                                      requiredMessage="msg://entityClassField.required"/>
+                            <comboBox id="screenField" label="msg://io.jmix.dynattr.model/CategoryAttribute.screen"
+                                      required="true"
+                                      requiredMessage="msg://screenField.required"/>
+                            <textField id="widthField" property="width">
+                                <validators>
+                                    <regexp regexp="^(-?\d+(?:\.\d+)?)(%|px)?$"
+                                            message="msg://widthField.validationMessage"/>
+                                </validators>
+                            </textField>
+                            <textField id="rowsCountField" property="rowsCount">
+                                <validators>
+                                    <min value="1" message="msg://rowsCountField.validationMessage"/>
+                                    <max value="40" message="msg://rowsCountField.validationMessage"/>
+                                </validators>
+                            </textField>
+                            <valuePicker id="defaultEntityIdField"
+                                         dataContainer="categoryAttributeDc"
+                                         property="defaultEntity"
+                                         label="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">
+                                <actions>
+                                    <action id="lookup" icon="ELLIPSIS_DOTS_H"/>
+                                    <action id="clear" type="value_clear" icon="BAN"/>
+                                </actions>
+                            </valuePicker>
+                            <hbox id="enumerationBox" expand="enumerationField" margin="false" classNames="items-end">
+                                <textField id="enumerationField"
+                                           label="msg://io.jmix.dynattr.model/CategoryAttribute.enumeration"
+                                           dataContainer="categoryAttributeDc"
+                                           property="enumeration" required="true"
+                                           requiredMessage="msg://enumerationField.required" readOnly="true"/>
+                                <button id="editEnumerationBtn" text="msg:///actions.Edit"/>
+                            </hbox>
+                            <textField id="defaultStringField" property="defaultString"/>
+                            <textField id="defaultIntField" property="defaultInt"/>
+                            <textField id="defaultDoubleField" property="defaultDouble"/>
+                            <textField id="defaultDecimalField" property="defaultDecimal"/>
+                            <comboBox id="defaultBooleanField" property="defaultBoolean"/>
+                            <dateTimePicker id="defaultDateField" property="defaultDate"/>
+                            <datePicker id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
+                            <textField id="numberFormatPatternField" property="configuration.numberFormatPattern"/>
+                            <textField id="minIntField" property="configuration.minInt"/>
+                            <textField id="maxIntField" property="configuration.maxInt"/>
+                            <textField id="minDoubleField" property="configuration.minDouble"/>
+                            <textField id="maxDoubleField" property="configuration.maxDouble"/>
+                            <textField id="minDecimalField" property="configuration.minDecimal"/>
+                            <textField id="maxDecimalField" property="configuration.maxDecimal"/>
+                            <checkbox id="defaultDateIsCurrentField" property="defaultDateIsCurrent"/>
+                            <checkbox id="lookupField" property="lookup" visible="false">
+                                <tooltip text="msg://lookupField.contextHelp"/>
+                            </checkbox>
+                            <checkbox id="isCollectionField" property="isCollection" visible="false"/>
+                        </formLayout>
+                    </hbox>
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="validationScriptField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.validatorGroovyScript"
+                                    dataContainer="categoryAttributeDc" property="configuration.validatorGroovyScript"
+                                    mode="GROOVY"
+                                    width="100%"
+                                    showLineNumbers="true"
+                                    highlightActiveLine="false"
+                                    colspan="2"
+                                    showGutter="true"
+                                    highlightGutterLine="false"
+                                    height="9em"/>
+                    </div>
+                </vbox>
+            </tab>
+            <tab id="calculatedValuesAndOptionsTab" label="msg://calculatedValuesAndOptionsTab.title">
+                <vbox margin="false" padding="false">
+                    <formLayout id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc" width="100%">
+                        <multiSelectComboBoxPicker id="dependsOnAttributesField"
+                                                   label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.dependsOnAttributes"
+                                                   allowCustomValue="true">
+                            <actions>
+                                <action id="select" type="multi_value_select" icon="ELLIPSIS_DOTS_H"/>
+                                <action id="clear" type="value_clear"/>
+                            </actions>
+                        </multiSelectComboBoxPicker>
+                        <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
+                    </formLayout>
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="optionsLoaderScriptField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.optionsLoaderScript"
+                                    dataContainer="categoryAttributeDc" property="configuration.optionsLoaderScript"
+                                    width="100%"
+                                    showLineNumbers="true"
+                                    highlightGutterLine="false"
+                                    highlightActiveLine="false"
+                                    mode="GROOVY"
+                                    height="12em"
+                                    colspan="2"
+                                    showGutter="true"/>
+                    </div>
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="joinClauseField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttribute.joinClause"
+                                    dataContainer="categoryAttributeDc" property="joinClause"
+                                    width="100%"
+                                    showLineNumbers="true"
+                                    highlightGutterLine="false"
+                                    highlightActiveLine="false"
+                                    mode="SQL"
+                                    colspan="2"
+                                    showGutter="true"
+                                    height="12em"/>
+                    </div>
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="whereClauseField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttribute.whereClause"
+                                    dataContainer="categoryAttributeDc" property="whereClause"
+                                    width="100%"
+                                    showLineNumbers="true"
+                                    highlightGutterLine="false"
+                                    highlightActiveLine="false"
+                                    colspan="2"
+                                    mode="SQL"
+                                    showGutter="true"
+                                    height="12em"/>
+                    </div>
+                    <div width="100%" classNames="flex items-start">
+                        <codeEditor id="recalculationScriptField"
+                                    label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.recalculationScript"
+                                    dataContainer="categoryAttributeDc" property="configuration.recalculationScript"
+                                    showLineNumbers="true"
+                                    width="100%"
+                                    highlightGutterLine="false"
+                                    highlightActiveLine="false"
+                                    colspan="2"
+                                    showGutter="true"
+                                    mode="GROOVY"
+                                    height="12em"/>
+                    </div>
+                </vbox>
+            </tab>
+            <tab id="localizationTab" label="msg://localizationTab.title"
+                 visible="false">
+                <vbox id="localizationContainer" padding="false" margin="false">
+                    <formLayout id="categoryAttrLocalizationForm" dataContainer="categoryAttributeDc" width="100%">
+                        <textField id="localizedNameField" property="name" readOnly="true"/>
+                        <textField id="localizedDescriptionField" property="description" readOnly="true"/>
+                    </formLayout>
+                </vbox>
+            </tab>
+            <tab id="visibilityTab" label="msg://visibilityTab.title">
+                <vbox padding="false" margin="false">
+                    <h3 text="msg://targetViews"/>
+                    <html content="msg://visibilityTab.help"/>
+                    <hbox classNames="buttons-panel">
+                        <button id="createBtn" action="targetScreensTable.create"/>
+                        <button id="removeBtn" action="targetScreensTable.remove"/>
+                    </hbox>
+                    <dataGrid id="targetScreensTable" dataContainer="targetScreensDc" width="100%" height="250px"
+                              editorBuffered="true" minWidth="55em">
+                        <actions>
+                            <action id="create" type="list_create" text="msg:///actions.Create"/>
+                            <action id="remove" type="list_remove" text="msg:///actions.Remove" actionVariant="DANGER"/>
+                        </actions>
+                        <columns>
+                            <column key="view"
+                                    header="msg://io.jmix.dynattrflowui.impl.model/TargetViewComponent.view"/>
+                            <column key="component"
+                                    header="msg://io.jmix.dynattrflowui.impl.model/TargetViewComponent.component"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+        </tabSheet>
+        <hbox id="detailButtonsBox" >
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</view>

@@ -117,4 +117,12 @@ public final class ViewControllerUtils {
                                                                 ComponentEventListener<QueryParametersChangeEvent> listener) {
         return view.addQueryParametersChangeListener(listener);
     }
+
+    public static <T> Registration addInitEntityEvent(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
+        return view.addInitEntityListener(listener);
+    }
+
+    public static Registration addBeforeShowEvent(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
+        return view.addBeforeShowListener(listener);
+    }
 }

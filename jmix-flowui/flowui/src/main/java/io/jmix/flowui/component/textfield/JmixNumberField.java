@@ -19,11 +19,9 @@ package io.jmix.flowui.component.textfield;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
-import io.jmix.flowui.component.delegate.FieldDelegate;
-import io.jmix.flowui.component.validation.DoubleMaxValidator;
-import io.jmix.flowui.component.validation.DoubleMinValidator;
+import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.delegate.NumberFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -33,8 +31,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public class JmixNumberField extends NumberField implements SupportsValueSource<Double>, SupportsValidation<Double>,
@@ -42,10 +40,7 @@ public class JmixNumberField extends NumberField implements SupportsValueSource<
 
     protected ApplicationContext applicationContext;
 
-    protected FieldDelegate<JmixNumberField, Double, Double> fieldDelegate;
-
-    protected Registration maxValidatorRegistration;
-    protected Registration minValidatorRegistration;
+    protected NumberFieldDelegate fieldDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -61,9 +56,8 @@ public class JmixNumberField extends NumberField implements SupportsValueSource<
         fieldDelegate = createFieldDelegate();
     }
 
-    @SuppressWarnings("unchecked")
-    protected FieldDelegate<JmixNumberField, Double, Double> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
+    protected NumberFieldDelegate createFieldDelegate() {
+        return applicationContext.getBean(NumberFieldDelegate.class, this);
     }
 
     @Nullable
@@ -156,20 +150,12 @@ public class JmixNumberField extends NumberField implements SupportsValueSource<
     @Override
     public void setMax(double max) {
         super.setMax(max);
-        if (maxValidatorRegistration != null) {
-            maxValidatorRegistration.remove();
-        }
-        //noinspection unchecked
-        maxValidatorRegistration = fieldDelegate.addValidator(applicationContext.getBean(DoubleMaxValidator.class, max));
+        fieldDelegate.setMax(max);
     }
 
     @Override
     public void setMin(double min) {
         super.setMin(min);
-        if (minValidatorRegistration != null) {
-            minValidatorRegistration.remove();
-        }
-        //noinspection unchecked
-        minValidatorRegistration = fieldDelegate.addValidator(applicationContext.getBean(DoubleMinValidator.class, min));
+        fieldDelegate.setMin(min);
     }
 }

@@ -19,11 +19,9 @@ package io.jmix.flowui.component.textfield;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
-import io.jmix.flowui.component.delegate.FieldDelegate;
-import io.jmix.flowui.component.validation.MaxValidator;
-import io.jmix.flowui.component.validation.MinValidator;
+import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.delegate.IntegerFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -33,8 +31,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public class JmixIntegerField extends IntegerField implements SupportsValueSource<Integer>, SupportsValidation<Integer>,
@@ -42,10 +40,7 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
 
     protected ApplicationContext applicationContext;
 
-    protected FieldDelegate<JmixIntegerField, Integer, Integer> fieldDelegate;
-
-    protected Registration maxValidatorRegistration;
-    protected Registration minValidatorRegistration;
+    protected IntegerFieldDelegate fieldDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -61,9 +56,8 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
         fieldDelegate = createFieldDelegate();
     }
 
-    @SuppressWarnings("unchecked")
-    protected FieldDelegate<JmixIntegerField, Integer, Integer> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
+    protected IntegerFieldDelegate createFieldDelegate() {
+        return applicationContext.getBean(IntegerFieldDelegate.class, this);
     }
 
     @Nullable
@@ -156,20 +150,12 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
     @Override
     public void setMax(int max) {
         super.setMax(max);
-        if (maxValidatorRegistration != null) {
-            maxValidatorRegistration.remove();
-        }
-        //noinspection unchecked
-        maxValidatorRegistration = fieldDelegate.addValidator(applicationContext.getBean(MaxValidator.class, max));
+        fieldDelegate.setMax(max);
     }
 
     @Override
     public void setMin(int min) {
         super.setMin(min);
-        if (minValidatorRegistration != null) {
-            minValidatorRegistration.remove();
-        }
-        //noinspection unchecked
-        minValidatorRegistration = fieldDelegate.addValidator(applicationContext.getBean(MinValidator.class, min));
+        fieldDelegate.setMin(min);
     }
 }

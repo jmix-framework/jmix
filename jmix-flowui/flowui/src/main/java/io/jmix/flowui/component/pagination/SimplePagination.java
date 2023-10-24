@@ -22,7 +22,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.LoadContext;
+import io.jmix.core.DataLoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -85,7 +85,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     protected Registration totalCountLabelClickRegistration;
     protected Registration itemsPerPageValueChangeRegistration;
 
-    protected Function<LoadContext, Integer> totalCountDelegate;
+    protected Function<DataLoadContext, Integer> totalCountDelegate;
 
     protected boolean samePage;
     protected boolean lastPage = false;
@@ -232,12 +232,12 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
     @Nullable
     @Override
-    public Function<LoadContext, Integer> getTotalCountDelegate() {
+    public Function<DataLoadContext, Integer> getTotalCountDelegate() {
         return totalCountDelegate;
     }
 
     @Override
-    public void setTotalCountDelegate(@Nullable Function<LoadContext, Integer> totalCountDelegate) {
+    public void setTotalCountDelegate(@Nullable Function<DataLoadContext, Integer> totalCountDelegate) {
         this.totalCountDelegate = totalCountDelegate;
 
         if (loader != null) {

@@ -19,7 +19,7 @@ package io.jmix.flowui.component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.LoadContext;
+import io.jmix.core.DataLoadContext;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.kit.component.pagination.AbstractPagination;
 
@@ -48,7 +48,7 @@ public interface PaginationComponent<T extends AbstractPagination> {
      * @return delegate which is used to get the total count of items
      */
     @Nullable
-    Function<LoadContext, Integer> getTotalCountDelegate();
+    Function<DataLoadContext, Integer> getTotalCountDelegate();
 
     /**
      * Sets delegate which is used to get the total count of items. For instance:
@@ -57,14 +57,14 @@ public interface PaginationComponent<T extends AbstractPagination> {
      * private DataManager dataManager;
      *
      * &#64;Install(to = "pagination", subject = "totalCountDelegate")
-     * private Integer paginationTotalCountDelegate(LoadContext&lt;User&gt; dataLoadContext) {
+     * private Integer paginationTotalCountDelegate(DataLoadContext dataLoadContext) {
      *     return dataManager.loadValue("select count(e) from demo_User e", Integer.class).one();
      * }
      * </pre>
      *
      * @param totalCountDelegate total count delegate to set
      */
-    void setTotalCountDelegate(@Nullable Function<LoadContext, Integer> totalCountDelegate);
+    void setTotalCountDelegate(@Nullable Function<DataLoadContext, Integer> totalCountDelegate);
 
     /**
      * Adds before refresh listener. It is invoked when data should be refreshed after user actions:

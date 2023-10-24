@@ -4,5 +4,5 @@ group = 'io.jmix.search'
 archivesBaseName = 'jmix-search-flowui-kit'
 
 dependencies {
-    api 'io.jmix.flowui:jmix-flowui-kit'
+    api project(':flowui-kit')
 }

@@ -135,6 +135,10 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
+    public void saveWithoutReload() {
+    }
+
+    @Override
     public DataContext getParent() {
         return null;
     }

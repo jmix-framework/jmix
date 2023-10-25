@@ -86,6 +86,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private Boolean showSaveNotification;
     private boolean saveActionPerformed = false;
 
+    protected boolean entityReloadAfterSaveAndCloseDisabled = true;
+
     /**
      * Create views using {@link io.jmix.flowui.ViewNavigators} or {@link io.jmix.flowui.DialogWindows}.
      */
@@ -195,7 +197,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return DEFAULT_ROUTE_PARAM;
     }
 
-    private OperationResult saveChanges() {
+    private OperationResult saveChanges(boolean discardSaved) {
         ValidationErrors validationErrors = validateView();
         if (!validationErrors.isEmpty()) {
             ViewValidation viewValidation = getViewValidation();
@@ -207,7 +209,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             return OperationResult.fail();
         }
 
-        Runnable standardSaveAction = createStandardSaveAction();
+        Runnable standardSaveAction = createStandardSaveAction(discardSaved);
 
         BeforeSaveEvent beforeEvent = new BeforeSaveEvent(this, standardSaveAction);
         fireEvent(beforeEvent);
@@ -253,27 +255,30 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return errors;
     }
 
-    private Runnable createStandardSaveAction() {
+    private Runnable createStandardSaveAction(boolean discardSaved) {
         return () -> {
-            EntitySet savedEntities = getViewData().getDataContext().save();
+            if (discardSaved) {
+                getViewData().getDataContext().saveWithoutReload();
+            } else {
+                EntitySet savedEntities = getViewData().getDataContext().save();
 
-            InstanceContainer<T> container = getEditedEntityContainer();
-            if (container instanceof HasLoader) {
-                DataLoader loader = ((HasLoader) container).getLoader();
-                if (loader instanceof InstanceLoader) {
-                    //noinspection rawtypes
-                    InstanceLoader instanceLoader = (InstanceLoader) loader;
-                    if (instanceLoader.getEntityId() == null) {
-                        savedEntities.optional(getEditedEntity())
-                                .ifPresent(entity ->
-                                        instanceLoader.setEntityId(
-                                                requireNonNull(EntityValues.getId(entity))
-                                        )
-                                );
+                InstanceContainer<T> container = getEditedEntityContainer();
+                if (container instanceof HasLoader) {
+                    DataLoader loader = ((HasLoader) container).getLoader();
+                    if (loader instanceof InstanceLoader) {
+                        //noinspection rawtypes
+                        InstanceLoader instanceLoader = (InstanceLoader) loader;
+                        if (instanceLoader.getEntityId() == null) {
+                            savedEntities.optional(getEditedEntity())
+                                    .ifPresent(entity ->
+                                            instanceLoader.setEntityId(
+                                                    requireNonNull(EntityValues.getId(entity))
+                                            )
+                                    );
+                        }
                     }
                 }
             }
-
             fireEvent(new AfterSaveEvent(this));
         };
     }
@@ -284,13 +289,13 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     @Override
     public OperationResult save() {
-        return saveChanges()
+        return saveChanges(false)
                 .then(() -> saveActionPerformed = true);
     }
 
     @Override
     public OperationResult closeWithSave() {
-        return saveChanges()
+        return saveChanges(entityReloadAfterSaveAndCloseDisabled)
                 .compose(() -> close(StandardOutcome.SAVE));
     }
 
@@ -415,7 +420,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private OperationResult navigateWithSave(ContinueNavigationAction navigationAction) {
-        return saveChanges()
+        return saveChanges(entityReloadAfterSaveAndCloseDisabled)
                 .compose(() -> navigate(navigationAction, StandardOutcome.SAVE.getCloseAction()));
     }
 
@@ -877,6 +882,14 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return getEventBus().addListener(ValidationEvent.class, listener);
     }
 
+    public boolean isEntityReloadAfterSaveAndCloseDisabled() {
+        return entityReloadAfterSaveAndCloseDisabled;
+    }
+
+    public void setEntityReloadAfterSaveAndCloseDisabled(boolean entityReloadAfterSaveAndCloseDisabled) {
+        this.entityReloadAfterSaveAndCloseDisabled = entityReloadAfterSaveAndCloseDisabled;
+    }
+
     /**
      * Event sent before the new entity instance is set to edited entity container.
      * <p>
@@ -981,7 +994,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         /**
          * Prevents saving of the view data.
          *
-         * @param saveResult result object that will be returned from the {@link #saveChanges()}} method
+         * @param saveResult result object that will be returned from the {@link #saveChanges(boolean)}} method
          */
         public void preventSave(OperationResult saveResult) {
             this.savePrevented = true;

@@ -195,6 +195,8 @@ public interface DataContext {
      */
     EntitySet save();
 
+    void saveWithoutReload();
+
     /**
      * Returns a parent context, if any. If the parent context is set, {@link #save()}
      * method merges the changed instances to it instead of sending them to DataManager

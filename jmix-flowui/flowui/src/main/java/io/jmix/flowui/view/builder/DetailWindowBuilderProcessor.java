@@ -105,6 +105,10 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
             return;
         }
 
+        if (detailView instanceof StandardDetailView<E> standardDetailView) {
+            standardDetailView.setEntityReloadAfterSaveAndCloseDisabled(false);
+        }
+
         dialog.addAfterCloseListener(closeEvent -> {
             if (closeEvent.closedWith(StandardOutcome.SAVE)) {
                 E entityFromDetail = getSavedEntity(detailView, parentDataContext);

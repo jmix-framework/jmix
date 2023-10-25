@@ -26,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
@@ -82,6 +83,7 @@ public class FlowuiSecurityConfiguration {
     protected UiViewAccessChecker viewAccessChecker;
     protected UiProperties uiProperties;
     protected ViewRegistry viewRegistry;
+    protected ServerProperties serverProperties;
 
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -116,6 +118,11 @@ public class FlowuiSecurityConfiguration {
     @Autowired
     public void setViewRegistry(ViewRegistry viewRegistry) {
         this.viewRegistry = viewRegistry;
+    }
+
+    @Autowired
+    public void setServerProperties(ServerProperties serverProperties) {
+        this.serverProperties = serverProperties;
     }
 
     /**
@@ -183,6 +190,11 @@ public class FlowuiSecurityConfiguration {
         urlRegistry.requestMatchers(requestUtil::isAnonymousRoute).permitAll();
         urlRegistry.requestMatchers(
                 getDefaultHttpSecurityPermitMatcher(getUrlMapping())).permitAll();
+
+        // Permit default Spring framework error page (/error)
+        MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(applicationContext.getBean(HandlerMappingIntrospector.class));
+        MvcRequestMatcher errorPageRequestMatcher = mvcRequestMatcherBuilder.pattern(serverProperties.getError().getPath());
+        urlRegistry.requestMatchers(errorPageRequestMatcher).permitAll();
 
         // all other requests require authentication
         urlRegistry.anyRequest().authenticated();

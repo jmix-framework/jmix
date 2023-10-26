@@ -1047,7 +1047,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         attribute.setTargetScreens(stringBuilder.toString());
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     protected void preCommitConfiguration() {
         CategoryAttribute attribute = getEditedEntity();
         if (attribute.getConfiguration() != null) {
@@ -1064,7 +1063,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             CategoryAttributeConfiguration configuration = configurationDc.getItemOrNull();
             if (configuration != null) {
                 attribute.setConfiguration((CategoryAttributeConfiguration) configuration.clone());
-                getViewData().getDataContext().merge(attribute);
             }
         }
     }

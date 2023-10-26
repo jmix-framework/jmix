@@ -416,26 +416,24 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Subscribe("categoryAttrsGrid.moveUp")
     protected void onCategoryAttrsGridMoveUp(ActionPerformedEvent event) {
         dynAttrUiHelper.moveTableItemUp(categoryAttributesDc, categoryAttrsGrid, () ->
                 categoryAttributesDc.getMutableItems().forEach(item -> {
                     item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item));
-                    getViewData().getDataContext().setModified(item, true);
-                    getViewData().getDataContext().merge(item);
+                    CategoryAttribute merged = getViewData().getDataContext().merge(item);
+                    getViewData().getDataContext().setModified(merged, true);
                 }));
 
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Subscribe("categoryAttrsGrid.moveDown")
     protected void onCategoryAttrsGridMoveDown(ActionPerformedEvent event) {
         dynAttrUiHelper.moveTableItemDown(categoryAttributesDc, categoryAttrsGrid, () ->
                 categoryAttributesDc.getMutableItems().forEach(item -> {
                     item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item));
-                    getViewData().getDataContext().setModified(item, true);
-                    getViewData().getDataContext().merge(item);
+                    CategoryAttribute merged = getViewData().getDataContext().merge(item);
+                    getViewData().getDataContext().setModified(merged, true);
                 }));
     }
 

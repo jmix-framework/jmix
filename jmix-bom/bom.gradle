@@ -281,8 +281,8 @@ dependencies {
         api 'org.spockframework:spock-core:2.3-groovy-4.0'
         api 'org.spockframework:spock-spring:2.3-groovy-4.0'
 
-        api 'io.swagger.core.v3:swagger-models:2.1.11'
-        api 'io.swagger.core.v3:swagger-core:2.1.11'
+        api 'io.swagger.core.v3:swagger-models-jakarta:2.2.17'
+        api 'io.swagger.core.v3:swagger-core-jakarta:2.2.17'
 
         api 'com.icegreen:greenmail:2.0.0'
 

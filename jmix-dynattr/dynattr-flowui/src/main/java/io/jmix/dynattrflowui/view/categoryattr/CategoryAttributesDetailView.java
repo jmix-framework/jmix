@@ -1063,8 +1063,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             CategoryAttributeConfiguration configuration = configurationDc.getItemOrNull();
             if (configuration != null) {
                 attribute.setConfiguration((CategoryAttributeConfiguration) configuration.clone());
-                CategoryAttribute mergedAttribute = getViewData().getDataContext().merge(attribute);
-                getViewData().getDataContext().setModified(mergedAttribute, true);
             }
         }
     }

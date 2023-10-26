@@ -419,22 +419,16 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     @Subscribe("categoryAttrsGrid.moveUp")
     protected void onCategoryAttrsGridMoveUp(ActionPerformedEvent event) {
         dynAttrUiHelper.moveTableItemUp(categoryAttributesDc, categoryAttrsGrid, () ->
-                categoryAttributesDc.getMutableItems().forEach(item -> {
-                    item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item));
-                    CategoryAttribute merged = getViewData().getDataContext().merge(item);
-                    getViewData().getDataContext().setModified(merged, true);
-                }));
+                categoryAttributesDc.getMutableItems()
+                        .forEach(item -> item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item))));
 
     }
 
     @Subscribe("categoryAttrsGrid.moveDown")
     protected void onCategoryAttrsGridMoveDown(ActionPerformedEvent event) {
         dynAttrUiHelper.moveTableItemDown(categoryAttributesDc, categoryAttrsGrid, () ->
-                categoryAttributesDc.getMutableItems().forEach(item -> {
-                    item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item));
-                    CategoryAttribute merged = getViewData().getDataContext().merge(item);
-                    getViewData().getDataContext().setModified(merged, true);
-                }));
+                categoryAttributesDc.getMutableItems()
+                        .forEach(item -> item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item))));
     }
 
     protected CategoryAttribute getPrevAttribute(Integer orderNo) {

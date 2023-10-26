@@ -17,9 +17,9 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.data.grid.EmptyTreeDataGridItems;
@@ -63,7 +63,7 @@ public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
     }
 
     @Override
-    protected Grid.Column<?> addColumn(String key, MetaPropertyPath metaPropertyPath) {
+    protected DataGridColumn<?> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         String hierarchyColumn = loadString(element, "hierarchyColumn").orElse(null);
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
 

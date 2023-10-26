@@ -82,7 +82,7 @@ public interface StudioElements {
 
     @StudioElement(
             name = "Column",
-            classFqn = "com.vaadin.flow.component.grid.Grid.Column",
+            classFqn = "io.jmix.flowui.component.grid.DataGridColumn",
             xmlElement = "column",
             icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
             visible = true,
@@ -354,6 +354,19 @@ public interface StudioElements {
             }
     )
     void facetPropertyFilter();
+
+    @StudioElement(
+            name = "HeaderFilter",
+            classFqn = "io.jmix.flowui.facet.urlqueryparameters.HeaderFilterUrlQueryParametersBinder",
+            xmlElement = "headerFilter",
+            target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
+            }
+    )
+    void headerFilter();
 
     @StudioElement(
             name = "ResponsiveStep",

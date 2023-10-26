@@ -1,0 +1,100 @@
+/*
+ * Copyright 2023 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.flowui.component.grid;
+
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.renderer.Renderer;
+import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
+import io.jmix.flowui.sys.BeanUtil;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationContextAware {
+
+    protected DataGridHeaderFilter headerFilter;
+    protected ApplicationContext applicationContext;
+
+    /**
+     * Constructs a new DataGridColumn for use inside a {@link DataGrid}.
+     *
+     * @param grid     the grid this column is attached to
+     * @param columnId unique identifier of this column
+     * @param renderer the renderer to use in this column, must not be
+     *                 {@code null}
+     */
+    public DataGridColumn(Grid<E> grid, String columnId, Renderer<E> renderer) {
+        super(grid, columnId, renderer);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    /**
+     * Sets the filtering for a column. If the filtering is enabled,
+     * a filter button will be added to the column header.
+     * The filtering is disabled by default.
+     *
+     * @param filterable whether to add a filter to the header
+     */
+    public void setFilterable(boolean filterable) {
+        if (filterable && headerFilter == null) {
+            headerFilter = new DataGridHeaderFilter(new DataGridHeaderFilter.HeaderFilterContext(grid, this));
+            super.setHeader(headerFilter);
+
+            BeanUtil.autowireContext(applicationContext, headerFilter);
+        } else if (!filterable && headerFilter != null) {
+            Component currentHeader = headerFilter.getHeader();
+            headerFilter = null;
+
+            if (currentHeader != null) {
+                currentHeader.removeFromParent();
+            }
+            super.setHeader(currentHeader);
+        }
+    }
+
+    /**
+     * @return {@code true} if the filter is added to the column header, {@code false} otherwise
+     */
+    public boolean isFilterable() {
+        return headerFilter != null;
+    }
+
+    @Override
+    public Grid.Column<E> setHeader(String labelText) {
+        if (headerFilter != null) {
+            headerFilter.setHeader(labelText);
+            return this;
+        }
+
+        return super.setHeader(labelText);
+    }
+
+    @Override
+    public Grid.Column<E> setHeader(Component headerComponent) {
+        if (headerFilter != null && !(headerComponent instanceof DataGridHeaderFilter)) {
+            headerFilter.setHeader(headerComponent);
+            return this;
+        }
+
+        return super.setHeader(headerComponent);
+    }
+}

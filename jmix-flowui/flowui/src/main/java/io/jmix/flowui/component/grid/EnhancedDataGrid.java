@@ -28,9 +28,9 @@ public interface EnhancedDataGrid<T> {
     @Nullable
     MetaPropertyPath getColumnMetaPropertyPath(Grid.Column<T> column);
 
-    Grid.Column<T> addColumn(MetaPropertyPath metaPropertyPath);
+    DataGridColumn<T> addColumn(MetaPropertyPath metaPropertyPath);
 
-    Grid.Column<T> addColumn(String key, MetaPropertyPath metaPropertyPath);
+    DataGridColumn<T> addColumn(String key, MetaPropertyPath metaPropertyPath);
 
     boolean isEditorCreated();
 

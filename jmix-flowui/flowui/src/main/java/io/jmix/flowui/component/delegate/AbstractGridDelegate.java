@@ -24,6 +24,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.data.selection.SelectionModel;
@@ -41,6 +42,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
@@ -52,6 +54,7 @@ import io.jmix.flowui.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.sys.BeanUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
@@ -61,6 +64,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -467,20 +471,29 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         }
     }
 
+    public BiFunction<Renderer<E>, String, Grid.Column<E>> getDefaultColumnFactory() {
+        return (Renderer<E> renderer, String columnId) -> {
+            DataGridColumn<E> dataGridColumn =
+                    new DataGridColumn<>(component, columnId, renderer);
+            BeanUtil.autowireContext(applicationContext, dataGridColumn);
+            return dataGridColumn;
+        };
+    }
+
     @Nullable
     public MetaPropertyPath getColumnMetaPropertyPath(Grid.Column<E> column) {
         return propertyColumns.get(column);
     }
 
-    public Grid.Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         Grid.Column<E> column = addColumnInternal(key, metaPropertyPath);
         propertyColumns.put(column, metaPropertyPath);
-        return column;
+        return (DataGridColumn<E>) column;
     }
 
-    public Grid.Column<E> addColumn(Grid.Column<E> column) {
+    public DataGridColumn<E> addColumn(Grid.Column<E> column) {
         columns.add(column);
-        return column;
+        return (DataGridColumn<E>) column;
     }
 
     protected void setupEmptyDataProvider() {
@@ -650,11 +663,11 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     @Nullable
-    public Grid.Column<E> getColumnByKey(String key) {
+    public DataGridColumn<E> getColumnByKey(String key) {
         if (Strings.isNullOrEmpty(key)) {
             return null;
         }
-        return columns.stream()
+        return (DataGridColumn<E>) columns.stream()
                 .filter(c -> key.equals(c.getKey()))
                 .findFirst()
                 .orElse(null);
@@ -725,8 +738,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             this.propertyEnabled = propertyEnabled;
         }
 
-        public Grid.Column<E> getColumn() {
-            return column;
+        public DataGridColumn<E> getColumn() {
+            return (DataGridColumn<E>) column;
         }
 
         public MetaPropertyPath getMetaPropertyPath() {

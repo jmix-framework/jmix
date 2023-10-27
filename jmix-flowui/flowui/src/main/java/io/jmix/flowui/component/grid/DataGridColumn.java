@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContextAware;
 
 public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationContextAware {
 
-    protected DataGridHeaderFilter headerFilter;
+    protected DataGridHeaderFilter dataGridFilter;
     protected ApplicationContext applicationContext;
 
     /**
@@ -55,14 +55,14 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
      * @param filterable whether to add a filter to the header
      */
     public void setFilterable(boolean filterable) {
-        if (filterable && headerFilter == null) {
-            headerFilter = new DataGridHeaderFilter(new DataGridHeaderFilter.HeaderFilterContext(grid, this));
-            super.setHeader(headerFilter);
+        if (filterable && dataGridFilter == null) {
+            dataGridFilter = new DataGridHeaderFilter(new DataGridHeaderFilter.HeaderFilterContext(grid, this));
+            super.setHeader(dataGridFilter);
 
-            BeanUtil.autowireContext(applicationContext, headerFilter);
-        } else if (!filterable && headerFilter != null) {
-            Component currentHeader = headerFilter.getHeader();
-            headerFilter = null;
+            BeanUtil.autowireContext(applicationContext, dataGridFilter);
+        } else if (!filterable && dataGridFilter != null) {
+            Component currentHeader = dataGridFilter.getHeader();
+            dataGridFilter = null;
 
             if (currentHeader != null) {
                 currentHeader.removeFromParent();
@@ -75,13 +75,13 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
      * @return {@code true} if the filter is added to the column header, {@code false} otherwise
      */
     public boolean isFilterable() {
-        return headerFilter != null;
+        return dataGridFilter != null;
     }
 
     @Override
     public Grid.Column<E> setHeader(String labelText) {
-        if (headerFilter != null) {
-            headerFilter.setHeader(labelText);
+        if (dataGridFilter != null) {
+            dataGridFilter.setHeader(labelText);
             return this;
         }
 
@@ -90,8 +90,8 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
 
     @Override
     public Grid.Column<E> setHeader(Component headerComponent) {
-        if (headerFilter != null && !(headerComponent instanceof DataGridHeaderFilter)) {
-            headerFilter.setHeader(headerComponent);
+        if (dataGridFilter != null && !(headerComponent instanceof DataGridHeaderFilter)) {
+            dataGridFilter.setHeader(headerComponent);
             return this;
         }
 

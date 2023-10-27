@@ -40,9 +40,9 @@ import java.util.Objects;
 
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 
-public class HeaderFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
 
-    public static final String NAME = "headerFilter";
+    public static final String NAME = "dataGridFilter";
 
     protected Grid<?> grid;
 
@@ -53,9 +53,9 @@ public class HeaderFilterUrlQueryParametersBinder extends AbstractUrlQueryParame
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
     protected RouteSupport routeSupport;
 
-    public HeaderFilterUrlQueryParametersBinder(Grid<?> grid,
-                                                UrlParamSerializer urlParamSerializer,
-                                                ApplicationContext applicationContext) {
+    public DataGridFilterUrlQueryParametersBinder(Grid<?> grid,
+                                                  UrlParamSerializer urlParamSerializer,
+                                                  ApplicationContext applicationContext) {
         this.grid = grid;
         this.urlParamSerializer = urlParamSerializer;
         this.applicationContext = applicationContext;
@@ -71,23 +71,26 @@ public class HeaderFilterUrlQueryParametersBinder extends AbstractUrlQueryParame
 
     protected void initComponent(Grid<?> grid) {
         for (Grid.Column<?> column : grid.getColumns()) {
-            DataGridColumn<?> dataGridColumn = (DataGridColumn<?>) column;
-
-            if (dataGridColumn.isFilterable()) {
-                DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) dataGridColumn.getHeaderComponent();
-
-                Registration applyRegistration = headerFilter.addApplyListener(__ -> updateQueryParameters());
-                headerFilter.addDetachListener(__ -> {
-                    applyRegistration.remove();
-
-                    // To avoid changing URL query parameters of another view
-                    // E.g.: detach during routing
-                    if (UiComponentUtils.getView(grid) == UI.getCurrent().getCurrentView()) {
-                        updateQueryParameters();
-                    }
-                });
+            if (column instanceof DataGridColumn<?> dataGridColumn
+                    && dataGridColumn.isFilterable()) {
+                setupColumn(dataGridColumn);
             }
         }
+    }
+
+    protected void setupColumn(DataGridColumn<?> column) {
+        DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getHeaderComponent();
+
+        Registration applyRegistration = headerFilter.addApplyListener(__ -> updateQueryParameters());
+        headerFilter.addDetachListener(__ -> {
+            applyRegistration.remove();
+
+            // To avoid changing URL query parameters of another view
+            // E.g.: detach during routing
+            if (UiComponentUtils.getView(grid) == UI.getCurrent().getCurrentView()) {
+                updateQueryParameters();
+            }
+        });
     }
 
     protected void updateQueryParameters() {
@@ -172,7 +175,7 @@ public class HeaderFilterUrlQueryParametersBinder extends AbstractUrlQueryParame
                 propertyFilter.setValue(parsedValue);
             }
 
-            headerFilter.doApply();
+            headerFilter.apply();
         }
     }
 

@@ -356,9 +356,9 @@ public interface StudioElements {
     void facetPropertyFilter();
 
     @StudioElement(
-            name = "HeaderFilter",
-            classFqn = "io.jmix.flowui.facet.urlqueryparameters.HeaderFilterUrlQueryParametersBinder",
-            xmlElement = "headerFilter",
+            name = "DataGridFilter",
+            classFqn = "io.jmix.flowui.facet.urlqueryparameters.DataGridFilterUrlQueryParametersBinder",
+            xmlElement = "dataGridFilter",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
@@ -366,7 +366,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
             }
     )
-    void headerFilter();
+    void dataGridFilter();
 
     @StudioElement(
             name = "ResponsiveStep",

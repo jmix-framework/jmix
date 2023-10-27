@@ -26,8 +26,8 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.impl.UrlQueryParametersFacetImpl;
+import io.jmix.flowui.facet.urlqueryparameters.DataGridFilterUrlQueryParametersBinder;
 import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder;
-import io.jmix.flowui.facet.urlqueryparameters.HeaderFilterUrlQueryParametersBinder;
 import io.jmix.flowui.facet.urlqueryparameters.PaginationUrlQueryParametersBinder;
 import io.jmix.flowui.facet.urlqueryparameters.PropertyFilterUrlQueryParametersBinder;
 import io.jmix.flowui.view.View;
@@ -101,8 +101,8 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
             case PropertyFilterUrlQueryParametersBinder.NAME:
                 loadPropertyFilterQueryParametersBinder(facet, element, context);
                 break;
-            case HeaderFilterUrlQueryParametersBinder.NAME:
-                loadHeaderFilterUrlQueryParametersBinder(facet, element, context);
+            case DataGridFilterUrlQueryParametersBinder.NAME:
+                loadDataGridFilterUrlQueryParametersBinder(facet, element, context);
                 break;
             default:
                 throw new GuiDevelopmentException(
@@ -111,13 +111,13 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         }
     }
 
-    protected void loadHeaderFilterUrlQueryParametersBinder(UrlQueryParametersFacet facet,
-                                                            Element element, ComponentContext context) {
+    protected void loadDataGridFilterUrlQueryParametersBinder(UrlQueryParametersFacet facet,
+                                                              Element element, ComponentContext context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
         String param = loadAttribute(element, "param");
 
-        context.addPreInitTask(new HeaderFilterQueryParametersBinderInitTask(
+        context.addPreInitTask(new DataGridFilterQueryParametersBinderInitTask(
                 facet, componentId, param, binderId, urlParamSerializer, applicationContext
         ));
     }
@@ -212,7 +212,7 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         }
     }
 
-    public static class HeaderFilterQueryParametersBinderInitTask implements ComponentLoader.InitTask {
+    public static class DataGridFilterQueryParametersBinderInitTask implements ComponentLoader.InitTask {
 
         protected final UrlQueryParametersFacet facet;
         protected final String binderId;
@@ -221,12 +221,12 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         protected final UrlParamSerializer urlParamSerializer;
         protected final ApplicationContext applicationContext;
 
-        public HeaderFilterQueryParametersBinderInitTask(UrlQueryParametersFacet facet,
-                                                         String componentId,
-                                                         @Nullable String parameter,
-                                                         @Nullable String binderId,
-                                                         UrlParamSerializer urlParamSerializer,
-                                                         ApplicationContext applicationContext) {
+        public DataGridFilterQueryParametersBinderInitTask(UrlQueryParametersFacet facet,
+                                                           String componentId,
+                                                           @Nullable String parameter,
+                                                           @Nullable String binderId,
+                                                           UrlParamSerializer urlParamSerializer,
+                                                           ApplicationContext applicationContext) {
             this.facet = facet;
             this.binderId = binderId;
             this.componentId = componentId;
@@ -246,8 +246,8 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
                         Grid.class.getSimpleName()));
             }
 
-            HeaderFilterUrlQueryParametersBinder binder =
-                    new HeaderFilterUrlQueryParametersBinder(((Grid<?>) component),
+            DataGridFilterUrlQueryParametersBinder binder =
+                    new DataGridFilterUrlQueryParametersBinder(((Grid<?>) component),
                             urlParamSerializer, applicationContext);
 
             binder.setId(binderId);

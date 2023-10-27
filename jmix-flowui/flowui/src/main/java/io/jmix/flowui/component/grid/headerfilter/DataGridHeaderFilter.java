@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.grid.headerfilter;
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -110,7 +111,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         root.setPadding(false);
         root.setSpacing(false);
-        root.setClassName(LumoUtility.Gap.XSMALL);
+        root.getThemeList().add("spacing-xs");
         // Padding for filterButton's focus-ring
         root.getStyle().set("padding-inline-end", "2px");
         root.getStyle().set("padding-block", "2px");
@@ -157,7 +158,6 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         return propertyFilter;
     }
 
-
     /**
      * @return {@code true} if the {@link PropertyFilter} component is applied
      * to the {@link DataLoader}, {@code false} otherwise
@@ -173,15 +173,17 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         filterButton.setIcon(VaadinIcon.FILTER.create());
         filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
         filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ROLE);
-        filterButton.addClickListener(__ -> {
-            overlay.open();
-
-            if (!isSmallDevice()) {
-                overlay.getElement().executeJs(getOverlayPositionExpression(), overlay, filterButton);
-            }
-        });
+        filterButton.addClickListener(this::onFilterButtonClick);
 
         getContent().add(filterButton);
+    }
+
+    protected void onFilterButtonClick(ClickEvent<Button> event) {
+        overlay.open();
+
+        if (!isSmallDevice()) {
+            overlay.getElement().executeJs(getOverlayPositionExpression(), overlay, filterButton);
+        }
     }
 
     protected void initOverlay() {
@@ -201,7 +203,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         overlay.getFooter().add(createApplyButton(), createCancelButton());
         overlay.addOpenedChangeListener(this::onOpenOverlay);
-        overlay.addDialogCloseActionListener(__ -> doCancel());
+        overlay.addDialogCloseActionListener(this::onOverlayClose);
     }
 
     protected void initPropertyFilter() {
@@ -225,24 +227,27 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         }
     }
 
+    protected void onOverlayClose(Dialog.DialogCloseActionEvent event) {
+        doCancel();
+    }
+
     protected JmixButton createApplyButton() {
         JmixButton applyButton = uiComponents.create(JmixButton.class);
         applyButton.setIcon(VaadinIcon.CHECK.create());
         applyButton.setText(messages.getMessage("columnFilter.apply.text"));
 
         applyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        applyButton.addClickListener(__ -> {
-            doApply();
-            overlay.close();
-
-            fireEvent(new ApplyEvent(this, propertyFilter, false));
-        });
-
-        if (isSmallDevice()) {
-            applyButton.getStyle().set("flex-grow", "1");
-        }
+        applyButton.addClickListener(this::onApplyButtonClick);
+        setupButtonFlexGrowStyle(applyButton);
 
         return applyButton;
+    }
+
+    protected void onApplyButtonClick(ClickEvent<Button> event) {
+        apply();
+        overlay.close();
+
+        fireEvent(new ApplyEvent(this, propertyFilter, false));
     }
 
     protected JmixButton createCancelButton() {
@@ -250,19 +255,26 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         cancelButton.setIcon(VaadinIcon.BAN.create());
         cancelButton.setText(messages.getMessage("columnFilter.cancel.text"));
 
-        cancelButton.addClickListener(__ -> doCancel());
-
-        if (isSmallDevice()) {
-            cancelButton.getStyle().set("flex-grow", "1");
-        }
+        cancelButton.addClickListener(this::onCancelButtonClick);
+        setupButtonFlexGrowStyle(cancelButton);
 
         return cancelButton;
+    }
+
+    protected void onCancelButtonClick(ClickEvent<Button> event) {
+        doCancel();
+    }
+
+    protected void setupButtonFlexGrowStyle(JmixButton button) {
+        if (isSmallDevice()) {
+            button.getStyle().set("flex-grow", "1");
+        }
     }
 
     /**
      * Applies the current value of the {@link PropertyFilter} to the loader
      */
-    public void doApply() {
+    public void apply() {
         propertyFilter.getDataLoader().load();
         appliedValue = propertyFilter.getValue();
         appliedOperation = propertyFilter.getOperation();
@@ -284,9 +296,13 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         clearButton.addThemeVariants(ButtonVariant.LUMO_ICON);
         clearButton.setIcon(VaadinIcon.ERASER.create());
-        clearButton.addClickListener(__ -> propertyFilter.clear());
+        clearButton.addClickListener(this::onClearButtonClick);
 
         return clearButton;
+    }
+
+    protected void onClearButtonClick(ClickEvent<Button> event) {
+        propertyFilter.clear();
     }
 
     protected String getOverlayPositionExpression() {

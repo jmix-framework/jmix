@@ -574,6 +574,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.setClassName(LumoUtility.Gap.XSMALL);
+        // Padding for filterButton's focus-ring
+        layout.getStyle().set("padding-inline-end", "2px");
+        layout.getStyle().set("padding-block", "2px");
 
         layout.add(new Span(headerText), filterButton);
         return layout;

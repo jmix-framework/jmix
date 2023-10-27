@@ -366,12 +366,7 @@ dependencies {
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
 
-        api('com.hazelcast:hazelcast') {
-            version {
-                strictly '5.2.2'
-                because 'https://github.com/hazelcast/hazelcast/issues/24705, till https://github.com/hazelcast/hazelcast/pull/24841 will be released (5.2.5?)'
-            }
-        }
+        api 'com.hazelcast:hazelcast:5.3.2'
     }
 }
 

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.grid;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
 import com.vaadin.flow.component.grid.dataview.GridDataView;
@@ -46,6 +47,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
         EnhancedDataGrid<E>, ApplicationContextAware, InitializingBean {
@@ -152,6 +154,11 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return selectionModel;
     }
 
+    @Override
+    protected BiFunction<Renderer<E>, String, Column<E>> getDefaultColumnFactory() {
+        return gridDelegate.getDefaultColumnFactory();
+    }
+
     @Nullable
     @Override
     public MetaPropertyPath getColumnMetaPropertyPath(Column<E> column) {
@@ -165,7 +172,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
      * @return added column
      */
     @Override
-    public Column<E> addColumn(MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addColumn(MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
 
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
@@ -181,7 +188,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
      * @return added column
      */
     @Override
-    public Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
         Preconditions.checkNotNullArgument(key);
 
@@ -189,15 +196,31 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     }
 
     @Override
-    public Column<E> addColumn(ValueProvider<E, ?> valueProvider) {
+    public DataGridColumn<E> addColumn(ValueProvider<E, ?> valueProvider) {
         Column<E> column = super.addColumn(valueProvider);
         return gridDelegate.addColumn(column);
     }
 
     @Override
-    public Column<E> addColumn(Renderer<E> renderer) {
+    public DataGridColumn<E> addColumn(Renderer<E> renderer) {
         Column<E> column = super.addColumn(renderer);
         return gridDelegate.addColumn(column);
+    }
+
+    @Override
+    public <V extends Component> DataGridColumn<E> addComponentColumn(ValueProvider<E, V> componentProvider) {
+        return (DataGridColumn<E>) super.addComponentColumn(componentProvider);
+    }
+
+    @Override
+    public <V extends Comparable<? super V>> DataGridColumn<E> addColumn(ValueProvider<E, V> valueProvider,
+                                                                         String... sortingProperties) {
+        return (DataGridColumn<E>) super.addColumn(valueProvider, sortingProperties);
+    }
+
+    @Override
+    public DataGridColumn<E> addColumn(String propertyName) {
+        return (DataGridColumn<E>) super.addColumn(propertyName);
     }
 
     @Override
@@ -257,7 +280,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
 
     @Nullable
     @Override
-    public Column<E> getColumnByKey(String columnKey) {
+    public DataGridColumn<E> getColumnByKey(String columnKey) {
         return gridDelegate.getColumnByKey(columnKey);
     }
 

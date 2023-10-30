@@ -4199,6 +4199,8 @@
                             maxOccurs="unbounded"/>
                 <xs:element name="propertyFilter" type="propertyFilterUrlQueryParametersType" minOccurs="0"
                             maxOccurs="unbounded"/>
+                <xs:element name="dataGridFilter" type="dataGridFilterUrlQueryParametersType" minOccurs="0"
+                            maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>
@@ -4220,6 +4222,12 @@
     </xs:complexType>
 
     <xs:complexType name="propertyFilterUrlQueryParametersType">
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="component" type="xs:string" use="required"/>
+        <xs:attribute name="param" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="dataGridFilterUrlQueryParametersType">
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="component" type="xs:string" use="required"/>
         <xs:attribute name="param" type="xs:string"/>

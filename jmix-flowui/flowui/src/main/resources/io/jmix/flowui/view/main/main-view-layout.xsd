@@ -31,4 +31,14 @@
     <xs:complexType name="drawerLayoutContainer">
         <xs:group ref="layout:singleLayoutOrComponent"/>
     </xs:complexType>
+
+    <xs:complexType name="initialLayoutContainer">
+        <xs:complexContent>
+            <xs:extension base="layout:baseLayout">
+                <xs:attributeGroup ref="layout:hasId"/>
+                <xs:attribute name="css" type="xs:string"/>
+                <xs:attribute name="themeNames" type="layout:spacingThemeNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>

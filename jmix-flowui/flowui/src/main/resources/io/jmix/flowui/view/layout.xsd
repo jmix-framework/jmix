@@ -2045,6 +2045,28 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="gridColumnVisibilityThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="large"/>
+                    <xs:enumeration value="tertiary"/>
+                    <xs:enumeration value="tertiary-inline"/>
+                    <xs:enumeration value="primary"/>
+                    <xs:enumeration value="success"/>
+                    <xs:enumeration value="error"/>
+                    <xs:enumeration value="contrast"/>
+                    <xs:enumeration value="icon"/>
+                    <xs:enumeration value="contained"/>
+                    <xs:enumeration value="outlined"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -3807,6 +3829,36 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!--    GridColumnVisibility-->
+    <xs:complexType name="gridColumnVisibilityComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="columnItem" minOccurs="0" type="gridColumnVisibilityItemType"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasIcon"/>
+
+                <xs:attribute name="themeNames" type="gridColumnVisibilityThemeNames"/>
+                <xs:attribute name="dataGrid" type="xs:string" use="required"/>
+                <xs:attribute name="include" type="xs:string"/>
+                <xs:attribute name="exclude" type="xs:string"/>
+                <xs:attribute name="showAllEnabled" type="xs:boolean"/>
+                <xs:attribute name="hideAllEnabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="gridColumnVisibilityItemType">
+        <xs:attribute name="ref" type="xs:string" use="required"/>
+        <xs:attribute name="text" type="xs:string"/>
+    </xs:complexType>
+
     <!--    HTML-->
 
     <!-- Html -->
@@ -4350,6 +4402,7 @@
                 <xs:element name="genericFilter" type="genericFilterComponent"/>
                 <xs:element name="codeEditor" type="codeEditorComponent"/>
                 <xs:element name="virtualList" type="virtualListComponent"/>
+                <xs:element name="gridColumnVisibility" type="gridColumnVisibilityComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

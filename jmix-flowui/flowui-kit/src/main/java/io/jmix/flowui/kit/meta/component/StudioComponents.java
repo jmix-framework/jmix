@@ -2082,6 +2082,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.pagination.SimplePagination",
             category = "Components",
             xmlElement = "simplePagination",
+            icon = "io/jmix/flowui/kit/meta/icon/component/simplePagination.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

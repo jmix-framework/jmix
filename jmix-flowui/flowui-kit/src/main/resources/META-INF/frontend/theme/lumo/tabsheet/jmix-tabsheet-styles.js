@@ -1,4 +1,4 @@
-// CAUTION: copied from @vaadin/tabsheet/theme/lumo/vaadin-tabsheet-styles.js [since Vaadin 24.2.1]
+// CAUTION: copied from @vaadin/tabsheet/theme/lumo/vaadin-tabsheet-styles.js [last update Vaadin 24.2.1]
 import '@vaadin/vaadin-lumo-styles/color.js';
 import '@vaadin/vaadin-lumo-styles/spacing.js';
 import '@vaadin/vaadin-lumo-styles/typography.js';

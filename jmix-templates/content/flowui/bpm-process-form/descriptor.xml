@@ -1,11 +1,34 @@
 <%
+def dcId = ''
+def nestedCollectionDatasourceProperties = []
+def is_inline_detailFetchPlan_ = false
+def inline_detailFetchPlan_ = ''
+if (processFormType.name() == 'ENTITY') {
+    dcId = "${entity.uncapitalizedClassName}Dc"
+    nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
+    is_inline_detailFetchPlan_ = is_inline_detailFetchPlan
+    inline_detailFetchPlan_ = inline_detailFetchPlan
+}
 def containerXml = api.processSnippet('bpm_container.xml',
-        ['variables': processFormVariables, 'api': api])
+        ['variables': processFormVariables,
+        'formType': processFormType,
+        'dcId': dcId,
+        'entity': entity,
+        'detailFetchPlan': detailFetchPlan,
+        'is_inline_detailFetchPlan': is_inline_detailFetchPlan_,
+        'inline_detailFetchPlan': inline_detailFetchPlan_,
+        'nestedCollectionDatasourceProperties': nestedCollectionDatasourceProperties,
+        'api': api])
 def formXml = api.processSnippet('bpm_processform.xml',
         ['variables': processFormVariables,
+        'formType': processFormType,
+        'dcId': dcId,
+        'detailFetchPlan': detailFetchPlan,
+        'nestedCollectionDatasourceProperties': nestedCollectionDatasourceProperties,
         'api': api])
 def buttonsXml = api.processSnippet('bpm_buttons.xml',
         ['outputes': processFormOutcomes,
+        'formType': processFormType,
         'api': api])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 

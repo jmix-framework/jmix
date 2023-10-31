@@ -1,8 +1,14 @@
 <%
 def buttons = []
 
-outputes.each { o ->
-    def buttonText = "<button id=\"${o.id}Btn\" icon=\"${o.icon}\" text=\"${o.caption}\"/>"
-    buttons << buttonText
+if (formType.name() != 'CUSTOM') {
+    outputes.eachWithIndex { o, index ->
+        def themeNames = ''
+        if (index == 0) {
+            themeNames = " themeNames=\"primary\""
+        }
+        def buttonText = "<button id=\"${o.id}Btn\" icon=\"${o.icon}\" text=\"${o.caption}\"${themeNames}/>"
+        buttons << buttonText
+    }
 }
 %><%buttons.each {%>$it<%}%>

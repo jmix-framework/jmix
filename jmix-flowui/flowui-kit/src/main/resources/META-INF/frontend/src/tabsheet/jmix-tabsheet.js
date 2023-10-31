@@ -4,18 +4,19 @@
  * This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
  */
 import '@vaadin/tabsheet/src/vaadin-tabsheet-scroller.js';
-import {FlattenedNodesObserver} from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 import {ControllerMixin} from '@vaadin/component-base/src/controller-mixin.js';
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
 import {OverflowController} from '@vaadin/component-base/src/overflow-controller.js';
 import {SlotController} from '@vaadin/component-base/src/slot-controller.js';
+import {SlotObserver} from '@vaadin/component-base/src/slot-observer.js';
 import {generateUniqueId} from '@vaadin/component-base/src/unique-id-utils.js';
 import {DelegateStateMixin} from '@vaadin/component-base/src/delegate-state-mixin.js';
 import {Tabs} from '@vaadin/tabs/src/vaadin-tabs.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.1.10]
+// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.2.1]
 /**
  * @private
  * A controller which observes the <vaadin-tabs> slotted to the tabs slot.
@@ -46,6 +47,7 @@ class TabsSlotController extends SlotController {
         tabs.addEventListener('selected-changed', this.__tabsSelectedChangedListener);
         this.host.__tabs = tabs;
         this.host.stateTarget = tabs;
+        this.__tabsItemsChangedListener();
     }
 
     teardownNode(tabs) {
@@ -222,7 +224,7 @@ class JmixTabSheet extends ControllerMixin(DelegateStateMixin(ElementMixin(Thema
 
         // Observe the panels slot for nodes. Set the assigned element nodes as the __panels array.
         const panelSlot = this.shadowRoot.querySelector('#panel-slot');
-        this.__panelsObserver = new FlattenedNodesObserver(panelSlot, () => {
+        this.__panelsObserver = new SlotObserver(panelSlot, () => {
             this.__panels = Array.from(panelSlot.assignedNodes({flatten: true})).filter(
                 (node) => node.nodeType === Node.ELEMENT_NODE,
             );
@@ -288,6 +290,6 @@ class JmixTabSheet extends ControllerMixin(DelegateStateMixin(ElementMixin(Thema
     }
 }
 
-customElements.define(JmixTabSheet.is, JmixTabSheet);
+defineCustomElement(JmixTabSheet);
 
 export {JmixTabSheet};

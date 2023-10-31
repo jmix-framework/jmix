@@ -27,8 +27,6 @@ import io.jmix.dynattr.OptionsLoaderType;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import jakarta.validation.constraints.NotNull;
-import org.apache.http.util.Asserts;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;

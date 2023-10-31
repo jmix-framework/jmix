@@ -29,8 +29,8 @@ repositories {
 dependencies {
     implementation localGroovy()
 
-    implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.1.0'
-    implementation 'com.vaadin:vaadin-gradle-plugin:24.1.10'
+    implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.1.5'
+    implementation 'com.vaadin:vaadin-gradle-plugin:24.2.1'
 
     implementation('org.dom4j:dom4j:2.1.3') {
         exclude group: 'xpp3', module: 'xpp3'

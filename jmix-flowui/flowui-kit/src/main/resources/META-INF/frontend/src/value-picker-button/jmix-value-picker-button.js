@@ -15,12 +15,13 @@
  */
 
 import {html, PolymerElement} from "@polymer/polymer";
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {TabindexMixin} from "@vaadin/a11y-base/src/tabindex-mixin.js";
 import {FocusMixin} from "@vaadin/a11y-base/src/focus-mixin.js";
 import {ElementMixin} from "@vaadin/component-base/src/element-mixin";
 import {ThemableMixin} from "@vaadin/vaadin-themable-mixin";
 import {ActiveMixin} from "@vaadin/a11y-base/src/active-mixin.js";
-import { registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {registerStyles} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
 registerStyles('jmix-value-picker-button', [],{
     moduleId: 'jmix-value-picker-button-styles'
@@ -150,4 +151,4 @@ export class JmixValuePickerButton extends ActiveMixin(TabindexMixin(FocusMixin(
     }
 }
 
-customElements.define(JmixValuePickerButton.is, JmixValuePickerButton);
+defineCustomElement(JmixValuePickerButton);

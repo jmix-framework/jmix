@@ -226,6 +226,7 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.GenericFilterQueryParametersBinder",
             xmlElement = "genericFilter",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
+            icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -333,6 +334,7 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.PaginationQueryParametersBinder",
             xmlElement = "pagination",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
+            icon = "io/jmix/flowui/kit/meta/icon/element/pagination.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "firstResultParam", type = StudioPropertyType.STRING),
@@ -347,6 +349,7 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.facet.queryparameters.PropertyFilterQueryParametersBinder",
             xmlElement = "propertyFilter",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
+            icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),

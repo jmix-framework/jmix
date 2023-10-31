@@ -1,12 +1,18 @@
 <%
 def processAnnotation = api.processSnippet('bpm_processFormAnnotation.xml',
     ['outputes': processFormOutcomes,
+     'formType': processFormType,
      'api': api])
 def processComponents = api.processSnippet('bpm_components.xml',
      ['injects': bpmInjects,
+     'formType': processFormType,
+     'entity': entity,
+     'entityVarName': entityVarName,
      'api': api])
 def processHandlers = api.processSnippet('bpm_handlers.xml',
     ['outputes': processFormOutcomes,
+     'formType': processFormType,
+     'entityVarName': entityVarName,
      'api': api])
 %>package ${packageName};
 
@@ -34,6 +40,5 @@ ${processAnnotation}
 public class ${controllerName} extends ${superClass} {
 
     @Autowired
-    private ProcessFormContext processFormContext;
-${processComponents}
+    private ProcessFormContext processFormContext;${processComponents}
 ${processHandlers}}

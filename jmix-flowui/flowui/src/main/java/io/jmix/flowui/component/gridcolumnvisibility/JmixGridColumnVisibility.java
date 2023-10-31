@@ -46,19 +46,21 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         implements AttachNotifier, DetachNotifier, ApplicationContextAware, InitializingBean,
         HasTitle, HasSize, HasThemeVariant<GridColumnVisibilityVariant>, HasEnabled, HasStyle, HasOverlayClassName,
         HasText, Focusable<AbstractDropdownButton> {
 
-    protected ApplicationContext applicationContext;
-    protected Messages messages;
-
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-grid-column-visibility";
+
+    protected ApplicationContext applicationContext;
+    protected Messages messages;
 
     protected JmixMenuItem dropdownItem;
     protected Icon icon;
@@ -66,7 +68,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     protected Grid<?> grid;
 
     protected Header header;
-    protected Map<String, JmixMenuItem> columnItems = new HashMap<>();
+    protected List<ColumnItemImpl> columnItems = new ArrayList<>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -120,6 +122,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     public void setGrid(Grid<?> grid) {
         Preconditions.checkNotNullArgument(grid);
 
+        removeAllColumnItems();
         this.grid = grid;
     }
 
@@ -162,7 +165,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
 
         String columnKey = column.getKey();
         JmixMenuItem item = dropdownItem.getSubMenu().addItem(text, e -> onColumnItemClick(e, columnKey));
-        addColumnItemInternal(column, text, item);
+        addColumnItemInternal(column, item, null);
     }
 
     protected void onColumnItemClick(ClickEvent<MenuItem> event, String columnKey) {
@@ -176,11 +179,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         column.setVisible(visible);
     }
 
-    protected void addColumnItemInternal(Grid.Column<?> column, String text, JmixMenuItem item) {
-        Preconditions.checkNotNullArgument(column);
-        Preconditions.checkNotNullArgument(text);
-        checkColumnOwner(column);
-
+    protected void addColumnItemInternal(Grid.Column<?> column, JmixMenuItem item, @Nullable Integer index) {
         item.setCheckable(true);
         item.setChecked(column.isVisible());
         //todo: yuriy-khrebtov - uncomment when update to Vaadin 24.2
@@ -190,7 +189,12 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
 //        column.addVisibleChangeListener(e -> item.setChecked(e.getSource().isVisible()));
 //        column.addHeaderTextChangeListener(e -> item.setText(e.getText()));
 
-        columnItems.put(column.getKey(), item);
+        ColumnItemImpl columnItem = new ColumnItemImpl(column.getKey(), item);
+        if (index == null) {
+            columnItems.add(columnItem);
+        } else {
+            columnItems.add(index, columnItem);
+        }
 
         header.refresh();
     }
@@ -219,12 +223,12 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         Preconditions.checkNotNullArgument(text);
         checkColumnOwner(column);
 
-        int resultIndex = header.getHeaderItemCount() + index;
+        int menuItemIndex = header.getHeaderItemCount() + index;
         String columnKey = column.getKey();
-        JmixMenuItem item = dropdownItem.getSubMenu().addItemAtIndex(resultIndex, text, e ->
+        JmixMenuItem item = dropdownItem.getSubMenu().addItemAtIndex(menuItemIndex, text, e ->
                 onColumnItemClick(e, columnKey));
 
-        addColumnItemInternal(column, text, item);
+        addColumnItemInternal(column, item, index);
     }
 
     public void addColumnItem(String columnKey) {
@@ -264,13 +268,26 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     public void removeColumnItem(String columnKey) {
         Preconditions.checkNotNullArgument(columnKey);
 
-        JmixMenuItem item = columnItems.get(columnKey);
-        if (item == null) {
+        int removeItemIndex = getColumnItemIndexByColumnKey(columnKey);
+
+        if (removeItemIndex == -1) {
             throw new IllegalArgumentException("Column item for column '%s' doesn't exist".formatted(columnKey));
         }
-        columnItems.remove(columnKey);
-        dropdownItem.getSubMenu().remove(item);
+        ColumnItemImpl columnItem = columnItems.get(removeItemIndex);
+        dropdownItem.getSubMenu().remove(columnItem.getMenuItem());
+        columnItems.remove(removeItemIndex);
         header.refresh();
+    }
+
+    /**
+     *
+     * @return index of column item or -1 if no item was found for the column key
+     */
+    protected int getColumnItemIndexByColumnKey(String columnKey) {
+        return IntStream.range(0, columnItems.size())
+                .filter(i -> columnItems.get(i).getColumnKey().equals(columnKey))
+                .findAny()
+                .orElse(-1);
     }
 
     public void removeColumnItem(Grid.Column<?> column) {
@@ -278,6 +295,16 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         checkColumnOwner(column);
 
         removeColumnItem(column.getKey());
+    }
+
+    @Nullable
+    public ColumnItem getColumnItem(String columnKey) {
+        int columnItemIndex = getColumnItemIndexByColumnKey(columnKey);
+        return columnItemIndex != -1 ? columnItems.get(columnItemIndex) : null;
+    }
+
+    public List<ColumnItem> getColumnItems() {
+        return Collections.unmodifiableList(columnItems);
     }
 
     public boolean isShowAllEnabled() {
@@ -294,7 +321,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
 
     public void removeAllColumnItems() {
         JmixSubMenu subMenu = dropdownItem.getSubMenu();
-        columnItems.values().forEach(subMenu::remove);
+        columnItems.forEach(ci -> subMenu.remove(ci.getMenuItem()));
         columnItems.clear();
         header.refresh();
     }
@@ -350,10 +377,10 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         }
 
         protected void onShowAllClick(ClickEvent<?> event) {
-            for (Map.Entry<String, JmixMenuItem> columnKeyItemEntry : columnItems.entrySet()) {
-                Grid.Column<?> column = getColumnByKey(columnKeyItemEntry.getKey());
+            for (ColumnItemImpl columnItem : columnItems) {
+                Grid.Column<?> column = getColumnByKey(columnItem.getColumnKey());
                 column.setVisible(true);
-                columnKeyItemEntry.getValue().setChecked(true);
+                columnItem.setChecked(true);
             }
         }
 
@@ -372,22 +399,6 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
             }
         }
 
-        protected void addHideAllItem() {
-            String hideAllText = messages.getMessage(getClass(), "hideAllItem.text");
-            //add first if showAllItem is disabled, after showAllItem (second) otherwise
-            int index = showAllItem != null ? 1 : 0;
-            hideAllItem = dropdownItem.getSubMenu().addItemAtIndex(index, hideAllText, this::onHideAllClick);
-            refresh();
-        }
-
-        protected void onHideAllClick(ClickEvent<?> event) {
-            for (Map.Entry<String, JmixMenuItem> columnKeyItemEntry : columnItems.entrySet()) {
-                Grid.Column<?> column = getColumnByKey(columnKeyItemEntry.getKey());
-                column.setVisible(false);
-                columnKeyItemEntry.getValue().setChecked(false);
-            }
-        }
-
         public void setShowAllEnabled(boolean enabled) {
             showAllEnabled = enabled;
             if (showAllEnabled && showAllItem == null) {
@@ -398,7 +409,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         }
 
         protected void removeShowAllItem() {
-            dropdownItem.remove(showAllItem);
+            dropdownItem.getSubMenu().remove(showAllItem);
             showAllItem = null;
             refresh();
         }
@@ -416,14 +427,80 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
             }
         }
 
+        protected void addHideAllItem() {
+            String hideAllText = messages.getMessage(getClass(), "hideAllItem.text");
+            //add first if showAllItem is disabled, otherwise - after showAllItem (second)
+            int index = showAllItem != null ? 1 : 0;
+            hideAllItem = dropdownItem.getSubMenu().addItemAtIndex(index, hideAllText, this::onHideAllClick);
+            refresh();
+        }
+
+        protected void onHideAllClick(ClickEvent<?> event) {
+            for (ColumnItemImpl columnItem : columnItems) {
+                Grid.Column<?> column = getColumnByKey(columnItem.getColumnKey());
+                column.setVisible(false);
+                columnItem.setChecked(false);
+            }
+        }
+
         protected void removeHideAllItem() {
-            dropdownItem.remove(hideAllItem);
+            dropdownItem.getSubMenu().remove(hideAllItem);
             hideAllItem = null;
             refresh();
         }
 
         public boolean isHideAllEnabled() {
             return hideAllEnabled;
+        }
+    }
+
+    public interface ColumnItem {
+
+        String getColumnKey();
+
+        boolean isChecked();
+
+        void setText(String text);
+
+        String getText();
+    }
+
+    protected static class ColumnItemImpl implements ColumnItem {
+
+        protected String columnKey;
+        protected JmixMenuItem menuItem;
+
+        protected ColumnItemImpl(String columnKey, JmixMenuItem menuItem) {
+            this.columnKey = columnKey;
+            this.menuItem = menuItem;
+        }
+
+        @Override
+        public String getColumnKey() {
+            return columnKey;
+        }
+
+        public void setChecked(boolean checked) {
+            menuItem.setChecked(checked);
+        }
+
+        @Override
+        public boolean isChecked() {
+            return menuItem.isChecked();
+        }
+
+        @Override
+        public void setText(String text) {
+            menuItem.setText(text);
+        }
+
+        @Override
+        public String getText() {
+            return menuItem.getText();
+        }
+
+        public JmixMenuItem getMenuItem() {
+            return menuItem;
         }
     }
 }

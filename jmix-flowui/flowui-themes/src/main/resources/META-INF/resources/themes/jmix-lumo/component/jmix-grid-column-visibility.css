@@ -15,7 +15,6 @@
  */
 
 vaadin-menu-bar[jmix-role='jmix-grid-column-visibility'] > vaadin-menu-bar-button {
-    min-width: var(--lumo-button-size);
     margin: var(--lumo-space-xs) calc(var(--lumo-space-xs) / 2);
 }
 

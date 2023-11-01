@@ -75,7 +75,7 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
     protected void loadColumnItemParams(Element rootElement, DeferredLoadContext loadContext) {
         Map<String, ColumnItemParam> columnItemParams = new LinkedHashMap<>();
         for (Element element : rootElement.elements()) {
-            if (element.getName().equals("columnItem")) {
+            if (element.getName().equals("columnItemParam")) {
                 String ref = getLoaderSupport().loadString(element, "ref")
                         .orElseThrow(() ->
                                 new GuiDevelopmentException("Failed to find ref attribute for columnItem", context));

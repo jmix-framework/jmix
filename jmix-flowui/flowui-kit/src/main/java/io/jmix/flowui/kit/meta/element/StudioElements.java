@@ -700,4 +700,16 @@ public interface StudioElements {
             }
     )
     void settingsFacetComponent();
+
+    @StudioElement(
+            name = "ColumnItemParam",
+            xmlElement = "columnItemParam",
+            target = {"io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
+
+            }
+    )
+    void gridColumnVisibilityColumnItem();
 }

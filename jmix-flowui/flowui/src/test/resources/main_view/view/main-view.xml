@@ -33,6 +33,7 @@
             </section>
         </drawerLayout>
         <initialLayout>
+            <textField id="textField" label="TextField" clearButtonVisible="true"/>
         </initialLayout>
     </appLayout>
 </mainView>

@@ -17,13 +17,18 @@
 package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.shared.Registration;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.sys.BeanUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.util.Objects;
 
 public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationContextAware {
 
@@ -96,5 +101,22 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
         }
 
         return super.setHeader(headerComponent);
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        boolean prevVisible = isVisible();
+        super.setVisible(visible);
+        if (prevVisible != visible) {
+            fireEvent(new DataGridColumnVisibilityChangedEvent<>(this, false, visible));
+        }
+    }
+
+    public Registration addColumnVisibilityChangedListener(
+            ComponentEventListener<DataGridColumnVisibilityChangedEvent<E>> listener) {
+        Preconditions.checkNotNullArgument(listener);
+
+        //noinspection unchecked,rawtypes
+        return addListener(DataGridColumnVisibilityChangedEvent.class, (ComponentEventListener) listener);
     }
 }

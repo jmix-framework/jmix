@@ -19,10 +19,12 @@ package io.jmix.flowui.xml.layout.inittask;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
+import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.view.View;
@@ -49,17 +51,17 @@ public class AssignGridColumnVisibilityPropertiesInitTask implements ComponentLo
         String dataGridId = loadContext.getDataGridId();
         Component gridComponent = UiComponentUtils.findComponent(view, dataGridId).orElse(null);
 
-        if (!(gridComponent instanceof DataGrid<?> grid)) {
-            throw new GuiDevelopmentException("Failed to find a data grid", context, "Data Grid", dataGridId);
+        if (!(gridComponent instanceof DataGrid<?>) && !(gridComponent instanceof TreeDataGrid<?>)) {
+            throw new GuiDevelopmentException("Failed to find a grid with specified id", context, "Data Grid", dataGridId);
         }
-
+        Grid<?> grid = (Grid<?>) gridComponent;
         JmixGridColumnVisibility columnVisibilityComponent = loadContext.getComponent();
         columnVisibilityComponent.setGrid(grid);
 
         loadColumnItems(grid);
     }
 
-    protected void loadColumnItems(DataGrid<?> grid) {
+    protected void loadColumnItems(Grid<?> grid) {
         List<? extends DataGridColumn<?>> includeColumns = getColumnsToInclude(grid);
 
         JmixGridColumnVisibility columnVisibility = loadContext.getComponent();
@@ -74,21 +76,22 @@ public class AssignGridColumnVisibilityPropertiesInitTask implements ComponentLo
         }
     }
 
-    protected List<? extends DataGridColumn<?>> getColumnsToInclude(DataGrid<?> grid) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected List<? extends DataGridColumn<?>> getColumnsToInclude(Grid<?> grid) {
         List<String> includeColumnKeys = splitByComma(loadContext.getIncludeColumns());
         List<String> excludeColumnKeys = splitByComma(loadContext.getExcludeColumns());
 
+        List columnsToInclude;
         if (includeColumnKeys.isEmpty()) {
-            return grid.getColumns().stream()
+            columnsToInclude = grid.getColumns().stream()
                     .filter(c -> !excludeColumnKeys.contains(c.getKey()))
-                    .map(c -> (DataGridColumn<?>) c)
                     .toList();
         } else {
-            return grid.getColumns().stream()
+            columnsToInclude = grid.getColumns().stream()
                     .filter(c -> includeColumnKeys.contains(c.getKey()) && !excludeColumnKeys.contains(c.getKey()))
-                    .map(c -> (DataGridColumn<?>) c)
                     .toList();
         }
+        return columnsToInclude;
     }
 
     protected List<String> splitByComma(@Nullable String str) {

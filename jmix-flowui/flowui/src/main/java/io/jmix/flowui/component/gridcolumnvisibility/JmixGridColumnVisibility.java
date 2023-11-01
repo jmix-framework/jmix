@@ -37,6 +37,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
+import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
@@ -69,7 +70,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     protected JmixMenuItem dropdownItem;
     protected Icon icon;
 
-    protected DataGrid<?> grid;
+    protected Grid<?> grid;
 
     protected Header header;
     protected List<ColumnItemImpl> columnItems = new ArrayList<>();
@@ -104,7 +105,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Sets component icon
+     * Sets component icon.
      *
      * @param icon icon to set
      */
@@ -132,19 +133,27 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Sets a DataGrid instance which columns will be managed by this component
+     * Sets a grid which columns will be managed by this component.
+     * Grid must be an instance of DataGrid or TreeDataGrid.
      *
-     * @param grid DataGrid instance to set
+     * @param grid Grid instance to set
      */
-    public void setGrid(DataGrid<?> grid) {
+    public void setGrid(Grid<?> grid) {
         Preconditions.checkNotNullArgument(grid);
+        checkGridType(grid);
 
         removeAllColumnItems();
         this.grid = grid;
     }
 
+    protected void checkGridType(Grid<?> grid) {
+        if (!(grid instanceof DataGrid<?>) && !(grid instanceof TreeDataGrid<?>)) {
+            throw new IllegalArgumentException("The grid must be an instance of DataGrid or TreeDataGrid");
+        }
+    }
+
     /**
-     * @return a DataGrid instance which columns are managed by this component
+     * @return grid instance which columns are managed by this component
      */
     public Grid<?> getGrid() {
         return grid;
@@ -268,7 +277,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         if (grid == null) {
             throw new IllegalStateException("No grid specified");
         }
-        DataGridColumn<?> column = grid.getColumnByKey(columnKey);
+        DataGridColumn<?> column = (DataGridColumn<?>) grid.getColumnByKey(columnKey);
         if (column == null) {
             throw new IllegalArgumentException("Failed to find column with key '%s' in the grid".formatted(columnKey));
         }
@@ -321,7 +330,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Sets whether "Show all" item should be visible
+     * Sets whether "Show all" item should be visible.
      *
      * @param enabled flag indicating whether "Show all" item should be visible
      */
@@ -337,7 +346,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Sets whether "Hide all" item should be visible
+     * Sets whether "Hide all" item should be visible.
      *
      * @param enabled flag indicating whether "Hide all" item should be visible
      */
@@ -353,7 +362,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Removes column visibility toggle item from dropdown menu by column key of referenced column
+     * Removes column visibility toggle item from dropdown menu by column key of referenced column.
      *
      * @param columnKey column key of data grid column
      */
@@ -387,7 +396,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Removes column visibility toggle item from dropdown menu for specified referenced column
+     * Removes column visibility toggle item from dropdown menu for specified referenced column.
      *
      * @param column referenced data grid column
      */
@@ -551,36 +560,34 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Represents an item which allows to toggle column visibility
+     * Represents an item which allows to toggle column visibility.
      */
     public interface ColumnItem {
 
         /**
-         *
          * @return referenced data grid column
          */
         DataGridColumn<?> getColumn();
 
         /**
-         *
          * @return whether the item is checked
          */
         boolean isChecked();
 
         /**
-         * Sets item text
+         * Sets item text.
+         *
          * @param text item text
          */
         void setText(String text);
 
         /**
-         *
          * @return item text
          */
         String getText();
 
         /**
-         * Toggles visibility of referenced data grid column
+         * Toggles visibility of referenced data grid column.
          */
         void toggleVisibility();
     }

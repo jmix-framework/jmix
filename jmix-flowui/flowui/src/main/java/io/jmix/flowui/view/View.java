@@ -215,6 +215,9 @@ public class View<T extends Component> extends Composite<T>
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
         fireEvent(afterCloseEvent);
 
+        ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
+        applicationContext.publishEvent(viewClosedEvent);
+
         return OperationResult.success();
     }
 

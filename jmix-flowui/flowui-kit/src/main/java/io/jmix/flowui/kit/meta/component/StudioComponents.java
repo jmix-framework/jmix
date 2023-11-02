@@ -2681,7 +2681,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
                             options = {"small", "large", "tertiary", "tertiary-inline", "primary", "success", "error",
-                                    "contrast", "icon", "contained", "outlined"}),
+                                    "contrast", "icon", "contained", "outlined"}, initialValue = "icon"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,

@@ -112,6 +112,11 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
         }
     }
 
+    /**
+     * Add listener for event of column visibility change
+     * @param listener the listener to add
+     * @return a registration handle to remove the listener
+     */
     public Registration addColumnVisibilityChangedListener(
             ComponentEventListener<DataGridColumnVisibilityChangedEvent<E>> listener) {
         Preconditions.checkNotNullArgument(listener);

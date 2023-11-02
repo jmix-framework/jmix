@@ -134,9 +134,9 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
 
     /**
      * Sets a grid which columns will be managed by this component.
-     * Grid must be an instance of DataGrid or TreeDataGrid.
+     * The grid must be an instance of DataGrid or TreeDataGrid.
      *
-     * @param grid Grid instance to set
+     * @param grid the grid to set
      */
     public void setGrid(Grid<?> grid) {
         Preconditions.checkNotNullArgument(grid);
@@ -409,7 +409,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
 
     /**
      * @param columnKey column key of referenced data grid column
-     * @return Returns column visibility toggle item by column key of referenced data grid column
+     * @return column visibility toggle item by column key of referenced data grid column
      */
     @Nullable
     public ColumnItem getColumnItem(String columnKey) {
@@ -418,7 +418,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * @return Returns all column visibility toggle items
+     * @return all column visibility toggle items
      */
     public List<ColumnItem> getColumnItems() {
         return Collections.unmodifiableList(columnItems);

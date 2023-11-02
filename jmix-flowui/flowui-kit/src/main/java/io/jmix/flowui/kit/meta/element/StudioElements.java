@@ -708,7 +708,6 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
-
             }
     )
     void gridColumnVisibilityColumnItem();

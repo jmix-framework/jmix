@@ -21,7 +21,6 @@ import com.vaadin.flow.component.ComponentEvent;
 /**
  * Event fired when a DataGridColumn visibility is changed.
  *
- * @param <E> the grid bean type
  * @see DataGridColumn#addColumnVisibilityChangedListener(com.vaadin.flow.component.ComponentEventListener)
  */
 public class DataGridColumnVisibilityChangedEvent<E> extends ComponentEvent<DataGridColumn<E>> {
@@ -34,8 +33,7 @@ public class DataGridColumnVisibilityChangedEvent<E> extends ComponentEvent<Data
     }
 
     /**
-     *
-     * @return true/false if the column is visible or not
+     * @return true/false if the column is visible/not visible
      */
     public boolean isVisible() {
         return visible;

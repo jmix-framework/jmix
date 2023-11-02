@@ -22,7 +22,6 @@
                 <nav id="navigation"
                      classNames="jmix-main-view-navigation"
                      ariaLabel="msg://navigation.ariaLabel">
-                    <listMenu id="menu"/>
                 </nav>
                 <footer id="footer" classNames="jmix-main-view-footer">
                     <userIndicator id="userIndicator"/>

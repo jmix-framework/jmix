@@ -70,6 +70,7 @@ javaPlatform {
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:2.7.15")
     api platform('software.amazon.awssdk:bom:2.16.69')
+    api platform('org.eclipse.jetty:jetty-bom:9.4.52.v20230823') //contains Phoenix-approved libs. Unnecessary after update to org.springframework.boot:spring-boot-dependencies:2.7.16 or newer
 
     def freeVersion = version
     def premiumVersion = version
@@ -305,8 +306,8 @@ dependencies {
         api 'org.antlr:antlr-runtime:3.5.2'
         api 'org.apache.commons:commons-collections4:4.4'
         api 'org.apache.commons:commons-text:1.10.0'
-        api 'org.apache.commons:commons-compress:1.22'
-        api 'org.dom4j:dom4j:2.1.3'
+        api 'org.apache.commons:commons-compress:1.24.0'
+        api 'org.dom4j:dom4j:2.1.4'
         api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
         api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.9-6-jmix'
         api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix'

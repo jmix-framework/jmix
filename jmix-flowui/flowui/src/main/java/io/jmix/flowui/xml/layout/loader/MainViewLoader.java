@@ -61,6 +61,10 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
 
     protected void createInitialLayout(Element appLayoutElement) {
         Element initialLayoutElement = appLayoutElement.element("initialLayout");
+        if (initialLayoutElement == null) {
+            return;
+        }
+
         initialLayoutLoader = getLayoutLoader().getLoader(initialLayoutElement, VerticalLayoutLoader.class);
         initialLayoutLoader.initComponent();
         VerticalLayout initialLayout = (VerticalLayout) initialLayoutLoader.getResultComponent();
@@ -74,7 +78,11 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
         getViewLoader().loadFacets(element);
 
         loadAppLayout();
-        initialLayoutLoader.loadComponent();
+
+        if (initialLayoutLoader != null) {
+            initialLayoutLoader.loadComponent();
+        }
+
         loadSubComponents();
     }
 

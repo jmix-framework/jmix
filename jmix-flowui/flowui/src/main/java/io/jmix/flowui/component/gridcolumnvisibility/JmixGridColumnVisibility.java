@@ -75,6 +75,10 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     protected Header header;
     protected List<ColumnItemImpl> columnItems = new ArrayList<>();
 
+    public JmixGridColumnVisibility() {
+        dropdownItem = getContent().addItem("");
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -83,25 +87,24 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     @Override
     public void afterPropertiesSet() throws Exception {
         autowireDependencies();
+        initHeader();
     }
 
     protected void autowireDependencies() {
         messages = applicationContext.getBean(Messages.class);
     }
 
+    protected void initHeader() {
+        header = new Header();
+        header.setShowAllEnabled(true);
+        header.setHideAllEnabled(true);
+    }
+
     @Override
     protected JmixMenuBar initContent() {
         JmixMenuBar menuBar = super.initContent();
         menuBar.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, ATTRIBUTE_JMIX_ROLE_VALUE);
-        initDropdownItem(menuBar);
         return menuBar;
-    }
-
-    protected void initDropdownItem(JmixMenuBar menuBar) {
-        dropdownItem = menuBar.addItem("");
-        header = new Header();
-        header.setShowAllEnabled(true);
-        header.setHideAllEnabled(true);
     }
 
     /**

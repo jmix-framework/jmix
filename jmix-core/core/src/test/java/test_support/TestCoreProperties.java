@@ -41,14 +41,13 @@ public class TestCoreProperties extends CoreProperties {
                               boolean legacyFetchPlanSerializationAttributeName,
                               boolean triggerFilesEnabled,
                               Duration triggerFilesProcessInterval,
-                              PessimisticLock pessimisticLock,
                               boolean roundDecimalValueByFormat) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
                 entitySerializationTokenRequired, entitySerializationTokenEncryptionKey,
                 legacyFetchPlanSerializationAttributeName, triggerFilesEnabled, triggerFilesProcessInterval,
-                pessimisticLock, roundDecimalValueByFormat);
+                roundDecimalValueByFormat);
     }
 
     public static Builder builder() {
@@ -74,7 +73,6 @@ public class TestCoreProperties extends CoreProperties {
         boolean legacyFetchPlanSerializationAttributeName = false;
         boolean triggerFilesEnabled = true;
         Duration triggerFilesProcessInterval = Duration.ofSeconds(5000);
-        PessimisticLock pessimisticLock = new PessimisticLock("0 * * * * ?", true);
         boolean roundDecimalValueByFormat = true;
 
         public Builder setWebHostName(String webHostName) {
@@ -167,11 +165,6 @@ public class TestCoreProperties extends CoreProperties {
             return this;
         }
 
-        public Builder setPessimisticLock(PessimisticLock pessimisticLock) {
-            this.pessimisticLock = pessimisticLock;
-            return this;
-        }
-
         public Builder setRoundDecimalValueByFormat(boolean roundDecimalValueByFormat) {
             this.roundDecimalValueByFormat = roundDecimalValueByFormat;
             return this;
@@ -197,7 +190,6 @@ public class TestCoreProperties extends CoreProperties {
                     this.legacyFetchPlanSerializationAttributeName,
                     this.triggerFilesEnabled,
                     this.triggerFilesProcessInterval,
-                    this.pessimisticLock,
                     this.roundDecimalValueByFormat);
         }
     }

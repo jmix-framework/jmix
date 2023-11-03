@@ -37,6 +37,7 @@ dependencies {
 
     testImplementation project(':flowui-test-assist')
     testImplementation project(':eclipselink')
+    testImplementation project(':pessimisticlock')
     testImplementation 'org.apache.commons:commons-dbcp2'
 
     testRuntimeOnly 'org.hsqldb:hsqldb'

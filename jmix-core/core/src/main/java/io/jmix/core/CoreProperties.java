@@ -94,11 +94,6 @@ public class CoreProperties {
     Duration triggerFilesProcessInterval;
 
     /**
-     * Pessimistic lock configuration.
-     */
-    PessimisticLock pessimisticLock;
-
-    /**
      * Whether BigDecimalDatatype, DoubleDatatype and FloatDatatype should round the actual parsed value
      * according to format settings.
      */
@@ -123,7 +118,6 @@ public class CoreProperties {
             @DefaultValue("false") boolean legacyFetchPlanSerializationAttributeName,
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
-            @DefaultValue PessimisticLock pessimisticLock,
             @DefaultValue("true") boolean roundDecimalValueByFormat) {
         this.webHostName = webHostName;
         this.webPort = webPort;
@@ -152,7 +146,6 @@ public class CoreProperties {
         this.legacyFetchPlanSerializationAttributeName = legacyFetchPlanSerializationAttributeName;
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
-        this.pessimisticLock = pessimisticLock;
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
     }
 
@@ -248,44 +241,6 @@ public class CoreProperties {
      */
     public Duration getTriggerFilesProcessInterval() {
         return triggerFilesProcessInterval;
-    }
-
-    public PessimisticLock getPessimisticLock() {
-        return pessimisticLock;
-    }
-
-    public static class PessimisticLock {
-
-        /**
-         * CRON expression that is used by default pessimistic lock expiration scheduling configuration.
-         */
-        String expirationCron;
-
-        /**
-         * Whether the default pessimistic lock expiration scheduling configuration is used.
-         */
-        boolean useDefaultQuartzConfiguration;
-
-        public PessimisticLock(@DefaultValue("0 * * * * ?") String expirationCron,
-                               @DefaultValue("true") boolean useDefaultQuartzConfiguration) {
-            this.expirationCron = expirationCron;
-            this.useDefaultQuartzConfiguration = useDefaultQuartzConfiguration;
-        }
-
-        /**
-         * @see #expirationCron
-         */
-        public String getExpirationCron() {
-            return expirationCron;
-        }
-
-        /**
-         * @see #useDefaultQuartzConfiguration
-         */
-        public boolean isUseDefaultQuartzConfiguration() {
-            return useDefaultQuartzConfiguration;
-        }
-
     }
 
     /**

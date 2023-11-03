@@ -96,6 +96,11 @@ includeProject('multitenancy-flowui-starter', 'jmix-multitenancy/multitenancy-fl
 includeProject('oidc', 'jmix-oidc/oidc')
 includeProject('oidc-starter', 'jmix-oidc/oidc-starter')
 
+includeProject('pessimisticlock', 'jmix-pessimisticlock/pessimisticlock')
+includeProject('pessimisticlock-starter', 'jmix-pessimisticlock/pessimisticlock-starter')
+includeProject('pessimisticlock-flowui', 'jmix-pessimisticlock/pessimisticlock-flowui')
+includeProject('pessimisticlock-flowui-starter', 'jmix-pessimisticlock/pessimisticlock-flowui-starter')
+
 includeProject('quartz', 'jmix-quartz/quartz')
 includeProject('quartz-starter', 'jmix-quartz/quartz-starter')
 includeProject('quartz-flowui', 'jmix-quartz/quartz-flowui')

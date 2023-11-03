@@ -14,30 +14,34 @@
  * limitations under the License.
  */
 
-package io.jmix.simplesecurityflowui.authentication;
+package io.jmix.flowui.login;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.QueryParameters;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
 import com.vaadin.flow.server.auth.ViewAccessChecker;
-import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
-import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.sys.AppCookies;
 import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
+import io.jmix.flowui.view.DetailView;
+import io.jmix.flowui.view.DetailViewTypeExtractor;
+import io.jmix.flowui.view.ViewInfo;
+import io.jmix.flowui.view.ViewRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +51,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -55,6 +58,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
 import java.util.List;
@@ -64,29 +68,13 @@ import java.util.TimeZone;
 import static org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices.DEFAULT_PARAMETER;
 
 /**
- * Class that provides authentication via {@link AuthenticationManager}. It is intended to use from login view.
- * <p>
- * Example usage:
- * <pre>
- * &#64;Autowired
- * private LoginViewSupport authenticator;
- *
- * private void doLogin(String username, String password) {
- *     loginViewSupport.authenticate(
- *         AuthDetails.of(event.getUsername(), event.getPassword())
- *     );
- * }
- * </pre>
- *
- * @see AuthDetails
+ * Base class for LoginViewSupport implementations
  */
-//@SpringComponent("simsec_LoginViewSupport")
-public class LoginViewSupport {
+public abstract class AbstractLoginViewSupport implements LoginViewSupport {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginViewSupport.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractLoginViewSupport.class);
 
     protected AuthenticationManager authenticationManager;
-
     protected CoreProperties coreProperties;
     protected UiProperties uiProperties;
     protected ViewNavigators viewNavigators;
@@ -96,10 +84,11 @@ public class LoginViewSupport {
     protected RememberMeServices rememberMeServices;
     protected ApplicationEventPublisher applicationEventPublisher;
     protected VaadinDefaultRequestCache requestCache;
+    protected ViewRegistry viewRegistry;
 
     protected AppCookies cookies;
 
-    private SessionAuthenticationStrategy authenticationStrategy;
+    protected SessionAuthenticationStrategy authenticationStrategy;
 
     protected SecurityContextRepository securityContextRepository;
 
@@ -163,19 +152,12 @@ public class LoginViewSupport {
         this.authenticationStrategy = authenticationStrategy;
     }
 
-    /**
-     * Performs authentication via {@link AuthenticationManager} and uses
-     * {@link UsernamePasswordAuthenticationToken} with credentials from {@link AuthDetails}.
-     * <p>
-     * If locale is not provided it will use the first locale from
-     * {@link CoreProperties#getAvailableLocales()} list.
-     * <p>
-     * After successful authentication, there will be an attempt to open the main view.
-     *
-     * @param authDetails authentication details
-     * @return a fully authenticated object including credentials
-     * @throws AuthenticationException if exception occurs while authentication process
-     */
+    @Autowired
+    public void setViewRegistry(ViewRegistry viewRegistry) {
+        this.viewRegistry = viewRegistry;
+    }
+
+    @Override
     public Authentication authenticate(AuthDetails authDetails) throws AuthenticationException {
         Authentication authenticationToken = authenticationManager.authenticate(
                 createAuthenticationToken(
@@ -236,32 +218,14 @@ public class LoginViewSupport {
         }
     }
 
-    protected void checkLoginToUi(AuthDetails authDetails, Authentication authentication) {
-//        Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
-//
-//        UiLoginToUiContext loginToUiContext = new UiLoginToUiContext();
-//        try {
-//            SecurityContextHelper.setAuthentication(authentication);
-//            accessManager.applyRegisteredConstraints(loginToUiContext);
-//        } finally {
-//            SecurityContextHelper.setAuthentication(currentAuthentication);
-//        }
-//
-//        if (!loginToUiContext.isPermitted()) {
-//            log.warn("Attempt of login to UI for user '{}' without '{}' permission", authDetails.getUsername(),
-//                    loginToUiContext.getName());
-//            throw new AccessDeniedException("specific", loginToUiContext.getName());
-//        }
-    }
+    protected abstract void checkLoginToUi(AuthDetails authDetails, Authentication authentication);
 
     protected void showInitialView(VaadinServletRequest request, VaadinServletResponse response) {
         Location location = getRedirectLocation(request, response);
-        if (location != null) {
-            UI.getCurrent().navigate(location.getPath(), location.getQueryParameters());
+        if (location == null || isRedirectToInitialView(location)) {
+            navigateToInitialView();
         } else {
-            String mainViewId = uiProperties.getMainViewId();
-            viewNavigators.view(mainViewId)
-                    .navigate();
+            UI.getCurrent().navigate(location.getPath(), location.getQueryParameters());
         }
     }
 
@@ -280,30 +244,67 @@ public class LoginViewSupport {
 
         SavedRequest savedRequest = requestCache.getRequest(httpServletRequest, response);
         if (savedRequest != null) {
-            return new Location(savedRequest.getRedirectUrl());
+            if (savedRequest instanceof DefaultSavedRequest defaultSavedRequest) {
+                //build location by servlet path and query params only (without host, port etc.)
+                //because later we need to check if it is main view location
+                //and RouteConfiguration.getRoute(String) doesn't support full URLs
+                //like one returned from savedRequest.getRedirectUrl()
+                QueryParameters queryParameters = QueryParameters.fromString(defaultSavedRequest.getQueryString());
+                return new Location(defaultSavedRequest.getServletPath(), queryParameters);
+            } else {
+                return new Location(savedRequest.getRedirectUrl());
+            }
         }
 
         return null;
     }
 
-    protected Authentication createAuthenticationToken(String username, String password,
-                                                       @Nullable Locale locale,
-                                                       @Nullable TimeZone timeZone) {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(username, password);
-        VaadinServletRequest request = VaadinServletRequest.getCurrent();
-
-        ClientDetails clientDetails = ClientDetails.builder()
-                .locale(locale != null ? locale : getDefaultLocale())
-//                .scope(SecurityScope.UI)
-                .sessionId(request.getSession().getId())
-                .timeZone(timeZone == null ? getDeviceTimeZone() : timeZone)
-                .build();
-
-        authenticationToken.setDetails(clientDetails);
-
-        return authenticationToken;
+    protected boolean isRedirectToInitialView(Location redirectLocation) {
+        if (!Strings.isNullOrEmpty(redirectLocation.getQueryParameters().getQueryString())) {
+            return false;
+        }
+        RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
+        return routeConfiguration.getRoute(redirectLocation.getPathWithQueryParameters())
+                .map(StandardMainView.class::isAssignableFrom)
+                .orElse(false);
     }
+
+    protected void navigateToInitialView() {
+        String defaultViewId = uiProperties.getDefaultViewId();
+        if (Strings.isNullOrEmpty(defaultViewId)) {
+            navigateToMainView();
+        } else {
+            navigateToDefaultView(defaultViewId);
+        }
+    }
+
+    protected void navigateToMainView() {
+        String mainViewId = uiProperties.getMainViewId();
+        viewNavigators.view(mainViewId)
+                .navigate();
+    }
+
+    protected void navigateToDefaultView(String defaultViewId) {
+        ViewInfo viewInfo = viewRegistry.getViewInfo(defaultViewId);
+        if (DetailView.class.isAssignableFrom(viewInfo.getControllerClass())) {
+            viewNavigators.detailView(getEntityClass(viewInfo))
+                    .withBackwardNavigation(false)
+                    .navigate();
+        } else {
+            viewNavigators.view(defaultViewId)
+                    .navigate();
+        }
+    }
+
+    protected Class<?> getEntityClass(ViewInfo viewInfo) {
+        return DetailViewTypeExtractor.extractEntityClass(viewInfo)
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("Failed to determine entity type for detail view '%s'", viewInfo.getId())));
+    }
+
+    protected abstract Authentication createAuthenticationToken(String username, String password,
+                                                       @Nullable Locale locale,
+                                                       @Nullable TimeZone timeZone);
 
     protected Locale getDefaultLocale() {
         List<Locale> locales = coreProperties.getAvailableLocales();

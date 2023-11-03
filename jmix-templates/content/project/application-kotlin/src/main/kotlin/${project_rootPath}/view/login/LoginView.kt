@@ -11,9 +11,9 @@ import io.jmix.core.MessageTools
 import io.jmix.flowui.component.loginform.JmixLoginForm
 import io.jmix.flowui.kit.component.ComponentUtils
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n
+import io.jmix.flowui.login.AuthDetails
+import io.jmix.flowui.login.LoginViewSupport
 import io.jmix.flowui.view.*
-import io.jmix.securityflowui.authentication.AuthDetails
-import io.jmix.securityflowui.authentication.LoginViewSupport
 import org.apache.commons.collections4.MapUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

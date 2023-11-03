@@ -23,10 +23,11 @@ import io.jmix.core.Messages;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.login.LoginViewSupport;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.simplesecurity.SimpleSecurityConfiguration;
-import io.jmix.simplesecurityflowui.authentication.LoginViewSupport;
+import io.jmix.simplesecurityflowui.authentication.LoginViewSupportImpl;
 import io.jmix.simplesecurityflowui.constraint.SecurityConstraintRegistration;
 import io.jmix.simplesecurityflowui.constraint.UiMenuConstraint;
 import io.jmix.simplesecurityflowui.constraint.UiShowViewConstraint;
@@ -46,7 +47,7 @@ public class SimpleSecurityFlowuiConfiguration {
 
     @Bean("simsec_LoginViewSupport")
     public LoginViewSupport loginViewSupport() {
-        return new LoginViewSupport();
+        return new LoginViewSupportImpl();
     }
 
     @Bean("simsec_UiMenuConstraint")

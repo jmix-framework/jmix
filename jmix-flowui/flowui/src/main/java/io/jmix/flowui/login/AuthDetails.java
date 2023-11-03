@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.securityflowui.authentication;
+package io.jmix.flowui.login;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -35,7 +36,7 @@ import java.util.TimeZone;
  * }
  * </pre>
  *
- * @see LoginViewSupport
+ * @see AbstractLoginViewSupport
  */
 public class AuthDetails {
 

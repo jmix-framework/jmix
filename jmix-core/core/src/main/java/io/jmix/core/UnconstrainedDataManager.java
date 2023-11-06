@@ -19,6 +19,8 @@ package io.jmix.core;
 import io.jmix.core.entity.KeyValueEntity;
 
 import org.springframework.lang.Nullable;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -75,6 +77,14 @@ public interface UnconstrainedDataManager {
      * @return set of saved instances
      */
     EntitySet save(Object... entities);
+
+    /**
+     * Saves collection of entities to their data stores.
+     *
+     * @param entities entities to save
+     * @return set of saved instances
+     */
+    EntitySet saveAll(Collection<?> entities);
 
     /**
      * Saves the entity to its data store.

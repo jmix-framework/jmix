@@ -19,7 +19,7 @@ package io.jmix.pessimisticlock;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-@ConfigurationProperties(prefix = "jmix.psmlock")
+@ConfigurationProperties(prefix = "jmix.pslock")
 public class PessimisticLockProperties {
 
     /**

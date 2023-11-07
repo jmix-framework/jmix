@@ -22,7 +22,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import test_support.entity.base.BaseUuidEntity;
 
-@Entity(name = "psmlock_LockableParentEntity")
+@Entity(name = "pslock_LockableParentEntity")
 @JmixEntity
 @PessimisticLock(timeoutSec = 120)
 public class LockableParentEntity extends BaseUuidEntity {

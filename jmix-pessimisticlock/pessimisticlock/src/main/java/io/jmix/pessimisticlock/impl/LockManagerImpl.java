@@ -39,7 +39,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component("psmlock_LockManagerImpl")
+@Component("pslock_LockManagerImpl")
 public class LockManagerImpl implements LockManager {
 
     protected static final Logger log = LoggerFactory.getLogger(LockManagerImpl.class);

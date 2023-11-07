@@ -67,7 +67,7 @@ class LockManagerTest extends Specification {
 
         when:
         lockManager.unlock(entity)
-        lockInfo = lockManager.getLockInfo("psmlock_LockableParentEntity", entity.getId().toString())
+        lockInfo = lockManager.getLockInfo("pslock_LockableParentEntity", entity.getId().toString())
         then:
         assertNull(lockInfo)
     }
@@ -88,7 +88,7 @@ class LockManagerTest extends Specification {
 
         when:
         lockManager.unlock(entity)
-        lockInfo = lockManager.getLockInfo("psmlock_LockableChildEntity", entity.getId().toString())
+        lockInfo = lockManager.getLockInfo("pslock_LockableChildEntity", entity.getId().toString())
         then:
         assertNull(lockInfo)
     }

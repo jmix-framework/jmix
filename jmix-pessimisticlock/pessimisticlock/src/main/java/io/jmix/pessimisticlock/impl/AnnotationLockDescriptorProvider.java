@@ -38,7 +38,7 @@ import java.util.Map;
  * {@link LockDescriptor} objects for locks annotated by {@link PessimisticLock}
  * annotation from data model objects.
  */
-@Component("psmlock_AnnotationLockDescriptorProvider")
+@Component("pslock_AnnotationLockDescriptorProvider")
 public class AnnotationLockDescriptorProvider implements LockDescriptorProvider {
 
     private final Logger log = LoggerFactory.getLogger(AnnotationLockDescriptorProvider.class);

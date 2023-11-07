@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import(PessimisticLockConfiguration.class)
 @ConditionalOnClass(Job.class)
-@ConditionalOnProperty(name = "jmix.psmlock.use-default-quartz-configuration", matchIfMissing = true)
+@ConditionalOnProperty(name = "jmix.pslock.use-default-quartz-configuration", matchIfMissing = true)
 public class PessimisticLockScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(PessimisticLockScheduleAutoConfiguration.class);
@@ -43,7 +43,7 @@ public class PessimisticLockScheduleAutoConfiguration {
         this.pessimisticLockProperties = pessimisticLockProperties;
     }
 
-    @Bean("psmlock_PessimisticLockExpiringJob")
+    @Bean("pslock_PessimisticLockExpiringJob")
     JobDetail pessimisticLockExpiringJob() {
         return JobBuilder.newJob()
                 .ofType(PessimisticLockExpiringJob.class)
@@ -52,9 +52,9 @@ public class PessimisticLockScheduleAutoConfiguration {
                 .build();
     }
 
-    @Bean("psmlock_PessimisticLockExpiringTrigger")
+    @Bean("pslock_PessimisticLockExpiringTrigger")
     Trigger pessimisticLockExpiringTrigger(
-            @Qualifier("psmlock_PessimisticLockExpiringJob") JobDetail pessimisticLockExpiringJob) {
+            @Qualifier("pslock_PessimisticLockExpiringJob") JobDetail pessimisticLockExpiringJob) {
         String cron = pessimisticLockProperties.getExpirationCron();
         log.info("Schedule pessimistic lock expiring using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()

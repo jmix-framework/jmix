@@ -33,8 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 
-@Route(value = "psmlock/pessimistic-locks", layout = DefaultMainViewParent.class)
-@ViewController("psmlock_LockInfo.list")
+@Route(value = "pslock/pessimistic-locks", layout = DefaultMainViewParent.class)
+@ViewController("pslock_LockInfo.list")
 @ViewDescriptor("pessimistic-lock-list-view.xml")
 @DialogMode(width = "50em")
 public class PessimisticLockListView extends StandardView {

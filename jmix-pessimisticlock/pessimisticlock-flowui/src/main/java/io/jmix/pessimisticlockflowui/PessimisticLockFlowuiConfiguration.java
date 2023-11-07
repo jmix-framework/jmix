@@ -37,7 +37,7 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.pessimisticlockflowui", value = "classpath:/io/jmix/pessimisticlockflowui/module.properties")
 public class PessimisticLockFlowuiConfiguration {
 
-    @Bean("psmlock_ViewControllersConfiguration")
+    @Bean("pslock_ViewControllersConfiguration")
     public ViewControllersConfiguration views(ApplicationContext applicationContext,
                                                 AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ViewControllersConfiguration viewControllers

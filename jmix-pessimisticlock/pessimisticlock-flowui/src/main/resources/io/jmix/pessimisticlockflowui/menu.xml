@@ -16,7 +16,7 @@
 
 <menu-config xmlns="http://jmix.io/schema/flowui/menu" order="2600">
     <menu id="system">
-        <item view="psmlock_LockInfo.list"
+        <item view="pslock_LockInfo.list"
               title="msg://io.jmix.pessimisticlockflowui/pessimisticLockListView.menu"/>
     </menu>
 </menu-config>

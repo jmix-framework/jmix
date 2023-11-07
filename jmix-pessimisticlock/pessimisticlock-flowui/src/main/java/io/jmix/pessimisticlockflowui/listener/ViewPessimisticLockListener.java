@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 
 import static java.util.Objects.requireNonNull;
 
-@Component("psmlock_ViewPessimisticLockListener")
+@Component("pslock_ViewPessimisticLockListener")
 public class ViewPessimisticLockListener {
 
     protected ApplicationContext applicationContext;

@@ -19,7 +19,7 @@ package test_support.entity;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.Entity;
 
-@Entity(name = "psmlock_LockableChildEntity")
+@Entity(name = "pslock_LockableChildEntity")
 @JmixEntity
 public class LockableChildEntity extends LockableParentEntity {
 }

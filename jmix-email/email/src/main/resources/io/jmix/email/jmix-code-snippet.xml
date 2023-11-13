@@ -18,7 +18,7 @@
 
     <category name="Email">
 
-        <codeSnippet name="Send email" contextTypes="service,controller">
+        <codeSnippet name="Sending an email" contextTypes="service,controller">
             <inject variable="emailer" classQualifiedName="io.jmix.email.Emailer"/>
 
             <stringInputParameter code="address" text="Address"/>
@@ -86,7 +86,7 @@
 
         </codeSnippet>
 
-        <codeSnippet name="Send email async" contextTypes="service,controller">
+        <codeSnippet name="Sending an asynchronous email" contextTypes="service,controller">
             <inject variable="emailer" classQualifiedName="io.jmix.email.Emailer"/>
 
             <stringInputParameter code="address" text="Address"/>
@@ -154,7 +154,7 @@
 
         </codeSnippet>
 
-        <codeSnippet name="Create attachment from File Ref" contextTypes="service,controller">
+        <codeSnippet name="Create an attachment from File Ref" contextTypes="service,controller">
             <inject variable="fileStorage" classQualifiedName="io.jmix.core.FileStorage"/>
 
             <stringInputParameter code="fileName" text="File name"/>
@@ -207,7 +207,7 @@
 
         </codeSnippet>
 
-        <codeSnippet name="Create attachment from resources" contextTypes="service,controller">
+        <codeSnippet name="Create an attachment from resources" contextTypes="service,controller">
             <inject variable="resources" classQualifiedName="io.jmix.core.Resources"/>
 
             <stringInputParameter code="fileName" text="File name"/>

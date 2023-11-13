@@ -31,7 +31,7 @@
                     <button id="addBtn" action="localizedEnumValuesDataGrid.add"/>
                 </hbox>
                 <dataGrid id="localizedEnumValuesDataGrid"
-                          dataContainer="localizedEnumValuesDc" width="100%" height="100%" editorBuffered="true">
+                          dataContainer="localizedEnumValuesDc" width="100%" minHeight="20em" editorBuffered="true">
                     <actions>
                         <action id="add" text="msg:///actions.Add"/>
                     </actions>

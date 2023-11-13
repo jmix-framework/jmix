@@ -46,3 +46,7 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+vaadin {
+    optimizeBundle = false
+}

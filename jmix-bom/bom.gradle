@@ -20,6 +20,18 @@ plugins {
 }
 
 repositories {
+    if (rootProject.hasProperty('jmixPhoenixRepoUrl')) {
+        maven {
+            url rootProject['jmixPhoenixRepoUrl']
+
+            if (rootProject.hasProperty('jmixPhoenixRepoUser') && rootProject.hasProperty('jmixPhoenixRepoPassword')) {
+                credentials {
+                    username rootProject['jmixPhoenixRepoUser']
+                    password rootProject['jmixPhoenixRepoPassword']
+                }
+            }
+        }
+    }
     if (rootProject.hasProperty('jmixRepoUrl')) {
         maven {
             url rootProject['jmixRepoUrl']
@@ -398,8 +410,7 @@ dependencies {
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        // Using snapshot YARG dependency during development - it's required to build YARG with updated dependencies.
-        def yargVersion = '2.2-SNAPSHOT'
+        def yargVersion = '2.2.21.phoenix.1'
         api "com.haulmont.yarg:yarg-api:$yargVersion"
         api "com.haulmont.yarg:yarg:$yargVersion"
 

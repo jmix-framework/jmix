@@ -18,7 +18,7 @@
 
     <category name="Reports">
 
-        <codeSnippet name="Run report by code" contextTypes="service,controller">
+        <codeSnippet name="Running a report using a report code" contextTypes="service,controller">
 
             <inject variable="reportRunner" classQualifiedName="io.jmix.reports.runner.ReportRunner"/>
 
@@ -83,7 +83,7 @@
             </description>
         </codeSnippet>
 
-        <codeSnippet name="Run report by report entity" contextTypes="service,controller">
+        <codeSnippet name="Running a report using a report entity" contextTypes="service,controller">
             <inject variable="reportRunner" classQualifiedName="io.jmix.reports.runner.ReportRunner"/>
 
             <variableInputParameter code="report" text="Report" jmixEntity="true"/>

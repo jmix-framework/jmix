@@ -22,6 +22,7 @@ import com.google.gson.JsonPrimitive;
 import io.jmix.rest.impl.service.EntitiesControllerManager;
 import io.jmix.rest.impl.service.filter.data.EntitiesSearchResult;
 import io.jmix.rest.impl.service.filter.data.ResponseInfo;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller that performs CRUD entity operations
@@ -46,18 +45,16 @@ public class EntitiesController {
     @GetMapping("/{entityName}/{entityId}")
     public String loadEntity(@PathVariable String entityName,
                              @PathVariable String entityId,
-                             @RequestParam(required = false) String view,
                              @RequestParam(required = false) String fetchPlan,
                              @RequestParam(required = false) Boolean returnNulls,
                              @RequestParam(required = false) Boolean dynamicAttributes,
                              @RequestParam(required = false) String modelVersion) {
-        return entitiesControllerManager.loadEntity(entityName, entityId, StringUtils.defaultString(fetchPlan, view),
+        return entitiesControllerManager.loadEntity(entityName, entityId, fetchPlan,
                 returnNulls, dynamicAttributes, modelVersion);
     }
 
     @GetMapping("/{entityName}")
     public ResponseEntity<String> loadEntitiesList(@PathVariable String entityName,
-                                                   @RequestParam(required = false) String view,
                                                    @RequestParam(required = false) String fetchPlan,
                                                    @RequestParam(required = false) Integer limit,
                                                    @RequestParam(required = false) Integer offset,
@@ -66,8 +63,8 @@ public class EntitiesController {
                                                    @RequestParam(required = false) Boolean returnCount,
                                                    @RequestParam(required = false) Boolean dynamicAttributes,
                                                    @RequestParam(required = false) String modelVersion) {
-        EntitiesSearchResult entitiesSearchResult = entitiesControllerManager.loadEntitiesList(entityName, StringUtils.defaultString(fetchPlan, view), limit,
-                offset, sort, returnNulls, returnCount, dynamicAttributes, modelVersion);
+        EntitiesSearchResult entitiesSearchResult = entitiesControllerManager.loadEntitiesList(entityName, fetchPlan,
+                limit, offset, sort, returnNulls, returnCount, dynamicAttributes, modelVersion);
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(HttpStatus.OK);
         if (BooleanUtils.isTrue(returnCount)) {
             responseBuilder.header("X-Total-Count", entitiesSearchResult.getCount().toString());
@@ -78,7 +75,6 @@ public class EntitiesController {
     @GetMapping("/{entityName}/search")
     public ResponseEntity<String> searchEntitiesListGet(@PathVariable String entityName,
                                                         @RequestParam String filter,
-                                                        @RequestParam(required = false) String view,
                                                         @RequestParam(required = false) String fetchPlan,
                                                         @RequestParam(required = false) Integer limit,
                                                         @RequestParam(required = false) Integer offset,
@@ -88,7 +84,7 @@ public class EntitiesController {
                                                         @RequestParam(required = false) Boolean dynamicAttributes,
                                                         @RequestParam(required = false) String modelVersion) {
         EntitiesSearchResult entitiesSearchResult = entitiesControllerManager.searchEntities(entityName, filter,
-                StringUtils.defaultString(fetchPlan, view), limit, offset, sort, returnNulls, returnCount, dynamicAttributes, modelVersion);
+                fetchPlan, limit, offset, sort, returnNulls, returnCount, dynamicAttributes, modelVersion);
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(HttpStatus.OK);
         if (BooleanUtils.isTrue(returnCount)) {
             responseBuilder.header("X-Total-Count", entitiesSearchResult.getCount().toString());

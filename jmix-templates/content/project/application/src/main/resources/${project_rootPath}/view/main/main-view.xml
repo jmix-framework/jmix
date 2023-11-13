@@ -32,5 +32,7 @@
                 </footer>
             </section>
         </drawerLayout>
+        <initialLayout>
+        </initialLayout>
     </appLayout>
 </mainView>

@@ -19,6 +19,7 @@ package io.jmix.flowui.view.navigation;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
+import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
@@ -80,7 +81,8 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
             String viewId = navigator.getViewId().get();
             return viewRegistry.getViewInfo(viewId).getControllerClass();
         } else if (navigator.getViewClass().isPresent()) {
-            return navigator.getViewClass().get();
+            String id = ViewDescriptorUtils.getInferredViewId(navigator.getViewClass().get());
+            return viewRegistry.getViewInfo(id).getControllerClass();
         } else {
             return inferViewClass(navigator);
         }

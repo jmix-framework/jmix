@@ -16,6 +16,7 @@
 
 import '@vaadin/input-container/src/vaadin-input-container.js';
 import { html } from '@polymer/polymer';
+import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ComboBox } from '@vaadin/combo-box/src/vaadin-combo-box.js';
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
@@ -23,7 +24,7 @@ registerStyles('jmix-combo-box-picker', [],{
     moduleId: 'jmix-combo-box-picker-styles'
 });
 
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.0.3]
+// CAUTION: copied from @vaadin/combo-box [last update Vaadin 24.2.1]
 export class JmixComboBoxPicker extends ComboBox {
 
     static get is() {
@@ -102,4 +103,4 @@ export class JmixComboBoxPicker extends ComboBox {
     }
 }
 
-customElements.define(JmixComboBoxPicker.is, JmixComboBoxPicker);
+defineCustomElement(JmixComboBoxPicker);

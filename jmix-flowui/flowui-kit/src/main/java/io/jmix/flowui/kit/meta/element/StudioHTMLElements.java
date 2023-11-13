@@ -33,6 +33,7 @@ public interface StudioHTMLElements {
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -64,6 +65,7 @@ public interface StudioHTMLElements {
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -93,14 +95,4 @@ public interface StudioHTMLElements {
             target = "com.vaadin.flow.component.Html"
     )
     void htmlContent();
-
-    @StudioElement(
-            name = "File Content",
-            xmlElement = "file",
-            target = "com.vaadin.flow.component.Html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "path", type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
-    void fileContent();
 }

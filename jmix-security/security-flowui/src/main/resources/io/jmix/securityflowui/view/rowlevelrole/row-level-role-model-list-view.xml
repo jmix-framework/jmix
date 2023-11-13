@@ -46,6 +46,7 @@
         </hbox>
         <dataGrid id="roleModelsTable"
                   dataContainer="roleModelsDc"
+                  columnReorderingAllowed="true"
                   minHeight="20em"
                   width="100%">
             <actions>
@@ -56,7 +57,7 @@
                 <action id="exportJSON" text="msg://actions.exportJSON"/>
                 <action id="exportZIP" text="msg://actions.exportZIP"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="name" resizable="true"/>
                 <column property="code" resizable="true"/>
                 <column property="source" resizable="true"/>

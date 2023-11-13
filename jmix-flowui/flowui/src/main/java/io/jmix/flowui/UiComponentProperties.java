@@ -52,6 +52,11 @@ public class UiComponentProperties {
     boolean filterAutoApply;
 
     /**
+     * Shortcut for applying {@link GenericFilter}
+     */
+    String filterApplyShortcut;
+
+    /**
      * Number of nested properties in the {@link AddConditionView}. I.e. if the depth is 2, then you'll be able to
      * select a property "contractor.city.country", if the value is 3, then "contractor.city.country.name", etc.
      */
@@ -61,6 +66,11 @@ public class UiComponentProperties {
      * Whether field for filter configuration id should be visible in the {@link FilterConfigurationDetail}.
      */
     boolean filterShowConfigurationIdField;
+
+    /**
+     * Whether validation of filter configuration name uniqueness should be enabled
+     */
+    boolean filterConfigurationUniqueNamesEnabled;
 
     public UiComponentProperties(
             String gridCreateShortcut,
@@ -75,8 +85,10 @@ public class UiComponentProperties {
             String pickerClearShortcut,
             @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageItems,
             @DefaultValue("true") boolean filterAutoApply,
+            String filterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
-            @DefaultValue("false") boolean filterShowConfigurationIdField) {
+            @DefaultValue("false") boolean filterShowConfigurationIdField,
+            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -92,8 +104,10 @@ public class UiComponentProperties {
         this.paginationItemsPerPageItems = paginationItemsPerPageItems;
 
         this.filterAutoApply = filterAutoApply;
+        this.filterApplyShortcut = filterApplyShortcut;
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
+        this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
     }
 
     public String getGridCreateShortcut() {
@@ -151,6 +165,13 @@ public class UiComponentProperties {
     }
 
     /**
+     * @see #filterApplyShortcut
+     */
+    public String getFilterApplyShortcut() {
+        return filterApplyShortcut;
+    }
+
+    /**
      * @see #filterPropertiesHierarchyDepth
      */
     public int getFilterPropertiesHierarchyDepth() {
@@ -162,5 +183,12 @@ public class UiComponentProperties {
      */
     public boolean isFilterShowConfigurationIdField() {
         return filterShowConfigurationIdField;
+    }
+
+    /**
+     * @see #filterConfigurationUniqueNamesEnabled
+     */
+    public boolean isFilterConfigurationUniqueNamesEnabled() {
+        return filterConfigurationUniqueNamesEnabled;
     }
 }

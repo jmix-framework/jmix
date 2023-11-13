@@ -1,0 +1,10 @@
+<%
+def components = []
+StringBuilder builder = new StringBuilder()
+injects.each { inject ->
+    builder.append("\n\t@io.jmix.bpmflowui.processform.annotation.ProcessVariable\n")
+    builder.append("\t@io.jmix.flowui.view.ViewComponent\n")
+    builder.append("\tprivate ${inject.getClassName()} ${inject.getVariableName()};")
+}
+components << builder.toString()
+components.each {%>$it<%}%>

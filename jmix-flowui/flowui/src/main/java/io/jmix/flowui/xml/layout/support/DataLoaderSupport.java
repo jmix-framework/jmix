@@ -18,7 +18,12 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import io.jmix.core.ClassManager;
+import com.vaadin.flow.data.provider.Query;
+import io.jmix.core.*;
+import io.jmix.core.common.util.ParamsMap;
+import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.impl.FetchPlanLoader;
+import io.jmix.flowui.component.SupportsItemsFetchCallback;
 import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.data.SupportsValueSource;
@@ -27,6 +32,7 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.sys.substitutor.StringSubstitutor;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
@@ -35,23 +41,38 @@ import io.jmix.flowui.xml.layout.LoaderResolver;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkState;
 
 @org.springframework.stereotype.Component("flowui_DataLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DataLoaderSupport {
+public class DataLoaderSupport implements ApplicationContextAware {
+
+    protected static final String ITEMS_QUERY_ELEMENT = "itemsQuery";
+    protected static final String VALUE_PARAMETER = "value";
 
     protected Context context;
+    protected ApplicationContext applicationContext;
     protected LoaderResolver loaderResolver;
     protected ClassManager classManager;
+    protected LoaderSupport loaderSupport;
+    protected Metadata metadata;
+    protected FetchPlanLoader fetchPlanLoader;
+    protected FetchPlanRepository fetchPlanRepository;
 
     public DataLoaderSupport(Context context) {
         this.context = context;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Autowired
@@ -62,6 +83,26 @@ public class DataLoaderSupport {
     @Autowired
     public void setClassManager(ClassManager classManager) {
         this.classManager = classManager;
+    }
+
+    @Autowired
+    public void setLoaderSupport(LoaderSupport loaderSupport) {
+        this.loaderSupport = loaderSupport;
+    }
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setFetchPlanLoader(FetchPlanLoader fetchPlanLoader) {
+        this.fetchPlanLoader = fetchPlanLoader;
+    }
+
+    @Autowired
+    public void setFetchPlanRepository(FetchPlanRepository fetchPlanRepository) {
+        this.fetchPlanRepository = fetchPlanRepository;
     }
 
     public void loadData(SupportsValueSource<?> component, Element element) {
@@ -108,6 +149,178 @@ public class DataLoaderSupport {
         if (component instanceof SupportsItemsEnum) {
             loadItemsEnum(((SupportsItemsEnum<?>) component), element);
         }
+    }
+
+    /**
+     * Loads {@code itemsQuery} element that may contain a query to load either entities or scalar values.
+     *
+     * @param component a component to set a result
+     * @param element   an xml definition
+     * @see #loadEntityItemsQuery(SupportsItemsFetchCallback, Element)
+     * @see #loadValueItemsQuery(SupportsItemsFetchCallback, Element)
+     */
+    public void loadItemsQuery(SupportsItemsFetchCallback<?, String> component, Element element) {
+        Element itemsElement = element.element(ITEMS_QUERY_ELEMENT);
+        if (itemsElement == null) {
+            return;
+        }
+
+        loaderSupport.loadString(itemsElement, "class")
+                .map(ReflectionHelper::getClass).ifPresentOrElse(
+                        entityClass -> loadEntityItemsQueryInternal(component, itemsElement, entityClass),
+                        () -> loadValueItemsQueryInternal(component, itemsElement));
+    }
+
+    /**
+     * Loads {@code itemsQuery} element that contains a query to load entities only.
+     *
+     * @param component a component to set a result
+     * @param element   an xml definition
+     * @see #loadItemsQuery(SupportsItemsFetchCallback, Element)
+     * @see #loadValueItemsQuery(SupportsItemsFetchCallback, Element)
+     */
+    public void loadEntityItemsQuery(SupportsItemsFetchCallback<?, String> component, Element element) {
+        Element itemsElement = element.element(ITEMS_QUERY_ELEMENT);
+        if (itemsElement == null) {
+            return;
+        }
+
+        Class<?> entityClass = loaderSupport.loadString(itemsElement, "class")
+                .map(ReflectionHelper::getClass)
+                .orElseThrow(() ->
+                        new GuiDevelopmentException(String.format("Field 'class' is empty in component %s.",
+                                ((Component) component).getId()), getComponentContext()));
+
+        loadEntityItemsQueryInternal(component, itemsElement, entityClass);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void loadEntityItemsQueryInternal(SupportsItemsFetchCallback<?, String> component,
+                                                Element itemsElement, Class<?> entityClass) {
+        String queryString = loadQuery((Component) component, itemsElement);
+        String searchStringFormat = loadSearchStringFormat(itemsElement);
+        boolean escapeValue = loadEscapeValueForLike(itemsElement);
+
+        FetchPlan fetchPlan = loadFetchPlan(itemsElement, entityClass);
+
+        DataManager dataManager = applicationContext.getBean(DataManager.class);
+        component.setItemsFetchCallback(query -> {
+            String searchString = getSearchString(query, searchStringFormat, escapeValue);
+
+            FluentLoader.ByQuery loader = dataManager.load(entityClass)
+                    .query(queryString)
+                    .parameter("searchString", searchString)
+                    .firstResult(query.getOffset())
+                    .maxResults(query.getLimit());
+            if (fetchPlan != null) {
+                loader.fetchPlan(fetchPlan);
+            }
+
+            return loader.list().stream();
+        });
+    }
+
+    /**
+     * Loads {@code itemsQuery} element that contains a query to load scalar values only.
+     *
+     * @param component a component to set a result
+     * @param element   an xml definition
+     * @see #loadItemsQuery(SupportsItemsFetchCallback, Element)
+     * @see #loadEntityItemsQuery(SupportsItemsFetchCallback, Element)
+     */
+    public void loadValueItemsQuery(SupportsItemsFetchCallback<?, String> component, Element element) {
+        Element itemsElement = element.element(ITEMS_QUERY_ELEMENT);
+        if (itemsElement == null) {
+            return;
+        }
+
+        loadValueItemsQueryInternal(component, itemsElement);
+    }
+
+    protected void loadValueItemsQueryInternal(SupportsItemsFetchCallback<?, String> component,
+                                               Element itemsElement) {
+        String queryString = loadQuery((Component) component, itemsElement);
+        String searchStringFormat = loadSearchStringFormat(itemsElement);
+        boolean escapeValue = loadEscapeValueForLike(itemsElement);
+
+        DataManager dataManager = applicationContext.getBean(DataManager.class);
+        component.setItemsFetchCallback(query -> {
+            String searchString = getSearchString(query, searchStringFormat, escapeValue);
+
+            return dataManager.loadValues(queryString)
+                    .properties(VALUE_PARAMETER)
+                    .parameter("searchString", searchString)
+                    .firstResult(query.getOffset())
+                    .maxResults(query.getLimit())
+                    .list().stream()
+                    .map(entity -> entity.getValue(VALUE_PARAMETER));
+        });
+    }
+
+    protected String loadQuery(Component component, Element itemsElement) {
+        Element queryElement = itemsElement.element("query");
+        if (queryElement == null) {
+            throw new GuiDevelopmentException(String.format("Nested 'query' element is missing " +
+                            "for '%s' element in component %s.",
+                    ITEMS_QUERY_ELEMENT, component.getId()), getComponentContext());
+        }
+
+        return queryElement.getTextTrim();
+    }
+
+    @Nullable
+    protected String loadSearchStringFormat(Element itemsElement) {
+        return loaderSupport
+                .loadString(itemsElement, "searchStringFormat")
+                .orElse(null);
+    }
+
+    protected Boolean loadEscapeValueForLike(Element itemsElement) {
+        return loaderSupport
+                .loadBoolean(itemsElement, "escapeValueForLike")
+                .orElse(false);
+    }
+
+    @Nullable
+    protected FetchPlan loadFetchPlan(Element itemsElement, Class<?> entityClass) {
+        Element fetchPlanElement = itemsElement.element("fetchPlan");
+        if (fetchPlanElement != null) {
+            return loadInlineFetchPlan(fetchPlanElement, entityClass);
+        }
+
+        return loaderSupport.loadString(itemsElement, "fetchPlan")
+                .map(fetchPlanName ->
+                        fetchPlanRepository.getFetchPlan(entityClass, fetchPlanName))
+                .orElse(null);
+    }
+
+    protected FetchPlan loadInlineFetchPlan(Element fetchPlanElement, Class<?> entityClass) {
+        FetchPlanLoader.FetchPlanInfo fetchPlanInfo = fetchPlanLoader
+                .getFetchPlanInfo(fetchPlanElement, metadata.getClass(entityClass));
+
+        FetchPlanBuilder builder = fetchPlanLoader.getFetchPlanBuilder(fetchPlanInfo, name ->
+                fetchPlanRepository.getFetchPlan(fetchPlanInfo.getMetaClass(), name));
+
+        fetchPlanLoader.loadFetchPlanProperties(fetchPlanElement, builder,
+                fetchPlanInfo.isSystemProperties(), (metaClass, fetchPlanName) ->
+                        fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName));
+
+        return builder.build();
+    }
+
+    protected String getSearchString(Query<?, String> query,
+                                     @Nullable String searchStringFormat, boolean escapeValue) {
+        String searchString = query.getFilter().orElse("");
+        if (escapeValue) {
+            searchString = QueryUtils.escapeForLike(searchString);
+        }
+
+        if (!Strings.isNullOrEmpty(searchStringFormat)) {
+            StringSubstitutor substitutor = applicationContext.getBean(StringSubstitutor.class);
+            searchString = substitutor.substitute(searchStringFormat, ParamsMap.of("inputString", searchString));
+        }
+
+        return searchString;
     }
 
     public <E> void loadItemsContainer(SupportsItemsContainer<E> component, Element element) {

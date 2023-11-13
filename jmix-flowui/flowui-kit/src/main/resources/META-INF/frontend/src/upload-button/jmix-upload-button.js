@@ -16,6 +16,7 @@
 import '@vaadin/button/src/vaadin-button.js';
 import '@vaadin/dialog/src/vaadin-dialog.js';
 import {html, render} from 'lit';
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 
 import {Upload} from '@vaadin/upload/src/vaadin-upload.js';
 
@@ -270,6 +271,6 @@ class JmixUploadButton extends Upload {
     }
 }
 
-customElements.define(JmixUploadButton.is, JmixUploadButton);
+defineCustomElement(JmixUploadButton);
 
 export {JmixUploadButton};

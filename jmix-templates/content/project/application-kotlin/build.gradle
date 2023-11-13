@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '2.0.0-RC1'
+    id 'io.jmix' version '2.1.0'
     id 'org.jetbrains.kotlin.jvm' version '1.7.20'
     id 'java'
 }
@@ -24,6 +24,7 @@ ${additionalRepository}<%}}%>
 dependencies {
     implementation 'io.jmix.core:jmix-core-starter'
     implementation 'io.jmix.data:jmix-eclipselink-starter'
+    implementation 'io.jmix.security:jmix-security-starter'
     implementation 'io.jmix.security:jmix-security-flowui-starter'
     implementation 'io.jmix.security:jmix-security-data-starter'
     implementation 'io.jmix.localfs:jmix-localfs-starter'
@@ -32,8 +33,6 @@ dependencies {
     implementation 'io.jmix.flowui:jmix-flowui-themes'
     implementation 'io.jmix.datatools:jmix-datatools-starter'
     implementation 'io.jmix.datatools:jmix-datatools-flowui-starter'
-
-    implementation 'io.jmix.flowui:jmix-flowui-kit'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -47,4 +46,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+vaadin {
+    optimizeBundle = false
 }

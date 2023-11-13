@@ -19,10 +19,12 @@ package io.jmix.flowui.xml.layout.loader.component;
 import io.jmix.flowui.component.textfield.JmixIntegerField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
 public class IntegerFieldLoader extends AbstractComponentLoader<JmixIntegerField> {
 
     protected DataLoaderSupport dataLoaderSupport;
+    protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
     protected JmixIntegerField createComponent() {
@@ -30,8 +32,16 @@ public class IntegerFieldLoader extends AbstractComponentLoader<JmixIntegerField
     }
 
     @Override
+    public void initComponent() {
+        super.initComponent();
+
+        getPrefixSuffixLoaderSupport().createPrefixSuffixComponents(resultComponent, element);
+    }
+
+    @Override
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
+        getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
         loadInteger(element, "max", resultComponent::setMax);
         loadInteger(element, "min", resultComponent::setMin);
@@ -67,5 +77,12 @@ public class IntegerFieldLoader extends AbstractComponentLoader<JmixIntegerField
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
+        if (prefixSuffixLoaderSupport == null) {
+            prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
+        }
+        return prefixSuffixLoaderSupport;
     }
 }

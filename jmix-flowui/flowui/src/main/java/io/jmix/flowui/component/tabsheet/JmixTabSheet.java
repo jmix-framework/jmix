@@ -42,7 +42,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [since Vaadin 24.1.1]
+// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [last update Vaadin 24.2.1]
 @Tag("jmix-tabsheet")
 @JsModule("./src/tabsheet/jmix-tabsheet.js")
 public class JmixTabSheet extends Component

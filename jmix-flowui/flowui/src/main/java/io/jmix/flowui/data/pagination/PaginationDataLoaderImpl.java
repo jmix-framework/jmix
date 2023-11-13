@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.data.pagination;
 
+import io.jmix.core.DataLoadContext;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.ValueLoadContext;
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -49,7 +51,7 @@ public class PaginationDataLoaderImpl implements PaginationDataLoader {
     protected WeakCollectionChangeListener<?> weakContainerCollectionChangeListener;
 
     protected Consumer<CollectionChangeEvent<?>> containerCollectionChangeListener;
-    protected Function<LoadContext, Integer> totalCountDelegate;
+    protected Function<DataLoadContext, Integer> totalCountDelegate;
 
     public PaginationDataLoaderImpl(BaseCollectionLoader loader) {
         Preconditions.checkNotNullArgument(loader);
@@ -97,15 +99,21 @@ public class PaginationDataLoaderImpl implements PaginationDataLoader {
     @Override
     public int getCount() {
         if (totalCountDelegate != null) {
-            LoadContext<?> context = ((CollectionLoader<?>) loader).createLoadContext();
-            return totalCountDelegate.apply(context);
+            if (loader instanceof CollectionLoader<?> collectionLoader) {
+                return totalCountDelegate.apply(collectionLoader.createLoadContext());
+            } else if (loader instanceof KeyValueCollectionLoader valueCollectionLoader) {
+                return totalCountDelegate.apply(valueCollectionLoader.createLoadContext());
+            } else {
+                log.warn("Unsupported loader type: {}", loader.getClass().getName());
+                return 0;
+            }
         }
 
-        if (loader instanceof CollectionLoader) {
-            LoadContext<?> context = ((CollectionLoader<?>) loader).createLoadContext();
+        if (loader instanceof CollectionLoader<?> collectionLoader) {
+            LoadContext<?> context = collectionLoader.createLoadContext();
             return (int) dataManager.getCount(context);
-        } else if (loader instanceof KeyValueCollectionLoader) {
-            ValueLoadContext context = ((KeyValueCollectionLoader) loader).createLoadContext();
+        } else if (loader instanceof KeyValueCollectionLoader valueCollectionLoader) {
+            ValueLoadContext context = valueCollectionLoader.createLoadContext();
             return (int) dataManager.getCount(context);
         } else {
             log.warn("Unsupported loader type: {}", loader.getClass().getName());
@@ -141,12 +149,12 @@ public class PaginationDataLoaderImpl implements PaginationDataLoader {
 
     @Nullable
     @Override
-    public Function<LoadContext, Integer> getTotalCountDelegate() {
+    public Function<DataLoadContext, Integer> getTotalCountDelegate() {
         return totalCountDelegate;
     }
 
     @Override
-    public void setTotalCountDelegate(@Nullable Function<LoadContext, Integer> totalCountDelegate) {
+    public void setTotalCountDelegate(@Nullable Function<DataLoadContext, Integer> totalCountDelegate) {
         this.totalCountDelegate = totalCountDelegate;
     }
 }

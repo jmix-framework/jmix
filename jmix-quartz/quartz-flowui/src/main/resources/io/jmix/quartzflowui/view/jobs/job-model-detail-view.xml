@@ -37,6 +37,7 @@
                     </hbox>
                     <dataGrid id="triggerModelTable"
                               dataContainer="triggerModelDc"
+                              columnReorderingAllowed="true"
                               width="100%" minHeight="20em">
                         <actions>
                             <action id="create" type="list_create"/>
@@ -44,7 +45,7 @@
                             <action id="read" type="list_read"/>
                             <action id="remove" type="list_remove"/>
                         </actions>
-                        <columns>
+                        <columns resizable="true">
                             <column property="triggerName" resizable="true"/>
                             <column property="triggerGroup" resizable="true"/>
                             <column property="scheduleType" resizable="true"/>
@@ -65,6 +66,7 @@
                     <dataGrid id="jobDataParamsTable"
                               dataContainer="jobDataParamsDc"
                               width="100%" minHeight="20em"
+                              columnReorderingAllowed="true"
                               editorBuffered="true">
                         <actions>
                             <action id="addNewDataParam"
@@ -72,7 +74,7 @@
                                     icon="PLUS"/>
                             <action id="remove" type="list_remove"/>
                         </actions>
-                        <columns>
+                        <columns resizable="true">
                             <column property="key" editable="true"/>
                             <column property="value" editable="true"/>
 

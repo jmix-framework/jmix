@@ -68,13 +68,13 @@ class TextFieldXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             datatype.class == IntegerDatatype
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxLength == 50
@@ -86,7 +86,6 @@ class TextFieldXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])

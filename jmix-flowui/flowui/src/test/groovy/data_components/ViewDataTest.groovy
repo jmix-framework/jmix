@@ -73,8 +73,8 @@ class ViewDataTest extends DataContextSpec {
         dataContext != null
         userCont != null
         usersCont != null
-        userCont.view == fetchPlanRepository.getFetchPlan(User, 'user.edit')
-        usersCont.view == fetchPlanRepository.getFetchPlan(User, 'user.browse')
+        userCont.fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.edit')
+        usersCont.fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.browse')
     }
 
     def "containers with loaders"() {
@@ -90,10 +90,30 @@ class ViewDataTest extends DataContextSpec {
                     </loader>
                 </instance>
 
+                <instance id="userContReadOnly"
+                          class="test_support.entity.sec.User" fetchPlan="user.edit">
+                          
+                    <loader id="userLoaderReadOnly" readOnly="true">
+                        <query>
+                            select u from sec$User u where u.id = 1
+                        </query>
+                    </loader>
+                </instance>
+
                 <collection id="usersCont"
                             class="test_support.entity.sec.User" fetchPlan="user.browse">
             
                     <loader id="usersLoader">
+                        <query>
+                            select u from sec$User u
+                        </query>
+                    </loader>
+                </collection>
+                
+                <collection id="usersContReadOnly"
+                            class="test_support.entity.sec.User" fetchPlan="user.browse">
+            
+                    <loader id="usersLoaderReadOnly" readOnly="true">
                         <query>
                             select u from sec$User u
                         </query>
@@ -146,9 +166,11 @@ class ViewDataTest extends DataContextSpec {
         DataContext dataContext = viewData.dataContext
         InstanceContainer<User> userCont = viewData.getContainer('userCont')
         InstanceLoader<User> userLoader = viewData.getLoader('userLoader')
+        InstanceLoader<User> userLoaderReadOnly = viewData.getLoader('userLoaderReadOnly')
         CollectionContainer<User> usersCont = viewData.getContainer('usersCont')
         CollectionContainer<User> usersCont1 = viewData.getContainer('usersCont1')
         CollectionLoader<User> usersLoader = viewData.getLoader('usersLoader')
+        CollectionLoader<User> usersLoaderReadOnly = viewData.getLoader('usersLoaderReadOnly')
         KeyValueCollectionContainer userInfoCont = viewData.getContainer('userInfoCont')
         KeyValueCollectionLoader userInfoLoader = viewData.getLoader('userInfoLoader')
         KeyValueContainer userInfoInstanceCont = viewData.getContainer('userInfoInstanceCont')
@@ -164,6 +186,8 @@ class ViewDataTest extends DataContextSpec {
         userLoader.container == userCont
         userLoader.query == 'select u from sec$User u where u.id = 1'
 
+        userLoaderReadOnly.dataContext == null
+
         usersCont != null
         usersLoader != null
         usersCont instanceof HasLoader
@@ -174,6 +198,8 @@ class ViewDataTest extends DataContextSpec {
         usersLoader.firstResult == 0
         usersLoader.maxResults == Integer.MAX_VALUE
         !usersLoader.cacheable
+
+        usersLoaderReadOnly.dataContext == null
 
         viewData.getLoaderIds().find { String id -> viewData.getLoader(id) == usersCont1.loader } != null
 

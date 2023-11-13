@@ -61,11 +61,11 @@ class CheckboxGroupXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(rbgView.checkboxGroup) {
             id.get() == "checkboxGroup"
             classNames.containsAll(["className", "className1"])
+            style.get("color") == "red"
             enabled
             errorMessage == "errorMessage"
             height == "100%"
             helperText == "helperText"
-            !invalid
             label == "label"
             maxHeight == "200px"
             maxWidth == "200px"
@@ -73,7 +73,6 @@ class CheckboxGroupXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "100px"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessage"
             themeNames.containsAll([CheckboxGroupVariant.LUMO_HELPER_ABOVE_FIELD.getVariantName(),
                                     CheckboxGroupVariant.LUMO_VERTICAL.getVariantName()])

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.grid;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
@@ -26,24 +27,26 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
-import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
         EnhancedTreeDataGrid<E>, ApplicationContextAware, InitializingBean {
@@ -150,6 +153,11 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         return selectionModel;
     }
 
+    @Override
+    protected BiFunction<Renderer<E>, String, Column<E>> getDefaultColumnFactory() {
+        return gridDelegate.getDefaultColumnFactory();
+    }
+
     @Nullable
     @Override
     public MetaPropertyPath getColumnMetaPropertyPath(Column<E> column) {
@@ -163,7 +171,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
      * @return added column
      */
     @Override
-    public Column<E> addColumn(MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addColumn(MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
 
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
@@ -179,7 +187,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
      * @return added column
      */
     @Override
-    public Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
         Preconditions.checkNotNullArgument(key);
 
@@ -187,7 +195,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     }
 
     @Override
-    public Column<E> addHierarchyColumn(MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addHierarchyColumn(MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
 
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
@@ -195,7 +203,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     }
 
     @Override
-    public Column<E> addHierarchyColumn(String key, MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addHierarchyColumn(String key, MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
         Preconditions.checkNotNullArgument(key);
 
@@ -203,21 +211,63 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     }
 
     @Override
-    public Column<E> addColumn(ValueProvider<E, ?> valueProvider) {
+    public DataGridColumn<E> addColumn(ValueProvider<E, ?> valueProvider) {
         Column<E> column = super.addColumn(valueProvider);
         return gridDelegate.addColumn(column);
     }
 
     @Override
-    public Column<E> addColumn(Renderer<E> renderer) {
+    public DataGridColumn<E> addColumn(Renderer<E> renderer) {
         Column<E> column = super.addColumn(renderer);
         return gridDelegate.addColumn(column);
     }
 
     @Nullable
     @Override
-    public Column<E> getColumnByKey(String columnKey) {
+    public DataGridColumn<E> getColumnByKey(String columnKey) {
         return gridDelegate.getColumnByKey(columnKey);
+    }
+
+    @Override
+    public DataGridColumn<E> addHierarchyColumn(ValueProvider<E, ?> valueProvider) {
+        return (DataGridColumn<E>) super.addHierarchyColumn(valueProvider);
+    }
+
+    @Override
+    public <V extends Component> DataGridColumn<E> addComponentColumn(ValueProvider<E, V> componentProvider) {
+        return (DataGridColumn<E>) super.addComponentColumn(componentProvider);
+    }
+
+    @Override
+    public <V extends Comparable<? super V>> DataGridColumn<E> addColumn(ValueProvider<E, V> valueProvider,
+                                                                         String... sortingProperties) {
+        return (DataGridColumn<E>) super.addColumn(valueProvider, sortingProperties);
+    }
+
+    @Override
+    public DataGridColumn<E> addColumn(String propertyName) {
+        return (DataGridColumn<E>) super.addColumn(propertyName);
+    }
+
+    @Override
+    public <V extends Component> DataGridColumn<E> addComponentHierarchyColumn(ValueProvider<E, V> componentProvider) {
+        return (DataGridColumn<E>) super.addComponentHierarchyColumn(componentProvider);
+    }
+
+    @Override
+    public DataGridColumn<E> setHierarchyColumn(String propertyName) {
+        return (DataGridColumn<E>) super.setHierarchyColumn(propertyName);
+    }
+
+    @Override
+    public DataGridColumn<E> setHierarchyColumn(String propertyName, ValueProvider<E, ?> valueProvider) {
+        return (DataGridColumn<E>) super.setHierarchyColumn(propertyName, valueProvider);
+    }
+
+    @Override
+    public DataGridColumn<E> setColumns(String hierarchyPropertyName, ValueProvider<E, ?> valueProvider,
+                                        Collection<String> propertyNames) {
+        return (DataGridColumn<E>) super.setColumns(hierarchyPropertyName, valueProvider, propertyNames);
     }
 
     @Override
@@ -232,8 +282,33 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     }
 
     @Override
-    public List<Column<E>> getVisibleColumns() {
-        return gridDelegate.getVisibleColumns();
+    public boolean isAggregatable() {
+        return gridDelegate.isAggregatable();
+    }
+
+    @Override
+    public void setAggregatable(boolean aggregatable) {
+        gridDelegate.setAggregatable(aggregatable);
+    }
+
+    @Override
+    public AggregationPosition getAggregationPosition() {
+        return gridDelegate.getAggregationPosition();
+    }
+
+    @Override
+    public void setAggregationPosition(AggregationPosition aggregationPosition) {
+        gridDelegate.setAggregationPosition(aggregationPosition);
+    }
+
+    @Override
+    public void addAggregation(Column<E> column, AggregationInfo info) {
+        gridDelegate.addAggregationInfo(column, info);
+    }
+
+    @Override
+    public Map<Grid.Column<E>, Object> getAggregationResults() {
+        return gridDelegate.getAggregationResults();
     }
 
     /**

@@ -18,19 +18,15 @@ package io.jmix.flowui.sys.event;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.spring.annotation.SpringComponent;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.sys.ViewControllerDependencyInjector;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.context.event.GenericApplicationListenerAdapter;
 import org.springframework.core.ResolvableType;
-import org.springframework.web.context.annotation.SessionScope;
 
 import org.springframework.lang.Nullable;
 import java.util.*;
@@ -44,18 +40,9 @@ import java.util.stream.Collectors;
  * @see UiEventListenerMethodAdapter
  */
 @Internal
-@SpringComponent("flowui_UiEventsMulticaster")
-@SessionScope
 public class UiEventsManager {
 
-    protected ApplicationContext applicationContext;
-
     protected Set<ComponentListeners> listeners = ConcurrentHashMap.newKeySet();
-
-    @Autowired
-    public UiEventsManager(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     /**
      * Adds application listener that should be invoked when corresponding application event is fired.

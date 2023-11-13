@@ -1,3 +1,39 @@
 vaadin-grid[theme~='no-header']::part(header-cell) {
   display: none;
 }
+
+/* Dialog overlay style like a popup */
+vaadin-dialog-overlay[class~='column-filter-popup']::part(backdrop) {
+  background: unset;
+}
+
+vaadin-dialog-overlay[class~='column-filter-dialog']::part(content) {
+  display: flex;
+  flex-direction: row;
+  gap: var(--lumo-space-s);
+  padding: var(--lumo-space-wide-m);
+}
+
+vaadin-dialog-overlay[class~='column-filter-popup']::part(overlay) {
+  align-self: flex-start;
+  position: absolute;
+}
+
+vaadin-dialog-overlay[class~='column-filter-footer-small']::slotted([slot='footer']) {
+  display: flex;
+  gap: var(--lumo-space-s);
+  width: 100%;
+}
+
+/* Styles for the column-filter button */
+[jmix-role='column-filter-button']:not([activated]):hover {
+  color: var(--lumo-contrast);
+}
+
+[jmix-role='column-filter-button']:not([activated]) {
+  color: var(--lumo-tertiary-text-color);
+}
+
+[jmix-role='column-filter-button']:is([activated]) {
+  color: var(--lumo-primary-text-color);
+}

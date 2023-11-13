@@ -19,6 +19,7 @@ package io.jmix.flowui.facet.urlqueryparameters;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
@@ -131,5 +132,11 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
 
     public void setParameter(@Nullable String parameter) {
         this.parameter = parameter;
+    }
+
+    @Nullable
+    @Override
+    public Component getComponent() {
+        return filter;
     }
 }

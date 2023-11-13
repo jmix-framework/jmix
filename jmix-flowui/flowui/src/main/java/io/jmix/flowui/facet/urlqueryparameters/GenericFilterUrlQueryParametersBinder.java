@@ -18,6 +18,7 @@ package io.jmix.flowui.facet.urlqueryparameters;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
@@ -389,5 +390,11 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
             singleFilterSupport = applicationContext.getBean(SingleFilterSupport.class);
         }
         return singleFilterSupport;
+    }
+
+    @Nullable
+    @Override
+    public Component getComponent() {
+        return filter;
     }
 }

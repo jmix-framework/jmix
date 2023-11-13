@@ -59,7 +59,7 @@ def initDefaultFieldAttrs(attr) {
 	}
 
 	if(attr.isEnumType()) {
-		field.tag = 'comboBox'
+		field.tag = 'select'
 	}
 
     if (attr.isDeepInheritor('java.lang.Boolean')) {
@@ -120,11 +120,13 @@ rootProperties.each { property ->
     }
 }%>
 <%allForms.each {id, form ->%>
-<formLayout id="${id}" dataContainer="${form.dcId}">
+<formLayout id="${id}" dataContainer="${form.dcId}"<% if (asideLabelsPosition) {%> labelsPosition="ASIDE"<% }%>>
 	<%form.fields.each {fieldId, field -> %>
-	<${field.tag} ${field.printAttrs()}<%if(field.text == null) {%>/><% } else {%>>
+	<% if (asideLabelsPosition) {%><formItem><%}%>
+		<${field.tag} ${field.printAttrs()}<%if(field.text == null) {%>/><% } else {%>>
 		${field.text}
 	</${field.tag}><%}%>
+	<% if (asideLabelsPosition) {%></formItem><%}%>
 	<%}%>
 </formLayout>
 <%}%>

@@ -50,6 +50,7 @@ public class SimplePaginationLoader extends AbstractComponentLoader<SimplePagina
                 .ifPresent(items -> resultComponent.setItemsPerPageItems(parseItemsPerPageOptions(items)));
 
         loadBoolean(element, "itemsPerPageVisible", resultComponent::setItemsPerPageVisible);
+        loadBoolean(element, "autoLoad", resultComponent::setAutoLoad);
 
         loadLoader(element);
     }

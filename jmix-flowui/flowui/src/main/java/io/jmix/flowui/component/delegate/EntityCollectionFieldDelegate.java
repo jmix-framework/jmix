@@ -67,11 +67,20 @@ public class EntityCollectionFieldDelegate<C extends AbstractField<?, Set<T>> & 
         this.metaClass = metaClass;
     }
 
-    @Nullable
     public Collection<V> convertToModel(Set<V> presentationValue, @Nullable Stream<V> options) {
-        Stream<V> items = options == null ? Stream.empty()
+        Stream<V> items = options == null
+                ? Stream.empty()
                 : options.filter(presentationValue::contains);
 
+        return convertToModelInternal(items);
+    }
+
+    public Collection<V> convertToModel(Set<V> presentationValue) {
+        Stream<V> items = presentationValue.stream();
+        return convertToModelInternal(items);
+    }
+
+    protected Collection<V> convertToModelInternal(Stream<V> items) {
         if (getValueSource() != null) {
             Class<Collection<V>> targetType = getValueSource().getType();
 

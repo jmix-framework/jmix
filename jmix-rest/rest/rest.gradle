@@ -40,8 +40,8 @@ dependencies {
 
     implementation'com.google.code.gson:gson'
 
-    implementation 'io.swagger.core.v3:swagger-models'
-    implementation 'io.swagger.core.v3:swagger-core'
+    implementation 'io.swagger.core.v3:swagger-models-jakarta'
+    implementation 'io.swagger.core.v3:swagger-core-jakarta'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'

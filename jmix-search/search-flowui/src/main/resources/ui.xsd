@@ -1,0 +1,82 @@
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema xmlns="http://jmix.io/schema/search/ui"
+           attributeFormDefault="unqualified"
+           elementFormDefault="qualified"
+           targetNamespace="http://jmix.io/schema/search/ui"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:layout="http://jmix.io/schema/flowui/layout">
+
+    <xs:element name="searchField">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="layout:baseComponent">
+                    <xs:attributeGroup ref="layout:hasAriaLabel"/>
+                    <xs:attributeGroup ref="layout:hasClassNames"/>
+                    <xs:attributeGroup ref="layout:hasEnabled"/>
+                    <xs:attributeGroup ref="layout:hasHelperText"/>
+                    <xs:attributeGroup ref="layout:hasLabel"/>
+                    <xs:attributeGroup ref="layout:hasSize"/>
+                    <xs:attributeGroup ref="layout:hasTabIndex"/>
+                    <xs:attributeGroup ref="layout:hasTitle"/>
+                    <xs:attributeGroup ref="layout:hasValueChangeMode"/>
+
+                    <xs:attribute name="autofocus" type="xs:boolean"/>
+                    <xs:attribute name="themeNames" type="layout:textFieldThemeNames"/>
+                    <xs:attribute name="value" type="xs:string"/>
+                    <xs:attribute name="visible" type="xs:boolean"/>
+
+                    <xs:attribute name="entities" type="xs:string"/>
+                    <xs:attribute name="openMode" type="openMode"/>
+                    <xs:attribute name="searchSize" type="xs:integer"/>
+                    <xs:attribute name="searchStrategy" type="searchStrategyType"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="fullTextFilter">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="layout:baseSingleFilterComponent">
+                    <xs:attribute name="autoApply" type="xs:boolean"/>
+                    <xs:attribute name="dataLoader" type="xs:string" use="required"/>
+                    <xs:attribute name="labelPosition" type="layout:labelPositionType"/>
+                    <xs:attribute name="labelWidth" type="layout:componentSize"/>
+                    <xs:attribute name="searchStrategy" type="searchStrategyType"/>
+                    <xs:attributeGroup ref="layout:hasSize"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="searchStrategyType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="anyTermAnyField"/>
+            <xs:enumeration value="allTermsAnyField"/>
+            <xs:enumeration value="allTermsSingleField"/>
+            <xs:enumeration value="phrase"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="openMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NAVIGATION"/>
+            <xs:enumeration value="DIALOG"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

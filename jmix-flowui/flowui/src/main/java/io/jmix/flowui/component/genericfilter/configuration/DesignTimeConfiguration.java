@@ -145,6 +145,11 @@ public class DesignTimeConfiguration implements Configuration {
     }
 
     @Override
+    public boolean isAvailableForAllUsers() {
+        return true;
+    }
+
+    @Override
     public int compareTo(Configuration other) {
         return id.compareTo(other.getId());
     }

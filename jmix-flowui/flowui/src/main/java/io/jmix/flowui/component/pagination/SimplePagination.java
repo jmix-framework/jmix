@@ -22,7 +22,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.LoadContext;
+import io.jmix.core.DataLoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -31,16 +31,25 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
+import io.jmix.flowui.backgroundtask.BackgroundWorker;
+import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.component.PaginationComponent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.kit.component.pagination.JmixSimplePagination;
 import io.jmix.flowui.model.CollectionChangeType;
+import io.jmix.flowui.view.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +57,7 @@ import java.util.function.Function;
 
 public class SimplePagination extends JmixSimplePagination implements PaginationComponent<SimplePagination>,
         ApplicationContextAware, InitializingBean {
+    private static final Logger log = LoggerFactory.getLogger(SimplePagination.class);
 
     protected enum State {
         FIRST_COMPLETE,     // "63 rows"
@@ -61,6 +71,9 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     protected UiComponents uiComponents;
     protected CurrentAuthentication currentAuthentication;
     protected UiProperties uiProperties;
+    protected BackgroundWorker backgroundWorker;
+
+    protected BackgroundTaskHandler<Integer> itemsCountTaskHandler;
 
     protected ItemsPerPage itemsPerPage;
     protected PaginationDataLoader loader;
@@ -72,7 +85,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     protected Registration totalCountLabelClickRegistration;
     protected Registration itemsPerPageValueChangeRegistration;
 
-    protected Function<LoadContext, Integer> totalCountDelegate;
+    protected Function<DataLoadContext, Integer> totalCountDelegate;
 
     protected boolean samePage;
     protected boolean lastPage = false;
@@ -100,6 +113,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
         messages = applicationContext.getBean(Messages.class);
         currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
         uiProperties = applicationContext.getBean(UiProperties.class);
+        backgroundWorker = applicationContext.getBean(BackgroundWorker.class);
     }
 
     protected void initComponent() {
@@ -218,12 +232,12 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
     @Nullable
     @Override
-    public Function<LoadContext, Integer> getTotalCountDelegate() {
+    public Function<DataLoadContext, Integer> getTotalCountDelegate() {
         return totalCountDelegate;
     }
 
     @Override
-    public void setTotalCountDelegate(@Nullable Function<LoadContext, Integer> totalCountDelegate) {
+    public void setTotalCountDelegate(@Nullable Function<DataLoadContext, Integer> totalCountDelegate) {
         this.totalCountDelegate = totalCountDelegate;
 
         if (loader != null) {
@@ -464,7 +478,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
     protected void updateTotalCountLabel() {
         if (autoLoad) {
-//            loadItemsCount(); // todo background task
+            loadItemsCount();
         } else {
             getTotalCountLabel().setText(messages.getMessage("pagination.msg3"));
             getTotalCountLabel().addClassName(ROWS_STATUS_LINK_CLASS_NAME);
@@ -562,6 +576,55 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
         }
     }
 
+    /*
+     * Loads total count in the background thread if autoLoad is true.
+     */
+    protected void loadItemsCount() {
+        if (itemsCountTaskHandler != null
+                && itemsCountTaskHandler.isAlive()) {
+            log.debug("Cancel previous items count task");
+            itemsCountTaskHandler.cancel();
+            itemsCountTaskHandler = null;
+        }
+
+        itemsCountTaskHandler = backgroundWorker.handle(getLoadCountTask());
+        itemsCountTaskHandler.execute();
+    }
+
+    protected BackgroundTask<Long, Integer> getLoadCountTask() {
+        return new BackgroundTask<>(30, UiComponentUtils.getView(this)) {
+            @Override
+            public Integer run(TaskLifeCycle<Long> taskLifeCycle) {
+                return loader.getCount();
+            }
+
+            @Override
+            public void done(Integer result) {
+                setTotalCountLabelText(result);
+            }
+
+            @Override
+            public void canceled() {
+                log.debug("Loading items count for View '{}' is canceled", getViewId());
+            }
+
+            @Override
+            public boolean handleTimeoutException() {
+                log.warn("Time out while loading items count for View '{}'", getViewId());
+                return true;
+            }
+
+            @Nullable
+            private String getViewId() {
+                View<?> ownerView = getOwnerView();
+                if (ownerView != null) {
+                    return ownerView.getId().orElse(null);
+                }
+                return null;
+            }
+        };
+    }
+
     protected void setTotalCountLabelText(int totalCount) {
         getTotalCountLabel().setText(numberDatatype.format(totalCount, currentAuthentication.getLocale()));
         getTotalCountLabel().removeClassName(ROWS_STATUS_LINK_CLASS_NAME);
@@ -608,5 +671,27 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
         AfterRefreshEvent<SimplePagination> event = new AfterRefreshEvent<>(this);
 
         fireEvent(event);
+    }
+
+    @Nullable
+    protected Integer getItemsPerPageValue() {
+        return isItemsPerPageVisible() ? itemsPerPage.getItemsPerPageValue() : null;
+    }
+
+    protected void setItemsPerPageValue(@Nullable Integer value) {
+        if (!isItemsPerPageVisible()) {
+            return;
+        }
+
+        if (value != null && itemsPerPage.containsItem(value)) {
+            setSilentlyItemsPerPageValue(value);
+            loader.setMaxResults(value);
+        } else if (canSetUnlimitedValue(value)) {
+            setSilentlyItemsPerPageValue(null);
+            loader.setMaxResults(getEntityMaxFetchSize(loader.getEntityMetaClass()));
+        } else {
+            log.debug("Options for items-per-page dropdown list do not contain '{}' value."
+                    + " The value is not set.", value);
+        }
     }
 }

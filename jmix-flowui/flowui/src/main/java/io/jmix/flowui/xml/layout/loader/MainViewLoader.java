@@ -19,8 +19,11 @@ package io.jmix.flowui.xml.layout.loader;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.loader.container.VerticalLayoutLoader;
 import org.dom4j.Element;
 
 import java.util.Collections;
@@ -31,6 +34,8 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
 
     public static final String MAIN_VIEW_ROOT = "mainView";
     public static final String CONTENT_NAME = "appLayout";
+
+    protected ComponentLoader<?> initialLayoutLoader;
 
     @Override
     public void createContent() {
@@ -50,6 +55,20 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
         if (!drawerLayoutComponents.isEmpty()) {
             resultComponent.getContent().addToDrawer(drawerLayoutComponents.toArray(new Component[0]));
         }
+
+        createInitialLayout(appLayoutElement);
+    }
+
+    protected void createInitialLayout(Element appLayoutElement) {
+        Element initialLayoutElement = appLayoutElement.element("initialLayout");
+        if (initialLayoutElement == null) {
+            return;
+        }
+
+        initialLayoutLoader = getLayoutLoader().getLoader(initialLayoutElement, VerticalLayoutLoader.class);
+        initialLayoutLoader.initComponent();
+        VerticalLayout initialLayout = (VerticalLayout) initialLayoutLoader.getResultComponent();
+        resultComponent.setInitialLayout(initialLayout);
     }
 
     @Override
@@ -60,6 +79,9 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
 
         loadAppLayout();
 
+        if (initialLayoutLoader != null) {
+            initialLayoutLoader.loadComponent();
+        }
 
         loadSubComponents();
     }

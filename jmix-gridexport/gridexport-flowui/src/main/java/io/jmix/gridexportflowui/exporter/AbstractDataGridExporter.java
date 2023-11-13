@@ -16,7 +16,12 @@
 
 package io.jmix.gridexportflowui.exporter;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -134,6 +139,7 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
+    @Nullable
     protected Object getColumnValue(Grid<?> dataGrid, Grid.Column<?> column, Object instance) {
         Function<ColumnValueContext, Object> columnValueProvider = MapUtils.isNotEmpty(columnValueProviders)
                 ? columnValueProviders.get(column.getKey())
@@ -143,14 +149,22 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
             return columnValueProvider.apply(new ColumnValueContext((ListDataComponent<?>) dataGrid, column, instance));
         }
 
-        Object cellValue;
-
+        Object cellValue = null;
         MetaPropertyPath metaPropertyPath = ((EnhancedDataGrid) dataGrid).getColumnMetaPropertyPath(column);
 
         if (metaPropertyPath != null) {
             cellValue = EntityValues.getValueEx(instance, metaPropertyPath.getPath());
         } else {
-            cellValue = EntityValues.getValueEx(instance, column.getKey());
+            Renderer<?> renderer = column.getRenderer();
+            //if a component renderer is assigned, try to retrieve export value from rendered component
+            if (renderer instanceof ComponentRenderer componentRenderer) {
+                Component cellComponent = componentRenderer.createComponent(instance);
+                if (cellComponent instanceof HasText hasText) {
+                    cellValue = hasText.getText();
+                } else if (cellComponent instanceof HasValue<?,?> hasValue) {
+                    cellValue = hasValue.getValue();
+                }
+            }
         }
 
         return cellValue;

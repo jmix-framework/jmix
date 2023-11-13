@@ -59,7 +59,6 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "NumberField attributes will be loaded"
         verifyAll(componentView.numberFieldId) {
             id.get() == "numberFieldId"
-            !invalid
             allowedCharPattern == "charPattern"
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
@@ -67,6 +66,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             stepButtonsVisible
             enabled
@@ -83,7 +83,6 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             step == 5
             tabIndex == 3

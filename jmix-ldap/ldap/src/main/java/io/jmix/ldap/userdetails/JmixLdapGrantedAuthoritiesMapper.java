@@ -16,10 +16,10 @@
 
 package io.jmix.ldap.userdetails;
 
-import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,11 +29,11 @@ import org.springframework.util.Assert;
 import java.util.*;
 
 /**
- * GrantedAuthoritiesMapper that maps authorities to {@link RoleGrantedAuthority}s.
+ * GrantedAuthoritiesMapper that maps authorities to {@link GrantedAuthority}s.
  * <p>
- * First, it tries to map provided authorities to Jmix role codes if implementation of {@link LdapAuthorityToJmixRoleCodesMapper}
- * is provided. After that, it searches resource and row-level roles with such codes, in case both resource and row-level roles
- * with the same code exist both will be returned.
+ * First, it tries to map provided authorities to Jmix role codes if implementation of
+ * {@link LdapAuthorityToJmixRoleCodesMapper} is provided. After that, it searches resource and row-level roles with
+ * such codes, in case both resource and row-level roles with the same code exist both will be returned.
  *
  * @see LdapAuthorityToJmixRoleCodesMapper
  */
@@ -42,6 +42,7 @@ public class JmixLdapGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
     private ResourceRoleRepository resourceRoleRepository;
     private RowLevelRoleRepository rowLevelRoleRepository;
     private LdapAuthorityToJmixRoleCodesMapper authorityToJmixRoleCodeMapper;
+    private RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
     private List<String> defaultRoles;
 
@@ -60,6 +61,11 @@ public class JmixLdapGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
         this.authorityToJmixRoleCodeMapper = authorityToJmixRoleCodeMapper;
     }
 
+    @Autowired
+    public void setRoleGrantedAuthorityUtils(RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
+        this.roleGrantedAuthorityUtils = roleGrantedAuthorityUtils;
+    }
+
     public void setDefaultRoles(List<String> roles) {
         Assert.notNull(roles, "roles list cannot be null");
         this.defaultRoles = roles;
@@ -68,11 +74,19 @@ public class JmixLdapGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
     @Override
     public Set<GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
         Set<GrantedAuthority> mapped = new HashSet<>(authorities.size());
-        for (GrantedAuthority authority : authorities) {
-            if (authority instanceof RoleGrantedAuthority) {
-                mapped.add(authority);
-            } else {
-                mapped.addAll(mapAuthority(authority.getAuthority()));
+        for (GrantedAuthority grantedAuthority : authorities) {
+            String authority = grantedAuthority.getAuthority();
+            if (authority != null) {
+                mapped.addAll(mapAuthority(authority));
+                if (authority.startsWith(roleGrantedAuthorityUtils.getDefaultRolePrefix())) {
+                    //there may be an authority like ROLE_manager, we need to extract the role code (manager)
+                    String roleCode = authority.substring(roleGrantedAuthorityUtils.getDefaultRolePrefix().length());
+                    mapped.addAll(mapAuthority(roleCode));
+                } else if (authority.startsWith(roleGrantedAuthorityUtils.getDefaultRowLevelRolePrefix())) {
+                    //there may be an authority like ROW_LEVEL_ROLE_manager, we need to extract the role code (manager)
+                    String roleCode = authority.substring(roleGrantedAuthorityUtils.getDefaultRowLevelRolePrefix().length());
+                    mapped.addAll(mapAuthority(roleCode));
+                }
             }
         }
 
@@ -99,12 +113,12 @@ public class JmixLdapGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
         for (String roleCode : roleCodes) {
             ResourceRole resourceRole = resourceRoleRepository.findRoleByCode(roleCode);
             if (resourceRole != null) {
-                authorities.add(RoleGrantedAuthority.ofResourceRole(resourceRole));
+                authorities.add(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(resourceRole));
             }
 
             RowLevelRole rowLevelRole = rowLevelRoleRepository.findRoleByCode(roleCode);
             if (rowLevelRole != null) {
-                authorities.add(RoleGrantedAuthority.ofRowLevelRole(rowLevelRole));
+                authorities.add(roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(rowLevelRole));
             }
         }
 

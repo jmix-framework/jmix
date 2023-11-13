@@ -54,6 +54,7 @@
         <xs:all>
             <xs:element name="navigationBar" type="mainLayout:navigationBarContainer"/>
             <xs:element name="drawerLayout" type="mainLayout:drawerLayoutContainer"/>
+            <xs:element name="initialLayout" type="mainLayout:initialLayoutContainer" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="drawerOpened" type="xs:boolean"/>
         <xs:attribute name="primarySection" type="primarySection"/>

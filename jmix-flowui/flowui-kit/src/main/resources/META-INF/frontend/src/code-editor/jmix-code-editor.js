@@ -17,6 +17,7 @@
 import 'ace-builds/src-noconflict/ace.js';
 import 'ace-builds/esm-resolver.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ResizeMixin} from '@vaadin/component-base/src/resize-mixin.js';
 import {InputFieldMixin} from '@vaadin/field-base/src/input-field-mixin.js';
 import {TooltipController} from '@vaadin/component-base/src/tooltip-controller.js';
@@ -63,8 +64,8 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         return {
             theme: {
                 type: String,
-                value: 'textmate',
-                observer: '_onThemeChange'
+                observer: '_onThemeChange',
+                notify: true
             },
 
             mode: {
@@ -77,6 +78,12 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 type: Boolean,
                 value: true,
                 observer: '_onHighlightActiveLineChange'
+            },
+
+            highlightGutterLine: {
+                type: Boolean,
+                value: true,
+                observer: '_onHighlightGutterLineChange'
             },
 
             showGutter: {
@@ -116,7 +123,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
 
             /** @private */
             _editor: {
-                type: Object,
+                type: Object
             }
         }
     }
@@ -131,10 +138,15 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
 
         const editor = this.shadowRoot.querySelector('[part="input-field"]');
 
+        if (this.theme === undefined) {
+            this.initApplicationThemeObserver();
+        }
+
         this._editor = ace.edit(editor, {
             theme: "ace/theme/" + this.theme,
             mode: "ace/mode/" + this.mode,
             highlightActiveLine: this.highlightActiveLine,
+            highlightGutterLine: this.highlightGutterLine,
             showGutter: this.showGutter,
             showLineNumbers: this.showLineNumbers,
             showPrintMargin: this.showPrintMargin,
@@ -143,7 +155,6 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             fontSize: this.fontSize,
             useWorker: false
         });
-
 
         this._tooltipController = new TooltipController(this);
         this._tooltipController.setPosition('top');
@@ -155,7 +166,45 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         });
     }
 
-    /** @protected */
+    initApplicationThemeObserver() {
+        // Apply current application theme as initial value
+        this._applyTheme()
+
+        this._applicationThemeObserver = new MutationObserver(mutations => {
+            if (mutations.filter(mutation =>
+                mutation.type === "attributes" && mutation.attributeName === "theme").length !== 0) {
+                this._applyTheme()
+            }
+        });
+
+        this._applicationThemeObserver.observe(document.documentElement, {
+            attributes: true
+        });
+    }
+
+    /**
+     * @protected
+     */
+    _applyTheme() {
+        const currentTheme = this._getCurrentApplicationTheme();
+
+        if (currentTheme === "dark") {
+            this.theme = "nord_dark";
+        } else if (currentTheme === "") {
+            this.theme = "textmate";
+        }
+    }
+
+    /**
+     * @protected
+     */
+    _getCurrentApplicationTheme() {
+        return document.documentElement.getAttribute("theme");
+    }
+
+    /**
+     * @protected
+     */
     _disabledChanged(disabled, readonly, editor) {
         if (disabled === undefined || readonly === undefined || editor === undefined) {
             return;
@@ -168,8 +217,8 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.setReadOnly(readonly);
-        this._editor.setHighlightActiveLine(!readonly);
-        this._editor.setHighlightGutterLine(!readonly);
+        this._editor.setHighlightActiveLine(this.highlightActiveLine && !readonly);
+        this._editor.setHighlightGutterLine(this.highlightGutterLine && !readonly);
         this._editor.renderer.$cursorLayer.element.style.opacity = readonly
             ? 0
             : 1;
@@ -219,6 +268,17 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     /**
      * @protected
      */
+    _onHighlightGutterLineChange(showGutterLine) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.setHighlightGutterLine(showGutterLine);
+    }
+
+    /**
+     * @protected
+     */
     _onShowGutterChange(showGutter) {
         if (this._editor === undefined) {
             return;
@@ -257,7 +317,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             return;
         }
 
-        this._editor.setValue(value);
+        this._editor.session.setValue(value);
     }
 
     /**
@@ -287,6 +347,6 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     }
 }
 
-customElements.define(JmixCodeEditor.is, JmixCodeEditor);
+defineCustomElement(JmixCodeEditor);
 
 export {JmixCodeEditor};

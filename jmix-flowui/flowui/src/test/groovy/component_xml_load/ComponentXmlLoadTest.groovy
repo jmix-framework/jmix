@@ -27,11 +27,13 @@ import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer
 import com.vaadin.flow.dom.ElementConstants
 import component_xml_load.screen.ComponentView
 import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer
+import io.jmix.flowui.data.items.EnumDataProvider
 import io.jmix.flowui.kit.component.dropdownbutton.ActionItem
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant
 import io.jmix.flowui.kit.component.dropdownbutton.TextItem
 import org.springframework.boot.test.context.SpringBootTest
+import test_support.entity.sec.RoleType
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -51,6 +53,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "avatarId"
             abbreviation == "abbreviationString"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             colorIndex == 50
             height == "50px"
             image == "imageString"
@@ -73,6 +76,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.iconId) {
             id.get() == "iconId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             color == "purple"
             getElement().getAttribute("icon") == "vaadin:check"
             getStyle().get(ElementConstants.STYLE_WIDTH) == "2em"
@@ -90,6 +94,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "buttonId"
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             icon.element.getAttribute("icon") ==
                     VaadinIcon.YOUTUBE.create().element.getAttribute("icon")
             disableOnClick
@@ -145,6 +150,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.detailsId) {
             id.get() == "detailsId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             maxHeight == "55px"
@@ -175,6 +181,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.progressBarId) {
             id.get() == "progressBarId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             height == "50px"
             !indeterminate
             max == 95
@@ -198,6 +205,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.dropdownButtonId) {
             id.get() == "dropdownButtonId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             (!dropdownIndicatorVisible)
             enabled
             height == "50px"
@@ -233,6 +241,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "comboButtonId"
             action.getText() == "Action Text"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             getDropdownIcon().element.getAttribute("icon")
                     == VaadinIcon.CHECK.create().element.getAttribute("icon")
             enabled
@@ -269,6 +278,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             acceptedFileTypes.containsAll([".jpg"])
             !autoUpload
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             dropAllowed
             (dropLabel as HasText).getText() == "dropLabelString"
             dropLabelIcon.element.getAttribute("icon") ==
@@ -297,6 +307,38 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.uploadWithReceiverFqn) {
             id.get() == "uploadWithReceiverFqn"
             receiver instanceof FileTemporaryStorageBuffer
+        }
+    }
+
+    def "Load virtualList component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "VirtualList attributes will be loaded"
+        verifyAll(componentView.virtualListId) {
+            id.get() == "virtualListId"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
+            enabled
+            height == "50px"
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            tabIndex == 3
+            !visible
+            width == "100px"
+        }
+    }
+
+    def "Load virtualList with itemsEnum from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "ItemsEnum should be loaded"
+        verifyAll(componentView.virtualListItemsEnumId) {
+            id.get() == "virtualListItemsEnumId"
+            (dataProvider as EnumDataProvider<RoleType>).getEnumClass() == RoleType.class
         }
     }
 }

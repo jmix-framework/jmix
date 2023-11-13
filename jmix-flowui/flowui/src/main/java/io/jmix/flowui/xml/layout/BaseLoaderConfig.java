@@ -47,6 +47,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("details", DetailsLoader.class);
         loaders.put("split", SplitLayoutLoader.class);
         loaders.put("formLayout", FormLayoutLoader.class);
+        loaders.put("formItem", FormLayoutLoader.FormItemLoader.class);
 
         /* Components */
         loaders.put("button", ButtonLoader.class);
@@ -95,6 +96,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("groupFilter", GroupFilterLoader.class);
         loaders.put("genericFilter", GenericFilterLoader.class);
         loaders.put("codeEditor", CodeEditorLoader.class);
+        loaders.put("virtualList", VirtualListLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

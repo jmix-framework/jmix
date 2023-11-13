@@ -135,4 +135,18 @@ public interface Configuration extends Comparable<Configuration> {
      * Sets null as the default value for all configuration filter components.
      */
     void resetAllDefaultValues();
+
+    /**
+     * Returns whether the configuration is available for all users
+     * @return true if the configuration is available for all users, otherwise false.
+     */
+    default boolean isAvailableForAllUsers() {
+        return false;
+    }
+
+    /**
+     * Sets whether the configuration is available for all users or not
+     */
+    default void setAvailableForAllUsers(boolean availableForAllUsers) {
+    }
 }

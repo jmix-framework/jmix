@@ -105,6 +105,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "${picker}Id"
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             height == "50px"
             helperText == "helperTextString"
@@ -115,7 +116,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             placeholder == "placeholderString"
             readOnly
-            requiredIndicatorVisible
             tabIndex == 3
             themeNames.containsAll(["theme1", "theme2"])
             title == "titleString"
@@ -150,7 +150,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "valuePickerId"
             allowCustomValue
             errorMessage == "errorMessageString"
-            !invalid
             required
             requiredMessage == "requiredMessageString"
             value == order.number
@@ -170,7 +169,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "valuesPickerId"
             allowCustomValue
             errorMessage == "errorMessageString"
-            !invalid
             required
             requiredMessage == "requiredMessageString"
             value.size() == 2
@@ -191,7 +189,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "entityPickerId"
             allowCustomValue
             errorMessage == "errorMessageString"
-            !invalid
             required
             requiredMessage == "requiredMessageString"
             value == customer
@@ -215,12 +212,12 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -232,7 +229,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
@@ -266,11 +262,11 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -282,7 +278,6 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])

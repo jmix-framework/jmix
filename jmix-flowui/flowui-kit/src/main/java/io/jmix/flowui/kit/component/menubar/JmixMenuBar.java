@@ -29,7 +29,7 @@ import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 import java.util.List;
 import java.util.stream.Stream;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBar [last update Vaadin 24.1.1]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBar [last update Vaadin 24.2.1]
 public class JmixMenuBar extends MenuBar
         implements HasMenuItemsEnhanced, Focusable<JmixMenuBar>, HasTooltip {
 

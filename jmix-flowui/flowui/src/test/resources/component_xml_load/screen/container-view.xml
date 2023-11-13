@@ -32,6 +32,7 @@
               alignItems="STRETCH"
               boxSizing="BORDER_BOX"
               classNames="cssClassName1, cssClassName2"
+              css="color: red;"
               enabled="true"
               expand="expanded"
               height="50px"
@@ -43,15 +44,18 @@
               minWidth="80px"
               padding="true"
               spacing="true"
+              themeNames="spacing-xs"
               width="100px">
             <textField id="expanded"/>
             <button text="vboxChild"/>
+            <checkbox id="selfAlignChild" alignSelf="END"/>
         </vbox>
 
         <hbox id="hboxId"
               alignItems="STRETCH"
               boxSizing="BORDER_BOX"
               classNames="cssClassName1, cssClassName2"
+              css="color: red;"
               enabled="true"
               expand="expanded"
               height="50px"
@@ -63,13 +67,38 @@
               minWidth="80px"
               padding="true"
               spacing="true"
+              themeNames="spacing-xs"
               width="100px">
             <textField id="expanded"/>
             <button text="hboxChild"/>
+            <checkbox id="selfAlignChild" alignSelf="END"/>
         </hbox>
+
+        <flexLayout id="flexLayoutId"
+                    alignItems="STRETCH"
+                    classNames="cssClassName1, cssClassName2"
+                    contentAlignment="CENTER"
+                    css="color: red;"
+                    enabled="true"
+                    expand="expanded"
+                    flexDirection="COLUMN_REVERSE"
+                    flexWrap="WRAP"
+                    height="50px"
+                    justifyContent="AROUND"
+                    maxHeight="55px"
+                    maxWidth="120px"
+                    minHeight="40px"
+                    minWidth="80px"
+                    visible="true"
+                    width="100px">
+            <textField id="expanded"/>
+            <button text="flexLayoutChild"/>
+            <checkbox id="selfAlignChild" alignSelf="END"/>
+        </flexLayout>
 
         <accordion id="accordionId"
                    classNames="cssClassName1, cssClassName2"
+                   css="color: red;"
                    height="50px"
                    maxHeight="55px"
                    maxWidth="120px"
@@ -79,6 +108,7 @@
                    width="100px">
             <accordionPanel id="accordionPanelId"
                             classNames="cssClassName1, cssClassName2"
+                            css="color: red;"
                             enabled="true"
                             height="50px"
                             maxHeight="55px"
@@ -100,6 +130,7 @@
             </accordionPanel>
             <accordionPanel id="anotherAccordionPanelId"
                             classNames="cssClassName1, cssClassName2"
+                            css="color: red;"
                             enabled="true"
                             height="50px"
                             maxHeight="55px"
@@ -115,6 +146,7 @@
 
         <formLayout id="formLayoutId"
                     classNames="cssClassName1, cssClassName2"
+                    css="color: red;"
                     dataContainer="orderDc"
                     enabled="true"
                     height="50px"
@@ -125,15 +157,17 @@
                     visible="true"
                     width="100px"
                     labelsPosition="ASIDE">
-                <textField id="forNumber" property="number"
-                           colspan="3"
-                           enabled="true"
-                           visible="true"/>
-                <bigDecimalField id="forAmount" property="amount"
-                                 colspan="2"
-                                 enabled="true"
-                                 label="amountLabel"
-                                 visible="true"/>
+            <formItem colspan="3"
+                      enabled="false"
+                      visible="false">
+                <textField id="forNumber" property="number"/>
+            </formItem>
+            <formItem colspan="2"
+                      enabled="false"
+                      label="amountLabel"
+                      visible="false">
+                <bigDecimalField id="forAmount" property="amount"/>
+            </formItem>
             <responsiveSteps>
                 <responsiveStep
                         columns="5"
@@ -144,6 +178,7 @@
 
         <scroller id="scrollerId"
                   classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
                   height="50px"
                   maxHeight="55px"
                   maxWidth="120px"
@@ -157,6 +192,7 @@
 
         <split id="splitLayoutId"
                classNames="cssClassName1, cssClassName2"
+               css="color: red;"
                height="50px"
                maxHeight="55px"
                maxWidth="120px"
@@ -173,6 +209,7 @@
 
         <tabs id="tabsId"
               classNames="cssClassName1, cssClassName2"
+              css="color: red;"
               height="50px"
               maxHeight="55px"
               maxWidth="120px"
@@ -184,6 +221,7 @@
               width="100px">
             <tab id="tab1"
                  classNames="cssClassName1, cssClassName2"
+                 css="color: red;"
                  enabled="true"
                  flexGrow="45.54"
                  label="labelString"
@@ -200,6 +238,7 @@
             </tab>
             <tab id="tab2"
                  classNames="cssClassName1, cssClassName2"
+                 css="color: red;"
                  enabled="true"
                  flexGrow="45.44"
                  themeNames="icon-on-top"
@@ -211,6 +250,7 @@
 
         <tabSheet id="tabSheetId"
                   classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
                   height="50px"
                   maxHeight="55px"
                   maxWidth="120px"

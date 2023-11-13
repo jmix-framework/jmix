@@ -29,10 +29,6 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.Validator",
             xmlElement = "custom",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
-            unsupportedTarget = {
-                    "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
-            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "bean",
@@ -54,7 +50,18 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -81,7 +88,18 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -106,7 +124,17 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.DigitsValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             xmlElement = "digits",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
@@ -135,7 +163,18 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -162,7 +201,18 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -189,7 +239,15 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {
                     @StudioProperty(
@@ -208,18 +266,29 @@ public interface StudioValidatorsElements {
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
-                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase"
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
                             type = StudioPropertyType.LOCALIZED_STRING
+                    ),
+                    @StudioProperty(
+                            xmlAttribute = "checkSeconds",
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"
                     )
             }
     )
@@ -233,18 +302,29 @@ public interface StudioValidatorsElements {
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
-                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase"
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
                             type = StudioPropertyType.LOCALIZED_STRING
+                    ),
+                    @StudioProperty(
+                            xmlAttribute = "checkSeconds",
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"
                     )
             }
     )
@@ -257,7 +337,17 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -280,7 +370,17 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -303,7 +403,16 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -321,7 +430,16 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -339,7 +457,15 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {
                     @StudioProperty(
@@ -357,7 +483,13 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {
                     @StudioProperty(
@@ -390,18 +522,29 @@ public interface StudioValidatorsElements {
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
-                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase"
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
                             type = StudioPropertyType.LOCALIZED_STRING
+                    ),
+                    @StudioProperty(
+                            xmlAttribute = "checkSeconds",
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"
                     )
             }
     )
@@ -415,18 +558,29 @@ public interface StudioValidatorsElements {
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixPasswordField",
                     "io.jmix.flowui.component.textfield.JmixNumberField",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
-                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase"
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
                             type = StudioPropertyType.LOCALIZED_STRING
+                    ),
+                    @StudioProperty(
+                            xmlAttribute = "checkSeconds",
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"
                     )
             }
     )
@@ -439,7 +593,16 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -457,7 +620,16 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixEmailField",
+                    "io.jmix.flowui.component.textarea.JmixTextArea",
+                    "io.jmix.flowui.component.textfield.JmixPasswordField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
                     @StudioProperty(
@@ -475,7 +647,15 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {
                     @StudioProperty(
@@ -498,7 +678,13 @@ public interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "io.jmix.flowui.component.datepicker.TypedDatePicker"
+                    "io.jmix.flowui.component.datepicker.TypedDatePicker",
+                    "io.jmix.flowui.component.timepicker.TypedTimePicker",
+                    "io.jmix.flowui.component.textfield.JmixNumberField",
+                    "io.jmix.flowui.component.textfield.JmixIntegerField",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
             properties = {
                     @StudioProperty(

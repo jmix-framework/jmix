@@ -38,8 +38,8 @@ import io.jmix.flowui.model.DataLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -362,7 +362,17 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
     }
 
     protected void initValueComponent(HasValueAndElement<?, V> valueComponent) {
-        ((Component) valueComponent).setId(getInnerComponentPrefix() + "valueComponent");
+        // Generate ID only when valueComponent.getId() is empty
+        // Overwriting the valueComponent's id will make it impossible to inject the valueComponent into controller
+        if (((Component) valueComponent).getId().isEmpty()) {
+            ((Component) valueComponent).setId(getInnerComponentPrefix() + "valueComponent");
+        }
+
+        // WA: min-width (in a flexbox) defaults not to 0 but to the element's intrinsic width,
+        // which in this case is the default width
+        if (valueComponent instanceof HasSize hasSizeComponent) {
+            hasSizeComponent.setMinWidth("1px");
+        }
 
         if (valueComponent instanceof SupportsTypedValue) {
             //noinspection unchecked

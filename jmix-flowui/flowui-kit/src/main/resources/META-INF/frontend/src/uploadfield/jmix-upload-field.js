@@ -16,12 +16,13 @@
 
 import '@vaadin/input-container/src/vaadin-input-container.js';
 import {html, PolymerElement} from '@polymer/polymer';
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
-import { TooltipController } from '@vaadin/component-base/src/tooltip-controller.js';
-import { DelegateFocusMixin } from '@vaadin/a11y-base/src/delegate-focus-mixin.js';
-import { FieldMixin } from '@vaadin/field-base/src/field-mixin.js';
-import { InputConstraintsMixin } from '@vaadin/field-base/src/input-constraints-mixin.js';
-import { SlotStylesMixin } from '@vaadin/field-base/src/slot-styles-mixin.js';
+import {TooltipController} from '@vaadin/component-base/src/tooltip-controller.js';
+import {DelegateFocusMixin} from '@vaadin/a11y-base/src/delegate-focus-mixin.js';
+import {FieldMixin} from '@vaadin/field-base/src/field-mixin.js';
+import {InputConstraintsMixin} from '@vaadin/field-base/src/input-constraints-mixin.js';
+import {SlotStylesMixin} from '@vaadin/component-base/src/slot-styles-mixin.js';
 import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
 import {css, registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
@@ -119,4 +120,4 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
     }
 }
 
-customElements.define(JmixUploadField.is, JmixUploadField);
+defineCustomElement(JmixUploadField);

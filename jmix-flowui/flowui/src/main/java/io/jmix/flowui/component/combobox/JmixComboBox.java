@@ -28,6 +28,7 @@ import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
+import io.jmix.flowui.component.SupportsItemsFetchCallback;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
@@ -39,6 +40,7 @@ import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.HasTitle;
+import io.jmix.flowui.util.FetchCallbackAdapter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -48,7 +50,7 @@ import java.util.function.Consumer;
 
 public class JmixComboBox<V> extends ComboBox<V>
         implements SupportsValueSource<V>, SupportsValidation<V>, SupportsStatusChangeHandler<JmixComboBox<V>>,
-        SupportsDataProvider<V>, SupportsItemsEnum<V>, HasRequired, HasTitle,
+        SupportsDataProvider<V>, SupportsItemsEnum<V>, HasRequired, HasTitle, SupportsItemsFetchCallback<V, String>,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -128,6 +130,11 @@ public class JmixComboBox<V> extends ComboBox<V>
         if (dataViewDelegate != null) {
             dataViewDelegate.bind(dataProvider);
         }
+    }
+
+    @Override
+    public void setItemsFetchCallback(FetchCallback<V, String> fetchCallback) {
+        setItems(new FetchCallbackAdapter<>(fetchCallback));
     }
 
     @Nullable

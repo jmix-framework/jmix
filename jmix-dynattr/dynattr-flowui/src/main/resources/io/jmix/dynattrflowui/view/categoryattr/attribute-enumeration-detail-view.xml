@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://enumerationView.title">
+    <data>
+        <collection id="localizedEnumValuesDc"
+                    class="io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue"
+                    fetchPlan="_local">
+            <loader id="localizedEnumValuesDl"/>
+        </collection>
+    </data>
+    <layout spacing="true" expand="detailButtonsBox">
+        <hbox id="editorBox" margin="false" width="100%">
+            <vbox spacing="true" width="100%" height="100%">
+                <hbox spacing="true" width="100%" expand="valueField">
+                    <textField id="valueField" datatype="string"/>
+                    <button id="addBtn" action="localizedEnumValuesDataGrid.add"/>
+                </hbox>
+                <dataGrid id="localizedEnumValuesDataGrid"
+                          dataContainer="localizedEnumValuesDc" width="100%" minHeight="20em" editorBuffered="true">
+                    <actions>
+                        <action id="add" text="msg:///actions.Add"/>
+                    </actions>
+                    <columns>
+                        <column key="value" property="value" editable="true"/>
+                        <editorActionsColumn key="bufferedEditorColumn" width="7em" header="msg://AttributeLocalizedEnumValue.edit">
+                            <editButton text="Edit" icon="PENCIL"/>
+                            <saveButton icon="CHECK" themeNames="success"/>
+                            <cancelButton icon="CLOSE" themeNames="error"/>
+                        </editorActionsColumn>
+                        <column key="removeItem" editable="false" header="msg://AttributeLocalizedEnumValue.remove"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+            <vbox id="localizationBox" spacing="true" margin="false" width="100%" height="100%" visible="false">
+                <h3 text="msg://localizationBox.title"/>
+            </vbox>
+        </hbox>
+        <hbox id="detailButtonsBox" spacing="true">
+            <button id="commitBtn" icon="CHECK" text="msg:///actions.Ok" themeNames="primary"/>
+            <button id="cancelBtn" icon="BAN" text="msg:///actions.Cancel"/>
+        </hbox>
+    </layout>
+</view>

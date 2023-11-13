@@ -19,8 +19,8 @@ entity.attributes.each { attr ->
 
 %>
 <hbox id="buttonsPanel" classNames="buttons-panel">
-<%tableActions.each { action ->%>
-<button id="${action}Btn" action="${tableId}.${action}"/>
+<%tableActions.each { actionId ->%>
+<button id="${actionId}Btn" action="${tableId}.${actionId}"/>
 <%}%>
 <simplePagination id="pagination" dataLoader="${tableDl}"/>
 </hbox>
@@ -28,12 +28,19 @@ entity.attributes.each { attr ->
         width="100%"
         minHeight="20em"
         dataContainer="${tableDc}"<%
+        if (columnReorderingAllowed) {%>\n columnReorderingAllowed="true"<%}
         if (multiselect) {%>\n selectionMode="MULTI"<%}%>>
-<actions><%tableActions.each { action ->%>
-<action id="${action}" type="list_${action}"/>
+<actions><%tableActions.each { actionId ->
+if (actionSearch != null && jmixProjectModule != null) {
+def actionDescription = actionSearch.getActionDescriptionBy(actionId, jmixProjectModule)
+%>
+<action id="${actionDescription.getId()}" type="${actionDescription.getType()}"/>
+<%} else {%>
+<action id="${actionId}" type="list_${actionId}"/>
+<%}%>
 <%}%>
 </actions>
-<columns><%columns.each {column ->%>
+<columns<%if (resizableColumns) {%> resizable="true"<%}%>><%columns.each {column ->%>
 <column property="${column}"/>
 <%}%>
 </columns>

@@ -18,6 +18,7 @@ import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-chip.js
 import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-container.js';
 import './jmix-multi-select-combo-box-internal.js';
 import { html } from '@polymer/polymer';
+import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { MultiSelectComboBox } from '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box.js';
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
@@ -25,7 +26,7 @@ registerStyles('jmix-multi-select-combo-box-picker', [],{
     moduleId: 'jmix-multi-select-combo-box-picker-styles'
 });
 
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.1.1]
+// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 24.2.1]
 export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
 
     static get is() {
@@ -121,4 +122,4 @@ export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
     }
 }
 
-customElements.define(JmixMultiSelectComboBoxPicker.is, JmixMultiSelectComboBoxPicker);
+defineCustomElement(JmixMultiSelectComboBoxPicker);

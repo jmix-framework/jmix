@@ -50,6 +50,7 @@ class SplitLayoutXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(containerView.splitLayoutId) {
             id.get() == "splitLayoutId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
             height == "50px"
             maxHeight == "55px"
             maxWidth == "120px"

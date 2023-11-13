@@ -49,6 +49,7 @@
             <simplePagination id="pagination" dataLoader="groupsDl"/>
         </hbox>
         <dataGrid id="reportGroupsDataGrid" dataContainer="groupsDc"
+                  columnReorderingAllowed="true"
                   width="100%" minHeight="20em">
             <actions>
                 <action id="create" type="list_create">
@@ -63,7 +64,7 @@
                 </action>
                 <action id="remove" type="list_remove"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="systemFlag"/>
             </columns>
         </dataGrid>

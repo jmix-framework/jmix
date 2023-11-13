@@ -5,27 +5,39 @@ def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "C
 def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 def isNotPersistEntity = entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')
 
+private Object getActionSearchSafely() {
+    try {
+        return actionSearch
+    } catch(Exception e) {
+        return null
+    }
+}
+
 def tableXml = api.processSnippet('table.xml',
-        ['entity': entity,
+        ['jmixProjectModule': api.jmixProjectModule,
+        'actionSearch': getActionSearchSafely(),
+        'tableActions': tableActions,
+        'entity': entity,
         'fetchPlan': listFetchPlan,
         'tableDc': tableDc,
         'tableDl': tableDl,
         'tableType': tableType,
         'tableId': tableId,
         'multiselect': multiselect,
-        'tableActions': tableActions,
+        'columnReorderingAllowed': columnReorderingAllowed,
+        'resizableColumns': resizableColumns,
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="${messageKeys['viewTitle']}"
       focusComponent="${tableId}">
-    <data readOnly="true">
+    <data>
         <collection id="${tableDc}"
                     class="${entity.fqn}"<%if (!is_inline_listFetchPlan) {%>
         fetchPlan="${listFetchPlan.name}"<%}%>> <%if (is_inline_listFetchPlan) {%>
             ${inline_listFetchPlan}
-            <%}%><loader id="${tableDl}">
+            <%}%><loader id="${tableDl}" readOnly="true">
                 <query>
                     <![CDATA[select e from ${entity.name} e]]>
                 </query>

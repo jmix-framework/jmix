@@ -33,10 +33,11 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.list.EditAction;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.exception.GuiDevelopmentException;
@@ -82,7 +83,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     // whether user has edited entity after view opening
     private boolean modifiedAfterOpen = false;
 
-    private boolean showSaveNotification = true;
+    private Boolean showSaveNotification;
     private boolean saveActionPerformed = false;
 
     /**
@@ -126,7 +127,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         setModifiedAfterOpen(false);
 
         if (!postSaveEvent.getSavedInstances().isEmpty()
-                && showSaveNotification) {
+                && isShowSaveNotification()) {
             showSaveNotification();
         }
     }
@@ -302,7 +303,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      * @return whether a notification will be shown in case of successful save
      */
     public boolean isShowSaveNotification() {
-        return showSaveNotification;
+        return showSaveNotification != null ? showSaveNotification : !hasParentDataContext();
+    }
+
+    private boolean hasParentDataContext() {
+        DataContext dataContext = getViewData().getDataContextOrNull();
+        return dataContext != null && dataContext.getParent() != null;
     }
 
     /**
@@ -687,7 +693,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         if (isLockedBeforeRefresh()) {
             // restore state after refresh
             entityLockStatus = PessimisticLockStatus.LOCKED;
-            addAfterCloseListener(__ -> releaseLock());
+
+            if (UiComponentUtils.isComponentAttachedToDialog(this)) {
+                addDetachListener(__ -> releaseLock());
+            } else {
+                addAfterCloseListener(__ -> releaseLock());
+            }
             return;
         }
 
@@ -711,7 +722,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                 entityLockStatus = getLockingSupport().lock(entityId);
                 if (entityLockStatus == PessimisticLockStatus.LOCKED) {
                     setLockedBeforeRefresh();
-                    addAfterCloseListener(__ -> releaseLock());
+
+                    if (UiComponentUtils.isComponentAttachedToDialog(this)) {
+                        addDetachListener(__ -> releaseLock());
+                    } else {
+                        addAfterCloseListener(__ -> releaseLock());
+                    }
                 } else if (entityLockStatus == PessimisticLockStatus.FAILED) {
                     setReadOnly(true);
                 }

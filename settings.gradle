@@ -26,6 +26,9 @@ includeProject('authserver-starter', 'jmix-authserver/authserver-starter')
 includeProject('awsfs', 'jmix-awsfs/awsfs')
 includeProject('awsfs-starter', 'jmix-awsfs/awsfs-starter')
 
+includeProject('bulkeditor', 'jmix-bulkeditor/bulkeditor')
+includeProject('bulkeditor-starter', 'jmix-bulkeditor/bulkeditor-starter')
+
 includeProject('core', 'jmix-core/core')
 includeProject('core-starter', 'jmix-core/core-starter')
 
@@ -48,6 +51,9 @@ includeProject('datatools-flowui-starter', 'jmix-datatools/datatools-flowui-star
 
 includeProject('dynattr', 'jmix-dynattr/dynattr')
 includeProject('dynattr-starter', 'jmix-dynattr/dynattr-starter')
+includeProject('dynattr-flowui', 'jmix-dynattr/dynattr-flowui')
+includeProject('dynattr-flowui-kit', 'jmix-dynattr/dynattr-flowui-kit')
+includeProject('dynattr-flowui-starter', 'jmix-dynattr/dynattr-flowui-starter')
 
 includeProject('email', 'jmix-email/email')
 includeProject('email-starter', 'jmix-email/email-starter')
@@ -107,9 +113,15 @@ includeProject('reports-rest-starter', 'jmix-reports/reports-rest-starter')
 includeProject('reports-flowui', 'jmix-reports/reports-flowui')
 includeProject('reports-flowui-starter', 'jmix-reports/reports-flowui-starter')
 
+includeProject('jmxconsole', 'jmix-jmxconsole/jmxconsole')
+includeProject('jmxconsole-starter', 'jmix-jmxconsole/jmxconsole-starter')
+
 includeProject('search', 'jmix-search/search')
 includeProject('search-starter', 'jmix-search/search-starter')
 includeProject('search-aws-starter', 'jmix-search/search-aws-starter')
+includeProject('search-flowui', 'jmix-search/search-flowui')
+includeProject('search-flowui-kit', 'jmix-search/search-flowui-kit')
+includeProject('search-flowui-starter', 'jmix-search/search-flowui-starter')
 
 includeProject('security', 'jmix-security/security')
 includeProject('security-starter', 'jmix-security/security-starter')

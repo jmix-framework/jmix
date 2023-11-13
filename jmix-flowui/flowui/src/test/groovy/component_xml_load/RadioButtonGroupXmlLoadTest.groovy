@@ -61,11 +61,11 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(rbgView.radioButtonGroup) {
             id.get() == "radioButtonGroup"
             classNames.containsAll(["className", "className1"])
+            style.get("color") == "red"
             enabled
             errorMessage == "errorMessage"
             height == "100%"
             helperText == "helperText"
-            !invalid
             label == "label"
             maxHeight == "200px"
             maxWidth == "200px"
@@ -73,7 +73,6 @@ class RadioButtonGroupXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "100px"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessage"
             themeNames.containsAll([RadioGroupVariant.LUMO_HELPER_ABOVE_FIELD.getVariantName(),
                                     RadioGroupVariant.LUMO_VERTICAL.getVariantName()])

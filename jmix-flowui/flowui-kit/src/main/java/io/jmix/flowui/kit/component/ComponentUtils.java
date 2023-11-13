@@ -19,9 +19,11 @@ package io.jmix.flowui.kit.component;
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.ListBox;
@@ -69,7 +71,7 @@ public final class ComponentUtils {
      * @param components components to add to the specified slot.
      * @deprecated {@link com.vaadin.flow.component.shared.SlotUtils#addToSlot(HasElement, String, Component...)} instead
      */
-    @Deprecated
+    @Deprecated(since = "2.1", forRemoval = true)
     public static void addComponentsToSlot(Element element, String slot, Component... components) {
         for (Component component : components) {
             component.getElement().setAttribute("slot", slot);
@@ -82,7 +84,7 @@ public final class ComponentUtils {
      * @param slot    the name of the slot inside the parent
      * @deprecated use {@link com.vaadin.flow.component.shared.SlotUtils#clearSlot(HasElement, String)} instead
      */
-    @Deprecated
+    @Deprecated(since = "2.1", forRemoval = true)
     public static void clearSlot(Element element, String slot) {
         element.getChildren()
                 .filter(child -> slot.equals(child.getAttribute("slot")))
@@ -148,6 +150,28 @@ public final class ComponentUtils {
     public static boolean isAutoSize(@Nullable String size) {
         // TODO: gg, implement
         return false;
+    }
+
+    public static void setVisible(Component component, boolean visible) {
+        component.setVisible(visible);
+
+        component.getParent().ifPresent(parent -> {
+            if (parent instanceof FormLayout.FormItem) {
+                parent.setVisible(visible);
+            }
+        });
+    }
+
+    public static void setEnabled(HasEnabled hasEnabled, boolean enabled) {
+        hasEnabled.setEnabled(enabled);
+
+        if (hasEnabled instanceof Component component) {
+            component.getParent().ifPresent(parent -> {
+                if (parent instanceof FormLayout.FormItem formItem) {
+                    formItem.setEnabled(enabled);
+                }
+            });
+        }
     }
 
     public static boolean isVisible(Object component) {

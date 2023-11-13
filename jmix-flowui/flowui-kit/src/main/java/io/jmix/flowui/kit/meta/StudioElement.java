@@ -46,4 +46,10 @@ public @interface StudioElement {
     boolean unlimitedCount() default true;
 
     StudioProperty[] properties() default {};
+
+    StudioPropertiesBinding[] propertiesBindings() default {};
+
+    StudioSupplyHandler[] supplyHandlers() default {};
+
+    StudioAvailableChildrenInfo availableChildren() default @StudioAvailableChildrenInfo();
 }

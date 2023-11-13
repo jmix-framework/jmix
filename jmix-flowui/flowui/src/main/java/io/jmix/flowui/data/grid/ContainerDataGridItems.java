@@ -21,6 +21,7 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Sort;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.BindingState;
@@ -195,8 +196,16 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
                 .limit(query.getLimit());
     }
 
+    @Nullable
+    @Override
     public T getItem(Object entityId) {
         return container.getItem(entityId);
+    }
+
+    @Nullable
+    @Override
+    public Object getItemValue(Object itemId, MetaPropertyPath propertyId) {
+        return EntityValues.getValueEx(container.getItem(itemId), propertyId);
     }
 
     @Override

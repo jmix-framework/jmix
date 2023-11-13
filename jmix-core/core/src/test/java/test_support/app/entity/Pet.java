@@ -16,22 +16,21 @@
 
 package test_support.app.entity;
 
-import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.core.metamodel.annotation.*;
 import test_support.base.entity.BaseEntity;
 
 import jakarta.persistence.*;
 
 @Entity(name = "app_Pet")
 @JmixEntity
+@Comment("Pet - a domestic animal")
 public class Pet extends BaseEntity {
 
     private static final long serialVersionUID = 6106462788935207865L;
 
     @Column(name = "NAME")
     @InstanceName
+    @Comment("Name of the pet")
     private String name;
 
     @JmixProperty

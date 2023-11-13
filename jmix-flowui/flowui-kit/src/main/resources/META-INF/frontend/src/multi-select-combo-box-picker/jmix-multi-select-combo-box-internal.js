@@ -18,9 +18,10 @@ import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import { ComboBoxDataProviderMixin } from '@vaadin/combo-box/src/vaadin-combo-box-data-provider-mixin.js';
 import { ComboBoxMixin } from '@vaadin/combo-box/src/vaadin-combo-box-mixin.js';
 import { ComboBoxPlaceholder } from '@vaadin/combo-box/src/vaadin-combo-box-placeholder.js';
+import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.0.3]
+// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.2.1]
 class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBoxMixin(ThemableMixin(PolymerElement))) {
     static get is() {
         return 'jmix-multi-select-combo-box-internal';
@@ -154,20 +155,6 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
     }
 
     /**
-     * Override method from `InputMixin`.
-     *
-     * @protected
-     * @override
-     */
-    clear() {
-        super.clear();
-
-        if (this.inputElement) {
-            this.inputElement.value = '';
-        }
-    }
-
-    /**
      * Override Enter handler to keep overlay open
      * when item is selected or unselected.
      * @param {!Event} event
@@ -175,33 +162,44 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
      * @override
      */
     _onEnter(event) {
-        this.__enterPressed = true;
+        if (this.opened) {
+            // Do not submit the surrounding form.
+            event.preventDefault();
+            // Do not trigger global listeners.
+            event.stopPropagation();
+
+            if (this.readonly) {
+                this.close();
+            } else {
+                // Keep selected item focused after committing on Enter.
+                const focusedItem = this.filteredItems[this._focusedIndex];
+                this._commitValue();
+                this._focusedIndex = this.filteredItems.indexOf(focusedItem);
+            }
+
+            return;
+        }
 
         super._onEnter(event);
     }
 
     /**
+     * Override Escape handler to not clear
+     * selected items when readonly.
+     * @param {!Event} event
      * @protected
      * @override
      */
-    _closeOrCommit() {
+    _onEscape(event) {
         if (this.readonly) {
-            this.close();
+            event.stopPropagation();
+            if (this.opened) {
+                this.close();
+            }
             return;
         }
 
-        if (this.__enterPressed) {
-            this.__enterPressed = null;
-
-            // Keep selected item focused after committing on Enter.
-            const focusedItem = this.filteredItems[this._focusedIndex];
-            this._commitValue();
-            this._focusedIndex = this.filteredItems.indexOf(focusedItem);
-
-            return;
-        }
-
-        super._closeOrCommit();
+        super._onEscape(event);
     }
 
     /**
@@ -247,18 +245,20 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
     /**
      * Override method inherited from the combo-box
      * to close dropdown on blur when readonly.
-     * @param {FocusEvent} event
+     * @param {boolean} focused
      * @protected
      * @override
      */
-    _onFocusout(event) {
+    _setFocused(focused) {
         // Disable combo-box logic that updates selectedItem
         // based on the overlay focused index on input blur
-        this._ignoreCommitValue = true;
+        if (!focused) {
+            this._ignoreCommitValue = true;
+        }
 
-        super._onFocusout(event);
+        super._setFocused(focused);
 
-        if (this.readonly && !this._closeOnBlurIsPrevented) {
+        if (!focused && this.readonly && !this._closeOnBlurIsPrevented) {
             this.close();
         }
     }
@@ -360,4 +360,4 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
     }
 }
 
-customElements.define(JmixMultiSelectComboBoxInternal.is, JmixMultiSelectComboBoxInternal);
+defineCustomElement(JmixMultiSelectComboBoxInternal);

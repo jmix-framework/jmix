@@ -24,8 +24,8 @@ import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyConditionUtils;
-import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.FilterMetadataTools;
+import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
@@ -35,11 +35,14 @@ import io.jmix.flowui.entity.filter.FilterValueComponent;
 import io.jmix.flowui.entity.filter.HeaderFilterCondition;
 import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Component("flowui_PropertyConditionBuilder")
 public class PropertyConditionBuilder extends AbstractConditionBuilder {
@@ -69,12 +72,7 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
 
     @Override
     public List<FilterCondition> build(GenericFilter filter) {
-        MetaClass filterMetaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
-        String query = filter.getDataLoader().getQuery();
-        Predicate<MetaPropertyPath> propertiesFilterPredicate = filter.getPropertyFiltersPredicate();
-
-        List<MetaPropertyPath> paths = filterMetadataTools.getPropertyPaths(filterMetaClass, query,
-                propertiesFilterPredicate);
+        List<MetaPropertyPath> paths = filterMetadataTools.getPropertyPaths(filter);
 
         return !paths.isEmpty()
                 ? createFilterConditionsByPaths(paths)
@@ -94,6 +92,10 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
         conditions.add(propertiesHeaderCondition);
 
         for (MetaPropertyPath path : paths) {
+            // todo support dynamic properties and remove this interception
+            if(isDynamicAttribute(path)) {
+                continue;
+            }
             FilterCondition condition = createFilterConditionByPath(path);
             FilterCondition parent = path.isDirectProperty()
                     ? propertiesHeaderCondition
@@ -106,6 +108,10 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
                 ObjectUtils.compare(condition1.getLocalizedLabel(), condition2.getLocalizedLabel()));
 
         return conditions;
+    }
+
+    protected boolean isDynamicAttribute(MetaPropertyPath path) {
+        return path.isDirectProperty() && path.getFirstPropertyName().startsWith("+");
     }
 
     protected FilterCondition createFilterConditionByPath(MetaPropertyPath metaPropertyPath) {

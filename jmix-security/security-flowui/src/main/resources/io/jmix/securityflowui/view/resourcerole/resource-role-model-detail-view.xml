@@ -76,6 +76,7 @@
                       dataContainer="resourcePoliciesDc"
                       selectionMode="MULTI"
                       minHeight="20em"
+                      columnReorderingAllowed="true"
                       width="100%">
                 <actions>
                     <action id="createMenuPolicy" text="msg://actions.menuPolicy.text"/>
@@ -89,7 +90,7 @@
                     <action id="read" type="list_read"/>
                     <action id="remove" type="list_remove"/>
                 </actions>
-                <columns>
+                <columns resizable="true">
                     <column property="policyGroup"/>
                     <column property="type"/>
                     <column property="resource"/>
@@ -106,6 +107,7 @@
                       dataContainer="childRolesDc"
                       selectionMode="MULTI"
                       minHeight="20em"
+                      columnReorderingAllowed="true"
                       width="100%">
                 <actions>
                     <action id="add" type="list_add"/>
@@ -115,7 +117,7 @@
                         </properties>
                     </action>
                 </actions>
-                <columns>
+                <columns resizable="true">
                     <column property="name"/>
                     <column property="code"/>
                     <column property="source"/>

@@ -1,17 +1,5 @@
 buildscript {
     repositories {
-        if (rootProject.hasProperty('jmixPhoenixRepoUrl')) {
-            maven {
-                url rootProject['jmixPhoenixRepoUrl']
-
-                if (rootProject.hasProperty('jmixPhoenixRepoUser') && rootProject.hasProperty('jmixPhoenixRepoPassword')) {
-                    credentials {
-                        username rootProject['jmixPhoenixRepoUser']
-                        password rootProject['jmixPhoenixRepoPassword']
-                    }
-                }
-            }
-        }
         if (rootProject.hasProperty('jmixRepoUrl')) {
             if (rootProject.hasProperty('jmixUseLocalMavenRepository')) {
                 mavenLocal()

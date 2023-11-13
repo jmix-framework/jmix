@@ -32,6 +32,23 @@ class JmixBuildPlugin implements Plugin<Project> {
 
     private void setupRepositories(Project project) {
         project.with {
+            String jmixPhoenixRepoUrl = rootProject.findProperty('jmixPhoenixRepoUrl')
+            if (jmixPhoenixRepoUrl) {
+                repositories {
+                    maven {
+                        url jmixPhoenixRepoUrl
+                        String jmixPhoenixRepoUser = rootProject.findProperty('jmixPhoenixRepoUser')
+                        String jmixPhoenixRepoPassword = rootProject.findProperty('jmixPhoenixRepoPassword')
+                        if (jmixPhoenixRepoUser && jmixPhoenixRepoPassword) {
+                            credentials {
+                                username jmixPhoenixRepoUser
+                                password jmixPhoenixRepoPassword
+                            }
+                        }
+                    }
+                }
+            }
+
             String jmixRepoUrl = rootProject.findProperty('jmixRepoUrl')
             if (jmixRepoUrl) {
                 repositories {

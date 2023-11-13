@@ -18,31 +18,134 @@
 
     <category name="Reports">
 
-        <codeSnippet name="Run report" contextTypes="service,controller">
+        <codeSnippet name="Run report by code" contextTypes="service,controller">
+
             <inject variable="reportRunner" classQualifiedName="io.jmix.reports.runner.ReportRunner"/>
 
+            <stringInputParameter code="code" text="Report code"/>
+            <optionsInputParameter code="outputType" text="Output type">
+                <option name="XLS" value="XLS"/>
+                <option name="DOC" value="DOC"/>
+                <option name="PDF" value="PDF"/>
+                <option name="HTML" value="HTML"/>
+                <option name="DOCX" value="DOCX"/>
+                <option name="XLSX" value="XLSX"/>
+                <option name="CUSTOM" value="CUSTOM"/>
+                <option name="CSV" value="CSV"/>
+                <option name="TABLE" value="TABLE"/>
+                <!--<option name="CHART" value="CHART"/>-->
+                <!--<option name="PIVOT_TABLE" value="PIVOT_TABLE"/>-->
+            </optionsInputParameter>
+            <stringInputParameter code="outputNamePattern" text="Output name pattern"/>
+
             <text language="java">
-                ${IS_FINAL}io.jmix.reports.yarg.reporting.ReportOutputDocument document =
-                reportRunner.byReportCode("user-list")
-                .addParam("active", true)
-                .run();
+                ${IS_FINAL}io.jmix.reports.yarg.reporting.ReportOutputDocument document = reportRunner.byReportCode("${code}")
+                    .withParams(java.util.Map.of("param", "param1"))
+                    .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
+                    .withOutputNamePattern("${outputNamePattern}")
+                    .run();
+
                 ${IS_FINAL}byte[] reportContent = document.getContent();
                 ${IS_FINAL}String reportName = document.getDocumentName();
             </text>
+
             <text language="kotlin">
-                val document = reportRunner.byReportCode("user-list")
-                        .addParam("active", true)
-                        .run()
+                val document = reportRunner.byReportCode("${code}")
+                    .withParams(java.util.Map.of("param", "param1"))
+                    .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
+                    .withOutputNamePattern("${outputNamePattern}")
+                    .run();
+
                 val reportContent = document.content
                 val reportName = document.documentName
             </text>
 
             <description>
                 <![CDATA[
-                Run a report by code and get the result content using <code>ReportRunner</code>.<br>
-                <a href="https://docs.jmix.io/jmix/reports/run-report.html#report-runner">Jmix Documentation</a>
+                    Run a report by code and get the result content using <code>ReportRunner</code>.<br>
+                    <br>
+                    Example:<br>
+                    <pre>
+<code>
+    ReportOutputDocument document = reportRunner.byReportCode("user-list-report")
+        .withParams(Map.of("companyCode", "jmix"))
+        .withOutputType(ReportOutputType.XLSX)
+        .withOutputNamePattern("Users_report.xlsx")
+        .run();
+
+    byte[] reportContent = document.getContent();
+    String reportName = document.getDocumentName();
+</code>
+                    </pre>
+
+                    <a href="https://docs.jmix.io/jmix/reports/run-report.html#report-runner">Jmix Documentation</a>
                 ]]>
             </description>
+        </codeSnippet>
+
+        <codeSnippet name="Run report by report entity" contextTypes="service,controller">
+            <inject variable="reportRunner" classQualifiedName="io.jmix.reports.runner.ReportRunner"/>
+
+            <variableInputParameter code="report" text="Report" jmixEntity="true"/>
+            <optionsInputParameter code="outputType" text="Output type">
+                <option name="XLS" value="XLS"/>
+                <option name="DOC" value="DOC"/>
+                <option name="PDF" value="PDF"/>
+                <option name="HTML" value="HTML"/>
+                <option name="DOCX" value="DOCX"/>
+                <option name="XLSX" value="XLSX"/>
+                <option name="CUSTOM" value="CUSTOM"/>
+                <option name="CSV" value="CSV"/>
+                <option name="TABLE" value="TABLE"/>
+                <!--<option name="CHART" value="CHART"/>-->
+                <!--<option name="PIVOT_TABLE" value="PIVOT_TABLE"/>-->
+            </optionsInputParameter>
+            <stringInputParameter code="outputNamePattern" text="Output name pattern"/>
+
+            <text language="java">
+                ${IS_FINAL}io.jmix.reports.yarg.reporting.ReportOutputDocument document = reportRunner.byReportEntity(${report})
+                    .withParams(java.util.Map.of("param", "param1"))
+                    .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
+                    .withOutputNamePattern("${outputNamePattern}")
+                    .run();
+
+                ${IS_FINAL}byte[] reportContent = document.getContent();
+                ${IS_FINAL}String reportName = document.getDocumentName();
+            </text>
+
+            <text language="kotlin">
+                val document = reportRunner.byReportEntity("${report}")
+                    .withParams(java.util.Map.of("param", "param1"))
+                    .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
+                    .withOutputNamePattern("${outputNamePattern}")
+                    .run()
+
+                val reportContent = document.content
+                val reportName = document.documentName
+            </text>
+
+            <description>
+                <![CDATA[
+                    Run a report by report entity and get the result content using <code>ReportRunner</code>.<br>
+                    <br>
+                    Example:<br>
+                    <pre>
+<code>
+    ReportOutputDocument document = reportRunner.byReportEntity(report)
+        .withParams(Map.of("companyCode", "jmix"))
+        .withOutputType(ReportOutputType.XLSX)
+        .withOutputNamePattern("Users report.xlsx")
+        .run();
+
+    byte[] reportContent = document.getContent();
+    String reportName = document.getDocumentName();
+</code>
+                    </pre>
+
+                    <a href="https://docs.jmix.io/jmix/reports/run-report.html#report-runner">Jmix Documentation</a>
+                ]]>
+            </description>
+
         </codeSnippet>
 
     </category>

@@ -23,7 +23,7 @@ import component_xml_load.screen.MenuSearchFieldView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
-@SpringBootTest
+@SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menusearchfield/menu.xml"])
 class MenuSearchFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Override

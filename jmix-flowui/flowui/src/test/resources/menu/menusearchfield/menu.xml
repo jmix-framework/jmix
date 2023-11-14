@@ -21,20 +21,23 @@
           opened="true"
           description="Application"
           icon="TABLE">
-        <item view="Application.view"
+        <item id="Application.view"
+              view="MenuSearchFieldView"
               title="Application view"
               description="app view"
               icon="ABACUS"
               shortcutCombination="Control-Enter"/>
         <menu id="nestedMenu"
               title="Nested menu">
-            <item view="Nested.view"
+            <item id="Nested.view"
+                  view="MenuSearchFieldView"
                   title="Nested view"/>
         </menu>
     </menu>
     <menu id="administration"
           title="Administration">
-        <item view="Administration.view"
+        <item id="Administration.view"
+              view="MenuSearchFieldView"
               title="Administration view"/>
     </menu>
 </menu-config>

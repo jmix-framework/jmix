@@ -44,7 +44,7 @@ public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
         if (loadMenuConfig) {
             MenuConfigListMenuItemProvider itemProvider =
                     applicationContext.getBean(MenuConfigListMenuItemProvider.class);
-            resultComponent.setItemProvider(itemProvider);
+            resultComponent.setMenuItemProvider(itemProvider);
             itemProvider.load();
         }
     }

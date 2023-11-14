@@ -21,6 +21,8 @@ import io.jmix.flowui.menu.ListMenuBuilder;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
  * Menu item provider for {@link io.jmix.flowui.component.main.JmixListMenu}
  */
 @Component("flowui_MenuConfigListMenuItemProvider")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MenuConfigListMenuItemProvider extends MenuConfigMenuItemProvider<ListMenu.MenuItem> {
 
     protected ObjectProvider<ListMenuBuilder> menuBuilderFactory;

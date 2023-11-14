@@ -41,7 +41,6 @@ public abstract class MenuConfigMenuItemProvider<T extends MenuItem>
     protected List<T> menuItems = new ArrayList<>();
     protected EventHub events = new EventHub();
 
-
     public MenuConfigMenuItemProvider(MenuConfig menuConfig) {
         this.menuConfig = menuConfig;
     }

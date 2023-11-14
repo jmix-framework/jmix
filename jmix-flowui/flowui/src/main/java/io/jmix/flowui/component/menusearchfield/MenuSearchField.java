@@ -22,22 +22,26 @@ import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasAriaLabel;
+import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasHelper;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.InputNotifier;
 import com.vaadin.flow.component.KeyNotifier;
+import com.vaadin.flow.component.shared.HasClearButton;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.component.shared.HasTooltip;
-import com.vaadin.flow.component.shared.InputField;
+import com.vaadin.flow.component.textfield.HasAutocapitalize;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.kit.component.HasAutofocus;
 import io.jmix.flowui.kit.component.HasPlaceholder;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.menu.MenuItem;
@@ -56,10 +60,10 @@ import java.util.function.Function;
  * by their text labels using entered value
  */
 public class MenuSearchField extends Composite<TextField>
-        implements HasHelper, HasLabel, HasPrefix, HasSuffix, HasSize, HasValueChangeMode,
-        HasStyle, HasTooltip, HasThemeVariant<MenuSearchFieldVariant>, HasTitle,
-        InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuSearchField>, HasPlaceholder,
-        InputField<ComponentValueChangeEvent<MenuSearchField, String>, String> {
+        implements HasHelper, HasPrefix, HasSuffix, HasValueChangeMode, HasAutocapitalize,
+        HasThemeVariant<MenuSearchFieldVariant>, HasTitle, HasClearButton, HasAutofocus, HasEnabled, HasLabel, HasSize,
+        HasStyle, HasTooltip, InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuSearchField>, HasPlaceholder,
+        HasValueAndElement<ComponentValueChangeEvent<MenuSearchField, String>, String> {
 
     protected MenuItemProvider<?> menuItemProvider;
     protected MenuItemsTransformer<?> itemsTransformer;
@@ -135,24 +139,21 @@ public class MenuSearchField extends Composite<TextField>
         return new ComponentValueChangeEvent<>(this, this, e.getOldValue(), e.isFromClient());
     }
 
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        getContent().setReadOnly(readOnly);
+    /**
+     * @return true/false if auto select is active/inactive
+     */
+    public boolean isAutoselect() {
+        return getContent().isAutoselect();
     }
 
-    @Override
-    public boolean isReadOnly() {
-        return getContent().isReadOnly();
-    }
-
-    @Override
-    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
-        getContent().setRequiredIndicatorVisible(requiredIndicatorVisible);
-    }
-
-    @Override
-    public boolean isRequiredIndicatorVisible() {
-        return getContent().isRequiredIndicatorVisible();
+    /**
+     * Set to true to always have the field value automatically
+     * selected when the field gains focus, false otherwise.
+     *
+     * @param autoselect true/false to set auto select on/off
+     */
+    public void setAutoselect(boolean autoselect) {
+        getContent().setAutoselect(autoselect);
     }
 
     protected static class MenuItemsTransformer<T extends MenuItem> implements Function<List<T>, List<T>> {

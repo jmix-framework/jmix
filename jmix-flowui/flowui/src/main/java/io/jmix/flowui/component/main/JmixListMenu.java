@@ -28,6 +28,7 @@ import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.menu.ListMenuBuilder;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
+import io.jmix.flowui.menu.provider.HasMenuItemProvider;
 import io.jmix.flowui.menu.provider.MenuItemProvider;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.view.View;
@@ -45,7 +46,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class JmixListMenu extends ListMenu implements ApplicationContextAware, InitializingBean {
+public class JmixListMenu extends ListMenu implements ApplicationContextAware, InitializingBean,
+        HasMenuItemProvider<ListMenu.MenuItem> {
 
     protected ApplicationContext applicationContext;
 
@@ -127,11 +129,8 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
                 && targetView.getAnnotation(ViewController.class) != null;
     }
 
-    /**
-     * Sets menu item provider
-     * @param itemProvider menu item provider to set
-     */
-    public void setItemProvider(@Nullable MenuItemProvider<ListMenu.MenuItem> itemProvider) {
+    @Override
+    public void setMenuItemProvider(@Nullable MenuItemProvider<ListMenu.MenuItem> itemProvider) {
         if (Objects.equals(this.itemProvider, itemProvider)) {
             return;
         }
@@ -151,12 +150,9 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         e.getItems().forEach(this::addMenuItem);
     }
 
-    /**
-     *
-     * @return menu item provider
-     */
+    @Override
     @Nullable
-    public MenuItemProvider<ListMenu.MenuItem> getItemProvider() {
+    public MenuItemProvider<ListMenu.MenuItem> getMenuItemProvider() {
         return this.itemProvider;
     }
 

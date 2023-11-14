@@ -2045,6 +2045,23 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="menuSearchFieldThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="helper-above-field"/>
+                    <xs:enumeration value="always-float-label"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -3807,6 +3824,40 @@
         </xs:complexContent>
     </xs:complexType>
 
+<!--    MenuSearchField-->
+    <xs:complexType name="menuSearchFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+
+                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                </xs:choice>
+
+                <xs:attribute name="value" type="xs:string"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="autoselect" type="xs:boolean"/>
+                <xs:attribute name="themeNames" type="menuSearchFieldThemeNames"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="menu" type="xs:string" use="required"/>
+
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasPlaceholder"/>
+                <xs:attributeGroup ref="hasAutocapitalize"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
     <!--    HTML-->
 
     <!-- Html -->
@@ -4350,6 +4401,7 @@
                 <xs:element name="genericFilter" type="genericFilterComponent"/>
                 <xs:element name="codeEditor" type="codeEditorComponent"/>
                 <xs:element name="virtualList" type="virtualListComponent"/>
+                <xs:element name="menuSearchField" type="menuSearchFieldComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

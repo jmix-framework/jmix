@@ -189,7 +189,7 @@ public class MenuSearchField extends Composite<TextField>
             Iterator<T> iterator = menuItems.iterator();
             while (iterator.hasNext()) {
                 T rootItem = iterator.next();
-                boolean match = filterItemRecursive(rootItem);
+                boolean match = filterItemRecursive(rootItem, false);
                 if (!match) {
                     iterator.remove();
                 }
@@ -197,17 +197,31 @@ public class MenuSearchField extends Composite<TextField>
             return menuItems;
         }
 
-        protected boolean filterItemRecursive(MenuItem item) {
-            boolean anyChildMatch = false;
-
+        /**
+         * Tests menu item and filters its children recursively by title.
+         *
+         * @param item        item to filter
+         * @param forceRetainAllChildren flag indicating whether to retain all children of this item or not.
+         * @return true/false if the item matches/doesn't match the condition (if title contains search string
+         * or any child matches this condition)
+         */
+        protected boolean filterItemRecursive(MenuItem item, boolean forceRetainAllChildren) {
+            //test item itself
             boolean selfMatch = testItemMatch(item);
 
+            boolean match;
             if (item instanceof ParentMenuItem<? extends MenuItem> parentMenuItem) {
-                anyChildMatch = filterChildren(parentMenuItem, selfMatch);
-            }
-            boolean match = selfMatch || anyChildMatch;
-            if (match) {
-                transformMatchingItem(item);
+                //test item children and filter them by title
+                //or retain all children if this item matches the condition or force flag is enabled externally
+                boolean anyChildMatch =
+                        filterChildren(parentMenuItem, selfMatch || forceRetainAllChildren);
+
+                match = selfMatch || anyChildMatch;
+                if (match) {
+                    parentMenuItem.setExpanded(true);
+                }
+            } else {
+                match = selfMatch;
             }
             return match;
         }
@@ -217,29 +231,29 @@ public class MenuSearchField extends Composite<TextField>
         }
 
         protected <C extends MenuItem> boolean filterChildren(ParentMenuItem<C> parentMenuItem,
-                                                              boolean forceAddChildren) {
+                                                              boolean forceRetainAllChildren) {
             boolean anyChildMatch = false;
 
             List<C> childItems = new ArrayList<>(parentMenuItem.getChildren());
-            parentMenuItem.removeAllChildItems();
+
+            //update child collection only if force flag is disabled
+            if (!forceRetainAllChildren) {
+                parentMenuItem.removeAllChildItems();
+            }
+
             for (C childItem : childItems) {
-                boolean childMatch = filterItemRecursive(childItem);
+                boolean childMatch = filterItemRecursive(childItem, forceRetainAllChildren);
 
                 if (childMatch) {
                     anyChildMatch = true;
                 }
 
-                if (childMatch || forceAddChildren) {
+                //update child collection only if force flag is disabled
+                if (childMatch && !forceRetainAllChildren) {
                     parentMenuItem.addChildItem(childItem);
                 }
             }
             return anyChildMatch;
-        }
-
-        protected void transformMatchingItem(MenuItem item) {
-            if (item instanceof ParentMenuItem<?> parentMenuItem) {
-                parentMenuItem.setExpanded(true);
-            }
         }
     }
 }

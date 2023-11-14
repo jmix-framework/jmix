@@ -35,7 +35,6 @@ import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.InputField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
@@ -58,7 +57,7 @@ import java.util.function.Function;
  */
 public class MenuSearchField extends Composite<TextField>
         implements HasHelper, HasLabel, HasPrefix, HasSuffix, HasSize, HasValueChangeMode,
-        HasStyle, HasTooltip, HasThemeVariant<TextFieldVariant>, HasTitle,
+        HasStyle, HasTooltip, HasThemeVariant<MenuSearchFieldVariant>, HasTitle,
         InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuSearchField>, HasPlaceholder,
         InputField<ComponentValueChangeEvent<MenuSearchField, String>, String> {
 
@@ -81,7 +80,6 @@ public class MenuSearchField extends Composite<TextField>
     }
 
     /**
-     *
      * @return menu item provider used to filter menu items
      */
     @Nullable
@@ -91,8 +89,9 @@ public class MenuSearchField extends Composite<TextField>
 
     /**
      * Sets menu item provider which will be used to filter menu items
+     *
      * @param menuItemProvider menu item provider to set
-     * @param <T> menu item type
+     * @param <T>              menu item type
      */
     public <T extends MenuItem> void setMenuItemProvider(@Nullable MenuItemProvider<T> menuItemProvider) {
         this.menuItemProvider = menuItemProvider;

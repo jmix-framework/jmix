@@ -65,6 +65,8 @@ public class MenuSearchField extends Composite<TextField>
         HasStyle, HasTooltip, InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuSearchField>, HasPlaceholder,
         HasValueAndElement<ComponentValueChangeEvent<MenuSearchField, String>, String> {
 
+    protected static final String SEARCH_FIELD_STYLE_NAME = "jmix-menu-search-field";
+
     protected MenuItemProvider<?> menuItemProvider;
     protected MenuItemsTransformer<?> itemsTransformer;
 
@@ -72,6 +74,7 @@ public class MenuSearchField extends Composite<TextField>
     protected TextField initContent() {
         TextField field = super.initContent();
         field.addValueChangeListener(this::onValueChange);
+        field.addClassName(SEARCH_FIELD_STYLE_NAME);
 
         return field;
     }

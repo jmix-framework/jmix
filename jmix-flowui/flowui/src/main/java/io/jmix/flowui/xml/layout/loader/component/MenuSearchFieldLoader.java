@@ -24,6 +24,8 @@ import io.jmix.flowui.menu.provider.HasMenuItemProvider;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
+import java.util.Optional;
+
 public class MenuSearchFieldLoader extends AbstractComponentLoader<MenuSearchField> {
 
     protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
@@ -51,7 +53,6 @@ public class MenuSearchFieldLoader extends AbstractComponentLoader<MenuSearchFie
     public void loadComponent() {
         getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
-        loadString(element, "value", resultComponent::setValue);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
 
@@ -75,6 +76,8 @@ public class MenuSearchFieldLoader extends AbstractComponentLoader<MenuSearchFie
                 .orElseThrow(() ->
                         new GuiDevelopmentException("Menu id is required for menu search field component", context));
 
+        Optional<String> valueOptional = loadString(element, "value");
+
         getComponentContext().addInitTask((context, view) -> {
             Component menuComponent = UiComponentUtils.findComponent(view, menuId).orElse(null);
 
@@ -82,6 +85,8 @@ public class MenuSearchFieldLoader extends AbstractComponentLoader<MenuSearchFie
                 throw new GuiDevelopmentException("Failed to find a menu with item provider", context, "Menu", menuId);
             }
             resultComponent.setMenuItemProvider(hasMenuItemProvider.getMenuItemProvider());
+
+            valueOptional.ifPresent(resultComponent::setValue);
         });
     }
 }

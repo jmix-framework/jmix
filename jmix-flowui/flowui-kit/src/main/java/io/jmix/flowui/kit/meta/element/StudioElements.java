@@ -312,7 +312,8 @@ public interface StudioElements {
                     "io.jmix.flowui.component.genericfilter.GenericFilter",
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
-                    "com.vaadin.flow.component.tabs.Tab"},
+                    "com.vaadin.flow.component.tabs.Tab",
+                    "io.jmix.flowui.component.menusearchfield.MenuSearchField"},
             properties = {
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING, required = true),
                     @StudioProperty(xmlAttribute = "focusDelay", type = StudioPropertyType.INTEGER),

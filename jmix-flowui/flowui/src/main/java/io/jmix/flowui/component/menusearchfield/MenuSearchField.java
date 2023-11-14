@@ -218,7 +218,7 @@ public class MenuSearchField extends Composite<TextField>
 
                 match = selfMatch || anyChildMatch;
                 if (match) {
-                    parentMenuItem.setExpanded(true);
+                    parentMenuItem.setOpened(true);
                 }
             } else {
                 match = selfMatch;
@@ -227,7 +227,7 @@ public class MenuSearchField extends Composite<TextField>
         }
 
         protected boolean testItemMatch(MenuItem item) {
-            return StringUtils.contains(item.getLabel(), searchString);
+            return StringUtils.contains(item.getTitle(), searchString);
         }
 
         protected <C extends MenuItem> boolean filterChildren(ParentMenuItem<C> parentMenuItem,

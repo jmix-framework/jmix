@@ -425,7 +425,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     }
 
     protected void onMenuItemPropertyChange(PropertyChangeEvent event) {
-        if (MenuBarItem.MENU_ITEM_EXPANDED.equals(event.getPropertyName())) {
+        if (MenuBarItem.MENU_ITEM_OPENED.equals(event.getPropertyName())) {
             Details menuBarComponent = getMenuBarComponent((MenuItem) event.getSource());
             menuBarComponent.setOpened((Boolean) event.getNewValue());
         }
@@ -450,7 +450,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         protected static final String MENU_ITEM_CLASS_NAME = "className";
 
         protected String id;
-        protected String label;
+        protected String title;
         protected String description;
         protected VaadinIcon icon;
         protected List<String> classNames;
@@ -491,12 +491,11 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
         /**
          * @return title or {@code null} if not set
-         * @deprecated use {@link #getLabel()}}
          */
+        @Override
         @Nullable
-        @Deprecated
         public String getTitle() {
-            return label;
+            return title;
         }
 
         /**
@@ -504,11 +503,9 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          *
          * @param title displayed text
          * @return current menu instance
-         * @deprecated use {@link #withLabel(String)}
          */
-        @Deprecated
         public MenuItem withTitle(@Nullable String title) {
-            this.label = title;
+            this.title = title;
             return this;
         }
 
@@ -680,28 +677,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         public String toString() {
             return "{\"id\": \"" + getId() + "\"}";
         }
-
-        @Nullable
-        @Override
-        public String getLabel() {
-            return getTitle();
-        }
-
-        @Override
-        public void setLabel(@Nullable String label) {
-            this.label = label;
-        }
-
-        /**
-         * Set a textual label for the item
-         *
-         * @param label the label text to set or null to remove the label
-         * @return current menu item
-         */
-        public MenuItem withLabel(@Nullable String label) {
-            this.label = label;
-            return this;
-        }
     }
 
     /**
@@ -709,24 +684,18 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      */
     public static class MenuBarItem extends MenuItem implements ParentMenuItem<MenuItem> {
 
-        protected static final String MENU_ITEM_EXPANDED = "expanded";
+        protected static final String MENU_ITEM_OPENED = "isOpened";
 
         protected List<MenuItem> children;
-        protected boolean expanded;
+        protected boolean isOpened;
 
         public MenuBarItem(String id) {
             super(id);
         }
 
         @Override
-        @Deprecated
         public MenuBarItem withTitle(@Nullable String title) {
             return (MenuBarItem) super.withTitle(title);
-        }
-
-        @Override
-        public MenuBarItem withLabel(@Nullable String label) {
-            return (MenuBarItem) super.withLabel(label);
         }
 
         @Override
@@ -747,22 +716,22 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         /**
          * @return {@code true} if menu bar item initially should open list of sub menu items,
          * {@code false} otherwise
-         * @deprecated use {@link #isExpanded()}
          */
-        @Deprecated
+        @Override
         public boolean isOpened() {
-            return isExpanded();
+            return isOpened;
         }
 
         /**
          * Sets whether menu bar item should open sub menu when it's added to the menu.
          *
          * @param opened open option
-         * @deprecated use {@link #setExpanded(boolean)}
          */
-        @Deprecated
+        @Override
         public void setOpened(boolean opened) {
-            setExpanded(opened);
+            isOpened = opened;
+            propertyChangeSupport.firePropertyChange(
+                    new PropertyChangeEvent(this, MENU_ITEM_OPENED, !isOpened, isOpened));
         }
 
         /**
@@ -770,11 +739,10 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          *
          * @param opened open option
          * @return current menu bar item instance
-         * @deprecated use {@link #withExpanded(boolean)}
          */
-        @Deprecated
         public MenuBarItem withOpened(boolean opened) {
-            return withExpanded(opened);
+            setOpened(opened);
+            return this;
         }
 
         /**
@@ -914,29 +882,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         @Override
         public boolean isMenu() {
             return true;
-        }
-
-        @Override
-        public void setExpanded(boolean expanded) {
-            this.expanded = expanded;
-            propertyChangeSupport.firePropertyChange(
-                    new PropertyChangeEvent(this, MENU_ITEM_EXPANDED, !expanded, expanded));
-        }
-
-        @Override
-        public boolean isExpanded() {
-            return expanded;
-        }
-
-        /**
-         * Sets whether menu bar item should open sub menu when it's added to the menu.
-         *
-         * @param expanded expanded option
-         * @return current menu bar item instance
-         */
-        public MenuBarItem withExpanded(boolean expanded) {
-            setExpanded(expanded);
-            return this;
         }
     }
 

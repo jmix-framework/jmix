@@ -185,15 +185,8 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
-        @Deprecated
         public ViewMenuItem withTitle(@Nullable String title) {
             super.withTitle(title);
-            return this;
-        }
-
-        @Override
-        public ViewMenuItem withLabel(@Nullable String label) {
-            super.withLabel(label);
             return this;
         }
 
@@ -277,15 +270,8 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
-        @Deprecated
         public BeanMenuItem withTitle(@Nullable String title) {
             super.withTitle(title);
-            return this;
-        }
-
-        @Override
-        public BeanMenuItem withLabel(@jakarta.annotation.Nullable String label) {
-            super.withLabel(label);
             return this;
         }
 

@@ -24,15 +24,8 @@ import jakarta.annotation.Nullable;
 public interface MenuItem {
 
     /**
-     * @return the label of this menu item or null if no label has been set
+     * @return title of this menu item or null if no title has been set
      */
     @Nullable
-    String getLabel();
-
-    /**
-     * Set a textual label for the item.
-     *
-     * @param label the label text to set or null to remove the label
-     */
-    void setLabel(@Nullable String label);
+    String getTitle();
 }

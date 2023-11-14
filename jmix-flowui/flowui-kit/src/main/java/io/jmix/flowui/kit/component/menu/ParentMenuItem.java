@@ -58,14 +58,14 @@ public interface ParentMenuItem<T extends MenuItem> extends MenuItem {
     void removeChildItem(T item);
 
     /**
-     * Sets the expanded status of the item.
+     * Sets the opened status of the item.
      *
-     * @param expanded true/false to expand/collapse the item
+     * @param opened true/false to open/close the item
      */
-    void setExpanded(boolean expanded);
+    void setOpened(boolean opened);
 
     /**
-     * @return true/false if the item is expanded/collapsed
+     * @return true/false if the item is opened/closed
      */
-    boolean isExpanded();
+    boolean isOpened();
 }

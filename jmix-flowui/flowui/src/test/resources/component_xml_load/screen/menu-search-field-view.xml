@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <layout>
+        <listMenu id="listMenu"/>
+
+        <menuSearchField id="menuSearchField"
+                         autocapitalize="SENTENCES"
+                         autofocus="true"
+                         autoselect="true"
+                         classNames="cssClassName1, cssClassName2"
+                         css="color: red;"
+                         clearButtonVisible="true"
+                         enabled="true"
+                         height="50px"
+                         helperText="helperTextString"
+                         label="labelString"
+                         maxHeight="55px"
+                         maxWidth="120px"
+                         minHeight="40px"
+                         minWidth="80px"
+                         placeholder="placeholderString"
+                         readOnly="true"
+                         tabIndex="3"
+                         themeNames="small, align-right"
+                         title="titleString"
+                         value="5050"
+                         valueChangeMode="ON_CHANGE"
+                         valueChangeTimeout="50"
+                         visible="true"
+                         width="100px"
+                         menu="listMenu">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"/>
+        </menuSearchField>
+    </layout>
+</view>

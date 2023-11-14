@@ -119,6 +119,16 @@ public class MenuSearchField extends Composite<TextField>
     }
 
     @Override
+    public void setValueChangeTimeout(int valueChangeTimeout) {
+        getContent().setValueChangeTimeout(valueChangeTimeout);
+    }
+
+    @Override
+    public int getValueChangeTimeout() {
+        return getContent().getValueChangeTimeout();
+    }
+
+    @Override
     public void setValue(String value) {
         getContent().setValue(value);
     }

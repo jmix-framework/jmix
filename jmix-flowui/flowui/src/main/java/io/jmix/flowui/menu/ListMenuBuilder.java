@@ -32,9 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -85,7 +85,7 @@ public class ListMenuBuilder {
         }
     }
 
-    protected Optional<JmixListMenu.MenuItem> createListMenu(MenuItem menuItem) {
+    public Optional<JmixListMenu.MenuItem> createListMenu(MenuItem menuItem) {
         if (menuItem.isMenu()) {
             if (menuItem.getChildren().isEmpty()) {
                 log.warn("Menu bar item '{}' is skipped as it does not have children", menuItem.getId());

@@ -21,12 +21,14 @@ import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RouterLink;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.menu.ListMenuBuilder;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
+import io.jmix.flowui.menu.provider.MenuItemProvider;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
@@ -36,10 +38,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class JmixListMenu extends ListMenu implements ApplicationContextAware, InitializingBean {
@@ -48,6 +51,9 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
 
     protected UiComponents uiComponents;
     protected ViewRegistry viewRegistry;
+
+    protected MenuItemProvider<ListMenu.MenuItem> itemProvider;
+    protected Subscription itemCollectionChangedSubscription;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -122,6 +128,39 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     }
 
     /**
+     * Sets menu item provider
+     * @param itemProvider menu item provider to set
+     */
+    public void setItemProvider(@Nullable MenuItemProvider<ListMenu.MenuItem> itemProvider) {
+        if (Objects.equals(this.itemProvider, itemProvider)) {
+            return;
+        }
+        if (itemCollectionChangedSubscription != null) {
+            itemCollectionChangedSubscription.remove();
+            itemCollectionChangedSubscription = null;
+        }
+        this.itemProvider = itemProvider;
+        if (itemProvider != null) {
+            itemCollectionChangedSubscription =
+                    itemProvider.addCollectionChangedListener(this::onMenuItemCollectionChanged);
+        }
+    }
+
+    protected void onMenuItemCollectionChanged(MenuItemProvider.CollectionChangeEvent<ListMenu.MenuItem> e) {
+        removeAllMenuItems();
+        e.getItems().forEach(this::addMenuItem);
+    }
+
+    /**
+     *
+     * @return menu item provider
+     */
+    @Nullable
+    public MenuItemProvider<ListMenu.MenuItem> getItemProvider() {
+        return this.itemProvider;
+    }
+
+    /**
      * Describes menu item that should navigate to the view.
      */
     public static class ViewMenuItem extends MenuItem {
@@ -150,8 +189,15 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
+        @Deprecated
         public ViewMenuItem withTitle(@Nullable String title) {
             super.withTitle(title);
+            return this;
+        }
+
+        @Override
+        public ViewMenuItem withLabel(@Nullable String label) {
+            super.withLabel(label);
             return this;
         }
 
@@ -235,8 +281,15 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
+        @Deprecated
         public BeanMenuItem withTitle(@Nullable String title) {
             super.withTitle(title);
+            return this;
+        }
+
+        @Override
+        public BeanMenuItem withLabel(@jakarta.annotation.Nullable String label) {
+            super.withLabel(label);
             return this;
         }
 

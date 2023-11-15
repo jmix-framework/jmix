@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.gridexportui.action.ExportAction;
 import io.jmix.gridexportui.exporter.AbstractTableExporter;
 import io.jmix.gridexportui.exporter.ExportMode;
+import io.jmix.gridexportui.exporter.ExporterSortHelper;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.download.ByteArrayDataProvider;
@@ -75,7 +76,7 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
                     entity -> {
                         JsonObject jsonObject = createJsonObjectFromEntity(table, entity);
                         jsonElements.add(jsonObject);
-                    });
+                    }, ExporterSortHelper.getSortOrder(table.getSortInfo()));
         } else {
             Collection<Object> items = getItems(table, exportMode);
 
@@ -100,7 +101,7 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
                     entity -> {
                         JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
                         jsonElements.add(jsonObject);
-                    });
+                    }, ExporterSortHelper.getSortOrder(dataGrid.getSortOrder()));
         } else {
             Collection<Object> items = getItems(dataGrid, exportMode);
 

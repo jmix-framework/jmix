@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-starter'
+package io.jmix.flowui.sys.cluster;
 
-dependencies {
-    api project(':flowui')
+import org.springframework.messaging.SubscribableChannel;
 
-    api 'org.springframework.boot:spring-boot-autoconfigure'
+import java.util.function.Supplier;
 
-    implementation 'org.springframework:spring-messaging'
+/**
+ * Provides {@link SubscribableChannel} to pass and handle cluster messages containing application events.
+ * These messages are intended to distribute application events in a cluster.
+ */
+public interface AppEventSubscribableChannelSupplier extends Supplier<SubscribableChannel> {
 
-    compileOnly 'com.hazelcast:hazelcast'
-//    compileOnly 'org.springframework.boot:spring-boot-starter-websocket'
 }

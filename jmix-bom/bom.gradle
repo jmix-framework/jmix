@@ -80,9 +80,8 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:2.7.15")
+    api platform("org.springframework.boot:spring-boot-dependencies:2.7.17")
     api platform('software.amazon.awssdk:bom:2.16.69')
-    api platform('org.eclipse.jetty:jetty-bom:9.4.52.v20230823') //contains Phoenix-approved libs. Unnecessary after update to org.springframework.boot:spring-boot-dependencies:2.7.16 or newer
 
     def freeVersion = version
     def premiumVersion = version
@@ -410,14 +409,14 @@ dependencies {
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        def yargVersion = '2.2.21.phoenix.1'
+        def yargVersion = '2.2.21.phoenix.2'
         api "com.haulmont.yarg:yarg-api:$yargVersion"
         api "com.haulmont.yarg:yarg:$yargVersion"
 
         api 'org.jsoup:jsoup:1.14.3'
 
-        api 'org.apache.poi:poi:5.2.3'
-        api 'org.apache.poi:poi-ooxml:5.2.3'
+        api 'org.apache.poi:poi:5.2.2'
+        api 'org.apache.poi:poi-ooxml:5.2.2'
         api 'org.apache.tika:tika-parsers:1.28.5'
 
         api 'org.webjars.bower:pivottable:2.21.0.jmix.0'
@@ -448,19 +447,11 @@ dependencies {
         api 'org.jetbrains:annotations:22.0.0'
         api 'commons-codec:commons-codec:1.15'
 
-        api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
+        api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.13'
 
         api 'xerces:xercesImpl:2.12.2'
 
         api 'com.hazelcast:hazelcast:5.3.2'
-
-        api 'org.apache.tomcat:tomcat-annotations-api:9.0.80'
-        api 'org.apache.tomcat:tomcat-jdbc:9.0.80'
-        api 'org.apache.tomcat:tomcat-jsp-api:9.0.80'
-        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.80'
-        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.80'
-        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.80'
-        api 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.80'
         
         api 'com.nimbusds:oauth2-oidc-sdk:9.43.3'
 

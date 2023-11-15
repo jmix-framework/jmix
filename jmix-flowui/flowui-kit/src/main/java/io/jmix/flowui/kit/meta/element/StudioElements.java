@@ -121,11 +121,135 @@ public interface StudioElements {
     )
     Grid.Column column();
 
+
+    @StudioElement(
+            name = "EditorActionsColumn",
+            classFqn = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
+            xmlElement = "editorActionsColumn",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "autoWidth", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "footer", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "header", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "key", type = StudioPropertyType.STRING,
+                            initialValue = "editorActionsColumn"),
+                    @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
+                            defaultValueRef = "parent:resizable"),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE,
+                            defaultValue = "UNDEFINED"),
+            }
+    )
+    void editorActionsColumn();
+
+    @StudioElement(
+            name = "EditButton",
+            xmlElement = "editButton",
+            target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "PENCIL",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
+                            defaultValue = "msg:///actions.Edit"),
+                    @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"}),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"small", "large", "tertiary", "tertiary-inline",
+                                    "primary", "success", "error", "contrast", "icon", "contained", "outlined"}),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "iconAfterText", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+            }
+    )
+    void editButton();
+
+    @StudioElement(
+            name = "SaveButton",
+            xmlElement = "saveButton",
+            target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "CHECK",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"}),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"small", "large", "tertiary", "tertiary-inline",
+                                    "primary", "success", "error", "contrast", "icon", "contained", "outlined"}),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "iconAfterText", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+            }
+    )
+    void saveButton();
+
+    @StudioElement(
+            name = "CloseButton",
+            xmlElement = "closeButton",
+            target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "BAN",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"}),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"small", "large", "tertiary", "tertiary-inline",
+                                    "primary", "success", "error", "contrast", "icon", "contained", "outlined"}),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "iconAfterText", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+            }
+    )
+    void closeButton();
+
+    @StudioElement(
+            name = "CancelButton",
+            xmlElement = "cancelButton",
+            target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "BAN",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
+                            defaultValue = "msg:///actions.Cancel"),
+                    @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"}),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"small", "large", "tertiary", "tertiary-inline",
+                                    "primary", "success", "error", "contrast", "icon", "contained", "outlined"}),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "iconAfterText", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+            }
+    )
+    void cancelButton();
+
     @StudioElement(
             name = "Aggregation",
             classFqn = "io.jmix.flowui.component.AggregationInfo",
             xmlElement = "aggregation",
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             properties = {
                     @StudioProperty(xmlAttribute = "cellTitle", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "strategyClass", type = StudioPropertyType.STRING),
@@ -141,6 +265,7 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.data.renderer.LocalDateRenderer",
             xmlElement = "localDateRenderer",
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             properties = {
                     @StudioProperty(xmlAttribute = "format",
                             type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -156,6 +281,7 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.data.renderer.LocalDateTimeRenderer",
             xmlElement = "localDateTimeRenderer",
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             properties = {
                     @StudioProperty(xmlAttribute = "format",
                             type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -171,6 +297,7 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.data.renderer.NumberRenderer",
             xmlElement = "numberRenderer",
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             properties = {
                     @StudioProperty(xmlAttribute = "format",
                             type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -695,8 +822,8 @@ public interface StudioElements {
             xmlElement = "component",
             target = "io.jmix.flowui.facet.SettingsFacet",
             properties = {
-                @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
-                @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN)
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN)
             }
     )
     void settingsFacetComponent();

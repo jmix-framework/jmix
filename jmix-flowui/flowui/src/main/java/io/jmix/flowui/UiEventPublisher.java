@@ -24,14 +24,19 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
 import com.vaadin.flow.server.WrappedSession;
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.flowui.sys.cluster.AppEventMessagePayload;
+import io.jmix.flowui.sys.cluster.AppEventSubscribableChannelSupplier;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -77,13 +82,133 @@ public class UiEventPublisher {
 
     protected ApplicationContext applicationContext;
     protected SystemAuthenticator systemAuthenticator;
+    protected AppEventSubscribableChannelSupplier appEventChannelSupplier;
 
     protected final ReadWriteLock lock = new ReentrantReadWriteLock();
     protected final List<WeakReference<VaadinSession>> sessions = new ArrayList<>();
 
-    public UiEventPublisher(ApplicationContext applicationContext, SystemAuthenticator systemAuthenticator) {
+    public UiEventPublisher(ApplicationContext applicationContext,
+                            SystemAuthenticator systemAuthenticator,
+                            @Nullable AppEventSubscribableChannelSupplier appEventChannelSupplier) {
         this.applicationContext = applicationContext;
         this.systemAuthenticator = systemAuthenticator;
+        this.appEventChannelSupplier = appEventChannelSupplier;
+    }
+
+    @EventListener
+    public void init(ApplicationStartedEvent event) {
+        if (appEventChannelSupplier != null) {
+            appEventChannelSupplier.get().subscribe(this::onAppEventMessage);
+        }
+    }
+
+    protected void onAppEventMessage(Message<?> message) {
+        AppEventMessagePayload payload = (AppEventMessagePayload) message.getPayload();
+        log.debug("Received message with event {} for users {}", payload.getEvent(), payload.getUsernames());
+
+        publishEventForUsersInternal(payload.getEvent(), payload.getUsernames());
+    }
+
+    protected void publishEventForUsersInternal(ApplicationEvent event, @Nullable Collection<String> usernames) {
+        Map<String, List<VaadinSession>> userSessions = getActiveSessionsForUsernames(usernames);
+
+        sendEventToUserSessions(event, userSessions);
+    }
+
+    protected Map<String, List<VaadinSession>> getActiveSessionsForUsernames(@Nullable Collection<String> usernames) {
+        Map<String, List<VaadinSession>> userActiveSessions = new HashMap<>();
+        Set<String> usernamesSet = usernames != null ? new HashSet<>(usernames) : null;
+        int removed = 0;
+
+        lock.readLock().lock();
+        try {
+            for (Iterator<WeakReference<VaadinSession>> iterator = sessions.iterator(); iterator.hasNext(); ) {
+                WeakReference<VaadinSession> reference = iterator.next();
+                VaadinSession session = reference.get();
+                if (session != null) {
+                    String sessionUsername = getUsernameFromVaadinSession(session);
+                    if (Strings.isNullOrEmpty(sessionUsername)) {
+                        log.debug("Skip Vaadin session {} as it does not contain security context or" +
+                                " authentication with username", session);
+                    } else if (usernamesSet == null || usernamesSet.contains(sessionUsername)) {
+                        List<VaadinSession> vaadinSessions =
+                                userActiveSessions.computeIfAbsent(sessionUsername, k -> new ArrayList<>());
+                        vaadinSessions.add(session);
+                    }
+                } else {
+                    lock.readLock().unlock();
+                    lock.writeLock().lock();
+                    try {
+                        iterator.remove();
+                        lock.readLock().lock();
+                    } finally {
+                        lock.writeLock().unlock();
+                    }
+                    removed++;
+                }
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+
+        if (removed > 0) {
+            log.debug("Removed {} Vaadin sessions", removed);
+        }
+        return userActiveSessions;
+    }
+
+    @Nullable
+    protected String getUsernameFromVaadinSession(VaadinSession session) {
+        WrappedSession wrappedSession = session.getSession();
+        if (wrappedSession == null) {
+            return null;
+        }
+        SecurityContext securityContext = (SecurityContext) wrappedSession.getAttribute(
+                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+        if (securityContext == null || securityContext.getAuthentication() == null) {
+            return null;
+        }
+        Authentication authentication = securityContext.getAuthentication();
+        if (!(authentication.getPrincipal() instanceof UserDetails)) {
+            return null;
+        }
+        return ((UserDetails) authentication.getPrincipal()).getUsername();
+    }
+
+    protected void sendEventToUserSessions(ApplicationEvent event, Map<String, List<VaadinSession>> userSessions) {
+        log.debug("Sending {} to {} Vaadin sessions", event,userSessions.values().stream().mapToLong(List::size).sum());
+
+        for (Map.Entry<String, List<VaadinSession>> usernameSessionEntry : userSessions.entrySet()) {
+            // Without 'VaadinAwareSecurityContextHolderStrategyConfiguration' configuration
+            // when we get access to another user session, the security context is still the same as
+            // in VaadinSession of sender user. I.e. if "admin" send notification to "user1", the
+            // "CurrentAuthentication#getUser()" under VaadinSession of "user1" will return "admin".
+
+            // To avoid the problem we should perform access to VaadinSession of recipient behalf of
+            // recipient.
+            String sessionUsername = usernameSessionEntry.getKey();
+            List<VaadinSession> sessions = usernameSessionEntry.getValue();
+            for (VaadinSession session : sessions) {
+                systemAuthenticator.runWithUser(sessionUsername,
+                        // obtain lock on session state
+                        () -> session.access(() -> onSessionAccess(session, event)));
+            }
+        }
+    }
+
+    protected void onSessionAccess(VaadinSession session, ApplicationEvent event) {
+        if (session.getState() != VaadinSessionState.OPEN) {
+            return;
+        }
+        // notify all opened web browser tabs
+        Collection<UI> uis = session.getUIs();
+        for (UI ui : uis) {
+            if (!ui.isClosing()) {
+                // work in context of UI
+                ui.accessSynchronously(() ->
+                        session.getAttribute(UiEventsManager.class).publish(Collections.singletonList(ui), event));
+            }
+        }
     }
 
     /**
@@ -133,99 +258,23 @@ public class UiEventPublisher {
     /**
      * Publishes the event for all UIs in all sessions of users specified in usernames collection.
      * If usernames collection is null the event will be published for all users (broadcast).
-     * @param event event to publish
+     *
+     * @param event     event to publish
      * @param usernames usernames of target users or null if broadcast to all users is needed
      */
     public void publishEventForUsers(ApplicationEvent event, @Nullable Collection<String> usernames) {
-        Map<String, List<VaadinSession>> userActiveSessions = new HashMap<>();
-        Set<String> usernamesSet = usernames != null ? new HashSet<>(usernames) : null;
-        int removed = 0;
-
-        lock.readLock().lock();
-        try {
-            for (Iterator<WeakReference<VaadinSession>> iterator = sessions.iterator(); iterator.hasNext(); ) {
-                WeakReference<VaadinSession> reference = iterator.next();
-                VaadinSession session = reference.get();
-                if (session != null) {
-                    String sessionUsername = getUsernameFromVaadinSession(session);
-                    if (Strings.isNullOrEmpty(sessionUsername)) {
-                        log.debug("Skip Vaadin session {} as it does not contain security context or" +
-                                " authentication with username", session);
-                    } else if (usernamesSet == null || usernamesSet.contains(sessionUsername)) {
-                        List<VaadinSession> vaadinSessions =
-                                userActiveSessions.computeIfAbsent(sessionUsername, k -> new ArrayList<>());
-                        vaadinSessions.add(session);
-                    }
-                } else {
-                    lock.readLock().unlock();
-                    lock.writeLock().lock();
-                    try {
-                        iterator.remove();
-                        lock.readLock().lock();
-                    } finally {
-                        lock.writeLock().unlock();
-                    }
-                    removed++;
-                }
-            }
-        } finally {
-            lock.readLock().unlock();
-        }
-
-        if (removed > 0) {
-            log.debug("Removed {} Vaadin sessions", removed);
-        }
-        log.debug("Sending {} to {} Vaadin sessions", event,
-                userActiveSessions.values().stream().mapToLong(List::size).sum());
-
-        for (Map.Entry<String, List<VaadinSession>> usernameSessionEntry : userActiveSessions.entrySet()) {
-            // Without 'VaadinAwareSecurityContextHolderStrategyConfiguration' configuration
-            // when we get access to another user session, the security context is still the same as
-            // in VaadinSession of sender user. I.e. if "admin" send notification to "user1", the
-            // "CurrentAuthentication#getUser()" under VaadinSession of "user1" will return "admin".
-
-            // To avoid the problem we should perform access to VaadinSession of recipient behalf of
-            // recipient.
-            String sessionUsername = usernameSessionEntry.getKey();
-            List<VaadinSession> sessions = usernameSessionEntry.getValue();
-            for (VaadinSession session : sessions) {
-                systemAuthenticator.runWithUser(sessionUsername,
-                        // obtain lock on session state
-                        () -> session.access(() -> onSessionAccess(session, event)));
-            }
-        }
+        publishEventToChannel(event, usernames);
+        publishEventForUsersInternal(event, usernames);
     }
 
-    @Nullable
-    protected String getUsernameFromVaadinSession(VaadinSession session) {
-        WrappedSession wrappedSession = session.getSession();
-        if (wrappedSession == null) {
-            return null;
-        }
-        SecurityContext securityContext = (SecurityContext) wrappedSession.getAttribute(
-                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-        if (securityContext == null || securityContext.getAuthentication() == null) {
-            return null;
-        }
-        Authentication authentication = securityContext.getAuthentication();
-        if (!(authentication.getPrincipal() instanceof UserDetails)) {
-            return null;
-        }
-        return ((UserDetails) authentication.getPrincipal()).getUsername();
-    }
+    protected void publishEventToChannel(ApplicationEvent event, @Nullable Collection<String> usernames) {
+        if (appEventChannelSupplier != null) {
+            AppEventMessagePayload payload = new AppEventMessagePayload(event, usernames);
+            Message<?> message = MessageBuilder.withPayload(payload).build();
 
-    protected void onSessionAccess(VaadinSession session, ApplicationEvent event) {
-        if (session.getState() != VaadinSessionState.OPEN) {
-            return;
-        }
-        // notify all opened web browser tabs
-        Collection<UI> uis = session.getUIs();
-        for (UI ui : uis) {
-            if (!ui.isClosing()) {
-                // work in context of UI
-                ui.accessSynchronously(() ->
-                        session.getAttribute(UiEventsManager.class).publish(Collections.singletonList(ui), event));
-            }
+            log.debug("Publish message with event {} for users {}", event, usernames);
+
+            appEventChannelSupplier.get().send(message);
         }
     }
 }

@@ -16,6 +16,7 @@
 
 package io.jmix.autoconfigure.flowui.cluster;
 
+import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.topic.ITopic;
 import io.jmix.flowui.sys.cluster.AppEventSubscribableChannelSupplier;
@@ -37,7 +38,13 @@ public class HazelcastAppEventSubscribableChannelSupplier implements AppEventSub
 
         @Override
         public boolean subscribe(MessageHandler handler) {
-            topic.addMessageListener(message -> handler.handleMessage(message.getMessageObject()));
+            topic.addMessageListener(message -> {
+                Member publishingMember = message.getPublishingMember();
+                //avoid to process own messages
+                if (publishingMember == null || !publishingMember.localMember()) {
+                    handler.handleMessage(message.getMessageObject());
+                }
+            });
             return true;
         }
 

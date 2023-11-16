@@ -30,7 +30,6 @@ dependencies {
     api 'org.springframework.boot:spring-boot-autoconfigure'
 
     implementation 'com.google.code.gson:gson'
-    implementation 'org.springframework:spring-messaging'
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.flowui.cluster;
+package io.jmix.autoconfigure.core.cluster;
 
-import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.topic.ITopic;
-import io.jmix.flowui.sys.cluster.AppEventSubscribableChannelSupplier;
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;
 
-public class HazelcastAppEventSubscribableChannelSupplier implements AppEventSubscribableChannelSupplier {
+/**
+ * Provides a channel that publishes messages to all application instances in a cluster using Hazelcast topics.
+ */
+public class HazelcastApplicationEventChannelSupplier implements ClusterApplicationEventChannelSupplier {
 
     protected final SubscribableChannel messageChannel;
 
@@ -38,13 +40,7 @@ public class HazelcastAppEventSubscribableChannelSupplier implements AppEventSub
 
         @Override
         public boolean subscribe(MessageHandler handler) {
-            topic.addMessageListener(message -> {
-                Member publishingMember = message.getPublishingMember();
-                //avoid to process own messages
-                if (publishingMember == null || !publishingMember.localMember()) {
-                    handler.handleMessage(message.getMessageObject());
-                }
-            });
+            topic.addMessageListener(message -> handler.handleMessage(message.getMessageObject()));
             return true;
         }
 
@@ -66,8 +62,8 @@ public class HazelcastAppEventSubscribableChannelSupplier implements AppEventSub
         }
     }
 
-    public HazelcastAppEventSubscribableChannelSupplier(HazelcastInstance hazelcastInstance) {
-        ITopic<Message<?>> topic = hazelcastInstance.getTopic("jmix-app-event-topic");
+    public HazelcastApplicationEventChannelSupplier(HazelcastInstance hazelcastInstance) {
+        ITopic<Message<?>> topic = hazelcastInstance.getTopic("jmix-cluster-application-event-topic");
         this.messageChannel = new HazelcastMessageChannel(topic);
     }
 

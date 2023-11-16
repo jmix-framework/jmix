@@ -23,20 +23,17 @@ import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
 import com.vaadin.flow.server.WrappedSession;
+import io.jmix.core.cluster.ClusterApplicationEvent;
+import io.jmix.core.cluster.ClusterApplicationEventPublisher;
 import io.jmix.core.security.SystemAuthenticator;
-import io.jmix.flowui.sys.cluster.AppEventMessagePayload;
-import io.jmix.flowui.sys.cluster.AppEventSubscribableChannelSupplier;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -82,36 +79,26 @@ public class UiEventPublisher {
 
     protected ApplicationContext applicationContext;
     protected SystemAuthenticator systemAuthenticator;
-    protected AppEventSubscribableChannelSupplier appEventChannelSupplier;
+    protected ClusterApplicationEventPublisher clusterApplicationEventPublisher;
 
     protected final ReadWriteLock lock = new ReentrantReadWriteLock();
     protected final List<WeakReference<VaadinSession>> sessions = new ArrayList<>();
 
     public UiEventPublisher(ApplicationContext applicationContext,
                             SystemAuthenticator systemAuthenticator,
-                            @Nullable AppEventSubscribableChannelSupplier appEventChannelSupplier) {
+                            ClusterApplicationEventPublisher clusterApplicationEventPublisher) {
         this.applicationContext = applicationContext;
         this.systemAuthenticator = systemAuthenticator;
-        this.appEventChannelSupplier = appEventChannelSupplier;
+        this.clusterApplicationEventPublisher = clusterApplicationEventPublisher;
     }
 
     @EventListener
-    public void init(ApplicationStartedEvent event) {
-        if (appEventChannelSupplier != null) {
-            appEventChannelSupplier.get().subscribe(this::onAppEventMessage);
-        }
-    }
-
-    protected void onAppEventMessage(Message<?> message) {
-        AppEventMessagePayload payload = (AppEventMessagePayload) message.getPayload();
-        log.debug("Received message with event {} for users {}", payload.getEvent(), payload.getUsernames());
-
-        publishEventForUsersInternal(payload.getEvent(), payload.getUsernames());
+    protected void onUiUserEvent(UiUserEvent event) {
+        publishEventForUsersInternal(event.getEvent(), event.getUsernames());
     }
 
     protected void publishEventForUsersInternal(ApplicationEvent event, @Nullable Collection<String> usernames) {
         Map<String, List<VaadinSession>> userSessions = getActiveSessionsForUsernames(usernames);
-
         sendEventToUserSessions(event, userSessions);
     }
 
@@ -176,7 +163,7 @@ public class UiEventPublisher {
     }
 
     protected void sendEventToUserSessions(ApplicationEvent event, Map<String, List<VaadinSession>> userSessions) {
-        log.debug("Sending {} to {} Vaadin sessions", event,userSessions.values().stream().mapToLong(List::size).sum());
+        log.debug("Sending {} to {} Vaadin sessions", event, userSessions.values().stream().mapToLong(List::size).sum());
 
         for (Map.Entry<String, List<VaadinSession>> usernameSessionEntry : userSessions.entrySet()) {
             // Without 'VaadinAwareSecurityContextHolderStrategyConfiguration' configuration
@@ -212,13 +199,13 @@ public class UiEventPublisher {
     }
 
     /**
-     * Handles {@link VaadinServiceInitEventPublisher.VaadinSessionInitEvent} to collect new active
+     * Handles {@link VaadinSessionInitEventPublisher.VaadinSessionInitEvent} to collect new active
      * Vaadin sessions.
      *
      * @param event session initialized event
      */
     @EventListener
-    public void onSessionInitialized(VaadinServiceInitEventPublisher.VaadinSessionInitEvent event) {
+    public void onSessionInitialized(VaadinSessionInitEventPublisher.VaadinSessionInitEvent event) {
         lock.writeLock().lock();
         try {
             sessions.add(new WeakReference<>(event.getSession()));
@@ -257,24 +244,42 @@ public class UiEventPublisher {
 
     /**
      * Publishes the event for all UIs in all sessions of users specified in usernames collection.
-     * If usernames collection is null the event will be published for all users (broadcast).
+     * If usernames collection is null the event will be published for all users.
      *
      * @param event     event to publish
      * @param usernames usernames of target users or null if broadcast to all users is needed
      */
     public void publishEventForUsers(ApplicationEvent event, @Nullable Collection<String> usernames) {
-        publishEventToChannel(event, usernames);
-        publishEventForUsersInternal(event, usernames);
+        UiUserEvent uiUserEvent = new UiUserEvent(this, event, usernames);
+        clusterApplicationEventPublisher.publish(uiUserEvent);
     }
 
-    protected void publishEventToChannel(ApplicationEvent event, @Nullable Collection<String> usernames) {
-        if (appEventChannelSupplier != null) {
-            AppEventMessagePayload payload = new AppEventMessagePayload(event, usernames);
-            Message<?> message = MessageBuilder.withPayload(payload).build();
+    protected static class UiUserEvent extends ClusterApplicationEvent {
 
-            log.debug("Publish message with event {} for users {}", event, usernames);
+        protected ApplicationEvent event;
+        protected Collection<String> usernames;
 
-            appEventChannelSupplier.get().send(message);
+        public UiUserEvent(Object source, ApplicationEvent event, @Nullable Collection<String> usernames) {
+            super(source);
+            this.event = event;
+            this.usernames = usernames;
+        }
+
+        public ApplicationEvent getEvent() {
+            return event;
+        }
+
+        @Nullable
+        public Collection<String> getUsernames() {
+            return usernames;
+        }
+
+        @Override
+        public String toString() {
+            return "UiUserEvent{" +
+                    "event=" + event +
+                    ", usernames=" + usernames +
+                    '}';
         }
     }
 }

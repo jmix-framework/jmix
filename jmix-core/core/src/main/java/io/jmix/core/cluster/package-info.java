@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-starter'
+@NonNullApi
+package io.jmix.core.cluster;
 
-dependencies {
-    api project(':flowui')
-
-    api 'org.springframework.boot:spring-boot-autoconfigure'
-
-//    compileOnly 'org.springframework.boot:spring-boot-starter-websocket'
-}
+import org.springframework.lang.NonNullApi;

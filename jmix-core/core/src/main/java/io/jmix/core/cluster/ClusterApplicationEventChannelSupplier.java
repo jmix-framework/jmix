@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-@Internal
-package io.jmix.autoconfigure.flowui.cluster;
+package io.jmix.core.cluster;
 
-import io.jmix.core.annotation.Internal;
+import org.springframework.messaging.SubscribableChannel;
+
+import java.util.function.Supplier;
+
+/**
+ * Provides {@link SubscribableChannel} to pass and handle cluster application events.
+ */
+public interface ClusterApplicationEventChannelSupplier extends Supplier<SubscribableChannel> {
+
+}

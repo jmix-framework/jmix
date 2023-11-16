@@ -14,35 +14,49 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.sys.cluster.impl;
+package io.jmix.core.cluster;
 
-import io.jmix.flowui.sys.cluster.AppEventSubscribableChannelSupplier;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;
 
-public class NoOpAppEventSubscribableChannelSupplier implements AppEventSubscribableChannelSupplier {
+import java.util.ArrayList;
+import java.util.List;
 
-    private static final SubscribableChannel NO_OP_CHANNEL = new SubscribableChannel() {
+/**
+ * Provides a channel that publishes messages only to owner application instance
+ * which is used in single-instance applications.
+ */
+public class LocalApplicationEventChannelSupplier implements ClusterApplicationEventChannelSupplier {
+
+    protected static SubscribableChannel LOCAL_CHANNEL = new SubscribableChannel() {
+
+        private List<MessageHandler> handlers;
 
         @Override
         public boolean subscribe(MessageHandler handler) {
-            return true;
+            if (handlers == null) {
+                handlers = new ArrayList<>();
+            }
+            return handlers.add(handler);
         }
 
         @Override
         public boolean unsubscribe(MessageHandler handler) {
-            return true;
+            return handlers != null && handlers.remove(handler);
         }
 
         @Override
         public boolean send(Message<?> message, long timeout) {
+            if (handlers != null) {
+                handlers.forEach(handler -> handler.handleMessage(message));
+            }
             return true;
         }
     };
 
     @Override
     public SubscribableChannel get() {
-        return NO_OP_CHANNEL;
+        return LOCAL_CHANNEL;
     }
 }

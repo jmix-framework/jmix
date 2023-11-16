@@ -18,21 +18,21 @@ import java.util.EventObject;
  * Vaadin service init listener. It handles session init event and propagate new global
  * {@link VaadinSessionInitEvent}.
  */
-@Component("flowui_VaadinServiceInitEventPublisher")
-public class VaadinServiceInitEventPublisher implements VaadinServiceInitListener {
+@Component("flowui_VaadinSessionInitEventPublisher")
+public class VaadinSessionInitEventPublisher implements VaadinServiceInitListener {
 
     protected ApplicationEventPublisher eventPublisher;
 
-    public VaadinServiceInitEventPublisher(ApplicationEventPublisher eventPublisher) {
+    public VaadinSessionInitEventPublisher(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
 
     @Override
     public void serviceInit(ServiceInitEvent event) {
-        event.getSource().addSessionInitListener(this::onSessionInitListener);
+        event.getSource().addSessionInitListener(this::onSessionInit);
     }
 
-    protected void onSessionInitListener(SessionInitEvent event) {
+    protected void onSessionInit(SessionInitEvent event) {
         eventPublisher.publishEvent(new VaadinSessionInitEvent(this, event.getSession()));
     }
 

@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- io.jmix.autoconfigure.flowui.FlowuiAutoConfiguration,\
- io.jmix.autoconfigure.flowui.cluster.AppEventChannelAutoConfiguration
+ io.jmix.autoconfigure.flowui.FlowuiAutoConfiguration

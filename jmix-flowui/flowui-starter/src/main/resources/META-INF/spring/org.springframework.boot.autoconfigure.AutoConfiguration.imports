@@ -1,2 +1,1 @@
 io.jmix.autoconfigure.flowui.FlowuiAutoConfiguration
-io.jmix.autoconfigure.flowui.cluster.AppEventChannelAutoConfiguration

@@ -14,9 +14,24 @@
  * limitations under the License.
  */
 
-@Internal
-@NonNullApi
-package io.jmix.flowui.sys.cluster.impl;
+package io.jmix.core.cluster;
 
-import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import org.springframework.context.ApplicationEvent;
+
+import java.time.Clock;
+
+/**
+ * Base event that can be extended by specific event implementation
+ * to publish events to all application instances in a cluster.
+ * @see ClusterApplicationEventPublisher#publish(ClusterApplicationEvent)
+ */
+public abstract class ClusterApplicationEvent extends ApplicationEvent {
+
+    public ClusterApplicationEvent(Object source) {
+        super(source);
+    }
+
+    public ClusterApplicationEvent(Object source, Clock clock) {
+        super(source, clock);
+    }
+}

@@ -26,7 +26,14 @@ import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.EntitySet;
+import io.jmix.core.EntityStates;
+import io.jmix.core.InstanceNameProvider;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
@@ -41,7 +48,12 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.model.*;
+import io.jmix.flowui.model.DataContext;
+import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.model.HasLoader;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.InstanceLoader;
+import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -86,7 +98,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private Boolean showSaveNotification;
     private boolean saveActionPerformed = false;
 
-    protected boolean entityReloadAfterSaveAndCloseDisabled = true;
+    protected boolean reloadSaved = false;
 
     /**
      * Create views using {@link io.jmix.flowui.ViewNavigators} or {@link io.jmix.flowui.DialogWindows}.
@@ -197,7 +209,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return DEFAULT_ROUTE_PARAM;
     }
 
-    private OperationResult saveChanges(boolean discardSaved) {
+    private OperationResult saveChanges(boolean reloadSaved) {
         ValidationErrors validationErrors = validateView();
         if (!validationErrors.isEmpty()) {
             ViewValidation viewValidation = getViewValidation();
@@ -209,7 +221,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             return OperationResult.fail();
         }
 
-        Runnable standardSaveAction = createStandardSaveAction(discardSaved);
+        Runnable standardSaveAction = createStandardSaveAction(reloadSaved);
 
         BeforeSaveEvent beforeEvent = new BeforeSaveEvent(this, standardSaveAction);
         fireEvent(beforeEvent);
@@ -255,13 +267,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return errors;
     }
 
-    private Runnable createStandardSaveAction(boolean discardSaved) {
+    private Runnable createStandardSaveAction(boolean reloadSaved) {
         return () -> {
-            if (discardSaved) {
-                getViewData().getDataContext().saveWithoutReload();
-            } else {
-                EntitySet savedEntities = getViewData().getDataContext().save();
-
+            EntitySet savedEntities = getViewData().getDataContext().save(reloadSaved);
+            if (reloadSaved) {
                 InstanceContainer<T> container = getEditedEntityContainer();
                 if (container instanceof HasLoader) {
                     DataLoader loader = ((HasLoader) container).getLoader();
@@ -279,7 +288,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                     }
                 }
             }
-            fireEvent(new AfterSaveEvent(this));
+            fireEvent(new AfterSaveEvent(this, reloadSaved));
         };
     }
 
@@ -289,13 +298,13 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     @Override
     public OperationResult save() {
-        return saveChanges(false)
+        return saveChanges(true)
                 .then(() -> saveActionPerformed = true);
     }
 
     @Override
     public OperationResult closeWithSave() {
-        return saveChanges(entityReloadAfterSaveAndCloseDisabled)
+        return saveChanges(reloadSaved)
                 .compose(() -> close(StandardOutcome.SAVE));
     }
 
@@ -420,7 +429,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private OperationResult navigateWithSave(ContinueNavigationAction navigationAction) {
-        return saveChanges(entityReloadAfterSaveAndCloseDisabled)
+        return saveChanges(reloadSaved)
                 .compose(() -> navigate(navigationAction, StandardOutcome.SAVE.getCloseAction()));
     }
 
@@ -882,12 +891,19 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return getEventBus().addListener(ValidationEvent.class, listener);
     }
 
-    public boolean isEntityReloadAfterSaveAndCloseDisabled() {
-        return entityReloadAfterSaveAndCloseDisabled;
+    /**
+     * @return true if edited entity should be reloaded after closeWithSave action, false otherwise
+     */
+    public boolean isReloadSaved() {
+        return reloadSaved;
     }
 
-    public void setEntityReloadAfterSaveAndCloseDisabled(boolean entityReloadAfterSaveAndCloseDisabled) {
-        this.entityReloadAfterSaveAndCloseDisabled = entityReloadAfterSaveAndCloseDisabled;
+    /**
+     * Sets the flag indicating whether edited entity should be reloaded after closeWithSave action.
+     * @param reloadSaved flag indicating whether edited entity should be reloaded after closeWithSave action
+     */
+    public void setReloadSaved(boolean reloadSaved) {
+        this.reloadSaved = reloadSaved;
     }
 
     /**
@@ -1053,8 +1069,11 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      */
     public static class AfterSaveEvent extends ComponentEvent<View<?>> {
 
-        public AfterSaveEvent(View source) {
+        protected boolean entityReloaded;
+
+        public AfterSaveEvent(View source, boolean entityReloaded) {
             super(source, false);
+            this.entityReloaded = entityReloaded;
         }
 
         /**
@@ -1062,6 +1081,13 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
          */
         public DataContext getDataContext() {
             return getSource().getViewData().getDataContext();
+        }
+
+        /**
+         * @return true if reload and merge to data context was performed for saved entity, false otherwise
+         */
+        public boolean isEntityReloaded() {
+            return entityReloaded;
         }
     }
 

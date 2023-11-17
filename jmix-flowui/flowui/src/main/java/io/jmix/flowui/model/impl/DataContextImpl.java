@@ -640,10 +640,11 @@ public class DataContextImpl implements DataContextInternal {
 
     @Override
     public EntitySet save() {
-        return save(false);
+        return save(true);
     }
 
-    protected EntitySet save(boolean discardSaved) {
+    @Override
+    public EntitySet save(boolean reloadSaved) {
         PreSaveEvent preSaveEvent = new PreSaveEvent(this, modifiedInstances, removedInstances);
         events.publish(PreSaveEvent.class, preSaveEvent);
         if (preSaveEvent.isSavePrevented())
@@ -651,8 +652,8 @@ public class DataContextImpl implements DataContextInternal {
 
         EntitySet savedAndMerged;
         try {
-            Set<Object> saved = performSave(discardSaved);
-            if (!discardSaved) {
+            Set<Object> saved = performSave(reloadSaved);
+            if (reloadSaved) {
                 savedAndMerged = mergeSaved(saved);
             } else {
                 savedAndMerged = EntitySet.of(Collections.emptySet());
@@ -661,17 +662,12 @@ public class DataContextImpl implements DataContextInternal {
             nullIdEntitiesMap.clear();
         }
 
-        events.publish(PostSaveEvent.class, new PostSaveEvent(this, savedAndMerged));
+        events.publish(PostSaveEvent.class, new PostSaveEvent(this, savedAndMerged, reloadSaved));
 
         modifiedInstances.clear();
         removedInstances.clear();
 
         return savedAndMerged;
-    }
-
-    @Override
-    public void saveWithoutReload() {
-        save(true);
     }
 
     @Override
@@ -694,22 +690,22 @@ public class DataContextImpl implements DataContextInternal {
         this.saveDelegate = delegate;
     }
 
-    protected Set<Object> performSave(boolean discardSaved) {
+    protected Set<Object> performSave(boolean reloadSaved) {
         if (!hasChanges())
             return Collections.emptySet();
 
         if (parentContext == null) {
-            return saveToDataManager(discardSaved);
+            return saveToDataManager(reloadSaved);
         } else {
             return saveToParentContext();
         }
     }
 
-    protected Set<Object> saveToDataManager(boolean discardSaved) {
+    protected Set<Object> saveToDataManager(boolean reloadSaved) {
         SaveContext saveContext = new SaveContext()
                 .saving(isolate(filterSavedInstances(modifiedInstances)))
                 .removing(isolate(filterSavedInstances(removedInstances)))
-                .setDiscardSaved(discardSaved);
+                .setDiscardSaved(!reloadSaved);
 
         entityReferencesNormalizer.updateReferences(saveContext.getEntitiesToSave());
         updateFetchPlans(saveContext);

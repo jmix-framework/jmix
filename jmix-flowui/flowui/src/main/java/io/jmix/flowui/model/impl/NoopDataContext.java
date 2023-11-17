@@ -135,7 +135,8 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public void saveWithoutReload() {
+    public EntitySet save(boolean reloadSaved) {
+        return EntitySet.of(Collections.emptySet());
     }
 
     @Override

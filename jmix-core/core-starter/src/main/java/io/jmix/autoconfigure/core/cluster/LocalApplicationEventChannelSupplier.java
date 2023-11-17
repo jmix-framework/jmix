@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.core.cluster;
+package io.jmix.autoconfigure.core.cluster;
 
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;

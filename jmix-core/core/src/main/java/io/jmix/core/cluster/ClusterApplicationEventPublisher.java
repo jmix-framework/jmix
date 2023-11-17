@@ -22,6 +22,7 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.lang.Nullable;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
@@ -38,14 +39,16 @@ public class ClusterApplicationEventPublisher {
     protected ClusterApplicationEventChannelSupplier appEventChannelSupplier;
 
     public ClusterApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher,
-                                            ClusterApplicationEventChannelSupplier appEventChannelSupplier) {
+                                            @Nullable ClusterApplicationEventChannelSupplier appEventChannelSupplier) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.appEventChannelSupplier = appEventChannelSupplier;
     }
 
     @EventListener
     public void onApplicationStarted(ApplicationStartedEvent event) {
-        appEventChannelSupplier.get().subscribe(this::onAppEventMessage);
+        if (appEventChannelSupplier != null) {
+            appEventChannelSupplier.get().subscribe(this::onAppEventMessage);
+        }
     }
 
     protected void onAppEventMessage(Message<?> message) {

@@ -16,10 +16,12 @@
 
 package io.jmix.quartz.service;
 
+import io.jmix.core.Messages;
 import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.ScheduleType;
 import io.jmix.quartz.model.TriggerModel;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -28,7 +30,11 @@ import java.util.stream.Collectors;
 @Service("quartz_QuartzDescriptionService")
 public class QuartzDescriptionService {
 
-
+    protected Messages messages;
+    @Autowired
+    public QuartzDescriptionService(Messages messages) {
+        this.messages = messages;
+    }
 
     public String getScheduleDescription(TriggerModel triggerModel) {
         ScheduleType scheduleType = triggerModel.getScheduleType();
@@ -43,11 +49,11 @@ public class QuartzDescriptionService {
         Integer repeatCount = triggerModel.getRepeatCount();
         Long repeatInterval = triggerModel.getRepeatInterval();
         if (Objects.isNull(repeatCount) || repeatCount < 0) {
-            return String.format("Execute forever every %s seconds", repeatInterval / 1000);
+            return messages.formatMessage(QuartzDescriptionService.class, "ExecuteForeverMessage", repeatInterval/1000);
         } else if (repeatCount == 0) {
-            return "Execute once";
+            return messages.getMessage(QuartzDescriptionService.class, "ExecuteOnceMessage");
         } else {
-            return String.format("Execute %s times every %s seconds", repeatCount + 1, repeatInterval / 1000);
+            return messages.formatMessage(QuartzDescriptionService.class, "ExecuteSeveralTimesMessage", repeatCount + 1, repeatInterval/1000);
         }
     }
 
@@ -57,7 +63,8 @@ public class QuartzDescriptionService {
         }
 
         return jobModel.getTriggers().stream()
-                .map(TriggerModel::getScheduleDescription)
+                .map(this::getScheduleDescription)
                 .collect(Collectors.joining(", "));
     }
 }
+

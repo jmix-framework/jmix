@@ -16,42 +16,28 @@
 
 package io.jmix.flowui;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
-import com.vaadin.flow.server.WrappedSession;
 import io.jmix.core.cluster.ClusterApplicationEvent;
 import io.jmix.core.cluster.ClusterApplicationEventPublisher;
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.flowui.sys.SessionHolder;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Component;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Sends application events that should be handled in the components (e.g. views). To enable handling
@@ -77,89 +63,26 @@ public class UiEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(UiEventPublisher.class);
 
-    protected ApplicationContext applicationContext;
     protected SystemAuthenticator systemAuthenticator;
     protected ClusterApplicationEventPublisher clusterApplicationEventPublisher;
+    protected SessionHolder sessionHolder;
 
-    protected final ReadWriteLock lock = new ReentrantReadWriteLock();
-    protected final List<WeakReference<VaadinSession>> sessions = new ArrayList<>();
-
-    public UiEventPublisher(ApplicationContext applicationContext,
-                            SystemAuthenticator systemAuthenticator,
-                            ClusterApplicationEventPublisher clusterApplicationEventPublisher) {
-        this.applicationContext = applicationContext;
+    public UiEventPublisher(SystemAuthenticator systemAuthenticator,
+                            ClusterApplicationEventPublisher clusterApplicationEventPublisher,
+                            SessionHolder sessionHolder) {
         this.systemAuthenticator = systemAuthenticator;
         this.clusterApplicationEventPublisher = clusterApplicationEventPublisher;
+        this.sessionHolder = sessionHolder;
     }
 
     @EventListener
-    protected void onUiUserEvent(UiUserEvent event) {
+    public void onUiUserEvent(UiUserEvent event) {
         publishEventForUsersInternal(event.getEvent(), event.getUsernames());
     }
 
     protected void publishEventForUsersInternal(ApplicationEvent event, @Nullable Collection<String> usernames) {
-        Map<String, List<VaadinSession>> userSessions = getActiveSessionsForUsernames(usernames);
+        Map<String, List<VaadinSession>> userSessions = sessionHolder.getActiveSessionsForUsernames(usernames);
         sendEventToUserSessions(event, userSessions);
-    }
-
-    protected Map<String, List<VaadinSession>> getActiveSessionsForUsernames(@Nullable Collection<String> usernames) {
-        Map<String, List<VaadinSession>> userActiveSessions = new HashMap<>();
-        Set<String> usernamesSet = usernames != null ? new HashSet<>(usernames) : null;
-        int removed = 0;
-
-        lock.readLock().lock();
-        try {
-            for (Iterator<WeakReference<VaadinSession>> iterator = sessions.iterator(); iterator.hasNext(); ) {
-                WeakReference<VaadinSession> reference = iterator.next();
-                VaadinSession session = reference.get();
-                if (session != null) {
-                    String sessionUsername = getUsernameFromVaadinSession(session);
-                    if (Strings.isNullOrEmpty(sessionUsername)) {
-                        log.debug("Skip Vaadin session {} as it does not contain security context or" +
-                                " authentication with username", session);
-                    } else if (usernamesSet == null || usernamesSet.contains(sessionUsername)) {
-                        List<VaadinSession> vaadinSessions =
-                                userActiveSessions.computeIfAbsent(sessionUsername, k -> new ArrayList<>());
-                        vaadinSessions.add(session);
-                    }
-                } else {
-                    lock.readLock().unlock();
-                    lock.writeLock().lock();
-                    try {
-                        iterator.remove();
-                        lock.readLock().lock();
-                    } finally {
-                        lock.writeLock().unlock();
-                    }
-                    removed++;
-                }
-            }
-        } finally {
-            lock.readLock().unlock();
-        }
-
-        if (removed > 0) {
-            log.debug("Removed {} Vaadin sessions", removed);
-        }
-        return userActiveSessions;
-    }
-
-    @Nullable
-    protected String getUsernameFromVaadinSession(VaadinSession session) {
-        WrappedSession wrappedSession = session.getSession();
-        if (wrappedSession == null) {
-            return null;
-        }
-        SecurityContext securityContext = (SecurityContext) wrappedSession.getAttribute(
-                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-        if (securityContext == null || securityContext.getAuthentication() == null) {
-            return null;
-        }
-        Authentication authentication = securityContext.getAuthentication();
-        if (!(authentication.getPrincipal() instanceof UserDetails)) {
-            return null;
-        }
-        return ((UserDetails) authentication.getPrincipal()).getUsername();
     }
 
     protected void sendEventToUserSessions(ApplicationEvent event, Map<String, List<VaadinSession>> userSessions) {
@@ -195,23 +118,6 @@ public class UiEventPublisher {
                 ui.accessSynchronously(() ->
                         session.getAttribute(UiEventsManager.class).publish(Collections.singletonList(ui), event));
             }
-        }
-    }
-
-    /**
-     * Handles {@link VaadinSessionInitEventPublisher.VaadinSessionInitEvent} to collect new active
-     * Vaadin sessions.
-     *
-     * @param event session initialized event
-     */
-    @EventListener
-    public void onSessionInitialized(VaadinSessionInitEventPublisher.VaadinSessionInitEvent event) {
-        lock.writeLock().lock();
-        try {
-            sessions.add(new WeakReference<>(event.getSession()));
-            log.trace("Added session: " + event.getSession());
-        } finally {
-            lock.writeLock().unlock();
         }
     }
 
@@ -254,7 +160,10 @@ public class UiEventPublisher {
         clusterApplicationEventPublisher.publish(uiUserEvent);
     }
 
-    protected static class UiUserEvent extends ClusterApplicationEvent {
+    /**
+     * Event that should be processed on UI of specific users (or all users if usernames collection is null)
+     */
+    public static class UiUserEvent extends ClusterApplicationEvent {
 
         protected ApplicationEvent event;
         protected Collection<String> usernames;

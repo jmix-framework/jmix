@@ -31,8 +31,8 @@ repositories {
 dependencies {
     implementation localGroovy()
 
-    implementation 'org.springframework.boot:spring-boot-gradle-plugin:2.7.4'
-    implementation 'com.vaadin:vaadin-gradle-plugin:23.3.0'
+    implementation 'org.springframework.boot:spring-boot-gradle-plugin:2.7.16'
+    implementation 'com.vaadin:vaadin-gradle-plugin:23.3.14'
 
     implementation('org.dom4j:dom4j:2.1.4'){
         exclude group: 'xpp3', module: 'xpp3'
@@ -40,6 +40,7 @@ dependencies {
     }
     implementation 'org.javassist:javassist:3.24.1-GA'
     implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.apache.commons:commons-compress:1.24.0'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'com.yahoo.platform.yui:yuicompressor:2.4.6'

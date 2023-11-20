@@ -22,20 +22,25 @@ import io.jmix.quartz.model.ScheduleType;
 import io.jmix.quartz.model.TriggerModel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service("quartz_QuartzDescriptionService")
-public class QuartzTriggerDescriptionService {
+public class QuartzDescriptionService {
 
     static final String EXECUTE_FOREVER_MESSAGE_KEY = "ExecuteForeverMessage";
     static final String EXECUTE_ONCE_MESSAGE_KEY = "ExecuteOnceMessage";
     static final String EXECUTE_SEVERAL_TIMES_MESSAGE_KEY = "ExecuteSeveralTimesMessage";
     protected Messages messages;
     @Autowired
-    public QuartzTriggerDescriptionService(Messages messages) {
+    public QuartzDescriptionService(Messages messages) {
         this.messages = messages;
     }
 
@@ -52,12 +57,31 @@ public class QuartzTriggerDescriptionService {
         Integer repeatCount = triggerModel.getRepeatCount();
         Long repeatInterval = triggerModel.getRepeatInterval();
         if (Objects.isNull(repeatCount) || repeatCount < 0) {
-            return messages.formatMessage(QuartzTriggerDescriptionService.class, EXECUTE_FOREVER_MESSAGE_KEY, repeatInterval/1000);
+            return messages.formatMessage(QuartzDescriptionService.class, EXECUTE_FOREVER_MESSAGE_KEY, calculateInterval(repeatInterval));
         } else if (repeatCount == 0) {
-            return messages.getMessage(QuartzTriggerDescriptionService.class, EXECUTE_ONCE_MESSAGE_KEY);
+            return messages.getMessage(QuartzDescriptionService.class, EXECUTE_ONCE_MESSAGE_KEY);
         } else {
-            return messages.formatMessage(QuartzTriggerDescriptionService.class, EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatCount + 1, repeatInterval/1000);
+            return messages.formatMessage(QuartzDescriptionService.class, EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatCount + 1, calculateInterval(repeatInterval));
         }
+    }
+
+    private static String calculateInterval(Long repeatInterval) {
+        double doubleValue = (double) repeatInterval / 1000;
+        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(LocaleContextHolder.getLocale());
+        decimalFormatSymbols.setDecimalSeparator('.');
+
+        DecimalFormat format = new DecimalFormat("0.#", decimalFormatSymbols);
+        return format.format(doubleValue);
+    }
+
+    public String getTriggerDescription(JobModel jobModel) {
+        if (CollectionUtils.isEmpty(jobModel.getTriggers())) {
+            return null;
+        }
+
+        return jobModel.getTriggers().stream()
+                .map(this::getScheduleDescription)
+                .collect(Collectors.joining(", "));
     }
 }
 

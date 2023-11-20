@@ -3,7 +3,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath "io.jmix.gradle:jmix-gradle-plugin:1.5.4"
+        classpath "io.jmix.gradle:jmix-gradle-plugin:1.5.4.phoenix.3"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
     }
 }
@@ -17,7 +17,7 @@ subprojects {
     apply plugin: 'io.jmix'
 
     repositories {
-        mavenCentral()<%if (project_additionalRepositories) {
+        <%if (project_additionalRepositories) {
         project_additionalRepositories.each { additionalRepository ->%>
     ${additionalRepository}<%}}%>
     }

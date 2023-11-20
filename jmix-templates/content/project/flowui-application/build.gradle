@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '1.5.4'
+    id 'io.jmix' version '1.5.4.phoenix.3'
     id 'java'
 }
 
@@ -15,7 +15,7 @@ group = '${project_group}'
 version = '${project_version}'
 
 repositories {
-    mavenCentral()<%if (project_additionalRepositories) {
+    <%if (project_additionalRepositories) {
     project_additionalRepositories.each { additionalRepository ->%>
 ${additionalRepository}<%}}%>
 }

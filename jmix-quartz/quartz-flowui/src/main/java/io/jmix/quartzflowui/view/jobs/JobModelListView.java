@@ -93,12 +93,16 @@ public class JobModelListView extends StandardListView<JobModel> {
         jobModelsTable.addColumn(entity -> entity.getLastFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getLastFireDate()) : "").setResizable(true)
-                .setHeader(messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), "lastFireDate"));
+                .setHeader(getHeaderForColumn("lastFireDate"));
 
         jobModelsTable.addColumn(entity -> entity.getNextFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getNextFireDate()) : "").setResizable(true)
-                .setHeader(messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), "nextFireDate"));
+                .setHeader(getHeaderForColumn("nextFireDate"));
+    }
+
+    private String getHeaderForColumn(String propertyName) {
+        return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }
 
     @Subscribe

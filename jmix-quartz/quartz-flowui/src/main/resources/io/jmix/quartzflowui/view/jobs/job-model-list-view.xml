@@ -68,7 +68,6 @@
                 <column property="jobClass" resizable="true"/>
                 <column property="jobState" resizable="true"/>
                 <column property="jobSource" resizable="true"/>
-                <column property="triggerDescription" resizable="true"/>
                 <column property="description" resizable="true"/>
             </columns>
         </dataGrid>

@@ -28,11 +28,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service("quartz_QuartzDescriptionService")
-public class QuartzDescriptionService {
+public class QuartzTriggerDescriptionService {
 
+    static final String EXECUTE_FOREVER_MESSAGE_KEY = "ExecuteForeverMessage";
+    static final String EXECUTE_ONCE_MESSAGE_KEY = "ExecuteOnceMessage";
+    static final String EXECUTE_SEVERAL_TIMES_MESSAGE_KEY = "ExecuteSeveralTimesMessage";
     protected Messages messages;
     @Autowired
-    public QuartzDescriptionService(Messages messages) {
+    public QuartzTriggerDescriptionService(Messages messages) {
         this.messages = messages;
     }
 
@@ -49,22 +52,12 @@ public class QuartzDescriptionService {
         Integer repeatCount = triggerModel.getRepeatCount();
         Long repeatInterval = triggerModel.getRepeatInterval();
         if (Objects.isNull(repeatCount) || repeatCount < 0) {
-            return messages.formatMessage(QuartzDescriptionService.class, "ExecuteForeverMessage", repeatInterval/1000);
+            return messages.formatMessage(QuartzTriggerDescriptionService.class, EXECUTE_FOREVER_MESSAGE_KEY, repeatInterval/1000);
         } else if (repeatCount == 0) {
-            return messages.getMessage(QuartzDescriptionService.class, "ExecuteOnceMessage");
+            return messages.getMessage(QuartzTriggerDescriptionService.class, EXECUTE_ONCE_MESSAGE_KEY);
         } else {
-            return messages.formatMessage(QuartzDescriptionService.class, "ExecuteSeveralTimesMessage", repeatCount + 1, repeatInterval/1000);
+            return messages.formatMessage(QuartzTriggerDescriptionService.class, EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatCount + 1, repeatInterval/1000);
         }
-    }
-
-    public String getTriggerDescription(JobModel jobModel) {
-        if (CollectionUtils.isEmpty(jobModel.getTriggers())) {
-            return null;
-        }
-
-        return jobModel.getTriggers().stream()
-                .map(this::getScheduleDescription)
-                .collect(Collectors.joining(", "));
     }
 }
 

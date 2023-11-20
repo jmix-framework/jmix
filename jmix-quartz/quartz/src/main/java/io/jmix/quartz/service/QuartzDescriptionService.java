@@ -25,10 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -74,7 +72,7 @@ public class QuartzDescriptionService {
         return format.format(doubleValue);
     }
 
-    public String getTriggerDescription(JobModel jobModel) {
+    public String getScheduleDescription(JobModel jobModel) {
         if (CollectionUtils.isEmpty(jobModel.getTriggers())) {
             return null;
         }

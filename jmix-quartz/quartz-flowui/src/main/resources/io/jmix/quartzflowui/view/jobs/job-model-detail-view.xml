@@ -49,7 +49,6 @@
                             <column property="triggerName" resizable="true"/>
                             <column property="triggerGroup" resizable="true"/>
                             <column property="scheduleType" resizable="true"/>
-                            <column property="scheduleDescription" resizable="true"/>
                         </columns>
                     </dataGrid>
                 </vbox>

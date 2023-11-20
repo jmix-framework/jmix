@@ -33,9 +33,8 @@ import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
-import io.jmix.quartz.service.QuartzTriggerDescriptionService;
+import io.jmix.quartz.service.QuartzDescriptionService;
 import io.jmix.quartz.service.QuartzService;
-import io.jmix.quartz.util.QuartzJobDescriptionService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -73,7 +72,7 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected QuartzService quartzService;
 
     @Autowired
-    protected QuartzJobDescriptionService jobDescriptionService;
+    protected QuartzDescriptionService quartzDescriptionService;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -87,7 +86,7 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected void initTable() {
-        DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> jobDescriptionService.getTriggerDescription(job)));
+        DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> quartzDescriptionService.getScheduleDescription(job)));
         triggerDescriptionColumn.setHeader(messageBundle.getMessage("column.triggerDescription.header"));
         jobModelsTable.setColumnPosition(triggerDescriptionColumn, 5);
 

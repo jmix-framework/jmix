@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/flowui/menu">
+    <menu id="application"
+          title="Application title"
+          opened="true"
+          description="Application"
+          icon="TABLE">
+        <item view="Application.view"
+              title="Application view"
+              description="app view"
+              icon="ABACUS"
+              shortcutCombination="Control-Enter"/>
+        <menu id="nestedMenu"
+              title="Nested menu">
+            <item view="Nested.view"
+                  title="Nested view"/>
+        </menu>
+    </menu>
+    <menu id="administration"
+          title="Administration">
+        <item view="Administration.view"
+              title="Administration view"/>
+    </menu>
+</menu-config>

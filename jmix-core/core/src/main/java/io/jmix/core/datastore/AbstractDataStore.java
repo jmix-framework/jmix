@@ -25,8 +25,8 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Function;
@@ -83,6 +83,7 @@ public abstract class AbstractDataStore implements DataStore {
         Object entity;
         Object transaction = beginLoadTransaction(context.isJoinTransaction());
         try {
+            TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
             entity = loadOne(context);
 
             DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entity, loadState);
@@ -91,7 +92,7 @@ public abstract class AbstractDataStore implements DataStore {
             entity = loadEvent.getResultEntity();
 
             beforeLoadTransactionCommit(context,
-                    entity == null ? Collections.emptyList() : Collections.singletonList(entity));
+                    entity == null ? Collections.emptyList() : Collections.singletonList(entity), txContextState);
             commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
@@ -123,6 +124,7 @@ public abstract class AbstractDataStore implements DataStore {
         List<Object> resultList;
         Object transaction = beginLoadTransaction(context.isJoinTransaction());
         try {
+            TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
             if (context.getIds().isEmpty()) {
                 List<Object> entities = loadAll(context);
 
@@ -146,7 +148,7 @@ public abstract class AbstractDataStore implements DataStore {
                 resultList = checkAndReorderLoadedEntities(context, loadEvent.getResultEntities());
             }
 
-            beforeLoadTransactionCommit(context, resultList);
+            beforeLoadTransactionCommit(context, resultList, txContextState);
             commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
@@ -178,6 +180,7 @@ public abstract class AbstractDataStore implements DataStore {
         long count = 0L;
         Object transaction = beginLoadTransaction(context.isJoinTransaction());
         try {
+            TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
             if (beforeCountEvent.countByItems()) {
                 LoadContext<?> countContext = context.copy();
                 if (countContext.getQuery() != null) {
@@ -196,7 +199,7 @@ public abstract class AbstractDataStore implements DataStore {
                 count = countAll(context);
             }
 
-            beforeLoadTransactionCommit(context, Collections.emptyList());
+            beforeLoadTransactionCommit(context, Collections.emptyList(), txContextState);
             commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
@@ -323,7 +326,9 @@ public abstract class AbstractDataStore implements DataStore {
 
     protected abstract void rollbackTransaction(Object transaction);
 
-    protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities) {
+    protected abstract TransactionContextState getTransactionContextState(boolean isJoinTransaction);
+
+    protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities, TransactionContextState transactionContextState) {
     }
 
     protected void beforeSaveTransactionCommit(SaveContext context, Collection<Object> savedEntities,
@@ -416,6 +421,7 @@ public abstract class AbstractDataStore implements DataStore {
         Set<Object> loadedEntities = new HashSet<>();
         Object loadTransaction = beginLoadTransaction(context.isJoinTransaction());
         try {
+            TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
             for (Object entity : savedEntities) {
                 EventSharedState loadState = new EventSharedState();
                 LoadContext<?> loadContext = new LoadContext<>(metadata.getClass(entity))
@@ -446,7 +452,7 @@ public abstract class AbstractDataStore implements DataStore {
 
             for (Object entity : loadedEntities) {
                 EntityLoadInfo loadInfo = loadInfoMap.get(entity);
-                beforeLoadTransactionCommit(loadInfo.loadContext, Collections.singletonList(entity));
+                beforeLoadTransactionCommit(loadInfo.loadContext, Collections.singletonList(entity), txContextState);
             }
             commitTransaction(loadTransaction);
         } finally {
@@ -504,5 +510,8 @@ public abstract class AbstractDataStore implements DataStore {
             this.loadContext = loadContext;
             this.eventState = eventState;
         }
+    }
+
+    protected interface TransactionContextState {
     }
 }

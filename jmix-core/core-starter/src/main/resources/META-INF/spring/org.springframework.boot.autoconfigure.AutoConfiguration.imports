@@ -1,2 +1,1 @@
 io.jmix.autoconfigure.core.CoreAutoConfiguration
-io.jmix.autoconfigure.core.PessimisticLockScheduleAutoConfiguration

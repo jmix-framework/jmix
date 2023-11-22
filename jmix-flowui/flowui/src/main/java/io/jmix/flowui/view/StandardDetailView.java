@@ -47,6 +47,7 @@ import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -74,7 +75,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private T entityToEdit;
     private String serializedEntityIdToEdit;
 
-    private PessimisticLockStatus entityLockStatus = PessimisticLockStatus.NOT_SUPPORTED;
+    private LockStatus entityLockStatus = LockStatus.NOT_SUPPORTED;
 
     private boolean showValidationErrors = true;
     private boolean crossFieldValidationEnabled = true;
@@ -655,7 +656,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private void itemChangeLockHandler(InstanceContainer.ItemChangeEvent<T> event) {
-        if (entityLockStatus == PessimisticLockStatus.LOCKED) {
+        if (entityLockStatus == LockStatus.LOCKED) {
             return;
         }
         if (event.getItem() == null) {
@@ -692,13 +693,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
         if (isLockedBeforeRefresh()) {
             // restore state after refresh
-            entityLockStatus = PessimisticLockStatus.LOCKED;
-
-            if (UiComponentUtils.isComponentAttachedToDialog(this)) {
-                addDetachListener(__ -> releaseLock());
-            } else {
-                addAfterCloseListener(__ -> releaseLock());
-            }
+            entityLockStatus = LockStatus.LOCKED;
             return;
         }
 
@@ -719,17 +714,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                     || inMemoryContext.isUpdatePermitted(getEditedEntity()));
 
             if (isPermittedBySecurity) {
-                entityLockStatus = getLockingSupport().lock(entityId);
-                if (entityLockStatus == PessimisticLockStatus.LOCKED) {
-                    setLockedBeforeRefresh();
+                SetupLockEvent event = new SetupLockEvent(this);
+                getApplicationContext().publishEvent(event);
 
-                    if (UiComponentUtils.isComponentAttachedToDialog(this)) {
-                        addDetachListener(__ -> releaseLock());
-                    } else {
-                        addAfterCloseListener(__ -> releaseLock());
-                    }
-                } else if (entityLockStatus == PessimisticLockStatus.FAILED) {
-                    setReadOnly(true);
+                this.entityLockStatus = event.getLockStatus();
+                if (entityLockStatus == LockStatus.LOCKED) {
+                    setLockedBeforeRefresh();
                 }
             } else {
                 setReadOnly(true);
@@ -737,18 +727,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         }
     }
 
-    private void releaseLock() {
-        if (isLocked()) {
-            T entity = getEditedEntityContainer().getItemOrNull();
-            if (entity != null) {
-                Object entityId = requireNonNull(EntityValues.getId(entity));
-                getLockingSupport().unlock(entityId);
-            }
-        }
-    }
-
     @Override
-    public PessimisticLockStatus getPessimisticLockStatus() {
+    public LockStatus getLockStatus() {
         return entityLockStatus;
     }
 
@@ -756,18 +736,11 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      * @return {@code true} if the detail is switched to read-only mode because the entity is locked by another user
      */
     private boolean isReadOnlyDueToLock() {
-        return entityLockStatus == PessimisticLockStatus.FAILED;
+        return entityLockStatus == LockStatus.FAILED;
     }
 
     /**
-     * @return {@code true} if the entity instance has been pessimistically locked when the view is opened
-     */
-    private boolean isLocked() {
-        return entityLockStatus == PessimisticLockStatus.LOCKED;
-    }
-
-    /**
-     * @return {@code true} if the entity instance has been pessimistically locked in this view before refreshing the
+     * @return {@code true} if the entity instance has been locked in this view before refreshing the
      * page.
      */
     private boolean isLockedBeforeRefresh() {
@@ -824,10 +797,6 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return getApplicationContext().getBean(Notifications.class);
     }
 
-    private PessimisticLockSupport getLockingSupport() {
-        return getApplicationContext().getBean(PessimisticLockSupport.class, this, getEditedEntityContainer());
-    }
-
     private ReadOnlyViewsSupport getReadOnlyViewSupport() {
         return getApplicationContext().getBean(ReadOnlyViewsSupport.class);
     }
@@ -875,6 +844,31 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      */
     protected Registration addValidationEventListener(ComponentEventListener<ValidationEvent> listener) {
         return getEventBus().addListener(ValidationEvent.class, listener);
+    }
+
+    /**
+     * Event sent when the view requests an external lock, if one is defined.
+     */
+    public static class SetupLockEvent extends ApplicationEvent {
+
+        protected LockStatus lockStatus = LockStatus.NOT_SUPPORTED;
+
+        public SetupLockEvent(StandardDetailView<?> view) {
+            super(view);
+        }
+
+        @Override
+        public StandardDetailView<?> getSource() {
+            return ((StandardDetailView<?>) super.getSource());
+        }
+
+        public LockStatus getLockStatus() {
+            return lockStatus;
+        }
+
+        public void setLockStatus(LockStatus lockStatus) {
+            this.lockStatus = lockStatus;
+        }
     }
 
     /**

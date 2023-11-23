@@ -395,7 +395,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
             for (Object entity : recentlyLoaded) {
                 entityEventManager.publishEntityLoadingEvent(entity);
-                //BeforeLoadTransactionCommit can be invoked several times for the same transaction in loadAllAfterSave,
+                //Current method can be invoked several times for the same transaction in loadAllAfterSave,
                 //so we have to remember processed entities in order to not send the same event many times in a row.
                 txState.alreadyExisted.add(entity);
             }
@@ -700,7 +700,13 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         return constraintName.toUpperCase();
     }
 
+    /**
+     * Helps to distinguish newly loaded entities (including implicitly loaded) from already existed.
+     */
     protected static class JpaTransactionContextState implements TransactionContextState {
+        /**
+         * Stores entities that have been already merged into persistent context before loading started.
+         */
         protected final Set<Object> alreadyExisted = Sets.newIdentityHashSet();
     }
 }

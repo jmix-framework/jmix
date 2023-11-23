@@ -326,6 +326,11 @@ public abstract class AbstractDataStore implements DataStore {
 
     protected abstract void rollbackTransaction(Object transaction);
 
+    /**
+     * Invoked after {@link  AbstractDataStore#beginLoadTransaction}.
+     * <br>
+     * Override this method to create {@link TransactionContextState} implementation and store required data in it.
+     */
     protected abstract TransactionContextState getTransactionContextState(boolean isJoinTransaction);
 
     protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities, TransactionContextState transactionContextState) {
@@ -512,6 +517,12 @@ public abstract class AbstractDataStore implements DataStore {
         }
     }
 
+    /**
+     * Designed to store and share various data during load transaction.
+     * <p>
+     * E.g. for {@code JpaDataStore}: to remember already existed in persistence context entities.
+     * It is required to distinguish newly loaded entities (including implicitly loaded) from already existed.
+     */
     protected interface TransactionContextState {
     }
 }

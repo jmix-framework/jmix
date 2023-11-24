@@ -18,7 +18,6 @@ package ${project_rootPackage}.security;
 
 import ${project_rootPackage}.entity.User;
 import io.jmix.core.security.user.UserAuthoritiesPopulator;
-import io.jmix.localusermanagementflowui.security.UserManagementRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -36,16 +35,13 @@ public class AppUserAuthoritiesPopulator implements UserAuthoritiesPopulator<Use
 
     private static final String ADMIN_ROLE = "ADMIN";
     private static final String USER_ROLE = "USER";
-    private static final String EDIT_FILTER_ROLE = "flowui-filter";
 
     @Override
     public void populateUserAuthorities(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(createRoleAuthority(USER_ROLE));
-        authorities.add(createRoleAuthority(EDIT_FILTER_ROLE));
         if ("admin".equals(user.getUsername())) {
             authorities.add(createRoleAuthority(ADMIN_ROLE));
-            authorities.add(createRoleAuthority(UserManagementRole.CODE));
         }
         user.setAuthorities(authorities);
     }

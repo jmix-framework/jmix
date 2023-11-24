@@ -21,7 +21,8 @@ dependencies {
     api project(':authserver')
 
     implementation project(':core-starter')
-    implementation project(':security-starter')
+    //todo MG remove security-starter
+//    implementation project(':security-starter')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

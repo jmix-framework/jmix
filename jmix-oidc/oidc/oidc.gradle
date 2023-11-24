@@ -21,6 +21,7 @@ archivesBaseName = 'jmix-oidc'
 
 dependencies {
     api project(':core')
+    //todo MG remove security dependency (add-on must work both with simple and regular security modules)
     api project(':security')
 
     api 'org.springframework.security:spring-security-oauth2-client'
@@ -28,6 +29,7 @@ dependencies {
 
     api 'org.springframework.security:spring-security-oauth2-resource-server'
 
+    //todo MG remove security-data dependency (add-on must work both with simple and regular security modules)
     compileOnly project(':security-data')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

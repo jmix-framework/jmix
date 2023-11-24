@@ -26,6 +26,7 @@ import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignment;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentPropertiesMapper;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
 import io.jmix.core.JmixSecurityFilterChainOrder;
+import io.jmix.core.security.QualifiedSecurityConfigurers;
 import io.jmix.security.SecurityConfigurers;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -99,7 +100,7 @@ public class AuthServerAutoConfiguration {
                                     new LoginUrlAuthenticationEntryPoint(authServerProperties.getLoginPageUrl()))
                     )
                     .cors(Customizer.withDefaults());
-            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
+            QualifiedSecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 
@@ -116,7 +117,7 @@ public class AuthServerAutoConfiguration {
                         form.loginPage(authServerProperties.getLoginPageUrl());
                     });
 
-            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER);
+            QualifiedSecurityConfigurers.applySecurityConfigurersWithQualifier(http, LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 
@@ -158,7 +159,7 @@ public class AuthServerAutoConfiguration {
                     .cors(Customizer.withDefaults());
             AsResourceServerEventSecurityFilter asResourceServerEventSecurityFilter = new AsResourceServerEventSecurityFilter(applicationEventPublisher);
             http.addFilterBefore(asResourceServerEventSecurityFilter, AuthorizationFilter.class);
-            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
+            QualifiedSecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 

@@ -25,6 +25,8 @@ import com.vaadin.flow.component.textfield.TextArea;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -39,6 +41,7 @@ import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.ComponentGenerationStrategy;
+import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
@@ -80,12 +83,12 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected MsgBundleTools msgBundleTools;
     protected AttributeOptionsLoader optionsLoader;
     protected AttributeValidators attributeValidators;
-    //   todo protected WindowConfig windowConfig;
     protected ViewRegistry viewRegistry;
     protected Actions actions;
     protected AttributeDependencies attributeDependencies;
     protected FormatStringsRegistry formatStringsRegistry;
     protected ApplicationContext applicationContext;
+    protected DatatypeRegistry datatypeRegistry;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
@@ -96,12 +99,12 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                                               MsgBundleTools msgBundleTools,
                                               AttributeOptionsLoader optionsLoader,
                                               AttributeValidators attributeValidators,
-//                                              WindowConfig windowConfig,
                                               ViewRegistry viewRegistry,
                                               Actions actions,
                                               AttributeDependencies attributeDependencies,
                                               FormatStringsRegistry formatStringsRegistry,
-                                              ApplicationContext applicationContext) {
+                                              ApplicationContext applicationContext,
+                                              DatatypeRegistry datatypeRegistry) {
         this.messages = messages;
         this.uiComponents = uiComponents;
         this.dynamicModelMetadata = dynamicModelMetadata;
@@ -109,12 +112,12 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         this.msgBundleTools = msgBundleTools;
         this.optionsLoader = optionsLoader;
         this.attributeValidators = attributeValidators;
-//        this.windowConfig = windowConfig;
         this.viewRegistry = viewRegistry;
         this.actions = actions;
         this.attributeDependencies = attributeDependencies;
         this.formatStringsRegistry = formatStringsRegistry;
         this.applicationContext = applicationContext;
+        this.datatypeRegistry = datatypeRegistry;
     }
 
     public Component createComponent(ComponentGenerationContext context) {
@@ -140,7 +143,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         if (attribute.isCollection()) {
             resultComponent = createCollectionField(context, attribute);
         } else if (attribute.getDataType() == ENTITY) {
-            resultComponent = createClassField(context, attribute);
+            resultComponent = createEntityField(context, attribute);
         } else {
             resultComponent = createDatatypeField(context, attribute);
         }
@@ -155,7 +158,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         }
 
         if (resultComponent instanceof HasLabel) {
-            setCaption((HasLabel) resultComponent, attribute);
+            setLabel((HasLabel) resultComponent, attribute);
         }
 
         if (resultComponent instanceof HasTitle) {
@@ -163,10 +166,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         }
 
         return resultComponent;
-    }
-
-    protected Component createClassField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        return createEntityField(context, attribute);
     }
 
     protected Component createDatatypeField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -184,7 +183,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         } else if (type == DATE_WITHOUT_TIME) {
             return createDateWithoutTimeField(context, attribute);
         } else if (type == INTEGER || type == DOUBLE || type == DECIMAL) {
-            return createNumberField(context, attribute);
+            return createNumberField(type, context, attribute);
         } else if (type == ENUMERATION) {
             return createEnumerationField(context, attribute);
         }
@@ -344,9 +343,15 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         return dateField;
     }
 
-    protected AbstractField<?, ?> createNumberField(ComponentGenerationContext context, AttributeDefinition attribute) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected AbstractField<?, ?> createNumberField(AttributeType type, ComponentGenerationContext context, AttributeDefinition attribute) {
         TypedTextField<?> component = uiComponents.create(TypedTextField.class);
-
+        switch (type) {
+            case INTEGER -> component.setDatatype((Datatype) datatypeRegistry.get(Integer.class));
+            case DOUBLE -> component.setDatatype((Datatype) datatypeRegistry.get(Double.class));
+            case DECIMAL -> component.setDatatype((Datatype) datatypeRegistry.get(BigDecimal.class));
+            default -> throw new IllegalStateException();
+        }
         setValidators(component, attribute);
         setCustomDatatype(component, attribute);
         setValueSource(component, context);
@@ -411,23 +416,33 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         Set<AttributeDefinition> dependentAttributes = attributeDependencies.getDependentAttributes(attribute);
         if (!dependentAttributes.isEmpty() && component instanceof SupportsValueSource) {
             //noinspection unchecked
-            component.addValueChangeListener(e -> {
-                AttributeRecalculationManager manager = applicationContext.getBean(AttributeRecalculationManager.class);
-
-                Assert.notNull(((SupportsValueSource<?>) component).getValueSource(), "Not value source for component");
-                applicationContext.getBean(AttributeRecalculationListener.class, manager, attribute)
-                        .accept(new ValueSource.ValueChangeEvent(((SupportsValueSource<?>) component).getValueSource(), e.getOldValue(), e.getValue()));
-            });
+            if(component instanceof SupportsTypedValue) {
+                ((TypedTextField<?>) component).addTypedValueChangeListener(e ->
+                        valueChangeListenerHandler((Component) component, attribute, e.getOldValue(), e.getValue()));
+            } else {
+                component.addValueChangeListener(e ->
+                        valueChangeListenerHandler((Component) component, attribute, e.getOldValue(), e.getValue()));
+            }
         }
     }
 
+    protected void valueChangeListenerHandler(Component source, AttributeDefinition attributeDefinition,
+                                              Object oldValue, Object value) {
+        AttributeRecalculationManager manager = applicationContext.getBean(AttributeRecalculationManager.class);
+
+        Assert.notNull(((SupportsValueSource<?>) source).getValueSource(), "Not value source for component");
+        applicationContext.getBean(AttributeRecalculationListener.class, manager, attributeDefinition)
+                .accept(new ValueSource.ValueChangeEvent(((SupportsValueSource<?>) source).getValueSource(), oldValue, value));
+
+    }
+
     protected void setEditable(HasValueAndElement<?, ?> component, AttributeDefinition attribute) {
-        if (Boolean.TRUE.equals(attribute.isReadOnly())) {
+        if (attribute.isReadOnly()) {
             component.setReadOnly(false);
         }
     }
 
-    protected void setCaption(HasLabel component, AttributeDefinition attribute) {
+    protected void setLabel(HasLabel component, AttributeDefinition attribute) {
         //noinspection DataFlowIssue
         component.setLabel(
                 msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName()));

@@ -18,17 +18,24 @@ package io.jmix.core.common.util;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.dom4j.Element;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utility class to simplify work with Java reflection.
  */
 public final class ReflectionHelper {
+
+    private static final ConcurrentHashMap<Class<?>, Map<String, Field>> fields = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Class<?>, Map<String, Map<Class[], Method>>> methods =
+            new ConcurrentHashMap<>();
 
     private ReflectionHelper() {
     }
@@ -95,9 +102,10 @@ public final class ReflectionHelper {
         Class[] paramTypes = getParamTypes(params);
 
         Constructor<T> constructor = ConstructorUtils.getMatchingAccessibleConstructor(cls, paramTypes);
-        if (constructor == null)
+        if (constructor == null) {
             throw new NoSuchMethodException(
                     String.format("Cannot find a matching constructor for %s and given parameters", cls.getName()));
+        }
         try {
             return constructor.newInstance(params);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -117,19 +125,8 @@ public final class ReflectionHelper {
     public static Method findMethod(Class<?> c, String name, Object... params) {
         Class[] paramTypes = getParamTypes(params);
 
-        Method method = null;
-        try {
-            method = c.getDeclaredMethod(name, paramTypes);
-        } catch (NoSuchMethodException e) {
-            try {
-                method = c.getMethod(name, paramTypes);
-            } catch (NoSuchMethodException e1) {
-                Class superclass = c.getSuperclass();
-                if (superclass != null) {
-                    method = findMethod(superclass, name, params);
-                }
-            }
-        }
+        Method method = findDeclaredMethod(c, name, paramTypes);
+
         if (method != null) {
             method.setAccessible(true);
         }
@@ -151,12 +148,12 @@ public final class ReflectionHelper {
         Class[] paramTypes = getParamTypes(params);
 
         final Class<?> aClass = obj.getClass();
-        Method method;
-        try {
-            method = aClass.getDeclaredMethod(name, paramTypes);
-        } catch (NoSuchMethodException e) {
-            method = aClass.getMethod(name, paramTypes);
+
+        Method method = findDeclaredMethod(aClass, name, paramTypes);
+        if (method == null) {
+            throw new NoSuchMethodException(name);
         }
+
         method.setAccessible(true);
         try {
             return (T) method.invoke(obj, params);
@@ -174,8 +171,9 @@ public final class ReflectionHelper {
     public static Class[] getParamTypes(Object... params) {
         List<Class> paramClasses = new ArrayList<>();
         for (Object param : params) {
-            if (param == null)
+            if (param == null) {
                 throw new IllegalStateException("Null parameter");
+            }
 
             final Class aClass = param.getClass();
             if (List.class.isAssignableFrom(aClass)) {
@@ -200,21 +198,9 @@ public final class ReflectionHelper {
      */
     public static Object getFieldValue(Object entity, String property) {
         Class javaClass = entity.getClass();
-        Field field = null;
-        try {
-            field = javaClass.getDeclaredField(property);
-        } catch (NoSuchFieldException e) {
-            Class superclass = javaClass.getSuperclass();
-            while (superclass != null) {
-                try {
-                    field = superclass.getDeclaredField(property);
-                    break;
-                } catch (NoSuchFieldException e1) {
-                    superclass = superclass.getSuperclass();
-                }
-            }
-            if (field == null)
-                throw new RuntimeException("Field not found: " + property);
+        Field field = findDeclaredField(javaClass, property);
+        if (field == null) {
+            throw new RuntimeException("Field not found: " + property);
         }
         if (!Modifier.isPublic(field.getModifiers())) {
             field.setAccessible(true);
@@ -224,5 +210,60 @@ public final class ReflectionHelper {
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Cannot get field:" + property);
         }
+    }
+
+    @Nullable
+    private static Field findDeclaredField(Class aClass, String name) {
+        Map<String, Field> fieldMap = fields.computeIfAbsent(aClass, cls -> getDeclaredFields(aClass));
+        return fieldMap.get(name);
+    }
+
+    private static Map<String, Field> getDeclaredFields(Class javaClass) {
+        Map<String, Field> fields = new HashMap<>();
+        Class current = javaClass;
+        while (current != null) {
+            for (Field declaredField : current.getDeclaredFields()) {
+                fields.put(declaredField.getName(), declaredField);
+            }
+            current = current.getSuperclass();
+        }
+        return Collections.unmodifiableMap(fields);
+    }
+
+    @Nullable
+    private static Method findDeclaredMethod(Class javaClass, String name, Class[] paramTypes) {
+        Map<String, Map<Class[], Method>> methodMap =
+                methods.computeIfAbsent(javaClass, cls -> getDeclaredMethods(javaClass));
+        Map<Class[], Method> synonyms = methodMap.get(name);
+        if (synonyms == null) {
+            return null;
+        }
+        return synonyms.get(paramTypes);
+    }
+
+    private static Map<String, Map<Class[], Method>> getDeclaredMethods(Class aClass) {
+        Map<String, Map<Class[], Method>> methods = new HashMap<>();
+
+        Class current = aClass;
+        while (current != null) {
+            for (Method method : current.getDeclaredMethods()) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                Map<Class[], Method> byParamsMap = methods.computeIfAbsent(method.getName(), s -> new HashMap<>());
+                byParamsMap.put(parameterTypes, method);
+            }
+            for (Method method : current.getMethods()) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                Map<Class[], Method> byParamsMap = methods.computeIfAbsent(method.getName(), s -> new HashMap<>());
+                byParamsMap.put(parameterTypes, method);
+            }
+            current = current.getSuperclass();
+        }
+
+        Map<String, Map<Class[], Method>> unmodifiable = new HashMap<>();
+        for (Map.Entry<String, Map<Class[], Method>> entry : methods.entrySet()) {
+            unmodifiable.put(entry.getKey(), Collections.unmodifiableMap(entry.getValue()));
+        }
+
+        return Collections.unmodifiableMap(unmodifiable);
     }
 }

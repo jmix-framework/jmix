@@ -156,7 +156,12 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             setEditable((HasValueAndElement<?, ?>) resultComponent, attribute);
             setRequired((HasValueAndElement<?, ?>) resultComponent, attribute);
         }
-
+        if (resultComponent instanceof HasEnabled && !(resultComponent instanceof HasValueAndElement)) {
+            ((HasEnabled) resultComponent).setEnabled(!attribute.isReadOnly());
+        }
+        if (resultComponent instanceof HasValidationProperties) {
+            setValidationError((HasValidationProperties) resultComponent, attribute);
+        }
         if (resultComponent instanceof HasLabel) {
             setLabel((HasLabel) resultComponent, attribute);
         }
@@ -166,6 +171,16 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         }
 
         return resultComponent;
+    }
+
+    protected Component createClassField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        return createEntityField(context, attribute);
+    }
+
+    private void setValidationError(HasValidationProperties resultComponent, AttributeDefinition attribute) {
+        resultComponent.setErrorMessage(messages.formatMessage("",
+                "validation.required.defaultMsg",
+                msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName())));
     }
 
     protected Component createDatatypeField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -437,9 +452,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected void setEditable(HasValueAndElement<?, ?> component, AttributeDefinition attribute) {
-        if (attribute.isReadOnly()) {
-            component.setReadOnly(false);
-        }
+        component.setReadOnly(attribute.isReadOnly());
     }
 
     protected void setLabel(HasLabel component, AttributeDefinition attribute) {
@@ -456,12 +469,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
     protected void setRequired(HasValueAndElement<?, ?> field, AttributeDefinition attribute) {
         field.setRequiredIndicatorVisible(attribute.isRequired());
-        if (field instanceof HasValidationProperties) {
-            //noinspection DataFlowIssue
-            ((HasValidationProperties) field).setErrorMessage(messages.formatMessage("",
-                    "validation.required.defaultMsg",
-                    msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName())));
-        }
     }
 
     @SuppressWarnings({"rawtypes"})

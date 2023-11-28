@@ -83,7 +83,7 @@ class ListMenuTest extends FlowuiTestSpecification {
         applicationMenuBar.opened
         applicationMenuBar.icon == VaadinIcon.ABACUS
         applicationMenuBar.description == "Description"
-        applicationMenuBar.getChildren().size() == 2
+        applicationMenuBar.getChildItems().size() == 2
 
         def menuItem = listMenu.getMenuItem("ListMenuTestView")
         menuItem != null

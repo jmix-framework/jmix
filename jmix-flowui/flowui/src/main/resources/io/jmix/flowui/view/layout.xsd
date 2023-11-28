@@ -3865,6 +3865,18 @@
             <xs:enumeration value="CASE_INSENSITIVE"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <!-- NavigationMenuBar -->
+    <xs:complexType name="navigationMenuBarComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="loadMenuConfig" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
     <!--    HTML-->
 
     <!-- Html -->
@@ -4409,6 +4421,7 @@
                 <xs:element name="codeEditor" type="codeEditorComponent"/>
                 <xs:element name="virtualList" type="virtualListComponent"/>
                 <xs:element name="menuSearchField" type="menuSearchFieldComponent"/>
+                <xs:element name="navigationMenuBar" type="navigationMenuBarComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

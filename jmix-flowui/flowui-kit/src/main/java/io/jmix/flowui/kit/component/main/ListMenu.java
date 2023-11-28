@@ -231,7 +231,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             Details menuBar = createMenuBarComponent(menuBarItem);
             UnorderedList content = getMenuBarContent(menuBar);
 
-            for (MenuItem childItem : menuBarItem.getChildren()) {
+            for (MenuItem childItem : menuBarItem.getChildItems()) {
                 ListItem component = createMenuRecursively(childItem);
                 content.add(component);
             }
@@ -262,7 +262,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuItem.setMenuComponent(this);
 
         if (menuItem.isMenu()) {
-            for (MenuItem item : ((MenuBarItem) menuItem).getChildren()) {
+            for (MenuItem item : ((MenuBarItem) menuItem).getChildItems()) {
                 attachMenuItemRecursively(item);
             }
         }
@@ -272,7 +272,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuItem.setMenuComponent(null);
 
         if (menuItem.isMenu()) {
-            for (MenuItem item : ((MenuBarItem) menuItem).getChildren()) {
+            for (MenuItem item : ((MenuBarItem) menuItem).getChildItems()) {
                 detachMenuItemRecursively(item);
             }
         }
@@ -283,7 +283,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuItem.removePropertyChangeListener(menuItemPropertyChangeListener);
 
         if (menuItem.isMenu()) {
-            for (MenuItem item : ((MenuBarItem) menuItem).getChildren()) {
+            for (MenuItem item : ((MenuBarItem) menuItem).getChildItems()) {
                 unregisterMenuItemRecursively(item);
             }
         }

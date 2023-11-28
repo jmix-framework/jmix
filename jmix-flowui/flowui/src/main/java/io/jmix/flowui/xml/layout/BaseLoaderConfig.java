@@ -98,6 +98,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("codeEditor", CodeEditorLoader.class);
         loaders.put("virtualList", VirtualListLoader.class);
         loaders.put("menuSearchField", MenuSearchFieldLoader.class);
+        loaders.put("navigationMenuBar", NavigationMenuBarLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

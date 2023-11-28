@@ -16,13 +16,14 @@
 
 package cascade_operations
 
-
 import io.jmix.core.DataManager
 import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlans
 import io.jmix.core.SaveContext
 import io.jmix.data.PersistenceHints
 import io.jmix.data.impl.EntityListenerManager
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.cascade_operations.JpaCascadeBar
@@ -32,9 +33,6 @@ import test_support.entity.cascade_operations.JpaCascadeItem
 import test_support.listeners.cascade_operations.TestCascadeBarEventListener
 import test_support.listeners.cascade_operations.TestCascadeFooEventListener
 import test_support.listeners.cascade_operations.TestCascadeItemEventListener
-
-import jakarta.persistence.EntityManager
-import jakarta.persistence.PersistenceContext
 
 class CascadeEventsTest extends DataSpec {
 
@@ -57,6 +55,10 @@ class CascadeEventsTest extends DataSpec {
     }
 
     def "check OneToOne cascade operations events"() {
+        setup:
+        TestCascadeFooEventListener.clear()
+        TestCascadeBarEventListener.clear()
+
         when: "cascade persist occurs"
         def foo = dataManager.create(JpaCascadeFoo)
         foo.name = "testFoo"
@@ -155,6 +157,10 @@ class CascadeEventsTest extends DataSpec {
     }
 
     def "check OneToMany cascade operations events"() {
+        setup:
+        TestCascadeFooEventListener.clear()
+        TestCascadeBarEventListener.clear()
+
         when: "cascade persist occurs"
         def foo = dataManager.create(JpaCascadeFoo)
         foo.name = "testFoo"
@@ -250,6 +256,10 @@ class CascadeEventsTest extends DataSpec {
     }
 
     def "check cascade events for embedded entities"() {
+        setup:
+        TestCascadeFooEventListener.clear()
+        TestCascadeBarEventListener.clear()
+
         when: "cascade persist occurs"
         def foo = dataManager.create(JpaCascadeFoo)
         foo.name = "testFoo"

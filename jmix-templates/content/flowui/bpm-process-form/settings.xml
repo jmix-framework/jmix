@@ -20,7 +20,7 @@
         <step name="BPM process form outcomes" order="2"/>
     </steps>
 
-    <property caption="Process form id"
+    <property caption="Process id"
               code="processFormId"
               propertyType="PROCESS_FORM_ID"
               required="false"/>

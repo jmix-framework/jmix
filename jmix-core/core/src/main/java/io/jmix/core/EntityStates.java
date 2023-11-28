@@ -112,8 +112,8 @@ public class EntityStates {
      */
     public boolean isDetached(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof Entity && getUncheckedEntityEntry(entity).isDetached()) {
-            return true;
+        if (entity instanceof Entity) {
+            return getUncheckedEntityEntry(entity).isDetached();
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("EntityStates.isDetached is called for unsupported type '{}'. Stacktrace:\n{}",

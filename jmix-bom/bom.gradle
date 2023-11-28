@@ -60,7 +60,7 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.2.1'
+def vaadinFlowVersion = '24.2.3'
 
 javaPlatform {
     allowDependencies()
@@ -189,6 +189,11 @@ dependencies {
 
         api "io.jmix.oidc:jmix-oidc:$freeVersion"
         api "io.jmix.oidc:jmix-oidc-starter:$freeVersion"
+
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock:$freeVersion"
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock-starter:$freeVersion"
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock-flowui:$freeVersion"
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock-flowui-starter:$freeVersion"
 
         api "io.jmix.quartz:jmix-quartz:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-starter:$freeVersion"

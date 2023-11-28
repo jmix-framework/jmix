@@ -66,7 +66,6 @@ public class MenuSearchFieldLoader extends AbstractComponentLoader<MenuSearchFie
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
-        componentLoader().loadAutocapitalize(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);

@@ -20,7 +20,6 @@
         <listMenu id="listMenu"/>
 
         <menuSearchField id="menuSearchField"
-                         autocapitalize="SENTENCES"
                          autofocus="true"
                          autoselect="true"
                          classNames="cssClassName1, cssClassName2"

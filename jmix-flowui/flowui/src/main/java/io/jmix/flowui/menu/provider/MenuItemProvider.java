@@ -27,6 +27,7 @@ import java.util.function.Function;
 
 /**
  * Represents menu item source which can be bound to a menu
+ *
  * @param <T> menu item type
  */
 public interface MenuItemProvider<T extends MenuItem> {
@@ -38,13 +39,13 @@ public interface MenuItemProvider<T extends MenuItem> {
 
     /**
      * Adds a listener for an event of menu item collection change.
+     *
      * @param listener a listener to add
      * @return subscription for the listener
      */
     Subscription addCollectionChangedListener(Consumer<CollectionChangeEvent<T>> listener);
 
     /**
-     *
      * @return loaded menu items.
      */
     List<T> getMenuItems();
@@ -52,12 +53,14 @@ public interface MenuItemProvider<T extends MenuItem> {
     /**
      * Adds a transform function which will be applied to menu items after load. It can be used to add some
      * customizations to loaded items (for example, expand or collapse specific items).
+     *
      * @param itemsTransformer a transform function to add
      */
     void addMenuItemsTransformer(Function<List<T>, List<T>> itemsTransformer);
 
     /**
      * Removes menu item transform function
+     *
      * @param transformer transform function to remove
      * @see #addMenuItemsTransformer(Function)
      */
@@ -65,6 +68,7 @@ public interface MenuItemProvider<T extends MenuItem> {
 
     /**
      * Menu item collection change event.
+     *
      * @param <T> menu item type
      */
     class CollectionChangeEvent<T> extends EventObject {
@@ -77,7 +81,6 @@ public interface MenuItemProvider<T extends MenuItem> {
         }
 
         /**
-         *
          * @return new menu item collection
          */
         public Collection<? extends T> getItems() {

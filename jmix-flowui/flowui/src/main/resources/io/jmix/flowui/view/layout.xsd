@@ -3844,7 +3844,6 @@
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
-                <xs:attributeGroup ref="hasAutocapitalize"/>
                 <xs:attributeGroup ref="hasValueChangeMode"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>

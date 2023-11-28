@@ -38,7 +38,6 @@ class MenuSearchFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "MenuSearchField attributes will be loaded"
         verifyAll(menuSearchFieldView.menuSearchField) {
             id.get() == "menuSearchField"
-            autocapitalize == Autocapitalize.SENTENCES
             autofocus
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])

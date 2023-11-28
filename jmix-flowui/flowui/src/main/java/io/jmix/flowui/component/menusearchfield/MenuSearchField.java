@@ -36,7 +36,6 @@ import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.component.shared.HasTooltip;
-import com.vaadin.flow.component.textfield.HasAutocapitalize;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -60,9 +59,9 @@ import java.util.function.Function;
  * by their text labels using entered value
  */
 public class MenuSearchField extends Composite<TextField>
-        implements HasHelper, HasPrefix, HasSuffix, HasValueChangeMode, HasAutocapitalize,
-        HasThemeVariant<MenuSearchFieldVariant>, HasTitle, HasClearButton, HasAutofocus, HasEnabled, HasLabel, HasSize,
-        HasStyle, HasTooltip, InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuSearchField>, HasPlaceholder,
+        implements HasHelper, HasPrefix, HasSuffix, HasValueChangeMode, HasThemeVariant<MenuSearchFieldVariant>,
+        HasTitle, HasClearButton, HasAutofocus, HasEnabled, HasLabel, HasSize, HasStyle, HasTooltip,
+        InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuSearchField>, HasPlaceholder,
         HasValueAndElement<ComponentValueChangeEvent<MenuSearchField, String>, String> {
 
     protected static final String SEARCH_FIELD_STYLE_NAME = "jmix-menu-search-field";

@@ -23,11 +23,11 @@ import com.vaadin.flow.component.shared.ThemeVariant;
  */
 public enum MenuSearchFieldVariant implements ThemeVariant {
 
-    LUMO_SMALL("small"),
-    LUMO_ALIGN_CENTER("align-center"),
-    LUMO_ALIGN_RIGHT("align-right"),
-    LUMO_HELPER_ABOVE_FIELD("helper-above-field"),
-    MATERIAL_ALWAYS_FLOAT_LABEL("always-float-label");
+    SMALL("small"),
+    ALIGN_CENTER("align-center"),
+    ALIGN_RIGHT("align-right"),
+    HELPER_ABOVE_FIELD("helper-above-field"),
+    ALWAYS_FLOAT_LABEL("always-float-label");
 
     private final String variant;
 

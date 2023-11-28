@@ -42,9 +42,11 @@ vaadin-menu-bar-list-box .jmix-navigation-menu-bar-item-link {
   text-decoration: none;
 }
 
-.jmix-navigation-menu-bar-icon-with-title {
+.jmix-navigation-menu-bar-item-icon-with-title {
+  margin-right: var(--lumo-space-s);
+}
+
+.jmix-navigation-menu-bar-item-icon {
   width: var(--lumo-icon-size-s);
   height: var(--lumo-icon-size-s);
-  margin-right: var(--lumo-space-s);
-  padding: 0;
 }

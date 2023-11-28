@@ -19,21 +19,26 @@ package io.jmix.flowui.component.navigationmenubar;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.ShortcutEvent;
+import com.vaadin.flow.component.ShortcutRegistration;
 import com.vaadin.flow.component.Shortcuts;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.shared.Tooltip;
+import com.vaadin.flow.dom.DomListenerRegistration;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -45,21 +50,9 @@ import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
 import io.jmix.flowui.menu.provider.HasMenuItemProvider;
 import io.jmix.flowui.menu.provider.MenuItemProvider;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewInfo;
-import io.jmix.flowui.view.ViewRegistry;
 import jakarta.annotation.Nullable;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -71,55 +64,17 @@ import java.util.stream.Collectors;
 /**
  * Represents horizontal menu that can be used for navigation to a view or for invoking a method of a bean
  */
-public class NavigationMenuBar extends Composite<JmixMenuBar> implements ApplicationContextAware, InitializingBean,
-        HasMenuItemProvider<NavigationMenuBar.MenuItem>, HasSize, HasStyle {
+public class NavigationMenuBar extends Composite<JmixMenuBar>
+        implements HasMenuItemProvider<NavigationMenuBar.AbstractMenuItem<?>>, HasSize, HasStyle {
 
     protected static final String NAVIGATION_MENU_BAR_CLASS_NAME = "jmix-navigation-menu-bar";
     protected static final String ROOT_MENU_ITEM_CLASS_NAME = "jmix-navigation-menu-bar-root-item";
-    protected static final String MENU_ITEM_LINK_CLASS_NAME = "jmix-navigation-menu-bar-item-link";
-    protected static final String ICON_WITH_TITLE_CLASS_NAME = "jmix-navigation-menu-bar-icon-with-title";
 
-    protected ApplicationContext applicationContext;
-    protected ViewRegistry viewRegistry;
-
-    protected MenuItemProvider<MenuItem> menuItemProvider;
+    protected MenuItemProvider<AbstractMenuItem<?>> menuItemProvider;
     protected Subscription itemCollectionChangedSubscription;
 
-    protected List<MenuItem> rootMenuItems = new ArrayList<>();
-    protected Map<String, Pair<MenuItem, Component>> registrations = new HashMap<>();
-
-    protected PropertyChangeListener menuItemPropertyChangeListener = this::onMenuItemPropertyChange;
-
-    protected void onMenuItemPropertyChange(PropertyChangeEvent event) {
-        if (MenuItem.MENU_ITEM_CLASS_NAME.equals(event.getPropertyName())) {
-            MenuItem menuItem = (MenuItem) event.getSource();
-            Component menuBarComponent = getMenuItemComponent(menuItem);
-            menuBarComponent.setClassName(null);
-            menuBarComponent.addClassNames(menuItem.getClassNames().toArray(new String[0]));
-        }
-    }
-
-    protected Component getMenuItemComponent(MenuItem menuItem) {
-        Pair<MenuItem, Component> itemPair = registrations.get(menuItem.getId());
-        if (itemPair == null) {
-            throw new IllegalArgumentException("Failed to find JmixMenuItem component for menu item %s".formatted(menuItem));
-        }
-        return itemPair.getValue();
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        autowireDependencies();
-    }
-
-    protected void autowireDependencies() {
-        viewRegistry = applicationContext.getBean(ViewRegistry.class);
-    }
+    protected List<AbstractMenuItem<?>> rootMenuItems = new ArrayList<>();
+    protected Map<String, AbstractMenuItem<?>> allMenuItems = new HashMap<>();
 
     @Override
     protected JmixMenuBar initContent() {
@@ -130,12 +85,12 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
 
     @Override
     @Nullable
-    public MenuItemProvider<MenuItem> getMenuItemProvider() {
+    public MenuItemProvider<AbstractMenuItem<?>> getMenuItemProvider() {
         return menuItemProvider;
     }
 
     @Override
-    public void setMenuItemProvider(@Nullable MenuItemProvider<MenuItem> menuItemProvider) {
+    public void setMenuItemProvider(@Nullable MenuItemProvider<AbstractMenuItem<?>> menuItemProvider) {
         if (Objects.equals(this.menuItemProvider, menuItemProvider)) {
             return;
         }
@@ -150,29 +105,28 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
         }
     }
 
-    protected void onMenuItemCollectionChanged(MenuItemProvider.CollectionChangeEvent<MenuItem> e) {
+    protected void onMenuItemCollectionChanged(MenuItemProvider.CollectionChangeEvent<AbstractMenuItem<?>> e) {
         removeAllMenuItems();
         e.getItems().forEach(this::addMenuItem);
     }
 
     /**
-     * Gets menu item from the menu by its id.
+     * Returns menu item from the menu (including non-root items) by its id.
      *
      * @param id menu item id
      * @return menu item or null if not found
      */
     @Nullable
-    public MenuItem getMenuItem(String id) {
+    public AbstractMenuItem<?> getMenuItem(String id) {
         Preconditions.checkNotNullArgument(id);
 
-        Pair<MenuItem, Component> itemComponentPair = registrations.get(id);
-        return itemComponentPair != null ? itemComponentPair.getKey() : null;
+        return allMenuItems.get(id);
     }
 
     /**
      * @return immutable list of root menu items
      */
-    public List<MenuItem> getMenuItems() {
+    public List<AbstractMenuItem<?>> getMenuItems() {
         return Collections.unmodifiableList(rootMenuItems);
     }
 
@@ -181,234 +135,69 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
      *
      * @param menuItem menu item to add
      */
-    public void addMenuItem(MenuItem menuItem) {
+    public void addMenuItem(AbstractMenuItem<?> menuItem) {
         Preconditions.checkNotNullArgument(menuItem);
 
-        createItemComponentRecursively(menuItem, null, null);
+        addMenuItemRecursive(menuItem, null, null);
 
         rootMenuItems.add(menuItem);
-        attachMenuItemRecursively(menuItem);
     }
 
-    /**
-     * Adds menu item and its children to the menu in specified index.
-     * <p>
-     * If root menu items already contain provided menu item, it will be moved to the provided index.
-     *
-     * @param menuItem menu item to add
-     * @param index    index to add menu item in the root items
-     */
-    public void addMenuItem(MenuItem menuItem, int index) {
-        Preconditions.checkNotNullArgument(menuItem);
+    protected void addMenuItemRecursive(AbstractMenuItem<?> childMenuItem,
+                                        @Nullable ParentMenuItem menuItem,
+                                        @Nullable Integer index) {
+        checkItemIdDuplicate(childMenuItem.getId());
 
-        MenuItem itemToAdd;
-        int existingIndex = rootMenuItems.indexOf(menuItem);
-        if (existingIndex != -1) {
-            if (index > existingIndex) {
-                //decrement because we will remove existing element
-                index--;
+        JmixSubMenu parentSubMenu = menuItem != null
+                ? getParentSubMenu(menuItem)
+                : null;
+
+        Component childMenuItemComponent = childMenuItem.getComponent();
+
+        if (childMenuItem.isMenu()) {
+            ParentMenuItem parentMenuItem = (ParentMenuItem) childMenuItem;
+
+            JmixMenuItem itemWrapper = addMenuItemComponent(childMenuItemComponent, parentSubMenu, index);
+            childMenuItem.setMenuItemWrapper(itemWrapper);
+
+            for (AbstractMenuItem<?> item : parentMenuItem.getChildren()) {
+                addMenuItemRecursive(item, parentMenuItem, null);
             }
-
-            itemToAdd = rootMenuItems.get(existingIndex);
-            removeMenuItem(itemToAdd);
-        } else {
-            itemToAdd = menuItem;
-        }
-
-        createItemComponentRecursively(itemToAdd, null, index);
-
-        rootMenuItems.add(index, itemToAdd);
-
-        attachMenuItemRecursively(itemToAdd);
-    }
-
-    /**
-     * Removes menu item and its children from the menu.
-     *
-     * @param menuItem menu item to remove
-     */
-    public void removeMenuItem(MenuItem menuItem) {
-        if (!menuItem.isAttachedToMenu()
-                || !this.equals(menuItem.getMenuComponent())) {
-            throw new IllegalArgumentException(MenuItem.class.getSimpleName() + "is not attached to the menu");
-        }
-
-        Pair<MenuItem, Component> menuItemEntry = registrations.get(menuItem.getId());
-        if (menuItemEntry == null) {
-            return;
-        }
-        menuItem = menuItemEntry.getKey();
-
-        //if is root
-        rootMenuItems.remove(menuItem);
-
-        JmixSubMenu parentSubMenu = menuItem.getParentSubMenu();
-        Component menuItemComponent = menuItemEntry.getValue();
-        if (parentSubMenu != null) {
-            parentSubMenu.remove(menuItemComponent);
-        } else {
-            if (menuItemComponent instanceof JmixMenuItem jmixMenuItem) {
-                getContent().remove(jmixMenuItem);
-            } else {
-                throw new IllegalStateException("Illegal item type on the root level");
-            }
-        }
-
-        detachMenuItemRecursively(menuItem);
-        unregisterMenuItemRecursively(menuItem);
-    }
-
-    /**
-     * Removes root menu item by index.
-     *
-     * @param index index to remove from root menu items
-     */
-    public void removeMenuItem(int index) {
-        MenuItem menuItem = rootMenuItems.get(index);
-        removeMenuItem(menuItem);
-    }
-
-    /**
-     * Removes all menu items from the menu.
-     */
-    public void removeAllMenuItems() {
-        for (MenuItem menuItem : new ArrayList<>(rootMenuItems)) {
-            removeMenuItem(menuItem);
-        }
-    }
-
-
-    protected void addChildItem(MenuItem parentItem, MenuItem childItem, @Nullable Integer index) {
-        Pair<MenuItem, Component> parentItemComponentPair = registrations.get(parentItem.getId());
-
-        if (parentItemComponentPair == null) {
-            throw new IllegalArgumentException("The menu doesn't contain parent item");
-        }
-
-        if (!parentItem.isMenu()) {
-            throw new IllegalArgumentException("Parent item is not a menu");
-        }
-
-        if (parentItemComponentPair.getValue() instanceof JmixMenuItem jmixMenuItem) {
-            JmixSubMenu subMenu = jmixMenuItem.getSubMenu();
-            createItemComponentRecursively(childItem, subMenu, index);
-            attachMenuItemRecursively(childItem);
-        } else {
-            throw new IllegalStateException("Parent item component must be an instance of JmixMenuItem");
-        }
-    }
-
-    protected void createItemComponentRecursively(MenuItem menuItem,
-                                                  @Nullable JmixSubMenu parentSubMenu,
-                                                  @Nullable Integer index) {
-        checkItemIdDuplicate(menuItem.getId());
-
-        Component menuItemComponent;
-        if (menuItem.isMenu()) {
-            ParentMenuItem parentMenuItem = (ParentMenuItem) menuItem;
-
-            JmixMenuItem parentItemComponent = createParentMenuItemComponent(parentMenuItem, parentSubMenu, index);
-
-            JmixSubMenu subMenu = parentItemComponent.getSubMenu();
-            for (MenuItem childItem : parentMenuItem.getChildren()) {
-                createItemComponentRecursively(childItem, subMenu, null);
-            }
-            menuItemComponent = parentItemComponent;
-        } else if (menuItem.isSeparator()) {
+        } else if (childMenuItem.isSeparator()) {
             if (parentSubMenu != null) {
-                menuItemComponent = createSeparatorMenuItemComponent(parentSubMenu, index);
+                if (index == null) {
+                    parentSubMenu.add(childMenuItemComponent);
+                } else {
+                    parentSubMenu.addComponentAtIndex(index, childMenuItemComponent);
+                }
             } else {
                 throw new UnsupportedOperationException("Separators are not supported on the root level");
             }
         } else {
-            menuItemComponent = createMenuItemComponent(menuItem, parentSubMenu, index);
+            JmixMenuItem itemWrapper = addMenuItemComponent(childMenuItemComponent, parentSubMenu, index);
+            childMenuItem.setMenuItemWrapper(itemWrapper);
         }
-        registerMenuItem(menuItem, menuItemComponent);
-        menuItem.setParentSubMenu(parentSubMenu);
+
+        registerMenuItem(childMenuItem);
+        if (menuItem == null) {
+            childMenuItem.addClassNames(ROOT_MENU_ITEM_CLASS_NAME);
+        }
+        childMenuItem.setMenu(this);
+        childMenuItem.setParentMenuItem(menuItem);
     }
 
-    protected void attachMenuItemRecursively(MenuItem menuItem) {
-        menuItem.setMenuComponent(this);
-
-        if (menuItem.isMenu()) {
-            for (MenuItem item : ((ParentMenuItem) menuItem).getChildren()) {
-                attachMenuItemRecursively(item);
-            }
-        }
-    }
-
-    protected void detachMenuItemRecursively(MenuItem menuItem) {
-        menuItem.setMenuComponent(null);
-
-        if (menuItem.isMenu()) {
-            for (MenuItem item : ((ParentMenuItem) menuItem).getChildren()) {
-                detachMenuItemRecursively(item);
-            }
+    protected void checkItemIdDuplicate(String id) {
+        if (allMenuItems.containsKey(id)) {
+            throw new IllegalArgumentException("Menu item with id \"%s\" already exists".formatted(id));
         }
     }
 
-    protected void unregisterMenuItemRecursively(MenuItem menuItem) {
-        registrations.remove(menuItem.getId());
-        menuItem.removePropertyChangeListener(menuItemPropertyChangeListener);
-
-        if (menuItem.isMenu()) {
-            for (MenuItem item : ((ParentMenuItem) menuItem).getChildren()) {
-                unregisterMenuItemRecursively(item);
-            }
+    protected JmixSubMenu getParentSubMenu(ParentMenuItem parentMenuItem) {
+        JmixMenuItem itemWrapper = parentMenuItem.getMenuItemWrapper();
+        if (itemWrapper == null) {
+            throw new IllegalArgumentException("JmixMenuItem for parent menu item is not set");
         }
-    }
-
-    protected void registerMenuItem(MenuItem menuItem, Component menuItemComponent) {
-        registrations.put(menuItem.getId(), Pair.of(menuItem, menuItemComponent));
-        menuItem.addPropertyChangeListener(menuItemPropertyChangeListener);
-    }
-
-    protected void addMenuItemClickShortcutCombination(Component component, MenuItem menuItem) {
-        KeyCombination shortcutCombination = menuItem.getShortcutCombination();
-
-        if (shortcutCombination != null) {
-            Key key = shortcutCombination.getKey();
-            KeyModifier[] keyModifiers = shortcutCombination.getKeyModifiers();
-
-            Shortcuts.addShortcutListener(component, this::onShortcutEvent, key, keyModifiers);
-        }
-    }
-
-    protected void onShortcutEvent(ShortcutEvent event) {
-        event.getLifecycleOwner().getElement().executeJs("this.click()");
-    }
-
-    protected JmixMenuItem createParentMenuItemComponent(ParentMenuItem parentMenuItem,
-                                                         @Nullable JmixSubMenu parentSubMenu,
-                                                         @Nullable Integer index) {
-        VaadinIcon vaadinIcon = parentMenuItem.getIcon();
-        Component titleComponent = createTitleComponent(getText(parentMenuItem));
-        JmixMenuItem menuItemComponent;
-        if (vaadinIcon != null) {
-            Icon menuItemIcon = createMenuItemIcon(vaadinIcon);
-
-            menuItemComponent = addMenuItemComponent(menuItemIcon, parentSubMenu, index);
-            menuItemComponent.add(titleComponent);
-        } else {
-            menuItemComponent = addMenuItemComponent(titleComponent, parentSubMenu, index);
-        }
-
-        if (parentSubMenu == null) {
-            menuItemComponent.setClassName(ROOT_MENU_ITEM_CLASS_NAME);
-        }
-        menuItemComponent.addClassNames(parentMenuItem.getClassNames().toArray(new String[0]));
-
-        return menuItemComponent;
-    }
-
-    protected Icon createMenuItemIcon(VaadinIcon vaadinIcon) {
-        Icon icon = new Icon(vaadinIcon);
-        icon.setClassName(ICON_WITH_TITLE_CLASS_NAME);
-        return icon;
-    }
-
-    protected Component createTitleComponent(String title) {
-        return new Text(title);
+        return itemWrapper.getSubMenu();
     }
 
     protected JmixMenuItem addMenuItemComponent(Component component,
@@ -422,112 +211,122 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
         }
     }
 
-    protected Component createSeparatorMenuItemComponent(JmixSubMenu parentSubMenu, @Nullable Integer index) {
-        Component separator = new Hr();
-        if (index == null) {
-            parentSubMenu.add(separator);
-        } else {
-            parentSubMenu.addComponentAtIndex(index, separator);
-        }
-        return separator;
-    }
-
-    protected String getText(MenuItem menuItem) {
-        return Strings.isNullOrEmpty(menuItem.getTitle())
-                ? menuItem.getId()
-                : menuItem.getTitle();
-    }
-
-    protected void checkItemIdDuplicate(String id) {
-        if (registrations.containsKey(id)) {
-            throw new IllegalArgumentException("Menu item with id \"%s\" already exists".formatted(id));
-        }
-    }
-
-    protected JmixMenuItem createMenuItemComponent(MenuItem menuItem,
-                                                   @Nullable JmixSubMenu parentSubMenu,
-                                                   @Nullable Integer index) {
-        RouterLink routerLink = new RouterLink();
-        routerLink.setClassName(MENU_ITEM_LINK_CLASS_NAME);
-        if (parentSubMenu == null) {
-            routerLink.addClassName(ROOT_MENU_ITEM_CLASS_NAME);
-        }
-        routerLink.setHighlightCondition(HighlightConditions.never());
-
-        VaadinIcon vaadinIcon = menuItem.getIcon();
-        if (vaadinIcon != null) {
-            Icon menuItemIcon = createMenuItemIcon(vaadinIcon);
-            routerLink.add(menuItemIcon);
-        }
-
-        Span textComponent = new Span(getText(menuItem));
-        textComponent.setTitle(Strings.nullToEmpty(menuItem.getDescription()));
-        routerLink.add(textComponent);
-
-        addMenuItemClickListener(routerLink, menuItem);
-        addMenuItemClickShortcutCombination(routerLink, menuItem);
-
-        if (menuItem instanceof ViewMenuItem viewMenuItem) {
-            QueryParameters queryParameters = viewMenuItem.getUrlQueryParameters();
-            RouteParameters routeParameters = viewMenuItem.getRouteParameters();
-            if (queryParameters != null) {
-                routerLink.setQueryParameters(queryParameters);
-            }
-            Class<? extends View<?>> viewClass = getViewClass(viewMenuItem);
-            if (routeParameters != null) {
-                routerLink.setRoute(viewClass, routeParameters);
-            } else {
-                routerLink.setRoute(viewClass);
-            }
-        }
-
-        JmixMenuItem jmixMenuItem = addMenuItemComponent(routerLink, parentSubMenu, index);
-        jmixMenuItem.addClassNames(menuItem.getClassNames().toArray(new String[0]));
-        return jmixMenuItem;
-    }
-
-    protected void addMenuItemClickListener(RouterLink routerLink, MenuItem menuItem) {
-        Consumer<MenuItem> clickHandler = menuItem.getClickHandler();
-        if (clickHandler != null && !(menuItem instanceof ViewMenuItem)) {
-            routerLink.getElement().addEventListener("click", event -> clickHandler.accept(menuItem));
-        }
-    }
-
-    protected Class<? extends View<?>> getViewClass(ViewMenuItem menuItem) {
-        Class<? extends View<?>> viewClass = menuItem.getViewClass();
-
-        if (viewClass != null && isSupportedView(viewClass)) {
-            return menuItem.getViewClass();
-        }
-        ViewInfo viewInfo = viewRegistry.getViewInfo(menuItem.getId());
-        return viewInfo.getControllerClass();
-    }
-
-    protected boolean isSupportedView(Class<?> targetView) {
-        return View.class.isAssignableFrom(targetView)
-                && targetView.getAnnotation(ViewController.class) != null;
+    protected void registerMenuItem(AbstractMenuItem<?> menuItem) {
+        allMenuItems.put(menuItem.getId(), menuItem);
     }
 
     /**
-     * Describes navigation menu bar item.
+     * Adds menu item and its children to the menu in specified index.
+     *
+     * @param menuItem menu item to add
+     * @param index    index at which the item will be inserted
      */
-    public static class MenuItem implements io.jmix.flowui.kit.component.menu.MenuItem {
+    public void addMenuItem(AbstractMenuItem<?> menuItem, int index) {
+        Preconditions.checkNotNullArgument(menuItem);
 
-        protected static final String MENU_ITEM_CLASS_NAME = "className";
+        addMenuItemRecursive(menuItem, null, index);
+
+        rootMenuItems.add(index, menuItem);
+    }
+
+    protected void addChildItem(AbstractMenuItem<?> menuItem, ParentMenuItem parentMenuItem, @Nullable Integer index) {
+        addMenuItemRecursive(menuItem, parentMenuItem, index);
+    }
+
+    /**
+     * Removes menu item and its children from the menu.
+     *
+     * @param menuItem menu item to remove
+     */
+    public void removeMenuItem(AbstractMenuItem<?> menuItem) {
+        if (!menuItem.isAttachedToMenu() || !this.equals(menuItem.getMenu())) {
+            throw new IllegalArgumentException("Menu item is not attached to this menu");
+        }
+
+        if (!allMenuItems.containsKey(menuItem.getId())) {
+            return;
+        }
+
+        ParentMenuItem parentMenuItem = menuItem.getParentMenuItem();
+        if (parentMenuItem == null) {
+            removeRootItem(menuItem);
+        } else {
+            parentMenuItem.removeChildItem(menuItem);
+        }
+    }
+
+    protected void removeRootItem(AbstractMenuItem<?> menuItem) {
+        rootMenuItems.remove(menuItem);
+
+        JmixMenuItem itemWrapper = menuItem.getMenuItemWrapper();
+        if (itemWrapper != null) {
+            getContent().remove(itemWrapper);
+        }
+
+        detachMenuItemRecursively(menuItem);
+        unregisterMenuItemRecursively(menuItem);
+    }
+
+    protected void detachMenuItemRecursively(AbstractMenuItem<?> menuItem) {
+        menuItem.setMenu(null);
+        menuItem.setMenuItemWrapper(null);
+
+        if (menuItem.isMenu()) {
+            for (AbstractMenuItem<?> item : ((ParentMenuItem) menuItem).getChildren()) {
+                detachMenuItemRecursively(item);
+            }
+        }
+    }
+
+    protected void unregisterMenuItemRecursively(AbstractMenuItem<?> menuItem) {
+        allMenuItems.remove(menuItem.getId());
+
+        if (menuItem.isMenu()) {
+            for (AbstractMenuItem<?> item : ((ParentMenuItem) menuItem).getChildren()) {
+                unregisterMenuItemRecursively(item);
+            }
+        }
+    }
+
+    protected void removeChildItem(AbstractMenuItem<?> menuItem, ParentMenuItem parentMenuItem) {
+        JmixMenuItem parentItemWrapper = parentMenuItem.getMenuItemWrapper();
+        JmixMenuItem itemWrapper = menuItem.getMenuItemWrapper();
+        if (itemWrapper != null && parentItemWrapper != null) {
+            parentItemWrapper.getSubMenu().remove(itemWrapper);
+        }
+
+        detachMenuItemRecursively(menuItem);
+        unregisterMenuItemRecursively(menuItem);
+    }
+
+    /**
+     * Removes root menu item by index.
+     *
+     * @param index index of an item to remove
+     */
+    public void removeMenuItem(int index) {
+        AbstractMenuItem<?> menuItem = rootMenuItems.get(index);
+        removeMenuItem(menuItem);
+    }
+
+    /**
+     * Removes all menu items from the menu.
+     */
+    public void removeAllMenuItems() {
+        for (AbstractMenuItem<?> menuItem : new ArrayList<>(rootMenuItems)) {
+            removeMenuItem(menuItem);
+        }
+    }
+
+    public static abstract class AbstractMenuItem<T extends Component>
+            implements io.jmix.flowui.kit.component.menu.MenuItem {
 
         protected String id;
-        protected String title;
-        protected String description;
-        protected VaadinIcon icon;
-        protected List<String> classNames;
-        protected Consumer<MenuItem> clickHandler;
-        protected KeyCombination shortcutCombination;
-        protected JmixSubMenu parentSubMenu;
-        protected NavigationMenuBar menuComponent;
+        protected NavigationMenuBar menu;
+        protected JmixMenuItem menuItemWrapper;
+        protected ParentMenuItem parentMenuItem;
 
-        protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-
-        public MenuItem(String id) {
+        public AbstractMenuItem(String id) {
             this.id = id;
         }
 
@@ -536,91 +335,22 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
         }
 
         /**
-         * @return title or {@code null} if not set
-         */
-        @Override
-        @Nullable
-        public String getTitle() {
-            return title;
-        }
-
-        /**
-         * Sets displayed menu item text.
-         *
-         * @param title displayed text
-         * @return current menu item instance
-         */
-        public MenuItem withTitle(@Nullable String title) {
-            this.title = title;
-            return this;
-        }
-
-        /**
-         * @return menu item description or {@code null} if not set.
-         */
-        @Nullable
-        public String getDescription() {
-            return description;
-        }
-
-        /**
-         * Sets menu item description that should be shown when the user moves cursor on the item.
-         *
-         * @param description description to set
-         * @return current menu item instance
-         */
-        public MenuItem withDescription(@Nullable String description) {
-            this.description = description;
-            return this;
-        }
-
-        /**
-         * @return icon or {@code null} if not set
-         */
-        @Nullable
-        public VaadinIcon getIcon() {
-            return icon;
-        }
-
-        /**
-         * Sets icon that should be displayed to the left of the {@link #getTitle()}.
-         *
-         * @param icon icon to set
-         * @return current menu item instance
-         */
-        public MenuItem withIcon(@Nullable VaadinIcon icon) {
-            this.icon = icon;
-            return this;
-        }
-
-        /**
          * @return css class names
          */
         public List<String> getClassNames() {
-            return classNames != null && !classNames.isEmpty()
-                    ? Collections.unmodifiableList(classNames)
-                    : Collections.emptyList();
+            return getComponent().getClassNames().stream().toList();
         }
 
         /**
          * Sets css class names that should be added to the menu item.
          *
          * @param classNames css class names to add
-         * @return current menu item instance
          */
-        public MenuItem withClassNames(List<String> classNames) {
+        public void setClassNames(List<String> classNames) {
             Preconditions.checkNotNullArgument(classNames);
 
-            List<String> oldClassNames = this.classNames == null
-                    ? Collections.emptyList()
-                    : List.copyOf(this.classNames);
-
-            this.classNames = new ArrayList<>(classNames);
-
-            propertyChangeSupport.firePropertyChange(MENU_ITEM_CLASS_NAME, oldClassNames,
-                    Collections.unmodifiableList(this.classNames));
-
-            return this;
+            getComponent().setClassName(null);
+            getComponent().addClassNames(classNames.toArray(new String[0]));
         }
 
         /**
@@ -631,54 +361,39 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
         public void addClassNames(String... classNames) {
             Preconditions.checkNotNullArgument(classNames);
 
-            if (this.classNames == null) {
-                this.classNames = new ArrayList<>();
-            }
-
-            List<String> oldClassNames = List.copyOf(this.classNames);
-
-            this.classNames.addAll(Arrays.asList(classNames));
-
-            propertyChangeSupport.firePropertyChange(MENU_ITEM_CLASS_NAME, oldClassNames,
-                    Collections.unmodifiableList(this.classNames));
+            getComponent().addClassNames(classNames);
         }
 
         /**
-         * @return click handler of the item
+         * @return menu component that contains this item
          */
         @Nullable
-        public Consumer<MenuItem> getClickHandler() {
-            return clickHandler;
+        public NavigationMenuBar getMenu() {
+            return menu;
         }
 
-        /**
-         * Sets click handler of the item.
-         *
-         * @param clickHandler menu item click handler
-         * @return current menu item instance
-         */
-        public MenuItem withClickHandler(@Nullable Consumer<MenuItem> clickHandler) {
-            this.clickHandler = clickHandler;
-            return this;
+        protected void setMenu(@Nullable NavigationMenuBar menu) {
+            this.menu = menu;
         }
 
-        /**
-         * @return shortcut key combination of the item
-         */
+        public abstract T getComponent();
+
         @Nullable
-        public KeyCombination getShortcutCombination() {
-            return shortcutCombination;
+        public JmixMenuItem getMenuItemWrapper() {
+            return menuItemWrapper;
         }
 
-        /**
-         * Sets shortcut key combination of the item.
-         *
-         * @param shortcutCombination shortcut key combination
-         * @return current menu item instance
-         */
-        public MenuItem withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
-            this.shortcutCombination = shortcutCombination;
-            return this;
+        public void setMenuItemWrapper(@Nullable JmixMenuItem menuItemWrapper) {
+            this.menuItemWrapper = menuItemWrapper;
+        }
+
+        @Nullable
+        public ParentMenuItem getParentMenuItem() {
+            return parentMenuItem;
+        }
+
+        public void setParentMenuItem(@Nullable ParentMenuItem parentMenuItem) {
+            this.parentMenuItem = parentMenuItem;
         }
 
         /**
@@ -696,47 +411,10 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
         }
 
         /**
-         * @return menu component that contains this item
-         */
-        @Nullable
-        public NavigationMenuBar getMenuComponent() {
-            return menuComponent;
-        }
-
-        protected void setMenuComponent(@Nullable NavigationMenuBar menu) {
-            this.menuComponent = menu;
-        }
-
-        /**
          * @return true if menu item is attached to the menu component, false otherwise
          */
         public boolean isAttachedToMenu() {
-            return getMenuComponent() != null;
-        }
-
-        /**
-         * @return submenu component that contains this item
-         */
-        @Nullable
-        public JmixSubMenu getParentSubMenu() {
-            return parentSubMenu;
-        }
-
-        /**
-         * Sets submenu component that contains this item.
-         *
-         * @param parentSubMenu submenu to set
-         */
-        public void setParentSubMenu(@Nullable JmixSubMenu parentSubMenu) {
-            this.parentSubMenu = parentSubMenu;
-        }
-
-        protected void addPropertyChangeListener(PropertyChangeListener listener) {
-            propertyChangeSupport.addPropertyChangeListener(listener);
-        }
-
-        protected void removePropertyChangeListener(PropertyChangeListener listener) {
-            propertyChangeSupport.removePropertyChangeListener(listener);
+            return getMenu() != null;
         }
 
         @Override
@@ -747,7 +425,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
             if (obj == null || this.getClass() != obj.getClass()) {
                 return false;
             }
-            return id.equals(((MenuItem) obj).getId());
+            return id.equals(((AbstractMenuItem<?>) obj).getId());
         }
 
         @Override
@@ -761,36 +439,195 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
         }
     }
 
+    public static abstract class AbstractIconTextMenuItem<T extends Component & HasComponents>
+            extends AbstractMenuItem<T> {
+
+        protected static final String ITEM_ICON_CLASS_NAME = "jmix-navigation-menu-bar-item-icon";
+        protected static final String ITEM_ICON_WITH_TITLE_CLASS_NAME = "jmix-navigation-menu-bar-item-icon-with-title";
+
+        protected Icon iconComponent;
+        protected Span textComponent;
+
+        public AbstractIconTextMenuItem(String id) {
+            super(id);
+
+            initRootComponent();
+        }
+
+        protected abstract void initRootComponent();
+
+        protected void updateContent(@Nullable Icon icon, @Nullable String title) {
+            getComponent().removeAll();
+            iconComponent = null;
+            textComponent = null;
+
+            if (icon != null) {
+                iconComponent = icon;
+                getComponent().add(iconComponent);
+            }
+            if (!Strings.isNullOrEmpty(title)) {
+                textComponent = new Span(title);
+                getComponent().add(textComponent);
+            }
+
+            if (iconComponent != null) {
+                iconComponent.setClassName(ITEM_ICON_CLASS_NAME);
+                if (textComponent != null) {
+                    iconComponent.addClassName(ITEM_ICON_WITH_TITLE_CLASS_NAME);
+                }
+            }
+        }
+
+        /**
+         * Sets menu item text.
+         *
+         * @param title item text
+         */
+        public void setTitle(@Nullable String title) {
+            updateContent(iconComponent, title);
+        }
+
+        @Nullable
+        @Override
+        public String getTitle() {
+            return textComponent != null ? textComponent.getText() : null;
+        }
+
+        /**
+         * Sets the icon of menu item.
+         *
+         * @param icon icon to set
+         */
+        public void setIcon(@Nullable Icon icon) {
+            String title = textComponent != null ? textComponent.getText() : null;
+            updateContent(icon, title);
+        }
+
+        /**
+         * @return menu item icon or null if not set
+         */
+        @Nullable
+        public Icon getIcon() {
+            return iconComponent;
+        }
+
+        public void setDescription(@Nullable String description) {
+            Tooltip.forComponent(getComponent()).setText(description);
+        }
+
+        /**
+         * @return menu item description or null if not set.
+         */
+        @Nullable
+        public String getDescription() {
+            return Tooltip.forComponent(getComponent()).getText();
+        }
+    }
+
+    /**
+     * Represents navigation menu bar item.
+     */
+    public static class MenuItem extends AbstractIconTextMenuItem<RouterLink> {
+
+        protected static final String MENU_ITEM_LINK_CLASS_NAME = "jmix-navigation-menu-bar-item-link";
+
+        protected RouterLink routerLink;
+
+        protected KeyCombination shortcutCombination;
+
+        protected DomListenerRegistration clickHandlerRegistration;
+        protected ShortcutRegistration shortcutRegistration;
+
+        public MenuItem(String id) {
+            super(id);
+        }
+
+        @Override
+        protected void initRootComponent() {
+            routerLink = new RouterLink();
+            routerLink.setClassName(MENU_ITEM_LINK_CLASS_NAME);
+            routerLink.setHighlightCondition(HighlightConditions.never());
+        }
+
+        @Override
+        public RouterLink getComponent() {
+            return routerLink;
+        }
+
+        /**
+         * Sets click handler of the item.
+         *
+         * @param clickHandler menu item click handler
+         */
+        @Nullable
+        public Registration setClickHandler(@Nullable Consumer<MenuItem> clickHandler) {
+            if (clickHandlerRegistration != null) {
+                clickHandlerRegistration.remove();
+                clickHandlerRegistration = null;
+            }
+            if (clickHandler != null) {
+                clickHandlerRegistration = routerLink.getElement()
+                        .addEventListener("click", event -> clickHandler.accept(this));
+            }
+            return clickHandlerRegistration;
+        }
+
+        /**
+         * @return shortcut key combination of the item
+         */
+        @Nullable
+        public KeyCombination getShortcutCombination() {
+            return shortcutCombination;
+        }
+
+        /**
+         * Sets shortcut key combination of the item.
+         *
+         * @param shortcutCombination shortcut key combination
+         */
+        public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+            this.shortcutCombination = shortcutCombination;
+            updateShortcutRegistration();
+        }
+
+        protected void updateShortcutRegistration() {
+            if (shortcutRegistration != null) {
+                shortcutRegistration.remove();
+                shortcutRegistration = null;
+            }
+
+            if (shortcutCombination != null) {
+                Key key = shortcutCombination.getKey();
+                KeyModifier[] keyModifiers = shortcutCombination.getKeyModifiers();
+
+                shortcutRegistration =
+                        Shortcuts.addShortcutListener(routerLink, this::onShortcutEvent, key, keyModifiers);
+            }
+        }
+
+        protected void onShortcutEvent(ShortcutEvent event) {
+            event.getLifecycleOwner().getElement().executeJs("this.click()");
+        }
+    }
+
     /**
      * Describes menu item that can contain other menu items.
      */
-    public static class ParentMenuItem extends MenuItem
-            implements io.jmix.flowui.kit.component.menu.ParentMenuItem<MenuItem> {
+    public static class ParentMenuItem extends AbstractIconTextMenuItem<HorizontalLayout>
+            implements io.jmix.flowui.kit.component.menu.ParentMenuItem<AbstractMenuItem<?>> {
 
-        protected List<MenuItem> children;
+        protected List<AbstractMenuItem<?>> children;
+        protected HorizontalLayout hbox;
 
         public ParentMenuItem(String id) {
             super(id);
         }
 
         @Override
-        public ParentMenuItem withTitle(@Nullable String title) {
-            return (ParentMenuItem) super.withTitle(title);
-        }
-
-        @Override
-        public ParentMenuItem withDescription(@Nullable String description) {
-            return (ParentMenuItem) super.withDescription(description);
-        }
-
-        @Override
-        public ParentMenuItem withIcon(@Nullable VaadinIcon icon) {
-            return (ParentMenuItem) super.withIcon(icon);
-        }
-
-        @Override
-        public ParentMenuItem withClassNames(List<String> classNames) {
-            return (ParentMenuItem) super.withClassNames(classNames);
+        protected void initRootComponent() {
+            hbox = new HorizontalLayout();
+            hbox.setAlignItems(FlexComponent.Alignment.CENTER);
+            hbox.setSpacing(false);
         }
 
         @Override
@@ -805,13 +642,18 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
                     "Parent item of navigation menu bar doesn't support opening from server");
         }
 
+        @Override
+        public HorizontalLayout getComponent() {
+            return hbox;
+        }
+
         /**
          * Adds child menu item.
          *
          * @param menuItem menu item to add
          */
         @Override
-        public void addChildItem(MenuItem menuItem) {
+        public void addChildItem(AbstractMenuItem<?> menuItem) {
             Preconditions.checkNotNullArgument(menuItem);
 
             if (children == null) {
@@ -819,46 +661,37 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
             }
 
             if (isAttachedToMenu()) {
-                menuComponent.addChildItem(this, menuItem, null);
+                menu.addChildItem(menuItem, this, null);
             }
 
             children.add(menuItem);
         }
 
         @Override
-        public void addChildItem(MenuItem menuItem, int index) {
+        public void addChildItem(AbstractMenuItem<?> menuItem, int index) {
             Preconditions.checkNotNullArgument(menuItem);
 
             if (children == null) {
                 children = new ArrayList<>();
             }
 
-            int existingIndex = children.indexOf(menuItem);
-            if (existingIndex != -1) {
-                if (index > existingIndex) {
-                    index--;
-                }
-
-                removeChildItem(children.get(existingIndex));
+            if (isAttachedToMenu()) {
+                menu.addChildItem(menuItem, this, index);
             }
 
             children.add(index, menuItem);
-            if (isAttachedToMenu()) {
-                menuComponent.addChildItem(this, menuItem, index);
-            }
         }
 
         @Override
-        public void removeChildItem(MenuItem menuItem) {
+        public void removeChildItem(AbstractMenuItem<?> menuItem) {
             Preconditions.checkNotNullArgument(menuItem);
 
             if (!hasChildren()) {
                 return;
             }
 
-            if (!menuItem.isAttachedToMenu()
-                    || menuItem.getMenuComponent() != menuComponent) {
-                throw new IllegalArgumentException(MenuItem.class.getSimpleName() + " is not attached to the menu");
+            if (!Objects.equals(menuItem.getMenu(), menu)) {
+                throw new IllegalArgumentException("The item is not attached to the same menu");
             }
 
             children.stream()
@@ -866,7 +699,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
                     .findFirst()
                     .ifPresent((item) -> {
                         if (isAttachedToMenu()) {
-                            menuComponent.removeMenuItem(menuItem);
+                            menu.removeChildItem(menuItem, this);
                         }
                         children.remove(menuItem);
                     });
@@ -892,8 +725,8 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
             }
 
             if (isAttachedToMenu()) {
-                for (MenuItem menuItem : children) {
-                    menuComponent.removeMenuItem(menuItem);
+                for (AbstractMenuItem<?> menuItem : children) {
+                    menu.removeChildItem(menuItem, this);
                 }
             }
 
@@ -901,7 +734,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
         }
 
         @Override
-        public List<MenuItem> getChildren() {
+        public List<AbstractMenuItem<?>> getChildren() {
             return hasChildren()
                     ? Collections.unmodifiableList(children)
                     : Collections.emptyList();
@@ -923,15 +756,29 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
     /**
      * Represents menu separator
      */
-    public static class MenuSeparatorItem extends MenuItem {
+    public static class MenuSeparatorItem extends AbstractMenuItem<Hr> {
+
+        protected Hr hr;
 
         public MenuSeparatorItem(String id) {
             super(id);
+            hr = new Hr();
         }
 
         @Override
         public boolean isSeparator() {
             return true;
+        }
+
+        @Override
+        public Hr getComponent() {
+            return hr;
+        }
+
+        @Nullable
+        @Override
+        public String getTitle() {
+            return null;
         }
     }
 
@@ -941,40 +788,13 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
     public static class ViewMenuItem extends MenuItem {
 
         protected Class<? extends View<?>> viewClass;
-        protected QueryParameters urlQueryParameters;
         protected RouteParameters routeParameters;
 
-        public ViewMenuItem(String id) {
+        public ViewMenuItem(String id, Class<? extends View<?>> viewClass) {
             super(id);
-        }
 
-        @Override
-        public ViewMenuItem withTitle(@org.springframework.lang.Nullable String title) {
-            super.withTitle(title);
-            return this;
-        }
-
-        @Override
-        public ViewMenuItem withDescription(@org.springframework.lang.Nullable String description) {
-            super.withDescription(description);
-            return this;
-        }
-
-        @Override
-        public ViewMenuItem withIcon(@org.springframework.lang.Nullable VaadinIcon icon) {
-            super.withIcon(icon);
-            return this;
-        }
-
-        @Override
-        public ViewMenuItem withClassNames(List<String> classNames) {
-            super.withClassNames(classNames);
-            return this;
-        }
-
-        @Override
-        public ViewMenuItem withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
-            return (ViewMenuItem) super.withShortcutCombination(shortcutCombination);
+            this.viewClass = viewClass;
+            routerLink.setRoute(viewClass);
         }
 
         /**
@@ -982,21 +802,19 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
          */
         @Nullable
         public QueryParameters getUrlQueryParameters() {
-            return urlQueryParameters;
+            return routerLink.getQueryParameters().orElse(null);
         }
 
         /**
          * Sets query parameters of the view to navigate.
          *
          * @param queryParameters query parameters
-         * @return current menu item instance
          */
-        public ViewMenuItem withUrlQueryParameters(List<MenuItemParameter> queryParameters) {
+        public void setUrlQueryParameters(List<MenuItemParameter> queryParameters) {
             Map<String, String> parametersMap = queryParameters.stream()
                     .collect(Collectors.toMap(MenuItemParameter::getName, MenuItemParameter::getValue));
 
-            this.urlQueryParameters = QueryParameters.simple(parametersMap);
-            return this;
+            routerLink.setQueryParameters(QueryParameters.simple(parametersMap));
         }
 
         /**
@@ -1011,14 +829,14 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
          * Sets route parameters of the view to navigate.
          *
          * @param routeParameters route parameters
-         * @return current menu item instance
          */
-        public ViewMenuItem withRouteParameters(List<MenuItemParameter> routeParameters) {
+        public void setRouteParameters(List<MenuItemParameter> routeParameters) {
             Map<String, String> parametersMap = routeParameters.stream()
                     .collect(Collectors.toMap(MenuItemParameter::getName, MenuItemParameter::getValue));
 
             this.routeParameters = new RouteParameters(parametersMap);
-            return this;
+
+            routerLink.setRoute(viewClass, this.routeParameters);
         }
 
         /**
@@ -1034,11 +852,21 @@ public class NavigationMenuBar extends Composite<JmixMenuBar> implements Applica
          * will be used as view id to navigate.
          *
          * @param viewClass view class to set
-         * @return current menu item instance
          */
-        public ViewMenuItem withViewClass(@Nullable Class<? extends View<?>> viewClass) {
+        public void setViewClass(Class<? extends View<?>> viewClass) {
             this.viewClass = viewClass;
-            return this;
+            if (routeParameters == null) {
+                routerLink.setRoute(viewClass);
+            } else {
+                routerLink.setRoute(viewClass, routeParameters);
+            }
+        }
+
+        @Override
+        public Registration setClickHandler(@Nullable Consumer<MenuItem> clickHandler) {
+            //no-op - always navigate to a view
+            return () -> {
+            };
         }
     }
 }

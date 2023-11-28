@@ -31,7 +31,8 @@ import java.util.List;
  */
 @Component("flowui_MenuConfigNavigationMenuBarItemProvider")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class MenuConfigNavigationMenuBarItemProvider extends MenuConfigMenuItemProvider<NavigationMenuBar.MenuItem> {
+public class MenuConfigNavigationMenuBarItemProvider
+        extends MenuConfigMenuItemProvider<NavigationMenuBar.AbstractMenuItem<?>> {
 
     protected NavigationMenuBarItemConverter itemConverter;
 
@@ -42,7 +43,7 @@ public class MenuConfigNavigationMenuBarItemProvider extends MenuConfigMenuItemP
     }
 
     @Override
-    protected List<NavigationMenuBar.MenuItem> convertToMenuItems(Collection<MenuItem> menuConfigItems) {
+    protected List<NavigationMenuBar.AbstractMenuItem<?>> convertToMenuItems(Collection<MenuItem> menuConfigItems) {
         return menuConfigItems.stream()
                 .flatMap(item -> itemConverter.createMenuItemWithChildren(item).stream())
                 .toList();

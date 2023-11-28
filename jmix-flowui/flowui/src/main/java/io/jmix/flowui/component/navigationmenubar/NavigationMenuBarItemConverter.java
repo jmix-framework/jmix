@@ -19,6 +19,7 @@ package io.jmix.flowui.component.navigationmenubar;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.menu.MenuConfig;
@@ -27,6 +28,7 @@ import io.jmix.flowui.menu.MenuItemCommand;
 import io.jmix.flowui.menu.MenuItemCommands;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -35,8 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -64,7 +64,7 @@ public class NavigationMenuBarItemConverter {
         this.menuItemCommands = menuItemCommands;
     }
 
-    public Optional<NavigationMenuBar.MenuItem> createMenuItemWithChildren(MenuItem menuItemDescriptor) {
+    public Optional<NavigationMenuBar.AbstractMenuItem<?>> createMenuItemWithChildren(MenuItem menuItemDescriptor) {
         if (menuItemDescriptor.isMenu()) {
             if (menuItemDescriptor.getChildren().isEmpty()) {
                 log.warn("Parent menu item '{}' is skipped as it does not have children", menuItemDescriptor.getId());
@@ -86,7 +86,7 @@ public class NavigationMenuBarItemConverter {
 
             return Optional.of(parentMenuItem);
         } else if (menuItemDescriptor.isSeparator()) {
-            NavigationMenuBar.MenuItem separatorItem = createSeparatorItem();
+            NavigationMenuBar.MenuSeparatorItem separatorItem = createSeparatorItem();
 
             return Optional.of(separatorItem);
         } else {
@@ -97,15 +97,23 @@ public class NavigationMenuBarItemConverter {
     }
 
     protected NavigationMenuBar.ParentMenuItem createParentMenuItem(MenuItem menuItemDescriptor) {
-        NavigationMenuBar.ParentMenuItem menuBarItem = new NavigationMenuBar.ParentMenuItem(menuItemDescriptor.getId())
-                .withTitle(menuConfig.getItemTitle(menuItemDescriptor))
-                .withDescription(getDescription(menuItemDescriptor))
-                .withClassNames(getClassNames(menuItemDescriptor));
+        NavigationMenuBar.ParentMenuItem parentMenuItem =
+                new NavigationMenuBar.ParentMenuItem(menuItemDescriptor.getId());
 
-        if (!Strings.isNullOrEmpty(menuItemDescriptor.getIcon())) {
-            menuBarItem.withIcon(VaadinIcon.valueOf(menuItemDescriptor.getIcon()));
-        }
-        return menuBarItem;
+        parentMenuItem.setIcon(getIcon(menuItemDescriptor));
+        parentMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
+        parentMenuItem.addClassNames(getClassNames(menuItemDescriptor));
+        parentMenuItem.setDescription(getDescription(menuItemDescriptor));
+
+        return parentMenuItem;
+    }
+
+    @Nullable
+    protected Icon getIcon(MenuItem menuItemDescriptor) {
+        VaadinIcon vaadinIcon = Strings.isNullOrEmpty(menuItemDescriptor.getIcon())
+                ? null
+                : VaadinIcon.valueOf(menuItemDescriptor.getIcon());
+        return vaadinIcon == null ? null : vaadinIcon.create();
     }
 
     @Nullable
@@ -117,16 +125,17 @@ public class NavigationMenuBarItemConverter {
         return null;
     }
 
-    protected List<String> getClassNames(MenuItem menuItem) {
+    protected String[] getClassNames(MenuItem menuItem) {
         if (Strings.isNullOrEmpty(menuItem.getClassNames())) {
-            return Collections.emptyList();
+            return new String[0];
         }
         return Splitter.on(",")
                 .trimResults()
-                .splitToList(menuItem.getClassNames());
+                .splitToStream(menuItem.getClassNames())
+                .toArray(String[]::new);
     }
 
-    protected NavigationMenuBar.MenuItem createSeparatorItem() {
+    protected NavigationMenuBar.MenuSeparatorItem createSeparatorItem() {
         return new NavigationMenuBar.MenuSeparatorItem(generateSeparatorId());
     }
 
@@ -155,42 +164,47 @@ public class NavigationMenuBarItemConverter {
     }
 
     protected NavigationMenuBar.MenuItem createViewMenuItem(MenuItem menuItemDescriptor) {
-        NavigationMenuBar.ViewMenuItem viewMenuItem = new NavigationMenuBar.ViewMenuItem(menuItemDescriptor.getId())
-                .withViewClass(getViewClass(menuItemDescriptor))
-                .withTitle(menuConfig.getItemTitle(menuItemDescriptor))
-                .withDescription(getDescription(menuItemDescriptor))
-                .withClassNames(getClassNames(menuItemDescriptor))
-                .withUrlQueryParameters(menuItemDescriptor.getUrlQueryParameters())
-                .withRouteParameters(menuItemDescriptor.getRouteParameters())
-                .withShortcutCombination(menuItemDescriptor.getShortcutCombination());
+        NavigationMenuBar.ViewMenuItem viewMenuItem =
+                new NavigationMenuBar.ViewMenuItem(menuItemDescriptor.getId(), getViewClass(menuItemDescriptor));
 
-        if (!Strings.isNullOrEmpty(menuItemDescriptor.getIcon())) {
-            viewMenuItem.withIcon(VaadinIcon.valueOf(menuItemDescriptor.getIcon()));
-        }
+        viewMenuItem.setIcon(getIcon(menuItemDescriptor));
+        viewMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
+        viewMenuItem.setDescription(getDescription(menuItemDescriptor));
+        viewMenuItem.addClassNames(getClassNames(menuItemDescriptor));
+        viewMenuItem.setUrlQueryParameters(menuItemDescriptor.getUrlQueryParameters());
+        viewMenuItem.setRouteParameters(menuItemDescriptor.getRouteParameters());
+        viewMenuItem.setShortcutCombination(menuItemDescriptor.getShortcutCombination());
 
         return viewMenuItem;
     }
 
-    @Nullable
     protected Class<? extends View<?>> getViewClass(MenuItem menuItem) {
-        if (Strings.isNullOrEmpty(menuItem.getView())) {
-            return null;
+        String viewId = menuItem.getView();
+        if (Strings.isNullOrEmpty(viewId)) {
+            viewId = menuItem.getId();
         }
-        ViewInfo viewInfo = viewRegistry.getViewInfo(menuItem.getView());
-        return viewInfo.getControllerClass();
+        ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
+        Class<? extends View<?>> viewClass = viewInfo.getControllerClass();
+        if (!isSupportedView(viewClass)) {
+            throw new IllegalArgumentException("View class '%s' is not supported".formatted(viewClass.getSimpleName()));
+        }
+        return viewClass;
+    }
+
+    protected boolean isSupportedView(Class<?> targetView) {
+        return View.class.isAssignableFrom(targetView)
+                && targetView.getAnnotation(ViewController.class) != null;
     }
 
     protected NavigationMenuBar.MenuItem createBeanMenuItem(MenuItem menuItemDescriptor) {
-        NavigationMenuBar.MenuItem beanMenuItem = new NavigationMenuBar.MenuItem(menuItemDescriptor.getId())
-                .withTitle(menuConfig.getItemTitle(menuItemDescriptor))
-                .withDescription(getDescription(menuItemDescriptor))
-                .withClassNames(getClassNames(menuItemDescriptor))
-                .withShortcutCombination(menuItemDescriptor.getShortcutCombination())
-                .withClickHandler(new MenuCommandExecutor(menuItemDescriptor, menuItemCommands));
+        NavigationMenuBar.MenuItem beanMenuItem = new NavigationMenuBar.MenuItem(menuItemDescriptor.getId());
 
-        if (!Strings.isNullOrEmpty(menuItemDescriptor.getIcon())) {
-            beanMenuItem.withIcon(VaadinIcon.valueOf(menuItemDescriptor.getIcon()));
-        }
+        beanMenuItem.setIcon(getIcon(menuItemDescriptor));
+        beanMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
+        beanMenuItem.setDescription(getDescription(menuItemDescriptor));
+        beanMenuItem.addClassNames(getClassNames(menuItemDescriptor));
+        beanMenuItem.setShortcutCombination(menuItemDescriptor.getShortcutCombination());
+        beanMenuItem.setClickHandler(new MenuCommandExecutor(menuItemDescriptor, menuItemCommands));
 
         return beanMenuItem;
     }
@@ -207,7 +221,7 @@ public class NavigationMenuBarItemConverter {
 
         @Override
         public void accept(NavigationMenuBar.MenuItem menuItem) {
-            NavigationMenuBar menuComponent = menuItem.getMenuComponent();
+            NavigationMenuBar menuComponent = menuItem.getMenu();
 
             if (menuComponent != null) {
                 menuComponent.getUI()

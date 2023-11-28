@@ -3841,6 +3841,7 @@
                 <xs:attribute name="themeNames" type="menuSearchFieldThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="menu" type="xs:string" use="required"/>
+                <xs:attribute name="searchMode" type="menuSearchFieldSearchMode"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -3857,6 +3858,13 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:simpleType name="menuSearchFieldSearchMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CASE_SENSITIVE"/>
+            <xs:enumeration value="CASE_INSENSITIVE"/>
+        </xs:restriction>
+    </xs:simpleType>
     <!--    HTML-->
 
     <!-- Html -->

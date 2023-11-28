@@ -20,6 +20,7 @@ import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.textfield.Autocapitalize
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.MenuSearchFieldView
+import io.jmix.flowui.component.menusearchfield.MenuSearchField
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
@@ -53,6 +54,7 @@ class MenuSearchFieldXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             placeholder == "placeholderString"
             readOnly
+            searchMode == MenuSearchField.SearchMode.CASE_SENSITIVE
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"

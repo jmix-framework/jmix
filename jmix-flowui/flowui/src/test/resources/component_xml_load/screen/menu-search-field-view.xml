@@ -35,6 +35,7 @@
                          minWidth="80px"
                          placeholder="placeholderString"
                          readOnly="true"
+                         searchMode="CASE_SENSITIVE"
                          tabIndex="3"
                          themeNames="small, align-right"
                          title="titleString"

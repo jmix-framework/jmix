@@ -17,8 +17,6 @@
 package io.jmix.flowui.component.menusearchfield;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasAriaLabel;
@@ -28,7 +26,6 @@ import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.InputNotifier;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.shared.HasClearButton;
@@ -39,7 +36,6 @@ import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.HasAutofocus;
 import io.jmix.flowui.kit.component.HasPlaceholder;
 import io.jmix.flowui.kit.component.HasTitle;
@@ -61,13 +57,14 @@ import java.util.function.Function;
 public class MenuSearchField extends Composite<TextField>
         implements HasHelper, HasPrefix, HasSuffix, HasValueChangeMode, HasThemeVariant<MenuSearchFieldVariant>,
         HasTitle, HasClearButton, HasAutofocus, HasEnabled, HasLabel, HasSize, HasStyle, HasTooltip,
-        InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuSearchField>, HasPlaceholder,
-        HasValueAndElement<ComponentValueChangeEvent<MenuSearchField, String>, String> {
+        InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuSearchField>, HasPlaceholder {
 
     protected static final String SEARCH_FIELD_STYLE_NAME = "jmix-menu-search-field";
 
     protected MenuItemProvider<?> menuItemProvider;
     protected MenuItemsTransformer<?> itemsTransformer;
+
+    protected SearchMode searchMode = SearchMode.CASE_INSENSITIVE;
 
     @Override
     protected TextField initContent() {
@@ -102,7 +99,7 @@ public class MenuSearchField extends Composite<TextField>
     public <T extends MenuItem> void setMenuItemProvider(@Nullable MenuItemProvider<T> menuItemProvider) {
         this.menuItemProvider = menuItemProvider;
         if (menuItemProvider != null) {
-            MenuItemsTransformer<T> itemsTransformer = new MenuItemsTransformer<>();
+            MenuItemsTransformer<T> itemsTransformer = new MenuItemsTransformer<>(searchMode);
             menuItemProvider.addMenuItemsTransformer(itemsTransformer);
             this.itemsTransformer = itemsTransformer;
         } else {
@@ -130,25 +127,37 @@ public class MenuSearchField extends Composite<TextField>
         return getContent().getValueChangeTimeout();
     }
 
-    @Override
-    public void setValue(String value) {
+    /**
+     * Sets new search string value.
+     *
+     * @param value string to search
+     */
+    public void setValue(@Nullable String value) {
         getContent().setValue(value);
     }
 
-    @Override
+    /**
+     * @return current search string value
+     */
+    @Nullable
     public String getValue() {
         return getContent().getValue();
     }
 
-    @Override
-    public Registration addValueChangeListener(
-            ValueChangeListener<? super ComponentValueChangeEvent<MenuSearchField, String>> listener) {
-        return getContent().addValueChangeListener(e -> listener.valueChanged(convertValueChangedEvent(e)));
+    /**
+     * Sets read-only mode of the field
+     *
+     * @param readOnly true if read-only mode should be enabled, false otherwise
+     */
+    public void setReadOnly(boolean readOnly) {
+        getElement().setProperty("readonly", readOnly);
     }
 
-    protected ComponentValueChangeEvent<MenuSearchField, String> convertValueChangedEvent(
-            AbstractField.ComponentValueChangeEvent<TextField, String> e) {
-        return new ComponentValueChangeEvent<>(this, this, e.getOldValue(), e.isFromClient());
+    /**
+     * @return true if the field is in read-only mode, false otherwise
+     */
+    public boolean isReadOnly() {
+        return getElement().getProperty("readonly", false);
     }
 
     /**
@@ -168,9 +177,35 @@ public class MenuSearchField extends Composite<TextField>
         getContent().setAutoselect(autoselect);
     }
 
+    /**
+     * @return field search mode
+     * @see SearchMode
+     */
+    public SearchMode getSearchMode() {
+        return searchMode;
+    }
+
+    /**
+     * Sets search mode.
+     *
+     * @param searchMode search mode to set
+     * @see SearchMode
+     */
+    public void setSearchMode(SearchMode searchMode) {
+        this.searchMode = searchMode;
+        if (itemsTransformer != null) {
+            itemsTransformer.setSearchMode(searchMode);
+        }
+    }
+
     protected static class MenuItemsTransformer<T extends MenuItem> implements Function<List<T>, List<T>> {
 
         protected String searchString;
+        protected SearchMode searchMode;
+
+        public MenuItemsTransformer(SearchMode searchMode) {
+            this.searchMode = searchMode;
+        }
 
         public String getSearchString() {
             return searchString;
@@ -178,6 +213,14 @@ public class MenuSearchField extends Composite<TextField>
 
         public void setSearchString(String searchString) {
             this.searchString = searchString;
+        }
+
+        public SearchMode getSearchMode() {
+            return searchMode;
+        }
+
+        public void setSearchMode(SearchMode searchMode) {
+            this.searchMode = searchMode;
         }
 
         @Override
@@ -199,7 +242,7 @@ public class MenuSearchField extends Composite<TextField>
         /**
          * Tests menu item and filters its children recursively by title.
          *
-         * @param item        item to filter
+         * @param item                   item to filter
          * @param forceRetainAllChildren flag indicating whether to retain all children of this item or not.
          * @return true/false if the item matches/doesn't match the condition (if title contains search string
          * or any child matches this condition)
@@ -226,7 +269,11 @@ public class MenuSearchField extends Composite<TextField>
         }
 
         protected boolean testItemMatch(MenuItem item) {
-            return StringUtils.contains(item.getTitle(), searchString);
+            String title = item.getTitle();
+            return switch (searchMode) {
+                case CASE_SENSITIVE -> StringUtils.contains(title, searchString);
+                case CASE_INSENSITIVE -> StringUtils.containsIgnoreCase(title, searchString);
+            };
         }
 
         protected <C extends MenuItem> boolean filterChildren(ParentMenuItem<C> parentMenuItem,
@@ -254,5 +301,21 @@ public class MenuSearchField extends Composite<TextField>
             }
             return anyChildMatch;
         }
+    }
+
+    /**
+     * Search mode variants
+     */
+    public enum SearchMode {
+
+        /**
+         * Search string case will not be ignored
+         */
+        CASE_SENSITIVE,
+
+        /**
+         * Search string case will be ignored
+         */
+        CASE_INSENSITIVE
     }
 }

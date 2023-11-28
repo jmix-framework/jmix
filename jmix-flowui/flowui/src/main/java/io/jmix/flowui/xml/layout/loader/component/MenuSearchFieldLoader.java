@@ -68,8 +68,9 @@ public class MenuSearchFieldLoader extends AbstractComponentLoader<MenuSearchFie
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueChangeMode(resultComponent, element);
-        componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
+        loadBoolean(element, "readOnly", resultComponent::setReadOnly);
+        loadEnum(element, MenuSearchField.SearchMode.class, "searchMode", resultComponent::setSearchMode);
 
         String menuId = loadString(element, "menu")
                 .orElseThrow(() ->

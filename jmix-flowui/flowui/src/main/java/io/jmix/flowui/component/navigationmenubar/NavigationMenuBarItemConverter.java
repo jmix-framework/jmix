@@ -103,7 +103,8 @@ public class NavigationMenuBarItemConverter {
         parentMenuItem.setIcon(getIcon(menuItemDescriptor));
         parentMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
         parentMenuItem.addClassNames(getClassNames(menuItemDescriptor));
-        parentMenuItem.setDescription(getDescription(menuItemDescriptor));
+        //noinspection DataFlowIssue
+        parentMenuItem.setTooltipText(getDescription(menuItemDescriptor));
 
         return parentMenuItem;
     }
@@ -169,7 +170,8 @@ public class NavigationMenuBarItemConverter {
 
         viewMenuItem.setIcon(getIcon(menuItemDescriptor));
         viewMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
-        viewMenuItem.setDescription(getDescription(menuItemDescriptor));
+        //noinspection DataFlowIssue
+        viewMenuItem.setTooltipText(getDescription(menuItemDescriptor));
         viewMenuItem.addClassNames(getClassNames(menuItemDescriptor));
         viewMenuItem.setUrlQueryParameters(menuItemDescriptor.getUrlQueryParameters());
         viewMenuItem.setRouteParameters(menuItemDescriptor.getRouteParameters());
@@ -201,7 +203,8 @@ public class NavigationMenuBarItemConverter {
 
         beanMenuItem.setIcon(getIcon(menuItemDescriptor));
         beanMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
-        beanMenuItem.setDescription(getDescription(menuItemDescriptor));
+        //noinspection DataFlowIssue
+        beanMenuItem.setTooltipText(getDescription(menuItemDescriptor));
         beanMenuItem.addClassNames(getClassNames(menuItemDescriptor));
         beanMenuItem.setShortcutCombination(menuItemDescriptor.getShortcutCombination());
         beanMenuItem.setClickHandler(new MenuCommandExecutor(menuItemDescriptor, menuItemCommands));

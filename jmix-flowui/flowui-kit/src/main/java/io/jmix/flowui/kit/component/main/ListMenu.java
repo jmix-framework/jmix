@@ -863,9 +863,15 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
         /**
          * @return immutable list of child items
+         * @deprecated use {@link #getChildItems()}
          */
-        @Override
+        @Deprecated
         public List<MenuItem> getChildren() {
+            return getChildItems();
+        }
+
+        @Override
+        public List<MenuItem> getChildItems() {
             return hasChildren()
                     ? Collections.unmodifiableList(children)
                     : Collections.emptyList();

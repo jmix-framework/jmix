@@ -132,7 +132,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Adds menu item and its children to the menu.
+     * Adds menu item and its children to menu root.
      *
      * @param menuItem menu item to add
      */
@@ -171,7 +171,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         attachMenuItem(childMenuItem);
     }
 
-    public String getMenuItemIdNN(AbstractMenuItem<?> menuItem) {
+    protected String getMenuItemIdNN(AbstractMenuItem<?> menuItem) {
         return menuItem.getId().orElseThrow(() -> new IllegalStateException("Menu item id is not defined"));
     }
 
@@ -224,7 +224,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Adds menu item and its children to the menu in specified index.
+     * Adds menu item and its children to menu root at the specified position.
      *
      * @param menuItem menu item to add
      * @param index    index at which the item will be inserted
@@ -316,6 +316,11 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         }
     }
 
+    /**
+     * Provides base functionality for navigation menu bar items
+     *
+     * @param <T> root component type
+     */
     public static abstract class AbstractMenuItem<T extends Component> extends Composite<T>
             implements io.jmix.flowui.kit.component.menu.MenuItem {
 
@@ -351,6 +356,9 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
             this.menuItemWrapper = menuItemWrapper;
         }
 
+        /**
+         * @return parent menu item of this item or null if no parent has been set.
+         */
         @Nullable
         public ParentMenuItem getParentMenuItem() {
             return parentMenuItem;
@@ -361,27 +369,34 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         }
 
         /**
-         * @return true if the item can contain other items {@link ParentMenuItem}, false otherwise
+         * @return true if the item can contain other items, false otherwise
+         * @see ParentMenuItem
          */
         public boolean isMenu() {
             return false;
         }
 
         /**
-         * @return true if the item is a separator
+         * @return true if the item is a separator, false otherwise
+         * @see SeparatorMenuItem
          */
         public boolean isSeparator() {
             return false;
         }
 
         /**
-         * @return true if menu item is attached to the menu component, false otherwise
+         * @return true if the item is attached to menu component, false otherwise
          */
         public boolean isAttachedToMenu() {
             return getMenu() != null;
         }
     }
 
+    /**
+     * Provides base functionality for items that can display icon and text
+     *
+     * @param <T> root component type
+     */
     public static abstract class AbstractIconTextMenuItem<T extends Component & HasComponents>
             extends AbstractMenuItem<T> implements HasTooltip {
 
@@ -467,7 +482,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Represents navigation menu bar item.
+     * Represents navigation menu bar item that can run some action on click
      */
     public static class MenuItem extends AbstractIconTextMenuItem<RouterLink> {
 
@@ -497,6 +512,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
          * Sets click handler of the item.
          *
          * @param clickHandler menu item click handler
+         * @return click handler registration
          */
         @Nullable
         public Registration setClickHandler(@Nullable Consumer<MenuItem> clickHandler) {
@@ -512,14 +528,6 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         }
 
         /**
-         * @return shortcut key combination of the item
-         */
-        @Nullable
-        public KeyCombination getShortcutCombination() {
-            return shortcutCombination;
-        }
-
-        /**
          * Sets shortcut key combination of the item.
          *
          * @param shortcutCombination shortcut key combination
@@ -527,6 +535,14 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
             this.shortcutCombination = shortcutCombination;
             updateShortcutRegistration();
+        }
+
+        /**
+         * @return shortcut key combination of the item
+         */
+        @Nullable
+        public KeyCombination getShortcutCombination() {
+            return shortcutCombination;
         }
 
         protected void updateShortcutRegistration() {
@@ -550,7 +566,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Describes menu item that can contain other menu items.
+     * Represents menu item that can contain other menu items.
      */
     public static class ParentMenuItem extends AbstractIconTextMenuItem<HorizontalLayout>
             implements io.jmix.flowui.kit.component.menu.ParentMenuItem<AbstractMenuItem<?>> {
@@ -584,11 +600,6 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
                     "Parent item of navigation menu bar doesn't support opening from server");
         }
 
-        /**
-         * Adds child menu item.
-         *
-         * @param menuItem menu item to add
-         */
         @Override
         public void addChildItem(AbstractMenuItem<?> menuItem) {
             Preconditions.checkNotNullArgument(menuItem);
@@ -693,16 +704,16 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Represents menu separator
+     * Represents separator
      */
-    public static class MenuSeparatorItem extends AbstractMenuItem<Hr> {
+    public static class SeparatorMenuItem extends AbstractMenuItem<Hr> {
 
         protected Hr hr;
 
-        public MenuSeparatorItem() {
+        public SeparatorMenuItem() {
         }
 
-        public MenuSeparatorItem(String id) {
+        public SeparatorMenuItem(String id) {
             super(id);
             hr = new Hr();
         }

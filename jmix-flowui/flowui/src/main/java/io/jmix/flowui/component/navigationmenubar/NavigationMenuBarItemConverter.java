@@ -86,7 +86,7 @@ public class NavigationMenuBarItemConverter {
 
             return Optional.of(parentMenuItem);
         } else if (menuItemDescriptor.isSeparator()) {
-            NavigationMenuBar.MenuSeparatorItem separatorItem = createSeparatorItem();
+            NavigationMenuBar.SeparatorMenuItem separatorItem = createSeparatorItem();
 
             return Optional.of(separatorItem);
         } else {
@@ -136,8 +136,8 @@ public class NavigationMenuBarItemConverter {
                 .toArray(String[]::new);
     }
 
-    protected NavigationMenuBar.MenuSeparatorItem createSeparatorItem() {
-        return new NavigationMenuBar.MenuSeparatorItem(generateSeparatorId());
+    protected NavigationMenuBar.SeparatorMenuItem createSeparatorItem() {
+        return new NavigationMenuBar.SeparatorMenuItem(generateSeparatorId());
     }
 
     protected String generateSeparatorId() {

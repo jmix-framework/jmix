@@ -173,10 +173,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         return resultComponent;
     }
 
-    protected Component createClassField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        return createEntityField(context, attribute);
-    }
-
     private void setValidationError(HasValidationProperties resultComponent, AttributeDefinition attribute) {
         resultComponent.setErrorMessage(messages.formatMessage("",
                 "validation.required.defaultMsg",

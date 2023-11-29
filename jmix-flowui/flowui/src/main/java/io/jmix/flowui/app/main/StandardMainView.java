@@ -25,6 +25,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.applayout.JmixAppLayout;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.View;
+import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
@@ -33,9 +34,11 @@ import java.util.Optional;
  */
 public class StandardMainView extends View<JmixAppLayout> implements RouterLayout {
 
+    private Component initialLayout;
+
     @Override
-    public void showRouterLayoutContent(HasElement content) {
-        getContent().showRouterLayoutContent(content);
+    public void showRouterLayoutContent(@Nullable HasElement content) {
+        getContent().showRouterLayoutContent(content != null ? content : initialLayout);
 
         updateTitle();
     }
@@ -52,5 +55,28 @@ public class StandardMainView extends View<JmixAppLayout> implements RouterLayou
 
     private String getTitleFromOpenedView() {
         return ViewControllerUtils.getPageTitle(getContent().getContent());
+    }
+
+    /**
+     * @return a component that is displayed if no view is opened.
+     */
+    @Nullable
+    public Component getInitialLayout() {
+        return initialLayout;
+    }
+
+    /**
+     * Sets a component that is displayed if no view is opened.
+     *
+     * @param initialLayout a component to display
+     * @see #showRouterLayoutContent(HasElement)
+     */
+    public void setInitialLayout(@Nullable Component initialLayout) {
+        this.initialLayout = initialLayout;
+
+        if (getContent().getContent() == null
+                && initialLayout != null) {
+            getContent().setContent(initialLayout);
+        }
     }
 }

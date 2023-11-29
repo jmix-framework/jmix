@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '2.0.2'
+    id 'io.jmix' version '2.1.0'
     id 'java'
 }
 
@@ -45,4 +45,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+vaadin {
+    optimizeBundle = false
 }

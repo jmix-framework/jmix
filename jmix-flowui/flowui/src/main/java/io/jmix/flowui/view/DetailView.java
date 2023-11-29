@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.view;
 
-import io.jmix.core.pessimisticlocking.PessimisticLock;
 import io.jmix.flowui.util.OperationResult;
 
 /**
@@ -57,12 +56,11 @@ public interface DetailView<E> extends ChangeTracker {
     /**
      * @return lock status of the currently edited entity instance. Possible variants:
      * <ul>
-     *     <li>{@link PessimisticLockStatus#NOT_SUPPORTED} - if the entity does not support pessimistic lock.</li>
-     *     <li>{@link PessimisticLockStatus#LOCKED} - if the entity instance is successfully locked.</li>
-     *     <li>{@link PessimisticLockStatus#FAILED} - if the entity instance has been locked when the view is
+     *     <li>{@link LockStatus#NOT_SUPPORTED} - if the entity does not support lock.</li>
+     *     <li>{@link LockStatus#LOCKED} - if the entity instance is successfully locked.</li>
+     *     <li>{@link LockStatus#FAILED} - if the entity instance has been locked when the view is
      *         opened.</li>
      * </ul>
-     * @see PessimisticLock
      */
-    PessimisticLockStatus getPessimisticLockStatus();
+    LockStatus getLockStatus();
 }

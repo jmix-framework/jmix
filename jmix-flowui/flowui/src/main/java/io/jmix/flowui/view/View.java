@@ -20,6 +20,9 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.event.view.ViewClosedEvent;
+import io.jmix.flowui.event.view.ViewOpenedEvent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -95,6 +98,9 @@ public class View<T extends Component> extends Composite<T>
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
         fireEvent(new ReadyEvent(this));
+
+        ViewOpenedEvent viewOpenedEvent = new ViewOpenedEvent(this);
+        applicationContext.publishEvent(viewOpenedEvent);
     }
 
     @Override
@@ -116,8 +122,13 @@ public class View<T extends Component> extends Composite<T>
                     return;
                 }
 
+                removeViewAttributes();
+
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
                 fireEvent(afterCloseEvent);
+
+                ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
+                applicationContext.publishEvent(viewClosedEvent);
             }
         }
 
@@ -138,7 +149,9 @@ public class View<T extends Component> extends Composite<T>
         super.onDetach(detachEvent);
 
         removeApplicationListeners();
-        removeViewAttributes();
+        if (UiComponentUtils.isComponentAttachedToDialog(this)) {
+            removeViewAttributes();
+        }
         unregisterBackNavigation();
 
         if (preventBrowserTabClosing) {
@@ -206,6 +219,9 @@ public class View<T extends Component> extends Composite<T>
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
         fireEvent(afterCloseEvent);
+
+        ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
+        applicationContext.publishEvent(viewClosedEvent);
 
         return OperationResult.success();
     }

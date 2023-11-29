@@ -23,7 +23,7 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.flowui.view.PessimisticLockStatus;
+import io.jmix.flowui.view.LockStatus;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -70,6 +70,6 @@ public class DetailSaveCloseAction<E>
 
     @Override
     protected boolean isApplicable() {
-        return super.isApplicable() && target.getPessimisticLockStatus() != PessimisticLockStatus.FAILED;
+        return super.isApplicable() && target.getLockStatus() != LockStatus.FAILED;
     }
 }

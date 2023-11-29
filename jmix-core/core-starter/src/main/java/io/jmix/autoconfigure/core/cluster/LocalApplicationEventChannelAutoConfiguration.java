@@ -18,14 +18,13 @@ package io.jmix.autoconfigure.core.cluster;
 
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.Ordered;
 
 @AutoConfiguration
 @ConditionalOnMissingBean(ClusterApplicationEventChannelSupplier.class)
-@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
+@AutoConfigureAfter(ClusterApplicationEventChannelAutoConfiguration.class)
 public class LocalApplicationEventChannelAutoConfiguration {
 
     @Bean

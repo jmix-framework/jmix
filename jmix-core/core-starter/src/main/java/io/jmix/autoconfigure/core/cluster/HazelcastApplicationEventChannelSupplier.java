@@ -28,7 +28,19 @@ import org.springframework.messaging.SubscribableChannel;
  */
 public class HazelcastApplicationEventChannelSupplier implements ClusterApplicationEventChannelSupplier {
 
+    protected static final String TOPIC_NAME = "jmix-cluster-application-event-topic";
+
     protected final SubscribableChannel messageChannel;
+
+    public HazelcastApplicationEventChannelSupplier(HazelcastInstance hazelcastInstance) {
+        ITopic<Message<?>> topic = hazelcastInstance.getTopic(TOPIC_NAME);
+        this.messageChannel = new HazelcastMessageChannel(topic);
+    }
+
+    @Override
+    public SubscribableChannel get() {
+        return messageChannel;
+    }
 
     protected static class HazelcastMessageChannel implements SubscribableChannel {
 
@@ -60,15 +72,5 @@ public class HazelcastApplicationEventChannelSupplier implements ClusterApplicat
             topic.publish(message);
             return true;
         }
-    }
-
-    public HazelcastApplicationEventChannelSupplier(HazelcastInstance hazelcastInstance) {
-        ITopic<Message<?>> topic = hazelcastInstance.getTopic("jmix-cluster-application-event-topic");
-        this.messageChannel = new HazelcastMessageChannel(topic);
-    }
-
-    @Override
-    public SubscribableChannel get() {
-        return messageChannel;
     }
 }

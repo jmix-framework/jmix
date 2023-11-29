@@ -22,40 +22,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class InMemoryUserRepository implements UserRepository {
 
-    protected UserDetails systemUser;
-    protected UserDetails anonymousUser;
     protected List<UserDetails> users = new ArrayList<>();
-
-    public InMemoryUserRepository() {
-        initServiceUsers();
-    }
-
-    protected void initServiceUsers() {
-        systemUser = createSystemUser();
-        anonymousUser = createAnonymousUser();
-    }
-
-    protected UserDetails createSystemUser() {
-        return User.builder()
-                .username("system")
-                .password("{noop}")
-                .authorities(Collections.emptyList())
-                .build();
-    }
-
-    protected UserDetails createAnonymousUser() {
-        return User.builder()
-                .username("anonymous")
-                .password("{noop}")
-                .authorities(Collections.emptyList())
-                .build();
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -66,15 +38,6 @@ public class InMemoryUserRepository implements UserRepository {
                 .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found"));
     }
 
-    @Override
-    public UserDetails getSystemUser() {
-        return systemUser;
-    }
-
-    @Override
-    public UserDetails getAnonymousUser() {
-        return anonymousUser;
-    }
 
     @Override
     public List<UserDetails> getByUsernameLike(String substring) {

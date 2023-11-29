@@ -22,7 +22,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.user.UserClassResolver;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.ActionType;
@@ -61,7 +61,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
 
     protected DataManager dataManager;
 
-    protected UserRepository userRepository;
+    protected UserClassResolver userClassResolver;
 
     protected E selectedItem;
 
@@ -101,9 +101,10 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         this.dataManager = dataManager;
     }
 
+
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setApplicationUserClassResolver(UserClassResolver userClassResolver) {
+        this.userClassResolver = userClassResolver;
     }
 
     @Override
@@ -125,7 +126,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
     }
 
     protected void openDialog() {
-        Class<?> userClass = userRepository.getSystemUser().getClass();
+        Class<?> userClass = userClassResolver.getUserClass();
 
         if (!UserDetails.class.isAssignableFrom(userClass)) {
             String message = String.format(

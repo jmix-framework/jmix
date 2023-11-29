@@ -135,6 +135,17 @@ includeProject('security-data-starter', 'jmix-security/security-data-starter')
 includeProject('security-flowui', 'jmix-security/security-flowui')
 includeProject('security-flowui-starter', 'jmix-security/security-flowui-starter')
 
+includeProject('simple-security', 'jmix-simple-security/simple-security')
+includeProject('simple-security-starter', 'jmix-simple-security/simple-security-starter')
+includeProject('simple-security-flowui', 'jmix-simple-security/simple-security-flowui')
+includeProject('simple-security-flowui-starter', 'jmix-simple-security/simple-security-flowui-starter')
+
+includeProject('local-user-management', 'jmix-user-management/local-user-management')
+includeProject('local-user-management-starter', 'jmix-user-management/local-user-management-starter')
+includeProject('local-user-management-flowui', 'jmix-user-management/local-user-management-flowui')
+includeProject('local-user-management-flowui-starter', 'jmix-user-management/local-user-management-flowui-starter')
+
+
 //includeProject('sessions', 'jmix-sessions/sessions')
 //includeProject('sessions-starter', 'jmix-sessions/sessions-starter')
 

@@ -12,10 +12,10 @@ import com.vaadin.flow.spring.security.RequestUtil;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import com.vaadin.flow.spring.security.VaadinSavedRequestAwareAuthenticationSuccessHandler;
 import io.jmix.core.JmixSecurityFilterChainOrder;
+import io.jmix.core.security.QualifiedSecurityConfigurers;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
@@ -144,7 +144,7 @@ public class FlowuiSecurityConfiguration {
 
         // Apply Jmix SecurityConfigurer beans with the given qualifier to the HttpSecurity
         // Can be used as extension points to adjust security configurations
-        SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
+        QualifiedSecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
 
         initLoginView(http);
 

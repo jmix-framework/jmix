@@ -58,11 +58,12 @@ import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
 @Route(value = "datatl/entityinspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
-@ViewController("datatl_entityInspectorDetailView")
+@ViewController(EntityInspectorDetailView.ID)
 @ViewDescriptor("entity-inspector-detail-view.xml")
 @DialogMode(width = "50em", resizable = true)
 public class EntityInspectorDetailView extends StandardDetailView<Object> {
 
+    public static final String ID = "datatl_entityInspectorDetailView";
     protected static final String BASE_SELECT_QUERY = "select e from %s e where e.%s.id = '%s'";
     protected static final String SOFT_DELETABLE_SELECT_QUERY = "select e from %s e where e.%s.id = '%s' and e.%s is null";
     protected static final String SINGLE_SELECT_QUERY = "select e from %s e where e.id = '%s'";

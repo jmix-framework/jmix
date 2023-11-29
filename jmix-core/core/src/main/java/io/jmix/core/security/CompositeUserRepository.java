@@ -25,37 +25,6 @@ public class CompositeUserRepository implements UserRepository {
     protected List<UserRepository> userRepositories;
 
     @Override
-    public UserDetails getSystemUser() {
-        for (UserRepository delegate : userRepositories) {
-            UserDetails systemUser;
-            try {
-                systemUser = delegate.getSystemUser();
-            } catch (Exception e) {
-                log.debug("Failed to obtain the system user from user repository: " + delegate.getClass().getName(), e);
-                continue;
-            }
-            return systemUser;
-        }
-        throw new UnsupportedOperationException("User repository does not provide the system user");
-    }
-
-    @Override
-    public UserDetails getAnonymousUser() {
-        for (UserRepository delegate : userRepositories) {
-            UserDetails anonymousUser;
-            try {
-                anonymousUser = delegate.getAnonymousUser();
-            } catch (Exception e) {
-                log.debug("Failed to obtain the anonymous user from user repository: "
-                        + delegate.getClass().getName(), e);
-                continue;
-            }
-            return anonymousUser;
-        }
-        throw new UnsupportedOperationException("User repository does not provide the anonymous user");
-    }
-
-    @Override
     public List<? extends UserDetails> getByUsernameLike(String substring) {
         return userRepositories.stream()
                 .flatMap(userRepository -> userRepository.getByUsernameLike(substring).stream())

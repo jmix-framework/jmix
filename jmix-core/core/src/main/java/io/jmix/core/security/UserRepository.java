@@ -27,16 +27,6 @@ import java.util.List;
 public interface UserRepository extends UserDetailsService {
 
     /**
-     * Returns the built-in 'system' user.
-     */
-    UserDetails getSystemUser();
-
-    /**
-     * Returns the built-in 'anonymous' user.
-     */
-    UserDetails getAnonymousUser();
-
-    /**
      * Returns the list of users whose username contains the given substring.
      */
     List<? extends UserDetails> getByUsernameLike(String substring);

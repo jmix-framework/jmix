@@ -22,6 +22,7 @@ archivesBaseName = 'jmix-search'
 
 dependencies {
     api project(':data')
+    //todo MG remove security dependency (add-on must work both with simple and regular security modules)
     implementation project(':security')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'

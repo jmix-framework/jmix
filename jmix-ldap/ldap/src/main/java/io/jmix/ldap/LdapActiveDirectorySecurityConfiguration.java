@@ -17,11 +17,11 @@
 package io.jmix.ldap;
 
 import io.jmix.core.JmixOrder;
-import io.jmix.core.security.AddonAuthenticationManagerSupplier;
+import io.jmix.core.security.AddonAuthenticationManagerProvider;
 import io.jmix.core.security.event.PreAuthenticationCheckEvent;
-import io.jmix.ldap.authentication.ActiveDirectoryAuthenticationManagerSupplier;
+import io.jmix.ldap.authentication.ActiveDirectoryAuthenticationManagerProvider;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
-import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
+import io.jmix.core.security.StandardAuthenticationProvidersProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -41,14 +41,14 @@ public class LdapActiveDirectorySecurityConfiguration {
     @Autowired
     protected JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper;
 
-    @Bean("ldap_ActiveDirectoryAuthenticationManagerSupplier")
+    @Bean("ldap_ActiveDirectoryAuthenticationManagerProvider")
     @Order(100)
-    public AddonAuthenticationManagerSupplier ldapActiveDirectoryAuthenticationManagerSupplier(StandardAuthenticationProvidersProducer providersProducer,
+    public AddonAuthenticationManagerProvider ldapActiveDirectoryAuthenticationManagerProvider(StandardAuthenticationProvidersProducer providersProducer,
                                                                                                ApplicationEventPublisher publisher,
                                                                                                LdapProperties ldapProperties,
                                                                                                UserDetailsContextMapper ldapUserDetailsContextMapper,
                                                                                                JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper) {
-        return new ActiveDirectoryAuthenticationManagerSupplier(providersProducer, publisher, ldapProperties,
+        return new ActiveDirectoryAuthenticationManagerProvider(providersProducer, publisher, ldapProperties,
                 ldapUserDetailsContextMapper, grantedAuthoritiesMapper);
     }
 

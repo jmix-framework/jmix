@@ -17,19 +17,24 @@
 package io.jmix.core.security.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.security.ServiceUserProvider;
 import io.jmix.core.security.SystemAuthenticationToken;
 import io.jmix.core.security.UserRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 public class SystemAuthenticationProvider implements AuthenticationProvider {
 
     private UserRepository userRepository;
 
-    public SystemAuthenticationProvider(UserRepository userRepository) {
+    private ServiceUserProvider serviceUserProvider;
+
+    public SystemAuthenticationProvider(UserRepository userRepository, ServiceUserProvider serviceUserProvider) {
         this.userRepository = userRepository;
+        this.serviceUserProvider = serviceUserProvider;
     }
 
     @Override
@@ -43,7 +48,7 @@ public class SystemAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         //todo MG check null or 'system'
         if (Strings.isNullOrEmpty(username)) {
-            userDetails = userRepository.getSystemUser();
+            userDetails = serviceUserProvider.getSystemUser();
         } else {
             userDetails = userRepository.loadUserByUsername(username);
         }

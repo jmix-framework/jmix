@@ -90,12 +90,13 @@ import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Route(value = "datatl/entityinspector", layout = DefaultMainViewParent.class)
-@ViewController("datatl_entityInspectorListView")
+@ViewController(EntityInspectorListView.ID)
 @ViewDescriptor("entity-inspector-list-view.xml")
 @LookupComponent("entitiesDataGrid")
 @DialogMode(width = "50em")
 public class EntityInspectorListView extends StandardListView<Object> {
 
+    public static final String ID = "datatl_entityInspectorListView";
     private static final Logger log = LoggerFactory.getLogger(EntityInspectorListView.class);
 
     protected static final String BASE_SELECT_QUERY = "select e from %s e";

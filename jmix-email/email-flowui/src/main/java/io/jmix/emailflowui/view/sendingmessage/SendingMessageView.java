@@ -24,6 +24,7 @@ import io.jmix.email.EmailDataProvider;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
+import io.jmix.emailflowui.role.EmailHistoryRole;
 import io.jmix.emailflowui.view.sendingmessage.attachments.SendingMessageAttachmentsListView;
 import io.jmix.emailflowui.view.sendingmessage.resend.ResendMessageView;
 import io.jmix.flowui.DialogWindows;
@@ -41,6 +42,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.upload.TemporaryStorage;
 import io.jmix.flowui.view.*;
+import jakarta.annotation.security.RolesAllowed;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
+@RolesAllowed(EmailHistoryRole.CODE)
 @Route(value = "email/sendingmessage", layout = DefaultMainViewParent.class)
 @ViewController("email_sendingMessageView")
 @ViewDescriptor("sending-message-view.xml")

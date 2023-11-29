@@ -17,6 +17,7 @@
 package io.jmix.autoconfigure.oidc;
 
 import io.jmix.core.JmixSecurityFilterChainOrder;
+import io.jmix.core.security.QualifiedSecurityConfigurers;
 import io.jmix.oidc.OidcConfiguration;
 import io.jmix.oidc.OidcProperties;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
@@ -119,7 +120,7 @@ public class OidcAutoConfiguration {
                         });
                     });
             http.apply(new SessionManagementConfigurer());
-            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
+            QualifiedSecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 
@@ -156,7 +157,7 @@ public class OidcAutoConfiguration {
             OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =
                     new OidcResourceServerEventSecurityFilter(applicationEventPublisher);
             http.addFilterBefore(resourceServerEventSecurityFilter, AuthorizationFilter.class);
-            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
+            QualifiedSecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }
 

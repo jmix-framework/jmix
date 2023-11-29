@@ -22,11 +22,10 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.rememberme.JmixRememberMeServices;
 import io.jmix.core.rememberme.RememberMeProperties;
 import io.jmix.core.security.*;
-import io.jmix.core.security.impl.AuthenticationManagerSupplierImpl;
+import io.jmix.core.security.impl.AuthenticationManagerProviderImpl;
 import io.jmix.core.security.impl.JmixSessionAuthenticationStrategy;
 import io.jmix.core.session.SessionProperties;
-import io.jmix.security.authentication.StandardAuthenticationManagerSupplier;
-import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
+import io.jmix.security.authentication.StandardSecurityAuthenticationManagerProvider;
 import io.jmix.security.impl.constraint.SecurityConstraintsRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -36,6 +35,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -43,6 +43,10 @@ import org.springframework.security.web.authentication.session.CompositeSessionA
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import java.util.LinkedList;
@@ -140,24 +144,43 @@ public class SecurityConfiguration {
         return new PostAuthenticationChecks();
     }
 
-    @Bean("sec_StandardAuthenticationManagerSupplier")
-    @Order(200)
-    public AddonAuthenticationManagerSupplier standardAuthenticationManagerSupplier(StandardAuthenticationProvidersProducer providersProducer,
-                                                                            ApplicationEventPublisher publisher) {
-        return new StandardAuthenticationManagerSupplier(providersProducer, publisher);
+    @Bean("sec_StandardAuthenticationProvidersProducer")
+    public StandardAuthenticationProvidersProducer standardAuthenticationProvidersProducer(
+            UserRepository userRepository,
+            ServiceUserProvider serviceUserProvider,
+            PasswordEncoder passwordEncoder,
+            PreAuthenticationChecks preAuthenticationChecks,
+            PostAuthenticationChecks postAuthenticationChecks
+    ) {
+        return new StandardAuthenticationProvidersProducer(userRepository, serviceUserProvider, passwordEncoder, preAuthenticationChecks, postAuthenticationChecks);
     }
 
-    @Bean("sec_AuthenticationManagerSupplier")
-    public AuthenticationManagerSupplier authenticationManagerSupplier(List<AddonAuthenticationManagerSupplier> suppliers) {
-        return new AuthenticationManagerSupplierImpl(suppliers);
+    @Bean("sec_StandardSecurityAuthenticationManagerProvider")
+    @Order(200)
+    public AddonAuthenticationManagerProvider standardSecurityAuthenticationManagerProvider(StandardAuthenticationProvidersProducer providersProducer,
+                                                                                    ApplicationEventPublisher publisher) {
+        return new StandardSecurityAuthenticationManagerProvider(providersProducer, publisher);
+    }
+
+    @Bean("sec_AuthenticationManagerProvider")
+    public AuthenticationManagerProvider authenticationManagerProvider(List<AddonAuthenticationManagerProvider> suppliers) {
+        return new AuthenticationManagerProviderImpl(suppliers);
     }
 
     /**
      * Global AuthenticationManager
      */
     @Bean("sec_AuthenticationManager")
-    public AuthenticationManager authenticationManager(AuthenticationManagerSupplier authenticationManagerSupplier) {
-        return authenticationManagerSupplier.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationManagerProvider authenticationManagerProvider) {
+        return authenticationManagerProvider.getAuthenticationManager();
+    }
+
+    @Bean("sec_SecurityContextRepository")
+    public SecurityContextRepository securityContextRepository() {
+        return new DelegatingSecurityContextRepository(
+                new RequestAttributeSecurityContextRepository(),
+                new HttpSessionSecurityContextRepository()
+        );
     }
 
 }

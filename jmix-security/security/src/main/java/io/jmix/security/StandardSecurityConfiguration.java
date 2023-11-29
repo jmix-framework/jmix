@@ -17,6 +17,7 @@
 package io.jmix.security;
 
 import io.jmix.core.JmixSecurityFilterChainOrder;
+import io.jmix.core.security.QualifiedSecurityConfigurers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -37,7 +38,7 @@ public class StandardSecurityConfiguration {
         http.logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/"));
-        SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
+        QualifiedSecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
         return http.build();
     }
 }

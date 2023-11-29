@@ -18,9 +18,12 @@ package io.jmix.emailflowui.view.sendingmessage.attachments;
 
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
+import io.jmix.emailflowui.role.EmailHistoryRole;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import jakarta.annotation.security.RolesAllowed;
 
+@RolesAllowed(EmailHistoryRole.CODE)
 @ViewController("email_SendingMessageAttachments.list")
 @ViewDescriptor("sending-message-attachments-list-view.xml")
 @DialogMode(width = "50em")

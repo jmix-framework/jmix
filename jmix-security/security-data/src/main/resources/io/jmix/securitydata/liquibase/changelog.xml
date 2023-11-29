@@ -26,6 +26,5 @@
 
     <include file="/io/jmix/securitydata/liquibase/changelog/001-security-data.xml"/>
     <include file="/io/jmix/securitydata/liquibase/changelog/002-security-data.xml"/>
-    <include file="/io/jmix/securitydata/liquibase/changelog/003-security-data.xml"/>
 
 </databaseChangeLog>

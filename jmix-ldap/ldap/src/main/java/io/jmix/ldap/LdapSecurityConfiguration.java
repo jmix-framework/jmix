@@ -17,11 +17,11 @@
 package io.jmix.ldap;
 
 import io.jmix.core.JmixOrder;
-import io.jmix.core.security.AddonAuthenticationManagerSupplier;
+import io.jmix.core.security.AddonAuthenticationManagerProvider;
 import io.jmix.core.security.event.PreAuthenticationCheckEvent;
-import io.jmix.ldap.authentication.LdapAuthenticationManagerSupplier;
+import io.jmix.ldap.authentication.LdapAuthenticationManagerProvider;
 import io.jmix.ldap.userdetails.JmixLdapGrantedAuthoritiesMapper;
-import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
+import io.jmix.core.security.StandardAuthenticationProvidersProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -49,16 +49,16 @@ public class LdapSecurityConfiguration {
     @Autowired
     protected JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper;
 
-    @Bean("ldap_LdapAuthenticationManagerSupplier")
+    @Bean("ldap_LdapAuthenticationManagerProvider")
     @Order(100)
-    public AddonAuthenticationManagerSupplier ldapAuthenticationManagerSupplier(StandardAuthenticationProvidersProducer providersProducer,
+    public AddonAuthenticationManagerProvider ldapAuthenticationManagerProvider(StandardAuthenticationProvidersProducer providersProducer,
                                                                                 ApplicationEventPublisher publisher,
                                                                                 LdapProperties ldapProperties,
                                                                                 LdapContextSource ldapContextSource,
                                                                                 UserDetailsContextMapper ldapUserDetailsContextMapper,
                                                                                 JmixLdapGrantedAuthoritiesMapper grantedAuthoritiesMapper,
                                                                                 LdapAuthoritiesPopulator ldapAuthoritiesPopulator) {
-        return new LdapAuthenticationManagerSupplier(providersProducer, publisher, ldapProperties, ldapContextSource,
+        return new LdapAuthenticationManagerProvider(providersProducer, publisher, ldapProperties, ldapContextSource,
                 ldapUserDetailsContextMapper, grantedAuthoritiesMapper, ldapAuthoritiesPopulator);
     }
 

@@ -1,6 +1,6 @@
 package io.jmix.oidc.user;
 
-import io.jmix.security.authentication.JmixUserDetails;
+import io.jmix.core.security.user.JmixUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 

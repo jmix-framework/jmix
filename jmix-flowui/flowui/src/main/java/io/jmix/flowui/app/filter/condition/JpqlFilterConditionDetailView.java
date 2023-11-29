@@ -53,11 +53,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@ViewController("flowui_JpqlFilterCondition.detail")
+@ViewController(JpqlFilterConditionDetailView.ID)
 @ViewDescriptor("jpql-filter-condition-detail-view.xml")
 @EditedEntityContainer("filterConditionDc")
 @DialogMode(width = "56em", resizable = true)
 public class JpqlFilterConditionDetailView extends FilterConditionDetailView<JpqlFilterCondition> {
+
+    public static final String ID = "flowui_JpqlFilterCondition.detail";
 
     @ViewComponent
     protected InstanceContainer<JpqlFilterCondition> filterConditionDc;

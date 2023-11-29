@@ -22,6 +22,7 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -121,6 +122,8 @@ public class View<T extends Component> extends Composite<T>
                     return;
                 }
 
+                removeViewAttributes();
+
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
                 fireEvent(afterCloseEvent);
 
@@ -146,7 +149,9 @@ public class View<T extends Component> extends Composite<T>
         super.onDetach(detachEvent);
 
         removeApplicationListeners();
-        removeViewAttributes();
+        if (UiComponentUtils.isComponentAttachedToDialog(this)) {
+            removeViewAttributes();
+        }
         unregisterBackNavigation();
 
         if (preventBrowserTabClosing) {

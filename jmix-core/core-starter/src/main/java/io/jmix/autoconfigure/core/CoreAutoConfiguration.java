@@ -18,10 +18,8 @@ package io.jmix.autoconfigure.core;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.JmixMessageSource;
-import io.jmix.core.pessimisticlocking.LockManager;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
@@ -41,10 +39,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.cache.Cache;
-import javax.cache.configuration.MutableConfiguration;
-import java.util.Arrays;
-
 @AutoConfiguration
 @Import({CoreConfiguration.class})
 @EnableConfigurationProperties(JmxProperties.class)
@@ -61,18 +55,6 @@ public class CoreAutoConfiguration {
     @ConditionalOnMissingBean(type = "org.springframework.scripting.ScriptEvaluator")
     public ScriptEvaluator scriptEvaluator() {
         return new GroovyScriptEvaluator();
-    }
-
-    @Bean
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    JCacheManagerCustomizer lockCacheCustomizer() {
-        return cacheManager -> {
-            Cache<Object, Object> cache = cacheManager.getCache(LockManager.LOCKS_CACHE_NAME);
-            if (cache == null) {
-                MutableConfiguration configuration = new MutableConfiguration();
-                cacheManager.createCache(LockManager.LOCKS_CACHE_NAME, configuration);
-            }
-        };
     }
 
     @Bean

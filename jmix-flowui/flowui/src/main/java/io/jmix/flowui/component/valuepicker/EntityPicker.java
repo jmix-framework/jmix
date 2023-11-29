@@ -20,6 +20,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.delegate.EntityFieldDelegate;
@@ -67,6 +68,11 @@ public class EntityPicker<V> extends ValuePickerBase<EntityPicker<V>, V>
     public void setValueFromClient(@Nullable V value) {
         fieldDelegate.checkValueType(value);
         super.setValueFromClient(value);
+    }
+
+    @Override
+    protected boolean valueEquals(V value1, V value2) {
+        return EntityValues.propertyValueEquals(value1, value2);
     }
 
     @Override

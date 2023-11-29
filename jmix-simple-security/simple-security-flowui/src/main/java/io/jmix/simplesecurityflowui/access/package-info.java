@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+@NonNullApi
+package io.jmix.simplesecurityflowui.access;
 
-group = 'io.jmix.simplesecurity'
-archivesBaseName = 'jmix-simple-security-flowui'
-
-dependencies {
-    api project(':simple-security')
-    api project(':flowui')
-
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'net.bytebuddy:byte-buddy:1.14.5'
-}
+import org.springframework.lang.NonNullApi;

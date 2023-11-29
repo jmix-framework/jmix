@@ -25,7 +25,6 @@ import com.vaadin.flow.server.VaadinServletContext;
 import com.vaadin.flow.server.auth.ViewAccessChecker;
 import com.vaadin.flow.spring.VaadinConfigurationProperties;
 import com.vaadin.flow.spring.security.*;
-import com.vaadin.flow.spring.security.stateless.VaadinStatelessSecurityConfigurer;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
@@ -40,13 +39,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
-import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
@@ -54,9 +46,7 @@ import org.springframework.security.web.access.DelegatingAccessDeniedHandler;
 import org.springframework.security.web.access.RequestMatcherDelegatingAccessDeniedHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -65,13 +55,10 @@ import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -168,12 +155,18 @@ public class SimpleSecurityVaadinConfiguration {
                             getDefaultWebSecurityIgnoreMatcher(getUrlMapping()))
                     .permitAll();
 
+            //todo restore access to /error page as it is done in security-flowui module
+//            // Permit default Spring framework error page (/error)
+//            MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(applicationContext.getBean(HandlerMappingIntrospector.class));
+//            MvcRequestMatcher errorPageRequestMatcher = mvcRequestMatcherBuilder.pattern(serverProperties.getError().getPath());
+//            urlRegistry.requestMatchers(errorPageRequestMatcher).permitAll();
+
             // all other requests require authentication
             httpRequests.anyRequest().authenticated();
         });
 
         // Enable view access control
-        viewAccessChecker.enable();
+//        viewAccessChecker.enable();
 
         initLoginView(http);
     }

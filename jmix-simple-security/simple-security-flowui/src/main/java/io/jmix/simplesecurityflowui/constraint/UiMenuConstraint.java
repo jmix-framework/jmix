@@ -22,19 +22,29 @@ import io.jmix.flowui.accesscontext.UiMenuContext;
 import io.jmix.flowui.menu.MenuItem;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.simplesecurityflowui.access.ViewAccessManager;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * The AccessConstraint is responsible for checking menu permissions.
+ */
+@Component("simsec_UiMenuConstraint")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiMenuConstraint implements AccessConstraint<UiMenuContext> {
 
     protected ViewRegistry viewRegistry;
 
     protected AccessAnnotationChecker accessAnnotationChecker;
+    private final ViewAccessManager viewAccessManager;
 
-    public UiMenuConstraint(ViewRegistry viewRegistry, AccessAnnotationChecker accessAnnotationChecker) {
+    public UiMenuConstraint(ViewRegistry viewRegistry,
+                            AccessAnnotationChecker accessAnnotationChecker,
+                            ViewAccessManager viewAccessManager) {
         this.viewRegistry = viewRegistry;
         this.accessAnnotationChecker = accessAnnotationChecker;
+        this.viewAccessManager = viewAccessManager;
     }
 
     @Override
@@ -45,9 +55,17 @@ public class UiMenuConstraint implements AccessConstraint<UiMenuContext> {
     @Override
     public void applyTo(UiMenuContext context) {
         MenuItem menuItem = context.getMenuItem();
-        ViewInfo viewInfo = viewRegistry.getViewInfo(menuItem.getView());
-        if (!accessAnnotationChecker.hasAccess(viewInfo.getControllerClass())) {
-            context.setDenied();
+        String viewId = menuItem.getView();
+        if (viewId != null) {
+            boolean viewPermittedForCurrentUser = viewAccessManager.currentUserHasAccess(viewId);
+            if (viewPermittedForCurrentUser) {
+                return;
+            }
+
+            ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
+            if (!accessAnnotationChecker.hasAccess(viewInfo.getControllerClass())) {
+                context.setDenied();
+            }
         }
     }
 }

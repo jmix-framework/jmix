@@ -19,14 +19,18 @@ package io.jmix.simplesecurityflowui.constraint;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.flowui.accesscontext.UiShowViewContext;
-import io.jmix.flowui.menu.MenuItem;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jmix.simplesecurityflowui.access.ViewAccessManager;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * The AccessConstraint is responsible for checking view permissions when view is being opened.
+ */
+@Component("simsec_UiShowViewConstraint")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiShowViewConstraint implements AccessConstraint<UiShowViewContext> {
 
 
@@ -34,9 +38,14 @@ public class UiShowViewConstraint implements AccessConstraint<UiShowViewContext>
 
     protected AccessAnnotationChecker accessAnnotationChecker;
 
-    public UiShowViewConstraint(ViewRegistry viewRegistry, AccessAnnotationChecker accessAnnotationChecker) {
+    protected ViewAccessManager viewAccessManager;
+
+    public UiShowViewConstraint(ViewRegistry viewRegistry,
+                                AccessAnnotationChecker accessAnnotationChecker,
+                                ViewAccessManager viewAccessManager) {
         this.viewRegistry = viewRegistry;
         this.accessAnnotationChecker = accessAnnotationChecker;
+        this.viewAccessManager = viewAccessManager;
     }
 
     @Override
@@ -47,6 +56,15 @@ public class UiShowViewConstraint implements AccessConstraint<UiShowViewContext>
     @Override
     public void applyTo(UiShowViewContext context) {
         ViewInfo viewInfo = viewRegistry.getViewInfo(context.getViewId());
+
+        //check viewPermissionsRegistry first
+        boolean viewPermittedForCurrentUser = viewAccessManager.currentUserHasAccess(viewInfo.getId());
+
+        if (viewPermittedForCurrentUser) {
+            return;
+        }
+
+        //if no permissions defined for view in viewPermissionsRegistry then check controller annotations (@RolesAllowed, etc.)
         if (!accessAnnotationChecker.hasAccess(viewInfo.getControllerClass())) {
             context.setDenied();
         }

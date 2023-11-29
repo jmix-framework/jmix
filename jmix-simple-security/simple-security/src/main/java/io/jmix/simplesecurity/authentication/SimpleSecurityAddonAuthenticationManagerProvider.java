@@ -30,14 +30,14 @@ import java.util.List;
  * The default AddonAuthenticationManagerProvider that provides AuthenticationManager used by the main application when
  * the simple-security add-on is included application.
  */
-public class SimpleSecurityAuthenticationManagerProvider implements AddonAuthenticationManagerProvider {
+public class SimpleSecurityAddonAuthenticationManagerProvider implements AddonAuthenticationManagerProvider {
 
     protected StandardAuthenticationProvidersProducer providersProducer;
 
     protected ApplicationEventPublisher publisher;
 
-    public SimpleSecurityAuthenticationManagerProvider(StandardAuthenticationProvidersProducer providersProducer,
-                                                       ApplicationEventPublisher publisher) {
+    public SimpleSecurityAddonAuthenticationManagerProvider(StandardAuthenticationProvidersProducer providersProducer,
+                                                            ApplicationEventPublisher publisher) {
         this.providersProducer = providersProducer;
         this.publisher = publisher;
     }

@@ -42,20 +42,19 @@ import io.jmix.flowui.entity.filter.FilterValueComponent;
 import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
-import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@RolesAllowed("flowui-filter")
-@ViewController("flowui_PropertyFilterCondition.detail")
+@ViewController(PropertyFilterConditionDetailView.ID)
 @ViewDescriptor("property-filter-condition-detail-view.xml")
 @EditedEntityContainer("filterConditionDc")
 @DialogMode(width = "32em", resizable = true)
 public class PropertyFilterConditionDetailView extends FilterConditionDetailView<PropertyFilterCondition> {
 
+    public static final String ID = "flowui_PropertyFilterCondition.detail";
     @ViewComponent
     protected InstanceContainer<PropertyFilterCondition> filterConditionDc;
 

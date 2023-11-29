@@ -41,7 +41,6 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import jakarta.annotation.Nullable;
-import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -54,12 +53,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@RolesAllowed("flowui-filter")
-@ViewController("flowui_JpqlFilterCondition.detail")
+@ViewController(JpqlFilterConditionDetailView.ID)
 @ViewDescriptor("jpql-filter-condition-detail-view.xml")
 @EditedEntityContainer("filterConditionDc")
 @DialogMode(width = "56em", resizable = true)
 public class JpqlFilterConditionDetailView extends FilterConditionDetailView<JpqlFilterCondition> {
+
+    public static final String ID = "flowui_JpqlFilterCondition.detail";
 
     @ViewComponent
     protected InstanceContainer<JpqlFilterCondition> filterConditionDc;

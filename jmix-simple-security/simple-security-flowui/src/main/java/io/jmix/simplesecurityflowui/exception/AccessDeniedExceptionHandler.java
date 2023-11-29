@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
  * Handles AccessDeniedExceptionHandler that can be thrown by checking access to the dialog.
  * Displays violation messages as on-screen notifications.
  */
+@Component("simsec_AccessDeniedExceptionHandler")
 public class AccessDeniedExceptionHandler extends AbstractUiExceptionHandler {
 
     protected final Notifications notifications;

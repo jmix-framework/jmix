@@ -23,9 +23,11 @@ import io.jmix.core.rememberme.RememberMeProperties;
 import io.jmix.core.security.*;
 import io.jmix.core.security.impl.AuthenticationManagerProviderImpl;
 import io.jmix.core.session.SessionProperties;
-import io.jmix.simplesecurity.authentication.SimpleSecurityAuthenticationManagerProvider;
+import io.jmix.simplesecurity.authentication.SimpleSecurityAddonAuthenticationManagerProvider;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -56,6 +58,8 @@ import static org.springframework.security.web.authentication.rememberme.Abstrac
  * Main configuration class of the simple-security module.
  */
 @Configuration
+@ComponentScan
+@ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class})
 public class SimpleSecurityConfiguration {
 
@@ -104,12 +108,12 @@ public class SimpleSecurityConfiguration {
         return new StandardAuthenticationProvidersProducer(userRepository, serviceUserProvider, passwordEncoder, preAuthenticationChecks, postAuthenticationChecks);
     }
 
-    @Bean("simsec_SimpleSecurityAuthenticationManagerProvider")
-    public SimpleSecurityAuthenticationManagerProvider simpleSecurityAuthenticationManagerProvider(
+    @Bean("simsec_SimpleSecurityAddonAuthenticationManagerProvider")
+    public SimpleSecurityAddonAuthenticationManagerProvider simpleSecurityAuthenticationManagerProvider(
             StandardAuthenticationProvidersProducer standardAuthenticationProvidersProducer,
             ApplicationEventPublisher applicationEventPublisher
     ) {
-        return new SimpleSecurityAuthenticationManagerProvider(standardAuthenticationProvidersProducer, applicationEventPublisher);
+        return new SimpleSecurityAddonAuthenticationManagerProvider(standardAuthenticationProvidersProducer, applicationEventPublisher);
     }
 
     @Bean("simsec_AuthenticationManagerProvider")

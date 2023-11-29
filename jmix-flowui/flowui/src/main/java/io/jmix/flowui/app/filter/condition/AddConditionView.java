@@ -34,23 +34,23 @@ import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
-import jakarta.annotation.security.RolesAllowed;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@RolesAllowed("flowui-filter")
 @Route(value = "add-condition", layout = DefaultMainViewParent.class)
-@ViewController("flowui_AddConditionView")
+@ViewController(AddConditionView.ID)
 @ViewDescriptor("add-condition-view.xml")
 @LookupComponent("filterConditionsTreeDataGrid")
 @DialogMode(width = "25em", height = "37.5em")
 public class AddConditionView extends StandardListView<FilterCondition> {
+
+    public static final String ID = "flowui_AddConditionView";
 
     @ViewComponent
     protected TreeDataGrid<FilterCondition> filterConditionsTreeDataGrid;

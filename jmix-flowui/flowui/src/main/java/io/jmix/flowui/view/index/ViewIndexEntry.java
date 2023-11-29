@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.flowui.view.index;
 
-group = 'io.jmix.simplesecurity'
-archivesBaseName = 'jmix-simple-security-flowui'
-
-dependencies {
-    api project(':simple-security')
-    api project(':flowui')
-
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'net.bytebuddy:byte-buddy:1.14.5'
-}
+/**
+ * Data structure that stores view information. This class must be used in "view indexes" in add-ons.
+ *
+ * @see io.jmix.flowui.FlowuiViewIndex
+ */
+public record ViewIndexEntry(String viewId) {}

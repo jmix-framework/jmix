@@ -19,7 +19,12 @@ package io.jmix.simplesecurityflowui.constraint;
 import io.jmix.core.AccessConstraintsRegistry;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.stereotype.Component;
 
+/**
+ * Class registers {@link io.jmix.core.constraint.AccessConstraint}s required for simple-security module.
+ */
+@Component("simsec_SecurityConstraintRegistration")
 public class SecurityConstraintRegistration {
 
     protected AccessConstraintsRegistry accessConstraintsRegistry;

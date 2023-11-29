@@ -34,18 +34,17 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import jakarta.annotation.Nullable;
-import jakarta.annotation.security.RolesAllowed;
 
 import java.util.Collections;
 import java.util.List;
 
-@RolesAllowed("flowui-filter")
-@ViewController("flowui_GroupFilterCondition.detail")
+@ViewController(GroupFilterConditionDetailView.ID)
 @ViewDescriptor("group-filter-condition-detail-view.xml")
 @EditedEntityContainer("filterConditionDc")
 @DialogMode(width = "64em")
 public class GroupFilterConditionDetailView extends LogicalFilterConditionDetailView<GroupFilterCondition> {
 
+    public static final String ID = "flowui_GroupFilterCondition.detail";
     protected static final String GROUP_FILTER_CLASS_NAME = "jmix-group-filter";
 
     @ViewComponent

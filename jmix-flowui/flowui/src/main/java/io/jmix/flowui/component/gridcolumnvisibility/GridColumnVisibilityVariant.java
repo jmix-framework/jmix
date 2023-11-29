@@ -20,17 +20,17 @@ import com.vaadin.flow.component.shared.ThemeVariant;
 
 public enum GridColumnVisibilityVariant implements ThemeVariant {
 
-    LUMO_SMALL("small"),
-    LUMO_LARGE("large"),
-    LUMO_TERTIARY("tertiary"),
-    LUMO_TERTIARY_INLINE("tertiary-inline"),
-    LUMO_PRIMARY("primary"),
-    LUMO_ERROR("error"),
-    LUMO_SUCCESS("success"),
-    LUMO_CONTRAST("contrast"),
-    LUMO_ICON("icon"),
-    MATERIAL_CONTAINED("contained"),
-    MATERIAL_OUTLINED("outlined");
+    SMALL("small"),
+    LARGE("large"),
+    TERTIARY("tertiary"),
+    TERTIARY_INLINE("tertiary-inline"),
+    PRIMARY("primary"),
+    ERROR("error"),
+    SUCCESS("success"),
+    CONTRAST("contrast"),
+    ICON("icon"),
+    CONTAINED("contained"),
+    OUTLINED("outlined");
 
     private final String variant;
 

@@ -35,9 +35,8 @@ import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
-import io.jmix.flowui.component.grid.TreeDataGrid;
+import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
@@ -119,11 +118,21 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         this.icon = icon;
 
         updateIconSlot();
+        updateTheme();
     }
 
     protected void updateIconSlot() {
         if (icon != null) {
             dropdownItem.addComponentAsFirst(icon);
+        }
+    }
+
+    protected void updateTheme() {
+        //Add icon theme when the button contains an icon and no text
+        if (Strings.isNullOrEmpty(getText()) && icon != null) {
+            addThemeVariants(GridColumnVisibilityVariant.ICON);
+        } else {
+            removeThemeVariants(GridColumnVisibilityVariant.ICON);
         }
     }
 
@@ -150,8 +159,8 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     protected void checkGridType(Grid<?> grid) {
-        if (!(grid instanceof DataGrid<?>) && !(grid instanceof TreeDataGrid<?>)) {
-            throw new IllegalArgumentException("The grid must be an instance of DataGrid or TreeDataGrid");
+        if (!(grid instanceof EnhancedDataGrid<?>)) {
+            throw new IllegalArgumentException("The grid must be an instance of EnhancedDataGrid");
         }
     }
 
@@ -440,6 +449,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     public void setText(String text) {
         dropdownItem.setText(text);
         updateIconSlot();
+        updateTheme();
     }
 
     @Override

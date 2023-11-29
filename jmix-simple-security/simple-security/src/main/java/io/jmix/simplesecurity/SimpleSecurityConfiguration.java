@@ -169,7 +169,7 @@ public class SimpleSecurityConfiguration {
         return new HttpSessionEventPublisher();
     }
 
-    @Bean
+    @Bean("simsec_SecurityContextRepository")
     public SecurityContextRepository securityContextRepository() {
         return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),

@@ -18,7 +18,6 @@ package io.jmix.autoconfigure.core;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.JmixMessageSource;
-import io.jmix.core.pessimisticlocking.LockManager;
 import io.jmix.core.security.ServiceUserProvider;
 import io.jmix.core.security.user.DefaultServiceUserProvider;
 import io.jmix.core.security.user.UserClassResolver;

@@ -43,6 +43,10 @@ import org.springframework.security.web.authentication.session.CompositeSessionA
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import java.util.LinkedList;
@@ -169,6 +173,14 @@ public class SecurityConfiguration {
     @Bean("sec_AuthenticationManager")
     public AuthenticationManager authenticationManager(AuthenticationManagerProvider authenticationManagerProvider) {
         return authenticationManagerProvider.getAuthenticationManager();
+    }
+
+    @Bean("sec_SecurityContextRepository")
+    public SecurityContextRepository securityContextRepository() {
+        return new DelegatingSecurityContextRepository(
+                new RequestAttributeSecurityContextRepository(),
+                new HttpSessionSecurityContextRepository()
+        );
     }
 
 }

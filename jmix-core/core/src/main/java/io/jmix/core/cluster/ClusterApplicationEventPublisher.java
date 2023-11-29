@@ -22,7 +22,6 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
-import org.springframework.lang.Nullable;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
@@ -39,16 +38,14 @@ public class ClusterApplicationEventPublisher {
     protected ClusterApplicationEventChannelSupplier appEventChannelSupplier;
 
     public ClusterApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher,
-                                            @Nullable ClusterApplicationEventChannelSupplier appEventChannelSupplier) {
+                                            ClusterApplicationEventChannelSupplier appEventChannelSupplier) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.appEventChannelSupplier = appEventChannelSupplier;
     }
 
     @EventListener
     public void onApplicationStarted(ApplicationStartedEvent event) {
-        if (appEventChannelSupplier != null) {
-            appEventChannelSupplier.get().subscribe(this::onAppEventMessage);
-        }
+        appEventChannelSupplier.get().subscribe(this::onAppEventMessage);
     }
 
     protected void onAppEventMessage(Message<?> message) {
@@ -66,12 +63,10 @@ public class ClusterApplicationEventPublisher {
      * @param event an event to publish
      */
     public void publish(ClusterApplicationEvent event) {
-        if (appEventChannelSupplier != null) {
-            Message<?> message = MessageBuilder.withPayload(event).build();
+        Message<?> message = MessageBuilder.withPayload(event).build();
 
-            log.debug("Publishing event {}", event);
+        log.debug("Publishing event {}", event);
 
-            appEventChannelSupplier.get().send(message);
-        }
+        appEventChannelSupplier.get().send(message);
     }
 }

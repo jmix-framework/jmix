@@ -20,6 +20,8 @@ import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
+import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.repository.EnableJmixDataRepositories;
 import io.jmix.core.security.CoreSecurityConfiguration;
@@ -142,5 +144,10 @@ public class DataTestConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean
+    public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
+        return new LocalApplicationEventChannelSupplier();
     }
 }

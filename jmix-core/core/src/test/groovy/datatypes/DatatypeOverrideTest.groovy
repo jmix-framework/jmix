@@ -26,8 +26,9 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
+import test_support.base.TestBaseConfiguration
 
-@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration])
 class DatatypeOverrideTest extends Specification {
 
     @Autowired

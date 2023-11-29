@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.core'
-archivesBaseName = 'jmix-core-starter'
+@NonNullApi
+package io.jmix.core.cluster;
 
-dependencies {
-    api project(':core')
-
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
-    implementation 'org.springframework:spring-messaging'
-
-    compileOnly 'com.hazelcast:hazelcast'
-}
+import org.springframework.lang.NonNullApi;

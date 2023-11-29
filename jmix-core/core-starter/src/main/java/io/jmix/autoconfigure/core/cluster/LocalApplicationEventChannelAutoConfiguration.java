@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package test_support;
+package io.jmix.autoconfigure.core.cluster;
 
-import io.jmix.awsfs.AwsFileStorageConfiguration;
-import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
-@Configuration
-@PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = AwsFileStorageConfiguration.class)
-public class AwsFileStorageTestConfiguration {
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager();
-    }
+@AutoConfiguration
+@ConditionalOnMissingBean(ClusterApplicationEventChannelSupplier.class)
+@AutoConfigureAfter(ClusterApplicationEventChannelAutoConfiguration.class)
+public class LocalApplicationEventChannelAutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean
     public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
         return new LocalApplicationEventChannelSupplier();
     }

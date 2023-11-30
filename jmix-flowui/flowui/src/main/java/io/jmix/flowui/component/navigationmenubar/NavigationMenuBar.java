@@ -405,6 +405,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
 
         protected Icon iconComponent;
         protected Span textComponent;
+        protected Tooltip tooltip;
 
         public AbstractIconTextMenuItem() {
         }
@@ -470,14 +471,22 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
 
         @Override
         public Tooltip setTooltipText(String text) {
-            Tooltip tooltip = Tooltip.forComponent(this);
+            Tooltip tooltip = getTooltipInternal();
+
             tooltip.setText(text);
+            return tooltip;
+        }
+
+        protected Tooltip getTooltipInternal() {
+            if (tooltip == null) {
+                tooltip = Tooltip.forComponent(this);
+            }
             return tooltip;
         }
 
         @Override
         public Tooltip getTooltip() {
-            return Tooltip.forComponent(this);
+            return getTooltipInternal();
         }
     }
 

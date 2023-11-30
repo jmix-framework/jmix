@@ -190,6 +190,11 @@ dependencies {
         api "io.jmix.oidc:jmix-oidc:$freeVersion"
         api "io.jmix.oidc:jmix-oidc-starter:$freeVersion"
 
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock:$freeVersion"
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock-starter:$freeVersion"
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock-flowui:$freeVersion"
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock-flowui-starter:$freeVersion"
+
         api "io.jmix.quartz:jmix-quartz:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-starter:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-flowui:$freeVersion"

@@ -16,7 +16,12 @@
 package io.jmix.flowui.menu;
 
 import com.google.common.base.Strings;
-import io.jmix.core.*;
+import io.jmix.core.JmixModules;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Resources;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -31,14 +36,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -147,8 +155,9 @@ public class MenuConfig {
             return order1 - order2;
         });
 
+        Map<List<String>, MenuItem> menusByIdPaths = new HashMap<>();
         for (Element rootElement : rootElements) {
-            loadMenuItems(rootElement, null);
+            loadMenuItems(rootElement, null, menusByIdPaths);
         }
     }
 
@@ -172,10 +181,12 @@ public class MenuConfig {
         }
     }
 
-    protected void loadMenuItems(Element parentElement, @Nullable MenuItem parentItem) {
+    protected void loadMenuItems(Element parentElement,
+                                 @Nullable MenuItem parentItem,
+                                 Map<List<String>, MenuItem> menusByIdPaths) {
         for (Element element : parentElement.elements()) {
             MenuItem menuItem = null;
-
+            boolean addItem = true;
             if ("menu".equals(element.getName())) {
                 String id = element.attributeValue("id");
 
@@ -183,7 +194,11 @@ public class MenuConfig {
                     log.warn("Invalid menu-config: 'id' attribute not defined");
                 }
 
-                menuItem = new MenuItem(parentItem, id);
+                List<String> itemIdPath = getItemIdPath(id, parentItem);
+                MenuItem existingMenuItem = menusByIdPaths.get(itemIdPath);
+
+                menuItem = existingMenuItem != null ? existingMenuItem : new MenuItem(parentItem, id);
+                addItem = existingMenuItem == null;
 
                 menuItem.setMenu(true);
                 menuItem.setDescriptor(element);
@@ -193,7 +208,9 @@ public class MenuConfig {
                 loadOpened(element, menuItem);
                 loadTitle(element, menuItem);
                 loadDescription(element, menuItem);
-                loadMenuItems(element, menuItem);
+                loadMenuItems(element, menuItem, menusByIdPaths);
+
+                menusByIdPaths.put(itemIdPath, menuItem);
             } else if ("item".equals(element.getName())) {
                 menuItem = createMenuItem(element, parentItem);
 
@@ -216,11 +233,26 @@ public class MenuConfig {
                 log.warn(String.format("Unknown tag '%s' in menu-config", element.getName()));
             }
 
-            if (parentItem != null) {
-                parentItem.getChildren().add(menuItem);
-            } else {
-                rootItems.add(menuItem);
+            if (addItem) {
+                if (parentItem != null) {
+                    parentItem.getChildren().add(menuItem);
+                } else {
+                    rootItems.add(menuItem);
+                }
             }
+        }
+    }
+
+    protected List<String> getItemIdPath(String id, @Nullable MenuItem parentItem) {
+        LinkedList<String> path = new LinkedList<>();
+        getItemIdPathRecursive(id, parentItem, path);
+        return path;
+    }
+
+    protected void getItemIdPathRecursive(String id, @Nullable MenuItem parentItem, LinkedList<String> resultPath) {
+        resultPath.push(id);
+        if (parentItem != null) {
+            getItemIdPathRecursive(parentItem.getId(), parentItem.getParent(), resultPath);
         }
     }
 

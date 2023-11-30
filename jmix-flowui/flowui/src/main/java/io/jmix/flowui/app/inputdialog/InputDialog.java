@@ -51,8 +51,10 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@ViewController("inputDialog")
+@ViewController(InputDialog.ID)
 public class InputDialog extends StandardView {
+
+    public static final String ID = "inputDialog";
 
     /**
      * A {@link CloseAction} used when the user clicks "OK" button and fields validation is successful.

@@ -2,8 +2,9 @@ package ${project_rootPackage}.security;
 
 import ${project_rootPackage}.entity.User;
 import io.jmix.core.security.user.UserAuthoritiesPopulator;
+import io.jmix.simplesecurity.SimpleSecurityProperties;
+import io.jmix.simplesecurity.role.GrantedAuthorityUtils;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,22 +16,28 @@ import java.util.List;
  */
 @Component
 public class AppUserAuthoritiesPopulator implements UserAuthoritiesPopulator<User> {
-    private static final String ROLE_PREFIX = "ROLE_";
 
-    private static final String ADMIN_ROLE = "ADMIN";
     private static final String USER_ROLE = "USER";
+
+    private GrantedAuthorityUtils grantedAuthorityUtils;
+
+    private SimpleSecurityProperties simpleSecurityProperties;
+
+    public AppUserAuthoritiesPopulator(GrantedAuthorityUtils grantedAuthorityUtils,
+                                       SimpleSecurityProperties simpleSecurityProperties) {
+        this.grantedAuthorityUtils = grantedAuthorityUtils;
+        this.simpleSecurityProperties = simpleSecurityProperties;
+    }
 
     @Override
     public void populateUserAuthorities(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(createRoleAuthority(USER_ROLE));
+        GrantedAuthority userRole = grantedAuthorityUtils.createRoleGrantedAuthority(USER_ROLE);
+        authorities.add(userRole);
         if ("admin".equals(user.getUsername())) {
-            authorities.add(createRoleAuthority(ADMIN_ROLE));
+            GrantedAuthority adminRole = grantedAuthorityUtils.createRoleGrantedAuthority(simpleSecurityProperties.getAdminRole());
+            authorities.add(adminRole);
         }
         user.setAuthorities(authorities);
-    }
-
-    private GrantedAuthority createRoleAuthority(String roleName) {
-        return new SimpleGrantedAuthority(ROLE_PREFIX + roleName);
     }
 }

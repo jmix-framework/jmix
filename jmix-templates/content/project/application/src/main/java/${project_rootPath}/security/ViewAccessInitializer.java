@@ -21,5 +21,6 @@ public class ViewAccessInitializer {
     @EventListener
     public void onApplicationEvent(ApplicationStartedEvent event) {
         viewAccessManager.grantAccess("USER", FlowuiViewIndex.editFilterGroup.viewIds());
+        viewAccessManager.grantAccess("USER", FlowuiViewIndex.inputDialog.viewId());
     }
 }

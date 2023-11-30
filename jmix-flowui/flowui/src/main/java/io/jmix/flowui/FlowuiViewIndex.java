@@ -20,6 +20,7 @@ import io.jmix.flowui.app.filter.condition.AddConditionView;
 import io.jmix.flowui.app.filter.condition.GroupFilterConditionDetailView;
 import io.jmix.flowui.app.filter.condition.JpqlFilterConditionDetailView;
 import io.jmix.flowui.app.filter.condition.PropertyFilterConditionDetailView;
+import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.view.index.ViewIndexEntry;
 import io.jmix.flowui.view.index.ViewIndexEntryGroup;
 
@@ -35,6 +36,7 @@ public interface FlowuiViewIndex {
     ViewIndexEntry propertyFilterConditionDetailView = new ViewIndexEntry(PropertyFilterConditionDetailView.ID);
     ViewIndexEntry groupFilterConditionDetailView = new ViewIndexEntry(GroupFilterConditionDetailView.ID);
     ViewIndexEntry jpqlFilterConditionDetailView = new ViewIndexEntry(JpqlFilterConditionDetailView.ID);
+    ViewIndexEntry inputDialog = new ViewIndexEntry(InputDialog.ID);
 
     ViewIndexEntryGroup editFilterGroup = new ViewIndexEntryGroup(List.of(
             addConditionView,

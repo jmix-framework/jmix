@@ -3,11 +3,10 @@ def handlers = []
 
 if (formType.name() != 'CUSTOM') {
     StringBuilder builder = new StringBuilder()
-    outputes.each { o ->
-        builder.append("\n\t@io.jmix.flowui.view.Subscribe(\"${o.id}Btn\")\n")
-        builder.append("\tprotected void on${o.id.capitalize()}BtnClick(com.vaadin.flow.component.ClickEvent<io.jmix.flowui.kit.component.button.JmixButton> event) {\n")
+    if (outputes.isEmpty()) {
+        builder.append("\n\t@io.jmix.flowui.view.Subscribe(id = \"completeBtn\", subject = \"clickListener\")\n")
+        builder.append("\tprotected void onCompleteBtnClick(com.vaadin.flow.component.ClickEvent<io.jmix.flowui.kit.component.button.JmixButton> event) {\n")
         builder.append("\t\tprocessFormContext.taskCompletion()\n")
-        builder.append("\t\t\t.withOutcome(\"${o.id}\")\n")
         builder.append("\t\t\t.saveInjectedProcessVariables()\n")
         builder.append("\t\t\t.complete();\n")
         if (formType.name() == 'ENTITY') {
@@ -15,7 +14,22 @@ if (formType.name() != 'CUSTOM') {
         }
         builder.append("\t\tcloseWithDefaultAction();\n")
         builder.append("\t}\n")
+    } else {
+        outputes.each { o ->
+            builder.append("\n\t@io.jmix.flowui.view.Subscribe(id = \"${o.id}Btn\", subject = \"clickListener\")\n")
+            builder.append("\tprotected void on${o.id.capitalize()}BtnClick(com.vaadin.flow.component.ClickEvent<io.jmix.flowui.kit.component.button.JmixButton> event) {\n")
+            builder.append("\t\tprocessFormContext.taskCompletion()\n")
+            builder.append("\t\t\t.withOutcome(\"${o.id}\")\n")
+            builder.append("\t\t\t.saveInjectedProcessVariables()\n")
+            builder.append("\t\t\t.complete();\n")
+            if (formType.name() == 'ENTITY') {
+                builder.append("\t\tdataManager.save(${entityVarName});\n")
+            }
+            builder.append("\t\tcloseWithDefaultAction();\n")
+            builder.append("\t}\n")
+        }
     }
+
     handlers << builder.toString()
 }
 handlers.each {%>$it<%}%>

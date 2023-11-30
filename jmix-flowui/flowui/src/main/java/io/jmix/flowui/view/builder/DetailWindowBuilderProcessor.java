@@ -105,9 +105,7 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
             return;
         }
 
-        if (detailView instanceof StandardDetailView<E> standardDetailView) {
-            standardDetailView.setReloadSaved(true);
-        }
+        detailView.setReloadSaved(true);
 
         dialog.addAfterCloseListener(closeEvent -> {
             if (closeEvent.closedWith(StandardOutcome.SAVE)) {

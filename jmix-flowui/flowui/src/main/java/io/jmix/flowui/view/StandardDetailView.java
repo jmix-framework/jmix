@@ -44,7 +44,6 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.list.EditAction;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.exception.GuiDevelopmentException;
@@ -860,17 +859,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return getEventBus().addListener(ValidationEvent.class, listener);
     }
 
-    /**
-     * @return true if edited entity should be reloaded after closeWithSave action, false otherwise
-     */
+    @Override
     public boolean isReloadSaved() {
         return reloadSaved;
     }
 
-    /**
-     * Sets the flag indicating whether edited entity should be reloaded after closeWithSave action.
-     * @param reloadSaved flag indicating whether edited entity should be reloaded after closeWithSave action
-     */
+    @Override
     public void setReloadSaved(boolean reloadSaved) {
         this.reloadSaved = reloadSaved;
     }

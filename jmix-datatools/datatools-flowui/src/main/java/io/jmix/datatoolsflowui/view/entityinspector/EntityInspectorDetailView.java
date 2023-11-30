@@ -112,6 +112,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     public void onInit(InitEvent event) {
         dataContext = dataComponents.createDataContext();
         getViewData().setDataContext(dataContext);
+        setReloadSaved(true);
     }
 
     @Override

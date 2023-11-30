@@ -138,12 +138,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private void onPostSaveEvent(DataContext.PostSaveEvent postSaveEvent) {
-        setModifiedAfterOpen(false);
-
-        if (!postSaveEvent.getSavedInstances().isEmpty()
-                && isShowSaveNotification()) {
+        if (isModifiedAfterOpen() && isShowSaveNotification()) {
             showSaveNotification();
         }
+        setModifiedAfterOpen(false);
     }
 
     private void showSaveNotification() {

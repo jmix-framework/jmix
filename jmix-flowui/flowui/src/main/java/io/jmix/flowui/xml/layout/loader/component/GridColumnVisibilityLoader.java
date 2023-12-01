@@ -19,7 +19,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 import io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.inittask.AssignGridColumnVisibilityPropertiesInitTask;
-import io.jmix.flowui.xml.layout.inittask.AssignGridColumnVisibilityPropertiesInitTask.ColumnItemParam;
+import io.jmix.flowui.xml.layout.inittask.AssignGridColumnVisibilityPropertiesInitTask.MenuItem;
 import io.jmix.flowui.xml.layout.inittask.AssignGridColumnVisibilityPropertiesInitTask.DeferredLoadContext;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
@@ -60,7 +60,7 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
 
         getLoaderSupport().loadString(element, "include", loadContext::setIncludeColumns);
         getLoaderSupport().loadString(element, "exclude", loadContext::setExcludeColumns);
-        loadColumnItemParams(element, loadContext);
+        loadMenuItems(element, loadContext);
 
         InitTask initTask = new AssignGridColumnVisibilityPropertiesInitTask(loadContext);
         getComponentContext().addInitTask(initTask);
@@ -72,21 +72,21 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
                         new GuiDevelopmentException("Grid id is required for column visibility component", context));
     }
 
-    protected void loadColumnItemParams(Element rootElement, DeferredLoadContext loadContext) {
-        Map<String, ColumnItemParam> columnItemParams = new LinkedHashMap<>();
+    protected void loadMenuItems(Element rootElement, DeferredLoadContext loadContext) {
+        Map<String, MenuItem> menuItems = new LinkedHashMap<>();
         for (Element element : rootElement.elements()) {
-            if (element.getName().equals("columnItemParam")) {
-                String ref = getLoaderSupport().loadString(element, "ref")
+            if (element.getName().equals("menuItem")) {
+                String refColumn = getLoaderSupport().loadString(element, "refColumn")
                         .orElseThrow(() ->
-                                new GuiDevelopmentException("Failed to find ref attribute for columnItem", context));
-                ColumnItemParam columnItemParam = new ColumnItemParam(ref);
-                getLoaderSupport().loadString(element, "text", columnItemParam::setText);
-                columnItemParams.put(ref, columnItemParam);
+                                new GuiDevelopmentException("Failed to find refColumn attribute for columnItem", context));
+                MenuItem menuItem = new MenuItem(refColumn);
+                getLoaderSupport().loadString(element, "text", menuItem::setText);
+                menuItems.put(refColumn, menuItem);
             } else {
                 throw new GuiDevelopmentException("Found invalid child element '%s' in gridColumnVisibility element"
                         .formatted(element.getName()), context);
             }
         }
-        loadContext.setColumnItemParams(columnItemParams);
+        loadContext.setMenuItems(menuItems);
     }
 }

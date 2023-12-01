@@ -58,20 +58,20 @@ public class AssignGridColumnVisibilityPropertiesInitTask implements ComponentLo
         JmixGridColumnVisibility columnVisibilityComponent = loadContext.getComponent();
         columnVisibilityComponent.setGrid(grid);
 
-        loadColumnItems(grid);
+        loadMenuItems(grid);
     }
 
-    protected void loadColumnItems(Grid<?> grid) {
+    protected void loadMenuItems(Grid<?> grid) {
         List<? extends DataGridColumn<?>> includeColumns = getColumnsToInclude(grid);
 
         JmixGridColumnVisibility columnVisibility = loadContext.getComponent();
-        Map<String, ColumnItemParam> columnItemParams = loadContext.getColumnItemParams();
+        Map<String, MenuItem> menuItems = loadContext.getMenuItems();
         for (DataGridColumn<?> column : includeColumns) {
-            ColumnItemParam columnItemParam = columnItemParams.get(column.getKey());
-            if (columnItemParam != null && !Strings.isNullOrEmpty(columnItemParam.getText())) {
-                columnVisibility.addColumnItem(column, columnItemParam.getText());
+            MenuItem menuItem = menuItems.get(column.getKey());
+            if (menuItem != null && !Strings.isNullOrEmpty(menuItem.getText())) {
+                columnVisibility.addMenuItem(column, menuItem.getText());
             } else {
-                columnVisibility.addColumnItem(column);
+                columnVisibility.addMenuItem(column);
             }
         }
     }
@@ -107,7 +107,7 @@ public class AssignGridColumnVisibilityPropertiesInitTask implements ComponentLo
         protected JmixGridColumnVisibility component;
         protected String includeColumns;
         protected String excludeColumns;
-        protected Map<String, ColumnItemParam> columnItemParams;
+        protected Map<String, MenuItem> menuItems;
 
         public DeferredLoadContext(JmixGridColumnVisibility component, String dataGridId) {
             this.component = component;
@@ -138,21 +138,21 @@ public class AssignGridColumnVisibilityPropertiesInitTask implements ComponentLo
             this.excludeColumns = excludeColumns;
         }
 
-        public Map<String, ColumnItemParam> getColumnItemParams() {
-            return columnItemParams;
+        public Map<String, MenuItem> getMenuItems() {
+            return menuItems;
         }
 
-        public void setColumnItemParams(Map<String, ColumnItemParam> columnItemParams) {
-            this.columnItemParams = columnItemParams;
+        public void setMenuItems(Map<String, MenuItem> menuItems) {
+            this.menuItems = menuItems;
         }
     }
 
-    public static class ColumnItemParam {
+    public static class MenuItem {
 
         protected String ref;
         protected String text;
 
-        public ColumnItemParam(String ref) {
+        public MenuItem(String ref) {
             this.ref = ref;
         }
 

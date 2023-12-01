@@ -48,7 +48,7 @@
                               showAllEnabled="true"
                               tabIndex="4"
                               whiteSpace="NOWRAP">
-            <columnItemParam ref="total" text="overall"/>
+            <menuItem refColumn="total" text="overall"/>
         </gridColumnVisibility>
         <gridColumnVisibility id="anotherColumnVisibility"
                               dataGrid="dataGrid"

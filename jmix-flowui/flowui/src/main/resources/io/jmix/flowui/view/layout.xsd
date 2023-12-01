@@ -3834,7 +3834,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
-                    <xs:element name="columnItemParam" minOccurs="0" type="gridColumnVisibilityItemParamType"/>
+                    <xs:element name="menuItem" minOccurs="0" type="gridColumnVisibilityMenuItemType"/>
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -3854,8 +3854,8 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="gridColumnVisibilityItemParamType">
-        <xs:attribute name="ref" type="xs:string" use="required"/>
+    <xs:complexType name="gridColumnVisibilityMenuItemType">
+        <xs:attribute name="refColumn" type="xs:string" use="required"/>
         <xs:attribute name="text" type="xs:string"/>
     </xs:complexType>
 

@@ -82,16 +82,16 @@ class GridColumnVisibilityXmlLoadTest extends FlowuiTestSpecification {
             !hideAllEnabled
             showAllEnabled
             whiteSpace == HasText.WhiteSpace.NOWRAP
-            getColumnItems().size() == 5
-            getColumnItem("number") != null
-            getColumnItem("number").checked
-            getColumnItem("number").text == "Number"
-            getColumnItem("dateTime") != null
-            getColumnItem("total") != null
-            !getColumnItem("total").checked
-            getColumnItem("total").text == "overall"
-            getColumnItem("amountColumn") != null
-            getColumnItem("generated") != null
+            getMenuItems().size() == 5
+            getMenuItem("number") != null
+            getMenuItem("number").checked
+            getMenuItem("number").text == "Number"
+            getMenuItem("dateTime") != null
+            getMenuItem("total") != null
+            !getMenuItem("total").checked
+            getMenuItem("total").text == "overall"
+            getMenuItem("amountColumn") != null
+            getMenuItem("generated") != null
         }
     }
 
@@ -103,9 +103,9 @@ class GridColumnVisibilityXmlLoadTest extends FlowuiTestSpecification {
         then: "gridColumnVisibility include attribute is loaded"
         verifyAll(columnVisibilityView.anotherColumnVisibility) {
             id.get() == "anotherColumnVisibility"
-            getColumnItems().size() == 2
-            getColumnItem("number") != null
-            getColumnItem("total") != null
+            getMenuItems().size() == 2
+            getMenuItem("number") != null
+            getMenuItem("total") != null
         }
     }
 }

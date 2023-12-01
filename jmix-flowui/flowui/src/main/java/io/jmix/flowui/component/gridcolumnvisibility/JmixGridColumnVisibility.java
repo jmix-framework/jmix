@@ -72,7 +72,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     protected Grid<?> grid;
 
     protected Header header;
-    protected List<ColumnItemImpl> columnItems = new ArrayList<>();
+    protected List<MenuItemImpl> menuItems = new ArrayList<>();
 
     public JmixGridColumnVisibility() {
         dropdownItem = getContent().addItem("");
@@ -154,7 +154,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         Preconditions.checkNotNullArgument(grid);
         checkGridType(grid);
 
-        removeAllColumnItems();
+        removeAllMenuItems();
         this.grid = grid;
     }
 
@@ -172,17 +172,17 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Adds new column item, which allows to toggle visibility of specified column, to the end of dropdown menu.
+     * Adds new menu item, which allows to toggle visibility of specified column, to the end of dropdown menu.
      * Item text will be copied from column header text.
      *
      * @param column column to manage
      */
-    public void addColumnItem(DataGridColumn<?> column) {
+    public void addMenuItem(DataGridColumn<?> column) {
         Preconditions.checkNotNullArgument(column);
         checkColumnOwner(column);
 
         String text = getColumnHeaderText(column);
-        addColumnItemInternal(column, text, null);
+        addMenuItemInternal(column, text, null);
     }
 
     protected void checkColumnOwner(DataGridColumn<?> column) {
@@ -205,7 +205,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         }
     }
 
-    protected void addColumnItemInternal(DataGridColumn<?> column, String text, @Nullable Integer index) {
+    protected void addMenuItemInternal(DataGridColumn<?> column, String text, @Nullable Integer index) {
         JmixMenuItem item;
         if (index == null) {
             item = dropdownItem.getSubMenu().addItem(text);
@@ -217,11 +217,11 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         item.setCheckable(true);
         item.setKeepOpen(true);
 
-        ColumnItemImpl columnItem = new ColumnItemImpl(column, item);
+        MenuItemImpl menuItem = new MenuItemImpl(column, item);
         if (index == null) {
-            columnItems.add(columnItem);
+            menuItems.add(menuItem);
         } else {
-            columnItems.add(index, columnItem);
+            menuItems.add(index, menuItem);
         }
 
         header.refresh();
@@ -233,56 +233,56 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
      * @param column column to manage
      * @param text   item text
      */
-    public void addColumnItem(DataGridColumn<?> column, String text) {
+    public void addMenuItem(DataGridColumn<?> column, String text) {
         Preconditions.checkNotNullArgument(column);
         Preconditions.checkNotNullArgument(text);
         checkColumnOwner(column);
 
-        addColumnItemInternal(column, text, null);
+        addMenuItemInternal(column, text, null);
     }
 
     /**
-     * Adds new column item, which allows to toggle visibility of specified column, to dropdown menu.
+     * Adds new menu item, which allows to toggle visibility of specified column, to dropdown menu.
      * The item will be placed using specified index. Item text will be copied from column header text.
      *
      * @param column column to manage
      * @param index  index of new item
      */
-    public void addColumnItemAtIndex(DataGridColumn<?> column, int index) {
+    public void addMenuItemAtIndex(DataGridColumn<?> column, int index) {
         Preconditions.checkNotNullArgument(column);
         checkColumnOwner(column);
 
         String text = getColumnHeaderText(column);
-        addColumnItemInternal(column, text, index);
+        addMenuItemInternal(column, text, index);
     }
 
     /**
-     * Adds new column item, which allows to toggle visibility of specified column, to dropdown menu.
+     * Adds new menu item, which allows to toggle visibility of specified column, to dropdown menu.
      * The item will be placed using specified index.
      *
      * @param column column to manage
      * @param index  index of new item
      * @param text   item text
      */
-    public void addColumnItemAtIndex(DataGridColumn<?> column, String text, int index) {
+    public void addMenuItemAtIndex(DataGridColumn<?> column, String text, int index) {
         Preconditions.checkNotNullArgument(column);
         Preconditions.checkNotNullArgument(text);
         checkColumnOwner(column);
 
-        addColumnItemInternal(column, text, index);
+        addMenuItemInternal(column, text, index);
     }
 
     /**
-     * Adds new column item, which allows to toggle visibility of the column with specified key,
+     * Adds new menu item, which allows to toggle visibility of the column with specified key,
      * to the end of dropdown menu. Item text will be copied from column header text.
      *
      * @param columnKey key of a column to manage
      */
-    public void addColumnItem(String columnKey) {
+    public void addMenuItem(String columnKey) {
         Preconditions.checkNotNullArgument(columnKey);
 
         DataGridColumn<?> column = getColumnByKey(columnKey);
-        addColumnItem(column);
+        addMenuItem(column);
     }
 
     protected DataGridColumn<?> getColumnByKey(String columnKey) {
@@ -297,48 +297,48 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Adds new column item, which allows to toggle visibility of the column with specified key,
+     * Adds new menu item, which allows to toggle visibility of the column with specified key,
      * to the end of dropdown menu.
      *
      * @param columnKey key of a column to manage
      * @param text      item text
      */
-    public void addColumnItem(String columnKey, String text) {
+    public void addMenuItem(String columnKey, String text) {
         Preconditions.checkNotNullArgument(columnKey);
         Preconditions.checkNotNullArgument(text);
 
         DataGridColumn<?> column = getColumnByKey(columnKey);
-        addColumnItem(column, text);
+        addMenuItem(column, text);
     }
 
     /**
-     * Adds new column item, which allows to toggle visibility of the column with specified key, to dropdown menu.
+     * Adds new menu item, which allows to toggle visibility of the column with specified key, to dropdown menu.
      * The item will be placed using specified index. Item text will be copied from column header text.
      *
      * @param columnKey key of a column to manage
      * @param index     index of new item
      */
-    public void addColumnItemAtIndex(String columnKey, int index) {
+    public void addMenuItemAtIndex(String columnKey, int index) {
         Preconditions.checkNotNullArgument(columnKey);
 
         DataGridColumn<?> column = getColumnByKey(columnKey);
-        addColumnItemAtIndex(column, index);
+        addMenuItemAtIndex(column, index);
     }
 
     /**
-     * Adds new column item, which allows to toggle visibility of the column with specified key, to dropdown menu.
+     * Adds new menu item, which allows to toggle visibility of the column with specified key, to dropdown menu.
      * The item will be placed using specified index.
      *
      * @param columnKey key of a column to manage
      * @param text      item text
      * @param index     index of new item
      */
-    public void addColumnItemAtIndex(String columnKey, String text, int index) {
+    public void addMenuItemAtIndex(String columnKey, String text, int index) {
         Preconditions.checkNotNullArgument(columnKey);
         Preconditions.checkNotNullArgument(text);
 
         DataGridColumn<?> column = getColumnByKey(columnKey);
-        addColumnItemAtIndex(column, text, index);
+        addMenuItemAtIndex(column, text, index);
     }
 
     /**
@@ -374,74 +374,74 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * Removes column visibility toggle item from dropdown menu by column key of referenced column.
+     * Removes menu item from dropdown menu by column key of referenced column.
      *
      * @param columnKey column key of data grid column
      */
-    public void removeColumnItem(String columnKey) {
+    public void removeMenuItem(String columnKey) {
         Preconditions.checkNotNullArgument(columnKey);
 
-        int removeItemIndex = getColumnItemIndexByColumnKey(columnKey);
+        int removeItemIndex = getMenuItemIndexByColumnKey(columnKey);
 
         if (removeItemIndex == -1) {
             throw new IllegalArgumentException("Column item for column '%s' doesn't exist".formatted(columnKey));
         }
-        ColumnItemImpl columnItem = columnItems.get(removeItemIndex);
-        removeColumnItemFromMenu(columnItem);
-        columnItems.remove(removeItemIndex);
+        MenuItemImpl menuItem = menuItems.get(removeItemIndex);
+        removeMenuItemFromMenu(menuItem);
+        menuItems.remove(removeItemIndex);
         header.refresh();
     }
 
-    protected void removeColumnItemFromMenu(ColumnItemImpl columnItem) {
-        columnItem.removeColumnListeners();
-        dropdownItem.getSubMenu().remove(columnItem.getMenuItem());
+    protected void removeMenuItemFromMenu(MenuItemImpl menuItem) {
+        menuItem.removeColumnListeners();
+        dropdownItem.getSubMenu().remove(menuItem.getMenuItem());
     }
 
     /**
-     * @return index of column item or -1 if no item was found for the column key
+     * @return index of menu item or -1 if no item was found for the column key
      */
-    protected int getColumnItemIndexByColumnKey(String columnKey) {
-        return IntStream.range(0, columnItems.size())
-                .filter(i -> columnItems.get(i).getColumn().getKey().equals(columnKey))
+    protected int getMenuItemIndexByColumnKey(String columnKey) {
+        return IntStream.range(0, menuItems.size())
+                .filter(i -> menuItems.get(i).getColumn().getKey().equals(columnKey))
                 .findAny()
                 .orElse(-1);
     }
 
     /**
-     * Removes column visibility toggle item from dropdown menu for specified referenced column.
+     * Removes menu item from dropdown menu for specified referenced column.
      *
      * @param column referenced data grid column
      */
-    public void removeColumnItem(DataGridColumn<?> column) {
+    public void removeMenuItem(DataGridColumn<?> column) {
         Preconditions.checkNotNullArgument(column);
         checkColumnOwner(column);
 
-        removeColumnItem(column.getKey());
+        removeMenuItem(column.getKey());
     }
 
     /**
      * @param columnKey column key of referenced data grid column
-     * @return column visibility toggle item by column key of referenced data grid column
+     * @return menu item by column key of referenced data grid column
      */
     @Nullable
-    public ColumnItem getColumnItem(String columnKey) {
-        int columnItemIndex = getColumnItemIndexByColumnKey(columnKey);
-        return columnItemIndex != -1 ? columnItems.get(columnItemIndex) : null;
+    public MenuItem getMenuItem(String columnKey) {
+        int menuItemIndex = getMenuItemIndexByColumnKey(columnKey);
+        return menuItemIndex != -1 ? menuItems.get(menuItemIndex) : null;
     }
 
     /**
-     * @return all column visibility toggle items
+     * @return all menu items
      */
-    public List<ColumnItem> getColumnItems() {
-        return Collections.unmodifiableList(columnItems);
+    public List<MenuItem> getMenuItems() {
+        return Collections.unmodifiableList(menuItems);
     }
 
     /**
-     * Removes all column visibility toggle items
+     * Removes all menu items
      */
-    public void removeAllColumnItems() {
-        columnItems.forEach(this::removeColumnItemFromMenu);
-        columnItems.clear();
+    public void removeAllMenuItems() {
+        menuItems.forEach(this::removeMenuItemFromMenu);
+        menuItems.clear();
         header.refresh();
     }
 
@@ -497,14 +497,14 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         }
 
         protected void onShowAllClick(ClickEvent<?> event) {
-            for (ColumnItemImpl columnItem : columnItems) {
-                DataGridColumn<?> column = columnItem.getColumn();
+            for (MenuItemImpl menuItem : menuItems) {
+                DataGridColumn<?> column = menuItem.getColumn();
                 column.setVisible(true);
             }
         }
 
         public void refresh() {
-            if (showAllItem == null && hideAllItem == null || columnItems.isEmpty()) {
+            if (showAllItem == null && hideAllItem == null || menuItems.isEmpty()) {
                 if (separatorItem != null) {
                     dropdownItem.getSubMenu().remove(separatorItem);
                     separatorItem = null;
@@ -555,8 +555,8 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         }
 
         protected void onHideAllClick(ClickEvent<?> event) {
-            for (ColumnItemImpl columnItem : columnItems) {
-                DataGridColumn<?> column = columnItem.getColumn();
+            for (MenuItemImpl menuItem : menuItems) {
+                DataGridColumn<?> column = menuItem.getColumn();
                 column.setVisible(false);
             }
         }
@@ -575,7 +575,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     /**
      * Represents an item which allows to toggle column visibility.
      */
-    public interface ColumnItem {
+    public interface MenuItem {
 
         /**
          * @return referenced data grid column
@@ -605,13 +605,13 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         void toggleVisibility();
     }
 
-    protected static class ColumnItemImpl implements ColumnItem {
+    protected static class MenuItemImpl implements MenuItem {
 
         protected DataGridColumn<?> column;
         protected JmixMenuItem menuItem;
         protected Registration columnVisibilityChangedRegistration;
 
-        protected ColumnItemImpl(DataGridColumn<?> column, JmixMenuItem menuItem) {
+        protected MenuItemImpl(DataGridColumn<?> column, JmixMenuItem menuItem) {
             this.column = column;
             this.columnVisibilityChangedRegistration =
                     column.addColumnVisibilityChangedListener(e -> setChecked(e.isVisible()));
@@ -644,7 +644,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
             return menuItem.getText();
         }
 
-        public JmixMenuItem getMenuItem() {
+        protected JmixMenuItem getMenuItem() {
             return menuItem;
         }
 

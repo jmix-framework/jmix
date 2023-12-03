@@ -16,6 +16,8 @@
 
 package io.jmix.data;
 
+import java.util.Objects;
+
 /**
  * Represents sequence with name, store, start value and increment.
  * Default data store for sequence is MAIN data store.
@@ -64,5 +66,22 @@ public class Sequence {
 
     public long getIncrement() {
         return increment;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Sequence sequence = (Sequence) o;
+        return Objects.equals(name, sequence.name) && Objects.equals(dataStore, sequence.dataStore);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, dataStore);
     }
 }

@@ -56,8 +56,8 @@ public class CorsProperties {
     List<String> allowedMethods;
 
     /**
-     * <p>A list of response headers other than simple headers (i.e. Cache-Control, Content-Language, Content-Type,
-     *     Expires, Last-Modified, or Pragma) that an actual response might have and can be exposed.</p>
+     * A list of response headers other than simple headers (i.e. Cache-Control, Content-Language, Content-Type,
+     *     Expires, Last-Modified, or Pragma) that an actual response might have and can be exposed.<br/>
      *
      * <p>The special value "*" allows all headers to be exposed for non-credentialed requests.</p>
      *

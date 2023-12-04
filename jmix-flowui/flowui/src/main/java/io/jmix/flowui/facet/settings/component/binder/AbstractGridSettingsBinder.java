@@ -61,6 +61,9 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                 if (sColumn.getWidth() != null) {
                     column.setWidth(sColumn.getWidth());
                 }
+                if (sColumn.getVisible() != null) {
+                    column.setVisible(sColumn.getVisible());
+                }
                 newColumnsOrder.add(column);
             }
             component.setColumnOrder((List) newColumnsOrder);
@@ -206,6 +209,9 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
             if (!Objects.equals(column.getWidth(), sColumn.getWidth())) {
                 return true;
             }
+            if (!Objects.equals(column.isVisible(), sColumn.getVisible())) {
+                return true;
+            }
         }
         return false;
     }
@@ -222,6 +228,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                     DataGridSettings.Column sColumn = new DataGridSettings.Column();
                     sColumn.setKey(column.getKey());
                     sColumn.setWidth(column.getWidth());
+                    sColumn.setVisible(column.isVisible());
                     return sColumn;
                 }).toList();
 

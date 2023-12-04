@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mainView xmlns="http://jmix.io/schema/flowui/main-view"
+          title="MainTopView">
+    <actions>
+        <action id="logout"
+                type="logout"/>
+    </actions>
+    <appLayout classNames="jmix-main-view-top-menu-app-layout">
+        <navigationBar>
+            <header classNames="jmix-main-view-top-menu-header">
+                <image id="logoImage"
+                       resource="icons/icon.png"
+                       classNames="jmix-main-view-top-menu-logo"/>
+                <nav id="navigation" width="100%">
+                    <navigationMenuBar id="navigationMenuBar" width="100%"/>
+                </nav>
+                <hbox classNames="jmix-top-menu-bar-user-box">
+                    <userIndicator id="userIndicator"/>
+                    <button id="logoutButton"
+                            action="logout"
+                            classNames="jmix-logout-button"/>
+                </hbox>
+            </header>
+        </navigationBar>
+        <initialLayout/>
+    </appLayout>
+</mainView>

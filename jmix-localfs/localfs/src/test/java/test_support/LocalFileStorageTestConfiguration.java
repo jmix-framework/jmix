@@ -18,6 +18,8 @@ package test_support;
 
 import io.jmix.core.FileStorage;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
+import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.localfs.LocalFileStorageConfiguration;
 import io.jmix.localfs.LocalFileStorage;
 import org.springframework.cache.CacheManager;
@@ -26,8 +28,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
-
-import java.net.URI;
 
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
@@ -42,5 +42,10 @@ public class LocalFileStorageTestConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean
+    public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
+        return new LocalApplicationEventChannelSupplier();
     }
 }

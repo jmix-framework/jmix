@@ -29,6 +29,7 @@
 @import url('component/jmix-generic-filter.css');
 @import url('component/jmix-property-filter.css');
 @import url('component/jmix-group-filter.css');
+@import url('component/jmix-grid-column-visibility.css');
 @import url('component/jmix-menu-search-field.css');
 
 @import url('component/vaadin-form-layout.css');

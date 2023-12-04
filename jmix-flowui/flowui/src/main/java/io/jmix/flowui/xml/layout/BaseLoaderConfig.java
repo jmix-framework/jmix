@@ -97,6 +97,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("genericFilter", GenericFilterLoader.class);
         loaders.put("codeEditor", CodeEditorLoader.class);
         loaders.put("virtualList", VirtualListLoader.class);
+        loaders.put("gridColumnVisibility", GridColumnVisibilityLoader.class);
         loaders.put("menuSearchField", MenuSearchFieldLoader.class);
 
         /* HTML components */

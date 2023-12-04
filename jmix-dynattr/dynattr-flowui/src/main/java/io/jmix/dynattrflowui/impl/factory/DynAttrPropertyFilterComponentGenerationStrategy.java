@@ -21,10 +21,10 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Range;
@@ -80,9 +80,11 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
                                                             Actions actions,
                                                             AttributeDependencies attributeDependencies,
                                                             FormatStringsRegistry formatStringsRegistry,
-                                                            ApplicationContext applicationContext) {
+                                                            ApplicationContext applicationContext,
+                                                            DatatypeRegistry datatypeRegistry) {
         super(messages, uiComponents, dynamicModelMetadata, metadata, msgBundleTools, optionsLoader,
-                attributeValidators, viewRegistry, actions, attributeDependencies, formatStringsRegistry, applicationContext);
+                attributeValidators, viewRegistry, actions, attributeDependencies,
+                formatStringsRegistry, applicationContext, datatypeRegistry);
     }
 
 
@@ -119,7 +121,7 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
         } else if (attribute.isCollection() || type == PropertyFilter.Operation.Type.LIST) {
             resultComponent = createCollectionField(context, attribute);
         } else if (attribute.getDataType() == ENTITY) {
-            resultComponent = createClassField(context, attribute);
+            resultComponent = createEntityField(context, attribute);
         } else if (type == PropertyFilter.Operation.Type.INTERVAL) {
             resultComponent = createIntervalField(context);
         } else {

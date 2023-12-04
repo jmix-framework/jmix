@@ -5,6 +5,8 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
+import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.CoreSecurityConfiguration;
 import org.springframework.cache.CacheManager;
@@ -48,5 +50,10 @@ public class TestBaseConfiguration {
 
     @EnableWebSecurity
     static class TestSecurityConfiguration extends CoreSecurityConfiguration {
+    }
+
+    @Bean
+    public ClusterApplicationEventChannelSupplier baseClusterApplicationEventChannelSupplier() {
+        return new LocalApplicationEventChannelSupplier();
     }
 }

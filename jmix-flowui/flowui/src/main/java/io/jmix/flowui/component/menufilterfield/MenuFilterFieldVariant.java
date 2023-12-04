@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.menusearchfield;
+package io.jmix.flowui.component.menufilterfield;
 
 import com.vaadin.flow.component.shared.ThemeVariant;
 
 /**
- * Set of theme variants applicable for the {@link MenuSearchField} component.
+ * Set of theme variants applicable for the {@link MenuFilterField} component.
  */
-public enum MenuSearchFieldVariant implements ThemeVariant {
+public enum MenuFilterFieldVariant implements ThemeVariant {
 
     SMALL("small"),
     ALIGN_CENTER("align-center"),
@@ -31,7 +31,7 @@ public enum MenuSearchFieldVariant implements ThemeVariant {
 
     private final String variant;
 
-    MenuSearchFieldVariant(String variant) {
+    MenuFilterFieldVariant(String variant) {
         this.variant = variant;
     }
 

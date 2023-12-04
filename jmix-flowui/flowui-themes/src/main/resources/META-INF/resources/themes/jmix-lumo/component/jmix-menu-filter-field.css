@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.flowui.component.menusearchfield;
-
-import org.springframework.lang.NonNullApi;
+.jmix-main-view-navigation > .jmix-menu-filter-field {
+    margin: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-s)  var(--lumo-space-m);
+}

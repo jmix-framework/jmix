@@ -19,7 +19,7 @@
     <layout>
         <listMenu id="listMenu"/>
 
-        <menuSearchField id="menuSearchField"
+        <menuFilterField id="menuFilterField"
                          autofocus="true"
                          autoselect="true"
                          classNames="cssClassName1, cssClassName2"
@@ -52,6 +52,6 @@
                      manual="true"
                      opened="true"
                      position="BOTTOM"/>
-        </menuSearchField>
+        </menuFilterField>
     </layout>
 </view>

@@ -18,7 +18,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.menusearchfield.MenuSearchField;
+import io.jmix.flowui.component.menufilterfield.MenuFilterField;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.menu.provider.HasMenuItemProvider;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -26,13 +26,13 @@ import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
 import java.util.Optional;
 
-public class MenuSearchFieldLoader extends AbstractComponentLoader<MenuSearchField> {
+public class MenuFilterFieldLoader extends AbstractComponentLoader<MenuFilterField> {
 
     protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
-    protected MenuSearchField createComponent() {
-        return factory.create(MenuSearchField.class);
+    protected MenuFilterField createComponent() {
+        return factory.create(MenuFilterField.class);
     }
 
     @Override
@@ -70,11 +70,11 @@ public class MenuSearchFieldLoader extends AbstractComponentLoader<MenuSearchFie
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
         loadBoolean(element, "readOnly", resultComponent::setReadOnly);
-        loadEnum(element, MenuSearchField.SearchMode.class, "searchMode", resultComponent::setSearchMode);
+        loadEnum(element, MenuFilterField.SearchMode.class, "searchMode", resultComponent::setSearchMode);
 
         String menuId = loadString(element, "menu")
                 .orElseThrow(() ->
-                        new GuiDevelopmentException("Menu id is required for menu search field component", context));
+                        new GuiDevelopmentException("Menu id is required for menu filter field component", context));
 
         Optional<String> valueOptional = loadString(element, "value");
 

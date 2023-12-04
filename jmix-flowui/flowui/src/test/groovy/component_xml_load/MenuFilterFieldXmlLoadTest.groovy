@@ -17,28 +17,27 @@
 package component_xml_load
 
 import com.vaadin.flow.component.shared.Tooltip
-import com.vaadin.flow.component.textfield.Autocapitalize
 import com.vaadin.flow.data.value.ValueChangeMode
-import component_xml_load.screen.MenuSearchFieldView
-import io.jmix.flowui.component.menusearchfield.MenuSearchField
+import component_xml_load.screen.MenuFilterFieldView
+import io.jmix.flowui.component.menufilterfield.MenuFilterField
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
-@SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menusearchfield/menu.xml"])
-class MenuSearchFieldXmlLoadTest extends FlowuiTestSpecification {
+@SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menufilterfield/menu.xml"])
+class MenuFilterFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
         registerViewBasePackages("component_xml_load.screen")
     }
 
-    def "Load MenuSearchField component from XML"() {
-        when: "Open the MenuSearchFieldView"
-        def menuSearchFieldView = navigateToView(MenuSearchFieldView.class)
+    def "Load MenuFilterField component from XML"() {
+        when: "Open the MenuFilterFieldView"
+        def menuFilterFieldView = navigateToView(MenuFilterFieldView.class)
 
-        then: "MenuSearchField attributes will be loaded"
-        verifyAll(menuSearchFieldView.menuSearchField) {
-            id.get() == "menuSearchField"
+        then: "MenuFilterField attributes will be loaded"
+        verifyAll(menuFilterFieldView.menuFilterField) {
+            id.get() == "menuFilterField"
             autofocus
             autoselect
             classNames.containsAll(["cssClassName1", "cssClassName2"])
@@ -54,7 +53,7 @@ class MenuSearchFieldXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             placeholder == "placeholderString"
             readOnly
-            searchMode == MenuSearchField.SearchMode.CASE_SENSITIVE
+            searchMode == MenuFilterField.SearchMode.CASE_SENSITIVE
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
@@ -62,7 +61,7 @@ class MenuSearchFieldXmlLoadTest extends FlowuiTestSpecification {
             valueChangeTimeout == 50
             visible
             width == "100px"
-            menuItemProvider == menuSearchFieldView.listMenu.menuItemProvider
+            menuItemProvider == menuFilterFieldView.listMenu.menuItemProvider
 
             tooltip.text == "tooltipText"
             tooltip.focusDelay == 1

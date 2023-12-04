@@ -2068,7 +2068,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="menuSearchFieldThemeNames">
+    <xs:simpleType name="menuFilterFieldThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -3877,8 +3877,8 @@
         <xs:attribute name="text" type="xs:string"/>
     </xs:complexType>
 
-<!--    MenuSearchField-->
-    <xs:complexType name="menuSearchFieldComponent">
+<!--    MenuFilterField-->
+    <xs:complexType name="menuFilterFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
@@ -3891,10 +3891,10 @@
                 <xs:attribute name="value" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="autoselect" type="xs:boolean"/>
-                <xs:attribute name="themeNames" type="menuSearchFieldThemeNames"/>
+                <xs:attribute name="themeNames" type="menuFilterFieldThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="menu" type="xs:string" use="required"/>
-                <xs:attribute name="searchMode" type="menuSearchFieldSearchMode"/>
+                <xs:attribute name="searchMode" type="menuFilterFieldSearchMode"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -3912,7 +3912,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:simpleType name="menuSearchFieldSearchMode">
+    <xs:simpleType name="menuFilterFieldSearchMode">
         <xs:restriction base="xs:string">
             <xs:enumeration value="CASE_SENSITIVE"/>
             <xs:enumeration value="CASE_INSENSITIVE"/>
@@ -4462,7 +4462,7 @@
                 <xs:element name="codeEditor" type="codeEditorComponent"/>
                 <xs:element name="virtualList" type="virtualListComponent"/>
                 <xs:element name="gridColumnVisibility" type="gridColumnVisibilityComponent"/>
-                <xs:element name="menuSearchField" type="menuSearchFieldComponent"/>
+                <xs:element name="menuFilterField" type="menuFilterFieldComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

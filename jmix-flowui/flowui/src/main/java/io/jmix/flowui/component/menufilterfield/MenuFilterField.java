@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.menusearchfield;
+package io.jmix.flowui.component.menufilterfield;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Composite;
@@ -54,12 +54,12 @@ import java.util.function.Function;
  * A component which allows to filter items of a menu (for example, {@link io.jmix.flowui.kit.component.main.ListMenu})
  * by their text labels using entered value
  */
-public class MenuSearchField extends Composite<TextField>
-        implements HasHelper, HasPrefix, HasSuffix, HasValueChangeMode, HasThemeVariant<MenuSearchFieldVariant>,
+public class MenuFilterField extends Composite<TextField>
+        implements HasHelper, HasPrefix, HasSuffix, HasValueChangeMode, HasThemeVariant<MenuFilterFieldVariant>,
         HasTitle, HasClearButton, HasAutofocus, HasEnabled, HasLabel, HasSize, HasStyle, HasTooltip,
-        InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuSearchField>, HasPlaceholder {
+        InputNotifier, KeyNotifier, HasAriaLabel, Focusable<MenuFilterField>, HasPlaceholder {
 
-    protected static final String SEARCH_FIELD_STYLE_NAME = "jmix-menu-search-field";
+    protected static final String FILTER_FIELD_STYLE_NAME = "jmix-menu-filter-field";
 
     protected MenuItemProvider<?> menuItemProvider;
     protected MenuItemsTransformer<?> itemsTransformer;
@@ -70,7 +70,7 @@ public class MenuSearchField extends Composite<TextField>
     protected TextField initContent() {
         TextField field = super.initContent();
         field.addValueChangeListener(this::onValueChange);
-        field.addClassName(SEARCH_FIELD_STYLE_NAME);
+        field.addClassName(FILTER_FIELD_STYLE_NAME);
 
         return field;
     }

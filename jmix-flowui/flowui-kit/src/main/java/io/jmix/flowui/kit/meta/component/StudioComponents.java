@@ -2694,10 +2694,10 @@ public interface StudioComponents {
     JmixMenuBar gridColumnVisibility();
 
     @StudioComponent(
-            name = "MenuSearchField",
-            classFqn = "io.jmix.flowui.component.menusearchfield.MenuSearchField",
+            name = "MenuFilterField",
+            classFqn = "io.jmix.flowui.component.menufilterfield.MenuFilterField",
             category = "Components",
-            xmlElement = "menuSearchField",
+            xmlElement = "menuFilterField",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -2729,7 +2729,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "searchMode", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.component.menusearchfield.MenuSearchField$SearchMode",
+                            classFqn = "io.jmix.flowui.component.menufilterfield.MenuFilterField$SearchMode",
                             defaultValue = "CASE_INSENSITIVE", options = {"CASE_INSENSITIVE", "CASE_SENSITIVE"}),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
@@ -2746,5 +2746,5 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
             }
     )
-    TextField menuSearchField();
+    TextField menuFilterField();
 }

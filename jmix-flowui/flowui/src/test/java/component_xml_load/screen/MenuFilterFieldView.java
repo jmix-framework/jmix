@@ -18,19 +18,19 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.main.JmixListMenu;
-import io.jmix.flowui.component.menusearchfield.MenuSearchField;
+import io.jmix.flowui.component.menufilterfield.MenuFilterField;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
-@Route(value = "menu-search-field-view")
-@ViewController("MenuSearchFieldView")
-@ViewDescriptor("menu-search-field-view.xml")
-public class MenuSearchFieldView extends StandardView {
+@Route(value = "menu-filter-field-view")
+@ViewController("MenuFilterFieldView")
+@ViewDescriptor("menu-filter-field-view.xml")
+public class MenuFilterFieldView extends StandardView {
 
     @ViewComponent
-    public MenuSearchField menuSearchField;
+    public MenuFilterField menuFilterField;
 
     @ViewComponent
     public JmixListMenu listMenu;

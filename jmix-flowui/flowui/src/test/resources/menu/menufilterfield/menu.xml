@@ -22,7 +22,7 @@
           description="Application"
           icon="TABLE">
         <item id="Application.view"
-              view="MenuSearchFieldView"
+              view="MenuFilterFieldView"
               title="Application view"
               description="app view"
               icon="ABACUS"
@@ -30,14 +30,14 @@
         <menu id="nestedMenu"
               title="Nested menu">
             <item id="Nested.view"
-                  view="MenuSearchFieldView"
+                  view="MenuFilterFieldView"
                   title="Nested view"/>
         </menu>
     </menu>
     <menu id="administration"
           title="Administration">
         <item id="Administration.view"
-              view="MenuSearchFieldView"
+              view="MenuFilterFieldView"
               title="Administration view"/>
     </menu>
 </menu-config>

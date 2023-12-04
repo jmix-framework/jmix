@@ -103,7 +103,6 @@ public class ShowEntityInfoAction extends SecuredListAction implements Action.Ex
     @Override
     protected boolean isApplicable() {
         return super.isApplicable()
-                && target != null
                 && target.getSelected().size() == 1;
     }
 }

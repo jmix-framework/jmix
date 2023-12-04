@@ -33,6 +33,7 @@
     </actions>
     <layout expand="mainContent" width="40em">
         <div id="tipLabel"
+             themeNames="badge normal"
              classNames="report-wizard-tip-label"
              width="100%"/>
         <hbox id="mainContent" width="100%">

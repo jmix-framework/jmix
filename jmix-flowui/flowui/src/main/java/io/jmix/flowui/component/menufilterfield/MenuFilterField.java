@@ -64,7 +64,7 @@ public class MenuFilterField extends Composite<TextField>
     protected MenuItemProvider<?> menuItemProvider;
     protected MenuItemsTransformer<?> itemsTransformer;
 
-    protected SearchMode searchMode = SearchMode.CASE_INSENSITIVE;
+    protected FilterMode filterMode = FilterMode.CASE_INSENSITIVE;
 
     @Override
     protected TextField initContent() {
@@ -77,7 +77,7 @@ public class MenuFilterField extends Composite<TextField>
 
     protected void onValueChange(HasValue.ValueChangeEvent<String> event) {
         if (menuItemProvider != null) {
-            itemsTransformer.setSearchString(event.getValue());
+            itemsTransformer.setFilterString(event.getValue());
             menuItemProvider.load();
         }
     }
@@ -99,7 +99,7 @@ public class MenuFilterField extends Composite<TextField>
     public <T extends MenuItem> void setMenuItemProvider(@Nullable MenuItemProvider<T> menuItemProvider) {
         this.menuItemProvider = menuItemProvider;
         if (menuItemProvider != null) {
-            MenuItemsTransformer<T> itemsTransformer = new MenuItemsTransformer<>(searchMode);
+            MenuItemsTransformer<T> itemsTransformer = new MenuItemsTransformer<>(filterMode);
             menuItemProvider.addMenuItemsTransformer(itemsTransformer);
             this.itemsTransformer = itemsTransformer;
         } else {
@@ -128,16 +128,16 @@ public class MenuFilterField extends Composite<TextField>
     }
 
     /**
-     * Sets new search string value.
+     * Sets new filter string value.
      *
-     * @param value string to search
+     * @param value string to filter by
      */
     public void setValue(@Nullable String value) {
         getContent().setValue(value);
     }
 
     /**
-     * @return current search string value
+     * @return current filter string value
      */
     @Nullable
     public String getValue() {
@@ -178,54 +178,54 @@ public class MenuFilterField extends Composite<TextField>
     }
 
     /**
-     * @return field search mode
-     * @see SearchMode
+     * @return field filter mode
+     * @see FilterMode
      */
-    public SearchMode getSearchMode() {
-        return searchMode;
+    public FilterMode getFilterMode() {
+        return filterMode;
     }
 
     /**
-     * Sets search mode.
+     * Sets filter mode.
      *
-     * @param searchMode search mode to set
-     * @see SearchMode
+     * @param filterMode filter mode to set
+     * @see FilterMode
      */
-    public void setSearchMode(SearchMode searchMode) {
-        this.searchMode = searchMode;
+    public void setFilterMode(FilterMode filterMode) {
+        this.filterMode = filterMode;
         if (itemsTransformer != null) {
-            itemsTransformer.setSearchMode(searchMode);
+            itemsTransformer.setFilterMode(filterMode);
         }
     }
 
     protected static class MenuItemsTransformer<T extends MenuItem> implements Function<List<T>, List<T>> {
 
-        protected String searchString;
-        protected SearchMode searchMode;
+        protected String filterString;
+        protected FilterMode filterMode;
 
-        public MenuItemsTransformer(SearchMode searchMode) {
-            this.searchMode = searchMode;
+        public MenuItemsTransformer(FilterMode filterMode) {
+            this.filterMode = filterMode;
         }
 
-        public String getSearchString() {
-            return searchString;
+        public String getFilterString() {
+            return filterString;
         }
 
-        public void setSearchString(String searchString) {
-            this.searchString = searchString;
+        public void setFilterString(String filterString) {
+            this.filterString = filterString;
         }
 
-        public SearchMode getSearchMode() {
-            return searchMode;
+        public FilterMode getFilterMode() {
+            return filterMode;
         }
 
-        public void setSearchMode(SearchMode searchMode) {
-            this.searchMode = searchMode;
+        public void setFilterMode(FilterMode filterMode) {
+            this.filterMode = filterMode;
         }
 
         @Override
         public List<T> apply(List<T> menuItems) {
-            if (Strings.isNullOrEmpty(searchString)) {
+            if (Strings.isNullOrEmpty(filterString)) {
                 return menuItems;
             }
             Iterator<T> iterator = menuItems.iterator();
@@ -244,7 +244,7 @@ public class MenuFilterField extends Composite<TextField>
          *
          * @param item                   item to filter
          * @param forceRetainAllChildren flag indicating whether to retain all children of this item or not.
-         * @return true/false if the item matches/doesn't match the condition (if title contains search string
+         * @return true/false if the item matches/doesn't match the condition (if the title contains filter string
          * or any child matches this condition)
          */
         protected boolean filterItemRecursive(MenuItem item, boolean forceRetainAllChildren) {
@@ -270,9 +270,9 @@ public class MenuFilterField extends Composite<TextField>
 
         protected boolean testItemMatch(MenuItem item) {
             String title = item.getTitle();
-            return switch (searchMode) {
-                case CASE_SENSITIVE -> StringUtils.contains(title, searchString);
-                case CASE_INSENSITIVE -> StringUtils.containsIgnoreCase(title, searchString);
+            return switch (filterMode) {
+                case CASE_SENSITIVE -> StringUtils.contains(title, filterString);
+                case CASE_INSENSITIVE -> StringUtils.containsIgnoreCase(title, filterString);
             };
         }
 
@@ -304,17 +304,17 @@ public class MenuFilterField extends Composite<TextField>
     }
 
     /**
-     * Search mode variants
+     * Filter mode variants
      */
-    public enum SearchMode {
+    public enum FilterMode {
 
         /**
-         * Search string case will not be ignored
+         * Filter string case will not be ignored
          */
         CASE_SENSITIVE,
 
         /**
-         * Search string case will be ignored
+         * Filter string case will be ignored
          */
         CASE_INSENSITIVE
     }

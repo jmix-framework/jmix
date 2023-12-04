@@ -53,7 +53,7 @@ class MenuFilterFieldXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             placeholder == "placeholderString"
             readOnly
-            searchMode == MenuFilterField.SearchMode.CASE_SENSITIVE
+            filterMode == MenuFilterField.FilterMode.CASE_SENSITIVE
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"

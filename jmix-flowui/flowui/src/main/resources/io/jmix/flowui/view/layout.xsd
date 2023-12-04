@@ -3894,7 +3894,7 @@
                 <xs:attribute name="themeNames" type="menuFilterFieldThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="menu" type="xs:string" use="required"/>
-                <xs:attribute name="searchMode" type="menuFilterFieldSearchMode"/>
+                <xs:attribute name="filterMode" type="menuFilterFieldFilterMode"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -3912,7 +3912,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:simpleType name="menuFilterFieldSearchMode">
+    <xs:simpleType name="menuFilterFieldFilterMode">
         <xs:restriction base="xs:string">
             <xs:enumeration value="CASE_SENSITIVE"/>
             <xs:enumeration value="CASE_INSENSITIVE"/>

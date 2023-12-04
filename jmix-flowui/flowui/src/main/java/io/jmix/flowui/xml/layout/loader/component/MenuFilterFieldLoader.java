@@ -70,7 +70,7 @@ public class MenuFilterFieldLoader extends AbstractComponentLoader<MenuFilterFie
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
         loadBoolean(element, "readOnly", resultComponent::setReadOnly);
-        loadEnum(element, MenuFilterField.SearchMode.class, "searchMode", resultComponent::setSearchMode);
+        loadEnum(element, MenuFilterField.FilterMode.class, "filterMode", resultComponent::setFilterMode);
 
         String menuId = loadString(element, "menu")
                 .orElseThrow(() ->

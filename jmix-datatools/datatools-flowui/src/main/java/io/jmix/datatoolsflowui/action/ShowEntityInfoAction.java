@@ -117,4 +117,11 @@ public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEnt
         dialog.getView().setEntity(entity);
         dialog.open();
     }
+
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable()
+                && target != null
+                && target.getSelectedItems().size() == 1;
+    }
 }

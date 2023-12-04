@@ -121,7 +121,6 @@ public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEnt
     @Override
     protected boolean isApplicable() {
         return super.isApplicable()
-                && target != null
                 && target.getSelectedItems().size() == 1;
     }
 }

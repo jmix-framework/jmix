@@ -11,10 +11,13 @@
                 <image id="logoImage"
                        resource="icons/icon.png"
                        classNames="jmix-main-view-top-menu-logo"/>
-                <nav id="navigation" width="100%">
-                    <navigationMenuBar id="navigationMenuBar" width="100%"/>
+                <nav id="navigation"
+                     classNames="jmix-main-view-top-menu-navigation">
+                    <navigationMenuBar id="navigationMenuBar"
+                                       width="100%"/>
                 </nav>
-                <hbox classNames="jmix-top-menu-bar-user-box">
+                <hbox id="userHeaderBox"
+                      classNames="jmix-main-view-top-menu-user-box">
                     <userIndicator id="userIndicator"/>
                     <button id="logoutButton"
                             action="logout"

@@ -18,8 +18,13 @@ vaadin-app-layout.jmix-main-view-top-menu-app-layout::part(navbar) {
   min-height: 0;
 }
 
+.jmix-main-view-top-menu-navigation {
+  display: flex;
+  flex-grow: 1;
+  overflow: auto;
+}
+
 .jmix-main-view-top-menu-header {
-  box-sizing: border-box;
   display: flex;
   align-items: center;
   width: 100%;
@@ -31,9 +36,10 @@ vaadin-app-layout.jmix-main-view-top-menu-app-layout::part(navbar) {
   height: var(--lumo-size-m);
 }
 
-.jmix-top-menu-bar-user-box {
+.jmix-main-view-top-menu-user-box {
   align-self: flex-end;
   align-items: center;
   margin: 0 var(--lumo-space-m);
+  max-width: 20em;
 }
 

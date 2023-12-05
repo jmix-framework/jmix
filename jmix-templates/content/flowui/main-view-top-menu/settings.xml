@@ -44,13 +44,15 @@
               defaultValue="MainViewTopMenu"
               required="true"
               sourceName="controller"
+              dynamic="true"
               valueTemplate="${api.evaluateScript('controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}"/>
 
     <property caption="View id"
-              code="screenId"
+              code="viewId"
               propertyType="SCREEN_ID"
               defaultValue="MainViewTopMenu"
               required="true"
+              dynamic="true"
               valueTemplate="${api.evaluateScript('screenIdByDescriptorName.groovy', ['descriptorName': descriptorName, 'projectId': project_id])}"/>
 
     <source fileExt="xml"

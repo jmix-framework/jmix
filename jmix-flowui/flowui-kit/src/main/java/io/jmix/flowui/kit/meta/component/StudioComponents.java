@@ -2698,6 +2698,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.menufilterfield.MenuFilterField",
             category = "Components",
             xmlElement = "menuFilterField",
+            icon = "io/jmix/flowui/kit/meta/icon/component/menufilterfield.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

@@ -58,6 +58,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Map;
 
 import static io.jmix.dynattr.AttributeType.ENTITY;
 
@@ -139,7 +140,7 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
     protected AbstractField<?, ?> createUnaryField(@SuppressWarnings("unused") ComponentGenerationContext context) {
         //noinspection unchecked
         JmixComboBox<Boolean> component = uiComponents.create(JmixComboBox.class);
-        ComponentUtils.setItemsMap(component, ImmutableMap.of(
+        ComponentUtils.setItemsMap(component, Map.of(
                 Boolean.TRUE, messages.getMessage("boolean.yes"),
                 Boolean.FALSE, messages.getMessage("boolean.no")
         ));

@@ -428,8 +428,9 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         if (!dependentAttributes.isEmpty() && component instanceof SupportsValueSource) {
             //noinspection unchecked
             if(component instanceof SupportsTypedValue) {
-                ((TypedTextField<?>) component).addTypedValueChangeListener(e ->
-                        valueChangeListenerHandler((Component) component, attribute, e.getOldValue(), e.getValue()));
+                ((SupportsTypedValue) component)
+                        .addTypedValueChangeListener((ComponentEventListener<SupportsTypedValue.TypedValueChangeEvent<?, ?>>) event ->
+                                valueChangeListenerHandler((Component) component, attribute, event.getOldValue(), event.getValue()));
             } else {
                 component.addValueChangeListener(e ->
                         valueChangeListenerHandler((Component) component, attribute, e.getOldValue(), e.getValue()));

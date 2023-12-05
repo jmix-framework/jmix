@@ -31,14 +31,15 @@
   background-color: var(--lumo-primary-color-10pct);
 }
 
-vaadin-menu-bar-item .jmix-navigation-menu-bar-item-link,
-vaadin-menu-bar-list-box .jmix-navigation-menu-bar-item-link {
+vaadin-menu-bar-item .jmix-navigation-menu-bar-menu-item,
+vaadin-menu-bar-list-box .jmix-navigation-menu-bar-menu-item {
   color: inherit;
   display: flex;
   cursor: pointer;
+  width: 100%;
 }
 
-.jmix-navigation-menu-bar-item-link:hover {
+.jmix-navigation-menu-bar-menu-item:hover {
   text-decoration: none;
 }
 

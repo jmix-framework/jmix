@@ -495,7 +495,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
      */
     public static class MenuItem extends AbstractIconTextMenuItem<RouterLink> {
 
-        protected static final String MENU_ITEM_LINK_CLASS_NAME = "jmix-navigation-menu-bar-item-link";
+        protected static final String MENU_ITEM_CLASS_NAME = "jmix-navigation-menu-bar-menu-item";
 
         protected KeyCombination shortcutCombination;
 
@@ -512,7 +512,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         @Override
         protected RouterLink initContent() {
             RouterLink routerLink = new RouterLink();
-            routerLink.setClassName(MENU_ITEM_LINK_CLASS_NAME);
+            routerLink.setClassName(MENU_ITEM_CLASS_NAME);
             routerLink.setHighlightCondition(HighlightConditions.never());
             return routerLink;
         }

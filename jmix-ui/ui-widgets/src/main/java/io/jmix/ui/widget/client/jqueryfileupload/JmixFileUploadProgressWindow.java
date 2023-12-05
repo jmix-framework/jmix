@@ -111,8 +111,12 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
     protected CloseListener closeListener;
 
     protected VLabel currentFileLabel;
+    protected VLabel totalFilesLabel;
     protected VButton cancelButton;
     protected VProgressBar progressBar;
+    protected VProgressBar totalProgressBar;
+
+    protected int filesNumber;
 
     public JmixFileUploadProgressWindow() {
         super(false, true); // no autohide, modal
@@ -245,6 +249,16 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
         progressBar.setState(0);
         progressBar.setWidth("100%");
 
+        totalFilesLabel = new VLabel();
+        totalFilesLabel.addStyleName("upload-file-total-label");
+        totalFilesLabel.setWidth("100%");
+
+        totalProgressBar = new VProgressBar();
+        totalProgressBar.addStyleName("upload-total-progressbar");
+        totalProgressBar.setIndeterminate(false);
+        totalProgressBar.setState(0);
+        totalProgressBar.setWidth("100%");
+
         cancelButton = new VButton();
         cancelButton.addStyleName("upload-cancel-button");
         cancelButton.addClickHandler(new ClickHandler() {
@@ -269,6 +283,10 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
 
         verticalPanel.add(currentFileLabel);
         verticalPanel.add(progressBar);
+
+        verticalPanel.add(totalFilesLabel);
+        verticalPanel.add(totalProgressBar);
+
         verticalPanel.add(cancelButton);
 
         contentPanel.setWidget(verticalPanel);
@@ -425,6 +443,28 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
 
     public void setProgress(float state) {
         progressBar.setState(state);
+    }
+
+    public void updateTotalProgress(int filesLeft) {
+        if (filesNumber <= 1) {
+            return;
+        }
+
+        int currentFileNumber = filesNumber - filesLeft;
+        float state = (float) currentFileNumber / (float) filesNumber;
+        // TODO: gg, think better
+        totalFilesLabel.setText(currentFileNumber + " / " + filesNumber);
+        totalProgressBar.setState(state);
+    }
+
+    public void setFilesNumber(int filesNumber) {
+        this.filesNumber = filesNumber;
+        if (filesNumber > 1) {
+            totalFilesLabel.setText("0 / " + filesNumber);
+        } else {
+            totalFilesLabel.setVisible(false);
+            totalProgressBar.setVisible(false);
+        }
     }
 
     @Override

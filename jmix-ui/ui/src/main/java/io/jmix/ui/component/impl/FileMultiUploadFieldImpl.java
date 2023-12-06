@@ -386,4 +386,14 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
     public Subscription addFileUploadErrorListener(Consumer<FileUploadErrorEvent> listener) {
         return getEventHub().subscribe(FileUploadErrorEvent.class, listener);
     }
+
+    @Override
+    public void setTotalProgressDisplayEnabled(boolean totalProgressDisplayEnabled) {
+        component.setTotalProgressDisplayEnabled(totalProgressDisplayEnabled);
+    }
+
+    @Override
+    public boolean isTotalProgressDisplayEnabled() {
+        return component.isTotalProgressDisplayEnabled();
+    }
 }

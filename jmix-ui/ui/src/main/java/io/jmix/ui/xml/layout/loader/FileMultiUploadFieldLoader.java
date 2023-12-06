@@ -64,6 +64,8 @@ public class FileMultiUploadFieldLoader extends AbstractComponentLoader<FileMult
         if (StringUtils.isNotEmpty(fileSizeLimit)) {
             resultComponent.setFileSizeLimit(Long.parseLong(fileSizeLimit));
         }
+
+        loadTotalProgressDisplayEnabled(resultComponent, element);
     }
 
     @Override
@@ -118,6 +120,13 @@ public class FileMultiUploadFieldLoader extends AbstractComponentLoader<FileMult
             } else {
                 throw new GuiDevelopmentException("Unable to find pasteZone component with id: " + pasteZoneId, context);
             }
+        }
+    }
+
+    protected void loadTotalProgressDisplayEnabled(FileMultiUploadField uploadField, Element element) {
+        String totalProgressDisplayEnabled = element.attributeValue("totalProgressDisplayEnabled");
+        if (StringUtils.isNotEmpty(totalProgressDisplayEnabled)) {
+            uploadField.setTotalProgressDisplayEnabled(Boolean.parseBoolean(totalProgressDisplayEnabled));
         }
     }
 }

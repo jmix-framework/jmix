@@ -16,7 +16,10 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.meta.*;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.EventObject;
 import java.util.Map;
@@ -56,6 +59,19 @@ public interface FileMultiUploadField extends UploadField {
      * @return a registration object for removing an event listener
      */
     Subscription addQueueUploadCompleteListener(Consumer<QueueUploadCompleteEvent> listener);
+
+    /**
+     * Sets whether total progress should be displayed during files loading
+     *
+     * @param totalProgressDisplayEnabled flag indicating whether total progress should be displayed
+     */
+    @StudioProperty(type = PropertyType.BOOLEAN, defaultValue = "true")
+    void setTotalProgressDisplayEnabled(boolean totalProgressDisplayEnabled);
+
+    /**
+     * @return true if total progress should be displayed, false otherwise
+     */
+    boolean isTotalProgressDisplayEnabled();
 
     /**
      * Describes queue upload complete event.

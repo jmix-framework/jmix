@@ -2513,6 +2513,7 @@
 
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
+                <xs:attribute name="totalProgressDisplayEnabled" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

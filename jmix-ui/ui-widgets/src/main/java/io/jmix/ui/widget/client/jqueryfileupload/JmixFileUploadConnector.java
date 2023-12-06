@@ -189,6 +189,10 @@ public class JmixFileUploadConnector extends AbstractComponentConnector implemen
             getWidget().setPasteZone(pasteZone != null ? pasteZone.getWidget() : null);
         }
 
+        if (stateChangeEvent.hasPropertyChanged("totalProgressDisplayEnabled")) {
+            getWidget().totalProgressDisplayEnabled = getState().totalProgressDisplayEnabled;
+        }
+
         if (!isEnabled()) {
             getWidget().disableUpload();
         } else {

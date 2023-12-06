@@ -117,6 +117,7 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
     protected VProgressBar totalProgressBar;
 
     protected int filesNumber;
+    protected boolean totalProgressDisplayEnabled = true;
 
     public JmixFileUploadProgressWindow() {
         super(false, true); // no autohide, modal
@@ -446,7 +447,7 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
     }
 
     public void updateTotalProgress(int filesLeft) {
-        if (filesNumber <= 1) {
+        if (!isTotalProgressVisible()) {
             return;
         }
 
@@ -457,14 +458,27 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
         totalProgressBar.setState(state);
     }
 
+    protected boolean isTotalProgressVisible() {
+        return filesNumber > 1 && totalProgressDisplayEnabled;
+    }
+
     public void setFilesNumber(int filesNumber) {
         this.filesNumber = filesNumber;
-        if (filesNumber > 1) {
+        if (isTotalProgressVisible()) {
             totalFilesLabel.setText("0 / " + filesNumber);
-        } else {
-            totalFilesLabel.setVisible(false);
-            totalProgressBar.setVisible(false);
         }
+        updateTotalProgressComponents();
+    }
+
+    protected void updateTotalProgressComponents() {
+        boolean componentsVisible = isTotalProgressVisible();
+        totalFilesLabel.setVisible(componentsVisible);
+        totalProgressBar.setVisible(componentsVisible);
+    }
+
+    public void setTotalProgressDisplayEnabled(boolean totalProgressDisplayEnabled) {
+        this.totalProgressDisplayEnabled = totalProgressDisplayEnabled;
+        updateTotalProgressComponents();
     }
 
     @Override

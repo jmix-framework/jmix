@@ -64,4 +64,7 @@ public class JmixFileUploadState extends TabIndexState {
 
     @NoLayout
     public boolean totalProgressDisplayEnabled = true;
+
+    @NoLayout
+    public String totalProgressDisplayCaption;
 }

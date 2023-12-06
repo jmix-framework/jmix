@@ -49,6 +49,7 @@ public class JmixFileUploadWidget extends FlowPanel implements Focusable, HasEna
     protected String unableToUploadFileMessage;
     protected String progressWindowCaption;
     protected String cancelButtonCaption;
+    protected String totalProgressDisplayCaption;
 
     protected boolean ignoreExceptions = false;
 
@@ -132,7 +133,8 @@ public class JmixFileUploadWidget extends FlowPanel implements Focusable, HasEna
                 progressWindow.setClosable(true);
 
                 progressWindow.setTotalProgressDisplayEnabled(totalProgressDisplayEnabled);
-                progressWindow.setFilesNumber(currentXHRs.size());
+                progressWindow.setTotalProgressDisplayCaption(totalProgressDisplayCaption);
+                progressWindow.initFilesNumber(currentXHRs.size());
 
                 progressWindow.setCaption(progressWindowCaption);
                 progressWindow.setCancelButtonCaption(cancelButtonCaption);

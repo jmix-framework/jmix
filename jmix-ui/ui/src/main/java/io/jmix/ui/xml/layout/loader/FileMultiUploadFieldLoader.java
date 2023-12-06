@@ -66,6 +66,7 @@ public class FileMultiUploadFieldLoader extends AbstractComponentLoader<FileMult
         }
 
         loadTotalProgressDisplayEnabled(resultComponent, element);
+        loadTotalProgressDisplayCaption(resultComponent, element);
     }
 
     @Override
@@ -127,6 +128,14 @@ public class FileMultiUploadFieldLoader extends AbstractComponentLoader<FileMult
         String totalProgressDisplayEnabled = element.attributeValue("totalProgressDisplayEnabled");
         if (StringUtils.isNotEmpty(totalProgressDisplayEnabled)) {
             uploadField.setTotalProgressDisplayEnabled(Boolean.parseBoolean(totalProgressDisplayEnabled));
+        }
+    }
+
+    protected void loadTotalProgressDisplayCaption(FileMultiUploadField uploadField, Element element) {
+        if (element.attribute("totalProgressDisplayCaption") != null) {
+            String captionAttributeValue = element.attributeValue("totalProgressDisplayCaption");
+            String caption = loadResourceString(captionAttributeValue);
+            uploadField.setTotalProgressDisplayCaption(caption);
         }
     }
 }

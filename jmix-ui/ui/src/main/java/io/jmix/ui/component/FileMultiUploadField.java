@@ -74,6 +74,24 @@ public interface FileMultiUploadField extends UploadField {
     boolean isTotalProgressDisplayEnabled();
 
     /**
+     * Sets caption which will be used in total progress display section.
+     * Two '%s' placeholders are supported in the caption - the first is for current file number,
+     * the second is for total file number. <br>
+     * Examples: "File %s of %s", "%s of %s" etc.
+     *
+     * @param totalProgressDisplayCaption caption template which will be used in total progress display section
+     */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING,
+            defaultValue = "msg:///multiupload.totalProgressDisplayCaption")
+    void setTotalProgressDisplayCaption(String totalProgressDisplayCaption);
+
+    /**
+     * @return caption which is used in total progress display section.
+     * @see #setTotalProgressDisplayCaption(String)
+     */
+    String getTotalProgressDisplayCaption();
+
+    /**
      * Describes queue upload complete event.
      */
     class QueueUploadCompleteEvent extends EventObject {

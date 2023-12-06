@@ -327,6 +327,16 @@ public class JmixFileUpload extends AbstractComponent
         return getState(false).totalProgressDisplayEnabled;
     }
 
+    public void setTotalProgressDisplayCaption(String totalProgressDisplayCaptionTemplate) {
+        if (!Objects.equals(getTotalProgressDisplayCaption(), totalProgressDisplayCaptionTemplate)) {
+            getState().totalProgressDisplayCaption = totalProgressDisplayCaptionTemplate;
+        }
+    }
+
+    public String getTotalProgressDisplayCaption() {
+        return getState(false).totalProgressDisplayCaption;
+    }
+
     protected com.vaadin.server.StreamVariable getStreamVariable() {
         if (streamVariable == null) {
             streamVariable = new com.vaadin.server.StreamVariable() {

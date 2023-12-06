@@ -118,6 +118,7 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
 
     protected int filesNumber;
     protected boolean totalProgressDisplayEnabled = true;
+    protected String totalProgressDisplayCaption;
 
     public JmixFileUploadProgressWindow() {
         super(false, true); // no autohide, modal
@@ -452,9 +453,9 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
         }
 
         int currentFileNumber = filesNumber - filesLeft;
+        totalFilesLabel.setText(getTotalProgressDisplayMessage(currentFileNumber));
+
         float state = (float) currentFileNumber / (float) filesNumber;
-        // TODO: gg, think better
-        totalFilesLabel.setText(currentFileNumber + " / " + filesNumber);
         totalProgressBar.setState(state);
     }
 
@@ -462,10 +463,21 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
         return filesNumber > 1 && totalProgressDisplayEnabled;
     }
 
-    public void setFilesNumber(int filesNumber) {
+    protected String getTotalProgressDisplayMessage(int currentFileNumber) {
+        if (totalProgressDisplayCaption == null) {
+            return "";
+        }
+        //because String.format(..) doesn't work in GWT
+        String placeholder = "%s";
+        String tmpResult =
+                totalProgressDisplayCaption.replaceFirst(placeholder, Integer.toString(currentFileNumber));
+        return tmpResult.replaceFirst(placeholder, Integer.toString(filesNumber));
+    }
+
+    public void initFilesNumber(int filesNumber) {
         this.filesNumber = filesNumber;
         if (isTotalProgressVisible()) {
-            totalFilesLabel.setText("0 / " + filesNumber);
+            totalFilesLabel.setText(getTotalProgressDisplayMessage(0));
         }
         updateTotalProgressComponents();
     }
@@ -479,6 +491,10 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
     public void setTotalProgressDisplayEnabled(boolean totalProgressDisplayEnabled) {
         this.totalProgressDisplayEnabled = totalProgressDisplayEnabled;
         updateTotalProgressComponents();
+    }
+
+    public void setTotalProgressDisplayCaption(String totalProgressDisplayCaption) {
+        this.totalProgressDisplayCaption = totalProgressDisplayCaption;
     }
 
     @Override

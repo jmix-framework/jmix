@@ -193,6 +193,10 @@ public class JmixFileUploadConnector extends AbstractComponentConnector implemen
             getWidget().totalProgressDisplayEnabled = getState().totalProgressDisplayEnabled;
         }
 
+        if (stateChangeEvent.hasPropertyChanged("totalProgressDisplayCaption")) {
+            getWidget().totalProgressDisplayCaption = getState().totalProgressDisplayCaption;
+        }
+
         if (!isEnabled()) {
             getWidget().disableUpload();
         } else {

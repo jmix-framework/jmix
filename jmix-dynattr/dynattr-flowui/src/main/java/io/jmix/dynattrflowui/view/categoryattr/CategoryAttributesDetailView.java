@@ -31,7 +31,6 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.Route;
@@ -88,7 +87,6 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static io.jmix.dynattr.AttributeType.*;
@@ -277,6 +275,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     private JmixButton editEnumerationBtn;
     private boolean isRefreshing = false;
 
+    private final List<String> defaultEnumValues = new ArrayList<>();
+
     @Subscribe
     protected void onInit(InitEvent event) {
         initAttributeForm();
@@ -284,7 +284,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         initViewGrid();
     }
     private void initDefaultEnumField() {
-        setDefaultStringValue();
+        defaultEnumValues.addAll(getEnumValues());
+        defaultEnumField.setItems(defaultEnumValues);
         defaultEnumField.addValueChangeListener(e -> getEditedEntity().setDefaultString(e.getValue()));
         if(StringUtils.isNotBlank(getEditedEntity().getDefaultString())) {
             defaultEnumField.setValue(getEditedEntity().getDefaultString());
@@ -296,28 +297,16 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    private void setDefaultStringValue() {
-        defaultEnumField.setItems(new CallbackDataProvider<>(
-                e -> getEnumValuesStream()
-                        .skip(e.getOffset())
-                        .limit(e.getLimit()),
-                e -> getEnumValuesStream()
-                        .skip(e.getOffset())
-                        .limit(e.getLimit())
-                        .toList()
-                        .size()));
-    }
 
-
-    private Stream<String> getEnumValuesStream() {
+    private List<String> getEnumValues() {
         if(StringUtils.isBlank(categoryAttributeDc.getItem().getEnumeration())) {
-            return Stream.of();
+            return List.of();
         }
         Spliterator<String> enumSpliterator = Splitter.on(",")
                 .omitEmptyStrings()
                 .split(categoryAttributeDc.getItem().getEnumeration())
                 .spliterator();
-        return StreamSupport.stream(enumSpliterator, false);
+        return StreamSupport.stream(enumSpliterator, false).toList();
     }
 
     @Subscribe
@@ -406,8 +395,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                         AttributeEnumerationDetailView screen = afterCloseEvent.getSource().getView();
                         getEditedEntity().setEnumeration(screen.getEnumeration());
                         getEditedEntity().setEnumerationLocales(screen.getEnumerationLocales());
+
+                        defaultEnumValues.clear();
+                        defaultEnumValues.addAll(getEnumValues());
+                        clearEnumValueIfCurrentItemAbsentOnEnum();
                         defaultEnumField.getDataProvider().refreshAll();
-                        defaultEnumField.clear();
                     }
                 })
                 .build();
@@ -415,6 +407,12 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         enumerationScreen.getView().setEnumeration(getEditedEntity().getEnumeration());
         enumerationScreen.getView().setEnumerationLocales(getEditedEntity().getEnumerationLocales());
         enumerationScreen.open();
+    }
+
+    private void clearEnumValueIfCurrentItemAbsentOnEnum() {
+        if(!defaultEnumValues.contains(defaultEnumField.getValue())) {
+            defaultEnumField.clear();
+        }
     }
 
     @Install(to = "targetScreensDl", target = Target.DATA_LOADER)

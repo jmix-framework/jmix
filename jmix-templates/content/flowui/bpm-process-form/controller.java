@@ -12,6 +12,7 @@ def processComponents = api.processSnippet('bpm_components.xml',
 def processHandlers = api.processSnippet('bpm_handlers.xml',
     ['outputes': processFormOutcomes,
      'formType': processFormType,
+     'caller': processFormCaller,
      'entityVarName': entityVarName,
      'api': api])
 %>package ${packageName};

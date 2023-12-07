@@ -1,9 +1,21 @@
 <%
 def handlers = []
 
-if (formType.name() != 'CUSTOM') {
+if (caller.name() == 'START_EVENT') {
     StringBuilder builder = new StringBuilder()
-    if (outputes.isEmpty()) {
+
+    builder.append("\n\t@io.jmix.flowui.view.Subscribe(id = \"startProcessBtn\", subject = \"clickListener\")\n")
+    builder.append("\tprotected void onStartProcessBtnClick(com.vaadin.flow.component.ClickEvent<io.jmix.flowui.kit.component.button.JmixButton> event) {\n")
+    builder.append("\t\tprocessFormContext.processStarting()\n")
+    builder.append("\t\t\t.saveInjectedProcessVariables()\n")
+    builder.append("\t\t\t.start();\n")
+    builder.append("\t\tcloseWithDefaultAction();\n")
+    builder.append("\t}\n")
+
+    handlers << builder.toString()
+} else if (formType.name() != 'CUSTOM') {
+    StringBuilder builder = new StringBuilder()
+    if (outputes == null || outputes.isEmpty()) {
         builder.append("\n\t@io.jmix.flowui.view.Subscribe(id = \"completeBtn\", subject = \"clickListener\")\n")
         builder.append("\tprotected void onCompleteBtnClick(com.vaadin.flow.component.ClickEvent<io.jmix.flowui.kit.component.button.JmixButton> event) {\n")
         builder.append("\t\tprocessFormContext.taskCompletion()\n")

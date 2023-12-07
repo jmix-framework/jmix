@@ -1,8 +1,9 @@
 <%
 def buttons = []
-
-if (formType.name() != 'CUSTOM') {
-    if (outputes.isEmpty()) {
+if (caller.name() == 'START_EVENT') {
+    buttons << "<button id=\"startProcessBtn\" icon=\"CHECK\" text=\"Start Process\" themeNames=\"primary\"/>"
+} else if (formType.name() != 'CUSTOM') {
+    if (outputes == null || outputes.isEmpty()) {
         buttons << "<button id=\"completeBtn\" icon=\"CHECK\" text=\"Complete Task\" themeNames=\"primary\"/>"
     } else {
         outputes.eachWithIndex { o, index ->

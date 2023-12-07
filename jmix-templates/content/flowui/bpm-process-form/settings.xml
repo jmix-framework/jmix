@@ -26,8 +26,9 @@
             <dependency code="processFormType"/>
         </step>
         <step name="BPM process form outcomes" order="3"
-              condition="${processFormType.name() in ['VARIABLE','ENTITY']}">
+              condition="${processFormType.name() in ['VARIABLE','ENTITY'] &amp;&amp; processFormCaller.name() != 'START_EVENT'}">
             <dependency code="processFormType"/>
+            <dependency code="processFormCaller"/>
         </step>
     </steps>
 
@@ -39,6 +40,11 @@
     <property caption="Process form type"
               code="processFormType"
               propertyType="PROCESS_FORM_TYPE"
+              required="true"/>
+
+    <property caption="Process form caller"
+              code="processFormCaller"
+              propertyType="PROCESS_FORM_CALLER_COMPONENT"
               required="true"/>
 
     <property caption="Entity"
@@ -94,13 +100,21 @@
               code="bpmTaskName"
               propertyType="PROCESS_FORM_TASK_NAME"
               advanced="true"
-              required="false"/>
+              required="false">
+        <dynamicAttribute name="name" source="${processFormCaller.name() == 'START_EVENT' ? 'Event name' : 'Task name'}">
+            <dependency code = "processFormCaller"/>
+        </dynamicAttribute>
+    </property>
 
     <property caption="Task details"
               code="bpmTaskDetails"
               propertyType="PROCESS_FORM_TASK_DETAILS"
               advanced="true"
-              required="false"/>
+              required="false">
+        <dynamicAttribute name="name" source="${processFormCaller.name() == 'START_EVENT' ? 'Event details' : 'Task details'}">
+            <dependency code = "processFormCaller"/>
+        </dynamicAttribute>
+    </property>
 
     <property caption="Entity fetch plan"
               code="detailFetchPlan"

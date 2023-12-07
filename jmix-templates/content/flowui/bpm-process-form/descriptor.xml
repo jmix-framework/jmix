@@ -3,6 +3,7 @@ def dcId = ''
 def nestedCollectionDatasourceProperties = []
 def is_inline_detailFetchPlan_ = false
 def inline_detailFetchPlan_ = ''
+def callerComponentName = processFormCaller.name() == 'START_EVENT' ? 'Start event' : 'Task'
 if (processFormType.name() == 'ENTITY') {
     dcId = "${entity.uncapitalizedClassName}Dc"
     nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
@@ -28,6 +29,7 @@ def formXml = api.processSnippet('bpm_processform.xml',
         'api': api])
 def buttonsXml = api.processSnippet('bpm_buttons.xml',
         ['outputes': processFormOutcomes,
+        'caller': processFormCaller,
         'formType': processFormType,
         'api': api])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -37,7 +39,7 @@ def buttonsXml = api.processSnippet('bpm_buttons.xml',
     ${containerXml}
     <layout><%if (bpmTaskName != null && bpmTaskName.trim() != '') {%>
         <h1 text="$bpmTaskName"/><%}%><%if (bpmTaskDetails != null && bpmTaskDetails.trim() != '') {%>
-        <details summaryText="Task details">
+        <details summaryText="$callerComponentName details">
             <p text="$bpmTaskDetails"/>
         </details><%}%>
         ${formXml}

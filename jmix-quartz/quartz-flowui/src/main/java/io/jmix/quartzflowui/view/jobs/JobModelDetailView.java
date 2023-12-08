@@ -32,7 +32,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.*;
-import io.jmix.quartz.service.ScheduleDescriptionService;
+import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     @Autowired
     protected UnconstrainedDataManager dataManager;
     @Autowired
-    protected ScheduleDescriptionService scheduleDescriptionService;
+    protected ScheduleDescriptionProvider scheduleDescriptionProvider;
 
     protected boolean replaceJobIfExists = true;
     protected boolean deleteObsoleteJob = false;
@@ -107,7 +107,7 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     }
 
     protected void initModelTable() {
-        triggerModelTable.addColumn(new TextRenderer<>(trigger -> scheduleDescriptionService.getScheduleDescription(trigger)))
+        triggerModelTable.addColumn(new TextRenderer<>(trigger -> scheduleDescriptionProvider.getScheduleDescription(trigger)))
                 .setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"));
         triggerModelTable.addColumn(entity -> entity.getStartDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))

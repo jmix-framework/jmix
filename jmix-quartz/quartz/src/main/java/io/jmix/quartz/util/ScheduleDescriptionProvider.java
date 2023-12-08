@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.quartz.service;
+package io.jmix.quartz.util;
 
 import io.jmix.core.Messages;
 import io.jmix.quartz.model.JobModel;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * Service for calculating description for quartz jobs and triggers based on their data and localized messages.
  */
 @Service("quartz_ScheduleDescriptionService")
-public class ScheduleDescriptionService {
+public class ScheduleDescriptionProvider {
 
     static final String EXECUTE_FOREVER_MESSAGE_KEY = "executeForeverMessage";
     static final String EXECUTE_ONCE_MESSAGE_KEY = "executeOnceMessage";
@@ -44,7 +44,7 @@ public class ScheduleDescriptionService {
     protected Messages messages;
 
     @Autowired
-    public ScheduleDescriptionService(Messages messages) {
+    public ScheduleDescriptionProvider(Messages messages) {
         this.messages = messages;
     }
 
@@ -69,11 +69,11 @@ public class ScheduleDescriptionService {
         Integer repeatCount = triggerModel.getRepeatCount();
         Long repeatInterval = triggerModel.getRepeatInterval();
         if (Objects.isNull(repeatCount) || repeatCount < 0) {
-            return messages.formatMessage(ScheduleDescriptionService.class, EXECUTE_FOREVER_MESSAGE_KEY, calculateInterval(repeatInterval));
+            return messages.formatMessage(ScheduleDescriptionProvider.class, EXECUTE_FOREVER_MESSAGE_KEY, calculateInterval(repeatInterval));
         } else if (repeatCount == 0) {
-            return messages.getMessage(ScheduleDescriptionService.class, EXECUTE_ONCE_MESSAGE_KEY);
+            return messages.getMessage(ScheduleDescriptionProvider.class, EXECUTE_ONCE_MESSAGE_KEY);
         } else {
-            return messages.formatMessage(ScheduleDescriptionService.class, EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatCount + 1, calculateInterval(repeatInterval));
+            return messages.formatMessage(ScheduleDescriptionProvider.class, EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatCount + 1, calculateInterval(repeatInterval));
         }
     }
 

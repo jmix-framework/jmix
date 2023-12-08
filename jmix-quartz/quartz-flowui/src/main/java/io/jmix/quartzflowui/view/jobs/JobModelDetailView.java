@@ -27,6 +27,7 @@ import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
@@ -108,7 +109,8 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
 
     protected void initModelTable() {
         triggerModelTable.addColumn(new TextRenderer<>(trigger -> scheduleDescriptionProvider.getScheduleDescription(trigger)))
-                .setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"));
+                .setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"))
+                .setResizable(true);
         triggerModelTable.addColumn(entity -> entity.getStartDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getStartDate()) : "").setResizable(true)

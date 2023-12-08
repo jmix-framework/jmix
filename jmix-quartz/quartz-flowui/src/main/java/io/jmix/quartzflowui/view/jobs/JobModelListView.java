@@ -89,6 +89,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> scheduleDescriptionProvider.getScheduleDescription(job)));
         triggerDescriptionColumn.setHeader(messageBundle.getMessage("column.triggerScheduleDescription.header"));
         jobModelsTable.setColumnPosition(triggerDescriptionColumn, 5);
+        triggerDescriptionColumn.setResizable(true);
 
         jobModelsTable.addColumn(entity -> entity.getLastFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))

@@ -17,9 +17,7 @@
 package io.jmix.flowui.facet.impl;
 
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Timer;
 import io.jmix.flowui.kit.component.timer.JmixTimer;
 import io.jmix.flowui.view.View;
@@ -105,52 +103,42 @@ public class TimerImpl extends AbstractFacet implements Timer {
     public void setOwner(@Nullable View<?> owner) {
         if (owner != null) {
             super.setOwner(owner);
-            registerForView(owner);
+            registerInView(owner);
         } else {
             if (this.owner != null) {
-                unregisterForView(this.owner);
+                unregisterInView(this.owner);
             }
             super.setOwner(null);
         }
     }
 
-    protected void registerForView(View<?> owner) {
+    protected void registerInView(View<?> owner) {
         if (owner.isAttached()) {
-            addTimer(owner);
+            attachTimer(owner);
         } else {
-            addTimerOnAttach(owner);
+            registerOnAttach(owner);
         }
         addDetachListener(owner);
     }
 
-    protected void addTimer(View<?> owner) {
-        Dialog dialog = UiComponentUtils.findDialog(owner);
-        if (dialog == null) {
-            owner.getUI().ifPresent(ui -> ui.add(timerImpl));
-        } else {
-            dialog.add(timerImpl);
-        }
+    protected void attachTimer(View<?> owner) {
+        owner.getContent().getElement().appendChild(timerImpl.getElement());
     }
 
-    protected void addTimerOnAttach(View<?> owner) {
-        owner.addAttachListener(e -> addTimer(owner));
+    protected void registerOnAttach(View<?> owner) {
+        owner.addAttachListener(e -> attachTimer(owner));
     }
 
     protected void addDetachListener(View<?> owner) {
-        owner.addDetachListener(e -> removeTimer(owner));
+        owner.addDetachListener(e -> detachTimer(owner));
     }
 
-    protected void removeTimer(View<?> owner) {
-        Dialog dialog = UiComponentUtils.findDialog(owner);
-        if (dialog == null) {
-            owner.getUI().ifPresent(ui -> ui.remove(timerImpl));
-        } else {
-            dialog.remove(timerImpl);
-        }
+    protected void detachTimer(View<?> owner) {
+        owner.getContent().getElement().removeChild(timerImpl.getElement());
     }
 
-    protected void unregisterForView(View<?> owner) {
-        removeTimer(owner);
+    protected void unregisterInView(View<?> owner) {
+        detachTimer(owner);
     }
 
     protected class JmixTimerActionListenerAdapter implements ComponentEventListener<JmixTimer.JmixTimerTickEvent> {

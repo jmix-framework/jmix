@@ -63,8 +63,8 @@ public class JmixFileUploadState extends TabIndexState {
     public String dropZonePrompt;
 
     @NoLayout
-    public boolean totalProgressDisplayEnabled = true;
+    public boolean totalProgressEnabled = true;
 
     @NoLayout
-    public String totalProgressDisplayCaption;
+    public String totalProgressFormat;
 }

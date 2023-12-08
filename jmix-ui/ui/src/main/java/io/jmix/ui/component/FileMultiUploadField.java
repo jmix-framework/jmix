@@ -63,33 +63,33 @@ public interface FileMultiUploadField extends UploadField {
     /**
      * Sets whether total progress should be displayed during files loading
      *
-     * @param totalProgressDisplayEnabled flag indicating whether total progress should be displayed
+     * @param totalProgressEnabled flag indicating whether total progress should be displayed
      */
     @StudioProperty(type = PropertyType.BOOLEAN, defaultValue = "true")
-    void setTotalProgressDisplayEnabled(boolean totalProgressDisplayEnabled);
+    void setTotalProgressEnabled(boolean totalProgressEnabled);
 
     /**
      * @return true if total progress should be displayed, false otherwise
      */
-    boolean isTotalProgressDisplayEnabled();
+    boolean isTotalProgressEnabled();
 
     /**
-     * Sets caption which will be used in total progress display section.
-     * Two '%s' placeholders are supported in the caption - the first is for current file number,
+     * Sets caption format that will be used in total progress display section.
+     * Two '%s' placeholders are supported in the format - the first is for current file number,
      * the second is for total file number. <br>
      * Examples: "File %s of %s", "%s of %s" etc.
      *
-     * @param totalProgressDisplayCaption caption template which will be used in total progress display section
+     * @param totalProgressFormat caption format which will be used in total progress display section
      */
     @StudioProperty(type = PropertyType.LOCALIZED_STRING,
-            defaultValue = "msg:///multiupload.totalProgressDisplayCaption")
-    void setTotalProgressDisplayCaption(String totalProgressDisplayCaption);
+            defaultValue = "msg:///multiupload.totalProgressFormat")
+    void setTotalProgressFormat(String totalProgressFormat);
 
     /**
-     * @return caption which is used in total progress display section.
-     * @see #setTotalProgressDisplayCaption(String)
+     * @return caption format which is used in total progress display section.
+     * @see #setTotalProgressFormat(String)
      */
-    String getTotalProgressDisplayCaption();
+    String getTotalProgressFormat();
 
     /**
      * Describes queue upload complete event.

@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.xml.layout.loader;
 
+import com.google.common.base.Strings;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.BoxLayout;
 import io.jmix.ui.component.Component;
@@ -65,8 +66,8 @@ public class FileMultiUploadFieldLoader extends AbstractComponentLoader<FileMult
             resultComponent.setFileSizeLimit(Long.parseLong(fileSizeLimit));
         }
 
-        loadTotalProgressDisplayEnabled(resultComponent, element);
-        loadTotalProgressDisplayCaption(resultComponent, element);
+        loadTotalProgressEnabled(resultComponent, element);
+        loadTotalProgressFormat(resultComponent, element);
     }
 
     @Override
@@ -124,18 +125,18 @@ public class FileMultiUploadFieldLoader extends AbstractComponentLoader<FileMult
         }
     }
 
-    protected void loadTotalProgressDisplayEnabled(FileMultiUploadField uploadField, Element element) {
-        String totalProgressDisplayEnabled = element.attributeValue("totalProgressDisplayEnabled");
-        if (StringUtils.isNotEmpty(totalProgressDisplayEnabled)) {
-            uploadField.setTotalProgressDisplayEnabled(Boolean.parseBoolean(totalProgressDisplayEnabled));
+    protected void loadTotalProgressEnabled(FileMultiUploadField uploadField, Element element) {
+        String totalProgressEnabled = element.attributeValue("totalProgressEnabled");
+        if (!Strings.isNullOrEmpty(totalProgressEnabled)) {
+            uploadField.setTotalProgressEnabled(Boolean.parseBoolean(totalProgressEnabled));
         }
     }
 
-    protected void loadTotalProgressDisplayCaption(FileMultiUploadField uploadField, Element element) {
-        if (element.attribute("totalProgressDisplayCaption") != null) {
-            String captionAttributeValue = element.attributeValue("totalProgressDisplayCaption");
-            String caption = loadResourceString(captionAttributeValue);
-            uploadField.setTotalProgressDisplayCaption(caption);
+    protected void loadTotalProgressFormat(FileMultiUploadField uploadField, Element element) {
+        if (element.attribute("totalProgressFormat") != null) {
+            String formatAttributeValue = element.attributeValue("totalProgressFormat");
+            String format = loadResourceString(formatAttributeValue);
+            uploadField.setTotalProgressFormat(format);
         }
     }
 }

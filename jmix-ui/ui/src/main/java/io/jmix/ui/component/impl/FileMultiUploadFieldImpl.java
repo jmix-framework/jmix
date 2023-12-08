@@ -107,7 +107,7 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
         impl.setCaption(messages.getMessage("upload.submit"));
         impl.setDropZonePrompt(messages.getMessage("upload.dropZonePrompt"));
         impl.setDescription(null);
-        impl.setTotalProgressDisplayCaption(messages.getMessage("multiupload.totalProgressDisplayCaption"));
+        impl.setTotalProgressFormat(messages.getMessage("multiupload.totalProgressFormat"));
 
         int maxUploadSizeMb = componentProperties.getUploadFieldMaxUploadSizeMb();
         int maxSizeBytes = maxUploadSizeMb * BYTES_IN_MEGABYTE;
@@ -389,22 +389,22 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
     }
 
     @Override
-    public void setTotalProgressDisplayEnabled(boolean totalProgressDisplayEnabled) {
-        component.setTotalProgressDisplayEnabled(totalProgressDisplayEnabled);
+    public void setTotalProgressEnabled(boolean totalProgressEnabled) {
+        component.setTotalProgressEnabled(totalProgressEnabled);
     }
 
     @Override
-    public boolean isTotalProgressDisplayEnabled() {
-        return component.isTotalProgressDisplayEnabled();
+    public boolean isTotalProgressEnabled() {
+        return component.isTotalProgressEnabled();
     }
 
     @Override
-    public void setTotalProgressDisplayCaption(String totalProgressDisplayCaption) {
-        component.setTotalProgressDisplayCaption(totalProgressDisplayCaption);
+    public void setTotalProgressFormat(String totalProgressFormat) {
+        component.setTotalProgressFormat(totalProgressFormat);
     }
 
     @Override
-    public String getTotalProgressDisplayCaption() {
-        return component.getTotalProgressDisplayCaption();
+    public String getTotalProgressFormat() {
+        return component.getTotalProgressFormat();
     }
 }

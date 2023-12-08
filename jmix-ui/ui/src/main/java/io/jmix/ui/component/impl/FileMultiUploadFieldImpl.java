@@ -108,6 +108,7 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
         impl.setDropZonePrompt(messages.getMessage("upload.dropZonePrompt"));
         impl.setDescription(null);
         impl.setTotalProgressFormat(messages.getMessage("multiupload.totalProgressFormat"));
+        impl.setTotalProgressEnabled(true);
 
         int maxUploadSizeMb = componentProperties.getUploadFieldMaxUploadSizeMb();
         int maxSizeBytes = maxUploadSizeMb * BYTES_IN_MEGABYTE;

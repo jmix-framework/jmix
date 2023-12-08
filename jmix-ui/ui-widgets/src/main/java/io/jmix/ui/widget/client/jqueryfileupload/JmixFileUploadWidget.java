@@ -61,7 +61,7 @@ public class JmixFileUploadWidget extends FlowPanel implements Focusable, HasEna
     protected FileUploadedListener fileUploadedListener;
 
     protected boolean enabled;
-    protected boolean totalProgressEnabled = true;
+    protected boolean totalProgressEnabled;
 
     public JmixFileUploadWidget() {
         submitButton = new VButton();

@@ -117,7 +117,7 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
     protected VProgressBar totalProgressBar;
 
     protected int filesNumber;
-    protected boolean totalProgressEnabled = true;
+    protected boolean totalProgressEnabled;
     protected String totalProgressFormat;
 
     public JmixFileUploadProgressWindow() {
@@ -448,22 +448,18 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
     }
 
     public void updateTotalProgress(int filesLeft) {
-        if (!isTotalProgressVisible()) {
+        if (!totalProgressEnabled) {
             return;
         }
 
         int currentFileNumber = filesNumber - filesLeft;
-        totalFilesLabel.setText(getTotalProgressDisplayMessage(currentFileNumber));
+        totalFilesLabel.setText(getTotalProgressMessage(currentFileNumber));
 
         float state = (float) currentFileNumber / (float) filesNumber;
         totalProgressBar.setState(state);
     }
 
-    protected boolean isTotalProgressVisible() {
-        return filesNumber > 1 && totalProgressEnabled;
-    }
-
-    protected String getTotalProgressDisplayMessage(int currentFileNumber) {
+    protected String getTotalProgressMessage(int currentFileNumber) {
         if (totalProgressFormat == null) {
             return "";
         }
@@ -476,16 +472,14 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
 
     public void initFilesNumber(int filesNumber) {
         this.filesNumber = filesNumber;
-        if (isTotalProgressVisible()) {
-            totalFilesLabel.setText(getTotalProgressDisplayMessage(0));
+        if (totalProgressEnabled) {
+            totalFilesLabel.setText(getTotalProgressMessage(0));
         }
-        updateTotalProgressComponents();
     }
 
     protected void updateTotalProgressComponents() {
-        boolean componentsVisible = isTotalProgressVisible();
-        totalFilesLabel.setVisible(componentsVisible);
-        totalProgressBar.setVisible(componentsVisible);
+        totalFilesLabel.setVisible(totalProgressEnabled);
+        totalProgressBar.setVisible(totalProgressEnabled);
     }
 
     public void setTotalProgressEnabled(boolean totalProgressEnabled) {

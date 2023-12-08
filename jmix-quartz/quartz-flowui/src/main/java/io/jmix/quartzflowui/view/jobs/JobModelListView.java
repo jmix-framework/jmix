@@ -33,7 +33,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
-import io.jmix.quartz.service.QuartzDescriptionService;
+import io.jmix.quartz.service.ScheduleDescriptionService;
 import io.jmix.quartz.service.QuartzService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected QuartzService quartzService;
 
     @Autowired
-    protected QuartzDescriptionService quartzDescriptionService;
+    protected ScheduleDescriptionService scheduleDescriptionService;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -86,22 +86,22 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected void initTable() {
-        DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> quartzDescriptionService.getScheduleDescription(job)));
-        triggerDescriptionColumn.setHeader(messageBundle.getMessage("column.triggerDescription.header"));
+        DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> scheduleDescriptionService.getScheduleDescription(job)));
+        triggerDescriptionColumn.setHeader(messageBundle.getMessage("column.triggerScheduleDescription.header"));
         jobModelsTable.setColumnPosition(triggerDescriptionColumn, 5);
 
         jobModelsTable.addColumn(entity -> entity.getLastFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getLastFireDate()) : "").setResizable(true)
-                .setHeader(getHeaderForColumn("lastFireDate"));
+                .setHeader(getHeaderForPropertyColumn("lastFireDate"));
 
         jobModelsTable.addColumn(entity -> entity.getNextFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getNextFireDate()) : "").setResizable(true)
-                .setHeader(getHeaderForColumn("nextFireDate"));
+                .setHeader(getHeaderForPropertyColumn("nextFireDate"));
     }
 
-    private String getHeaderForColumn(String propertyName) {
+    private String getHeaderForPropertyColumn(String propertyName) {
         return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }
 

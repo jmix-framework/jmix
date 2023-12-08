@@ -32,7 +32,7 @@ import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class QuartzDescriptionServiceTest {
+class ScheduleDescriptionServiceTest {
 
     @Test
     void getScheduleDescription_null_schedule_type() {
@@ -40,7 +40,7 @@ class QuartzDescriptionServiceTest {
         TriggerModel triggerMock = mock(TriggerModel.class);
         when(triggerMock.getScheduleType()).thenReturn(null);
 
-        QuartzDescriptionService service = new QuartzDescriptionService(messagesMock);
+        ScheduleDescriptionService service = new ScheduleDescriptionService(messagesMock);
         assertNull(service.getScheduleDescription(triggerMock));
     }
 
@@ -52,14 +52,14 @@ class QuartzDescriptionServiceTest {
         String cronExpression = "Some CRON expression";
         when(triggerMock.getCronExpression()).thenReturn(cronExpression);
 
-        QuartzDescriptionService service = new QuartzDescriptionService(messagesMock);
+        ScheduleDescriptionService service = new ScheduleDescriptionService(messagesMock);
         assertEquals(cronExpression, service.getScheduleDescription(triggerMock));
     }
 
     @Test
     void getScheduleDescription_simple_schedule_type_null_repeat_count() {
         Messages messagesMock = mock(Messages.class);
-        when(messagesMock.formatMessage(QuartzDescriptionService.class, QuartzDescriptionService.EXECUTE_FOREVER_MESSAGE_KEY, "10"))
+        when(messagesMock.formatMessage(ScheduleDescriptionService.class, ScheduleDescriptionService.EXECUTE_FOREVER_MESSAGE_KEY, "10"))
                 .thenReturn("Execute forever every 10 seconds");
 
         TriggerModel triggerMock = mock(TriggerModel.class);
@@ -67,7 +67,7 @@ class QuartzDescriptionServiceTest {
         when(triggerMock.getRepeatCount()).thenReturn(null);
         when(triggerMock.getRepeatInterval()).thenReturn(10000L);
 
-        QuartzDescriptionService service = new QuartzDescriptionService(messagesMock);
+        ScheduleDescriptionService service = new ScheduleDescriptionService(messagesMock);
         assertEquals("Execute forever every 10 seconds", service.getScheduleDescription(triggerMock));
     }
 
@@ -75,7 +75,7 @@ class QuartzDescriptionServiceTest {
     @ValueSource(ints = {-100, -3, -1})
     void getScheduleDescription_simple_schedule_type_negative_repeat_count(int repeatCount) {
         Messages messagesMock = mock(Messages.class);
-        when(messagesMock.formatMessage(QuartzDescriptionService.class, QuartzDescriptionService.EXECUTE_FOREVER_MESSAGE_KEY, "10"))
+        when(messagesMock.formatMessage(ScheduleDescriptionService.class, ScheduleDescriptionService.EXECUTE_FOREVER_MESSAGE_KEY, "10"))
                 .thenReturn("Execute forever every 10 seconds");
 
         TriggerModel triggerMock = mock(TriggerModel.class);
@@ -83,7 +83,7 @@ class QuartzDescriptionServiceTest {
         when(triggerMock.getRepeatCount()).thenReturn(repeatCount);
         when(triggerMock.getRepeatInterval()).thenReturn(10000L);
 
-        QuartzDescriptionService service = new QuartzDescriptionService(messagesMock);
+        ScheduleDescriptionService service = new ScheduleDescriptionService(messagesMock);
         assertEquals("Execute forever every 10 seconds", service.getScheduleDescription(triggerMock));
     }
 
@@ -92,7 +92,7 @@ class QuartzDescriptionServiceTest {
     @CsvSource({"500, 0.5", "540, 0.5", "550, 0.6", "560, 0.6", "10540, 10.5", "10000, 10", "10000000, 10000"})
     void getScheduleDescription_simple_schedule_type_less_1_second_interval(long interval, String formattedInterval) {
         Messages messagesMock = mock(Messages.class);
-        when(messagesMock.formatMessage(eq(QuartzDescriptionService.class), eq(QuartzDescriptionService.EXECUTE_FOREVER_MESSAGE_KEY), anyString()))
+        when(messagesMock.formatMessage(eq(ScheduleDescriptionService.class), eq(ScheduleDescriptionService.EXECUTE_FOREVER_MESSAGE_KEY), anyString()))
                 .thenReturn("Some message");
 
         TriggerModel triggerMock = mock(TriggerModel.class);
@@ -100,23 +100,23 @@ class QuartzDescriptionServiceTest {
         when(triggerMock.getRepeatCount()).thenReturn(-1);
         when(triggerMock.getRepeatInterval()).thenReturn(interval);
 
-        new QuartzDescriptionService(messagesMock).getScheduleDescription(triggerMock);
+        new ScheduleDescriptionService(messagesMock).getScheduleDescription(triggerMock);
 
-        verify(messagesMock, only()).formatMessage(QuartzDescriptionService.class, QuartzDescriptionService.EXECUTE_FOREVER_MESSAGE_KEY, formattedInterval);
+        verify(messagesMock, only()).formatMessage(ScheduleDescriptionService.class, ScheduleDescriptionService.EXECUTE_FOREVER_MESSAGE_KEY, formattedInterval);
     }
 
 
     @Test
     void getScheduleDescription_simple_schedule_type_0_repeats() {
         Messages messagesMock = mock(Messages.class);
-        when(messagesMock.getMessage(QuartzDescriptionService.class, QuartzDescriptionService.EXECUTE_ONCE_MESSAGE_KEY))
+        when(messagesMock.getMessage(ScheduleDescriptionService.class, ScheduleDescriptionService.EXECUTE_ONCE_MESSAGE_KEY))
                 .thenReturn("Execute once message");
 
         TriggerModel triggerMock = mock(TriggerModel.class);
         when(triggerMock.getScheduleType()).thenReturn(SIMPLE);
         when(triggerMock.getRepeatCount()).thenReturn(0);
 
-        QuartzDescriptionService service = new QuartzDescriptionService(messagesMock);
+        ScheduleDescriptionService service = new ScheduleDescriptionService(messagesMock);
         assertEquals("Execute once message", service.getScheduleDescription(triggerMock));
     }
 
@@ -126,7 +126,7 @@ class QuartzDescriptionServiceTest {
 
         int repeatsCount = 10;
         Messages messagesMock = mock(Messages.class);
-        when(messagesMock.formatMessage(QuartzDescriptionService.class, QuartzDescriptionService.EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatsCount + 1, "10"))
+        when(messagesMock.formatMessage(ScheduleDescriptionService.class, ScheduleDescriptionService.EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatsCount + 1, "10"))
                 .thenReturn("Execute once message");
 
         TriggerModel triggerMock = mock(TriggerModel.class);
@@ -134,7 +134,7 @@ class QuartzDescriptionServiceTest {
         when(triggerMock.getRepeatCount()).thenReturn(repeatsCount);
         when(triggerMock.getRepeatInterval()).thenReturn(10000L);
 
-        QuartzDescriptionService service = new QuartzDescriptionService(messagesMock);
+        ScheduleDescriptionService service = new ScheduleDescriptionService(messagesMock);
         assertEquals("Execute once message", service.getScheduleDescription(triggerMock));
     }
 
@@ -143,7 +143,7 @@ class QuartzDescriptionServiceTest {
         JobModel jobModelMock = mock(JobModel.class);
         when(jobModelMock.getTriggers()).thenReturn(Collections.emptyList());
 
-        QuartzDescriptionService service = new QuartzDescriptionService(mock(Messages.class));
+        ScheduleDescriptionService service = new ScheduleDescriptionService(mock(Messages.class));
         assertNull(service.getScheduleDescription(jobModelMock));
     }
 
@@ -156,7 +156,7 @@ class QuartzDescriptionServiceTest {
         when(triggerModelMock.getCronExpression()).thenReturn("SOME_CRON_EXPRESSION");
         when(jobModelMock.getTriggers()).thenReturn(asList(triggerModelMock));
 
-        QuartzDescriptionService service = new QuartzDescriptionService(mock(Messages.class));
+        ScheduleDescriptionService service = new ScheduleDescriptionService(mock(Messages.class));
         assertEquals("SOME_CRON_EXPRESSION", service.getScheduleDescription(jobModelMock));
     }
 
@@ -173,7 +173,7 @@ class QuartzDescriptionServiceTest {
 
         when(jobModelMock.getTriggers()).thenReturn(asList(triggerModelMock, triggerModelMock2));
 
-        QuartzDescriptionService service = new QuartzDescriptionService(mock(Messages.class));
+        ScheduleDescriptionService service = new ScheduleDescriptionService(mock(Messages.class));
         assertEquals("SOME_CRON_EXPRESSION, SOME_CRON_EXPRESSION2", service.getScheduleDescription(jobModelMock));
     }
 

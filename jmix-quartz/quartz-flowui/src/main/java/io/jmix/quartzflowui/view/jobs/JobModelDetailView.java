@@ -26,15 +26,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.UnconstrainedDataManager;
-import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.*;
-import io.jmix.quartz.service.QuartzDescriptionService;
+import io.jmix.quartz.service.ScheduleDescriptionService;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +77,7 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     @Autowired
     protected UnconstrainedDataManager dataManager;
     @Autowired
-    protected QuartzDescriptionService quartzDescriptionService;
+    protected ScheduleDescriptionService scheduleDescriptionService;
 
     protected boolean replaceJobIfExists = true;
     protected boolean deleteObsoleteJob = false;
@@ -109,8 +107,8 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     }
 
     protected void initModelTable() {
-        triggerModelTable.addColumn(new TextRenderer<>(trigger -> quartzDescriptionService.getScheduleDescription(trigger)))
-                .setHeader(messageBundle.getMessage("column.scheduleDescription.header"));
+        triggerModelTable.addColumn(new TextRenderer<>(trigger -> scheduleDescriptionService.getScheduleDescription(trigger)))
+                .setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"));
         triggerModelTable.addColumn(entity -> entity.getStartDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getStartDate()) : "").setResizable(true)

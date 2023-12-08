@@ -25,23 +25,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Service("quartz_QuartzDescriptionService")
-public class QuartzDescriptionService {
+/**
+ * Service for calculating description for quartz jobs and triggers based on their data and localized messages.
+ */
+@Service("quartz_ScheduleDescriptionService")
+public class ScheduleDescriptionService {
 
-    static final String EXECUTE_FOREVER_MESSAGE_KEY = "ExecuteForeverMessage";
-    static final String EXECUTE_ONCE_MESSAGE_KEY = "ExecuteOnceMessage";
-    static final String EXECUTE_SEVERAL_TIMES_MESSAGE_KEY = "ExecuteSeveralTimesMessage";
+    static final String EXECUTE_FOREVER_MESSAGE_KEY = "executeForeverMessage";
+    static final String EXECUTE_ONCE_MESSAGE_KEY = "executeOnceMessage";
+    static final String EXECUTE_SEVERAL_TIMES_MESSAGE_KEY = "executeSeveralTimesMessage";
+
     protected Messages messages;
+
     @Autowired
-    public QuartzDescriptionService(Messages messages) {
+    public ScheduleDescriptionService(Messages messages) {
         this.messages = messages;
     }
 
+    /**
+     * Calculating trigger description, based on schedule type, repeat count and repeat interval.
+     * Text messages is taken from correspondent localized properties files.
+     *
+     * @param triggerModel trigger data to calculate trigger description
+     * @return localized description
+     */
+    @Nullable
     public String getScheduleDescription(TriggerModel triggerModel) {
         ScheduleType scheduleType = triggerModel.getScheduleType();
         if (scheduleType == null) {
@@ -55,11 +69,11 @@ public class QuartzDescriptionService {
         Integer repeatCount = triggerModel.getRepeatCount();
         Long repeatInterval = triggerModel.getRepeatInterval();
         if (Objects.isNull(repeatCount) || repeatCount < 0) {
-            return messages.formatMessage(QuartzDescriptionService.class, EXECUTE_FOREVER_MESSAGE_KEY, calculateInterval(repeatInterval));
+            return messages.formatMessage(ScheduleDescriptionService.class, EXECUTE_FOREVER_MESSAGE_KEY, calculateInterval(repeatInterval));
         } else if (repeatCount == 0) {
-            return messages.getMessage(QuartzDescriptionService.class, EXECUTE_ONCE_MESSAGE_KEY);
+            return messages.getMessage(ScheduleDescriptionService.class, EXECUTE_ONCE_MESSAGE_KEY);
         } else {
-            return messages.formatMessage(QuartzDescriptionService.class, EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatCount + 1, calculateInterval(repeatInterval));
+            return messages.formatMessage(ScheduleDescriptionService.class, EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatCount + 1, calculateInterval(repeatInterval));
         }
     }
 
@@ -72,6 +86,14 @@ public class QuartzDescriptionService {
         return format.format(doubleValue);
     }
 
+    /**
+     * Calculating schedule description for quartz Job, based on schedule description of associated triggers
+     * as comma-separated string.
+     *
+     * @param jobModel to calculate description
+     * @return calculated description as comma-separated string
+     */
+    @Nullable
     public String getScheduleDescription(JobModel jobModel) {
         if (CollectionUtils.isEmpty(jobModel.getTriggers())) {
             return null;

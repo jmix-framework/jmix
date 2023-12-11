@@ -3600,6 +3600,7 @@
                 <xs:attribute name="forgotPasswordButtonVisible" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

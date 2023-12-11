@@ -46,17 +46,20 @@ public class StandardListView<E> extends StandardView implements LookupView<E>, 
 
     public StandardListView() {
         addBeforeShowListener(this::onBeforeShow);
+        addReadyListener(this::onReady);
     }
 
     private void onBeforeShow(BeforeShowEvent event) {
-        setupLookupComponent();
         setupSaveShortcut();
+    }
+
+    private void onReady(ReadyEvent event) {
+        setupLookupComponent();
     }
 
     protected void setupLookupComponent() {
         if (selectionHandler != null) {
-            // TODO: gg, implement
-//            getLookupComponent().setLookupSelectHandler(this::select);
+            getLookupComponent().setLookupSelectHandler(this::handleSelectionInternal);
         }
     }
 
@@ -149,6 +152,10 @@ public class StandardListView<E> extends StandardView implements LookupView<E>, 
 
         Collection<E> selectedItems = getLookupComponent().getSelectedItems();
 
+        return handleSelectionInternal(selectedItems);
+    }
+
+    protected OperationResult handleSelectionInternal(Collection<E> selectedItems) {
         return validateSelectedItems(selectedItems)
                 .compose(() -> close(StandardOutcome.SELECT))
                 .compose(() -> doSelect(selectedItems));

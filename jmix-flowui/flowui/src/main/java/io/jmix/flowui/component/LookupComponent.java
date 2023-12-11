@@ -16,16 +16,26 @@
 
 package io.jmix.flowui.component;
 
+import org.springframework.lang.Nullable;
+
+import java.util.Collection;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A component which can be set as lookup component for a view.
  */
 public interface LookupComponent<T> {
 
-    // TODO: gg, add analog of setLookupSelectHandler (if set, overrides Enter Press and Double Click handlers)
+    /**
+     * @param selectHandler handler that should be executed when a user
+     *                      select an item in a lookup screen, {@code null} to remove
+     */
+    void setLookupSelectHandler(@Nullable Consumer<Collection<T>> selectHandler);
 
-    // TODO: gg, move to a more general interface?
+    /**
+     * @return items selected in this lookup component
+     */
     Set<T> getSelectedItems();
 
     interface MultiSelectLookupComponent<T> extends LookupComponent<T> {

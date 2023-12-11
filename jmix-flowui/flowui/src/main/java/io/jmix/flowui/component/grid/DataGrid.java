@@ -17,8 +17,10 @@
 package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.grid.dataview.GridDataView;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -48,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
         EnhancedDataGrid<E>, ApplicationContextAware, InitializingBean {
@@ -133,6 +136,16 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     @Override
     public Registration addSelectionListener(SelectionListener<Grid<E>, E> listener) {
         return gridDelegate.addSelectionListener(listener);
+    }
+
+    @Override
+    public Registration addItemDoubleClickListener(ComponentEventListener<ItemDoubleClickEvent<E>> listener) {
+        return gridDelegate.addItemDoubleClickListener(listener);
+    }
+
+    @Override
+    public void setLookupSelectHandler(@Nullable Consumer<Collection<E>> selectHandler) {
+        gridDelegate.setLookupSelectHandler(selectHandler);
     }
 
     @Override

@@ -48,6 +48,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -249,6 +250,11 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
     @Override
     public void setMetaClass(@Nullable MetaClass metaClass) {
         fieldDelegate.setMetaClass(metaClass);
+    }
+
+    @Override
+    public void setLookupSelectHandler(@Nullable Consumer<Collection<V>> selectHandler) {
+        // do nothing
     }
 
     @Override

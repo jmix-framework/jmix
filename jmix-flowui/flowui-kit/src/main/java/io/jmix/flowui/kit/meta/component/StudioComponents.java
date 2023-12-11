@@ -304,6 +304,12 @@ public interface StudioComponents {
                             source = "dataContainer",
                             item = "property"
                     )
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.ComponentRenderer"
+                    )
             }
     )
     CheckboxGroup checkboxGroup();
@@ -419,6 +425,12 @@ public interface StudioComponents {
                             source = "dataContainer",
                             item = "property"
                     )
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.Renderer"
+                    )
             }
     )
     ComboBox comboBox();
@@ -491,6 +503,12 @@ public interface StudioComponents {
                             source = "dataContainer",
                             item = "property"
                     )
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.Renderer"
+                    )
             }
     )
     MultiSelectComboBox multiSelectComboBox();
@@ -562,6 +580,12 @@ public interface StudioComponents {
                     @StudioPropertiesBinding(
                             source = "dataContainer",
                             item = "property"
+                    )
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.Renderer"
                     )
             }
     )
@@ -971,6 +995,12 @@ public interface StudioComponents {
                     @StudioPropertiesBinding(
                             source = "dataContainer",
                             item = "property"
+                    )
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.Renderer"
                     )
             }
     )
@@ -1532,6 +1562,12 @@ public interface StudioComponents {
                             source = "dataContainer",
                             item = "property"
                     )
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.ComponentRenderer"
+                    )
             }
     )
     RadioButtonGroup radioButtonGroup();
@@ -1597,6 +1633,12 @@ public interface StudioComponents {
                     @StudioPropertiesBinding(
                             source = "dataContainer",
                             item = "property"
+                    )
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.ComponentRenderer"
                     )
             }
     )
@@ -1668,6 +1710,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.ComponentRenderer"
+                    )
             }
     )
     ListBox listBox();
@@ -1704,6 +1752,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.ComponentRenderer"
+                    )
             }
     )
     MultiSelectListBox multiSelectListBox();

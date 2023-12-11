@@ -60,7 +60,6 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
 
         loadAppLayout();
 
-
         loadSubComponents();
     }
 
@@ -77,6 +76,7 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
         Element appLayoutElement = getAppLayoutElement();
 
         componentLoader().loadClassNames(appLayout, appLayoutElement);
+        componentLoader().loadCss(appLayout, appLayoutElement);
 
         getLoaderSupport().loadBoolean(appLayoutElement, "drawerOpened", appLayout::setDrawerOpened);
         getLoaderSupport().loadEnum(appLayoutElement, AppLayout.Section.class, "primarySection")
@@ -89,6 +89,7 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
         Element contentElement = appLayout.element(contentName);
         if (contentElement != null) {
             Div bufferComponent = new Div();
+            componentLoader().loadCss(bufferComponent, contentElement);
 
             createSubComponents(bufferComponent, contentElement);
 

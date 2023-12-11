@@ -18,7 +18,7 @@
 
     <category name="Reports">
 
-        <codeSnippet name="Running a report using a report code" contextTypes="service,controller">
+        <codeSnippet name="Running a report by a report code using ReportRunner" contextTypes="service,controller">
 
             <inject variable="reportRunner" classQualifiedName="io.jmix.reports.runner.ReportRunner"/>
 
@@ -63,27 +63,12 @@
             <description>
                 <![CDATA[
                     Run a report by code and get the result content using <code>ReportRunner</code>.<br>
-                    <br>
-                    Example:<br>
-                    <pre>
-<code>
-    ReportOutputDocument document = reportRunner.byReportCode("user-list-report")
-        .withParams(Map.of("companyCode", "jmix"))
-        .withOutputType(ReportOutputType.XLSX)
-        .withOutputNamePattern("Users_report.xlsx")
-        .run();
-
-    byte[] reportContent = document.getContent();
-    String reportName = document.getDocumentName();
-</code>
-                    </pre>
-
                     <a href="https://docs.jmix.io/jmix/reports/run-report.html#report-runner">Jmix Documentation</a>
                 ]]>
             </description>
         </codeSnippet>
 
-        <codeSnippet name="Running a report using a report entity" contextTypes="service,controller">
+        <codeSnippet name="Running a report by a report entity using ReportRunner" contextTypes="service,controller">
             <inject variable="reportRunner" classQualifiedName="io.jmix.reports.runner.ReportRunner"/>
 
             <variableInputParameter code="report" text="Report" jmixEntity="true"/>
@@ -127,21 +112,6 @@
             <description>
                 <![CDATA[
                     Run a report by report entity and get the result content using <code>ReportRunner</code>.<br>
-                    <br>
-                    Example:<br>
-                    <pre>
-<code>
-    ReportOutputDocument document = reportRunner.byReportEntity(report)
-        .withParams(Map.of("companyCode", "jmix"))
-        .withOutputType(ReportOutputType.XLSX)
-        .withOutputNamePattern("Users report.xlsx")
-        .run();
-
-    byte[] reportContent = document.getContent();
-    String reportName = document.getDocumentName();
-</code>
-                    </pre>
-
                     <a href="https://docs.jmix.io/jmix/reports/run-report.html#report-runner">Jmix Documentation</a>
                 ]]>
             </description>

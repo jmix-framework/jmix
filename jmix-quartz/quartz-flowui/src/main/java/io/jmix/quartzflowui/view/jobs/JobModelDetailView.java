@@ -109,7 +109,7 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
 
     protected void initModelTable() {
         triggerModelTable.addColumn(new TextRenderer<>(trigger -> scheduleDescriptionProvider.getScheduleDescription(trigger)))
-                .setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"))
+                .setHeader(messageBundle.getMessage("column.triggerScheduleDescription.header"))
                 .setResizable(true)
                 .setAutoWidth(true);
         triggerModelTable.addColumn(entity -> entity.getStartDate() != null ?

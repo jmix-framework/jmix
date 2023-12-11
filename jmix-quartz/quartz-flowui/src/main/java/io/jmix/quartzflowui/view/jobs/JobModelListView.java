@@ -87,7 +87,7 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     protected void initTable() {
         DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> scheduleDescriptionProvider.getScheduleDescription(job)));
-        triggerDescriptionColumn.setHeader(messageBundle.getMessage("column.triggerScheduleDescription.header"));
+        triggerDescriptionColumn.setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"));
         jobModelsTable.setColumnPosition(triggerDescriptionColumn, 5);
         triggerDescriptionColumn.setResizable(true).setWidth("20%");
 

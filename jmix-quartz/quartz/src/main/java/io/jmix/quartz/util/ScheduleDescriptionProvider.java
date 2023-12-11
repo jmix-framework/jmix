@@ -23,7 +23,7 @@ import io.jmix.quartz.model.TriggerModel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 /**
  * Service for calculating description for quartz jobs and triggers based on their data and localized messages.
  */
-@Service("quartz_ScheduleDescriptionService")
+@Component("quartz_ScheduleDescriptionProvider")
 public class ScheduleDescriptionProvider {
 
     static final String EXECUTE_FOREVER_MESSAGE_KEY = "executeForeverMessage";

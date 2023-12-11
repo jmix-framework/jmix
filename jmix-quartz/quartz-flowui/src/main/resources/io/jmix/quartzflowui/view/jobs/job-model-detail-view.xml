@@ -46,9 +46,9 @@
                             <action id="remove" type="list_remove"/>
                         </actions>
                         <columns resizable="true">
-                            <column property="triggerName" resizable="true"/>
-                            <column property="triggerGroup" resizable="true"/>
-                            <column property="scheduleType" resizable="true"/>
+                            <column property="triggerName" resizable="true" autoWidth="true"/>
+                            <column property="triggerGroup" resizable="true" autoWidth="true"/>
+                            <column property="scheduleType" resizable="true" autoWidth="true"/>
                         </columns>
                     </dataGrid>
                 </vbox>

@@ -110,23 +110,32 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     protected void initModelTable() {
         triggerModelTable.addColumn(new TextRenderer<>(trigger -> scheduleDescriptionProvider.getScheduleDescription(trigger)))
                 .setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"))
-                .setResizable(true);
+                .setResizable(true)
+                .setAutoWidth(true);
         triggerModelTable.addColumn(entity -> entity.getStartDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getStartDate()) : "").setResizable(true)
-                .setHeader(messageBundle.getMessage("column.startDate.header"));
+                                .format(entity.getStartDate()) : "")
+                .setResizable(false)
+                .setHeader(messageBundle.getMessage("column.startDate.header"))
+                .setAutoWidth(true);
         triggerModelTable.addColumn(entity -> entity.getLastFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getLastFireDate()) : "").setResizable(true)
-                .setHeader(messageBundle.getMessage("column.lastFireDate.header"));
+                                .format(entity.getLastFireDate()) : "")
+                .setResizable(false)
+                .setHeader(messageBundle.getMessage("column.lastFireDate.header"))
+                .setAutoWidth(true);
         triggerModelTable.addColumn(entity -> entity.getNextFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getNextFireDate()) : "").setResizable(true)
-                .setHeader(messageBundle.getMessage("column.nextFireDate.header"));
+                                .format(entity.getNextFireDate()) : "")
+                .setResizable(false)
+                .setHeader(messageBundle.getMessage("column.nextFireDate.header"))
+                .setAutoWidth(true);
         triggerModelTable.addColumn(entity -> entity.getEndDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getEndDate()) : "").setResizable(true)
-                .setHeader(messageBundle.getMessage("column.endDate.header"));
+                                .format(entity.getEndDate()) : "")
+                .setResizable(false)
+                .setHeader(messageBundle.getMessage("column.endDate.header"))
+                .setAutoWidth(true);
     }
 
     @Subscribe("jobGroupField")

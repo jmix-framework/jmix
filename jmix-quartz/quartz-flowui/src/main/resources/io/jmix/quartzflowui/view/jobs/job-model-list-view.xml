@@ -63,12 +63,12 @@
                 <action id="deactivate" type="list_itemTracking" text="msg://pauseJob" icon="PAUSE"/>
             </actions>
             <columns resizable="true">
-                <column property="jobName" resizable="true"/>
-                <column property="jobGroup" resizable="true"/>
-                <column property="jobClass" resizable="true"/>
-                <column property="jobState" resizable="true"/>
-                <column property="jobSource" resizable="true"/>
-                <column property="description" resizable="true"/>
+                <column property="jobName" resizable="true" autoWidth="true"/>
+                <column property="jobGroup" resizable="true" autoWidth="true"/>
+                <column property="jobClass" resizable="true" width="15em"/>
+                <column property="jobState" resizable="true" autoWidth="true"/>
+                <column property="jobSource" resizable="true" autoWidth="true"/>
+                <column property="description" resizable="true" width="20%"/>
             </columns>
         </dataGrid>
 

@@ -89,17 +89,19 @@ public class JobModelListView extends StandardListView<JobModel> {
         DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> scheduleDescriptionProvider.getScheduleDescription(job)));
         triggerDescriptionColumn.setHeader(messageBundle.getMessage("column.triggerScheduleDescription.header"));
         jobModelsTable.setColumnPosition(triggerDescriptionColumn, 5);
-        triggerDescriptionColumn.setResizable(true);
+        triggerDescriptionColumn.setResizable(true).setWidth("20%");
 
         jobModelsTable.addColumn(entity -> entity.getLastFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getLastFireDate()) : "").setResizable(true)
-                .setHeader(getHeaderForPropertyColumn("lastFireDate"));
+                                .format(entity.getLastFireDate()) : "").setResizable(false)
+                .setHeader(getHeaderForPropertyColumn("lastFireDate"))
+                .setAutoWidth(true);
 
         jobModelsTable.addColumn(entity -> entity.getNextFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getNextFireDate()) : "").setResizable(true)
-                .setHeader(getHeaderForPropertyColumn("nextFireDate"));
+                                .format(entity.getNextFireDate()) : "").setResizable(false)
+                .setHeader(getHeaderForPropertyColumn("nextFireDate"))
+                .setAutoWidth(true);
     }
 
     private String getHeaderForPropertyColumn(String propertyName) {

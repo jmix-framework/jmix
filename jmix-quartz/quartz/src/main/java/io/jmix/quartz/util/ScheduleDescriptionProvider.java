@@ -66,18 +66,20 @@ public class ScheduleDescriptionProvider {
             return triggerModel.getCronExpression();
         }
 
-        Integer repeatCount = triggerModel.getRepeatCount();
         Long repeatInterval = triggerModel.getRepeatInterval();
+        if (repeatInterval == null) throw new IllegalStateException("\"repeatInterval\" field for simple trigger shouldn't be null");
+
+        Integer repeatCount = triggerModel.getRepeatCount();
         if (Objects.isNull(repeatCount) || repeatCount < 0) {
-            return messages.formatMessage(ScheduleDescriptionProvider.class, EXECUTE_FOREVER_MESSAGE_KEY, calculateInterval(repeatInterval));
+            return messages.formatMessage(ScheduleDescriptionProvider.class, EXECUTE_FOREVER_MESSAGE_KEY, formatSeconds(repeatInterval));
         } else if (repeatCount == 0) {
             return messages.getMessage(ScheduleDescriptionProvider.class, EXECUTE_ONCE_MESSAGE_KEY);
         } else {
-            return messages.formatMessage(ScheduleDescriptionProvider.class, EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatCount + 1, calculateInterval(repeatInterval));
+            return messages.formatMessage(ScheduleDescriptionProvider.class, EXECUTE_SEVERAL_TIMES_MESSAGE_KEY, repeatCount + 1, formatSeconds(repeatInterval));
         }
     }
 
-    private static String calculateInterval(Long repeatInterval) {
+    private static String formatSeconds(Long repeatInterval) {
         double doubleValue = (double) repeatInterval / 1000;
         DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(LocaleContextHolder.getLocale());
         decimalFormatSymbols.setDecimalSeparator('.');

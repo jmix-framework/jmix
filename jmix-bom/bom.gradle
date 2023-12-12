@@ -270,6 +270,8 @@ dependencies {
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
 
+        api 'org.liquibase:liquibase-core:4.25.0'
+
         api 'org.glassfish:jakarta.el:4.0.2'
 
         api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.1'

@@ -1087,6 +1087,9 @@
             <xs:enumeration value="IN_LIST"/>
             <xs:enumeration value="NOT_IN_LIST"/>
             <xs:enumeration value="DATE_INTERVAL"/>
+            <xs:enumeration value="IS_EMPTY"/>
+            <xs:enumeration value="MEMBER_OF_LIST"/>
+            <xs:enumeration value="NOT_MEMBER_OF_LIST"/>
         </xs:restriction>
     </xs:simpleType>
 

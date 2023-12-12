@@ -32,8 +32,8 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
 import org.slf4j.Logger;
@@ -181,8 +181,14 @@ public class PropertyFilterSupport {
     public EnumSet<Operation> getAvailableOperations(MetaPropertyPath mpp) {
         Range mppRange = mpp.getRange();
 
-        if (mppRange.isClass() || mppRange.isEnum()) {
+        if (mppRange.isEnum()) {
             return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
+        } else if (mppRange.isClass()) {
+            if (mppRange.getCardinality().isMany()) {
+                return EnumSet.of(IS_EMPTY, IN_LIST, NOT_IN_LIST);
+            } else {
+                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
+            }
         } else if (mppRange.isDatatype()) {
             Class<?> type = mppRange.asDatatype().getJavaClass();
 
@@ -229,14 +235,23 @@ public class PropertyFilterSupport {
             throw new UnsupportedOperationException("Unsupported attribute name: " + property);
         }
 
-        return isStringDatatype(mpp)
-                ? CONTAINS
-                : EQUAL;
+        if (isStringDatatype(mpp)) {
+            return CONTAINS;
+        } else if (isCollectionDatatype(mpp)) {
+            return IS_EMPTY;
+        } else {
+            return EQUAL;
+        }
     }
 
     protected boolean isStringDatatype(MetaPropertyPath mpp) {
         Range range = mpp.getMetaProperty().getRange();
         return range.isDatatype() && String.class.equals(range.asDatatype().getJavaClass());
+    }
+
+    protected boolean isCollectionDatatype(MetaPropertyPath mpp) {
+        Range range = mpp.getMetaProperty().getRange();
+        return range.isClass() && range.getCardinality().isMany();
     }
 
     public String toPropertyConditionOperation(Operation operation) {
@@ -269,6 +284,8 @@ public class PropertyFilterSupport {
                 return PropertyCondition.Operation.NOT_IN_LIST;
             case DATE_INTERVAL:
                 return PropertyCondition.Operation.IN_INTERVAL;
+            case IS_EMPTY:
+                return PropertyCondition.Operation.IS_EMPTY;
             default:
                 throw new IllegalArgumentException("Unknown operation: " + operation);
         }

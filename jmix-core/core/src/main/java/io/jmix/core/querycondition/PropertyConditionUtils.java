@@ -29,7 +29,8 @@ public class PropertyConditionUtils {
      */
     public static boolean isUnaryOperation(PropertyCondition propertyCondition) {
         String operation = propertyCondition.getOperation();
-        return PropertyCondition.Operation.IS_SET.equals(operation);
+        return PropertyCondition.Operation.IS_SET.equals(operation)
+                || PropertyCondition.Operation.IS_EMPTY.equals(operation);
     }
 
     /**
@@ -93,6 +94,8 @@ public class PropertyConditionUtils {
                 return Boolean.TRUE.equals(condition.getParameterValue()) ? "is not null" : "is null";
             case PropertyCondition.Operation.IN_INTERVAL:
                 return getInIntervalJpqlOperation(condition);
+            case PropertyCondition.Operation.IS_EMPTY:
+                return Boolean.TRUE.equals(condition.getParameterValue()) ? "is empty" : "is not empty";
         }
         throw new RuntimeException("Unknown PropertyCondition operation: " + condition.getOperation());
     }

@@ -173,6 +173,14 @@ public class PropertyCondition implements Condition {
         return createWithValue(property, Operation.NOT_IN_LIST, value);
     }
 
+    /**
+     * Creates a condition that is translated to "is empty" or "is not empty"
+     * depending on the parameter value.
+     */
+    public static PropertyCondition isEmpty(String property, Object value) {
+        return createWithValue(property, Operation.IS_EMPTY, value);
+    }
+
     public String getProperty() {
         return property;
     }
@@ -291,5 +299,6 @@ public class PropertyCondition implements Condition {
         public static final String IN_LIST = "in_list";
         public static final String NOT_IN_LIST = "not_in_list";
         public static final String IN_INTERVAL = "in_interval";
+        public static final String IS_EMPTY = "is_empty";
     }
 }

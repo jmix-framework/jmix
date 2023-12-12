@@ -110,7 +110,6 @@ public class FilterMetadataTools {
                         && isKeyValueCrossDataStoreReferenceAllowed(propertyPath, query)))
                     || (isCrossDataStoreReference(propertyPath.getMetaProperty())
                         && !(propertyPath.getMetaClass() instanceof KeyValueMetaClass)))
-                && !propertyPath.getMetaProperty().getRange().getCardinality().isMany()
                 && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()));
     }
 

@@ -181,6 +181,20 @@ public class PropertyCondition implements Condition {
         return createWithValue(property, Operation.IS_EMPTY, value);
     }
 
+    /**
+     * Creates a condition that is translated to "member of".
+     */
+    public static PropertyCondition memberOfList(String property, Object value) {
+        return createWithValue(property, Operation.MEMBER_OF_LIST, value);
+    }
+
+    /**
+     * Creates a condition that is translated to "not member of".
+     */
+    public static PropertyCondition notMemberOfList(String property, Object value) {
+        return createWithValue(property, Operation.NOT_MEMBER_OF_LIST, value);
+    }
+
     public String getProperty() {
         return property;
     }
@@ -300,5 +314,7 @@ public class PropertyCondition implements Condition {
         public static final String NOT_IN_LIST = "not_in_list";
         public static final String IN_INTERVAL = "in_interval";
         public static final String IS_EMPTY = "is_empty";
+        public static final String MEMBER_OF_LIST = "member_of_list";
+        public static final String NOT_MEMBER_OF_LIST = "not_member_of_list";
     }
 }

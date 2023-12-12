@@ -185,7 +185,7 @@ public class PropertyFilterSupport {
             return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
         } else if (mppRange.isClass()) {
             if (mppRange.getCardinality().isMany()) {
-                return EnumSet.of(IS_EMPTY, IN_LIST, NOT_IN_LIST);
+                return EnumSet.of(IS_EMPTY, MEMBER_OF_LIST, NOT_MEMBER_OF_LIST);
             } else {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
             }
@@ -286,6 +286,10 @@ public class PropertyFilterSupport {
                 return PropertyCondition.Operation.IN_INTERVAL;
             case IS_EMPTY:
                 return PropertyCondition.Operation.IS_EMPTY;
+            case MEMBER_OF_LIST:
+                return PropertyCondition.Operation.MEMBER_OF_LIST;
+            case NOT_MEMBER_OF_LIST:
+                return PropertyCondition.Operation.NOT_MEMBER_OF_LIST;
             default:
                 throw new IllegalArgumentException("Unknown operation: " + operation);
         }

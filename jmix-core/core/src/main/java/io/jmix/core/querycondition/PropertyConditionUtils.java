@@ -53,6 +53,16 @@ public class PropertyConditionUtils {
     }
 
     /**
+     * @param propertyCondition property condition
+     * @return true if property condition operation is "member of" operation
+     */
+    public static boolean isMemberOfListOperation(PropertyCondition propertyCondition) {
+        String operation = propertyCondition.getOperation();
+        return PropertyCondition.Operation.MEMBER_OF_LIST.equals(operation)
+                || PropertyCondition.Operation.NOT_MEMBER_OF_LIST.equals(operation);
+    }
+
+    /**
      * @param property an entity property
      * @return a parameter name
      */
@@ -96,6 +106,10 @@ public class PropertyConditionUtils {
                 return getInIntervalJpqlOperation(condition);
             case PropertyCondition.Operation.IS_EMPTY:
                 return Boolean.TRUE.equals(condition.getParameterValue()) ? "is empty" : "is not empty";
+            case PropertyCondition.Operation.MEMBER_OF_LIST:
+                return "member of";
+            case PropertyCondition.Operation.NOT_MEMBER_OF_LIST:
+                return "not member of";
         }
         throw new RuntimeException("Unknown PropertyCondition operation: " + condition.getOperation());
     }

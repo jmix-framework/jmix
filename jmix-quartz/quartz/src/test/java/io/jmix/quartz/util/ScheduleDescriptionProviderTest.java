@@ -84,7 +84,7 @@ class ScheduleDescriptionProviderTest {
 
         TriggerModel triggerMock = mock(TriggerModel.class);
         when(triggerMock.getScheduleType()).thenReturn(SIMPLE);
-        when(triggerMock.getRepeatCount()).thenReturn(null);
+        when(triggerMock.getRepeatCount()).thenReturn(-1);
         when(triggerMock.getRepeatInterval()).thenReturn(10000L);
 
         ScheduleDescriptionProvider service = new ScheduleDescriptionProvider(messagesMock);

@@ -30,6 +30,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.ComponentContainer;
+import io.jmix.flowui.kit.component.HasSubParts;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.lang.Nullable;
 
@@ -47,7 +48,7 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
 @JsModule("./src/tabsheet/jmix-tabsheet.js")
 public class JmixTabSheet extends Component
         implements HasStyle, HasSize, HasThemeVariant<TabSheetVariant>, HasPrefix, HasSuffix,
-        ComponentContainer {
+        ComponentContainer, HasSubParts {
 
     protected static final String GENERATED_TAB_ID_PREFIX = "tabsheet-tab-";
 
@@ -361,6 +362,15 @@ public class JmixTabSheet extends Component
 
     protected String generateTabId() {
         return GENERATED_TAB_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
+    }
+
+    @Nullable
+    @Override
+    public Object getSubPart(String name) {
+        return getChildren()
+                .filter(tab -> sameId(tab, name))
+                .findAny()
+                .orElse(null);
     }
 
     /**

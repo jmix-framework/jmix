@@ -38,6 +38,7 @@ import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -147,6 +148,11 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     @Override
     public <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler) {
         viewInitializer.setAfterCloseHandler(afterCloseHandler);
+    }
+
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
     }
 
     /**
@@ -354,6 +360,14 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
      */
     public <V extends View<?>> ReadAction<E> withAfterCloseHandler(Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
+        return this;
+    }
+
+    /**
+     * @see #setViewConfigurer(Consumer)
+     */
+    public <V extends View<?>> ReadAction<E> withViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        setViewConfigurer(viewConfigurer);
         return this;
     }
 

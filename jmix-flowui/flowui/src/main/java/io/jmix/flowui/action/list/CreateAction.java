@@ -38,8 +38,8 @@ import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -153,6 +153,11 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     @Override
     public <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<V>> afterCloseHandler) {
         viewInitializer.setAfterCloseHandler(afterCloseHandler);
+    }
+
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
     }
 
     /**
@@ -380,6 +385,14 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     public <V extends View<?>> CreateAction<E> withAfterCloseHandler(
             @Nullable Consumer<AfterCloseEvent<V>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
+        return this;
+    }
+
+    /**
+     * @see #setViewConfigurer(Consumer)
+     */
+    public <V extends View<?>> CreateAction<E> withViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        setViewConfigurer(viewConfigurer);
         return this;
     }
 

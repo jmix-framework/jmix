@@ -25,8 +25,8 @@ import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import io.jmix.flowui.view.builder.WindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import io.jmix.flowui.view.navigation.ViewNavigator;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public class ActionViewInitializer {
@@ -36,6 +36,7 @@ public class ActionViewInitializer {
     protected RouteParametersProvider routeParametersProvider;
     protected QueryParametersProvider queryParametersProvider;
     protected Consumer<AfterCloseEvent<?>> afterCloseHandler;
+    protected Consumer<View<?>> viewConfigurer;
 
     @Nullable
     public String getViewId() {
@@ -80,6 +81,11 @@ public class ActionViewInitializer {
 
     public <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<V>> afterCloseHandler) {
         this.afterCloseHandler = (Consumer) afterCloseHandler;
+    }
+
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        //noinspection unchecked
+        this.viewConfigurer = (Consumer) viewConfigurer;
     }
 
     public ViewNavigator initNavigator(ViewNavigator navigator) {
@@ -135,6 +141,10 @@ public class ActionViewInitializer {
             windowBuilder = windowBuilder.withAfterCloseListener((Consumer) afterCloseHandler);
         }
 
+        if (viewConfigurer != null) {
+            windowBuilder = windowBuilder.withViewConfigurer((Consumer) viewConfigurer);
+        }
+
         return windowBuilder;
     }
 
@@ -151,6 +161,10 @@ public class ActionViewInitializer {
             windowBuilder = windowBuilder.withAfterCloseListener((Consumer) afterCloseHandler);
         }
 
+        if (viewConfigurer != null) {
+            windowBuilder = windowBuilder.withViewConfigurer((Consumer) viewConfigurer);
+        }
+
         return windowBuilder;
     }
 
@@ -165,6 +179,10 @@ public class ActionViewInitializer {
 
         if (afterCloseHandler != null) {
             windowBuilder = windowBuilder.withAfterCloseListener((Consumer) afterCloseHandler);
+        }
+
+        if (viewConfigurer != null) {
+            windowBuilder = windowBuilder.withViewConfigurer((Consumer) viewConfigurer);
         }
 
         return windowBuilder;

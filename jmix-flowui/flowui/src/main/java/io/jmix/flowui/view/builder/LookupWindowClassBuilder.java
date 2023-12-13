@@ -119,6 +119,12 @@ public class LookupWindowClassBuilder<E, V extends View<?> & LookupView<E>> exte
     }
 
     @Override
+    public LookupWindowClassBuilder<E, V> withViewConfigurer(@Nullable Consumer<V> configurer) {
+        super.withViewConfigurer(configurer);
+        return this;
+    }
+
+    @Override
     public Optional<Class<V>> getViewClass() {
         return Optional.ofNullable(viewClass);
     }

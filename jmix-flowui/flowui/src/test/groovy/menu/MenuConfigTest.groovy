@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
-@SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menu.xml"])
+@SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menuconfig/menu.xml"])
 class MenuConfigTest extends FlowuiTestSpecification {
 
     @Autowired

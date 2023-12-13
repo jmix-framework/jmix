@@ -42,8 +42,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -198,8 +198,8 @@ public class GroupFilter extends Composite<VerticalLayout>
         }
 
         LogicalCondition resultCondition;
-        if (initialDataLoaderCondition instanceof LogicalCondition) {
-            resultCondition = (LogicalCondition) initialDataLoaderCondition.copy();
+        if (initialDataLoaderCondition instanceof LogicalCondition initialLogicalCondition) {
+            resultCondition = initialLogicalCondition;
             resultCondition.add(getQueryCondition());
         } else if (initialDataLoaderCondition != null) {
             resultCondition = LogicalCondition.and()

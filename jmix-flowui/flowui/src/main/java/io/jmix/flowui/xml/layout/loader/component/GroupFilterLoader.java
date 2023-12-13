@@ -52,7 +52,9 @@ public class GroupFilterLoader extends AbstractComponentLoader<GroupFilter> {
         loadString(element, "dataLoader")
                 .ifPresent(dataLoaderId -> {
                     DataLoader dataLoader = getComponentContext().getViewData().getLoader(dataLoaderId);
-                    resultComponent.setDataLoader(dataLoader);
+                    getComponentContext().addInitTask((context, view) ->
+                            resultComponent.setDataLoader(dataLoader)
+                    );
                 });
     }
 

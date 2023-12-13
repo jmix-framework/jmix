@@ -57,6 +57,7 @@
             <xs:element name="initialLayout" type="mainLayout:initialLayoutContainer" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="drawerOpened" type="xs:boolean"/>
+        <xs:attribute name="css" type="xs:string"/>
         <xs:attribute name="primarySection" type="primarySection"/>
 
         <xs:attributeGroup ref="layout:hasClassNames"/>

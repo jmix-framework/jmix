@@ -27,6 +27,9 @@ import org.springframework.beans.factory.BeanFactory;
 public abstract class AbstractSingleValueHolder extends AbstractValueHolder {
     private static final long serialVersionUID = -6300542559295657659L;
 
+    public static final String PREV_SOFT_DELETION = "jmix.softDeletion.previous";
+    public static final String SOFT_DELETION_ABSENT = "absent";
+
     public AbstractSingleValueHolder(BeanFactory beanFactory,
                                      ValueHolderInterface originalValueHolder,
                                      Object owner,

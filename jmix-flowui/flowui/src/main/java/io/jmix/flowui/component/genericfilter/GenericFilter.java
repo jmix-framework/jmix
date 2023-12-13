@@ -772,8 +772,8 @@ public class GenericFilter extends Composite<JmixDetails>
             LogicalCondition filterCondition = logicalFilterComponent.getQueryCondition();
 
             LogicalCondition resultCondition;
-            if (initialDataLoaderCondition instanceof LogicalCondition) {
-                resultCondition = (LogicalCondition) initialDataLoaderCondition.copy();
+            if (initialDataLoaderCondition instanceof LogicalCondition initialLogicalCondition) {
+                resultCondition = initialLogicalCondition;
                 resultCondition.add(filterCondition);
             } else if (initialDataLoaderCondition != null) {
                 resultCondition = LogicalCondition.and()

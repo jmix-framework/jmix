@@ -85,6 +85,44 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         }
     }
 
+    def "Load svgIcon component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "SvgIcon component will be loaded"
+        verifyAll(componentView.svgIconId) {
+            id.get() == "svgIconId"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
+            color == "purple"
+            src == "resourceString"
+            symbol == "code-branch"
+            getStyle().get(ElementConstants.STYLE_WIDTH) == "2em"
+            getStyle().get(ElementConstants.STYLE_HEIGHT) == "2em"
+            visible
+        }
+    }
+
+    def "Load fontIcon component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "FontIcon component will be loaded"
+        verifyAll(componentView.fontIconId) {
+            id.get() == "fontIconId"
+            charCode == "charCode"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("display") == "flex"
+            color == "purple"
+            fontFamily == "Lumo Icons"
+            iconClassNames.toList().containsAll(["iconClassName1", "iconClassName2"])
+            ligature == "ligature"
+            getStyle().get(ElementConstants.STYLE_WIDTH) == "2em"
+            getStyle().get(ElementConstants.STYLE_HEIGHT) == "2em"
+            visible
+        }
+    }
+
     def "Load button component from XML"() {
         when: "Open the ComponentView"
         def componentView = navigateToView(ComponentView.class)

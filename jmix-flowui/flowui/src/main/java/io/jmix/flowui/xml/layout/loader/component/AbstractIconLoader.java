@@ -16,14 +16,17 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.icon.Icon;
-import io.jmix.flowui.exception.GuiDevelopmentException;
+import com.vaadin.flow.component.icon.AbstractIcon;
+import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 
-public class IconLoader extends AbstractIconLoader<Icon> {
+public abstract class AbstractIconLoader<T extends AbstractIcon<T>> extends AbstractComponentLoader<T> {
 
     @Override
-    protected Icon createComponent() {
-        return componentLoader().loadIcon(element)
-                .orElseThrow(() -> new GuiDevelopmentException("Icon attribute is required", context));
+    public void loadComponent() {
+        loadString(element, "size", resultComponent::setSize);
+        loadResourceString(element, "color", context.getMessageGroup(), resultComponent::setColor);
+
+        componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadTooltip(resultComponent, element);
     }
 }

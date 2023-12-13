@@ -106,7 +106,9 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
                     FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
                     ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
                     DataLoader dataLoader = screenData.getLoader(dataLoaderId);
-                    component.setDataLoader(dataLoader);
+                    getComponentContext().addInitTask((context, window) ->
+                            component.setDataLoader(dataLoader)
+                    );
                 });
     }
 

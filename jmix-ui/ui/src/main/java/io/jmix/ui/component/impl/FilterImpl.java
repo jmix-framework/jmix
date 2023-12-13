@@ -683,7 +683,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
             LogicalCondition resultCondition;
             if (initialDataLoaderCondition instanceof LogicalCondition) {
-                resultCondition = (LogicalCondition) initialDataLoaderCondition.copy();
+                resultCondition = (LogicalCondition) initialDataLoaderCondition;
                 resultCondition.add(filterCondition);
             } else if (initialDataLoaderCondition != null) {
                 resultCondition = LogicalCondition.and()

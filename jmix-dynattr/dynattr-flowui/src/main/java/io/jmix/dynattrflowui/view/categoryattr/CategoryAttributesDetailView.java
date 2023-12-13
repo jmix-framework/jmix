@@ -283,23 +283,23 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         initCalculatedValuesAndOptionsForm();
         initViewGrid();
     }
+
     private void initDefaultEnumField() {
         defaultEnumValues.addAll(getEnumValues());
         defaultEnumField.setItems(defaultEnumValues);
         defaultEnumField.addValueChangeListener(e -> getEditedEntity().setDefaultString(e.getValue()));
-        if(StringUtils.isNotBlank(getEditedEntity().getDefaultString())) {
+        if (StringUtils.isNotBlank(getEditedEntity().getDefaultString())) {
             defaultEnumField.setValue(getEditedEntity().getDefaultString());
         }
 
-        if(!StringUtils.isBlank(categoryAttributeDc.getItem().getDefaultString())) {
+        if (!StringUtils.isBlank(categoryAttributeDc.getItem().getDefaultString())) {
             defaultEnumField.getDataProvider().refreshAll();
             defaultEnumField.setValue(categoryAttributeDc.getItem().getDefaultString());
         }
     }
 
-
-    private List<String> getEnumValues() {
-        if(StringUtils.isBlank(categoryAttributeDc.getItem().getEnumeration())) {
+    protected List<String> getEnumValues() {
+        if (StringUtils.isBlank(categoryAttributeDc.getItem().getEnumeration())) {
             return List.of();
         }
         Spliterator<String> enumSpliterator = Splitter.on(",")
@@ -377,7 +377,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    private void refreshOnce() {
+    protected void refreshOnce() {
         if (!isRefreshing) {
             isRefreshing = true;
             refreshAttributesUI();
@@ -410,7 +410,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     }
 
     private void clearEnumValueIfCurrentItemAbsentOnEnum() {
-        if(!defaultEnumValues.contains(defaultEnumField.getValue())) {
+        if (!defaultEnumValues.contains(defaultEnumField.getValue())) {
             defaultEnumField.clear();
         }
     }

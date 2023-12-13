@@ -16,6 +16,7 @@
 
 package io.jmix.dynattrflowui.view.categoryattr;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -86,6 +87,7 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.dynattr.OptionsLoaderType.*;
@@ -151,7 +153,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "enumerationBox");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "enumerationField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "editEnumerationBtn");
-        FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "defaultStringField");
+        FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "defaultEnumField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "entityClassField");
@@ -226,6 +228,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     protected JmixComboBox<Boolean> defaultBooleanField;
     @ViewComponent
+    protected JmixComboBox<String> defaultEnumField;
+    @ViewComponent
     protected JmixComboBox<OptionsLoaderType> optionsLoaderTypeField;
     @ViewComponent
     protected JmixValuePicker<Object> defaultEntityIdField;
@@ -261,19 +265,17 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected CollectionLoader<TargetViewComponent> targetScreensDl;
     @ViewComponent
     protected InstanceContainer<CategoryAttribute> categoryAttributeDc;
-
+    protected AttributeLocalizationComponent localizationFragment;
+    protected List<TargetViewComponent> targetScreens = new ArrayList<>();
     @ViewComponent("dependsOnAttributesField.clear")
     private ValueClearAction<String> dependsOnAttributesFieldClear;
     @ViewComponent("dependsOnAttributesField.select")
     private MultiValueSelectAction<String> dependsOnAttributesFieldSelect;
     @ViewComponent
     private JmixButton editEnumerationBtn;
-
-    protected AttributeLocalizationComponent localizationFragment;
-
-    protected List<TargetViewComponent> targetScreens = new ArrayList<>();
-
     private boolean isRefreshing = false;
+
+    private final List<String> defaultEnumValues = new ArrayList<>();
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -282,12 +284,37 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         initViewGrid();
     }
 
+    private void initDefaultEnumField() {
+        defaultEnumValues.addAll(getEnumValues());
+        defaultEnumField.setItems(defaultEnumValues);
+        defaultEnumField.addValueChangeListener(e -> getEditedEntity().setDefaultString(e.getValue()));
+        if (StringUtils.isNotBlank(getEditedEntity().getDefaultString())) {
+            defaultEnumField.setValue(getEditedEntity().getDefaultString());
+        }
+
+        if (!StringUtils.isBlank(categoryAttributeDc.getItem().getDefaultString())) {
+            defaultEnumField.getDataProvider().refreshAll();
+            defaultEnumField.setValue(categoryAttributeDc.getItem().getDefaultString());
+        }
+    }
+
+    protected List<String> getEnumValues() {
+        if (StringUtils.isBlank(categoryAttributeDc.getItem().getEnumeration())) {
+            return List.of();
+        }
+        Spliterator<String> enumSpliterator = Splitter.on(",")
+                .omitEmptyStrings()
+                .split(categoryAttributeDc.getItem().getEnumeration())
+                .spliterator();
+        return StreamSupport.stream(enumSpliterator, false).toList();
+    }
+
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
+        initDefaultEnumField();
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
         initDependsOnAttributesField();
-
 
         setupNumberFormat();
         if (!isRefreshing) {
@@ -350,7 +377,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    private void refreshOnce() {
+    protected void refreshOnce() {
         if (!isRefreshing) {
             isRefreshing = true;
             refreshAttributesUI();
@@ -368,6 +395,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                         AttributeEnumerationDetailView screen = afterCloseEvent.getSource().getView();
                         getEditedEntity().setEnumeration(screen.getEnumeration());
                         getEditedEntity().setEnumerationLocales(screen.getEnumerationLocales());
+
+                        defaultEnumValues.clear();
+                        defaultEnumValues.addAll(getEnumValues());
+                        clearEnumValueIfCurrentItemAbsentOnEnum();
+                        defaultEnumField.getDataProvider().refreshAll();
                     }
                 })
                 .build();
@@ -375,6 +407,12 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         enumerationScreen.getView().setEnumeration(getEditedEntity().getEnumeration());
         enumerationScreen.getView().setEnumerationLocales(getEditedEntity().getEnumerationLocales());
         enumerationScreen.open();
+    }
+
+    private void clearEnumValueIfCurrentItemAbsentOnEnum() {
+        if (!defaultEnumValues.contains(defaultEnumField.getValue())) {
+            defaultEnumField.clear();
+        }
     }
 
     @Install(to = "targetScreensDl", target = Target.DATA_LOADER)

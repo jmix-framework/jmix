@@ -16,14 +16,20 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.icon.Icon;
-import io.jmix.flowui.exception.GuiDevelopmentException;
+import com.vaadin.flow.component.icon.SvgIcon;
 
-public class IconLoader extends AbstractIconLoader<Icon> {
+public class SvgIconLoader extends AbstractIconLoader<SvgIcon> {
 
     @Override
-    protected Icon createComponent() {
-        return componentLoader().loadIcon(element)
-                .orElseThrow(() -> new GuiDevelopmentException("Icon attribute is required", context));
+    protected SvgIcon createComponent() {
+        return factory.create(SvgIcon.class);
+    }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        loadString(element, "symbol", resultComponent::setSymbol);
+        loadString(element, "resource", resultComponent::setSrc);
     }
 }

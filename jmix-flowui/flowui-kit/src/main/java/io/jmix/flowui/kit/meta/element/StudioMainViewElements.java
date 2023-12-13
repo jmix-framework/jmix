@@ -32,6 +32,7 @@ public interface StudioMainViewElements {
             target = {"com.vaadin.flow.component.applayout.AppLayout"},
             icon = "io/jmix/flowui/kit/meta/icon/element/navigationBar.svg",
             properties = {
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "touchOptimized", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true")
             }
@@ -43,7 +44,10 @@ public interface StudioMainViewElements {
             classFqn = "com.vaadin.flow.component.html.Div",
             xmlElement = "drawerLayout",
             icon = "io/jmix/flowui/kit/meta/icon/element/drawerLayout.svg",
-            target = {"com.vaadin.flow.component.applayout.AppLayout"}
+            target = {"com.vaadin.flow.component.applayout.AppLayout"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING)
+            }
     )
     Div drawerLayout();
 }

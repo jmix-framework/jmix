@@ -717,14 +717,11 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
      */
     public static class SeparatorMenuItem extends AbstractMenuItem<Hr> {
 
-        protected Hr hr;
-
         public SeparatorMenuItem() {
         }
 
         public SeparatorMenuItem(String id) {
             super(id);
-            hr = new Hr();
         }
 
         @Override

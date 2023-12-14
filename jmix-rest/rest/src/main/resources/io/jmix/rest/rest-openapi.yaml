@@ -20,30 +20,19 @@ info:
 
     ## Authentication
 
-    ### Authentication using the OAuth2 protocol
+    ### Authentication using the OAuth 2.1 protocol
 
-    Jmix REST API uses an OAuth2 resource owner password credentials grant to protect the endpoints (https://datatracker.ietf.org/doc/html/rfc6749#section-4.3).
+    Jmix REST API uses the OAuth 2.1 authorization framework to protect the endpoints (https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-08).
+    
+    The authorization is implemented in the Authorization server add-on that supports authorization code grant, client credential grant and refresh token grant. See details in Jmix documentation.
 
-    Before accessing a protected resource, a user must get an authentication token. The token can be obtained at the `/oauth/token` URL.
-
-    The `/oauth/token` endpoint is protected with the basic authentication. The request must contain the `Authorization` header for basic
-    authentication with REST API client credentials. Please note that client credentials are not the same as the user credentials.
-    Client means an application that uses the REST API. The default client credentials are defined by the following
-    application properties: `jmix.security.oauth2.clientId` and `jmix.security.oauth2.clientSecret`. User credentials must be passed in the request body.
-    The request format must be `application/x-www-form-urlencoded`.
-
-    See the `/oauth/token` endpoint documentation for more details.
-
-    The obtained token must be provided with all subsequent requests in the `Authorization` header of the `Bearer` type, e.g.:
+    Before accessing a protected resource, a user must get an authentication token. The obtained token must be provided with all subsequent requests in the `Authorization` header of the `Bearer` type, e.g.:
 
     ```
     GET /rest/entities/Order
          Host: example.com
          Authorization: Bearer 2YotnFZFEjr1zCsicMWpAA
     ```
-
-    Access token can also be provided in the request URL using the `access_token` parameter. This may be useful when you, for example, need to build
-    a link for downloading a file, like this: `http://localhost:8080/rest/files?fileRef=fs://2021/03/12/2266c97c-cf23-c202-481d-04d972e185b4.jpg?name=cat-via-direct-request.jpg?access_token=acefdad0-d728-4279-aae3-6b42620f7ef9`.
 
     ### Anonymous access
 
@@ -53,7 +42,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: "1.4"
+  version: "2.1"
 servers:
   - url: /rest
 security:

@@ -1,57 +1,92 @@
 <%
 def hasComboBox = false
-StringBuilder facetsBuilder = new StringBuilder()
-facetsBuilder.append("<facets>")
-facetsBuilder.append("<dataLoadCoordinator auto=\"true\"/>")
-facetsBuilder.append("</facets>")
-def facetBlock = facetsBuilder.toString()
-
 def containers = []
+def facetBlock = ''
+def nestedDatasourceProperties = []
+def optionsDatasourceXml = ''
+if (formType.name() == 'VARIABLE') {
+    StringBuilder facetsBuilder = new StringBuilder()
+    facetsBuilder.append("<facets>")
+    facetsBuilder.append("<dataLoadCoordinator auto=\"true\"/>")
+    facetsBuilder.append("</facets>")
+    facetBlock = facetsBuilder.toString()
+    def createdCollections = []
 
-variables.each { v ->
-    if (v.type.id == 'entity') {
-        def entityName = ''
-        def fqn = ''
-        if (v.getProperty('uiComponent') == 'comboBox') {
-            hasComboBox = true
-            entityName = v.getProperty("entityName")
-            if (entityName != null) {
-                def entity = api.findEntityByName(entityName)
-                if (entity != null) {
-                    fqn = entity.getFqn()
+    variables.each { v ->
+        if (v.type.id == 'entity') {
+            def entityName = ''
+            def fqn = ''
+            if (v.getProperty('uiComponent') == 'comboBox') {
+                hasComboBox = true
+                entityName = v.getProperty("entityName")
+                if (entityName != null) {
+                    def entity = api.findEntityByName(entityName)
+                    if (entity != null) {
+                        fqn = entity.getFqn()
+                    }
+                }
+            } else {
+                fqn = v.getProperty("entityName")
+                if (fqn != null) {
+                    def entity = api.findEntity(fqn)
+                    if (entity != null) {
+                        entityName = entity.name
+                    }
                 }
             }
-        } else {
-            fqn = v.getProperty("entityName")
-            if (fqn != null) {
-                def entity = api.findEntity(fqn)
-                if (entity != null) {
-                    entityName = entity.name
-                }
-            }
-        }
 
-        def entity = api.findEntityByName(entityName)
-        if (entity != null) {
-            StringBuilder containerBuilder = new StringBuilder()
-            containerBuilder.append("<collection id=\"${api.camelCase(entityName)}Dc\" class=\"$fqn\">")
-            containerBuilder.append("<fetchPlan extends=\"_base\"/>")
-            containerBuilder.append("<loader id=\"${api.camelCase(entityName)}Dl\" readOnly=\"true\">")
-            containerBuilder.append("<query>")
-            containerBuilder.append("<![CDATA[select e from ${entityName} e]]>")
-            containerBuilder.append("</query>")
-            containerBuilder.append("</loader>")
-            containerBuilder.append("</collection>")
-            containers << containerBuilder.toString()
+            def entity = api.findEntityByName(entityName)
+            if (entity != null && entityName !in createdCollections) {
+                StringBuilder containerBuilder = new StringBuilder()
+                containerBuilder.append("<collection id=\"${api.camelCase(entityName)}Dc\" class=\"$fqn\">")
+                containerBuilder.append("<fetchPlan extends=\"_base\"/>")
+                containerBuilder.append("<loader id=\"${api.camelCase(entityName)}Dl\" readOnly=\"true\">")
+                containerBuilder.append("<query>")
+                containerBuilder.append("<![CDATA[select e from ${entityName} e]]>")
+                containerBuilder.append("</query>")
+                containerBuilder.append("</loader>")
+                containerBuilder.append("</collection>")
+                containers << containerBuilder.toString()
+                createdCollections << entityName
+            }
         }
     }
-}
-%>
-<%if (!containers.isEmpty()) {%>
-<data>
-    <%containers.each {%>
-        $it
-    <%}%>
-</data>
-<%if (hasComboBox) {%>$facetsBuilder<%}%>
+} else if (formType.name() == 'ENTITY') {
+    nestedDatasourceProperties = api.evaluateScript('nestedDatasourceProperties.groovy',
+        ['view': detailFetchPlan,
+         'embeddable': false])
+    optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
+        ['view': detailFetchPlan,
+         'api': api])
+}%>
+<%if (formType.name() == 'VARIABLE' && !containers.isEmpty()) {%>
+    <data>
+        <%containers.each {%>
+            $it
+        <%}%>
+    </data>
+<%if (hasComboBox) {%>$facetBlock<%}%>
+<%} else if (formType.name() == 'ENTITY') {%>
+    <data>
+        <instance id="${dcId}"
+                  class="${entity.fqn}"<%if (!is_inline_detailFetchPlan) {%>
+                  fetchPlan="${detailFetchPlan.name}>"<%} else {%>>
+        ${inline_detailFetchPlan}
+        <%}%><loader/>
+        <%
+        nestedDatasourceProperties.each {%>
+        <instance id="${it}Dc" property="${it}"/>
+        <%}
+
+        nestedCollectionDatasourceProperties.each {%>
+            <collection id="${it}Dc" property="${it}"/>
+        <%}
+        %></instance>
+        <%if (optionsDatasourceXml?.trim()) {%>
+            ${optionsDatasourceXml}
+        <%}%>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
 <%}%>

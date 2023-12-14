@@ -18,10 +18,12 @@ package io.jmix.quartzflowui.view.jobs;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -31,6 +33,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
+import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +70,9 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected RemoveOperation removeOperation;
     @Autowired
     protected QuartzService quartzService;
+
+    @Autowired
+    protected ScheduleDescriptionProvider scheduleDescriptionProvider;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -80,15 +86,26 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected void initTable() {
+        DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> scheduleDescriptionProvider.getScheduleDescription(job)));
+        triggerDescriptionColumn.setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"));
+        jobModelsTable.setColumnPosition(triggerDescriptionColumn, 5);
+        triggerDescriptionColumn.setResizable(true).setWidth("20%");
+
         jobModelsTable.addColumn(entity -> entity.getLastFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getLastFireDate()) : "").setResizable(true)
-                .setHeader(messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), "lastFireDate"));
+                                .format(entity.getLastFireDate()) : "").setResizable(false)
+                .setHeader(getHeaderForPropertyColumn("lastFireDate"))
+                .setAutoWidth(true);
 
         jobModelsTable.addColumn(entity -> entity.getNextFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getNextFireDate()) : "").setResizable(true)
-                .setHeader(messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), "nextFireDate"));
+                                .format(entity.getNextFireDate()) : "").setResizable(false)
+                .setHeader(getHeaderForPropertyColumn("nextFireDate"))
+                .setAutoWidth(true);
+    }
+
+    private String getHeaderForPropertyColumn(String propertyName) {
+        return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }
 
     @Subscribe

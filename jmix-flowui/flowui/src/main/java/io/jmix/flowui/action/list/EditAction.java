@@ -29,18 +29,18 @@ import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
-import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
-import io.jmix.flowui.sys.ActionViewInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -150,6 +150,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     @Override
     public <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<V>> afterCloseHandler) {
         viewInitializer.setAfterCloseHandler(afterCloseHandler);
+    }
+
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
     }
 
     /**
@@ -396,6 +401,14 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
      */
     public <V extends View<?>> EditAction<E> withAfterCloseHandler(Consumer<AfterCloseEvent<V>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
+        return this;
+    }
+
+    /**
+     * @see #setViewConfigurer(Consumer)
+     */
+    public <V extends View<?>> EditAction<E> withViewConfigurer(Consumer<V> viewConfigurer) {
+        setViewConfigurer(viewConfigurer);
         return this;
     }
 

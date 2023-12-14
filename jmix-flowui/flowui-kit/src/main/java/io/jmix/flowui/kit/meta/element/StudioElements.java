@@ -440,7 +440,7 @@ public interface StudioElements {
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
                     "com.vaadin.flow.component.tabs.Tab",
-                    "io.jmix.flowui.component.menusearchfield.MenuSearchField"},
+                    "io.jmix.flowui.component.menufilterfield.MenuFilterField"},
             properties = {
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING, required = true),
                     @StudioProperty(xmlAttribute = "focusDelay", type = StudioPropertyType.INTEGER),
@@ -828,4 +828,15 @@ public interface StudioElements {
             }
     )
     void settingsFacetComponent();
+
+    @StudioElement(
+            name = "MenuItem",
+            xmlElement = "menuItem",
+            target = {"io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "refColumn", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    void gridColumnVisibilityMenuItem();
 }

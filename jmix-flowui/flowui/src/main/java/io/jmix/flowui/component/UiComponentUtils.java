@@ -63,6 +63,14 @@ public final class UiComponentUtils {
             if (component.isPresent()) {
                 return component;
             } else {
+                if (container instanceof HasSubParts subPartsContainer) {
+                    Optional<Component> subPart = findSubPart(subPartsContainer, id);
+
+                    if (subPart.isPresent()) {
+                        return subPart;
+                    }
+                }
+
                 return getComponentRecursively(getOwnComponents(container), id);
             }
         } else {
@@ -93,8 +101,7 @@ public final class UiComponentUtils {
                     return innerComponent;
                 }
             } else if (component instanceof HasSubParts hasSubPartsComponent) {
-                Optional<Component> innerComponent =
-                        Optional.ofNullable(((Component) hasSubPartsComponent.getSubPart(id)));
+                Optional<Component> innerComponent = findSubPart(hasSubPartsComponent, id);
 
                 if (innerComponent.isPresent()) {
                     return innerComponent;
@@ -162,6 +169,10 @@ public final class UiComponentUtils {
             throw new IllegalArgumentException(container.getClass().getSimpleName() +
                     " has no API to obtain component list");
         }
+    }
+
+    public static Optional<Component> findSubPart(HasSubParts container, String id) {
+        return Optional.ofNullable(((Component) container.getSubPart(id)));
     }
 
     private static void fillChildComponents(Component container, Collection<Component> components) {
@@ -386,7 +397,7 @@ public final class UiComponentUtils {
                                                  Consumer<ViewChildrenVisitResult> callback,
                                                  Set<Component> treeComponents) {
         for (Component component : currentChildrenComponents) {
-            if(treeComponents.contains(component)){
+            if (treeComponents.contains(component)) {
                 break;
             }
             ViewChildrenVisitResult visitResult = new ViewChildrenVisitResult();

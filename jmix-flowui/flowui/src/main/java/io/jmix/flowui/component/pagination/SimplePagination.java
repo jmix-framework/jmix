@@ -24,6 +24,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.DataLoadContext;
 import io.jmix.core.Messages;
+import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -487,6 +488,10 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     }
 
     protected void updateNavigationButtonsAvailability() {
+        // QueryTransformer can't create count query for KeyValueEntity,
+        // so we hide count and last buttons if DataBinder is bound to KeyValueEntity.
+        boolean canBeVisible = !isKeyValueEntity();
+
         switch (state) {
             case FIRST_COMPLETE:
                 firstButton.setEnabled(false);
@@ -498,16 +503,16 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
             case FIRST_INCOMPLETE:
                 firstButton.setEnabled(false);
                 previousButton.setEnabled(false);
-                getTotalCountLabel().setVisible(true);
+                getTotalCountLabel().setVisible(canBeVisible);
                 nextButton.setEnabled(true);
-                lastButton.setEnabled(true);
+                lastButton.setEnabled(canBeVisible);
                 break;
             case MIDDLE:
                 firstButton.setEnabled(true);
                 previousButton.setEnabled(true);
-                getTotalCountLabel().setVisible(true);
+                getTotalCountLabel().setVisible(canBeVisible);
                 nextButton.setEnabled(true);
-                lastButton.setEnabled(true);
+                lastButton.setEnabled(canBeVisible);
                 break;
             case LAST:
                 firstButton.setEnabled(true);
@@ -546,7 +551,10 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
                 break;
             case FIRST_INCOMPLETE:
             case MIDDLE:
-                msgKey = "pagination.msg1";
+                // QueryTransformer can't create count query for KeyValueEntity,
+                // so we return message without 'of' regardless the state,
+                // because we don't display the count button.
+                msgKey = isKeyValueEntity() ? "pagination.msg2Plural1" : "pagination.msg1";
                 break;
             case LAST:
                 msgKey = "pagination.msg2Plural2";
@@ -693,5 +701,9 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
             log.debug("Options for items-per-page dropdown list do not contain '{}' value."
                     + " The value is not set.", value);
         }
+    }
+
+    protected boolean isKeyValueEntity() {
+        return loader.getEntityMetaClass() instanceof KeyValueMetaClass;
     }
 }

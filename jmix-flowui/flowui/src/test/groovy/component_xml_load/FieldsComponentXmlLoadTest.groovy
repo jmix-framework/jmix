@@ -21,9 +21,11 @@ import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.ComponentView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
+import io.jmix.core.metamodel.datatype.impl.BooleanDatatype
 import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype
 import io.jmix.core.metamodel.datatype.impl.LocalDateDatatype
 import io.jmix.core.metamodel.datatype.impl.LocalTimeDatatype
+import io.jmix.core.metamodel.datatype.impl.StringDatatype
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -132,6 +134,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            datatype.class == StringDatatype
             style.get("color") == "red"
             clearButtonVisible
             enabled
@@ -327,6 +330,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.radioButtonGroupId) {
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
+            datatype.class == StringDatatype
             enabled
             errorMessage == null
             height == "50px"
@@ -360,6 +364,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
+            datatype.class == BooleanDatatype
             emptySelectionAllowed
             emptySelectionCaption == "emptySelectionString"
             enabled

@@ -27,10 +27,8 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsItemsFetchCallback;
-import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.SupportsStatusChangeHandler;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -44,13 +42,14 @@ import io.jmix.flowui.util.FetchCallbackAdapter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public class JmixComboBox<V> extends ComboBox<V>
         implements SupportsValueSource<V>, SupportsValidation<V>, SupportsStatusChangeHandler<JmixComboBox<V>>,
-        SupportsDataProvider<V>, SupportsItemsEnum<V>, HasRequired, HasTitle, SupportsItemsFetchCallback<V, String>,
+        SupportsDataProvider<V>, SupportsItemsEnum<V>, HasRequired, HasTitle,
+        SupportsItemsFetchCallback<V, String>, SupportsDatatype<V>,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -146,6 +145,17 @@ public class JmixComboBox<V> extends ComboBox<V>
     @Override
     public void setValueSource(@Nullable ValueSource<V> valueSource) {
         fieldDelegate.setValueSource(valueSource);
+    }
+
+    @Nullable
+    @Override
+    public Datatype<V> getDatatype() {
+        return fieldDelegate.getDatatype();
+    }
+
+    @Override
+    public void setDatatype(@Nullable Datatype<V> datatype) {
+        fieldDelegate.setDatatype(datatype);
     }
 
     @Override

@@ -4,6 +4,8 @@ import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
+import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
@@ -64,6 +66,11 @@ public class QuartTestApplication {
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog("test_support/liquibase/test-changelog.xml");
         return liquibase;
+    }
+
+    @Bean
+    public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
+        return new LocalApplicationEventChannelSupplier();
     }
 
     static class MyQuartzJob implements Job {

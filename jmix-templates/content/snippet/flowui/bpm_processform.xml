@@ -80,12 +80,36 @@ def createTag(variable) {
     return field
 }
 
+def collectionAttributesTable = []
+def entityFormXml = ''
+if (formType.name() == 'ENTITY') {
+    nestedCollectionDatasourceProperties.each { prop ->
+        def binding = [
+            'nestedDcProperty': prop,
+            'fetchPlan': detailFetchPlan]
+        def tableXml = api.processSnippet('collectionAttributeTable.xml', binding)
+        if (!binding['isError']) {
+            collectionAttributesTable << tableXml
+        }
+    }
+    entityFormXml = api.processSnippet('form.xml',
+        ['fetchPlan': detailFetchPlan,
+         'api': api,
+         'dcId': dcId,
+         'formId': 'form',
+         'asideLabelsPosition': false])
+}
 %>
-<formLayout>
+<%if (formType.name() == 'ENTITY') {%>${entityFormXml}
+    <%collectionAttributesTable.each{table ->%>
+        ${table}
+    <%}%>
+<%}%>
+<%if (!variables.isEmpty()) {%><formLayout>
     <%variables.each { v ->
         def field = createTag(v)%>
         <${field.tag} ${field.printAttrs()}<%if(field.text == null) {%>/><% } else {%>>
         ${field.text}
     </${field.tag}><%}%>
     <%}%>
-</formLayout>
+</formLayout><%}%>

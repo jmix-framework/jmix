@@ -13,7 +13,9 @@
     <!-- DynamicAttributesPanel -->
     <xs:complexType name="dynamicAttributesPanel">
         <xs:attributeGroup ref="layout:hasId"/>
+
         <xs:attribute name="dataContainer" type="xs:string" use="required"/>
+        <xs:attribute name="fieldWidth" type="xs:string"/>
     </xs:complexType>
 
     <xs:element name="dynamicAttributesPanel" type="dynamicAttributesPanel"/>

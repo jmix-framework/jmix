@@ -64,8 +64,6 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     protected final ViewValidation validate;
     protected InstanceContainer<?> instanceContainer;
     protected String fieldWidth = DEFAULT_FIELD_WIDTH;
-    protected String fieldCaptionWidth;
-
     protected VerticalLayout rootPanel;
     protected VerticalLayout categoryFieldBox;
     protected H3 categoryFieldLabel;
@@ -288,15 +286,5 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
      */
     public void setFieldWidth(String fieldWidth) {
         this.fieldWidth = fieldWidth;
-    }
-
-
-    /**
-     * Sets the width of the fields caption. {@code fieldCaptionWidth} with '%' unit is unsupported.
-     *
-     * @param fieldCaptionWidth width of the fields caption
-     */
-    public void setFieldCaptionWidth(String fieldCaptionWidth) {
-        this.fieldCaptionWidth = fieldCaptionWidth;
     }
 }

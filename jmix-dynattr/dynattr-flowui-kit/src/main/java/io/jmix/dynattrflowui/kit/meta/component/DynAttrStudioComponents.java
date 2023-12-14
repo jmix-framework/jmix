@@ -41,6 +41,10 @@ public interface DynAttrStudioComponents {
                             xmlAttribute = "dataContainer",
                             type = StudioPropertyType.DATA_CONTAINER_REF,
                             required = true),
+                    @StudioProperty(
+                            name = "fieldWidth",
+                            xmlAttribute = "fieldWidth",
+                            type = StudioPropertyType.STRING),
             })
     Div dynamicAttributesPanel();
 }

@@ -17,8 +17,10 @@
 package io.jmix.flowui.kit.meta.component;
 
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.kit.component.main.UserIndicator;
+import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
@@ -100,4 +102,25 @@ public interface StudioMainViewComponents {
             }
     )
     UserIndicator userIndicator();
+
+    @StudioComponent(
+            name = "MainView",
+            xmlElement = "mainView",
+            classFqn = "io.jmix.flowui.app.main.StandardMainView",
+            icon = "io/jmix/flowui/kit/meta/icon/mainview/mainView.svg",
+            availablePlaceRegExp = "",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "data", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "facets", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "actions", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "appLayout", maxCount = 1)
+                    }
+            ),
+            properties = {
+                    @StudioProperty(xmlAttribute = "messagesGroup", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    VerticalLayout mainView();
 }

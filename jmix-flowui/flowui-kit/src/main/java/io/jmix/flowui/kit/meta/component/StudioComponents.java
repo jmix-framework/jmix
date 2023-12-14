@@ -2614,6 +2614,31 @@ public interface StudioComponents {
     VerticalLayout layout();
 
     @StudioComponent(
+            name = "View",
+            xmlElement = "view",
+            classFqn = "io.jmix.flowui.view.View",
+            icon = "io/jmix/flowui/kit/meta/icon/view/view.svg",
+            availablePlaceRegExp = "",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "data", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "facets", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "actions", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "layout", maxCount = 1)
+                    }
+            ),
+            properties = {
+                    @StudioProperty(xmlAttribute = "focusComponent", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "focusMode", type = StudioPropertyType.VALUES_LIST,
+                            options = {"NO_FOCUS", "AUTO"}, defaultValue = "AUTO"),
+                    @StudioProperty(xmlAttribute = "extends", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "messagesGroup", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    VerticalLayout view();
+
+    @StudioComponent(
             name = "CodeEditor",
             classFqn = "io.jmix.flowui.component.codeeditor.CodeEditor",
             category = "Components",

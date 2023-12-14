@@ -79,8 +79,11 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                 (dataLoaderId) -> {
                     ViewData screenData = ViewControllerUtils.getViewData(getComponentContext().getView());
                     DataLoader dataLoader = screenData.getLoader(dataLoaderId);
+                    component.setDataLoader(dataLoader);
+
                     getComponentContext().addInitTask((context, view) ->
-                            component.setDataLoader(dataLoader)
+                            FilterUtils.updateDataLoaderInitialCondition(resultComponent,
+                                    dataLoader.getCondition())
                     );
                 });
     }

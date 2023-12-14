@@ -356,6 +356,10 @@ public class GenericFilter extends Composite<JmixDetails>
         rootLogicalFilterComponent.setAutoApply(autoApply);
     }
 
+    protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
+        this.initialDataLoaderCondition = copy(condition);
+    }
+
     /**
      * @return {@code true} if the filter should be automatically applied to
      * the {@link DataLoader} when the value component value is changed
@@ -773,8 +777,8 @@ public class GenericFilter extends Composite<JmixDetails>
 
             LogicalCondition resultCondition;
             if (initialDataLoaderCondition instanceof LogicalCondition initialLogicalCondition) {
-                resultCondition = initialLogicalCondition;
-                resultCondition.add(filterCondition);
+                resultCondition = ((LogicalCondition) copy(initialLogicalCondition));
+                Objects.requireNonNull(resultCondition).add(filterCondition);
             } else if (initialDataLoaderCondition != null) {
                 resultCondition = LogicalCondition.and()
                         .add(initialDataLoaderCondition)
@@ -1000,6 +1004,21 @@ public class GenericFilter extends Composite<JmixDetails>
                 getDataLoader().removeParameter(singleFilterComponent.getParameterName());
             }
         }
+    }
+
+    @Nullable
+    protected Condition copy(@Nullable Condition condition) {
+        if (condition == null) {
+            return null;
+        }
+
+        if (condition instanceof LogicalCondition logicalCondition) {
+            LogicalCondition copy = new LogicalCondition(logicalCondition.getType());
+            logicalCondition.getConditions().forEach(copy::add);
+            return copy;
+        }
+
+        return condition.copy();
     }
 
     /**

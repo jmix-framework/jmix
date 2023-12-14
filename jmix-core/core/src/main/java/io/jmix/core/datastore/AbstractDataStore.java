@@ -85,7 +85,7 @@ public abstract class AbstractDataStore implements DataStore {
         try {
             entity = loadOne(context);
 
-            DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entity, loadState);
+            DataStoreEntityLoadingEvent loadEvent = DataStoreEntityLoadingEvent.byEntity(context, entity, loadState);
             fireEvent(loadEvent);
 
             entity = loadEvent.getResultEntity();
@@ -185,7 +185,7 @@ public abstract class AbstractDataStore implements DataStore {
                     countContext.getQuery().setMaxResults(0);
                 }
 
-                List<?> entities = loadAll(countContext);
+                List<Object> entities = loadAll(countContext);
 
                 DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, eventState);
                 fireEvent(loadEvent);
@@ -436,7 +436,8 @@ public abstract class AbstractDataStore implements DataStore {
 
                         copyNonPersistentAttributes(entity, fetchedEntity);
 
-                        DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(loadContext, fetchedEntity, loadState);
+                        DataStoreEntityLoadingEvent loadEvent =
+                                DataStoreEntityLoadingEvent.byEntity(loadContext, fetchedEntity, loadState);
                         fireEvent(loadEvent);
 
                         loadedEntities.add(loadEvent.getResultEntity());

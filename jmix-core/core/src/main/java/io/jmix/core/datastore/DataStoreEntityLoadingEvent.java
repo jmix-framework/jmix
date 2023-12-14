@@ -37,10 +37,12 @@ public class DataStoreEntityLoadingEvent extends BaseDataStoreEvent {
         this.eventState = eventState;
     }
 
-    public DataStoreEntityLoadingEvent(LoadContext<?> loadContext, @Nullable Object entity, EventSharedState eventState) {
-        super(loadContext);
-        this.entities = entity == null ? Collections.emptyList() : Collections.singletonList(entity);
-        this.eventState = eventState;
+    public static DataStoreEntityLoadingEvent byEntity(LoadContext<?> loadContext,
+                                                       @Nullable Object entity,
+                                                       EventSharedState eventState) {
+        return new DataStoreEntityLoadingEvent(loadContext,
+                entity == null ? Collections.emptyList() : Collections.singletonList(entity),
+                eventState);
     }
 
     public LoadContext<?> getLoadContext() {

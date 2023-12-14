@@ -184,9 +184,9 @@ public interface PropertyFilter<V> extends SingleFilterComponent<V> {
         IN_LIST(Type.LIST),
         NOT_IN_LIST(Type.LIST),
         DATE_INTERVAL(Type.INTERVAL),
-        IS_EMPTY(Type.UNARY),
-        MEMBER_OF_LIST(Type.VALUE),
-        NOT_MEMBER_OF_LIST(Type.VALUE),
+        IS_COLLECTION_EMPTY(Type.UNARY),
+        MEMBER_OF_COLLECTION(Type.VALUE),
+        NOT_MEMBER_OF_COLLECTION(Type.VALUE),
         ;
 
         private final Type type;

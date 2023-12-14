@@ -222,7 +222,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def list = dataManager.load(TestAppEntity)
                 .condition(
                         LogicalCondition.and()
-                                .add(PropertyCondition.isEmpty("items", false))
+                                .add(PropertyCondition.isCollectionEmpty("items", false))
                 )
                 .list()
 
@@ -254,7 +254,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def list = dataManager.load(TestAppEntity)
                 .condition(
                         LogicalCondition.and()
-                                .add(PropertyCondition.isEmpty("items", true))
+                                .add(PropertyCondition.isCollectionEmpty("items", true))
                 )
                 .list()
 
@@ -284,7 +284,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         when:
 
         def list = dataManager.load(TestAppEntity)
-                .condition(PropertyCondition.memberOfList("items", appEntityItem1))
+                .condition(PropertyCondition.memberOfCollection("items", appEntityItem1))
                 .list()
 
         then:
@@ -313,7 +313,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         when:
 
         def list = dataManager.load(TestAppEntity)
-                .condition(PropertyCondition.notMemberOfList("items", appEntityItem1))
+                .condition(PropertyCondition.notMemberOfCollection("items", appEntityItem1))
                 .list()
 
         then:

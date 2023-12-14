@@ -177,22 +177,22 @@ public class PropertyCondition implements Condition {
      * Creates a condition that is translated to "is empty" or "is not empty"
      * depending on the parameter value.
      */
-    public static PropertyCondition isEmpty(String property, Object value) {
-        return createWithValue(property, Operation.IS_EMPTY, value);
+    public static PropertyCondition isCollectionEmpty(String property, Object value) {
+        return createWithValue(property, Operation.IS_COLLECTION_EMPTY, value);
     }
 
     /**
      * Creates a condition that is translated to "member of".
      */
-    public static PropertyCondition memberOfList(String property, Object value) {
-        return createWithValue(property, Operation.MEMBER_OF_LIST, value);
+    public static PropertyCondition memberOfCollection(String property, Object value) {
+        return createWithValue(property, Operation.MEMBER_OF_COLLECTION, value);
     }
 
     /**
      * Creates a condition that is translated to "not member of".
      */
-    public static PropertyCondition notMemberOfList(String property, Object value) {
-        return createWithValue(property, Operation.NOT_MEMBER_OF_LIST, value);
+    public static PropertyCondition notMemberOfCollection(String property, Object value) {
+        return createWithValue(property, Operation.NOT_MEMBER_OF_COLLECTION, value);
     }
 
     public String getProperty() {
@@ -313,8 +313,8 @@ public class PropertyCondition implements Condition {
         public static final String IN_LIST = "in_list";
         public static final String NOT_IN_LIST = "not_in_list";
         public static final String IN_INTERVAL = "in_interval";
-        public static final String IS_EMPTY = "is_empty";
-        public static final String MEMBER_OF_LIST = "member_of_list";
-        public static final String NOT_MEMBER_OF_LIST = "not_member_of_list";
+        public static final String IS_COLLECTION_EMPTY = "is_collection_empty";
+        public static final String MEMBER_OF_COLLECTION = "member_of_collection";
+        public static final String NOT_MEMBER_OF_COLLECTION = "not_member_of_collection";
     }
 }

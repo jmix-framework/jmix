@@ -185,7 +185,7 @@ public class PropertyFilterSupport {
             return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
         } else if (mppRange.isClass()) {
             if (mppRange.getCardinality().isMany()) {
-                return EnumSet.of(IS_EMPTY, MEMBER_OF_LIST, NOT_MEMBER_OF_LIST);
+                return EnumSet.of(IS_COLLECTION_EMPTY, MEMBER_OF_COLLECTION, NOT_MEMBER_OF_COLLECTION);
             } else {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
             }
@@ -238,7 +238,7 @@ public class PropertyFilterSupport {
         if (isStringDatatype(mpp)) {
             return CONTAINS;
         } else if (isCollectionDatatype(mpp)) {
-            return IS_EMPTY;
+            return IS_COLLECTION_EMPTY;
         } else {
             return EQUAL;
         }
@@ -284,12 +284,12 @@ public class PropertyFilterSupport {
                 return PropertyCondition.Operation.NOT_IN_LIST;
             case DATE_INTERVAL:
                 return PropertyCondition.Operation.IN_INTERVAL;
-            case IS_EMPTY:
-                return PropertyCondition.Operation.IS_EMPTY;
-            case MEMBER_OF_LIST:
-                return PropertyCondition.Operation.MEMBER_OF_LIST;
-            case NOT_MEMBER_OF_LIST:
-                return PropertyCondition.Operation.NOT_MEMBER_OF_LIST;
+            case IS_COLLECTION_EMPTY:
+                return PropertyCondition.Operation.IS_COLLECTION_EMPTY;
+            case MEMBER_OF_COLLECTION:
+                return PropertyCondition.Operation.MEMBER_OF_COLLECTION;
+            case NOT_MEMBER_OF_COLLECTION:
+                return PropertyCondition.Operation.NOT_MEMBER_OF_COLLECTION;
             default:
                 throw new IllegalArgumentException("Unknown operation: " + operation);
         }

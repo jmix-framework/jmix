@@ -43,6 +43,7 @@ import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -96,9 +97,11 @@ public class MetadataTools {
     @Autowired
     protected Messages messages;
 
+    @Lazy //Break circular dependencies
     @Autowired
     protected InstanceNameProvider instanceNameProvider;
 
+    @Lazy
     @Autowired(required = false)
     protected List<MetadataExtension> metadataExtensions;
 
@@ -108,9 +111,11 @@ public class MetadataTools {
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
+    @Lazy
     @Autowired
     protected PersistentAttributesLoadChecker persistentAttributesLoadChecker;
 
+    @Lazy
     @Autowired(required = false)
     protected Collection<MetaPropertyPathResolver> metaPropertyPathResolvers;
 

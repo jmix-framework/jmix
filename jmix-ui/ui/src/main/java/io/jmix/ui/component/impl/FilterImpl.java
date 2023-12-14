@@ -45,10 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -187,6 +184,10 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         this.initialDataLoaderCondition = dataLoader.getCondition();
 
         initEmptyConfiguration();
+    }
+
+    protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
+        this.initialDataLoaderCondition = copy(condition);
     }
 
     @Override
@@ -658,8 +659,8 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
             LogicalCondition resultCondition;
             if (initialDataLoaderCondition instanceof LogicalCondition) {
-                resultCondition = (LogicalCondition) initialDataLoaderCondition;
-                resultCondition.add(filterCondition);
+                resultCondition = (LogicalCondition) copy(initialDataLoaderCondition);
+                Objects.requireNonNull(resultCondition).add(filterCondition);
             } else if (initialDataLoaderCondition != null) {
                 resultCondition = LogicalCondition.and()
                         .add(initialDataLoaderCondition)
@@ -772,6 +773,23 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                 }
             }
         }
+    }
+
+    @Nullable
+    protected Condition copy(@Nullable Condition condition) {
+        if (condition == null) {
+            return null;
+        }
+
+        if (condition instanceof LogicalCondition) {
+            LogicalCondition logicalCondition = ((LogicalCondition) condition);
+
+            LogicalCondition copy = new LogicalCondition(logicalCondition.getType());
+            logicalCondition.getConditions().forEach(copy::add);
+            return copy;
+        }
+
+        return condition.copy();
     }
 
     protected void setupLoaderFirstResult() {

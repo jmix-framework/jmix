@@ -106,6 +106,10 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         updateCaption();
     }
 
+    protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
+        this.initialDataLoaderCondition = copy(condition);
+    }
+
     @Override
     public boolean isAutoApply() {
         return autoApply;
@@ -383,8 +387,8 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         if (dataLoader != null) {
             LogicalCondition resultCondition;
             if (initialDataLoaderCondition instanceof LogicalCondition) {
-                resultCondition = (LogicalCondition) initialDataLoaderCondition;
-                resultCondition.add(getQueryCondition());
+                resultCondition = (LogicalCondition) copy(initialDataLoaderCondition);
+                Objects.requireNonNull(resultCondition).add(getQueryCondition());
             } else if (initialDataLoaderCondition != null) {
                 resultCondition = LogicalCondition.and()
                         .add(initialDataLoaderCondition)
@@ -519,5 +523,22 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         }
 
         return column;
+    }
+
+    @Nullable
+    protected Condition copy(@Nullable Condition condition) {
+        if (condition == null) {
+            return null;
+        }
+
+        if (condition instanceof LogicalCondition) {
+            LogicalCondition logicalCondition = ((LogicalCondition) condition);
+
+            LogicalCondition copy = new LogicalCondition(logicalCondition.getType());
+            logicalCondition.getConditions().forEach(copy::add);
+            return copy;
+        }
+
+        return condition.copy();
     }
 }

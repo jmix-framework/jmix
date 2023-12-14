@@ -17,6 +17,8 @@
 package io.jmix.flowui.component.genericfilter;
 
 import com.google.common.base.Strings;
+import io.jmix.core.annotation.Internal;
+import io.jmix.core.querycondition.Condition;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -40,5 +42,10 @@ public class FilterUtils {
 
     public static void setCurrentConfiguration(GenericFilter filter, Configuration currentConfiguration, boolean fromClient) {
         filter.setCurrentConfigurationInternal(currentConfiguration, fromClient);
+    }
+
+    @Internal
+    public static void updateDataLoaderInitialCondition(GenericFilter genericFilter, @Nullable Condition condition) {
+        genericFilter.updateDataLoaderInitialCondition(condition);
     }
 }

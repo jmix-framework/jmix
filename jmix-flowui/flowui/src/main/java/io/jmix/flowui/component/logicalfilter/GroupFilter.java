@@ -192,6 +192,10 @@ public class GroupFilter extends Composite<VerticalLayout>
         updateSummaryText();
     }
 
+    protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
+        this.initialDataLoaderCondition = copy(condition);
+    }
+
     protected void updateDataLoaderCondition() {
         if (dataLoader == null) {
             return;
@@ -199,8 +203,8 @@ public class GroupFilter extends Composite<VerticalLayout>
 
         LogicalCondition resultCondition;
         if (initialDataLoaderCondition instanceof LogicalCondition initialLogicalCondition) {
-            resultCondition = initialLogicalCondition;
-            resultCondition.add(getQueryCondition());
+            resultCondition = ((LogicalCondition) copy(initialLogicalCondition));
+            Objects.requireNonNull(resultCondition).add(getQueryCondition());
         } else if (initialDataLoaderCondition != null) {
             resultCondition = LogicalCondition.and()
                     .add(initialDataLoaderCondition)
@@ -466,6 +470,21 @@ public class GroupFilter extends Composite<VerticalLayout>
     public Registration addFilterComponentsChangeListener(
             ComponentEventListener<FilterComponentsChangeEvent<GroupFilter>> listener) {
         return getEventBus().addListener(FilterComponentsChangeEvent.class, ((ComponentEventListener) listener));
+    }
+
+    @Nullable
+    protected Condition copy(@Nullable Condition condition) {
+        if (condition == null) {
+            return null;
+        }
+
+        if (condition instanceof LogicalCondition logicalCondition) {
+            LogicalCondition copy = new LogicalCondition(logicalCondition.getType());
+            logicalCondition.getConditions().forEach(copy::add);
+            return copy;
+        }
+
+        return condition.copy();
     }
 
     protected void fireFilterComponentsChanged() {

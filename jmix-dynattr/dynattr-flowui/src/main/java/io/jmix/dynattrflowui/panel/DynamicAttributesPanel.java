@@ -35,25 +35,21 @@ import io.jmix.dynattr.model.Categorized;
 import io.jmix.dynattr.model.Category;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.ComponentGenerationContext;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.UiComponentsGenerator;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
-import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.data.value.ContainerValueSourceProvider;
-import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.ViewValidation;
-import jakarta.validation.constraints.Positive;
-import org.hibernate.validator.internal.metadata.facets.Validatable;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DynamicAttributesPanel extends Composite<VerticalLayout> implements HasSize {
 
@@ -67,9 +63,6 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     protected final DynAttrMetadata dynAttrMetadata;
     protected final ViewValidation validate;
     protected InstanceContainer<?> instanceContainer;
-
-    protected Integer cols;
-    protected Integer rows;
     protected String fieldWidth = DEFAULT_FIELD_WIDTH;
     protected String fieldCaptionWidth;
 
@@ -137,7 +130,6 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         }
 
         addFieldsToForm(propertiesForm, fields);
-//        initFieldCaptionWidth(propertiesForm);
     }
 
     protected void addFieldsToForm(FormLayout newPropertiesForm, Map<AttributeDefinition, Component> fields) {
@@ -152,7 +144,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
                     .mapToInt(attr -> attr.getConfiguration().getColumnNumber())
                     .max()
                     .orElse(0);
-            newPropertiesForm.setResponsiveSteps(List.of(maxColumnIndex).stream()
+            newPropertiesForm.setResponsiveSteps(Stream.of(maxColumnIndex)
                     .map(i -> new FormLayout.ResponsiveStep("0px", i))
                     .toList());
             for (int i = 0; i <= maxColumnIndex; i++) {
@@ -176,21 +168,12 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
                 }
             }
         } else {
-            int propertiesCount = getAttributesByCategory().size();
-            int rowsPerColumn = getRowsPerColumn(propertiesCount);
-            int columnNo = 0;
-            int fieldsCount = 0;
-
             List<Component> sortedAttributeFields = fields.entrySet().stream()
                     .sorted(Comparator.comparingInt(e -> e.getKey().getOrderNo()))
-                    .map(e -> e.getValue())
+                    .map(Map.Entry::getValue)
                     .toList();
             for (Component field : sortedAttributeFields) {
-                fieldsCount++;
-                newPropertiesForm.add(field, columnNo);
-                if (fieldsCount % rowsPerColumn == 0) {
-                    columnNo++;
-                }
+                newPropertiesForm.add(field);
             }
         }
     }
@@ -199,19 +182,6 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         Text component = uiComponents.create(Text.class);
         component.setText("\u2060");
         return component;
-    }
-
-    protected int getRowsPerColumn(int propertiesCount) {
-        if (cols != null) {
-            if (propertiesCount % cols == 0) {
-                return propertiesCount / cols;
-            }
-            return propertiesCount / cols + 1;
-        }
-        if (rows != null) {
-            return rows;
-        }
-        return propertiesCount;
     }
 
     protected Collection<AttributeDefinition> getAttributesByCategory() {
@@ -312,35 +282,6 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     }
 
     /**
-     * Sets the number of columns. If {@code null} value is passed, columns count will be determined
-     * based on the {@code rows} parameter.
-     *
-     * @param cols positive integer or {@code null}
-     */
-    @Positive
-    public void setColumnsCount(Integer cols) {
-        if (cols != null && cols <= 0) {
-            throw new GuiDevelopmentException(
-                    "DynamicAttributesPanel element has incorrect value of the 'cols' attribute", this.getId().orElse(""));
-        }
-        this.cols = cols;
-    }
-
-    /**
-     * Sets the number of rows. This parameter will only be taken into account if {@code cols == null}.
-     *
-     * @param rows positive integer or {@code null}
-     */
-    @Positive
-    public void setRowsCount(Integer rows) {
-        if (rows != null && rows <= 0) {
-            throw new GuiDevelopmentException(
-                    "DynamicAttributesPanel element has incorrect value of the 'rows' attribute", this.getId().orElse(""));
-        }
-        this.rows = rows;
-    }
-
-    /**
      * Sets the width of the fields. This parameter is used if some dynamic attribute does not have own width value.
      *
      * @param fieldWidth width of the fields
@@ -357,27 +298,5 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
      */
     public void setFieldCaptionWidth(String fieldCaptionWidth) {
         this.fieldCaptionWidth = fieldCaptionWidth;
-    }
-
-    /**
-     * Sets visibility of the {@code CategoryField} component.
-     *
-     * @param visible visibility flag
-     */
-    public void setCategoryFieldVisible(boolean visible) {
-        categoryFieldBox.setVisible(visible);
-    }
-
-    public boolean isValid() {
-        Collection<Component> components = UiComponentUtils.getOwnComponents(propertiesForm);
-        for (Component component : components) {
-            if (component instanceof Validatable) {
-                ValidationErrors validationErrors = validate.validateUiComponents(component);
-                if (!validationErrors.isEmpty())
-                    return false;
-
-            }
-        }
-        return true;
     }
 }

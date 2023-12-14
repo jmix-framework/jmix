@@ -18,6 +18,7 @@ package io.jmix.flowui.kit.component.dropdownbutton;
 
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.meta.StudioIgnore;
 
 import java.util.function.Consumer;
 
@@ -25,6 +26,7 @@ public interface ActionItem extends DropdownButtonItem {
 
     Action getAction();
 
+    @StudioIgnore
     @Override
     default Registration addClickListener(Consumer<ClickEvent> listener) {
         throw new UnsupportedOperationException(String.format(

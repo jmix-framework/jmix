@@ -280,7 +280,7 @@ public class MenuFilterField extends Composite<TextField>
                                                               boolean forceRetainAllChildren) {
             boolean anyChildMatch = false;
 
-            List<C> childItems = new ArrayList<>(parentMenuItem.getChildren());
+            List<C> childItems = new ArrayList<>(parentMenuItem.getChildItems());
 
             //update child collection only if force flag is disabled
             if (!forceRetainAllChildren) {

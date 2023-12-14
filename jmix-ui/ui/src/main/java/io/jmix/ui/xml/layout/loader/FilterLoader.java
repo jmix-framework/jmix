@@ -23,6 +23,8 @@ import io.jmix.ui.action.filter.FilterAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.filter.FilterUtils;
 import io.jmix.ui.component.filter.inspector.FilterPropertiesInspector;
+import io.jmix.ui.component.impl.FilterImpl;
+import io.jmix.ui.component.impl.FilterLoaderUtils;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
@@ -106,8 +108,11 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
                     FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
                     ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
                     DataLoader dataLoader = screenData.getLoader(dataLoaderId);
+                    component.setDataLoader(dataLoader);
+
                     getComponentContext().addInitTask((context, window) ->
-                            component.setDataLoader(dataLoader)
+                            FilterLoaderUtils.updateDataLoaderInitialCondition(((FilterImpl) component),
+                                    dataLoader.getCondition())
                     );
                 });
     }

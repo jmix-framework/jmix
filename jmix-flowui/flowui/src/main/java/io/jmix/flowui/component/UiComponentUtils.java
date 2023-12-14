@@ -172,7 +172,13 @@ public final class UiComponentUtils {
     }
 
     public static Optional<Component> findSubPart(HasSubParts container, String id) {
-        return Optional.ofNullable(((Component) container.getSubPart(id)));
+        Object subPart = container.getSubPart(id);
+
+        if (subPart instanceof Component subPartComponent) {
+            return Optional.of(subPartComponent);
+        }
+
+        return Optional.empty();
     }
 
     private static void fillChildComponents(Component container, Collection<Component> components) {

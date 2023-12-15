@@ -177,12 +177,10 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
         VaadinServletContextInitializer contextInitializer =
                 applicationContext.getBean(VaadinServletContextInitializer.class, applicationContext);
         try {
-            // We create custom servlet context to disable dev server via attribute (see DevModeServletContextListener).
-            // Also, custom TestServletContext enables adding ServletContextListener from
+            // We create custom servlet context to enables adding ServletContextListener from
             // VaadinServletContextInitializer.
             TestServletContext servletContext = new TestServletContext();
             servletContext.setAttribute(ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
-            servletContext.setInitParameter(InitParameters.SERVLET_PARAMETER_PRODUCTION_MODE, "true");
 
             MockServletConfig mockServletConfig = new MockServletConfig(servletContext);
 
